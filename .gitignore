@@ -1,0 +1,9 @@
+#Directories
+Build/
+
+# Shader Cache
+*.spv
+
+# Libs
+shaderc_r.lib
+shaderc_d.lib

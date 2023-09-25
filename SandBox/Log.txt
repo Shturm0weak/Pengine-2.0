@@ -1,0 +1,1167 @@
+[Wed Oct  4 20:52:27 2023] Engine config has been loaded!
+[Wed Oct  4 20:52:27 2023] Graphics API:2
+[Wed Oct  4 20:52:27 2023] Available extensions:
+[Wed Oct  4 20:52:27 2023] 	VK_KHR_device_group_creation
+[Wed Oct  4 20:52:27 2023] 	VK_KHR_external_fence_capabilities
+[Wed Oct  4 20:52:27 2023] 	VK_KHR_external_memory_capabilities
+[Wed Oct  4 20:52:27 2023] 	VK_KHR_external_semaphore_capabilities
+[Wed Oct  4 20:52:27 2023] 	VK_KHR_get_physical_device_properties2
+[Wed Oct  4 20:52:27 2023] 	VK_KHR_get_surface_capabilities2
+[Wed Oct  4 20:52:27 2023] 	VK_KHR_surface
+[Wed Oct  4 20:52:27 2023] 	VK_KHR_surface_protected_capabilities
+[Wed Oct  4 20:52:27 2023] 	VK_KHR_win32_surface
+[Wed Oct  4 20:52:27 2023] 	VK_EXT_debug_report
+[Wed Oct  4 20:52:27 2023] 	VK_EXT_debug_utils
+[Wed Oct  4 20:52:27 2023] 	VK_EXT_swapchain_colorspace
+[Wed Oct  4 20:52:27 2023] 	VK_NV_external_memory_capabilities
+[Wed Oct  4 20:52:27 2023] 	VK_KHR_portability_enumeration
+[Wed Oct  4 20:52:27 2023] 	VK_LUNARG_direct_driver_loading
+[Wed Oct  4 20:52:27 2023] Required extensions:
+[Wed Oct  4 20:52:27 2023] 	VK_KHR_surface
+[Wed Oct  4 20:52:27 2023] 	VK_KHR_win32_surface
+[Wed Oct  4 20:52:27 2023] 	VK_EXT_debug_utils
+[Wed Oct  4 20:52:27 2023] Device count: 1
+[Wed Oct  4 20:52:27 2023] Physical device: NVIDIA GeForce RTX 3060 Ti
+[Wed Oct  4 20:52:39 2023] sponza_236: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_328: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_329: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_237: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_261: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_99: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_98: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_320: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_321: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_322: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_323: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_324: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_325: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_326: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_327: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_263: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_150: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_265: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_156: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_155: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_266: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_117: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_116: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_115: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_114: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_113: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_220: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_223: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_222: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_229: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_228: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_119: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_118: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_75: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_74: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_77: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_76: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_71: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_70: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_73: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_72: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_90: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_79: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_78: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_97: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_96: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_95: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_343: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_340: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_341: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_346: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_347: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_94: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_345: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_348: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_349: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_93: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_92: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_188: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_189: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_184: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_185: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_186: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_187: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_180: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_181: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_182: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_183: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_122: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_123: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_120: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_121: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_126: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_127: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_171: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_209: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_208: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_207: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_206: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_205: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_204: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_203: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_202: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_201: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_200: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_173: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_59: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_58: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_172: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_53: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_52: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_51: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_50: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_57: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_56: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_55: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_54: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_282: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_175: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_177: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_286: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_176: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_218: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_219: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_214: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_215: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_216: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_217: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_210: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_211: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_212: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_213: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_260: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_28: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_29: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_26: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_27: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_24: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_25: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_22: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_23: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_20: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_21: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_269: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_268: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_159: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_158: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_153: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_152: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_151: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_262: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_157: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_264: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_267: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_154: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_302: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_91: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_306: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_307: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_304: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_305: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_276: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_303: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_300: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_301: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_277: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_308: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_309: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_142: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_143: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_144: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_145: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_146: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_147: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_05: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_06: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_07: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_00: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_01: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_03: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_08: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_09: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_139: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_138: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_135: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_134: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_137: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_136: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_131: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_130: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_133: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_132: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_243: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_242: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_241: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_240: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_247: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_246: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_245: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_244: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_249: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_248: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_17: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_16: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_15: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_14: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_13: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_12: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_11: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_10: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_19: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_18: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_250: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_251: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_252: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_253: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_254: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_255: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_256: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_257: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_258: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_259: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_128: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_129: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_351: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_62: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_63: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_60: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_61: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_66: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_67: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_64: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_65: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_68: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_69: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_225: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_333: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_224: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_227: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_359: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_358: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_226: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_355: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_354: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_357: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_356: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_221: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_350: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_353: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_352: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_112: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_294: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_111: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_167: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_110: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_296: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_165: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_198: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_197: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_196: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_195: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_194: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_193: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_192: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_191: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_190: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_291: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_292: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_293: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_104: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_105: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_238: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_239: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_100: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_101: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_102: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_103: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_232: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_233: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_230: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_231: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_108: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_109: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_234: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_235: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_48: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_49: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_40: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_41: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_42: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_43: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_44: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_45: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_46: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_47: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_364: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_199: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_287: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_170: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_285: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_284: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_283: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_174: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_281: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_280: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_179: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_178: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_289: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_288: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_377: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_376: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_375: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_374: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_373: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_372: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_371: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_370: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_362: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_379: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_378: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_124: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_290: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_368: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_166: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_295: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_164: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_297: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_162: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_163: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_160: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_161: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_332: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_125: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_298: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_299: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_168: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_169: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_331: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_365: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_366: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_367: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_360: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_361: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_330: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_363: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_337: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_369: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_336: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_335: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_334: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_311: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_310: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_313: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_312: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_315: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_314: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_317: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_316: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_319: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_318: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_31: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_30: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_33: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_32: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_35: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_34: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_37: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_36: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_39: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_38: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_148: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_149: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_278: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_279: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_140: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_141: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_274: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_275: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_272: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_273: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_270: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_271: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_382: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_380: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_381: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_342: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_106: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_339: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_338: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_88: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_89: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_107: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_84: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_85: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_86: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_87: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_80: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_81: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_82: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_83: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:52:39 2023] sponza_344: has been created!
+[Wed Oct  4 20:52:39 2023] Pengine::Renderer3D:has been added to GameObject!
+[Wed Oct  4 20:53:07 2023] sponza_236: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_328: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_329: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_237: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_261: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_99: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_98: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_320: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_321: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_322: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_323: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_324: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_325: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_326: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_327: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_263: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_150: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_265: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_156: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_155: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_266: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_117: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_116: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_115: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_114: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_113: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_220: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_223: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_222: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_229: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_228: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_119: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_118: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_75: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_74: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_77: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_76: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_71: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_70: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_73: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_72: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_90: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_79: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_78: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_97: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_96: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_95: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_343: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_340: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_341: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_346: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_347: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_94: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_345: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_348: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_349: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_93: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_92: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_188: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_189: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_184: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_185: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_186: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_187: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_180: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_181: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_182: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_183: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_122: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_123: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_120: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_121: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_126: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_127: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_171: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_209: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_208: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_207: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_206: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_205: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_204: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_203: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_202: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_201: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_200: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_173: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_59: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_58: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_172: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_53: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_52: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_51: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_50: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_57: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_56: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_55: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_54: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_282: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_175: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_177: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_286: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_176: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_218: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_219: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_214: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_215: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_216: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_217: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_210: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_211: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_212: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_213: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_260: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_28: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_29: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_26: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_27: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_24: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_25: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_22: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_23: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_20: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_21: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_269: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_268: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_159: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_158: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_153: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_152: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_151: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_262: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_157: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_264: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_267: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_154: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_302: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_91: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_306: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_307: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_304: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_305: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_276: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_303: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_300: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_301: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_277: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_308: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_309: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_142: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_143: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_144: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_145: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_146: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_147: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_05: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_06: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_07: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_00: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_01: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_03: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_08: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_09: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_139: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_138: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_135: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_134: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_137: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_136: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_131: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_130: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_133: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_132: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_243: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_242: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_241: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_240: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_247: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_246: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_245: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_244: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_249: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_248: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_17: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_16: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_15: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_14: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_13: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_12: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_11: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_10: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_19: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_18: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_250: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_251: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_252: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_253: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_254: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_255: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_256: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_257: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_258: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_259: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_128: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_129: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_351: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_62: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_63: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_60: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_61: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_66: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_67: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_64: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_65: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_68: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_69: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_225: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_333: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_224: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_227: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_359: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_358: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_226: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_355: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_354: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_357: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_356: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_221: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_350: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_353: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_352: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_112: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_294: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_111: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_167: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_110: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_296: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_165: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_198: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_197: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_196: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_195: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_194: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_193: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_192: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_191: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_190: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_291: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_292: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_293: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_104: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_105: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_238: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_239: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_100: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_101: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_102: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_103: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_232: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_233: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_230: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_231: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_108: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_109: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_234: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_235: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_48: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_49: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_40: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_41: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_42: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_43: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_44: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_45: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_46: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_47: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_364: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_199: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_287: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_170: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_285: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_284: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_283: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_174: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_281: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_280: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_179: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_178: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_289: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_288: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_377: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_376: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_375: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_374: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_373: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_372: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_371: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_370: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_362: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_379: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_378: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_124: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_290: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_368: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_166: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_295: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_164: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_297: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_162: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_163: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_160: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_161: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_332: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_125: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_298: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_299: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_168: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_169: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_331: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_365: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_366: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_367: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_360: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_361: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_330: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_363: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_337: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_369: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_336: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_335: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_334: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_311: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_310: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_313: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_312: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_315: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_314: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_317: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_316: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_319: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_318: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_31: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_30: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_33: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_32: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_35: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_34: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_37: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_36: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_39: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_38: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_148: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_149: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_278: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_279: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_140: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_141: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_274: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_275: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_272: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_273: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_270: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_271: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_382: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_380: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_381: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_342: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_106: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_339: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_338: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_88: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_89: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_107: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_84: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_85: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_86: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_87: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_80: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_81: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_82: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_83: has been deleted!
+[Wed Oct  4 20:53:07 2023] sponza_344: has been deleted!

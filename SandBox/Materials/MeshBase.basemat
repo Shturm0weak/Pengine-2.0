@@ -1,0 +1,31 @@
+Basemat:
+  Pipelines:
+    - RenderPass: GBuffer
+      DepthTest: true
+      DepthWrite: true
+      CullMode: Back
+      PolygonMode: Fill
+      Vertex: Shaders/GBuffer.vert
+      Fragment: Shaders/GBuffer.frag
+      Uniforms:
+        - Binding: 0
+          Name: albedo
+          Type: Sampler
+          InputRate: Per Material
+          Stages:
+            - Fragment
+        - Binding: 1
+          Name: MaterialsBuffer
+          Type: Buffer
+          InputRate: Per Material
+          Values:
+            - Type: color
+              Name: color
+            - Type: vec4
+              Name: ambient
+          Stages:
+            - Fragment
+      ColorBlendStates:
+        - BlendEnabled: false
+        - BlendEnabled: false
+        - BlendEnabled: false

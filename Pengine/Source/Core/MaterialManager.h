@@ -1,0 +1,35 @@
+#pragma once
+
+#include "Core.h"
+
+#include "../Graphics/Material.h"
+
+namespace Pengine
+{
+
+	class PENGINE_API MaterialManager
+	{
+	public:
+		static MaterialManager& GetInstance();
+
+		std::shared_ptr<Material> LoadMaterial(const std::string& filepath);
+
+		std::shared_ptr<BaseMaterial> LoadBaseMaterial(const std::string& filepath);
+
+		std::shared_ptr<Material> GetMaterial(const std::string& filepath);
+
+		std::shared_ptr<BaseMaterial> GetBaseMaterial(const std::string& filepath);
+
+		void ShutDown();
+
+	private:
+		MaterialManager() = default;
+		~MaterialManager() = default;
+		MaterialManager(const MaterialManager&) = delete;
+		MaterialManager& operator=(const MaterialManager&) = delete;
+
+		std::unordered_map<std::string, std::shared_ptr<Material>> m_MaterialsByFilepath;
+		std::unordered_map<std::string, std::shared_ptr<BaseMaterial>> m_BaseMaterialsByFilepath;
+	};
+
+}

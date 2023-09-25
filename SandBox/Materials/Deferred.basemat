@@ -1,0 +1,33 @@
+Basemat:
+  Pipelines:
+    - RenderPass: Deferred
+      DepthTest: false
+      DepthWrite: false
+      CullMode: None
+      PolygonMode: Fill
+      Vertex: Shaders/Deferred.vert
+      Fragment: Shaders/Deferred.frag
+      Uniforms:
+        - Binding: 0
+          Name: textures
+          Type: SamplerArray
+          InputRate: Per BaseMaterial
+          Count: 3
+          Stages:
+            - Fragment
+        - Binding: 1
+          Name: TexturesBuffer
+          Type: Buffer
+          InputRate: Per BaseMaterial
+          Info: const
+          Values:
+            - Type: sampler
+              Name: albedo
+            - Type: sampler
+              Name: normal
+            - Type: sampler
+              Name: position
+          Stages:
+            - Fragment
+      ColorBlendStates:
+        - BlendEnabled: false
