@@ -27,13 +27,16 @@ namespace Pengine
 
 		static Material::CreateInfo LoadMaterial(const std::string& filepath);
 
+		static void SerializeMaterial(std::shared_ptr<Material> material);
+
 		static void SerializeMesh(const std::string& directory, std::shared_ptr<Mesh> mesh);
 
 		static std::shared_ptr<Mesh> DeserializeMesh(const std::string& filepath);
 
-		static void SerializeMeshes(const std::string& filepath, std::vector<std::shared_ptr<Mesh>> meshes);
+		static void SerializeMeshes(const std::string& filepath,
+			std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> meshes);
 
-		static std::vector<std::shared_ptr<Mesh>> DeserializeMeshes(const std::string& filepath);
+		static std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> DeserializeMeshes(const std::string& filepath);
 
 		static void SerializeShaderCache(std::string filepath, const std::string& code);
 

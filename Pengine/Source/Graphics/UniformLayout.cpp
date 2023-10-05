@@ -57,7 +57,7 @@ UniformLayout::Binding UniformLayout::GetBindingByName(const std::string& name) 
 	FATAL_ERROR("No binding at this " + name + " name!")
 }
 
-std::optional<UniformLayout::Variable> UniformLayout::Binding::GetValue(const std::string& name)
+std::optional<UniformLayout::Variable> UniformLayout::Binding::GetValue(const std::string& name) const
 {
 	for (const auto& value : values)
 	{

@@ -31,6 +31,11 @@ namespace Pengine
 			return "jpg";
 		}
 
+		inline const char* Dds()
+		{
+			return "dds";
+		}
+
 		inline const char* Obj()
 		{
 			return "obj";
@@ -70,7 +75,8 @@ namespace Pengine
 		{
 			return (fileFormat == Png()
 				|| fileFormat == Jpeg()
-				|| fileFormat == Jpg());
+				|| fileFormat == Jpg()
+				|| fileFormat == Dds());
 		}
 
 		inline bool IsMeshIntermediate(const std::string& fileFormat)

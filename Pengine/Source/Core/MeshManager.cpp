@@ -1,5 +1,7 @@
 #include "MeshManager.h"
 
+#include "TextureManager.h"
+#include "MaterialManager.h"
 #include "Logger.h"
 #include "Serializer.h"
 
@@ -48,26 +50,22 @@ std::shared_ptr<Mesh> MeshManager::GetMesh(const std::string& filepath)
 	return nullptr;
 }
 
-std::vector<std::shared_ptr<Mesh>> MeshManager::GenerateMeshes(const std::string& filepath)
+std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>>
+MeshManager::GenerateMeshes(const std::string& filepath)
 {
-	std::vector<std::shared_ptr<Mesh>> meshes = LoadIntermediate(filepath);
-	for (const auto& mesh : meshes)
-	{
-		Serializer::SerializeMesh(Utils::ExtractDirectoryFromFilePath(filepath), mesh);
+	std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> meshesByMaterial = LoadIntermediate(filepath);
 
-		m_MeshesByFilepath.emplace(mesh->GetFilepath(), mesh);
-	}
-
-	if (meshes.size() > 1)
+	if (meshesByMaterial.size() > 1)
 	{
 		std::string meshesFilepath = Utils::EraseFileFormat(filepath) + "." + FileFormats::Meshes();
-		Serializer::SerializeMeshes(meshesFilepath, meshes);
+		Serializer::SerializeMeshes(meshesFilepath, meshesByMaterial);
 	}
 
-	return meshes;
+	return meshesByMaterial;
 }
 
-std::vector<std::shared_ptr<Mesh>> MeshManager::LoadIntermediate(const std::string& filepath)
+std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>>
+MeshManager::LoadIntermediate(const std::string& filepath)
 {
 	Assimp::Importer import;
 	const aiScene* scene = import.ReadFile(filepath, aiProcess_Triangulate);
@@ -77,44 +75,100 @@ std::vector<std::shared_ptr<Mesh>> MeshManager::LoadIntermediate(const std::stri
 		FATAL_ERROR(std::string("ASSIMP::" + std::string(import.GetErrorString())).c_str());
 	}
 
-	std::vector<std::shared_ptr<Mesh>> meshes;
+	std::unordered_map<size_t, std::shared_ptr<Material>> materialsByIndex;
+	for (size_t materialIndex = 0; materialIndex < scene->mNumMaterials; materialIndex++)
+	{
+		aiMaterial* aiMaterial = scene->mMaterials[materialIndex];
+
+		aiString aiMaterialName;
+		aiMaterial->Get(AI_MATKEY_NAME, aiMaterialName);
+
+		std::string materialName = std::string(aiMaterialName.C_Str());
+		std::string materialFilepath = Utils::ExtractDirectoryFromFilePath(filepath) + "/" + materialName + ".mat";
+
+		std::shared_ptr<Material> meshBaseMaterial = MaterialManager::GetInstance().LoadMaterial("Materials/MeshBase.mat");
+		std::shared_ptr<Material> material = MaterialManager::GetInstance().Clone(materialName, materialFilepath, meshBaseMaterial);
+
+		aiColor3D aiColor(1.0f, 1.0f, 1.0f);
+		//aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, aiColor);
+		glm::vec4 color = { aiColor.r, aiColor.g, aiColor.b, 1.0f };
+		material->SetValue("material", "color", color);
+
+		uint32_t numTextures = aiMaterial->GetTextureCount(aiTextureType_DIFFUSE);
+		aiString aiTextureName;
+		if (numTextures > 0)
+		{
+			aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), aiTextureName);
+			std::string textureFilepath = aiTextureName.C_Str();
+			textureFilepath = Utils::Replace(textureFilepath, '\\', '/');
+			textureFilepath = Utils::ExtractDirectoryFromFilePath(filepath) + "/" + textureFilepath;
+
+			material->SetTexture("albedo", TextureManager::GetInstance().Load(textureFilepath));
+		}
+
+		Material::Save(material);
+
+		materialsByIndex.emplace(materialIndex, material);
+	}
+
+	std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> meshesByMaterial;
 	for (size_t meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++)
 	{
 		std::vector<float> vertices;
 		std::vector<uint32_t> indices;
-		aiMesh* mesh = scene->mMeshes[meshIndex];
+		aiMesh* aiMesh = scene->mMeshes[meshIndex];
 
-		for (size_t vertexIndex = 0; vertexIndex < mesh->mNumVertices; vertexIndex++)
+		std::string defaultMeshName = aiMesh->mName.C_Str();
+		std::string meshName = meshName;
+		std::string meshFilepath = Utils::ExtractDirectoryFromFilePath(filepath) + "/" + meshName + "." + FileFormats::Mesh();
+
+		int containIndex = 0;
+		while (GetMesh(meshFilepath))
 		{
-			aiVector3D vertex = mesh->mVertices[vertexIndex];
+			meshName = defaultMeshName + "_" + std::to_string(containIndex);
+			meshFilepath = Utils::ExtractDirectoryFromFilePath(filepath) + "/" + meshName + "." + FileFormats::Mesh();
+			containIndex++;
+		}
+
+		for (size_t vertexIndex = 0; vertexIndex < aiMesh->mNumVertices; vertexIndex++)
+		{
+			aiVector3D vertex = aiMesh->mVertices[vertexIndex];
 			vertices.emplace_back(vertex.x);
 			vertices.emplace_back(vertex.y);
 			vertices.emplace_back(vertex.z);
-			aiVector3D normal = mesh->mNormals[vertexIndex];
+			aiVector3D normal = aiMesh->mNormals[vertexIndex];
 			vertices.emplace_back(normal.x);
 			vertices.emplace_back(normal.y);
 			vertices.emplace_back(normal.z);
-			aiVector3D uv = mesh->mTextureCoords[0][vertexIndex];
-			vertices.emplace_back(uv.x);
-			vertices.emplace_back(uv.y);
-		}
 
-		for (size_t faceIndex = 0; faceIndex < mesh->mNumFaces; faceIndex++)
-		{
-			for (size_t i = 0; i < mesh->mFaces[faceIndex].mNumIndices; i++)
+			if (aiMesh->mNumUVComponents[0] == 2)
 			{
-				indices.emplace_back(mesh->mFaces[faceIndex].mIndices[i]);
+				aiVector3D uv = aiMesh->mTextureCoords[0][vertexIndex];
+				vertices.emplace_back(uv.x);
+				vertices.emplace_back(uv.y);
 			}
 		}
 
-		std::string meshName = mesh->mName.C_Str();
-		meshes.emplace_back(std::make_shared<Mesh>(meshName,
-			Utils::ExtractDirectoryFromFilePath(filepath) + "/" + meshName + "." + FileFormats::Mesh(),
+		for (size_t faceIndex = 0; faceIndex < aiMesh->mNumFaces; faceIndex++)
+		{
+			for (size_t i = 0; i < aiMesh->mFaces[faceIndex].mNumIndices; i++)
+			{
+				indices.emplace_back(aiMesh->mFaces[faceIndex].mIndices[i]);
+			}
+		}
+
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(meshName,
+			meshFilepath,
 			vertices,
-			indices));
+			indices);
+
+		meshesByMaterial[materialsByIndex[aiMesh->mMaterialIndex]].emplace_back(mesh);
+
+		m_MeshesByFilepath.emplace(mesh->GetFilepath(), mesh);
+		Serializer::SerializeMesh(Utils::ExtractDirectoryFromFilePath(mesh->GetFilepath()), mesh);
 	}
 
-	return meshes;
+	return meshesByMaterial;
 }
 
 void MeshManager::ShutDown()

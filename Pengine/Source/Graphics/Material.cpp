@@ -20,6 +20,86 @@ std::shared_ptr<Material> Material::Load(const std::string& filepath)
 	return Material::Create(filepath, filepath, Serializer::LoadMaterial(filepath));
 }
 
+void Material::Save(std::shared_ptr<Material> material)
+{
+	Serializer::SerializeMaterial(material);
+}
+
+std::shared_ptr<Material> Material::Inherit(const std::string& name, const std::string& filepath,
+	std::shared_ptr<BaseMaterial> baseMaterial)
+{
+	CreateInfo createInfo{};
+	createInfo.baseMaterial = baseMaterial;
+
+	for (const auto& [renderPass, pipeline] : baseMaterial->GetPipelinesByRenderPass())
+	{
+		for (const auto& [location, binding] : pipeline->GetChildUniformLayout()->GetBindingsByLocation())
+		{
+			if (binding.type == UniformLayout::Type::SAMPLER)
+			{
+				createInfo.renderPassInfo[renderPass].texturesByName[binding.name] = "White";
+			}
+		}
+	}
+
+	return Material::Create(name, filepath, createInfo);
+}
+
+std::shared_ptr<Material> Material::Clone(const std::string& name, const std::string& filepath,
+	std::shared_ptr<Material> material)
+{
+	CreateInfo createInfo{};
+	createInfo.baseMaterial = material->GetBaseMaterial();
+
+	for (const auto& [renderPass, pipeline] : createInfo.baseMaterial->GetPipelinesByRenderPass())
+	{
+		for (const auto& [location, binding] : pipeline->GetChildUniformLayout()->GetBindingsByLocation())
+		{
+			if (binding.type == UniformLayout::Type::SAMPLER)
+			{
+				createInfo.renderPassInfo[renderPass].texturesByName[binding.name] = material->GetTexture(binding.name)->GetFilepath();
+			}
+			else if (binding.type == UniformLayout::Type::BUFFER)
+			{
+				std::shared_ptr<Buffer> buffer = pipeline->GetBuffer(binding.name);
+				void* data = (char*)buffer->GetData() + buffer->GetInstanceSize() * material->GetIndex();
+
+				auto& uniformBufferInfo = createInfo.renderPassInfo[renderPass].uniformBuffersByName[binding.name];
+
+				for (const auto& value : binding.values)
+				{
+					if (value.type == "vec2")
+					{
+						uniformBufferInfo.vec2ValuesByName.emplace(value.name, Utils::GetValue<glm::vec2>(data, value.offset));
+					}
+					else if (value.type == "vec3")
+					{
+						uniformBufferInfo.vec3ValuesByName.emplace(value.name, Utils::GetValue<glm::vec3>(data, value.offset));
+					}
+					else if (value.type == "vec4" || value.type == "color")
+					{
+						uniformBufferInfo.vec4ValuesByName.emplace(value.name, Utils::GetValue<glm::vec4>(data, value.offset));
+					}
+					else if (value.type == "float")
+					{
+						uniformBufferInfo.floatValuesByName.emplace(value.name, Utils::GetValue<float>(data, value.offset));
+					}
+					else if (value.type == "int")
+					{
+						uniformBufferInfo.intValuesByName.emplace(value.name, Utils::GetValue<int>(data, value.offset));
+					}
+					else if (value.type == "sampler")
+					{
+						// TODO: Fill the value when figure out how to handle sampler arrays!
+					}
+				}
+			}
+		}
+	}
+
+	return Material::Create(name, filepath, createInfo);
+}
+
 Material::Material(const std::string& name, const std::string& filepath,
 	const CreateInfo& createInfo)
 	: Asset(name, filepath)
@@ -51,6 +131,7 @@ Material::Material(const std::string& name, const std::string& filepath,
 			UniformLayout::Binding binding = uniformLayout->GetBindingByName(bufferName);
 
 			uniformWriter->WriteBuffer(bufferName, buffer, buffer->GetInstanceSize(), buffer->GetInstanceSize() * m_Index);
+			uniformWriter->Flush();
 
 			void* data = (char*)buffer->GetData() + buffer->GetInstanceSize() * m_Index;
 

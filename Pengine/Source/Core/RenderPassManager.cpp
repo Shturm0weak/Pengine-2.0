@@ -227,7 +227,7 @@ void RenderPassManager::CreateGBuffer()
 
 		// Because these are all just commands and will be rendered later we can write the instance buffer
 		// just once when all instance data is collected.
-		if (instanceBuffer)
+		if (instanceBuffer && !instanceDatas.empty())
 		{
 			instanceBuffer->WriteToBuffer(instanceDatas.data());
 		}

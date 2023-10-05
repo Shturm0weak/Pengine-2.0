@@ -4,10 +4,10 @@ Mat:
     - RenderPass: GBuffer
       Uniforms:
         - Name: albedo
-          Value: Images/Bricks.png
-        - Name: MaterialsBuffer
+          Value: White
+        - Name: material
           Values:
             - Name: color
               Value: [1, 1, 1, 1]
             - Name: ambient
-              Value: [0.5, 0, 0, 0]
+              Value: [0.7, 0, 0, 0]

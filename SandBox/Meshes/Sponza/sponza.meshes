@@ -1,0 +1,787 @@
+Meshes:
+  - Material: 8301a275-f556-4604-b79a-5a9e91fc211b
+    Mesh: 8a8e1f1b-3e05-4ca8-8332-9f358318e5d8
+  - Material: 8301a275-f556-4604-b79a-5a9e91fc211b
+    Mesh: 00b4e50e-0092-4cbd-accf-f2a0ec0c4dcb
+  - Material: 8301a275-f556-4604-b79a-5a9e91fc211b
+    Mesh: 780331a5-b6e6-4a45-b305-40d7563d4cb0
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: e921a136-96af-4bf9-8ddf-ca8a32addbbf
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: a67e0536-3a25-41f9-8bff-f4dd35ff9813
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: cbdceb3b-0a35-4a0e-8f33-75336527927d
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: ccac7b28-18ac-48fe-b19a-0b23dcf4104d
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 763d1a6a-6a02-4eee-889f-3cd5cfb50f8a
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 30cff796-94da-4512-836e-740bb723f90f
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: b73c9d88-0c03-49f8-a945-47fce3c51506
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 129fad5c-3bce-459e-9981-6dd567f2b9c6
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: ce58c9b7-0236-4b5b-bddc-3b9de4309daa
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 399fca2d-a11d-45c1-8a5b-a016e1f6d2fa
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: c7f7ff1f-d6f8-4f71-a48a-aab0fc8bde5c
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: b1d4fe38-7156-447e-b102-02dc0090fa36
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 80495a11-a473-44c7-abf9-ba6e48ee8848
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 87f86408-0588-4ae4-b5a7-60a24e0c0957
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 8b74002c-44a6-4b27-ad3f-ec2e710e4126
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: debc0890-b5af-4304-a32e-56b13f17914c
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: e3b4591b-ea41-4cc9-ba78-8daa6ee83137
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 8c009a7f-6598-4ab6-9d8f-a327e9b49631
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 277f81d2-a974-4db0-bc6a-f09b7f782a2b
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 6107c32b-4b01-4eca-836b-d7a86edea305
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 7aa6e24f-6142-4e97-97c4-0ba8fdc6e0ca
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: fc6f2f59-cb69-4336-ab63-72471b1e34bd
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: bc8cad2f-c4f0-4720-9676-a9898ac42e24
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: a50896ab-558a-43ab-99c1-cb247c334ce3
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 68eaad9d-c8b3-4803-9e5e-7ccea075c12a
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 4cd41fda-41bd-41dd-b7bd-30dd89c20751
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: d0bb8fb7-53c2-4db6-b9ff-4f83ca653283
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: b03a6f72-79a1-4c9e-bda2-64310ffb1240
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 1f044c35-efc6-41b3-8f6e-7083552bb93c
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 54027795-614e-400b-b4d9-c90001d76d46
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 41a9875c-d562-4110-adf6-e6f1c9f6d7c2
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: faf0abe8-6121-4a94-844f-27049e3ff897
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 6943061f-750e-485d-a16c-22e9ffa6020f
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 0c52bb4b-14da-473d-840f-04b079ed9646
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: ed916d26-a501-43cd-b95d-226b6599ef2a
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 42e146b4-b1f7-44d0-aa33-8d912d46981d
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 20687f41-f269-435b-9c21-ae433b96a0f2
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 17c68933-5fa9-4335-862b-cf5afcb8a8a2
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: f4f98be7-335c-4ee4-81b1-4733cd021389
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: e0c6a7b5-f71c-450b-8ae4-2e8cbfb31d26
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: be4ebca5-b333-458f-a778-fec75ce36afa
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: b156db69-823f-41d0-a543-c2f17c93b948
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: ef1373c2-cd6d-4494-ab0b-4ee8aa83e1e0
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 6256cbc1-0bbd-48bb-9242-bb629964b4e0
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: ed1eb4a5-abf3-45f7-b691-c6bdd506d8e2
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: c1bf6e8f-f0f3-4ae0-bc36-1a1d9729d3d6
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: c09a8334-78a8-450d-beeb-ebcc0acdd00c
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 6ae64f5b-6a13-4b51-a95e-bf2a9cadb84f
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: dd30e584-7735-4fb9-b9e1-a413bcc6c200
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 9fd58265-ed1d-40c3-bcee-c4b0695975cd
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 16d72af1-d44e-4b2c-8a9f-2e4712612320
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 5409cf89-5c0c-4f48-9619-5a5562d2eba8
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: bca21846-6e38-4abf-9f33-5329dfe59b3d
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 43cdd2ca-a82c-4321-b2c3-d87379664dbd
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: a8f9ab31-cc56-440a-bacf-e680a9df09d2
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 46d6b29c-2093-40e9-8ebb-907f32dca566
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 4fbf9d78-35c1-4530-8cfb-21c707003e78
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 0ef1524a-ab3d-4ce9-ac73-a3d3759116fc
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: cd6064f8-3b32-4990-a47e-d377c95454f4
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 06aabb51-87a2-487f-9a1b-696df926a7da
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: d6573c51-197d-4790-8bc3-044905c576b7
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 85b142af-4463-40bc-9d21-f9e718287bb6
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 4442e0cf-5e77-4a88-9e34-44f18d85a05c
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: f908ac09-7def-47ae-8f2d-43e9abb4d5cd
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: d511a724-e1b1-45f2-be8d-57c003162c3b
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: eeca7157-3ec8-4ec9-a77f-f12e87bcc51f
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 980d46ad-040a-403e-85d3-d294eb5771be
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: a730f091-3f2e-47e8-96eb-c56a6f7a552b
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 1adefefc-6aa0-43b4-9c53-f50e3895cb16
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: fa0ea24b-06b9-47f9-8863-20aa30d97c9b
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 536153e1-625a-4463-bde2-43e9ffe0f663
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 14ae4ae3-18b9-4965-abd5-a7778146a5da
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 295db581-be60-43ff-8d2b-7e5e3a3a6625
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 124521aa-ff5a-4184-a77a-87775dbb5458
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: cff58022-cf6c-48e1-8827-177cb87bd6a7
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 8268a699-12d8-4524-a654-5c591b80febf
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 9c5f2ff3-d259-43c2-8cf5-d6d0b71aa163
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: ed8ab4de-8ad5-4c4e-8f09-64e06f5fcd78
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 4a560042-245d-42e5-b7c6-47d78b3be7bc
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 6c715810-b253-4519-b28b-023d019a2e87
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 6e8c63e0-ce12-4842-88d8-c9385b6a1c2b
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 221e4930-40be-4a59-9323-ddebfdc2b6a4
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: b4ef82d5-31c5-4d89-a7b8-d458edcabb8c
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 2b156eaf-1981-4cf2-bb83-1c841b57966d
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 6e88dc8f-61ed-4d29-b5fb-199d7b8c4710
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: b6654594-ab1e-45e6-bd20-fbf751807891
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: f98191e4-243b-4587-a00f-51d4b325a381
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: c1fbbb1b-9b63-4504-8bb3-1450f6f5af5d
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 3320f083-7009-4f94-985b-cfcef15a8bc9
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: aac1804a-83fe-4716-b966-21d1d9671c11
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: a2f514fb-d557-47bc-9655-b9ddb09f777a
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: ed5025b3-a531-49cf-8bcf-679d42b87d95
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 2f3b8711-da0c-44d4-b971-aac376203433
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 3cb68588-b74f-43ad-a6bb-90def032a1a5
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 3ad70b46-eef4-4dc4-9688-082dea0b2267
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: bb431105-c436-4e64-806d-55d1f755c211
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 12431c31-fc82-4ae4-b86a-61883da424d1
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 26db51fa-39de-43dc-8bf4-93e46f2c20e4
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: ae494ed0-af1c-4f0b-b1aa-23a673626c5c
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 88c46cef-66bc-4b43-8717-a7f3fcc1147b
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 7af7ea95-3dea-4242-818f-d4f156dfaceb
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 98306514-29e3-4452-975c-362add48fcfa
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: b0abb27a-6101-43b6-ba5b-fc106e0e7255
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: d5c4511c-a18a-4a9e-bacc-3a783501cc70
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 9a61a69a-5d81-4364-8069-21ae84718d4e
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 93373294-7d6c-4461-b006-caff8a733ee5
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 2bcb4b1e-96fb-44b1-9e93-0249bc6664f7
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 4254b006-bb1e-4546-ab30-9649b0c012db
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 33232659-68bb-4ac3-964d-03b8d99dd5de
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: f70b4e27-53c3-4513-9d62-1d8622e691de
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: c08d4901-98b4-4cf1-9619-10e9bf52158a
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: cf935f6b-ae5f-47bb-ac0d-a49be262716b
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 9ca4c67c-f287-420b-950b-deb64e15e624
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 59136629-fc4f-46a0-8513-2ba24e50635f
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 344cc598-4f6c-4cd4-9485-81c52fc80316
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 33f7f7da-4312-4d6c-a3e0-cc4dda89e109
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: a4676c5e-3ca0-44d4-828c-8d0868dec0a3
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: d9f7fb65-10d6-4512-9cb9-7cfe9666fbff
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 5cd60c30-f747-4c5d-98e1-7f50db9a5954
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: cbd72d2a-8c4d-4dee-b1a8-a3d145fa9cd4
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 35ca1e40-1c50-4bc8-ba48-2582b4e01d95
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 0a9040f3-adf2-430f-996d-bd624265c902
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 2c445cd0-7d42-4daa-a1c7-06298a27ee2a
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 5056dad5-90c1-4e47-9be4-649e47c161a6
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 86e8acf3-a0b3-44a5-a2d1-e29c3e545b50
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 01a2fd8b-0909-4097-b8dd-18291acaa40c
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 0702db35-2fbc-4096-8d2f-1b61c5b25375
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 20814b66-e57f-4a6c-a1ea-f5ded3d88c9e
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: bb5b1382-5e19-4f3d-ade8-736ca2e49ac3
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 914af9f2-582b-4e5c-9d2d-9b8df847fca7
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 8835364e-91ae-4c2f-b8b3-e4a3d46ba922
+  - Material: 1d3f4390-4593-4da7-80cd-94ff143749d3
+    Mesh: 40b7b743-f191-47b2-9d19-a619cb8e9085
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: bdae3bf4-72f9-4511-bddc-8c6f29ae3b51
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 7e2878a0-2ab1-4de6-b135-5382de7d8daf
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 305d8ed3-5dd8-443f-b787-5fd6348a9662
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: c215b677-0113-4712-8b0c-a379fb5431c8
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 2f7543fb-d928-4310-90f0-c1ee4521ae93
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: f4d68a6a-941c-4cc3-a289-dd4ef61fa5e9
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: c9186752-b64b-4b8b-81bd-5755250225d3
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 48bb86aa-5b09-4b44-a6db-b64262560ec8
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 6659a9a7-1794-469f-b97f-4c7eacb1cd97
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 9f8a4bba-8aa8-45eb-808a-55d1137b4028
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 4c365b0d-c5b1-4ca8-bccf-601fb37376a3
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: aa3291d0-6220-4e65-b617-acf02248b5d7
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 589f6174-9f3d-4b25-9184-96bc20bea819
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: a58da483-56c2-4c9d-be6f-3fc9d951fe7f
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 2122aa86-40db-4f12-ad54-dbb1af53282e
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: c83c7ea5-380f-413a-a491-b834339c088d
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: a9eb607c-cb53-4333-bb2c-ddab8e4727c9
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 5c890a4b-e4ee-447f-9694-f1a97c8a85ae
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: f9958eab-6219-440d-84fa-0d984bfd8baf
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: e09925c2-bc9a-435a-80ff-6b090b72f3c4
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: ef5f9c7c-eb90-4995-b248-452225a2450d
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: d7e723fd-3aba-4741-a06d-a03240471af5
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 88e66e90-d4c9-435d-bde7-e75f480b63d7
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 9106fd34-a190-4267-b1d4-0bd256380c04
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 397aaa5d-bc75-4de1-9ee2-4e50afdda9a7
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 5b481243-3763-4766-bd96-aee86a78ea82
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: a2aad996-9234-4fc0-b190-d2ccc234d67c
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: c90e3875-59b2-4ddb-a03c-3b09c9b7d36b
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 067c546c-3ec8-4d64-8d77-db79a665cc0f
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 9d2515d3-021a-44f2-aad2-23556bc5b163
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: fc84f70f-6717-44aa-b1eb-92df48f771a6
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: d31765af-8cc8-4e09-bc62-a5238c6b37bd
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: c7ff4b4a-a867-470a-a586-46595df10373
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 6273ccc2-12a0-4419-b39f-b7eedfd52f9e
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 43df7c30-cc15-4203-a8cd-5412598e6380
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 7eaad681-c200-47cb-9604-374c1e1cab1c
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 765305c6-f014-4389-8008-1dc3542d3697
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: cb4f3143-a00c-4836-877a-fcfa34cfd1a3
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: a039c250-6eff-47d9-b7c0-7e5fe0c0696b
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: daec9a90-a71c-4bd3-871e-0b3e4794f669
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 404c0947-8dc1-48ff-b667-413911f5b4cb
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 9419d96c-55b5-4f5b-ad9d-99beef9d15b0
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 442d5186-2c6c-47ee-90c5-126fe5afa555
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 01ad9e1a-2ac7-483a-8a69-153e7183ad31
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: ad2681eb-9a66-46fd-a361-a0b1dd101a38
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 8601b4f6-8c55-43d8-bff4-5aa36351791c
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: cca7a862-435a-4f7e-9a1a-2181fd30e65c
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 736d81d9-825a-483e-83c4-1073842cf3cc
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 2ba5b8ea-9b1d-4ac5-b345-0f7167706087
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: b2a7b4f1-1450-4a69-854c-528d08a3aeed
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 94027d02-1be5-44d1-a336-4a5c0b5d43c8
+  - Material: 4f1e0d7a-4f66-4af9-a93d-81a44e1fd31a
+    Mesh: 1632fe76-82a7-47f7-a370-978c44beaf82
+  - Material: 71538cd3-6a7d-48dc-87aa-faa25298ce07
+    Mesh: 306864d6-67ab-446c-8e8d-212348ae7ba0
+  - Material: 71538cd3-6a7d-48dc-87aa-faa25298ce07
+    Mesh: 9b32d299-3739-4fa8-a2d5-17756611d417
+  - Material: 71538cd3-6a7d-48dc-87aa-faa25298ce07
+    Mesh: 4e50b263-b1f4-4a0f-b0e2-36d4434bb7a5
+  - Material: 71538cd3-6a7d-48dc-87aa-faa25298ce07
+    Mesh: 21db8415-aa2d-4f76-9c0d-38c99e2ba416
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: b6e02106-1eec-4536-ab0f-1878c2ff1202
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 45da1069-7918-41ce-b23e-2df12eecc2f2
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: b36874c4-08b2-4878-9671-6b5c1da091fa
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: be30a0f3-78c7-445a-8fab-0b76fb8b5c89
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 4506a7a7-2652-4551-a0ab-b36ee1463290
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: b630b181-7b8c-4b15-a3b8-ead3e4d86412
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: b835237d-38a2-4f7b-bec2-5dbc9eec5000
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: e63de527-e42c-406c-9428-1d41c5db269e
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 9a19be15-6702-4304-8d04-2033735d5fbb
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 286a5d0d-ae51-49f4-9e23-f0cbae2226d0
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 2b692f44-85f2-401d-9aa7-7abeb04bc4b7
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 8fba3709-f33c-46b9-abbb-8d28a4dbe127
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: e6ba3024-0bb3-4dc7-811d-1739bc72be85
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: a860d791-e1cf-4260-80d8-85c8db45bbbc
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 9ff28730-d696-4dd0-9ead-98e5bcab5f13
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 20029a00-786b-4038-b6c6-bce31862bb3a
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 4d6ca8a4-fb06-4257-8d70-c6b201f23ff1
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: e50b95bd-3051-4908-9bb4-926c799f85c9
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 572fcd94-bf14-43f8-b450-ed93e5bfd158
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 124c3db2-f9ed-4b41-823e-82e8d4a3f290
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: e86f2644-a8ed-4226-9106-9e9ed975e4fe
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 75c8f65f-8345-4348-96cd-c534c93e82e8
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 20094347-9fd1-4815-8784-461d8cd15d8d
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 29e7233c-63ff-43ee-8043-3790dc283bbb
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 5a19e275-a092-40a1-8f70-afdd22fa6dd7
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: e9003feb-3c78-4146-9454-9f9da962f529
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 4ea6828b-e6dd-4eb6-a083-1e381c510525
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: f685766e-9d75-4993-ace1-19053a97fe11
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 341db2d2-f3a6-430c-a14f-2dc30654632c
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: bc53948a-313b-4a74-a1a0-2ed9cebebde3
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: d64476f0-fe35-4895-8087-dde4a7fbd20f
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: fa9b6ea7-5b05-4ae6-b3a4-61a18264463f
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 1f1f2a5e-1e43-426d-9598-eea516063959
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 140aba07-57cf-40e6-91e3-b9712ae3400f
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: db43dd36-66b4-4179-bd4b-0266f826af05
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 91493888-5b08-4892-b9a9-bea438416fb3
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 457723a8-5af4-4fdc-8844-aa6104b79aaf
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: a85ba469-80b2-46e8-a68f-90dbeb8a493e
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: d19abd48-b6ad-4c49-8afc-163ad065b52e
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 0627877e-0c1f-443b-99bc-6ca3c8a230dc
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: ac541aba-5c99-4cd0-9e79-b8871e41142d
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 3e1e0d1a-c0d4-49c7-9860-419973c29f5c
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 374e542b-3884-4141-a08e-6ad7bbfbbb9e
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: fe06dfcd-b8cd-43d0-81c9-dc9174672f1e
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 410d6aaa-8ca0-431d-9c73-7010c521859f
+  - Material: 69e3c010-0739-405e-93ec-60c28a31dc12
+    Mesh: 17aa833b-eab3-4228-b04c-e76d35faef85
+  - Material: b76a8d1b-050a-419c-a442-3047e5f84f52
+    Mesh: 1b5836fd-6b8e-4631-bfac-f9b5501e67fe
+  - Material: b76a8d1b-050a-419c-a442-3047e5f84f52
+    Mesh: ec340e5f-9850-4707-b541-e2d60e570a58
+  - Material: b76a8d1b-050a-419c-a442-3047e5f84f52
+    Mesh: 655afbd9-f20d-4776-b0d1-62e962a7de30
+  - Material: b76a8d1b-050a-419c-a442-3047e5f84f52
+    Mesh: a6d26e5d-899d-4d48-8f35-e18de7182f4e
+  - Material: 3172a808-907b-4750-b1f6-158365c0eb35
+    Mesh: 13d2d184-c6cf-4759-8c59-d63df591b0aa
+  - Material: 3172a808-907b-4750-b1f6-158365c0eb35
+    Mesh: 4bae8031-175c-4977-b722-3fb7e6049071
+  - Material: 3172a808-907b-4750-b1f6-158365c0eb35
+    Mesh: d18c0115-1840-4b84-8133-9135c191675f
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: 10332cf4-036c-4529-bac7-572677b0f5fd
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: 8f07a7b3-29d8-48d9-bb00-d0bfc36ac75c
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: 7be32325-079d-4b4f-83ce-5640102c4075
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: 35a3033b-457c-45af-87d1-cbd0d4feb58f
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: 3e90cbae-4391-45f9-8e69-df0b5cd01a55
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: dec8b5e0-e25d-491d-b144-25c92833c460
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: 9852d1ec-7b44-4010-b11c-078fec28bafe
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: 116e7f99-bca8-4e4c-add9-d1bcb1d824d4
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: 784ab4e4-ac25-46d6-b33d-5bf13d57e4b9
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: 4f73f048-a157-4c65-8711-f92a50584e47
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: 9b47b0ff-cb9e-47b4-937c-4213aa90594a
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: 3d368ada-de31-4367-ab7e-261deb6224f3
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: d41db799-2e28-412d-b5d4-bff36c1f19a2
+  - Material: e31ca64c-fbf6-4103-a146-2fc62460de8d
+    Mesh: abcb1328-90c4-4a7f-ae80-689fbd75d120
+  - Material: f3602d94-33ba-4fbb-aaf7-7dacebcdb8ac
+    Mesh: 309bd32e-a368-4c24-8bec-27a4efe40669
+  - Material: f3602d94-33ba-4fbb-aaf7-7dacebcdb8ac
+    Mesh: 571f6f1d-42af-43e8-a6f7-897c05906aaf
+  - Material: d5ccec8e-80b1-444a-bbf8-716cd9cc63de
+    Mesh: 485d53bd-6108-4d57-8201-9630fd4b3ceb
+  - Material: d5ccec8e-80b1-444a-bbf8-716cd9cc63de
+    Mesh: 02806ae8-8b50-4262-b1ec-681c912b8266
+  - Material: d5ccec8e-80b1-444a-bbf8-716cd9cc63de
+    Mesh: 60670d68-f429-48d3-8662-f6d27a94534f
+  - Material: d5ccec8e-80b1-444a-bbf8-716cd9cc63de
+    Mesh: f2268f14-a659-48fb-beeb-a1333df56aef
+  - Material: d5ccec8e-80b1-444a-bbf8-716cd9cc63de
+    Mesh: f6e9662f-7130-413d-abc6-69c2f8cba258
+  - Material: d5ccec8e-80b1-444a-bbf8-716cd9cc63de
+    Mesh: ba707cb6-7273-4862-9e58-4095cfa00e73
+  - Material: d5ccec8e-80b1-444a-bbf8-716cd9cc63de
+    Mesh: 0fc17c34-0721-48da-b2e9-c1095bd6ee37
+  - Material: d5ccec8e-80b1-444a-bbf8-716cd9cc63de
+    Mesh: bf0cb0a0-f96d-45b1-b850-db734412dd9c
+  - Material: d5ccec8e-80b1-444a-bbf8-716cd9cc63de
+    Mesh: 78f73660-a011-470c-9cb1-41fbe10ceee4
+  - Material: d5ccec8e-80b1-444a-bbf8-716cd9cc63de
+    Mesh: b92bfc07-6841-4ba8-834a-f711253e1260
+  - Material: d5ccec8e-80b1-444a-bbf8-716cd9cc63de
+    Mesh: 4fff7572-d746-4851-a645-31a7c8f6a2e1
+  - Material: d5ccec8e-80b1-444a-bbf8-716cd9cc63de
+    Mesh: cdb9ae6e-2465-4649-b34d-501df3027591
+  - Material: 79ccc635-8db8-41d4-a5d3-abb380949532
+    Mesh: 9792c743-fa31-4a9e-8538-dc30e89ff10b
+  - Material: 79ccc635-8db8-41d4-a5d3-abb380949532
+    Mesh: d2df3531-6ba6-4ec1-95bd-6aab900b868a
+  - Material: 79ccc635-8db8-41d4-a5d3-abb380949532
+    Mesh: 122f5a53-8660-478c-a21f-26f5ed432881
+  - Material: 79ccc635-8db8-41d4-a5d3-abb380949532
+    Mesh: 5ea37e75-0243-4439-bc01-d90c1e70439c
+  - Material: 79ccc635-8db8-41d4-a5d3-abb380949532
+    Mesh: 1b7aa3a9-15da-404d-8602-e4bc48e0a4f8
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 476f942b-e68c-4e3f-a3fc-f0190e0d1748
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: a7dbb970-8f3c-447a-8a9e-adcb00b5bc80
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: b5d3e50d-eccc-4f58-a4b2-495e83ede811
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 409f3913-621e-45d0-81eb-10e36c744a9f
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: c8823d03-ab12-4b33-ad61-0f7fe1c7a94d
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 51f5ca00-3713-4e0b-9731-4a3151e4ad11
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: b39d7da2-74d6-4e52-8742-f79e571c4edf
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 6293f0b1-4d27-49cb-b625-731ff52efc2a
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: ecae6db9-b350-436b-99d5-2a6d9166cc41
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 94594f43-fb6b-4c89-8c3a-3691a485b4c5
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 77fd4664-db3f-44c4-84db-aeff50f645d0
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 4278ea5e-03d5-4ad5-9451-35222c16f83e
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 795538f2-984e-4b11-998e-1e73e49bd470
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: addb81e7-07b3-488b-8d9e-ced1d641c5a5
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 03646d41-2611-428c-a61e-d9424c207fe0
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 04ac24f2-fa7f-47c7-adbb-453bf6b8c870
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 10d833f3-6e72-4bac-b983-2ae49e109574
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 2d52c225-4a1e-4931-943f-76fa79a4a2ea
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 55803b28-7065-44dc-922d-c65d59b86ab6
+  - Material: cc0bb530-9842-4971-8356-f128a790517d
+    Mesh: 2ef1a4e9-dc90-4781-9cc2-605fda3e1358
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: dd999a20-2fe0-4060-aa23-b513a12bfd08
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: 9952f0a6-a047-4f28-9fa5-967520b7b362
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: 4fc718a1-4b7c-47ee-b7d7-c525930a04e9
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: 5190bd67-5eed-4264-ad0d-d39d472c276f
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: 66068900-8d60-4a05-b5ee-e6cda483f3c7
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: 91665e48-ac59-4d7d-b135-e02b183f3173
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: bbc7066c-820a-47f8-9891-dc27307317ba
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: 2d04659c-5597-40aa-81db-4224e43aa76e
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: 74d3020b-8658-4a2f-9fbc-5ddb636879a7
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: b621cb08-ecf6-44e6-be20-02c84187c00c
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: bbb42abf-6355-46f8-9c93-19d4d1cfe2d6
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: 203333df-fd1d-45d2-91da-09a4ec75fd06
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: 2bee7cfc-bb34-429f-a6e1-dbe7600eb9eb
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: 324d6ad0-bf0a-4e92-9aa9-fea0f3a28bb8
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: fec72a2f-bb36-4651-96b4-e622c3b34170
+  - Material: b2918fc6-babe-4863-bcd7-46227f767a77
+    Mesh: 93590cbf-a177-4355-9237-b099f1d9e542
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 1b6583a9-e799-4fd7-bb08-4ae666b374aa
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 55dc666a-c55f-4d5a-9d3f-8ac66c3cb11a
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 75d25c2d-72b5-43fe-8c6c-eae11ba9d411
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: b5f87c01-99bc-4d71-b80b-d6f9f3d21040
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 9c93687c-3416-43f0-95d3-239b45b594d2
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 9adaa3df-9b28-4435-a831-56696b33e410
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 2a83371c-4ed7-4c4e-9b97-a03b63b185a6
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: d9e4f511-94e4-42a2-8d5b-b6add0085ea4
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: f31fe192-8a60-41c7-9855-a3b79c2aa30b
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 505d2173-874d-4047-aa48-4215ccc14b54
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 56bf2476-1fc3-43cf-b2cc-d162983dc23b
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 0edfb731-e934-490d-b3de-b11c553a88e7
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 99ffd206-5b45-40d0-b9ba-f85e671ab800
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 18a1423c-6cbd-4d77-97b8-8fc49c7a0aac
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 947aef7a-2899-421f-827d-a0d913aa1230
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 28b52f57-17e2-4f57-a1f9-fddc01758626
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 27e0ea6b-d0e1-41c0-a71f-0d7bc57f0c38
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 1b71e796-4d72-4508-87a9-767303a588aa
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 37d67873-1be8-4eaf-9065-73755d44bfb8
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 3dbdec25-0585-4e22-86c8-4d75c0b9ebb3
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 7c8b9dd2-87be-48c2-a8b8-c90c3bbb310b
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: a0ad60d1-f51e-4b13-ae85-7b61ad929b01
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 51fe85f8-cd6d-49e6-bb0f-abb3f716a5a4
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 65010857-09b0-49bd-b608-73e492eb4e0f
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 91ce3d1d-5245-4081-bfa7-0e3bb7984a3d
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 0b0fe9d4-0cf5-4c82-84a7-01e2e2a830f7
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: 35591661-679b-4599-9954-08780e7868d9
+  - Material: ce8931b4-7bdc-45c3-9b83-eaf17c4c5ef0
+    Mesh: e68c61d1-ca2b-45f9-ad5b-2819adbefb2d
+  - Material: 1e8cdcce-49c3-4af6-a46d-b8bc3dc8d217
+    Mesh: 43021469-cde4-49ad-b63f-4acf48dda176
+  - Material: 1e8cdcce-49c3-4af6-a46d-b8bc3dc8d217
+    Mesh: aee55325-9eae-4f64-92ec-61a3d24df7c1
+  - Material: 1f3f9a7d-6979-4b7e-af0e-c3abcb987ed6
+    Mesh: c6158b70-8b9d-45ec-aecd-150300e025ac
+  - Material: 1f3f9a7d-6979-4b7e-af0e-c3abcb987ed6
+    Mesh: c7ea715b-da42-4586-b12c-159a2709a0f5
+  - Material: 1f3f9a7d-6979-4b7e-af0e-c3abcb987ed6
+    Mesh: bf70121a-9ea8-4d5e-a8c5-a63f6f8c9765
+  - Material: 1f3f9a7d-6979-4b7e-af0e-c3abcb987ed6
+    Mesh: 8feff506-f1f8-43d8-9774-93674dbd6808
+  - Material: 1f3f9a7d-6979-4b7e-af0e-c3abcb987ed6
+    Mesh: ff432f99-0a6f-430d-bef8-a60c1e2c86f5
+  - Material: 1f3f9a7d-6979-4b7e-af0e-c3abcb987ed6
+    Mesh: a64b3c05-9f88-4592-b3b8-db1168afc6f6
+  - Material: 1f3f9a7d-6979-4b7e-af0e-c3abcb987ed6
+    Mesh: 735b1924-3ce6-40a7-9c38-3783c12b3148
+  - Material: 1f3f9a7d-6979-4b7e-af0e-c3abcb987ed6
+    Mesh: 7b2d26bd-7b43-41a7-8067-e428df98cc4a
+  - Material: 1f3f9a7d-6979-4b7e-af0e-c3abcb987ed6
+    Mesh: 4d8e6d76-322e-4e88-8d06-b62715044df2
+  - Material: 1f3f9a7d-6979-4b7e-af0e-c3abcb987ed6
+    Mesh: 01cd1113-8a94-422c-b197-03c01389124d
+  - Material: 1f3f9a7d-6979-4b7e-af0e-c3abcb987ed6
+    Mesh: a7de144c-c47f-4f4f-bb6f-bb66111b3499
+  - Material: 1f3f9a7d-6979-4b7e-af0e-c3abcb987ed6
+    Mesh: 829a6ef1-fc93-47da-90fc-520ec4961563
+  - Material: 4a2c1810-dbf2-49d4-807b-b5bf4d74ffa6
+    Mesh: f7e973c6-7412-4a9d-9f4d-6851cb3d7127
+  - Material: 4a2c1810-dbf2-49d4-807b-b5bf4d74ffa6
+    Mesh: eb5beb0b-6127-434b-9128-045576fce676
+  - Material: 4a2c1810-dbf2-49d4-807b-b5bf4d74ffa6
+    Mesh: e7e40861-7dcc-44a8-acfd-08dc61abcdc1
+  - Material: 45e3f2ec-4fb3-4465-81ba-93e91afb6fca
+    Mesh: d3479190-94a3-488b-9ffb-a82a4c14b697
+  - Material: 45e3f2ec-4fb3-4465-81ba-93e91afb6fca
+    Mesh: 5d24d61e-e6bc-42c2-b158-e8c37e2c705f
+  - Material: 45e3f2ec-4fb3-4465-81ba-93e91afb6fca
+    Mesh: c04b0027-e7d0-4995-896d-51853beb4bdd
+  - Material: bb2124c0-c40f-4f4b-a264-0da0aa9ae1af
+    Mesh: 3f0470eb-3795-445c-bcd1-2368be329cac
+  - Material: bb2124c0-c40f-4f4b-a264-0da0aa9ae1af
+    Mesh: 967820ca-5924-435c-8cae-132e0385d0cb
+  - Material: bb2124c0-c40f-4f4b-a264-0da0aa9ae1af
+    Mesh: bb6a69a8-3569-44bc-b1d1-a43d7e4d089f
+  - Material: bb2124c0-c40f-4f4b-a264-0da0aa9ae1af
+    Mesh: dfee705d-43b0-45bd-82eb-54b8f38da81f
+  - Material: bb2124c0-c40f-4f4b-a264-0da0aa9ae1af
+    Mesh: 30156297-1a4a-4fb2-9fbd-8cc9a245b27c
+  - Material: bb2124c0-c40f-4f4b-a264-0da0aa9ae1af
+    Mesh: 063a4d73-8b3c-44cd-bc3a-3ee21d927a50
+  - Material: bb2124c0-c40f-4f4b-a264-0da0aa9ae1af
+    Mesh: 049023c4-1623-4997-ade1-f4401f305929
+  - Material: bb2124c0-c40f-4f4b-a264-0da0aa9ae1af
+    Mesh: c3f8b50a-6983-4811-a889-c5fffc5d8d0d
+  - Material: be11dee1-6239-4853-8b2f-78a5c66db0e6
+    Mesh: b76eb9a5-5123-445d-83b6-265509d4cb8d
+  - Material: be11dee1-6239-4853-8b2f-78a5c66db0e6
+    Mesh: 29d5b1d8-32b7-4034-8e68-dec3f4ba7cd3
+  - Material: be11dee1-6239-4853-8b2f-78a5c66db0e6
+    Mesh: ef114a31-a4c9-496c-90b1-d885de987d96
+  - Material: be11dee1-6239-4853-8b2f-78a5c66db0e6
+    Mesh: babd6bb1-74ae-4ab4-b02b-58517a959799
+  - Material: be11dee1-6239-4853-8b2f-78a5c66db0e6
+    Mesh: e290c168-5821-46b6-b858-ada4ab09750e
+  - Material: be11dee1-6239-4853-8b2f-78a5c66db0e6
+    Mesh: 7e81190b-8de6-49c7-8c64-ab602f6c4903
+  - Material: be11dee1-6239-4853-8b2f-78a5c66db0e6
+    Mesh: c1f307c1-d68a-4fbb-8a49-a90aa8078012
+  - Material: be11dee1-6239-4853-8b2f-78a5c66db0e6
+    Mesh: 0b95f3d5-0c4a-4f4c-b468-f60902b42830
+  - Material: 059dfddc-7ce3-46f9-88d8-9b936dbc57d8
+    Mesh: 6c6bd063-c3a2-44a0-9443-b18236361fae
+  - Material: 059dfddc-7ce3-46f9-88d8-9b936dbc57d8
+    Mesh: 183fa9e8-5d68-44eb-8436-2af5c54c67fc
+  - Material: 059dfddc-7ce3-46f9-88d8-9b936dbc57d8
+    Mesh: 5f9fce92-e5fa-45dc-aa35-ecef0e7c5518
+  - Material: 059dfddc-7ce3-46f9-88d8-9b936dbc57d8
+    Mesh: 2fb5e89a-0166-4731-b126-702f758b894d
+  - Material: 059dfddc-7ce3-46f9-88d8-9b936dbc57d8
+    Mesh: ba7d19d3-30c0-4a81-b01c-3d4bf723d6cf
+  - Material: 059dfddc-7ce3-46f9-88d8-9b936dbc57d8
+    Mesh: cfff464a-3d33-414c-9ab9-8b76cf45439e
+  - Material: 059dfddc-7ce3-46f9-88d8-9b936dbc57d8
+    Mesh: feba47b2-f31a-4187-95af-035c8d10f127
+  - Material: 059dfddc-7ce3-46f9-88d8-9b936dbc57d8
+    Mesh: 48702d59-73d9-4445-9d98-10aec1c168cf
+  - Material: 7da517d5-c612-4256-b8a7-0920cfc78ae3
+    Mesh: dba94325-3203-46fa-ba45-eb5ad1e6eead
+  - Material: 7da517d5-c612-4256-b8a7-0920cfc78ae3
+    Mesh: 9929b446-c81e-406c-ad9f-25e35d170799
+  - Material: 7da517d5-c612-4256-b8a7-0920cfc78ae3
+    Mesh: 8d7ff0c5-f926-4077-8dd6-48791af5e933
+  - Material: e3d45f3b-5feb-4dcc-b76e-1cfbfab3f510
+    Mesh: 0d311040-00be-4742-85c1-203a35a386e9
+  - Material: ab1ccb34-1f8d-464f-b2e4-d4384f5b2187
+    Mesh: 66cdfe8c-b383-498f-a364-07a7f31904ed
+  - Material: ab1ccb34-1f8d-464f-b2e4-d4384f5b2187
+    Mesh: 2e1f8f34-3c9c-4c2f-a0f4-d76bdf52375d
+  - Material: c18262d8-1b77-4451-beb0-988401eb34d9
+    Mesh: 1ad035e2-feba-4017-9c17-df18fec685ac
+  - Material: c18262d8-1b77-4451-beb0-988401eb34d9
+    Mesh: 8f05cd5d-ab7d-45c3-b8a4-e17e4fc4bb61

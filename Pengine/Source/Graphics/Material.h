@@ -39,6 +39,14 @@ namespace Pengine
 
 		static std::shared_ptr<Material> Load(const std::string& filepath);
 
+		static void Save(std::shared_ptr<Material> material);
+
+		static std::shared_ptr<Material> Inherit(const std::string& name, const std::string& filepath,
+			std::shared_ptr<BaseMaterial> baseMaterial);
+
+		static std::shared_ptr<Material> Clone(const std::string& name, const std::string& filepath,
+			std::shared_ptr<Material> material);
+
 		Material(const std::string& name, const std::string& filepath,
 			const CreateInfo& createInfo);
 		~Material();
@@ -57,6 +65,9 @@ namespace Pengine
 
 		int const GetIndex() const { return m_Index; }
 
+		template<typename T>
+		void SetValue(const std::string& bufferName, const std::string& name, T& value);
+
 		struct RenderPassAttachmentInfo
 		{
 			std::string renderPassType;
@@ -72,5 +83,23 @@ namespace Pengine
 
 		int m_Index = 0;
 	};
+
+	template<typename T>
+	inline void Material::SetValue(const std::string& bufferName, const std::string& name, T& value)
+	{
+		for (const auto& [renderPass, uniformWriter] : m_UniformWriterByRenderPass)
+		{
+			const UniformLayout::Binding& binding = uniformWriter->GetLayout()->GetBindingByName(bufferName);
+			if (binding.type == UniformLayout::Type::BUFFER)
+			{
+				if (auto variable = binding.GetValue(name))
+				{
+					std::shared_ptr<Buffer> buffer = m_BaseMaterial->GetPipeline(renderPass)->GetBuffer(bufferName);
+					void* data = (char*)buffer->GetData() + buffer->GetInstanceSize() * m_Index;
+					Utils::SetValue(data, variable->offset, value);
+				}
+			}
+		}
+	}
 
 }

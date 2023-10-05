@@ -20,6 +20,12 @@ namespace Pengine
 
 		std::shared_ptr<BaseMaterial> GetBaseMaterial(const std::string& filepath);
 
+		std::shared_ptr<Material> Inherit(const std::string& name, const std::string& filepath,
+			std::shared_ptr<BaseMaterial> baseMaterial);
+
+		std::shared_ptr<Material> Clone(const std::string& name, const std::string& filepath,
+			std::shared_ptr<Material> material);
+
 		void ShutDown();
 
 	private:

@@ -3,9 +3,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "../Core/FileFormatNames.h"
+#include "../Core/Logger.h"
 #include "../SoftwareRenderer/SrTexture.h"
 #include "../Vulkan/VulkanTexture.h"
-#include "../Core/Logger.h"
 
 using namespace Pengine;
 
@@ -30,23 +31,33 @@ std::shared_ptr<Texture> Texture::Load(const std::string& filepath)
 	textureCreateInfo.name = filepath;
 	textureCreateInfo.filepath = filepath;
 	textureCreateInfo.aspectMask = AspectMask::COLOR;
+
 	textureCreateInfo.format = Format::R8G8B8A8_SRGB;
-	textureCreateInfo.data = stbi_load(
+	void* data = stbi_load(
 		filepath.c_str(),
 		&textureCreateInfo.size.x,
 		&textureCreateInfo.size.y,
 		&textureCreateInfo.channels,
 		STBI_rgb_alpha);
+	textureCreateInfo.channels = STBI_rgb_alpha;
+
+	textureCreateInfo.data.resize(textureCreateInfo.size.x * textureCreateInfo.size.y * textureCreateInfo.channels);
+	memcpy(textureCreateInfo.data.data(), data, textureCreateInfo.data.size());
+	delete data;
+
 	textureCreateInfo.mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(
 		textureCreateInfo.size.x, textureCreateInfo.size.y)))) + 1;
-	textureCreateInfo.channels = STBI_rgb_alpha;
 	textureCreateInfo.usage = { Usage::SAMPLED, Usage::TRANSFER_DST, Usage::TRANSFER_SRC };
 
-	if (!textureCreateInfo.data)
+	if (textureCreateInfo.data.empty())
 	{
 		Logger::Error("Texture can't be loaded from the filepath " + filepath);
 
 		return nullptr;
+	}
+	else
+	{
+		Logger::Log("Texture:" + textureCreateInfo.filepath + " has been loaded!", GREEN);
 	}
 
 	/*if (graphicsAPI == GraphicsAPI::Software)

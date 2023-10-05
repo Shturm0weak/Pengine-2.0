@@ -984,6 +984,11 @@ void Editor::MaterialMenu::Update(Editor& editor)
 
 	if (ImGui::Begin("Material", &opened))
 	{
+		if (ImGui::Button("Save"))
+		{
+			Material::Save(material);
+		}
+
 		ImGui::Text("Name: %s", material->GetName().c_str());
 		ImGui::Text("Filepath: %s", material->GetFilepath().c_str());
 

@@ -15,7 +15,7 @@ Basemat:
           Stages:
             - Fragment
         - Binding: 1
-          Name: MaterialsBuffer
+          Name: material
           Type: Buffer
           InputRate: Per Material
           Values:
@@ -23,6 +23,10 @@ Basemat:
               Name: color
             - Type: vec4
               Name: ambient
+            - Type: vec4
+              Name: __unused1
+            - Type: vec4
+              Name: __unused2
           Stages:
             - Fragment
       ColorBlendStates:

@@ -42,7 +42,7 @@ namespace Pengine
 			
 			Type type;
 
-			std::optional<Variable> GetValue(const std::string& name);
+			std::optional<Variable> GetValue(const std::string& name) const;
 		};
 
 		static std::shared_ptr<UniformLayout> Create(

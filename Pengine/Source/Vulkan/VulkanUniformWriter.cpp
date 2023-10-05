@@ -111,7 +111,7 @@ void VulkanUniformWriter::WriteTextures(const std::string& name, std::vector<std
 
 void VulkanUniformWriter::Flush()
 {
-    if (Vk::swapChainImageCount >= m_DescriptorSet.size())
+    if (Vk::swapChainImageCount > m_DescriptorSet.size())
     {
         for (size_t i = 0; i < Vk::swapChainImageCount; i++)
         {
@@ -162,6 +162,7 @@ void VulkanUniformWriter::Flush()
 
     m_ImageInfos.clear();
     m_BufferInfos.clear();
+    m_WritesByLocation.clear();
 }
 
 VkDescriptorSet VulkanUniformWriter::GetDescriptorSet() const

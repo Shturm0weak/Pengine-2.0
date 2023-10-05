@@ -48,14 +48,19 @@ void Viewport::Update(std::shared_ptr<Texture> viewportTexture)
 
 			if (FileFormats::Meshes() == Utils::GetFileFormat(path))
 			{
-				std::vector<std::shared_ptr<Mesh>> meshes = Serializer::DeserializeMeshes(path);
-				for (std::shared_ptr<Mesh> mesh : meshes)
+				std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> meshesByMaterial =
+					Serializer::DeserializeMeshes(path);
+
+				for (const auto& [material, meshes] : meshesByMaterial)
 				{
-					GameObject* gameObject = SceneManager::GetInstance().GetSceneByTag("Main")->CreateGameObject(mesh->GetName());
-					//gameObject->m_Transform.Scale(glm::vec3(0.001f, 0.001f, 0.001f));
-					Renderer3D* r3d = gameObject->m_ComponentManager.AddComponent<Renderer3D>();
-					r3d->mesh = mesh;
-					r3d->material = MaterialManager::GetInstance().LoadMaterial("Materials/MeshBase.mat");
+					for (std::shared_ptr<Mesh> mesh : meshes)
+					{
+						GameObject* gameObject = SceneManager::GetInstance().GetSceneByTag("Main")->CreateGameObject(mesh->GetName());
+						gameObject->m_Transform.Scale(glm::vec3(0.01f, 0.01f, 0.01f));
+						Renderer3D* r3d = gameObject->m_ComponentManager.AddComponent<Renderer3D>();
+						r3d->mesh = mesh;
+						r3d->material = material;
+					}
 				}
 			}
 		}

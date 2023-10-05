@@ -72,6 +72,23 @@ std::shared_ptr<BaseMaterial> MaterialManager::GetBaseMaterial(const std::string
 	return nullptr;
 }
 
+std::shared_ptr<Material> MaterialManager::Inherit(const std::string& name, const std::string& filepath,
+	std::shared_ptr<BaseMaterial> baseMaterial)
+{
+	std::shared_ptr<Material> inheritedMaterial = Material::Inherit(name, filepath, baseMaterial);
+	m_MaterialsByFilepath[filepath] = inheritedMaterial;
+
+	return inheritedMaterial;
+}
+
+std::shared_ptr<Material> MaterialManager::Clone(const std::string& name, const std::string& filepath, std::shared_ptr<Material> material)
+{
+	std::shared_ptr<Material> clonedMaterial = Material::Clone(name, filepath, material);
+	m_MaterialsByFilepath[filepath] = clonedMaterial;
+
+	return clonedMaterial;
+}
+
 void MaterialManager::ShutDown()
 {
 	m_MaterialsByFilepath.clear();

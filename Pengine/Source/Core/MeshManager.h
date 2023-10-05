@@ -16,9 +16,9 @@ namespace Pengine
 
 		std::shared_ptr<Mesh> GetMesh(const std::string& filepath);
 
-		std::vector<std::shared_ptr<Mesh>> GenerateMeshes(const std::string& filepath);
+		std::unordered_map<std::shared_ptr<class Material>, std::vector<std::shared_ptr<Mesh>>> GenerateMeshes(const std::string& filepath);
 
-		std::vector<std::shared_ptr<Mesh>> LoadIntermediate(const std::string& filepath);
+		std::unordered_map<std::shared_ptr<class Material>, std::vector<std::shared_ptr<Mesh>>> LoadIntermediate(const std::string& filepath);
 
 		void ShutDown();
 

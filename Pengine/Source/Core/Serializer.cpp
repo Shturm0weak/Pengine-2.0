@@ -628,6 +628,8 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::string
 		pipelineCreateInfos.emplace_back(pipelineCreateInfo);
 	}
 
+	Logger::Log("BaseMaterial:" + filepath + " has been deserialized!", GREEN);
+
 	return pipelineCreateInfos;
 }
 
@@ -755,7 +757,119 @@ Material::CreateInfo Serializer::LoadMaterial(const std::string& filepath)
 		createInfo.renderPassInfo.emplace(renderPass, renderPassInfo);
 	}
 
+	Logger::Log("Material:" + filepath + " has been deserialized!", GREEN);
+
 	return createInfo;
+}
+
+void Serializer::SerializeMaterial(std::shared_ptr<Material> material)
+{
+	YAML::Emitter out;
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "Mat";
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "Basemat" << YAML::Value << material->GetBaseMaterial()->GetFilepath();
+
+	out << YAML::Key << "Pipelines";
+
+	out << YAML::BeginSeq;
+
+	for (const auto& [renderPass, pipeline] : material->GetBaseMaterial()->GetPipelinesByRenderPass())
+	{
+		out << YAML::BeginMap;
+
+		out << YAML::Key << "RenderPass" << YAML::Value << renderPass;
+
+		out << YAML::Key << "Uniforms";
+
+		out << YAML::BeginSeq;
+
+		for (const auto& [location, binding] : pipeline->GetChildUniformLayout()->GetBindingsByLocation())
+		{
+			out << YAML::BeginMap;
+
+			out << YAML::Key << "Name" << YAML::Value << binding.name;
+
+			if (binding.type == UniformLayout::Type::SAMPLER)
+			{
+				// TODO: Better to use uuid for assets instead of filepaths!
+				out << YAML::Key << "Value" << YAML::Value << material->GetTexture(binding.name)->GetFilepath();
+			}
+			else if (binding.type == UniformLayout::Type::BUFFER)
+			{
+				std::shared_ptr<Buffer> buffer = pipeline->GetBuffer(binding.name);
+				void* data = (char*)buffer->GetData() + buffer->GetInstanceSize() * material->GetIndex();
+
+				out << YAML::Key << "Values";
+
+				out << YAML::BeginSeq;
+
+				for (const auto& value : binding.values)
+				{
+					out << YAML::BeginMap;
+
+					out << YAML::Key << "Name" << YAML::Value << value.name;
+
+					if (value.type == "vec2")
+					{
+						out << YAML::Key << "Value" << YAML::Value << Utils::GetValue<glm::vec2>(data, value.offset);
+					}
+					else if (value.type == "vec3")
+					{
+						out << YAML::Key << "Value" << YAML::Value << Utils::GetValue<glm::vec3>(data, value.offset);
+					}
+					else if (value.type == "vec4" || value.type == "color")
+					{
+						out << YAML::Key << "Value" << YAML::Value << Utils::GetValue<glm::vec4>(data, value.offset);
+					}
+					else if (value.type == "float")
+					{
+						out << YAML::Key << "Value" << YAML::Value << Utils::GetValue<float>(data, value.offset);
+					}
+					else if (value.type == "int")
+					{
+						out << YAML::Key << "Value" << YAML::Value << Utils::GetValue<int>(data, value.offset);
+					}
+					else if (value.type == "sampler")
+					{
+						// TODO: Fill the value when figure out how to handle sampler arrays!
+					}
+
+					out << YAML::EndMap;
+				}
+
+				out << YAML::EndSeq;
+			}
+
+			out << YAML::EndMap;
+		}
+
+		out << YAML::EndSeq;
+
+		out << YAML::EndMap;
+	}
+
+	out << YAML::EndSeq;
+
+	out << YAML::EndMap;
+
+	out << YAML::EndMap;
+
+	std::ofstream fout(material->GetFilepath());
+	fout << out.c_str();
+	fout.close();
+
+	std::string uuid = Utils::FindUuid(material->GetFilepath());
+	if (uuid.empty())
+	{
+		uuid = GenerateFileUUID(material->GetFilepath());
+	}
+
+	Logger::Log("Material:" + material->GetFilepath() + " has been serialized!", GREEN);
 }
 
 void Serializer::SerializeMesh(const std::string& directory, std::shared_ptr<Mesh> mesh)
@@ -810,13 +924,16 @@ void Serializer::SerializeMesh(const std::string& directory, std::shared_ptr<Mes
 		offset += mesh->GetIndexCount() * sizeof(uint32_t);
 	}
 
-	std::ofstream out(directory + "/" + meshName + "." + FileFormats::Mesh(), std::ostream::binary);
+	const std::string outMeshFilepath = directory + "/" + meshName + "." + FileFormats::Mesh();
+	std::ofstream out(outMeshFilepath, std::ostream::binary);
 
 	out.write(data, dataSize);
 
 	delete[] data;
 
 	out.close();
+
+	Logger::Log("Mesh:" + outMeshFilepath + " has been serialized!", GREEN);
 }
 
 std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::string& filepath)
@@ -893,39 +1010,69 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::string& filepath)
 
 	delete[] data;
 
+	Logger::Log("Mesh:" + meshFilepath + " has been deserialized!", GREEN);
+
 	return std::make_shared<Mesh>(meshName, meshFilepath, vertices, indices);
 }
 
-void Serializer::SerializeMeshes(const std::string& filepath, std::vector<std::shared_ptr<Mesh>> meshes)
+void Serializer::SerializeMeshes(const std::string& filepath,
+	std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> meshesByMaterial)
 {
-	std::vector<std::string> uuids;
-	for (std::shared_ptr<Mesh> mesh : meshes)
+	std::vector<std::pair<std::string, std::string>> uuids;
+	for (const auto& [material, meshes] : meshesByMaterial)
 	{
-		std::string uuid = Utils::FindUuid(mesh->GetFilepath());
-		if (uuid.empty())
+		std::string materialUuid = Utils::FindUuid(material->GetFilepath());
+		if (materialUuid.empty())
 		{
-			uuid = GenerateFileUUID(mesh->GetFilepath());
+			materialUuid = GenerateFileUUID(material->GetFilepath());
 		}
 
-		uuids.emplace_back(uuid);
-	}
+		for (std::shared_ptr<Mesh> mesh : meshes)
+		{
+			std::string meshUuid = Utils::FindUuid(mesh->GetFilepath());
+			if (meshUuid.empty())
+			{
+				meshUuid = GenerateFileUUID(mesh->GetFilepath());
+			}
 
+			uuids.emplace_back(std::make_pair(materialUuid, meshUuid));
+		}
+	}
+	
 	YAML::Emitter out;
 
 	out << YAML::BeginMap;
 
-	out << YAML::Key << "Meshes" << YAML::Value << uuids;
+	out << YAML::Key << "Meshes";
+
+	out << YAML::BeginSeq;
+
+	for (const auto& [material, mesh] : uuids)
+	{
+		out << YAML::BeginMap;
+
+		out << YAML::Key << "Material" << YAML::Value << material;
+
+		out << YAML::Key << "Mesh" << YAML::Value << mesh;
+
+		out << YAML::EndMap;
+	}
+
+	out << YAML::EndSeq;
 
 	out << YAML::EndMap;
 
 	std::ofstream fout(filepath);
 	fout << out.c_str();
 	fout.close();
+
+	Logger::Log("Meshes:" + filepath + " has been serialized!", GREEN);
 }
 
-std::vector<std::shared_ptr<Mesh>> Serializer::DeserializeMeshes(const std::string& filepath)
+std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>>
+Serializer::DeserializeMeshes(const std::string& filepath)
 {
-	std::vector<std::shared_ptr<Mesh>> meshes;
+	std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> meshes;
 
 	if (filepath.empty() || filepath == none || Utils::GetFileFormat(filepath) != FileFormats::Meshes())
 	{
@@ -948,16 +1095,35 @@ std::vector<std::shared_ptr<Mesh>> Serializer::DeserializeMeshes(const std::stri
 
 	if (YAML::Node meshesData = data["Meshes"])
 	{
-		for (const auto& meshUuidData : meshesData)
+		for (const auto& meshData : meshesData)
 		{
-			std::string uuid = meshUuidData.as<std::string>();
-			std::string filepath = Utils::Find(uuid, filepathByUuid);
-			if (!filepath.empty())
+			std::shared_ptr<Mesh> mesh;
+			if (const auto& meshUuid = meshData["Mesh"])
 			{
-				meshes.emplace_back(MeshManager::GetInstance().LoadMesh(filepath));
+				std::string uuid = meshUuid.as<std::string>();
+				std::string filepath = Utils::Find(uuid, filepathByUuid);
+				if (!filepath.empty())
+				{
+					mesh = MeshManager::GetInstance().LoadMesh(filepath);
+				}
 			}
+
+			std::shared_ptr<Material> material;
+			if (const auto& materialUuid = meshData["Material"])
+			{
+				std::string uuid = materialUuid.as<std::string>();
+				std::string filepath = Utils::Find(uuid, filepathByUuid);
+				if (!filepath.empty())
+				{
+					material = MaterialManager::GetInstance().LoadMaterial(filepath);
+				}
+			}
+			
+			meshes[material].emplace_back(mesh);
 		}
 	}
+
+	Logger::Log("Meshes:" + filepath + " has been deserialized!", GREEN);
 
 	return meshes;
 }

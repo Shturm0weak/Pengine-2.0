@@ -15,21 +15,22 @@ void ExampleApplication::OnPreStart()
 
 void ExampleApplication::OnStart()
 {
-	Texture::CreateInfo whiteTexturecreateInfo;
-	whiteTexturecreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	whiteTexturecreateInfo.channels = 4;
-	whiteTexturecreateInfo.filepath = "White";
-	whiteTexturecreateInfo.name = "White";
-	whiteTexturecreateInfo.format = Texture::Format::R8G8B8A8_SRGB;
-	whiteTexturecreateInfo.size = { 1, 1 };
-	whiteTexturecreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_DST };
-	uint8_t* pixels = new uint8_t[4];
-	pixels[0] = 255;
-	pixels[1] = 255;
-	pixels[2] = 255;
-	pixels[3] = 255;
-	whiteTexturecreateInfo.data = pixels;
-	TextureManager::GetInstance().Create(whiteTexturecreateInfo);
+	Texture::CreateInfo whiteTextureCreateInfo;
+	whiteTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	whiteTextureCreateInfo.channels = 4;
+	whiteTextureCreateInfo.filepath = "White";
+	whiteTextureCreateInfo.name = "White";
+	whiteTextureCreateInfo.format = Texture::Format::R8G8B8A8_SRGB;
+	whiteTextureCreateInfo.size = { 1, 1 };
+	whiteTextureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_DST };
+	std::vector<uint8_t> pixels = {
+		255,
+		255,
+		255,
+		255
+	};
+	whiteTextureCreateInfo.data = pixels;
+	TextureManager::GetInstance().Create(whiteTextureCreateInfo);
 
 	std::shared_ptr<Scene> scene = SceneManager::GetInstance().Create("Scene", "Main");
 
@@ -41,7 +42,8 @@ void ExampleApplication::OnStart()
 	camera->m_Transform.Rotate(glm::vec3(glm::radians(30.0f), 0.0f, 0.0f));
 	camera->m_Transform.Translate(glm::vec3(0.0f, 0.0f, 2.0f));
 
-	MaterialManager::GetInstance().LoadBaseMaterial("Materials/MeshBase.basemat");
+	auto material = MaterialManager::GetInstance().LoadMaterial("Materials/MeshBase.mat");
+	//TextureManager::GetInstance().Load("Meshes/Bistro_v5_2/Textures/MASTER_Concrete_Plaster_BaseColor.dds");
 }
 
 void ExampleApplication::OnUpdate()
@@ -52,48 +54,49 @@ void ExampleApplication::OnUpdate()
 		return;
 	}
 
+	const float speed = 2.0f;
 	std::shared_ptr<Camera> camera = viewport->GetCamera();
 	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_W))
 	{
-		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetForward() * (float)Time::GetDeltaTime());
+		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetForward() * (float)Time::GetDeltaTime() * speed);
 	}
 	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_S))
 	{
-		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetForward() * -(float)Time::GetDeltaTime());
+		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetForward() * -(float)Time::GetDeltaTime() * speed);
 	}
 	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_D))
 	{
-		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetRight() * (float)Time::GetDeltaTime());
+		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetRight() * (float)Time::GetDeltaTime() * speed);
 	}
 	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_A))
 	{
-		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetRight() * -(float)Time::GetDeltaTime());
+		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetRight() * -(float)Time::GetDeltaTime() * speed);
 	}
 
 	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL))
 	{
-		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetUp() * -(float)Time::GetDeltaTime());
+		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetUp() * -(float)Time::GetDeltaTime() * speed);
 	}
 	else if (Input::KeyBoard::IsKeyDown(Keycode::SPACE))
 	{
-		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetUp() * (float)Time::GetDeltaTime());
+		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetUp() * (float)Time::GetDeltaTime() * speed);
 	}
 
 	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_UP))
 	{
-		camera->m_Transform.Rotate(camera->m_Transform.GetRotation() + glm::vec3(1.0f * Time::GetDeltaTime(), 0.0f, 0.0f));
+		camera->m_Transform.Rotate(camera->m_Transform.GetRotation() + glm::vec3(1.0f * Time::GetDeltaTime() * speed, 0.0f, 0.0f));
 	}
 	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_DOWN))
 	{
-		camera->m_Transform.Rotate(camera->m_Transform.GetRotation() + glm::vec3(-1.0f * Time::GetDeltaTime(), 0.0f, 0.0f));
+		camera->m_Transform.Rotate(camera->m_Transform.GetRotation() + glm::vec3(-1.0f * Time::GetDeltaTime() * speed, 0.0f, 0.0f));
 	}
 	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_RIGHT))
 	{
-		camera->m_Transform.Rotate(camera->m_Transform.GetRotation() + glm::vec3(0.0f, -1.0f * Time::GetDeltaTime(), 0.0f));
+		camera->m_Transform.Rotate(camera->m_Transform.GetRotation() + glm::vec3(0.0f, -1.0f * Time::GetDeltaTime() * speed, 0.0f));
 	}
 	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT))
 	{
-		camera->m_Transform.Rotate(camera->m_Transform.GetRotation() + glm::vec3(0.0f, 1.0f * Time::GetDeltaTime(), 0.0f));
+		camera->m_Transform.Rotate(camera->m_Transform.GetRotation() + glm::vec3(0.0f, 1.0f * Time::GetDeltaTime() * speed, 0.0f));
 	}
 }
 

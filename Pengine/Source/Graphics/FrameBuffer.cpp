@@ -21,7 +21,6 @@ std::shared_ptr<FrameBuffer> Pengine::FrameBuffer::Create(std::shared_ptr<Render
 		attachmentCreateInfo.name = "RenderPassFrameBuffer";
 		attachmentCreateInfo.filepath = none;
 		attachmentCreateInfo.format = attachment.format;
-		attachmentCreateInfo.data = nullptr;
 		attachmentCreateInfo.channels = 4;
 		attachmentCreateInfo.size = attachment.size;
 		attachmentCreateInfo.aspectMask = isColor ? Texture::AspectMask::COLOR :
