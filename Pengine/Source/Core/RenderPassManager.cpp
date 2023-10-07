@@ -4,10 +4,11 @@
 #include "SceneManager.h"
 #include "Logger.h"
 #include "TextureSlots.h"
+#include "MaterialManager.h"
+#include "MeshManager.h"
 
 #include "../Components/Renderer3D.h"
-#include "../Graphics/Material.h"
-#include "../Graphics/Mesh.h"
+#include "../Components/PointLight.h"
 #include "../Graphics/Renderer.h"
 
 using namespace Pengine;
@@ -61,15 +62,15 @@ void RenderPassManager::CreateGBuffer()
 	glm::vec4 clearPosition = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Texture::Format::R8G8B8A8_SRGB;
+	color.format = Texture::Format::B8G8R8A8_SRGB;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
 	RenderPass::AttachmentDescription normal{};
-	normal.format = Texture::Format::R8G8B8A8_SRGB;
+	normal.format = Texture::Format::R16G16B16A16_SFLOAT;
 	normal.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
 	RenderPass::AttachmentDescription position{};
-	position.format = Texture::Format::R8G8B8A8_SRGB;
+	position.format = Texture::Format::R16G16B16A16_SFLOAT;
 	position.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
 	RenderPass::AttachmentDescription depth{};
@@ -88,19 +89,25 @@ void RenderPassManager::CreateGBuffer()
 		glm::vec4 row2;
 		glm::vec4 row3;
 		glm::vec4 row4;
-		float materialIndex;
+		glm::vec3 inverseRow1;
+		glm::vec3 inverseRow2;
+		glm::vec3 inverseRow3;
 	};
 
 	struct InstanceData
 	{
 		glm::mat4 transform;
+		glm::mat3 inverseTransform;
 	};
 
 	createInfo.attributeDescriptions = Vertex::GetDefaultVertexAttributeDescriptions();
-	createInfo.attributeDescriptions.emplace_back(Vertex::AttributeDescription{ 1, 3, Texture::Format::R32G32B32A32_SFLOAT, offsetof(InstanceDataExplicit, row1) });
-	createInfo.attributeDescriptions.emplace_back(Vertex::AttributeDescription{ 1, 4, Texture::Format::R32G32B32A32_SFLOAT, offsetof(InstanceDataExplicit, row2) });
-	createInfo.attributeDescriptions.emplace_back(Vertex::AttributeDescription{ 1, 5, Texture::Format::R32G32B32A32_SFLOAT, offsetof(InstanceDataExplicit, row3) });
-	createInfo.attributeDescriptions.emplace_back(Vertex::AttributeDescription{ 1, 6, Texture::Format::R32G32B32A32_SFLOAT, offsetof(InstanceDataExplicit, row4) });
+	createInfo.attributeDescriptions.emplace_back(Vertex::AttributeDescription{ 1, 5, Texture::Format::R32G32B32A32_SFLOAT, offsetof(InstanceDataExplicit, row1) });
+	createInfo.attributeDescriptions.emplace_back(Vertex::AttributeDescription{ 1, 6, Texture::Format::R32G32B32A32_SFLOAT, offsetof(InstanceDataExplicit, row2) });
+	createInfo.attributeDescriptions.emplace_back(Vertex::AttributeDescription{ 1, 7, Texture::Format::R32G32B32A32_SFLOAT, offsetof(InstanceDataExplicit, row3) });
+	createInfo.attributeDescriptions.emplace_back(Vertex::AttributeDescription{ 1, 8, Texture::Format::R32G32B32A32_SFLOAT, offsetof(InstanceDataExplicit, row4) });
+	createInfo.attributeDescriptions.emplace_back(Vertex::AttributeDescription{ 1, 9, Texture::Format::R32G32B32_SFLOAT, offsetof(InstanceDataExplicit, inverseRow1) });
+	createInfo.attributeDescriptions.emplace_back(Vertex::AttributeDescription{ 1, 10, Texture::Format::R32G32B32_SFLOAT, offsetof(InstanceDataExplicit, inverseRow2) });
+	createInfo.attributeDescriptions.emplace_back(Vertex::AttributeDescription{ 1, 11, Texture::Format::R32G32B32_SFLOAT, offsetof(InstanceDataExplicit, inverseRow3) });
 	
 	createInfo.bindingDescriptions = Vertex::GetDefaultVertexBindingDescriptions();
 	createInfo.bindingDescriptions.emplace_back(Vertex::BindingDescription{ 1, sizeof(InstanceData), Vertex::InputRate::INSTANCE });
@@ -165,15 +172,13 @@ void RenderPassManager::CreateGBuffer()
 		std::shared_ptr<Buffer> instanceBuffer = renderInfo.submitInfo.renderPass->GetBuffer("InstanceBuffer");
 		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
 		{
-			instanceBuffer = Buffer::Create(sizeof(InstanceData), gameObjects.size(),
+			instanceBuffer = Buffer::Create(sizeof(InstanceData), renderableCount,
 				std::vector<Buffer::Usage>{ Buffer::Usage::TRANSFER_SRC,
 				Buffer::Usage::VERTEX_BUFFER });
 
 			renderInfo.submitInfo.renderPass->SetBuffer("InstanceBuffer", instanceBuffer);
 		}
 
-		//TODO: revisit gbuffer rendering.
-		TextureSlots globalTextureSlots;
 		std::vector<InstanceData> instanceDatas;
 
 		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
@@ -193,7 +198,8 @@ void RenderPassManager::CreateGBuffer()
 			for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
 			{
 				std::shared_ptr<UniformWriter> materialUniformWriter = material->GetUniformWriter(renderInfo.submitInfo.renderPass->GetType());
-				materialUniformWriter->WriteTexture("albedo", material->GetTexture("albedo"));
+				materialUniformWriter->WriteTexture("albedoTexture", material->GetTexture("albedoTexture"));
+				materialUniformWriter->WriteTexture("normalTexture", material->GetTexture("normalTexture"));
 				materialUniformWriter->Flush();
 
 				for (const auto& [mesh, gameObjects] : gameObjectsByMeshes)
@@ -204,6 +210,7 @@ void RenderPassManager::CreateGBuffer()
 					{
 						InstanceData data;
 						data.transform = gameObject->m_Transform.GetTransform();
+						data.inverseTransform = glm::transpose(gameObject->m_Transform.GetInverseTransform());
 						instanceDatas.emplace_back(data);
 					}
 
@@ -257,7 +264,60 @@ void RenderPassManager::CreateDeferred()
 	createInfo.attributeDescriptions = Vertex::GetDefaultVertexAttributeDescriptions();
 	createInfo.bindingDescriptions = Vertex::GetDefaultVertexBindingDescriptions();
 
-	//TODO: Fill the rendering code.
+	std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
+
+	createInfo.renderCallback = [createInfo, plane](RenderPass::RenderCallbackInfo renderInfo)
+	{
+		std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Deferred.basemat");
+		std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderInfo.submitInfo.renderPass->GetType());
+		if (!pipeline)
+		{
+			return;
+		}
+
+		// TODO: Maybe move somewhere else on initialization!
+		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(GBuffer);
+		pipeline->GetUniformWriter()->WriteTexture("albedoTexture", frameBuffer->GetAttachment(0));
+		pipeline->GetUniformWriter()->WriteTexture("normalTexture", frameBuffer->GetAttachment(1));
+		pipeline->GetUniformWriter()->WriteTexture("positionTexture", frameBuffer->GetAttachment(2));
+
+		if (renderInfo.camera->GetScene()->m_PointLights.size() > 0)
+		{
+			PointLight* pl = renderInfo.camera->GetScene()->m_PointLights[0];
+			baseMaterial->SetValue("Light", "color", pl->color);
+			glm::vec3 lightPosition = pl->GetOwner()->m_Transform.GetPosition();
+			baseMaterial->SetValue("Light", "lightPosition", lightPosition);
+			glm::vec3 cameraPosition = renderInfo.camera->m_Transform.GetPosition();
+			baseMaterial->SetValue("Light", "viewPosition", cameraPosition);
+			baseMaterial->SetValue("Light", "linear", pl->linear);
+			baseMaterial->SetValue("Light", "quadratic", pl->quadratic);
+			baseMaterial->SetValue("Light", "constant", pl->constant);
+
+			float use = 1.0f;
+			baseMaterial->SetValue("Light", "use", use);
+		}
+		else
+		{
+			float use = 0.0f;
+			baseMaterial->SetValue("Light", "use", use);
+		}
+		
+		pipeline->GetUniformWriter()->Flush();
+
+		std::vector<std::shared_ptr<UniformWriter>> uniformWriters =
+		{
+			pipeline->GetUniformWriter()
+		};
+
+		renderInfo.renderer->Render(
+			plane,
+			pipeline,
+			nullptr,
+			0,
+			1,
+			uniformWriters,
+			renderInfo.submitInfo);
+	};
 
 	Create(createInfo);
 }

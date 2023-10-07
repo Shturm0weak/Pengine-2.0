@@ -26,6 +26,10 @@ namespace Pengine
 		std::shared_ptr<Material> Clone(const std::string& name, const std::string& filepath,
 			std::shared_ptr<Material> material);
 
+		const std::unordered_map<std::string, std::shared_ptr<Material>>& GetMaterials() const { return m_MaterialsByFilepath; }
+		
+		const std::unordered_map<std::string, std::shared_ptr<BaseMaterial>>& GetBaseMaterials() const { return m_BaseMaterialsByFilepath; }
+
 		void ShutDown();
 
 	private:

@@ -3,11 +3,11 @@ Mat:
   Pipelines:
     - RenderPass: GBuffer
       Uniforms:
-        - Name: albedo
+        - Name: albedoTexture
+          Value: White
+        - Name: normalTexture
           Value: White
         - Name: material
           Values:
             - Name: color
               Value: [1, 1, 1, 1]
-            - Name: ambient
-              Value: [0.7, 0, 0, 0]

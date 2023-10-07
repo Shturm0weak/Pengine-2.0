@@ -31,15 +31,6 @@ namespace Pengine
 
 		void Resize(const glm::ivec2& size);
 
-		//TODO: rework.
-		bool BindTexture(std::shared_ptr<Pipeline> pipeline, std::shared_ptr<BaseMaterial> baseMaterial,
-			std::shared_ptr<class Material> material,
-			TextureSlots& globalTextureSlots);
-
-		//TODO: rework.
-		// Call only before the render call.
-		void FlushTextures(std::shared_ptr<BaseMaterial> baseMaterial, std::shared_ptr<Pipeline> pipeline, TextureSlots& globalTextureSlots);
-
 		virtual void Render(std::shared_ptr<Mesh> mesh,
 			std::shared_ptr<Pipeline> pipeline, std::shared_ptr<Buffer> instanceBuffer,
 			size_t instanceBufferOffset, size_t count,

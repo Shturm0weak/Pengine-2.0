@@ -19,6 +19,8 @@ namespace Pengine
 
 		std::shared_ptr<Texture> GetTexture(const std::string& filepath) const;
 
+		const std::unordered_map<std::string, std::shared_ptr<Texture>>& GetTextures() const { return m_TexturesByFilepath; }
+
 		std::shared_ptr<Texture> GetWhite() const;
 
 		void ShutDown();

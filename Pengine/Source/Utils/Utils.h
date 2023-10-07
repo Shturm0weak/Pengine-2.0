@@ -259,6 +259,20 @@ namespace Pengine
 			return string;
 		}
 
+		inline std::string GetShortFilepath(const std::string& filepath)
+		{
+			std::string shortFilepath = filepath;
+			if (Contains(shortFilepath, std::filesystem::current_path().string()))
+			{
+				shortFilepath = Utils::EraseFromFront(shortFilepath, '\\');
+				shortFilepath = Utils::EraseFromFront(shortFilepath, '\\');
+				shortFilepath = Utils::EraseFromFront(shortFilepath, '\\');
+				shortFilepath = Utils::Replace(shortFilepath, '\\', '/');
+			}
+
+			return shortFilepath;
+		}
+
 	}
 
 }

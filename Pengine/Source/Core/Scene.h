@@ -43,6 +43,8 @@ namespace Pengine
 		std::string m_Tag = none;
 
 		void Copy(const Scene& scene);
+
+		friend class GameObject;
 	};
 
 }

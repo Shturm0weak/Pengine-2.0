@@ -5,6 +5,7 @@
 #include "Core/MaterialManager.h"
 #include "Core/MeshManager.h"
 #include "Core/RenderPassManager.h"
+#include "Core/Serializer.h"
 #include "Components/Renderer3D.h"
 
 using namespace Pengine;
@@ -42,8 +43,7 @@ void ExampleApplication::OnStart()
 	camera->m_Transform.Rotate(glm::vec3(glm::radians(30.0f), 0.0f, 0.0f));
 	camera->m_Transform.Translate(glm::vec3(0.0f, 0.0f, 2.0f));
 
-	auto material = MaterialManager::GetInstance().LoadMaterial("Materials/MeshBase.mat");
-	//TextureManager::GetInstance().Load("Meshes/Bistro_v5_2/Textures/MASTER_Concrete_Plaster_BaseColor.dds");
+	//TODO: Rework filepath system, use std::path!
 }
 
 void ExampleApplication::OnUpdate()

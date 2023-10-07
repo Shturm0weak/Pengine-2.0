@@ -92,6 +92,9 @@ bool GameObject::IsEnabled()
 
 void GameObject::Delete()
 {
+	Utils::Erase<GameObject*>(m_Scene->m_GameObjects, this);
+	m_Scene->m_GameObjectsByUUID.erase(GetUUID());
+
 	while (m_Childs.size() > 0)
 	{
 		m_Childs.back()->Delete();
@@ -134,6 +137,11 @@ void GameObject::ForChilds(std::function<void(GameObject& child)> forChilds)
 
 void GameObject::AddChild(GameObject* child)
 {
+	if (!child)
+	{
+		return;
+	}
+
 	if (this == child || child == this->GetOwner()) return;
 	if (child->GetOwner() != nullptr)
 	{

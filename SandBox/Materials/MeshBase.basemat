@@ -8,23 +8,35 @@ Basemat:
       Vertex: Shaders/GBuffer.vert
       Fragment: Shaders/GBuffer.frag
       Uniforms:
+
         - Binding: 0
-          Name: albedo
+          Name: albedoTexture
           Type: Sampler
           InputRate: Per Material
           Stages:
             - Fragment
+
         - Binding: 1
+          Name: normalTexture
+          Type: Sampler
+          InputRate: Per Material
+          Stages:
+            - Fragment
+
+        - Binding: 2
           Name: material
           Type: Buffer
           InputRate: Per Material
           Values:
             - Type: color
               Name: color
+
             - Type: vec4
-              Name: ambient
+              Name: other
+
             - Type: vec4
               Name: __unused1
+
             - Type: vec4
               Name: __unused2
           Stages:

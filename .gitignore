@@ -1,5 +1,6 @@
 #Directories
 Build/
+SandBox/Meshes/LargeFIles
 
 # Shader Cache
 *.spv

@@ -57,6 +57,7 @@ void VulkanRenderer::Render(std::shared_ptr<Mesh> mesh,
             nullptr);
     }
 
+    vertexCount += mesh->GetIndexCount() / 3;
     BindBuffers(frame->CommandBuffer, mesh->GetVertices(), instanceBuffer, mesh->GetIndices(), instanceBufferOffset);
     DrawIndexed(frame->CommandBuffer, mesh->GetIndexCount(), count);
 }
@@ -141,5 +142,6 @@ void VulkanRenderer::BindBuffers(VkCommandBuffer commandBuffer,
 
 void VulkanRenderer::DrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount)
 {
+    drawCallsCount++;
     vkCmdDrawIndexed(commandBuffer, indexCount, instanceCount, 0, 0, 0);
 }

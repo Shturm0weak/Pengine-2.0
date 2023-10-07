@@ -72,7 +72,7 @@ void EntryPoint::Run()
 			window->ImGuiBegin();
 			for (const auto& viewport : ViewportManager::GetInstance().GetViewports())
 			{
-				viewport.second->Update(viewport.second->GetCamera()->GetRenderer()->GetRenderPassFrameBuffer(GBuffer)->GetAttachment(0));
+				viewport.second->Update(viewport.second->GetCamera()->GetRenderer()->GetRenderPassFrameBuffer(Deferred)->GetAttachment(0));
 			}
 
 			editor.Update(SceneManager::GetInstance().GetSceneByTag("Main"));

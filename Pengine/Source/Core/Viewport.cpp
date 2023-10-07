@@ -13,8 +13,6 @@
 #include "../EventSystem/ResizeEvent.h"
 #include "../Utils/Utils.h"
 
-#include "Time.h"
-
 using namespace Pengine;
 
 Viewport::Viewport(const std::string& name, const glm::ivec2& size)
@@ -31,10 +29,6 @@ void Viewport::Update(std::shared_ptr<Texture> viewportTexture)
 		FATAL_ERROR("Viewport texture is nullptr!");
 	}
 
-	ImGui::Begin("FPS");
-	ImGui::Text("FPS: %.0f", 1.0f / Time::GetDeltaTime());
-	ImGui::End();
-
 	ImGui::Begin(m_Name.c_str());
 
 	ImGui::Image(viewportTexture->GetId(), ImVec2(m_Size.x, m_Size.y));
@@ -46,22 +40,9 @@ void Viewport::Update(std::shared_ptr<Texture> viewportTexture)
 			std::string path((const char*)payload->Data);
 			path.resize(payload->DataSize);
 
-			if (FileFormats::Meshes() == Utils::GetFileFormat(path))
+			if (FileFormats::Prefab() == Utils::GetFileFormat(path))
 			{
-				std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> meshesByMaterial =
-					Serializer::DeserializeMeshes(path);
-
-				for (const auto& [material, meshes] : meshesByMaterial)
-				{
-					for (std::shared_ptr<Mesh> mesh : meshes)
-					{
-						GameObject* gameObject = SceneManager::GetInstance().GetSceneByTag("Main")->CreateGameObject(mesh->GetName());
-						gameObject->m_Transform.Scale(glm::vec3(0.01f, 0.01f, 0.01f));
-						Renderer3D* r3d = gameObject->m_ComponentManager.AddComponent<Renderer3D>();
-						r3d->mesh = mesh;
-						r3d->material = material;
-					}
-				}
+				Serializer::DeserializePrefab(path, m_Camera->GetScene());
 			}
 		}
 

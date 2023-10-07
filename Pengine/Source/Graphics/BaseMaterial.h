@@ -6,6 +6,7 @@
 
 #include "Pipeline.h"
 #include "UniformWriter.h"
+#include "UniformLayout.h"
 
 namespace Pengine
 {
@@ -30,8 +31,34 @@ namespace Pengine
 
 		size_t m_MaterialsSize = 0;
 
+		template<typename T>
+		void SetValue(const std::string& bufferName, const std::string& name, T& value);
+
 	private:
 		std::unordered_map<std::string, std::shared_ptr<Pipeline>> m_PipelinesByRenderPass;
 	};
+
+	template<typename T>
+	inline void BaseMaterial::SetValue(const std::string& bufferName, const std::string& name, T& value)
+	{
+		for (const auto& [renderPass, pipeline] : m_PipelinesByRenderPass)
+		{
+			if (!pipeline->GetUniformWriter())
+			{
+				continue;
+			}
+
+			const UniformLayout::Binding& binding = pipeline->GetUniformWriter()->GetLayout()->GetBindingByName(bufferName);
+			if (binding.type == UniformLayout::Type::BUFFER)
+			{
+				if (auto variable = binding.GetValue(name))
+				{
+					std::shared_ptr<Buffer> buffer = pipeline->GetBuffer(bufferName);
+					void* data = buffer->GetData();
+					Utils::SetValue(data, variable->offset, value);
+				}
+			}
+		}
+	}
 
 }

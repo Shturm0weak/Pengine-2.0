@@ -61,9 +61,6 @@ GameObject* Scene::CreateGameObject(const std::string& name, const Transform& tr
 
 void Scene::DeleteGameObject(GameObject* gameObject)
 {
-	Utils::Erase<GameObject*>(m_GameObjects, gameObject);
-	m_GameObjectsByUUID.erase(gameObject->GetUUID());
-
 	gameObject->Delete();
 }
 

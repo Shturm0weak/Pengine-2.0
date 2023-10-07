@@ -3,31 +3,45 @@
 layout(location = 0) in vec3 normal;
 layout(location = 1) in vec3 worldPosition;
 layout(location = 2) in vec2 uv;
+layout(location = 3) in mat3 TBN;
 
 layout(location = 0) out vec4 outAlbedo;
 layout(location = 1) out vec4 outNormal;
 layout(location = 2) out vec4 outPosition;
 
-layout(set = 1, binding = 0) uniform sampler2D albedo;
+layout(set = 1, binding = 0) uniform sampler2D albedoTexture;
+layout(set = 1, binding = 1) uniform sampler2D normalTexture;
 
-layout(set = 1, binding = 1) uniform material
+layout(set = 1, binding = 2) uniform material
 {
 	// Min alignment is 64 bits!
 
 	vec4 color;
-	vec4 ambient;
+	vec4 other; // useNormalMap, unused, unused, unused
 	vec4 __unused1;
 	vec4 __unused2;
 };
 
 void main()
 {
-	// For more depth image. Remove after test
-	vec3 lightPosition = vec3(0.0, 5.0, 0.0);
-	vec3 lightDirection = normalize(lightPosition - worldPosition);
-	float diffuse = max(dot(normal, lightDirection), 0.0);
+	vec4 albedo = texture(albedoTexture, uv) * color;
+	if (albedo.a < 0.01f)
+	{
+		discard;
+	}
 
-	outAlbedo = texture(albedo, uv) * color * diffuse * 2.0f + texture(albedo, uv) * color * ambient.x;
-	outNormal = vec4(normal, 1.0);
+	outAlbedo = albedo;
+
+	if (other.x > 0.5f)
+	{
+		vec3 normalMap = texture(normalTexture, uv).xyz;
+		normalMap *= normalMap * 2.0 - 1.0;
+		outNormal = vec4(normalize(TBN * normalMap), 1.0f);
+	}
+	else
+	{
+		outNormal = vec4(normal, 1.0f);
+	}
+
 	outPosition = vec4(worldPosition, 1.0);
 }

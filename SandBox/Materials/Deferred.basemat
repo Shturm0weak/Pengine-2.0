@@ -8,25 +8,56 @@ Basemat:
       Vertex: Shaders/Deferred.vert
       Fragment: Shaders/Deferred.frag
       Uniforms:
+
         - Binding: 0
-          Name: textures
-          Type: SamplerArray
+          Name: albedoTexture
+          Type: Sampler
           InputRate: Per BaseMaterial
-          Count: 3
           Stages:
             - Fragment
+
         - Binding: 1
-          Name: TexturesBuffer
+          Name: normalTexture
+          Type: Sampler
+          InputRate: Per BaseMaterial
+          Stages:
+            - Fragment
+
+        - Binding: 2
+          Name: positionTexture
+          Type: Sampler
+          InputRate: Per BaseMaterial
+          Stages:
+            - Fragment
+
+        - Binding: 3
+          Name: Light
           Type: Buffer
           InputRate: Per BaseMaterial
-          Info: const
           Values:
-            - Type: sampler
-              Name: albedo
-            - Type: sampler
-              Name: normal
-            - Type: sampler
-              Name: position
+            - Type: vec3
+              Name: color
+
+            - Type: float
+              Name: constant
+
+            - Type: float
+              Name: linear
+
+            - Type: float
+              Name: quadratic
+
+            - Type: float
+              Name: use
+
+            - Type: float
+              Name: __unused1
+
+            - Type: vec3
+              Name: lightPosition
+
+            - Type: float
+              Name: __unused2
           Stages:
             - Fragment
       ColorBlendStates:

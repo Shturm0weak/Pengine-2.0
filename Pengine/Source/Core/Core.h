@@ -80,6 +80,8 @@ namespace Pengine
 {
 	inline std::unordered_map<std::string, std::string> filepathByUuid;
 	inline std::unordered_map<std::string, std::string> uuidByFilepath;
+	inline int drawCallsCount;
+	inline size_t vertexCount;
 
 	namespace Vk
 	{

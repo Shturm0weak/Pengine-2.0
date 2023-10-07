@@ -18,7 +18,7 @@ Mesh::Mesh(const std::string& name, const std::string& filepath,
 	stagingBuffer->WriteToBuffer((void*)m_RawVertices.data());
 
 	m_Vertices = Buffer::Create(sizeof(m_RawVertices[0]), m_RawVertices.size(),
-		std::vector<Buffer::Usage>{ Buffer::Usage::TRANSFER_DST, 
+		std::vector<Buffer::Usage>{ Buffer::Usage::TRANSFER_DST,
 		Buffer::Usage::VERTEX_BUFFER});
 
 	m_Vertices->Copy(stagingBuffer);

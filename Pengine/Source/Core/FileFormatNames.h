@@ -56,11 +56,6 @@ namespace Pengine
 			return "mesh";
 		}
 
-		inline const char* Meshes()
-		{
-			return "meshes";
-		}
-
 		inline const char* Meta()
 		{
 			return "meta";
@@ -69,6 +64,11 @@ namespace Pengine
 		inline const char* Spv()
 		{
 			return "spv";
+		}
+
+		inline const char* Prefab()
+		{
+			return "prefab";
 		}
 
 		inline bool IsTexture(const std::string& fileFormat)
@@ -91,7 +91,8 @@ namespace Pengine
 			if (IsTexture(fileFormat)
 				|| fileFormat == BaseMat()
 				|| fileFormat == Mat()
-				|| fileFormat == Mesh())
+				|| fileFormat == Mesh()
+				|| fileFormat == Prefab())
 			{
 				return true;
 			}

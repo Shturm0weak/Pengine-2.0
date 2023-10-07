@@ -6,6 +6,7 @@
 #include "../Core/MeshManager.h"
 #include "../Core/TextureManager.h"
 #include "../Core/Serializer.h"
+#include "../Core/Time.h"
 
 using namespace Pengine;
 
@@ -20,6 +21,18 @@ void Editor::Update(std::shared_ptr<Scene> scene)
 	AssetBrowser();
 
 	m_MaterialMenu.Update(*this);
+
+	ImGui::Begin("Settings");
+	ImGui::Text("FPS: %.0f", 1.0f / Time::GetDeltaTime());
+	ImGui::Text("DrawCalls: %d", drawCallsCount);
+	ImGui::Text("Triangles: %d", vertexCount);
+	drawCallsCount = 0;
+	vertexCount = 0;
+	ImGui::Text("Meshes: %d", (int)MeshManager::GetInstance().GetMeshes().size());
+	ImGui::Text("BaseMaterials: %d", (int)MaterialManager::GetInstance().GetBaseMaterials().size());
+	ImGui::Text("Materials: %d", (int)MaterialManager::GetInstance().GetMaterials().size());
+	ImGui::Text("Textures: %d", (int)TextureManager::GetInstance().GetTextures().size());
+	ImGui::End();
 }
 
 bool Editor::DrawVec2Control(const std::string& label, glm::vec2& values, float resetValue, const glm::vec2& limits, float speed, float columnWidth)
@@ -826,7 +839,7 @@ void Editor::AssetBrowser()
 				{
 					if (ImGui::MenuItem("Generate meshes"))
 					{
-						MeshManager::GetInstance().GenerateMeshes(Utils::Erase(path, m_RootDirectory.string() + "/"));
+						Serializer::LoadIntermediate(Utils::Erase(path, m_RootDirectory.string() + "/"));
 					}
 				}
 

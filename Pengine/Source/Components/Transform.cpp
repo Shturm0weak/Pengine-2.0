@@ -295,9 +295,8 @@ void Transform::UpdateVectors()
 	m_Back.y = sin(m_Rotation.x);
 	m_Back = glm::normalize(m_Back);
 
-	const glm::mat3 inverseTransform = m_InverseTransformMat3;
-	m_Up = glm::normalize(glm::vec3(inverseTransform[0][1],
-		inverseTransform[1][1], inverseTransform[2][1]));
+	m_Up = glm::normalize(glm::vec3(m_InverseTransformMat3[0][1],
+		m_InverseTransformMat3[1][1], m_InverseTransformMat3[2][1]));
 }
 
 void Transform::UpdateTransforms()
