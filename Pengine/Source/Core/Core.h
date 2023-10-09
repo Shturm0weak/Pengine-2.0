@@ -24,6 +24,7 @@
 #include <optional>
 #include <string>
 #include <set>
+#include <unordered_set>
 #include <unordered_map>
 #include <vector>
 
@@ -37,6 +38,8 @@
 #include "glm/gtc/type_ptr.hpp"
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/quaternion.hpp"
+
+#include "entt/entt.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -80,6 +83,8 @@ namespace Pengine
 {
 	inline std::unordered_map<std::string, std::string> filepathByUuid;
 	inline std::unordered_map<std::string, std::string> uuidByFilepath;
+
+	// TODO: Maybe move this somewhere!
 	inline int drawCallsCount;
 	inline size_t vertexCount;
 
@@ -93,3 +98,11 @@ namespace Pengine
 		inline uint32_t swapChainImageIndex = 0;
 	}
 }
+
+class ComponentC
+{
+public:
+	virtual ComponentC* CreateCopy(entt::entity handle) = 0;
+
+	std::string validation = "CreateCopy";
+};

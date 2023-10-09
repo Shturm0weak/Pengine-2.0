@@ -14,16 +14,13 @@ namespace Pengine
 	class PENGINE_API GameObject
 	{
 	public:
-		GameObject(const GameObject& gameObject);
-		GameObject(const std::string& name = "Unnamed", const Transform& transform = Transform());
+		GameObject(entt::entity entity, class Scene* scene, const std::string& name = "Unnamed",
+			const Transform& transform = Transform(), const UUID& uuid = UUID());
 		~GameObject();
 		void operator=(const GameObject& gameObject);
 
 		Transform m_Transform;
 		ComponentManager m_ComponentManager = ComponentManager(this);
-
-		static GameObject* Create(class Scene* scene, const std::string& name = "Unnamed",
-			const Transform& transform = Transform(), const UUID& uuid = UUID());
 
 		void Copy(const GameObject& gameObject);
 
@@ -44,10 +41,6 @@ namespace Pengine
 		void SetEditorVisible(bool isEditorVisible) { m_IsEditorVisible = isEditorVisible; }
 
 		float GetCreationTime() const { return m_CreationTime; }
-
-		void Delete();
-
-		void DeleteLater(float seconds = 0.0f);
 
 		std::string GetName() const { return m_Name; }
 
@@ -74,6 +67,8 @@ namespace Pengine
 		void SetOwner(GameObject* owner) { m_Owner = owner; }
 
 		class Scene* GetScene() const { return m_Scene; }
+
+		entt::entity GetEntity() const { return m_Entity; }
 	private:
 
 		std::vector<GameObject*> m_Childs;
@@ -83,6 +78,8 @@ namespace Pengine
 		class Scene* m_Scene = nullptr;
 
 		UUID m_UUID = UUID();
+
+		entt::entity m_Entity;
 
 		float m_CreationTime = 0.0f;
 

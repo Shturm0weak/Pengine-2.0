@@ -18,6 +18,7 @@ namespace Pengine
 		~UUID() = default;
 		UUID(const std::string& uuid) { m_UUID = uuid; }
 		UUID(const UUID& uuid) { m_UUID = uuid.m_UUID; }
+		UUID(UUID&& uuid) { m_UUID = std::move(uuid.m_UUID); uuid.m_UUID.clear(); }
 
 		void operator=(const std::string& uuid) { m_UUID = uuid; }
 		void operator=(const UUID& uuid) { m_UUID = uuid.m_UUID; }

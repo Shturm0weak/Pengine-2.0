@@ -44,6 +44,16 @@ void ExampleApplication::OnStart()
 	camera->m_Transform.Translate(glm::vec3(0.0f, 0.0f, 2.0f));
 
 	//TODO: Rework filepath system, use std::path!
+
+	Logger::Log("Test ecs");
+
+	GameObjectC& gameobject0 = scene->CreateGameObjectC();
+	Entity entity = gameobject0.GetEntity().Clone();
+
+	bool hasGameObject = entity.HasComponent<GameObjectC>();
+	GameObjectC& gameobject1 = entity.GetComponent<GameObjectC>();
+	scene->DeleteEntity(gameobject0.GetEntity());
+	scene->DeleteEntity(entity);
 }
 
 void ExampleApplication::OnUpdate()

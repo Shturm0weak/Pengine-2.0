@@ -19,6 +19,8 @@
 #include "../Graphics/Renderer.h"
 #include "../Editor/Editor.h"
 
+#include "Entity.h"
+
 using namespace Pengine;
 
 EntryPoint::EntryPoint(Application* application)

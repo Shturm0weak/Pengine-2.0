@@ -59,6 +59,7 @@ namespace Pengine
 		virtual Component* CreateCopy(GameObject* newOwner) override;
 	public:
 
+		~Transform();
 		Transform(const Transform& transform);
 		Transform(Transform&& transform) noexcept;
 		Transform(

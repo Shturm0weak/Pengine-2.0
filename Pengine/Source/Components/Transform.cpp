@@ -343,8 +343,14 @@ void Transform::RemoveChild(Transform* child)
 	child->Scale(scale);
 }
 
+Transform::~Transform()
+{
+	Logger::Log("Destroy Transform");
+}
+
 Transform::Transform(const Transform& transform)
 {
+	Logger::Log("Copy Transform");
 	Copy(transform);
 }
 
@@ -355,11 +361,14 @@ Transform::Transform(Transform&& transform) noexcept
 	, m_RotationMat4(std::move(transform.m_RotationMat4))
 	, m_FollowOwner(transform.m_FollowOwner)
 {
+	Logger::Log("Move Transform");
 	m_Type = "Pengine::Transform";
 }
 
 Transform::Transform(const glm::vec3& position, const glm::vec3& scale, const glm::vec3& rotation)
 {
+	Logger::Log("Create Transform");
+
 	Translate(position);
 	Rotate(rotation);
 	Scale(scale);

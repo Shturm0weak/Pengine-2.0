@@ -49,9 +49,17 @@ void Scene::operator=(const Scene& scene)
 	Copy(scene);
 }
 
+GameObjectC& Scene::CreateGameObjectC(const std::string& name, const UUID& uuid)
+{
+	Entity& entity = CreateEntity();
+	entity.AddComponent<Transform>();
+	return entity.AddComponent<GameObjectC>(entity, name, uuid);
+}
+
 GameObject* Scene::CreateGameObject(const std::string& name, const Transform& transform, const UUID& uuid)
 {
-	GameObject* gameObject = GameObject::Create(this, name, transform, uuid);
+	const entt::entity entity = m_Registry.create();
+	GameObject* gameObject = &m_Registry.emplace<GameObject>(entity, entity, this, name, transform, uuid);
 
 	m_GameObjectsByUUID.emplace(gameObject->GetUUID(), gameObject);
 	m_GameObjects.push_back(gameObject);
@@ -59,14 +67,29 @@ GameObject* Scene::CreateGameObject(const std::string& name, const Transform& tr
 	return gameObject;
 }
 
+Entity Scene::CreateEntity()
+{
+	return *m_Entities.emplace((this)).first;
+}
+
+void Scene::DeleteEntity(Entity& entity)
+{
+	if (entity.m_Handle != entt::tombstone)
+	{
+		m_Registry.destroy(entity.m_Handle);
+		entity.m_Handle = entt::tombstone;
+	}
+	m_Entities.erase(entity);
+}
+
 void Scene::DeleteGameObject(GameObject* gameObject)
 {
-	gameObject->Delete();
+	m_Registry.destroy(gameObject->GetEntity());
 }
 
 void Scene::DeleteGameObjectLater(GameObject* gameObject)
 {
-	gameObject->DeleteLater();
+	DeleteGameObject(gameObject);
 }
 
 GameObject* Scene::FindGameObjectByName(const std::string& name)
