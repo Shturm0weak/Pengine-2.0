@@ -123,11 +123,10 @@ void VulkanRenderer::BindBuffers(VkCommandBuffer commandBuffer,
     std::shared_ptr<Buffer> indexBuffer,
     size_t instanceBufferOffset)
 {
-
-    VkDeviceSize offsetsVertex[] = { 0 };
+    VkDeviceSize vertexOffsets[] = { 0 };
 
     VkBuffer vertexBuffers[] = { std::static_pointer_cast<VulkanBuffer>(vertexBuffer)->GetBuffer() };
-    vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsetsVertex);
+    vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, vertexOffsets);
 
     if (instanceBuffer)
     {

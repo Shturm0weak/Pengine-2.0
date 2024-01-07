@@ -1,259 +1,166 @@
-[Mon Oct  9 05:14:37 2023] Engine config has been loaded!
-[Mon Oct  9 05:14:37 2023] Graphics API:2
-[Mon Oct  9 05:14:37 2023] Available extensions:
-[Mon Oct  9 05:14:37 2023] 	VK_KHR_device_group_creation
-[Mon Oct  9 05:14:37 2023] 	VK_KHR_external_fence_capabilities
-[Mon Oct  9 05:14:37 2023] 	VK_KHR_external_memory_capabilities
-[Mon Oct  9 05:14:37 2023] 	VK_KHR_external_semaphore_capabilities
-[Mon Oct  9 05:14:37 2023] 	VK_KHR_get_physical_device_properties2
-[Mon Oct  9 05:14:37 2023] 	VK_KHR_get_surface_capabilities2
-[Mon Oct  9 05:14:37 2023] 	VK_KHR_surface
-[Mon Oct  9 05:14:37 2023] 	VK_KHR_surface_protected_capabilities
-[Mon Oct  9 05:14:37 2023] 	VK_KHR_win32_surface
-[Mon Oct  9 05:14:37 2023] 	VK_EXT_debug_report
-[Mon Oct  9 05:14:37 2023] 	VK_EXT_debug_utils
-[Mon Oct  9 05:14:37 2023] 	VK_EXT_swapchain_colorspace
-[Mon Oct  9 05:14:37 2023] 	VK_NV_external_memory_capabilities
-[Mon Oct  9 05:14:37 2023] 	VK_KHR_portability_enumeration
-[Mon Oct  9 05:14:37 2023] 	VK_LUNARG_direct_driver_loading
-[Mon Oct  9 05:14:37 2023] Required extensions:
-[Mon Oct  9 05:14:37 2023] 	VK_KHR_surface
-[Mon Oct  9 05:14:37 2023] 	VK_KHR_win32_surface
-[Mon Oct  9 05:14:37 2023] 	VK_EXT_debug_utils
-[Mon Oct  9 05:14:37 2023] Device count: 1
-[Mon Oct  9 05:14:37 2023] Physical device: NVIDIA GeForce RTX 3060 Ti
-[Mon Oct  9 05:14:37 2023] Mesh:Meshes/Plane.mesh has been deserialized!
-[Mon Oct  9 05:14:37 2023] Texture:Editor/Images/FileIcon.png has been loaded!
-[Mon Oct  9 05:14:37 2023] Texture:Editor/Images/FolderIcon.png has been loaded!
-[Mon Oct  9 05:14:37 2023] Texture:Editor/Images/MaterialIcon.png has been loaded!
-[Mon Oct  9 05:14:37 2023] Texture:Editor/Images/MeshIcon.png has been loaded!
-[Mon Oct  9 05:14:37 2023] Texture:Editor/Images/MetaIcon.png has been loaded!
-[Mon Oct  9 05:14:37 2023] Texture:Editor/Images/PlayButton.png has been loaded!
-[Mon Oct  9 05:14:37 2023] Texture:Editor/Images/StopButton.png has been loaded!
-[Mon Oct  9 05:14:37 2023] Create Transform
-[Mon Oct  9 05:14:37 2023] Test ecs
-[Mon Oct  9 05:14:37 2023] Create Transform
-[Mon Oct  9 05:14:37 2023] Create GameObject
-[Mon Oct  9 05:14:37 2023] Create GameObject
-[Mon Oct  9 05:14:37 2023] GameObject Destroy
-[Mon Oct  9 05:14:37 2023] Move Transform
-[Mon Oct  9 05:14:37 2023] Move Transform
-[Mon Oct  9 05:14:37 2023] Destroy Transform
-[Mon Oct  9 05:14:37 2023] Destroy Transform
-[Mon Oct  9 05:14:37 2023] Destroy Transform
-[Mon Oct  9 05:14:37 2023] GameObject Destroy
-[Mon Oct  9 05:14:39 2023] BaseMaterial:Materials/Deferred.basemat has been deserialized!
-[Mon Oct  9 05:14:39 2023] ERROR:Validation layer: Validation Performance Warning: [ UNASSIGNED-CoreValidation-Shader-OutputNotConsumed ] Object 0: handle = 0x6ab8a500000000fb, type = VK_OBJECT_TYPE_SHADER_MODULE; | MessageID = 0x609a13b | vkCreateGraphicsPipelines(): pCreateInfos[0] Vertex attribute at location 2 not consumed by vertex shader
-[Mon Oct  9 05:14:39 2023] ERROR:Validation layer: Validation Performance Warning: [ UNASSIGNED-CoreValidation-Shader-OutputNotConsumed ] Object 0: handle = 0x6ab8a500000000fb, type = VK_OBJECT_TYPE_SHADER_MODULE; | MessageID = 0x609a13b | vkCreateGraphicsPipelines(): pCreateInfos[0] Vertex attribute at location 3 not consumed by vertex shader
-[Mon Oct  9 05:14:39 2023] ERROR:Validation layer: Validation Performance Warning: [ UNASSIGNED-CoreValidation-Shader-OutputNotConsumed ] Object 0: handle = 0x6ab8a500000000fb, type = VK_OBJECT_TYPE_SHADER_MODULE; | MessageID = 0x609a13b | vkCreateGraphicsPipelines(): pCreateInfos[0] Vertex attribute at location 4 not consumed by vertex shader
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza.obj: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_378_sponza_378_Material__25: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_378_sponza_378_Material__25.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] BaseMaterial:Materials/MeshBase.basemat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/Material__25.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/lion.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_378_sponza_378_Material__298: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_378_sponza_378_Material__298.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/Material__298.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/background.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_257_sponza_257_Material__47: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_257_sponza_257_Material__47.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/Material__47.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_369_sponza_369_Material__57: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_369_sponza_369_Material__57.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/Material__57.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/vase_plant.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_39_sponza_39_arch: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_39_sponza_39_arch.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/arch.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_arch_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_382_sponza_382_bricks: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_382_sponza_382_bricks.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/bricks.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/spnza_bricks_a_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_38_sponza_38_ceiling: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_38_sponza_38_ceiling.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/ceiling.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_ceiling_a_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_339_sponza_339_chain: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_339_sponza_339_chain.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/chain.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/chain_texture.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_10_sponza_10_column_a: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_10_sponza_10_column_a.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/column_a.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_column_a_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_141_sponza_141_column_b: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_141_sponza_141_column_b.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/column_b.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_column_b_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_83_sponza_83_column_c: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_83_sponza_83_column_c.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/column_c.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_column_c_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_72_sponza_72_details: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_72_sponza_72_details.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/details.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_details_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_288_sponza_288_fabric_a: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_288_sponza_288_fabric_a.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/fabric_a.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_fabric_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_325_sponza_325_fabric_c: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_325_sponza_325_fabric_c.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/fabric_c.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_curtain_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_289_sponza_289_fabric_d: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_289_sponza_289_fabric_d.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/fabric_d.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_fabric_blue_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_285_sponza_285_fabric_e: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_285_sponza_285_fabric_e.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/fabric_e.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_fabric_green_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_327_sponza_327_fabric_f: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_327_sponza_327_fabric_f.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/fabric_f.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_curtain_green_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_326_sponza_326_fabric_g: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_326_sponza_326_fabric_g.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/fabric_g.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_curtain_blue_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_271_sponza_271_flagpole: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_271_sponza_271_flagpole.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/flagpole.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_flagpole_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_18_sponza_18_floor: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_18_sponza_18_floor.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/floor.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_floor_a_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_275_sponza_275_leaf: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_275_sponza_275_leaf.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/leaf.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_thorn_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_381_sponza_381_roof: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_381_sponza_381_roof.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/roof.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_roof_diff.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_373_sponza_373_vase: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_373_sponza_373_vase.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/vase.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/vase_dif.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_344_sponza_344_vase_hanging: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_344_sponza_344_vase_hanging.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/vase_hanging.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/vase_hanging.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] Create Transform
-[Mon Oct  9 05:14:49 2023] sponza_369_sponza_369_vase_round: has been created!
-[Mon Oct  9 05:14:49 2023] Destroy Transform
-[Mon Oct  9 05:14:49 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:49 2023] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_369_sponza_369_vase_round.mesh has been deserialized!
-[Mon Oct  9 05:14:49 2023] Material:Meshes/LargeFIles/SponzaOptimized/vase_round.mat has been deserialized!
-[Mon Oct  9 05:14:49 2023] Texture:Meshes/LargeFIles/SponzaOptimized/textures/vase_round.tga has been loaded!
-[Mon Oct  9 05:14:49 2023] Meshes:D:/Pengine/SandBox/Meshes/LargeFIles/SponzaOptimized/sponza.obj.prefab has been deserialized!
-[Mon Oct  9 05:14:51 2023] Copy Transform
-[Mon Oct  9 05:14:51 2023] Pengine::Renderer3D:has been added to GameObject!
-[Mon Oct  9 05:14:51 2023] Copy Transform
-[Mon Oct  9 05:14:51 2023] Copy Transform
-[Mon Oct  9 05:14:51 2023] sponza_369_sponza_369_vase_round: has been deleted!
-[Mon Oct  9 05:14:51 2023] Destroy Transform
+[Mon Jan  1 03:56:50 2024] Engine config has been loaded!
+[Mon Jan  1 03:56:50 2024] Graphics API:2
+[Mon Jan  1 03:56:50 2024] Available extensions:
+[Mon Jan  1 03:56:50 2024] 	VK_KHR_device_group_creation
+[Mon Jan  1 03:56:50 2024] 	VK_KHR_external_fence_capabilities
+[Mon Jan  1 03:56:50 2024] 	VK_KHR_external_memory_capabilities
+[Mon Jan  1 03:56:50 2024] 	VK_KHR_external_semaphore_capabilities
+[Mon Jan  1 03:56:50 2024] 	VK_KHR_get_physical_device_properties2
+[Mon Jan  1 03:56:50 2024] 	VK_KHR_get_surface_capabilities2
+[Mon Jan  1 03:56:50 2024] 	VK_KHR_surface
+[Mon Jan  1 03:56:50 2024] 	VK_KHR_surface_protected_capabilities
+[Mon Jan  1 03:56:50 2024] 	VK_KHR_win32_surface
+[Mon Jan  1 03:56:50 2024] 	VK_EXT_debug_report
+[Mon Jan  1 03:56:50 2024] 	VK_EXT_debug_utils
+[Mon Jan  1 03:56:50 2024] 	VK_EXT_swapchain_colorspace
+[Mon Jan  1 03:56:50 2024] 	VK_NV_external_memory_capabilities
+[Mon Jan  1 03:56:50 2024] 	VK_KHR_portability_enumeration
+[Mon Jan  1 03:56:50 2024] 	VK_LUNARG_direct_driver_loading
+[Mon Jan  1 03:56:50 2024] Required extensions:
+[Mon Jan  1 03:56:50 2024] 	VK_KHR_surface
+[Mon Jan  1 03:56:50 2024] 	VK_KHR_win32_surface
+[Mon Jan  1 03:56:50 2024] Device count: 1
+[Mon Jan  1 03:56:50 2024] Physical device: NVIDIA GeForce RTX 3060 Ti
+[Mon Jan  1 03:56:50 2024] Mesh:Meshes/Plane.mesh has been deserialized!
+[Mon Jan  1 03:56:50 2024] Texture:Editor/Images/FileIcon.png has been loaded!
+[Mon Jan  1 03:56:50 2024] Texture:Editor/Images/FolderIcon.png has been loaded!
+[Mon Jan  1 03:56:50 2024] Texture:Editor/Images/MaterialIcon.png has been loaded!
+[Mon Jan  1 03:56:50 2024] Texture:Editor/Images/MeshIcon.png has been loaded!
+[Mon Jan  1 03:56:50 2024] Texture:Editor/Images/MetaIcon.png has been loaded!
+[Mon Jan  1 03:56:50 2024] Texture:Editor/Images/PlayButton.png has been loaded!
+[Mon Jan  1 03:56:50 2024] Texture:Editor/Images/StopButton.png has been loaded!
+[Mon Jan  1 03:56:50 2024] Create Transform
+[Mon Jan  1 03:56:50 2024] BaseMaterial:Materials/Deferred.basemat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Destroy Transform
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_378_sponza_378_Material__25.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] BaseMaterial:Materials/MeshBase.basemat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/Material__25.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/lion.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_378_sponza_378_Material__298.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/Material__298.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/background.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_257_sponza_257_Material__47.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/Material__47.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_369_sponza_369_Material__57.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/Material__57.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/vase_plant.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_39_sponza_39_arch.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/arch.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_arch_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_382_sponza_382_bricks.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/bricks.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/spnza_bricks_a_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_38_sponza_38_ceiling.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/ceiling.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_ceiling_a_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_339_sponza_339_chain.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/chain.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/chain_texture.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_10_sponza_10_column_a.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/column_a.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_column_a_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_141_sponza_141_column_b.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/column_b.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_column_b_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_83_sponza_83_column_c.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/column_c.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_column_c_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_72_sponza_72_details.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/details.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_details_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_288_sponza_288_fabric_a.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/fabric_a.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_fabric_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_325_sponza_325_fabric_c.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/fabric_c.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_curtain_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_289_sponza_289_fabric_d.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/fabric_d.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_fabric_blue_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_285_sponza_285_fabric_e.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/fabric_e.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_fabric_green_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_327_sponza_327_fabric_f.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/fabric_f.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_curtain_green_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_326_sponza_326_fabric_g.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/fabric_g.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_curtain_blue_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_271_sponza_271_flagpole.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/flagpole.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_flagpole_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_18_sponza_18_floor.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/floor.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_floor_a_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_275_sponza_275_leaf.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/leaf.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_thorn_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_381_sponza_381_roof.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/roof.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/sponza_roof_diff.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_373_sponza_373_vase.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/vase.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/vase_dif.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_344_sponza_344_vase_hanging.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/vase_hanging.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/vase_hanging.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Mesh:Meshes/LargeFIles/SponzaOptimized/sponza_369_sponza_369_vase_round.mesh has been deserialized!
+[Mon Jan  1 03:56:52 2024] Material:Meshes/LargeFIles/SponzaOptimized/vase_round.mat has been deserialized!
+[Mon Jan  1 03:56:52 2024] Texture:Meshes/LargeFIles/SponzaOptimized/textures/vase_round.tga has been loaded!
+[Mon Jan  1 03:56:52 2024] Create Transform
+[Mon Jan  1 03:56:52 2024] Scene:D:/Pengine/SandBox/Scenes/Default.scene has been deserialized!
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform
+[Mon Jan  1 03:57:33 2024] Destroy Transform

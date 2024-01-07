@@ -8,67 +8,72 @@ namespace Pengine
 
 		inline const char* BaseMat()
 		{
-			return "basemat";
+			return ".basemat";
 		}
 
 		inline const char* Mat()
 		{
-			return "mat";
+			return ".mat";
 		}
 
 		inline const char* Png()
 		{
-			return "png";
+			return ".png";
 		}
 
 		inline const char* Jpeg()
 		{
-			return "jpeg";
+			return ".jpeg";
 		}
 
 		inline const char* Jpg()
 		{
-			return "jpg";
+			return ".jpg";
 		}
 
 		inline const char* Dds()
 		{
-			return "dds";
+			return ".dds";
 		}
 
 		inline const char* Obj()
 		{
-			return "obj";
+			return ".obj";
 		}
 
 		inline const char* Gltf()
 		{
-			return "gltf";
+			return ".gltf";
 		}
 
 		inline const char* Fbx()
 		{
-			return "fbx";
+			return ".fbx";
 		}
 
 		inline const char* Mesh()
 		{
-			return "mesh";
+			return ".mesh";
 		}
 
 		inline const char* Meta()
 		{
-			return "meta";
+			return ".meta";
 		}
 
 		inline const char* Spv()
 		{
-			return "spv";
+			return ".spv";
 		}
 
 		inline const char* Prefab()
 		{
-			return "prefab";
+			return ".prefab";
+		}
+
+		inline const char* Scene()
+		{
+			return ".scene";
 		}
 
 		inline bool IsTexture(const std::string& fileFormat)

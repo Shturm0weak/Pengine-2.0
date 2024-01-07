@@ -1,8 +1,5 @@
 #include "Camera.h"
 
-#include "Window.h"
-#include "Viewport.h"
-#include "Logger.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 #include "../EventSystem/ResizeEvent.h"
@@ -12,26 +9,51 @@ using namespace Pengine;
 
 void Camera::Copy(const Camera& camera)
 {
-	m_ProjectionMat4 = camera.m_ProjectionMat4;
-	m_ViewProjectionMat4 = camera.m_ViewProjectionMat4;
-	m_Fov = camera.m_Fov;
-	m_Type = camera.m_Type;
-	m_Transform = camera.m_Transform;
+	m_ViewMat4 = camera.GetViewMat4();
+	m_ProjectionMat4 = camera.GetProjectionMat4();
+	m_ViewProjectionMat4 = camera.GetViewProjectionMat4();
+	m_Viewport = camera.GetViewport();
+	m_Fov = camera.GetFov();
+	m_Type = camera.GetType();
+	m_Zfar = camera.GetZFar();
+	m_Znear = camera.GetZNear();
+	m_Size = camera.GetSize();
+}
+
+void Camera::Move(Camera&& camera) noexcept
+{
+	m_ViewMat4 = std::move(camera.m_ViewMat4);
+	m_ProjectionMat4 = std::move(camera.m_ProjectionMat4);
+	m_ViewProjectionMat4 = std::move(camera.m_ViewProjectionMat4);
+	m_Fov = camera.GetFov();
+	m_Type = camera.GetType();
+	m_Zfar = camera.GetZFar();
+	m_Znear = camera.GetZNear();
+	m_Size = camera.GetSize();
 }
 
 void Camera::UpdateViewProjection()
 {
-	m_ViewMat4 = glm::inverse(m_Transform.GetTransform());
+	if (m_Entity && m_Entity->HasComponent<Transform>())
+	{
+		m_ViewMat4 = glm::inverse(m_Entity->GetComponent<Transform>().GetTransform());
+	}
 	m_ViewProjectionMat4 = m_ProjectionMat4 * m_ViewMat4;
 }
 
-Camera::Camera()
+Camera::Camera(std::shared_ptr<Entity> entity)
+	: m_Entity(entity)
 {
 	m_Renderer = Renderer::Create(m_Size);
 
-	m_Transform.SetOnRotationCallback("Camera", std::bind(&Camera::UpdateViewProjection, this));
-	m_Transform.SetOnTranslationCallback("Camera", std::bind(&Camera::UpdateViewProjection, this));
-	SetType(CameraType::ORTHOGRAPHIC);
+	if (m_Entity && m_Entity->HasComponent<Transform>())
+	{
+		Transform& transform = m_Entity->GetComponent<Transform>();
+		transform.SetOnRotationCallback("Camera", std::bind(&Camera::UpdateViewProjection, this));
+		transform.SetOnTranslationCallback("Camera", std::bind(&Camera::UpdateViewProjection, this));
+	}
+
+	SetType(Type::PERSPECTIVE);
 }
 
 Camera::Camera(const Camera& camera)
@@ -39,9 +61,19 @@ Camera::Camera(const Camera& camera)
 	Copy(camera);
 }
 
+Camera::Camera(Camera&& camera) noexcept
+{
+	Move(std::move(camera));
+}
+
 void Camera::operator=(const Camera& camera)
 {
 	Copy(camera);
+}
+
+void Camera::operator=(Camera&& camera) noexcept
+{
+	Move(std::move(camera));
 }
 
 void Camera::SetSize(const glm::vec2& size)
@@ -96,7 +128,7 @@ void Camera::SetPerspective(const glm::ivec2& size)
 	UpdateViewProjection();
 }
 
-void Camera::SetType(CameraType type)
+void Camera::SetType(Type type)
 {
 	m_Type = type;
 
@@ -107,12 +139,12 @@ void Camera::UpdateProjection()
 {
 	switch (m_Type)
 	{
-	case CameraType::PERSPECTIVE:
+	case Type::PERSPECTIVE:
 	{
 		SetPerspective(m_Size);
 		break;
 	}
-	case CameraType::ORTHOGRAPHIC:
+	case Type::ORTHOGRAPHIC:
 	default:
 	{
 		SetOrthographic(m_Size);

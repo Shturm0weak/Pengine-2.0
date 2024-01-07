@@ -7,9 +7,12 @@
 #include "RenderPassManager.h"
 #include "TextureManager.h"
 #include "SceneManager.h"
+#include "ViewportManager.h"
 
+#include "../Components/Camera.h"
 #include "../Components/Transform.h"
 #include "../Components/Renderer3D.h"
+#include "../Components/PointLight.h"
 
 #include "../Utils/Utils.h"
 
@@ -369,7 +372,7 @@ void Serializer::GenerateFilesUUID(const std::filesystem::path& directory)
 	{
 		if (!entry.is_directory())
 		{
-			const std::string filepath = entry.path().string();
+			const std::string filepath = Utils::GetShortFilepath(entry.path().string());
 			const std::string metaFilepath = filepath + ".meta";
 
 			if (!Utils::FindUuid(filepath).empty())
@@ -419,9 +422,7 @@ void Serializer::GenerateFilesUUID(const std::filesystem::path& directory)
 
 const std::string Serializer::GenerateFileUUID(const std::string& filepath)
 {
-	std::string fullFilepath = Utils::GetFullFilepath(filepath);
-
-	UUID uuid = Utils::FindUuid(fullFilepath);
+	UUID uuid = Utils::FindUuid(filepath);
 	if (!uuid.Get().empty())
 	{
 		return uuid;
@@ -436,12 +437,12 @@ const std::string Serializer::GenerateFileUUID(const std::string& filepath)
 
 	out << YAML::EndMap;
 
-	std::ofstream fout(fullFilepath + ".meta");
+	std::ofstream fout(filepath + ".meta");
 	fout << out.c_str();
 	fout.close();
 
-	filepathByUuid[uuid] = fullFilepath;
-	uuidByFilepath[fullFilepath] = uuid;
+	filepathByUuid[uuid] = filepath;
+	uuidByFilepath[filepath] = uuid;
 
 	return uuid;
 }
@@ -924,7 +925,7 @@ void Serializer::SerializeMesh(const std::string& directory, std::shared_ptr<Mes
 		offset += mesh->GetIndexCount() * sizeof(uint32_t);
 	}
 
-	const std::string outMeshFilepath = directory + "/" + meshName + "." + FileFormats::Mesh();
+	const std::string outMeshFilepath = directory + "/" + meshName + FileFormats::Mesh();
 	std::ofstream out(outMeshFilepath, std::ostream::binary);
 
 	out.write(data, dataSize);
@@ -1013,7 +1014,7 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::string& filepath)
 void Serializer::SerializeShaderCache(std::string filepath, const std::string& code)
 {
 	const char* directory = "Shaders/Cache/";
-	filepath = directory + Utils::RemoveDirectoryFromFilePath(filepath) + "." + FileFormats::Spv();
+	filepath = directory + Utils::EraseDirectoryFromFilePath(filepath) + FileFormats::Spv();
 	std::ofstream out(filepath, std::ostream::binary);
 	out.write(code.data(), code.size());
 	out.close();
@@ -1027,7 +1028,7 @@ std::string Serializer::DeserializeShaderCache(std::string filepath)
 	}
 
 	const char* directory = "Shaders/Cache/";
-	filepath = directory + Utils::RemoveDirectoryFromFilePath(filepath) + "." + FileFormats::Spv();
+	filepath = directory + Utils::EraseDirectoryFromFilePath(filepath) + FileFormats::Spv();
 	if (std::filesystem::exists(filepath))
 	{
 		std::ifstream in(filepath, std::ifstream::binary);
@@ -1084,12 +1085,12 @@ Serializer::LoadIntermediate(const std::string& filepath)
 
 	SceneManager::GetInstance().Create("GenerateGameObject", "GenerateGameObject");
 
-	GameObject* root = GenerateGameObject(scene->mRootNode, meshesByIndex, materialsByMeshes);
+	std::shared_ptr<Entity> root = GenerateEntity(scene->mRootNode, meshesByIndex, materialsByMeshes);
 
 	// Consider that only a hierarchy of game objects can be serilized as a prefab.
 	if (root->GetChilds().size() > 0)
 	{
-		SerializePrefab(directory + "/" + root->GetName() + "." + FileFormats::Prefab(), root);
+		SerializePrefab(directory + "/" + root->GetName() + FileFormats::Prefab(), root);
 	}
 
 	SceneManager::GetInstance().Delete("GenerateGameObject");
@@ -1104,13 +1105,13 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::string
 
 	std::string defaultMeshName = aiMesh->mName.C_Str();
 	std::string meshName = defaultMeshName;
-	std::string meshFilepath = directory + "/" + meshName + "." + FileFormats::Mesh();
+	std::string meshFilepath = directory + "/" + meshName + FileFormats::Mesh();
 
 	int containIndex = 0;
 	while (MeshManager::GetInstance().GetMesh(meshFilepath))
 	{
 		meshName = defaultMeshName + "_" + std::to_string(containIndex);
-		meshFilepath = directory + "/" + meshName + "." + FileFormats::Mesh();
+		meshFilepath = directory + "/" + meshName + FileFormats::Mesh();
 		containIndex++;
 	}
 
@@ -1291,7 +1292,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(aiMaterial* aiMaterial, c
 	return material;
 }
 
-GameObject* Serializer::GenerateGameObject(aiNode* assimpNode,
+std::shared_ptr<Entity> Serializer::GenerateEntity(aiNode* assimpNode,
 	const std::unordered_map<size_t, std::shared_ptr<Mesh>>& meshesByIndex,
 	const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes)
 {
@@ -1301,12 +1302,13 @@ GameObject* Serializer::GenerateGameObject(aiNode* assimpNode,
 	}
 
 	std::shared_ptr<Scene> scene = SceneManager::GetInstance().GetSceneByTag("GenerateGameObject");
-	GameObject* node = scene->CreateGameObject(assimpNode->mName.C_Str());
+	std::shared_ptr<Entity> node = scene->CreateEntity(assimpNode->mName.C_Str());
+	Transform& nodeTransform = node->AddComponent<Transform>(node);
 
 	Renderer3D* r3d = nullptr;
 	if (assimpNode->mNumMeshes > 0)
 	{
-		r3d = node->m_ComponentManager.AddComponent<Renderer3D>();
+		r3d = &node->AddComponent<Renderer3D>();
 	}
 
 	for (size_t meshIndex = 0; meshIndex < assimpNode->mNumMeshes; meshIndex++)
@@ -1322,7 +1324,7 @@ GameObject* Serializer::GenerateGameObject(aiNode* assimpNode,
 	for (size_t childIndex = 0; childIndex < assimpNode->mNumChildren; childIndex++)
 	{
 		aiNode* child = assimpNode->mChildren[childIndex];
-		node->AddChild(GenerateGameObject(child, meshesByIndex, materialsByMeshes));
+		node->AddChild(GenerateEntity(child, meshesByIndex, materialsByMeshes));
 	}
 
 	aiVector3D aiPosition;
@@ -1334,47 +1336,96 @@ GameObject* Serializer::GenerateGameObject(aiNode* assimpNode,
 	glm::vec3 rotation = { aiRotation.x, aiRotation.y, aiRotation.z };
 	glm::vec3 scale = { aiScale.x, aiScale.y, aiScale.z };
 
-	node->m_Transform.Translate(position);
-	node->m_Transform.Rotate(rotation);
-	node->m_Transform.Scale(scale);
+	nodeTransform.Translate(position);
+	nodeTransform.Rotate(rotation);
+	nodeTransform.Scale(scale);
 
 	return node;
 }
 
-void Serializer::SerializeGameObject(YAML::Emitter& out, GameObject* gameObject)
+void Serializer::SerializeEntity(YAML::Emitter& out, std::shared_ptr<Entity> entity, bool withChilds)
 {
+	if (!entity)
+	{
+		return;
+	}
+
 	out << YAML::BeginMap;
 
-	out << YAML::Key << "UUID" << YAML::Value << gameObject->GetUUID();
-	out << YAML::Key << "Name" << YAML::Value << gameObject->GetName();
-	out << YAML::Key << "IsEnabled" << YAML::Value << gameObject->IsEnabled();
-
-	SerializeTransform(out, &gameObject->m_Transform);
-	SerializeRenderer3D(out, gameObject->m_ComponentManager.GetComponent<Renderer3D>());
+	out << YAML::Key << "UUID" << YAML::Value << entity->GetUUID();
+	out << YAML::Key << "Name" << YAML::Value << entity->GetName();
+	out << YAML::Key << "IsEnabled" << YAML::Value << entity->IsEnabled();
 
 	std::vector<std::string> childUUIDs;
-	for (GameObject* child : gameObject->GetChilds())
+	for (std::shared_ptr<Entity> child : entity->GetChilds())
 	{
 		childUUIDs.emplace_back(child->GetUUID());
 	}
 
 	out << YAML::Key << "Childs" << YAML::Value << childUUIDs;
 
+	SerializeTransform(out, entity);
+	SerializeCamera(out, entity);
+	SerializeRenderer3D(out, entity);
+	SerializePointLight(out, entity);
+
 	out << YAML::EndMap;
 
-	for (GameObject* child : gameObject->GetChilds())
+	if (!withChilds)
 	{
-		SerializeGameObject(out, child);
+		return;
+	}
+
+	for (std::shared_ptr<Entity> child : entity->GetChilds())
+	{
+		SerializeEntity(out, child);
 	}
 }
 
-void Serializer::SerializePrefab(const std::string& filepath, GameObject* gameObject)
+std::shared_ptr<Entity> Serializer::DeserializeEntity(
+	const YAML::Node& in,
+	std::shared_ptr<Scene> scene,
+	std::vector<std::string>& childs)
+{
+	UUID uuid;
+	if (const auto& uuidData = in["UUID"])
+	{
+		uuid = uuidData.as<std::string>();
+	}
+
+	std::string name;
+	if (const auto& nameData = in["Name"])
+	{
+		name = nameData.as<std::string>();
+	}
+
+	std::shared_ptr<Entity> entity = scene->CreateEntity(name, uuid);
+
+	if (const auto& isEnabledData = in["IsEnabled"])
+	{
+		entity->SetEnabled(isEnabledData.as<bool>());
+	}
+
+	for (const auto& childsData : in["Childs"])
+	{
+		childs.emplace_back(childsData.as<std::string>());
+	}
+
+	DeserializeTransform(in, entity);
+	DeserializeCamera(in, entity);
+	DeserializeRenderer3D(in, entity);
+	DeserializePointLight(in, entity);
+
+	return entity;
+}
+
+void Serializer::SerializePrefab(const std::string& filepath, std::shared_ptr<Entity> entity)
 {
 	YAML::Emitter out;
 
 	out << YAML::BeginSeq;
 
-	SerializeGameObject(out, gameObject);
+	SerializeEntity(out, entity);
 
 	out << YAML::EndSeq;
 
@@ -1383,11 +1434,303 @@ void Serializer::SerializePrefab(const std::string& filepath, GameObject* gameOb
 	fout.close();
 }
 
-GameObject* Serializer::DeserializePrefab(const std::string& filepath, std::shared_ptr<Scene> scene)
+void Serializer::DeserializePrefab(const std::string& filepath, std::shared_ptr<Scene> scene)
 {
 	if (filepath.empty() || filepath == none || Utils::GetFileFormat(filepath) != FileFormats::Prefab())
 	{
 		Logger::Error(filepath + ":Failed to load prefab! Filepath is incorrect!");
+		return;
+	}
+
+	std::ifstream stream(filepath);
+	std::stringstream stringStream;
+
+	stringStream << stream.rdbuf();
+
+	stream.close();
+
+	YAML::Node data = YAML::LoadMesh(stringStream.str());
+	if (!data)
+	{
+		FATAL_ERROR(filepath + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!")
+	}
+
+	std::unordered_map<std::shared_ptr<Entity>, std::vector<std::string>> childsUUIDByEntity;
+	for (const auto& entitiyData : data)
+	{
+		std::vector<std::string> childs;
+		std::shared_ptr<Entity> entity = DeserializeEntity(entitiyData, scene, childs);
+		childsUUIDByEntity[entity] = std::move(childs);
+	}
+
+	for (const auto& [entity, childsUUID] : childsUUIDByEntity)
+	{
+		for (const auto& childUUID : childsUUID)
+		{
+			if (std::shared_ptr<Entity> child = scene->FindEntityByUUID(childUUID))
+			{
+				entity->AddChild(child);
+			}
+			else
+			{
+				FATAL_ERROR("Child entity is not valid!")
+			}
+		}
+	}
+
+	Logger::Log("Prefab:" + filepath + " has been deserialized!", GREEN);
+
+	return;
+}
+
+void Serializer::SerializeTransform(YAML::Emitter& out, std::shared_ptr<Entity> entity)
+{
+	if (!entity->HasComponent<Transform>())
+	{
+		return;
+	}
+
+	Transform& transform = entity->GetComponent<Transform>();
+
+	out << YAML::Key << "Transform";
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "Position" << YAML::Value << transform.GetPosition();
+	out << YAML::Key << "Rotation" << YAML::Value << transform.GetRotation();
+	out << YAML::Key << "Scale" << YAML::Value << transform.GetScale();
+	out << YAML::Key << "FollowOwner" << YAML::Value << transform.GetFollorOwner();
+
+	out << YAML::EndMap;
+}
+
+void Serializer::DeserializeTransform(const YAML::Node& in, std::shared_ptr<Entity> entity)
+{
+	if (const auto& transformData = in["Transform"])
+	{
+		if (!entity->HasComponent<Transform>())
+		{
+			entity->AddComponent<Transform>(entity);
+		}
+
+		Transform& transform = entity->GetComponent<Transform>();
+
+		if (const auto& positionData = transformData["Position"])
+		{
+			transform.Translate(positionData.as<glm::vec3>());
+		}
+
+		if (const auto& rotationData = transformData["Rotation"])
+		{
+			transform.Rotate(rotationData.as<glm::vec3>());
+		}
+
+		if (const auto& scaleData = transformData["Scale"])
+		{
+			transform.Scale(scaleData.as<glm::vec3>());
+		}
+
+		if (const auto& follorOwnerData = transformData["FollowOwner"])
+		{
+			transform.SetFollowOwner(follorOwnerData.as<bool>());
+		}
+	}
+}
+
+void Serializer::SerializeRenderer3D(YAML::Emitter& out, std::shared_ptr<Entity> entity)
+{
+	if (!entity->HasComponent<Renderer3D>())
+	{
+		return;
+	}
+
+	Renderer3D& r3d = entity->GetComponent<Renderer3D>();
+
+	out << YAML::Key << "Renderer3D";
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "Mesh" << YAML::Value << Utils::FindUuid(r3d.mesh->GetFilepath());
+	out << YAML::Key << "Material" << YAML::Value << Utils::FindUuid(r3d.material->GetFilepath());
+
+	out << YAML::EndMap;
+}
+
+void Serializer::DeserializeRenderer3D(const YAML::Node& in, std::shared_ptr<Entity> entity)
+{
+	if (const auto& renderer3DData = in["Renderer3D"])
+	{
+		if (!entity->HasComponent<Renderer3D>())
+		{
+			entity->AddComponent<Renderer3D>();
+		}
+
+		Renderer3D& r3d = entity->GetComponent<Renderer3D>();
+
+		if (const auto& meshData = renderer3DData["Mesh"])
+		{
+			std::string uuid = meshData.as<std::string>();
+			std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().LoadMesh(Utils::GetShortFilepath(Utils::Find(uuid, filepathByUuid)));
+			r3d.mesh = mesh;
+		}
+
+		if (const auto& materialData = renderer3DData["Material"])
+		{
+			std::string uuid = materialData.as<std::string>();
+			std::shared_ptr<Material> material = MaterialManager::GetInstance().LoadMaterial(Utils::GetShortFilepath(Utils::Find(uuid, filepathByUuid)));
+			r3d.material = material;
+		}
+	}
+}
+
+void Serializer::SerializePointLight(YAML::Emitter& out, std::shared_ptr<Entity> entity)
+{
+	if (!entity->HasComponent<PointLight>())
+	{
+		return;
+	}
+
+	PointLight& pointLight = entity->GetComponent<PointLight>();
+
+	out << YAML::Key << "PointLight";
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "Color" << YAML::Value << pointLight.color;
+	out << YAML::Key << "Constant" << YAML::Value << pointLight.constant;
+	out << YAML::Key << "Quadratic" << YAML::Value << pointLight.quadratic;
+	out << YAML::Key << "Linear" << YAML::Value << pointLight.linear;
+
+	out << YAML::EndMap;
+}
+
+void Serializer::DeserializePointLight(const YAML::Node& in, std::shared_ptr<Entity> entity)
+{
+	if (const auto& pointLightData = in["PointLight"])
+	{
+		if (!entity->HasComponent<PointLight>())
+		{
+			entity->AddComponent<PointLight>();
+		}
+
+		PointLight& pointLight = entity->GetComponent<PointLight>();
+
+		if (const auto& colorData = pointLightData["Color"])
+		{
+			pointLight.color = colorData.as<glm::vec3>();
+		}
+
+		if (const auto& constantData = pointLightData["Constant"])
+		{
+			pointLight.constant = constantData.as<float>();
+		}
+
+		if (const auto& quadraticData = pointLightData["Quadratic"])
+		{
+			pointLight.quadratic = quadraticData.as<float>();
+		}
+
+		if (const auto& linearData = pointLightData["Linear"])
+		{
+			pointLight.linear = linearData.as<float>();
+		}
+	}
+}
+
+void Serializer::SerializeCamera(YAML::Emitter& out, std::shared_ptr<Entity> entity)
+{
+	if (!entity->HasComponent<Camera>())
+	{
+		return;
+	}
+
+	Camera& camera = entity->GetComponent<Camera>();
+
+	out << YAML::Key << "Camera";
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "Fov" << YAML::Value << camera.GetFov();
+	out << YAML::Key << "Type" << YAML::Value << (int)camera.GetType();
+	out << YAML::Key << "ZNear" << YAML::Value << camera.GetZNear();
+	out << YAML::Key << "ZFar" << YAML::Value << camera.GetZFar();
+	out << YAML::Key << "Viewport" << YAML::Value << camera.GetViewport();
+
+	out << YAML::EndMap;
+}
+
+void Serializer::DeserializeCamera(const YAML::Node& in, std::shared_ptr<Entity> entity)
+{
+	if (const auto& cameraData = in["Camera"])
+	{
+		if (!entity->HasComponent<Camera>())
+		{
+			entity->AddComponent<Camera>(entity);
+		}
+
+		Camera& camera = entity->GetComponent<Camera>();
+
+		if (const auto& fovData = cameraData["Fov"])
+		{
+			camera.SetFov(fovData.as<float>());
+		}
+
+		if (const auto& typeData = cameraData["Type"])
+		{
+			camera.SetType(Camera::Type(typeData.as<int>()));
+		}
+
+		if (const auto& zNearData = cameraData["ZNear"])
+		{
+			camera.SetZNear(zNearData.as<float>());
+		}
+
+		if (const auto& zFarData = cameraData["ZFar"])
+		{
+			camera.SetZFar(zFarData.as<float>());
+		}
+
+		if (const auto& viewportData = cameraData["Viewport"])
+		{
+			if (std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport(viewportData.as<std::string>()))
+			{
+				viewport->SetCamera(entity);
+			}
+		}
+	}
+}
+
+void Serializer::SerializeScene(const std::string& filepath, std::shared_ptr<Scene> scene)
+{
+	if (!scene)
+	{
+		Logger::Error("Failed to serialize a scene, the scene is invalid!");
+		return;
+	}
+
+	YAML::Emitter out;
+
+	out << YAML::BeginSeq;
+
+	for (const auto& entity : scene->GetEntities())
+	{
+		SerializeEntity(out, entity, false);
+	}
+
+	out << YAML::EndSeq;
+
+	std::ofstream fout(filepath);
+	fout << out.c_str();
+	fout.close();
+
+	Logger::Log("Scene:" + filepath + " has been serialized!", GREEN);
+}
+
+std::shared_ptr<Scene> Serializer::DeserializeScene(const std::string& filepath)
+{
+	if (filepath.empty() || filepath == none || Utils::GetFileFormat(filepath) != FileFormats::Scene())
+	{
+		Logger::Error(filepath + ":Failed to load scene! Filepath is incorrect!");
 		return nullptr;
 	}
 
@@ -1404,141 +1747,35 @@ GameObject* Serializer::DeserializePrefab(const std::string& filepath, std::shar
 		FATAL_ERROR(filepath + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!")
 	}
 
-	std::unordered_map<GameObject*, std::vector<std::string>> childsByGameObject;
-	for (const auto& gameObjectData : data)
+	std::shared_ptr<Scene> scene = SceneManager::GetInstance().Create(
+		Utils::EraseFileFormat(Utils::EraseDirectoryFromFilePath(filepath)),
+		"Main");
+	scene->SetFilepath(filepath);
+
+	std::unordered_map<std::shared_ptr<Entity>, std::vector<std::string>> childsUUIDByEntity;
+	for (const auto& entityData : data)
 	{
-		UUID uuid;
-		if (const auto& uuidData = gameObjectData["UUID"])
+		std::vector<std::string> childs;
+		std::shared_ptr<Entity> entity = DeserializeEntity(entityData, scene, childs);
+		childsUUIDByEntity[entity] = std::move(childs);
+	}
+
+	for (const auto& [entity, childsUUID] : childsUUIDByEntity)
+	{
+		for (const auto& childUUID : childsUUID)
 		{
-			uuid = uuidData.as<std::string>();
-		}
-
-		std::string name;
-		if (const auto& nameData = gameObjectData["Name"])
-		{
-			name = nameData.as<std::string>();
-		}
-
-		GameObject* gameObject = scene->CreateGameObject(name, {}, uuid);
-
-		if (const auto& isEnabledData = gameObjectData["IsEnabled"])
-		{
-			gameObject->SetEnabled(isEnabledData.as<bool>());
-		}
-
-		DeserializeTransform(gameObjectData, &gameObject->m_Transform);
-		DeserializeRenderer3D(gameObjectData, gameObject);
-
-		auto& childUuids = childsByGameObject[gameObject];
-		for (const auto& childData : gameObjectData["Childs"])
-		{
-			childUuids.emplace_back(childData.as<std::string>());
+			if (std::shared_ptr<Entity> child = scene->FindEntityByUUID(childUUID))
+			{
+				entity->AddChild(child);
+			}
+			else
+			{
+				FATAL_ERROR("Child entity is not valid!")
+			}
 		}
 	}
 
-	for (const auto& [gameObject, childs] : childsByGameObject)
-	{
-		for (const auto& child : childs)
-		{
-			gameObject->AddChild(scene->FindGameObjectByUUID(child));
-		}
-	}
+	Logger::Log("Scene:" + filepath + " has been deserialized!", GREEN);
 
-	Logger::Log("Meshes:" + filepath + " has been deserialized!", GREEN);
-
-	return nullptr;
-}
-
-void Serializer::SerializeTransform(YAML::Emitter& out, Transform* transform)
-{
-	if (!transform)
-	{
-		return;
-	}
-
-	out << YAML::Key << "Transform";
-
-	out << YAML::BeginMap;
-
-	out << YAML::Key << "Position" << YAML::Value << transform->GetPosition();
-	out << YAML::Key << "Rotation" << YAML::Value << transform->GetRotation();
-	out << YAML::Key << "Scale" << YAML::Value << transform->GetScale();
-	out << YAML::Key << "FollowOwner" << YAML::Value << transform->GetFollorOwner();
-
-	out << YAML::EndMap;
-}
-
-void Serializer::DeserializeTransform(const YAML::Node& in, Transform* transform)
-{
-	if (!transform)
-	{
-		return;
-	}
-
-	if (const auto& transformData = in["Transform"])
-	{
-		if (const auto& positionData = transformData["Position"])
-		{
-			transform->Translate(positionData.as<glm::vec3>());
-		}
-
-		if (const auto& rotationData = transformData["Rotation"])
-		{
-			transform->Rotate(rotationData.as<glm::vec3>());
-		}
-
-		if (const auto& scaleData = transformData["Scale"])
-		{
-			transform->Scale(scaleData.as<glm::vec3>());
-		}
-
-		if (const auto& follorOwnerData = transformData["FollowOwner"])
-		{
-			transform->SetFollowOwner(follorOwnerData.as<bool>());
-		}
-	}
-}
-
-void Serializer::SerializeRenderer3D(YAML::Emitter& out, Renderer3D* r3d)
-{
-	if (!r3d)
-	{
-		return;
-	}
-
-	out << YAML::Key << "Renderer3D";
-
-	out << YAML::BeginMap;
-
-	out << YAML::Key << "Mesh" << YAML::Value << Utils::FindUuid(r3d->mesh->GetFilepath());
-	out << YAML::Key << "Material" << YAML::Value << Utils::FindUuid(r3d->material->GetFilepath());
-
-	out << YAML::EndMap;
-}
-
-void Serializer::DeserializeRenderer3D(const YAML::Node& in, GameObject* gameObject)
-{
-	if (!gameObject)
-	{
-		return;
-	}
-
-	if (const auto& renderer3DData = in["Renderer3D"])
-	{
-		Renderer3D* r3d = gameObject->m_ComponentManager.AddComponent<Renderer3D>();
-
-		if (const auto& meshData = renderer3DData["Mesh"])
-		{
-			std::string uuid = meshData.as<std::string>();
-			std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().LoadMesh(Utils::GetShortFilepath(Utils::Find(uuid, filepathByUuid)));
-			r3d->mesh = mesh;
-		}
-
-		if (const auto& materialData = renderer3DData["Material"])
-		{
-			std::string uuid = materialData.as<std::string>();
-			std::shared_ptr<Material> material = MaterialManager::GetInstance().LoadMaterial(Utils::GetShortFilepath(Utils::Find(uuid, filepathByUuid)));
-			r3d->material = material;
-		}
-	}
+	return scene;
 }

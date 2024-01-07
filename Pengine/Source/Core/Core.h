@@ -98,11 +98,3 @@ namespace Pengine
 		inline uint32_t swapChainImageIndex = 0;
 	}
 }
-
-class ComponentC
-{
-public:
-	virtual ComponentC* CreateCopy(entt::entity handle) = 0;
-
-	std::string validation = "CreateCopy";
-};

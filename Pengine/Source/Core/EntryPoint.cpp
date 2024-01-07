@@ -1,8 +1,6 @@
 #include "EntryPoint.h"
 
-#include "Camera.h"
 #include "Scene.h"
-#include "GameObject.h"
 #include "Input.h"
 #include "Logger.h"
 #include "MaterialManager.h"
@@ -15,11 +13,10 @@
 #include "ViewportManager.h"
 #include "WindowManager.h"
 
+#include "../Components/Camera.h"
 #include "../EventSystem/EventSystem.h"
 #include "../Graphics/Renderer.h"
 #include "../Editor/Editor.h"
-
-#include "Entity.h"
 
 using namespace Pengine;
 
@@ -74,7 +71,16 @@ void EntryPoint::Run()
 			window->ImGuiBegin();
 			for (const auto& viewport : ViewportManager::GetInstance().GetViewports())
 			{
-				viewport.second->Update(viewport.second->GetCamera()->GetRenderer()->GetRenderPassFrameBuffer(Deferred)->GetAttachment(0));
+				std::shared_ptr<Entity> camera = viewport.second->GetCamera();
+				if (camera && camera->HasComponent<Camera>())
+				{
+					viewport.second->Update(
+						camera->GetComponent<Camera>().GetRenderer()->GetRenderPassFrameBuffer(Deferred)->GetAttachment(0));
+				}
+				else
+				{
+					viewport.second->Update(TextureManager::GetInstance().GetWhite());
+				}
 			}
 
 			editor.Update(SceneManager::GetInstance().GetSceneByTag("Main"));
@@ -85,7 +91,22 @@ void EntryPoint::Run()
 			{
 				for (const auto& viewport : ViewportManager::GetInstance().GetViewports())
 				{
-					viewport.second->GetCamera()->GetRenderer()->Update(frame, window, viewport.second->GetCamera());
+					if (std::shared_ptr<Entity> camera = viewport.second->GetCamera())
+					{
+						if (camera->HasComponent<Camera>())
+						{
+							Camera& cameraComponent = camera->GetComponent<Camera>();
+							cameraComponent.GetRenderer()->Update(
+								frame,
+								window,
+								camera->GetScene(),
+								camera);
+						}
+						else
+						{
+							viewport.second->SetCamera({});
+						}
+					}
 				}
 
 				window->ImGuiRenderPass(frame);

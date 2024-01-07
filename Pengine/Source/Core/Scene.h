@@ -2,64 +2,32 @@
 
 #include "Core.h"
 #include "Asset.h"
-#include "GameObject.h"
 #include "Entity.h"
-
-#include "../Components/GameObjectC.h"
 
 namespace Pengine
 {
 
-	class PENGINE_API Scene : public Asset
+	class PENGINE_API Scene : public Asset, public std::enable_shared_from_this<Scene>
 	{
 	public:
 		Scene(const std::string& name, const std::string& filepath);
 		Scene(const Scene& scene);
+		~Scene();
 		void operator=(const Scene& scene);
 
-		GameObjectC& CreateGameObjectC(const std::string& name = "Unnamed",
-			const UUID& uuid = UUID());
+		std::shared_ptr<Entity> CreateEntity(const std::string& name = "Unnamed", const UUID& uuid = UUID());
 
+		void DeleteEntity(std::shared_ptr<Entity> entity);
 
+		std::shared_ptr<Entity> FindEntityByUUID(const std::string& uuid);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		GameObject* CreateGameObject(const std::string& name = "Unnamed",
-			const Transform& transform = Transform(), const UUID& uuid = UUID());
-
-		Entity CreateEntity();
-
-		void DeleteEntity(Entity& entity);
-
-		GameObject* FindGameObjectByName(const std::string& name);
-
-		std::vector<GameObject*> FindGameObjects(const std::string& name);
-
-		GameObject* FindGameObjectByUUID(const std::string& uuid);
-
-		void DeleteGameObject(GameObject* gameObject);
-
-		void DeleteGameObjectLater(GameObject* gameObject);
-
-		const std::vector<GameObject*>& GetGameObjects() const { return m_GameObjects; }
+		const std::vector<std::shared_ptr<Entity>>& GetEntities() const { return m_Entities; }
 
 		void Clear();
 
 		void SetTag(const std::string& tag) { m_Tag = tag; }
+
+		void SetFilepath(const std::string& filepath) { m_Filepath = filepath; }
 
 		std::string GetTag() const { return m_Tag; }
 
@@ -67,17 +35,14 @@ namespace Pengine
 
 		std::vector<class PointLight*> m_PointLights;
 	private:
-		std::unordered_map<std::string, GameObject*> m_GameObjectsByUUID;
-		std::vector<GameObject*> m_GameObjects;
+		std::unordered_map<std::string, std::shared_ptr<Entity>> m_EntitiesByUUID;
+		std::vector<std::shared_ptr<Entity>> m_Entities;
+		
+		entt::registry m_Registry;
 
 		std::string m_Tag = none;
 
-		std::unordered_set<Entity> m_Entities;
-		entt::registry m_Registry;
-
 		void Copy(const Scene& scene);
-
-		friend class GameObject;
 	};
 
 }

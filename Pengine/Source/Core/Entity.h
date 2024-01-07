@@ -7,18 +7,20 @@ namespace Pengine
 
 	class Scene;
 
-	class PENGINE_API Entity
+	class PENGINE_API Entity : public std::enable_shared_from_this<Entity>
 	{
 	public:
-		Entity() = default;
-		Entity(Scene* scene);
+		Entity(
+			std::shared_ptr<Scene> scene,
+			const std::string& name = "Unnamed",
+			const UUID& uuid = UUID());
 		Entity(const Entity& entity);
 		Entity(Entity&& entity) noexcept;
 		~Entity();
 
-		Scene& GetScene();
+		entt::registry& GetRegistry() const;
 
-		bool IsValid() const { return m_Handle != entt::tombstone; }
+		std::shared_ptr<Scene> GetScene() const;
 
 		entt::entity GetHandle() const { return m_Handle; }
 
@@ -28,35 +30,68 @@ namespace Pengine
 
 		void operator=(const Entity& entity);
 
+		void operator=(Entity&& entity) noexcept;
+
 		template<typename T, typename ...Args>
 		T& AddComponent(Args&&... args)
 		{
-			return m_Scene->GetRegistry().emplace<T>(m_Handle, std::forward<Args>(args)...);
+			return m_Registry->emplace<T>(m_Handle, std::forward<Args>(args)...);
 		}
 
 		template<typename T>
-		T& GetComponent()
+		T& GetComponent() const
 		{
-			return m_Scene->GetRegistry().get<T>(m_Handle);
+			return m_Registry->get<T>(m_Handle);
 		}
 
 		template<typename T>
-		bool HasComponent()
+		bool HasComponent() const
 		{
-			return m_Scene->GetRegistry().any_of<T>(m_Handle);
+			return m_Registry->any_of<T>(m_Handle);
 		}
 
 		template<typename T>
 		void RemoveComponent()
 		{
-			m_Scene->GetRegistry().remove<T>(m_Handle);
+			m_Registry->remove<T>(m_Handle);
 		}
 
-		Entity Clone();
+		bool HasParent() const { return m_Parent != nullptr && m_Handle != entt::tombstone; }
+
+		void SetParent(std::shared_ptr<Entity> parent) { m_Parent = parent; }
+
+		std::shared_ptr<Entity> GetParent() const { return m_Parent; }
+
+		void AddChild(std::shared_ptr<Entity> child);
+
+		void RemoveChild(std::shared_ptr<Entity> child);
+
+		const std::vector<std::shared_ptr<Entity>>& GetChilds() const { return m_Childs; }
+
+		const std::string& GetName() const { return m_Name; }
+
+		void SetName(const std::string name) { m_Name = name; }
+
+		const UUID& GetUUID() const { return m_UUID; }
+
+		bool IsEnabled() const { return m_IsEnabled; }
+
+		void SetEnabled(bool isEnabled) { m_IsEnabled = isEnabled; }
+
+	private:
+		void Copy(const Entity& entity);
+
+		void Move(Entity&& entity) noexcept;
 
 		entt::entity m_Handle{entt::tombstone};
+		std::shared_ptr<Entity> m_Parent;
+		std::vector<std::shared_ptr<Entity>> m_Childs;
+		std::shared_ptr<Scene> m_Scene;
+		entt::registry* m_Registry;
+		std::string m_Name;
+		UUID m_UUID;
 
-		Scene* m_Scene = nullptr;
+		bool m_IsEnabled = true;
 
 		friend class Scene;
 	};

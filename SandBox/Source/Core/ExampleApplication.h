@@ -4,7 +4,7 @@
 #include "Core/SceneManager.h"
 #include "Core/MaterialManager.h"
 #include "Core/ViewportManager.h"
-#include "Core/Camera.h"
+
 #include "Graphics/Mesh.h"
 
 class ExampleApplication : public Pengine::Application
