@@ -7,15 +7,23 @@
 #include "../Core/TextureManager.h"
 #include "../Core/Serializer.h"
 #include "../Core/Time.h"
+#include "../Core/ViewportManager.h"
+#include "../EventSystem/EventSystem.h"
+#include "../EventSystem/NextFrameEvent.h"
+#include "../EventSystem/ResizeEvent.h"
+#include "../Editor/ImGuizmo.h"
 
 using namespace Pengine;
 
 Editor::Editor()
 {
+	SetDarkThemeColors();
 }
 
 void Editor::Update(std::shared_ptr<Scene> scene)
 {
+	Manipulate();
+
 	Hierarchy(scene);
 	Properties(scene);
 	AssetBrowser();
@@ -526,12 +534,13 @@ void Editor::Hierarchy(std::shared_ptr<Scene> scene)
 {
 	if (ImGui::Begin("Hierarchy"))
 	{
-		GameObjectPopUpMenu(scene);
-
 		if (ImGui::CollapsingHeader("Game Objects"))
 		{
 			DrawScene(scene);
 		}
+
+		GameObjectPopUpMenu(scene);
+
 		ImGui::End();
 	}
 }
@@ -544,38 +553,34 @@ void Editor::DrawScene(std::shared_ptr<Scene> scene)
 	{
 		ImGui::TreePop();
 
-		const std::vector<GameObject*>& gameObjects = scene->GetGameObjects();
-		for (auto& gameObject : gameObjects)
+		const std::vector<std::shared_ptr<Entity>>& entities = scene->GetEntities();
+		for (std::shared_ptr<Entity> entity : entities)
 		{
-			if (gameObject->GetOwner())
+			if (entity->HasParent())
 			{
 				continue;
 			}
 
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-			flags |= m_SelectedGameObjects.count(gameObject->GetUUID()) ? 
+			flags |= m_SelectedEntities.count(entity->GetUUID()) ? 
 				ImGuiTreeNodeFlags_Selected : 0;
 			
-			DrawNode(gameObject, flags);
+			DrawNode(entity, flags);
 		}
 	}
 }
 
-void Editor::DrawNode(GameObject* gameObject, ImGuiTreeNodeFlags flags)
+void Editor::DrawNode(std::shared_ptr<Entity> entity, ImGuiTreeNodeFlags flags)
 {
-	if (!gameObject->IsEditorVisible())
-	{
-		return;
-	}
-	flags |= gameObject->GetChilds().size() == 0 ? ImGuiTreeNodeFlags_Leaf : 0;
+	flags |= entity->GetChilds().size() == 0 ? ImGuiTreeNodeFlags_Leaf : 0;
 
 	Indent indent;
 
-	ImGui::PushID(gameObject);
-	bool enabled = gameObject->IsEnabled();
+	ImGui::PushID(entity.get());
+	bool enabled = entity->IsEnabled();
 	if (ImGui::Checkbox("##IsEnabled", &enabled))
 	{
-		gameObject->SetEnabled(enabled);
+		entity->SetEnabled(enabled);
 	}
 	ImGui::PopID();
 
@@ -583,33 +588,32 @@ void Editor::DrawNode(GameObject* gameObject, ImGuiTreeNodeFlags flags)
 
 	ImGuiStyle* style = &ImGui::GetStyle();
 
-	const bool opened = ImGui::TreeNodeEx((void*)gameObject, flags, gameObject->GetName().c_str());
+	const bool opened = ImGui::TreeNodeEx((void*)entity.get(), flags, entity->GetName().c_str());
 	style->Colors[ImGuiCol_Text] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	if (ImGui::IsItemHovered() && Input::Mouse::IsMouseReleased(Keycode::MOUSE_BUTTON_1))
 	{
 		if (!Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL))
 		{
-			m_SelectedGameObjects.clear();
+			m_SelectedEntities.clear();
 		}
 		
-		m_SelectedGameObjects.emplace(gameObject->GetUUID());
+		m_SelectedEntities.emplace(entity->GetUUID());
 	}
 
 	if (opened)
 	{
 		ImGui::TreePop();
-		DrawChilds(gameObject);
+		DrawChilds(entity);
 	}
 }
 
-void Editor::DrawChilds(GameObject* gameObject)
+void Editor::DrawChilds(std::shared_ptr<Entity> entity)
 {
-	for (size_t childIndex = 0; childIndex < gameObject->GetChilds().size(); childIndex++)
+	for (std::shared_ptr<Entity> child : entity->GetChilds())
 	{
-		GameObject* child = gameObject->GetChilds()[childIndex];
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-		flags |= m_SelectedGameObjects.count(gameObject->GetUUID()) ?
+		flags |= m_SelectedEntities.count(child->GetUUID()) ?
 			ImGuiTreeNodeFlags_Selected : 0;
 
 		DrawNode(child, flags);
@@ -621,32 +625,38 @@ void Editor::Properties(std::shared_ptr<Scene> scene)
 {
 	if (ImGui::Begin("Properties"))
 	{
-		for (const std::string gameObjectUUID : m_SelectedGameObjects)
+		for (const std::string entityUUID : m_SelectedEntities)
 		{
-			GameObject* gameObject = scene->FindGameObjectByUUID(gameObjectUUID);
-			if (!gameObject)
+			std::shared_ptr<Entity> entity = scene->FindEntityByUUID(entityUUID);
+			if (!entity)
 			{
 				continue;
 			}
 
-			ComponentsPopUpMenu(gameObject);
-
-			ImGui::Text("UUID: %s", gameObject->GetUUID().c_str());
-
-			char name[64];
-			strcpy_s(name, gameObject->GetName().c_str());
-			if (ImGui::InputText("Name", name, sizeof(name)))
+			if (entity->HasParent())
 			{
-				gameObject->SetName(name);
+				ImGui::Text("Owner: %s", entity->GetParent()->GetName().c_str());
+			}
+			else
+			{
+				ImGui::Text("Owner: Null");
 			}
 
-			ImGui::Text("Owner: %s", gameObject->HasOwner() ? gameObject->GetOwner()->GetName().c_str() : "Null");
-			//ImGui::Checkbox("Is Serializable", &gameObject->m_IsSerializable);
-			//ImGui::Checkbox("Is Selectable", &gameObject->m_IsSelectable);
+			ImGui::Text("UUID: %s", entity->GetUUID().Get().c_str());
 
-			TransformComponent(gameObject->m_Transform);
-			Renderer3DComponent(gameObject->m_ComponentManager.GetComponent<Renderer3D>());
-			PointLightComponent(gameObject->m_ComponentManager.GetComponent<PointLight>());
+			char name[64];
+			strcpy_s(name, entity->GetName().c_str());
+			if (ImGui::InputText("Name", name, sizeof(name)))
+			{
+				entity->SetName(name);
+			}
+
+			ComponentsPopUpMenu(entity);
+
+			TransformComponent(entity);
+			CameraComponent(entity);
+			Renderer3DComponent(entity);
+			PointLightComponent(entity);
 
 			ImGui::NewLine();
 		}
@@ -654,8 +664,75 @@ void Editor::Properties(std::shared_ptr<Scene> scene)
 	}
 }
 
-void Editor::TransformComponent(Transform& transform)
+void Editor::CameraComponent(std::shared_ptr<Entity> entity)
 {
+	if (!entity->HasComponent<Camera>())
+	{
+		return;
+	}
+
+	Camera& camera = entity->GetComponent<Camera>();
+	
+	if (ImGui::Button("X"))
+	{
+		entity->RemoveComponent<Camera>();
+	}
+	ImGui::SameLine();
+	if (ImGui::CollapsingHeader("Camera"))
+	{
+		Indent indent;
+
+		int type = (int)camera.GetType();
+		const char* types[] = { "ORTHOGRAPHIC", "PERSPECTIVE" };
+		if (ImGui::Combo("Camera type", &type, types, 2))
+		{
+			camera.SetType(Camera::Type(type));
+		}
+
+		float fov = camera.GetFov();
+		if (ImGui::SliderAngle("FOV", &fov, 0.0f, 120.0f))
+		{
+			camera.SetFov(fov);
+		}
+
+		float zFar = camera.GetZFar();
+		if (ImGui::SliderFloat("Z Far", &zFar, 0.0f, 1000.0f))
+		{
+			camera.SetZFar(zFar);
+		}
+
+		float zNear = camera.GetZNear();
+		if (ImGui::SliderFloat("Z Near", &zNear, 0.0f, 10.0f))
+		{
+			camera.SetZNear(zNear);
+		}
+
+		std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport("Main");
+		if (viewport->GetCamera() == entity)
+		{
+			bool setToMainViewport = true;
+			ImGui::Checkbox("Set to main viewport", &setToMainViewport);
+		}
+		else
+		{
+			bool setToMainViewport = false;
+			if (ImGui::Checkbox("Set to main viewport", &setToMainViewport))
+			{
+				viewport->SetCamera(entity);
+			}
+		}
+	}
+}
+
+void Editor::TransformComponent(std::shared_ptr<Entity> entity)
+{
+	if (!entity->HasComponent<Transform>())
+	{
+		return;
+	}
+
+	Transform& transform = entity->GetComponent<Transform>();
+
 	if (ImGui::Button("O"))
 	{
 	}
@@ -664,7 +741,12 @@ void Editor::TransformComponent(Transform& transform)
 	{
 		Indent indent;
 
-		ImGui::Checkbox("Follow owner", &transform.m_FollowOwner);
+		bool followOwner = transform.GetFollorOwner();
+		if (ImGui::Checkbox("Follow owner", &followOwner))
+		{
+			transform.SetFollowOwner(followOwner);
+		}
+
 		glm::vec3 position = transform.GetPosition(Transform::System::LOCAL);
 		glm::vec3 rotation = glm::degrees(transform.GetRotation(Transform::System::LOCAL));
 		glm::vec3 scale = transform.GetScale(Transform::System::LOCAL);
@@ -681,37 +763,45 @@ void Editor::GameObjectPopUpMenu(std::shared_ptr<Scene> scene)
 {
 	if (ImGui::BeginPopupContextWindow())
 	{
-		if (ImGui::MenuItem("Create gameobject"))
+		if (ImGui::MenuItem("Create Gameobject"))
 		{
-			scene->CreateGameObject();
+			std::shared_ptr<Entity> entity = scene->CreateEntity();
+			entity->AddComponent<Transform>(entity);
 		}
 
-		if (!m_SelectedGameObjects.empty())
+		if (!m_SelectedEntities.empty())
 		{
-			if (ImGui::MenuItem("Delete selected"))
+			if (ImGui::MenuItem("Delete Selected"))
 			{
-				for (const std::string& gameObjectUUID : m_SelectedGameObjects)
+				for (const std::string& uuid : m_SelectedEntities)
 				{
-					if (GameObject* gameObject = scene->FindGameObjectByUUID(gameObjectUUID))
+					auto callback = [scene, uuid]()
 					{
-						scene->DeleteGameObject(gameObject);
-					}
+						if (std::shared_ptr<Entity> entity = scene->FindEntityByUUID(uuid))
+						{
+							for(std::shared_ptr<Entity> child : entity->GetChilds())
+							{
+								scene->DeleteEntity(child);
+							}
+							scene->DeleteEntity(entity);
+						}
+					};
+
+					NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+					EventSystem::GetInstance().SendEvent(event);
 				}
-				m_SelectedGameObjects.clear();
+				m_SelectedEntities.clear();
 			}
-			else if (ImGui::MenuItem("Duplicate selected"))
+		}
+
+		if (ImGui::MenuItem("Save Scene"))
+		{
+			std::string sceneFilepath = scene->GetFilepath();
+			if (sceneFilepath == none)
 			{
-				auto selected = m_SelectedGameObjects;
-				for (const std::string& gameObjectUUID : selected)
-				{
-					if (GameObject* gameObject = scene->FindGameObjectByUUID(gameObjectUUID))
-					{
-						GameObject* newGameObject = scene->CreateGameObject();
-						newGameObject->Copy(*gameObject);
-						m_SelectedGameObjects.emplace(newGameObject->GetUUID());
-					}
-				}
+				sceneFilepath = "Scenes/" + scene->GetName() + FileFormats::Scene();
 			}
+			Serializer::SerializeScene(sceneFilepath, scene);
 		}
 		
 		ImGui::EndPopup();
@@ -767,13 +857,13 @@ void Editor::AssetBrowser()
 				continue;
 			}
 
-			const std::string filename = Utils::RemoveDirectoryFromFilePath(path);
+			const std::string filename = Utils::EraseDirectoryFromFilePath(path);
 			const std::string format = Utils::GetFileFormat(path);
 			ImTextureID currentIcon;
 
 			if (FileFormats::IsAsset(format))
 			{
-				if (!std::filesystem::exists(path + "." + FileFormats::Meta()))
+				if (!std::filesystem::exists(path + FileFormats::Meta()))
 				{
 					Serializer::GenerateFileUUID(path);
 				}
@@ -863,40 +953,162 @@ void Editor::AssetBrowser()
 	}
 }
 
-void Editor::ComponentsPopUpMenu(GameObject* gameObject)
+void Editor::SetDarkThemeColors()
+{
+	auto& colors = ImGui::GetStyle().Colors;
+	colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
+
+	// Headers
+	colors[ImGuiCol_Header] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+	colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+	colors[ImGuiCol_HeaderActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+
+	// Buttons
+	colors[ImGuiCol_Button] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+	colors[ImGuiCol_ButtonHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+	colors[ImGuiCol_ButtonActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+
+	// Frame BG
+	colors[ImGuiCol_FrameBg] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+	colors[ImGuiCol_FrameBgHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+	colors[ImGuiCol_FrameBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+
+	// Tabs
+	colors[ImGuiCol_Tab] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+	colors[ImGuiCol_TabHovered] = ImVec4{ 0.38f, 0.3805f, 0.381f, 1.0f };
+	colors[ImGuiCol_TabActive] = ImVec4{ 0.28f, 0.2805f, 0.281f, 1.0f };
+	colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+	colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+
+	// Title
+	colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+	colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+	colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+}
+
+void Editor::Manipulate()
+{
+	if (!Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
+	{
+		if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_W))
+		{
+			m_GizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+		}
+		else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_R))
+		{
+			m_GizmoOperation = ImGuizmo::OPERATION::ROTATE;
+		}
+		else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_S))
+		{
+			m_GizmoOperation = ImGuizmo::OPERATION::SCALE;
+		}
+		else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_U))
+		{
+			m_GizmoOperation = ImGuizmo::OPERATION::UNIVERSAL;
+		}
+		else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_Q))
+		{
+			m_GizmoOperation = -1;
+		}
+	}
+
+	if (m_SelectedEntities.empty() || m_GizmoOperation == -1)
+	{
+		return;
+	}
+
+	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
+	{
+		if (!viewport || !viewport->GetCamera())
+		{
+			continue;
+		}
+
+		auto callback = [this](const glm::vec2& position, const glm::ivec2 size, std::shared_ptr<Entity> camera)
+		{
+			if (m_SelectedEntities.empty())
+			{
+				return;
+			}
+
+			std::shared_ptr<Entity> entity = camera->GetScene()->FindEntityByUUID(*m_SelectedEntities.begin());
+			if (!entity)
+			{
+				return;
+			}
+
+			ImGuizmo::SetOrthographic(true);
+			ImGuizmo::SetDrawlist();
+
+			ImGuizmo::SetRect(position.x, position.y, size.x, size.y);
+
+			Camera& cameraComponent = camera->GetComponent<Camera>();
+			glm::mat4 projectionMat4 = cameraComponent.GetProjectionMat4();
+			glm::mat4 viewMat4 = cameraComponent.GetViewMat4();
+			Transform& transform = entity->GetComponent<Transform>();
+			glm::mat4 transformMat4 = transform.GetTransform();
+			ImGuizmo::Manipulate(glm::value_ptr(viewMat4), glm::value_ptr(projectionMat4),
+				(ImGuizmo::OPERATION)m_GizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(transformMat4));
+
+			if (ImGuizmo::IsUsing())
+			{
+				glm::vec3 position, rotation, scale;
+				Utils::DecomposeTransform(transformMat4, position, rotation, scale);
+
+				transform.Translate(position);
+				transform.Rotate(rotation);
+				transform.Scale(scale);
+			}
+		};
+
+		viewport->SetDrawGizmosCallback(callback);
+	}
+}
+
+void Editor::ComponentsPopUpMenu(std::shared_ptr<Entity> entity)
 {
 	if (ImGui::BeginPopupContextWindow())
 	{
+		if (ImGui::MenuItem("Camera"))
+		{
+			if (entity->HasComponent<Transform>())
+			{
+				entity->AddComponent<Camera>(entity);
+			}
+		}
 		if (ImGui::MenuItem("Renderer3D"))
 		{
-			gameObject->m_ComponentManager.AddComponent<Renderer3D>();
+			entity->AddComponent<Renderer3D>();
 		}
 		else if (ImGui::MenuItem("PointLight"))
 		{
-			gameObject->m_ComponentManager.AddComponent<PointLight>();
+			entity->AddComponent<PointLight>();
 		}
 		ImGui::EndPopup();
 	}
 }
 
-void Editor::Renderer3DComponent(Renderer3D* r3d)
+void Editor::Renderer3DComponent(std::shared_ptr<Entity> entity)
 {
-	if (!r3d)
+	if (!entity->HasComponent<Renderer3D>())
 	{
 		return;
 	}
 
-	if (ImGui::Button("x"))
+	Renderer3D& r3d = entity->GetComponent<Renderer3D>();
+
+	if (ImGui::Button("X"))
 	{
+		entity->RemoveComponent<Renderer3D>();
 	}
 	ImGui::SameLine();
 	if (ImGui::CollapsingHeader("Renderer3D"))
 	{
 		Indent indent;
 
-		if (r3d->mesh)
+		if (r3d.mesh)
 		{
-			ImGui::Text("Mesh: %s", r3d->mesh->GetName().c_str());
+			ImGui::Text("Mesh: %s", r3d.mesh->GetName().c_str());
 		}
 		else
 		{
@@ -914,7 +1126,7 @@ void Editor::Renderer3DComponent(Renderer3D* r3d)
 				{
 					path = Utils::Erase(path, m_RootDirectory.string() + "/");
 
-					r3d->mesh = MeshManager::GetInstance().LoadMesh(path);
+					r3d.mesh = MeshManager::GetInstance().LoadMesh(path);
 				}
 			}
 
@@ -923,12 +1135,12 @@ void Editor::Renderer3DComponent(Renderer3D* r3d)
 
 		ImGui::Text("Material:");
 		ImGui::SameLine();
-		if (r3d->material)
+		if (r3d.material)
 		{
-			if (ImGui::Button(r3d->material->GetName().c_str()))
+			if (ImGui::Button(r3d.material->GetName().c_str()))
 			{
 				m_MaterialMenu.opened = true;
-				m_MaterialMenu.material = r3d->material;
+				m_MaterialMenu.material = r3d.material;
 			}
 		}
 		else
@@ -947,7 +1159,7 @@ void Editor::Renderer3DComponent(Renderer3D* r3d)
 				{
 					path = Utils::Erase(path, m_RootDirectory.string() + "/");
 
-					r3d->material = MaterialManager::GetInstance().LoadMaterial(path);
+					r3d.material = MaterialManager::GetInstance().LoadMaterial(path);
 				}
 			}
 
@@ -956,25 +1168,28 @@ void Editor::Renderer3DComponent(Renderer3D* r3d)
 	}
 }
 
-void Editor::PointLightComponent(PointLight* pointLight)
+void Editor::PointLightComponent(std::shared_ptr<Entity> entity)
 {
-	if (!pointLight)
+	if (!entity->HasComponent<PointLight>())
 	{
 		return;
 	}
 
-	if (ImGui::Button("x"))
+	PointLight& pointLight = entity->GetComponent<PointLight>();
+
+	if (ImGui::Button("X"))
 	{
+		entity->RemoveComponent<PointLight>();
 	}
 	ImGui::SameLine();
 	if (ImGui::CollapsingHeader("PointLight"))
 	{
 		Indent indent;
 
-		ImGui::ColorEdit3("Color", &pointLight->color[0]);
-		ImGui::SliderFloat("Constant", &pointLight->constant, 0.0f, 1.0f);
-		ImGui::SliderFloat("Linear", &pointLight->linear, 0.0f, 1.0f);
-		ImGui::SliderFloat("Quadratic", &pointLight->quadratic, 0.0f, 1.0f);
+		ImGui::ColorEdit3("Color", &pointLight.color[0]);
+		ImGui::SliderFloat("Constant", &pointLight.constant, 0.0f, 1.0f);
+		ImGui::SliderFloat("Linear", &pointLight.linear, 0.0f, 1.0f);
+		ImGui::SliderFloat("Quadratic", &pointLight.quadratic, 0.0f, 1.0f);
 	}
 }
 

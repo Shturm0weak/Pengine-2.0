@@ -10,21 +10,26 @@ void Scene::Copy(const Scene& scene)
 	m_Name = scene.GetName();
 	m_Filepath = scene.GetFilepath();
 
-	for (const auto& gameObject : scene.m_GameObjects)
-	{
-		if (gameObject->GetOwner() == nullptr)
-		{
-			GameObject* createdGameObject = CreateGameObject(gameObject->GetName(),
-				gameObject->m_Transform, gameObject->GetUUID());
-			createdGameObject->Copy(*gameObject);
-		}
-	}
+	//for (const auto& gameObject : scene.m_GameObjects)
+	//{
+	//	if (gameObject->GetOwner() == nullptr)
+	//	{
+	//		GameObject* createdGameObject = CreateGameObject(gameObject->GetName(),
+	//			gameObject->m_Transform, gameObject->GetUUID());
+	//		createdGameObject->Copy(*gameObject);
+	//	}
+	//}
 }
 
 Scene::Scene(const std::string& name, const std::string& filepath)
 	: Asset(name, filepath)
 {
 
+}
+
+Scene::~Scene()
+{
+	Clear();
 }
 
 Scene::Scene(const Scene& scene)
@@ -38,10 +43,8 @@ void Scene::Clear()
 	m_Name = none;
 	m_Filepath = none;
 
-	while (m_GameObjects.size() > 0)
-	{
-		DeleteGameObject(m_GameObjects.front());
-	}
+	m_Registry.clear();
+	m_Entities.clear();
 }
 
 void Scene::operator=(const Scene& scene)
@@ -49,59 +52,38 @@ void Scene::operator=(const Scene& scene)
 	Copy(scene);
 }
 
-GameObject* Scene::CreateGameObject(const std::string& name, const Transform& transform, const UUID& uuid)
+std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name, const UUID& uuid)
 {
-	GameObject* gameObject = GameObject::Create(this, name, transform, uuid);
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>(shared_from_this(), name, uuid);
+	m_Entities.emplace_back(entity);
 
-	m_GameObjectsByUUID.emplace(gameObject->GetUUID(), gameObject);
-	m_GameObjects.push_back(gameObject);
-
-	return gameObject;
+	return entity;
 }
 
-void Scene::DeleteGameObject(GameObject* gameObject)
+void Scene::DeleteEntity(std::shared_ptr<Entity> entity)
 {
-	gameObject->Delete();
-}
-
-void Scene::DeleteGameObjectLater(GameObject* gameObject)
-{
-	gameObject->DeleteLater();
-}
-
-GameObject* Scene::FindGameObjectByName(const std::string& name)
-{
-	auto gameObject = std::find_if(m_GameObjects.begin(), m_GameObjects.end(), [name](GameObject* gameObject) {
-		return gameObject->GetName() == name;
-		});
-
-	if (gameObject != m_GameObjects.end())
+	if (entity->GetHandle() != entt::tombstone)
 	{
-		return *gameObject;
+		m_Registry.destroy(entity->GetHandle());
+	}
+	
+	auto entityToErase = std::find(m_Entities.begin(), m_Entities.end(), entity);
+	if (entityToErase != m_Entities.end())
+	{
+		m_Entities.erase(entityToErase);
 	}
 
-	return nullptr;
+	entity = nullptr;
 }
 
-std::vector<GameObject*> Scene::FindGameObjects(const std::string& name)
+std::shared_ptr<Entity> Scene::FindEntityByUUID(const std::string& uuid)
 {
-	std::vector<GameObject*> gameObjects;
-	for (auto gameObject : m_GameObjects)
+	for (std::shared_ptr<Entity> entity : m_Entities)
 	{
-		if (gameObject->GetName() == name)
+		if (entity->GetUUID().Get() == uuid)
 		{
-			gameObjects.push_back(gameObject);
+			return entity;
 		}
-	}
-	return gameObjects;
-}
-
-GameObject* Scene::FindGameObjectByUUID(const std::string& uuid)
-{
-	auto gameObject = m_GameObjectsByUUID.find(uuid);
-	if (gameObject != m_GameObjectsByUUID.end())
-	{
-		return gameObject->second;
 	}
 
 	return nullptr;

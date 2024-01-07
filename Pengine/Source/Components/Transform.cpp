@@ -1,30 +1,18 @@
 #include "Transform.h"
 
-#include "../Core/GameObject.h"
+#include "../Core/Logger.h"
 #include "../Utils/Utils.h"
 
 using namespace Pengine;
 
-void Transform::Copy(const Component& component)
+void Transform::Copy(const Transform& transform)
 {
 	if (!m_Copyable) return;
 
-	Transform& transform = *(Transform*)&component;
 	Translate(transform.GetPosition(System::LOCAL));
 	Rotate(transform.GetRotation(System::LOCAL));
 	Scale(transform.GetScale(System::LOCAL));
 	m_FollowOwner = transform.m_FollowOwner;
-	m_Type = transform.m_Type;
-}
-
-Component* Transform::New(GameObject* owner)
-{
-	return new Transform();
-}
-
-Component* Transform::CreateCopy(GameObject* newOwner)
-{
-	return new Transform(*this);
 }
 
 void Transform::CopyGlobal(const Transform& transform)
@@ -35,7 +23,6 @@ void Transform::CopyGlobal(const Transform& transform)
 	Rotate(transform.GetRotation());
 	Scale(transform.GetScale());
 	m_FollowOwner = transform.m_FollowOwner;
-	m_Type = transform.m_Type;
 }
 
 glm::mat4 Transform::GetPositionMat4(System system, bool isTransformed) const
@@ -50,9 +37,10 @@ glm::mat4 Transform::GetPositionMat4(System system, bool isTransformed) const
 	case System::GLOBAL:
 	{
 		glm::mat4 positionMat4 = m_PositionMat4;
-		if (Transform* parent = m_Parent)
+		if (m_Entity->HasParent())
 		{
-			positionMat4 = (isTransformed ? parent->GetTransform() : parent->GetPositionMat4()) * positionMat4;
+			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			positionMat4 = (isTransformed ? parent.GetTransform() : parent.GetPositionMat4()) * positionMat4;
 		}
 		return positionMat4;
 		break;
@@ -75,9 +63,10 @@ glm::mat4 Transform::GetRotationMat4(System system, bool isTransformed) const
 	case System::GLOBAL:
 	{
 		glm::mat4 rotationMat4 = m_RotationMat4;
-		if (Transform* parent = m_Parent)
+		if (m_Entity->HasParent())
 		{
-			rotationMat4 = (isTransformed ? parent->GetRotationMat4() * parent->GetScaleMat4() : parent->GetRotationMat4()) * rotationMat4;
+			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			rotationMat4 = (isTransformed ? parent.GetRotationMat4() * parent.GetScaleMat4() : parent.GetRotationMat4()) * rotationMat4;
 		}
 		return rotationMat4;
 		break;
@@ -100,9 +89,10 @@ glm::mat4 Transform::GetScaleMat4(System system, bool isTransformed) const
 	case System::GLOBAL:
 	{
 		glm::mat4 scaleMat4 = m_ScaleMat4;
-		if (Transform* parent = m_Parent)
+		if (m_Entity->HasParent())
 		{
-			scaleMat4 = parent->GetScaleMat4() * scaleMat4;
+			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			scaleMat4 = parent.GetScaleMat4() * scaleMat4;
 		}
 		return scaleMat4;
 		break;
@@ -125,9 +115,10 @@ glm::vec3 Transform::GetPreviousPosition(System system) const
 	case System::GLOBAL:
 	{
 		glm::vec3 previousPosition = m_PreviousPosition;
-		if (Transform* parent = m_Parent)
+		if (m_Entity->HasParent())
 		{
-			previousPosition = parent->GetTransform() * glm::vec4(previousPosition, 1.0f);
+			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			previousPosition = parent.GetTransform() * glm::vec4(previousPosition, 1.0f);
 		}
 		return previousPosition;
 		break;
@@ -150,9 +141,10 @@ glm::vec3 Transform::GetPositionDelta(System system) const
 	case System::GLOBAL:
 	{
 		glm::vec3 positionDelta = m_PositionDelta;
-		if (Transform* parent = m_Parent)
+		if (m_Entity->HasParent())
 		{
-			positionDelta = parent->GetTransform() * glm::vec4(positionDelta, 1.0f);
+			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			positionDelta = parent.GetTransform() * glm::vec4(positionDelta, 1.0f);
 		}
 		return positionDelta;
 		break;
@@ -195,9 +187,10 @@ glm::vec3 Transform::GetRotation(System system) const
 	case System::GLOBAL:
 	{
 		glm::vec3 rotation = m_Rotation;
-		if (Transform* parent = m_Parent)
+		if (m_Entity->HasParent())
 		{
-			rotation += parent->GetRotation();
+			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			rotation += parent.GetRotation();
 		}
 		return rotation;
 		break;
@@ -240,9 +233,11 @@ glm::mat4 Transform::GetTransform(System system) const
 	case System::GLOBAL:
 	{
 		glm::mat4 transformMat4 = m_TransformMat4;
-		if (Transform* parent = m_Parent)
+
+		if (m_Entity->HasParent())
 		{
-			transformMat4 = parent->GetTransform() * transformMat4;
+			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			transformMat4 = parent.GetTransform() * transformMat4;
 		}
 		return transformMat4;
 		break;
@@ -265,9 +260,10 @@ glm::mat3 Transform::GetInverseTransform(System system) const
 	case System::GLOBAL:
 	{
 		glm::mat3 inverseTransformMat3 = m_InverseTransformMat3;
-		if (Transform* parent = m_Parent)
+		if (m_Entity->HasParent())
 		{
-			inverseTransformMat3 = parent->GetInverseTransform() * inverseTransformMat3;
+			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			inverseTransformMat3 = parent.GetInverseTransform() * inverseTransformMat3;
 		}
 		return inverseTransformMat3;
 		break;
@@ -315,55 +311,35 @@ void Transform::operator=(Transform&& transform) noexcept
 	Move(std::move(transform));
 }
 
-void Transform::AddChild(Transform* child)
+Transform::~Transform()
 {
-	glm::vec3 position = Utils::GetPosition(glm::inverse(GetTransform()) * (child->GetPositionMat4()));
-	glm::vec3 rotation = child->GetRotation() - GetRotation();
-	glm::vec3 scale = child->GetScale() / GetScale();
-
-	child->GetOwner()->SetOwner(GetOwner());
-	child->m_Parent = this;
-
-	child->Translate(position);
-	child->Rotate(rotation);
-	child->Scale(scale);
-}
-
-void Transform::RemoveChild(Transform* child)
-{
-	glm::vec3 position = child->GetPosition();
-	glm::vec3 rotation = child->GetRotation();
-	glm::vec3 scale = child->GetScale();
-
-	child->GetOwner()->SetOwner(nullptr);
-	child->m_Parent = nullptr;
-
-	child->Translate(position);
-	child->Rotate(rotation);
-	child->Scale(scale);
+	Logger::Log("Destroy Transform");
 }
 
 Transform::Transform(const Transform& transform)
 {
+	Logger::Log("Copy Transform");
 	Copy(transform);
 }
 
 Transform::Transform(Transform&& transform) noexcept
-	: m_Rotation(std::move(transform.m_Rotation))
-	, m_PositionMat4(std::move(transform.m_PositionMat4))
-	, m_ScaleMat4(std::move(transform.m_ScaleMat4))
-	, m_RotationMat4(std::move(transform.m_RotationMat4))
-	, m_FollowOwner(transform.m_FollowOwner)
 {
-	m_Type = "Pengine::Transform";
+	Move(std::move(transform));
+	Logger::Log("Move Transform");
 }
 
-Transform::Transform(const glm::vec3& position, const glm::vec3& scale, const glm::vec3& rotation)
+Transform::Transform(
+	std::shared_ptr<Entity> entity,
+	const glm::vec3& position,
+	const glm::vec3& scale,
+	const glm::vec3& rotation)
+	: m_Entity(entity)
 {
+	Logger::Log("Create Transform");
+
 	Translate(position);
 	Rotate(rotation);
 	Scale(scale);
-	m_Type = "Pengine::Transform";
 }
 
 void Transform::RemoveOnRotationCallback(const std::string& label)
@@ -416,23 +392,20 @@ void Transform::Translate(const glm::vec3& position)
 
 	UpdateTransforms();
 
-	std::function<void(Transform*)> translationCallbacks = [&translationCallbacks](Transform* transform)
+	std::function<void(Transform&)> translationCallbacks = [&translationCallbacks](Transform& transform)
 	{
-		for (auto& onTranslationCallback : transform->m_OnTranslationCallbacks)
+		for (auto& onTranslationCallback : transform.m_OnTranslationCallbacks)
 		{
 			onTranslationCallback.second();
 		}
 
-		if (GameObject* owner = transform->GetOwner())
+		for (const std::shared_ptr<Entity> child : transform.m_Entity->GetChilds())
 		{
-			for (GameObject* child : owner->GetChilds())
-			{
-				translationCallbacks(&child->m_Transform);
-			}
+			translationCallbacks(child->GetComponent<Transform>());
 		}
 	};
 
-	translationCallbacks(this);
+	translationCallbacks(*this);
 }
 
 void Transform::Rotate(const glm::vec3& rotation)
@@ -447,23 +420,20 @@ void Transform::Rotate(const glm::vec3& rotation)
 	UpdateTransforms();
 	UpdateVectors();
 
-	std::function<void(Transform*)> rotationCallbacks = [&rotationCallbacks](Transform* transform)
+	std::function<void(Transform&)> rotationCallbacks = [&rotationCallbacks](Transform& transform)
 	{
-		for (auto& onRotationCallback : transform->m_OnRotationCallbacks)
+		for (auto& onRotationCallback : transform.m_OnRotationCallbacks)
 		{
 			onRotationCallback.second();
 		}
 
-		if (GameObject* owner = transform->GetOwner())
+		for (const std::shared_ptr<Entity> child : transform.m_Entity->GetChilds())
 		{
-			for (GameObject* child : owner->GetChilds())
-			{
-				rotationCallbacks(&child->m_Transform);
-			}
+			rotationCallbacks(child->GetComponent<Transform>());
 		}
 	};
 
-	rotationCallbacks(this);
+	rotationCallbacks(*this);
 }
 
 void Transform::Scale(const glm::vec3& scale)
@@ -476,23 +446,20 @@ void Transform::Scale(const glm::vec3& scale)
 
 	UpdateTransforms();
 
-	std::function<void(Transform*)> scaleCallbacks = [&scaleCallbacks](Transform* transform)
+	std::function<void(Transform&)> scaleCallbacks = [&scaleCallbacks](Transform& transform)
 	{
-		for (auto& onScaleCallback : transform->m_OnScaleCallbacks)
+		for (auto& onScaleCallback : transform.m_OnScaleCallbacks)
 		{
 			onScaleCallback.second();
 		}
 
-		if (GameObject* owner = transform->GetOwner())
+		for (const std::shared_ptr<Entity> child : transform.m_Entity->GetChilds())
 		{
-			for (GameObject* child : owner->GetChilds())
-			{
-				scaleCallbacks(&child->m_Transform);
-			}
+			scaleCallbacks(child->GetComponent<Transform>());
 		}
 	};
 
-	scaleCallbacks(this);
+	scaleCallbacks(*this);
 }
 
 void Transform::LogTransform()

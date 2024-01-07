@@ -1,12 +1,12 @@
 #include "RenderPassManager.h"
 
-#include "Camera.h"
 #include "SceneManager.h"
 #include "Logger.h"
 #include "TextureSlots.h"
 #include "MaterialManager.h"
 #include "MeshManager.h"
 
+#include "../Components/Camera.h"
 #include "../Components/Renderer3D.h"
 #include "../Components/PointLight.h"
 #include "../Graphics/Renderer.h"
@@ -144,27 +144,29 @@ void RenderPassManager::CreateGBuffer()
 	createInfo.renderCallback = [createInfo](RenderPass::RenderCallbackInfo renderInfo)
 	{
 		GlobalData globalData{};
-		globalData.viewProjectionMat4 = renderInfo.camera->GetViewProjectionMat4();
+		globalData.viewProjectionMat4 = renderInfo.camera->GetComponent<Camera>().GetViewProjectionMat4();
 		renderInfo.submitInfo.renderPass->GetBuffer("GlobalBuffer")->WriteToBuffer((void*)&globalData);
 
-		using GameObjectsByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<GameObject*>>;
-		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, GameObjectsByMesh>;
+		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
+		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
 		using MaterialByBaseMaterial = std::unordered_map<std::shared_ptr<BaseMaterial>, MeshesByMaterial>;
 
 		MaterialByBaseMaterial materialMeshGameObjects;
 
 		size_t renderableCount = 0;
-		std::vector<GameObject*> gameObjects = renderInfo.camera->GetScene()->GetGameObjects();
-		for (const auto& gameObject : gameObjects)
+		std::shared_ptr<Scene> scene = renderInfo.scene;
+		entt::registry& registry = scene->GetRegistry();
+		auto r3dView = registry.view<Renderer3D>();
+		for (const entt::entity& entity : r3dView)
 		{
-			Renderer3D* r3d = gameObject->m_ComponentManager.GetComponent<Renderer3D>();
+			Renderer3D& r3d = registry.get<Renderer3D>(entity);
 
-			if (!r3d || !r3d->mesh || !r3d->material)
+			if (!r3d.mesh || !r3d.material)
 			{
 				continue;
 			}
 
-			materialMeshGameObjects[r3d->material->GetBaseMaterial()][r3d->material][r3d->mesh].emplace_back(gameObject);
+			materialMeshGameObjects[r3d.material->GetBaseMaterial()][r3d.material][r3d.mesh].emplace_back(entity);
 
 			renderableCount++;
 		}
@@ -202,15 +204,16 @@ void RenderPassManager::CreateGBuffer()
 				materialUniformWriter->WriteTexture("normalTexture", material->GetTexture("normalTexture"));
 				materialUniformWriter->Flush();
 
-				for (const auto& [mesh, gameObjects] : gameObjectsByMeshes)
+				for (const auto& [mesh, entities] : gameObjectsByMeshes)
 				{
 					const size_t instanceDataOffset = instanceDatas.size();
 
-					for (GameObject* gameObject : gameObjects)
+					for (const entt::entity& entity : entities)
 					{
 						InstanceData data;
-						data.transform = gameObject->m_Transform.GetTransform();
-						data.inverseTransform = glm::transpose(gameObject->m_Transform.GetInverseTransform());
+						Transform& transform = registry.get<Transform>(entity);
+						data.transform = transform.GetTransform();
+						data.inverseTransform = glm::transpose(transform.GetInverseTransform());
 						instanceDatas.emplace_back(data);
 					}
 
@@ -225,7 +228,7 @@ void RenderPassManager::CreateGBuffer()
 						pipeline,
 						instanceBuffer,
 						instanceDataOffset * instanceBuffer->GetInstanceSize(),
-						gameObjects.size(),
+						entities.size(),
 						uniformWriters,
 						renderInfo.submitInfo);
 				}
@@ -261,13 +264,27 @@ void RenderPassManager::CreateDeferred()
 	createInfo.clearDepths = { clearDepth };
 	createInfo.attachmentDescriptions = { color };
 
-	createInfo.attributeDescriptions = Vertex::GetDefaultVertexAttributeDescriptions();
-	createInfo.bindingDescriptions = Vertex::GetDefaultVertexBindingDescriptions();
+	createInfo.attributeDescriptions =
+	{
+		{ 0, 0, Texture::Format::R32G32B32_SFLOAT, offsetof(Vertex, position) },
+		{ 0, 1, Texture::Format::R32G32_SFLOAT, offsetof(Vertex, uv) }
+	};
+	
+	createInfo.bindingDescriptions =
+	{
+		{ 0, sizeof(Vertex), Vertex::InputRate::VERTEX }
+	};
 
 	std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
 
-	createInfo.renderCallback = [createInfo, plane](RenderPass::RenderCallbackInfo renderInfo)
+	createInfo.renderCallback = [createInfo, planeWeak = std::weak_ptr<Mesh>(plane)](RenderPass::RenderCallbackInfo renderInfo)
 	{
+		std::shared_ptr<Mesh> plane = planeWeak.lock();
+		if (!plane)
+		{
+			return;
+		}
+
 		std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Deferred.basemat");
 		std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderInfo.submitInfo.renderPass->GetType());
 		if (!pipeline)
@@ -281,22 +298,26 @@ void RenderPassManager::CreateDeferred()
 		pipeline->GetUniformWriter()->WriteTexture("normalTexture", frameBuffer->GetAttachment(1));
 		pipeline->GetUniformWriter()->WriteTexture("positionTexture", frameBuffer->GetAttachment(2));
 
-		if (renderInfo.camera->GetScene()->m_PointLights.size() > 0)
+		auto pointLightView = renderInfo.scene->GetRegistry().view<PointLight>();
+		for (const entt::entity& entity : pointLightView)
 		{
-			PointLight* pl = renderInfo.camera->GetScene()->m_PointLights[0];
-			baseMaterial->SetValue("Light", "color", pl->color);
-			glm::vec3 lightPosition = pl->GetOwner()->m_Transform.GetPosition();
+			PointLight& pl = renderInfo.scene->GetRegistry().get<PointLight>(entity);
+			Transform& transform = renderInfo.scene->GetRegistry().get<Transform>(entity);
+			baseMaterial->SetValue("Light", "color", pl.color);
+			glm::vec3 lightPosition = transform.GetPosition();
 			baseMaterial->SetValue("Light", "lightPosition", lightPosition);
-			glm::vec3 cameraPosition = renderInfo.camera->m_Transform.GetPosition();
+			glm::vec3 cameraPosition = renderInfo.camera->GetComponent<Transform>().GetPosition();
 			baseMaterial->SetValue("Light", "viewPosition", cameraPosition);
-			baseMaterial->SetValue("Light", "linear", pl->linear);
-			baseMaterial->SetValue("Light", "quadratic", pl->quadratic);
-			baseMaterial->SetValue("Light", "constant", pl->constant);
+			baseMaterial->SetValue("Light", "linear", pl.linear);
+			baseMaterial->SetValue("Light", "quadratic", pl.quadratic);
+			baseMaterial->SetValue("Light", "constant", pl.constant);
 
 			float use = 1.0f;
 			baseMaterial->SetValue("Light", "use", use);
+			break;
 		}
-		else
+
+		if (pointLightView.empty())
 		{
 			float use = 0.0f;
 			baseMaterial->SetValue("Light", "use", use);

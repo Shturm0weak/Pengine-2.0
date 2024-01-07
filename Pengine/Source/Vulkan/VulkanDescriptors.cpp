@@ -133,11 +133,11 @@ bool VulkanDescriptorPool::AllocateDescriptorSet(const VkDescriptorSetLayout des
 
 void VulkanDescriptorPool::FreeDescriptors(std::vector<VkDescriptorSet> &descriptors) const
 {
-  vkFreeDescriptorSets(
-    device->GetDevice(),
-    m_DescriptorPool,
-    static_cast<uint32_t>(descriptors.size()),
-    descriptors.data());
+    vkFreeDescriptorSets(
+        device->GetDevice(),
+        m_DescriptorPool,
+        static_cast<uint32_t>(descriptors.size()),
+        descriptors.data());
 }
 
 void VulkanDescriptorPool::ResetPool()

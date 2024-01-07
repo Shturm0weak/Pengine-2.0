@@ -9,6 +9,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP")
 
 set(COMPONENTS_SOURCES
+	Components/Camera.cpp Components/Camera.h
 	Components/PointLight.cpp Components/PointLight.h
 	Components/Transform.cpp Components/Transform.h
 	Components/Renderer3D.cpp Components/Renderer3D.h
@@ -18,14 +19,11 @@ source_group("Components" FILES ${COMPONENTS_SOURCES})
 set(CORE_SOURCES
 	Core/Asset.h
 	Core/Application.cpp Core/Application.h
-	Core/Camera.cpp Core/Camera.h
 	Core/ColoredOutput.h
-	Core/Component.cpp Core/Component.h
-	Core/ComponentManager.cpp Core/ComponentManager.h
 	Core/Core.h
+	Core/Entity.cpp Core/Entity.h
 	Core/EntryPoint.cpp Core/EntryPoint.h
 	Core/FileFormatNames.h
-	Core/GameObject.cpp Core/GameObject.h
 	Core/Input.cpp Core/Input.h
 	Core/KeyCode.h
 	Core/Logger.cpp Core/Logger.h
@@ -50,6 +48,7 @@ source_group("Core" FILES ${CORE_SOURCES})
 
 set(EDITOR_SOURCES
 	Editor/Editor.cpp Editor/Editor.h
+	Editor/ImGuizmo.cpp Editor/ImGuizmo.h
 )
 source_group("Editor" FILES ${EDITOR_SOURCES})
 
@@ -128,6 +127,7 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC PENGINE_ENGINE=1)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE YAML)
 target_link_libraries(${PROJECT_NAME} PRIVATE ImGui)
+target_link_libraries(${PROJECT_NAME} PRIVATE EnTT)
 target_link_libraries(${PROJECT_NAME} PRIVATE assimp)
 
 IF (NOT GLFW_FOUND)

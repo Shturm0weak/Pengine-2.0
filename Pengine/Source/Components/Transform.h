@@ -1,12 +1,12 @@
 #pragma once
 
 #include "../Core/Core.h"
-#include "../Core/Component.h"
+#include "../Core/Entity.h"
 
 namespace Pengine
 {
 
-	class PENGINE_API Transform : public Component
+	class PENGINE_API Transform
 	{
 	public:
 
@@ -36,32 +36,23 @@ namespace Pengine
 		std::unordered_map<std::string, std::function<void()>> m_OnTranslationCallbacks;
 		std::unordered_map<std::string, std::function<void()>> m_OnScaleCallbacks;
 
-		Transform* m_Parent = nullptr;
+		std::shared_ptr<Entity> m_Entity;
 
 		bool m_FollowOwner = true;
 		bool m_Copyable = true;
 		bool m_IsDirty = true;
 
+		void Copy(const Transform& transform);
 		void Move(Transform&& transform) noexcept;
 		void UpdateVectors();
 		void UpdateTransforms();
 
-		friend class GameObject;
-		friend class Editor;
-		friend class Viewport;
-		friend class Instancing;
-	protected:
-
-		virtual void Copy(const Component& component) override;
-
-		virtual Component* New(GameObject* owner) override;
-
-		virtual Component* CreateCopy(GameObject* newOwner) override;
 	public:
-
+		~Transform();
 		Transform(const Transform& transform);
 		Transform(Transform&& transform) noexcept;
 		Transform(
+			std::shared_ptr<Entity> entity,
 			const glm::vec3& position = glm::vec3(0.0f),
 			const glm::vec3& scale = glm::vec3(1.0f),
 			const glm::vec3& rotation = glm::vec3(0.0f)
@@ -69,15 +60,7 @@ namespace Pengine
 		void operator=(const Transform& transform);
 		void operator=(Transform&& transform) noexcept;
 
-		void AddChild(Transform* child);
-
-		void RemoveChild(Transform* child);
-
 		void CopyGlobal(const Transform& transform);
-
-		bool HasParent() const { return m_Parent; }
-
-		Transform* GetParent() { return m_Parent; }
 
 		glm::mat4 GetPositionMat4(System system = System::GLOBAL, bool isTransformed = true) const;
 		

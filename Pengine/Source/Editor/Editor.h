@@ -2,7 +2,7 @@
 
 #include "../Core/Core.h"
 #include "../Core/Scene.h"
-#include "../Components/Transform.h"
+#include "../Components/Camera.h"
 #include "../Components/Renderer3D.h"
 #include "../Components/PointLight.h"
 
@@ -48,23 +48,29 @@ namespace Pengine
 
 		void DrawScene(std::shared_ptr<Scene> scene);
 
-		void DrawNode(GameObject* gameObject, ImGuiTreeNodeFlags flags);
+		void DrawNode(std::shared_ptr<Entity> entity, ImGuiTreeNodeFlags flags);
 
-		void DrawChilds(GameObject* gameObject);
+		void DrawChilds(std::shared_ptr<Entity> entity);
 
 		void Properties(std::shared_ptr<Scene> scene);
 
-		void TransformComponent(Transform& transform);
+		void CameraComponent(std::shared_ptr<Entity> entity);
 
-		void Renderer3DComponent(Renderer3D* r3d);
+		void TransformComponent(std::shared_ptr<Entity> entity);
 
-		void PointLightComponent(PointLight* pointLight);
+		void Renderer3DComponent(std::shared_ptr<Entity> entity);
+
+		void PointLightComponent(std::shared_ptr<Entity> entity);
 
 		void GameObjectPopUpMenu(std::shared_ptr<Scene> scene);
 
-		void ComponentsPopUpMenu(GameObject* gameObject);
+		void ComponentsPopUpMenu(std::shared_ptr<Entity> entity);
 
 		void AssetBrowser();
+
+		void SetDarkThemeColors();
+
+		void Manipulate();
 
 		struct MaterialMenu
 		{
@@ -74,7 +80,7 @@ namespace Pengine
 			void Update(Editor& editor);
 		} m_MaterialMenu;
 
-		std::set<std::string> m_SelectedGameObjects;
+		std::set<std::string> m_SelectedEntities;
 
 		std::filesystem::path m_RootDirectory = std::filesystem::current_path();
 		std::filesystem::path m_CurrentDirectory = m_RootDirectory;
@@ -82,6 +88,8 @@ namespace Pengine
 		//char m_FilterBuffer[64];
 
 		float m_ThumbnailScale = 0.8f;
+
+		uint32_t m_GizmoOperation = 0;
 
 		bool m_DrawVecLabel = true;
 	};

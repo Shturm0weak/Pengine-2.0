@@ -1,6 +1,5 @@
 #include "Renderer.h"
 
-#include "../Core/Camera.h"
 #include "../Core/FileFormatNames.h"
 #include "../Core/Logger.h"
 #include "../Core/TextureManager.h"
@@ -11,6 +10,7 @@
 #include "../Core/Serializer.h"
 #include "../Core/ViewportManager.h"
 #include "../Core/WindowManager.h"
+#include "../Components/Camera.h"
 #include "../Components/Renderer3D.h"
 #include "../Components/PointLight.h"
 #include "../EventSystem/EventSystem.h"
@@ -50,8 +50,17 @@ Renderer::~Renderer()
 	m_FrameBuffersByRenderPassType.clear();
 }
 
-void Renderer::Update(void* frame, std::shared_ptr<Window> window, std::shared_ptr<Camera> camera)
+void Renderer::Update(
+	void* frame,
+	std::shared_ptr<Window> window,
+	std::shared_ptr<Scene> scene,
+	std::shared_ptr<Entity> camera)
 {
+	if (!scene)
+	{
+		return;
+	}
+
 	for (const auto& type : renderPassesOrder)
 	{
 		std::shared_ptr<RenderPass> renderPass = RenderPassManager::GetInstance().GetRenderPass(type);
@@ -72,9 +81,10 @@ void Renderer::Update(void* frame, std::shared_ptr<Window> window, std::shared_p
 		BeginRenderPass(renderPassSubmitInfo);
 
 		RenderPass::RenderCallbackInfo renderInfo{};
-		renderInfo.renderer = this;
+		renderInfo.renderer = shared_from_this();
 		renderInfo.camera = camera;
 		renderInfo.window = window;
+		renderInfo.scene = scene;
 		renderInfo.submitInfo = renderPassSubmitInfo;
 
 		renderPass->Render(renderInfo);
@@ -117,5 +127,4 @@ void Renderer::Resize(const glm::ivec2& size)
 	{
 		frameBuffer->Resize(size);
 	}
-
 }

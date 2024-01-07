@@ -315,7 +315,7 @@ std::string VulkanPipeline::CompileShaderModule(const std::string& filepath, Sha
         Serializer::SerializeShaderCache(filepath, spv);
     }
     
-    return std::move(spv);
+    return spv;
 }
 
 void VulkanPipeline::Bind(VkCommandBuffer commandBuffer)

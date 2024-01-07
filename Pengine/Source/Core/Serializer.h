@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core.h"
+#include "Entity.h"
 
 #include "../Configs/EngineConfig.h"
 #include "../Graphics/Pipeline.h"
@@ -49,23 +50,38 @@ namespace Pengine
 
 		static std::shared_ptr<Material> GenerateMaterial(aiMaterial* aiMaterial, const std::string& directory);
 
-		static class GameObject* GenerateGameObject(aiNode* aiNode, 
+		static std::shared_ptr<Entity> GenerateEntity(aiNode* aiNode,
 			const std::unordered_map<size_t, std::shared_ptr<Mesh>>& meshesByIndex,
 			const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes);
 
-		static void SerializeGameObject(YAML::Emitter& out, GameObject* gameObject);
+		static void SerializeEntity(YAML::Emitter& out, std::shared_ptr<Entity> entity, bool withChilds = true);
 
-		static void SerializePrefab(const std::string& filepath, GameObject* gameObject);
+		static std::shared_ptr<Entity> DeserializeEntity(const YAML::Node& in, std::shared_ptr<Scene> scene,
+			std::vector<std::string>& childs);
 
-		static GameObject* DeserializePrefab(const std::string& filepath, std::shared_ptr<class Scene> scene);
+		static void SerializePrefab(const std::string& filepath, std::shared_ptr<Entity> entity);
 
-		static void SerializeTransform(YAML::Emitter& out, class Transform* transform);
+		static void DeserializePrefab(const std::string& filepath, std::shared_ptr<Scene> scene);
 
-		static void DeserializeTransform(const YAML::Node& in, class Transform* transform);
+		static void SerializeTransform(YAML::Emitter& out, std::shared_ptr<Entity> entity);
 
-		static void SerializeRenderer3D(YAML::Emitter& out, class Renderer3D* r3d);
+		static void DeserializeTransform(const YAML::Node& in, std::shared_ptr<Entity> entity);
 
-		static void DeserializeRenderer3D(const YAML::Node& in, GameObject* gameObject);
+		static void SerializeRenderer3D(YAML::Emitter& out, std::shared_ptr<Entity> entity);
+
+		static void DeserializeRenderer3D(const YAML::Node& in, std::shared_ptr<Entity> entity);
+
+		static void SerializePointLight(YAML::Emitter& out, std::shared_ptr<Entity> entity);
+
+		static void DeserializePointLight(const YAML::Node& in, std::shared_ptr<Entity> entity);
+
+		static void SerializeCamera(YAML::Emitter& out, std::shared_ptr<Entity> entity);
+
+		static void DeserializeCamera(const YAML::Node& in, std::shared_ptr<Entity> entity);
+
+		static void SerializeScene(const std::string& filepath, std::shared_ptr<Scene> scene);
+
+		static std::shared_ptr<Scene> DeserializeScene(const std::string& filepath);
 	};
 
 }

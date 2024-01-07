@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Core/Core.h"
-#include "../Core/GameObject.h"
 #include "../Core/TextureSlots.h"
 #include "../Graphics/Buffer.h"
 #include "../Graphics/FrameBuffer.h"
@@ -11,7 +10,14 @@
 namespace Pengine
 {
 
-	class PENGINE_API Renderer
+	class Mesh;
+	class Window;
+	class Camera;
+	class Scene;
+	class Pipeline;
+	class Entity;
+
+	class PENGINE_API Renderer : public std::enable_shared_from_this<Renderer>
 	{
 	public:
 		static std::shared_ptr<Renderer> Create(const glm::ivec2& size);
@@ -21,8 +27,11 @@ namespace Pengine
 		Renderer(const Renderer&) = delete;
 		Renderer& operator=(const Renderer&) = delete;
 
-		void Update(void* frame, std::shared_ptr<class Window> window,
-			std::shared_ptr<class Camera> camera);
+		void Update(
+			void* frame,
+			std::shared_ptr<Window> window,
+			std::shared_ptr<Scene> scene,
+			std::shared_ptr<Entity> camera);
 
 		std::shared_ptr<FrameBuffer> GetRenderPassFrameBuffer(const std::string& type) const;
 

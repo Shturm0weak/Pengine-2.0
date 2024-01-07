@@ -6,6 +6,7 @@
 #include "Core/MeshManager.h"
 #include "Core/RenderPassManager.h"
 #include "Core/Serializer.h"
+#include "Components/Camera.h"
 #include "Components/Renderer3D.h"
 
 using namespace Pengine;
@@ -33,17 +34,17 @@ void ExampleApplication::OnStart()
 	whiteTextureCreateInfo.data = pixels;
 	TextureManager::GetInstance().Create(whiteTextureCreateInfo);
 
-	std::shared_ptr<Scene> scene = SceneManager::GetInstance().Create("Scene", "Main");
+	std::shared_ptr<Scene> scene = SceneManager::GetInstance().Create("Default", "Main");
 
-	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
-	camera->SetType(Camera::CameraType::PERSPECTIVE);
-	camera->SetScene(scene);
+	std::shared_ptr<Entity> camera = scene->CreateEntity("Camera");
+	Transform& transform = camera->AddComponent<Transform>(camera);
+	Camera& cameraComponent = camera->AddComponent<Camera>(camera);
+
+	cameraComponent.SetType(Camera::Type::PERSPECTIVE);
 	ViewportManager::GetInstance().GetViewport("Main")->SetCamera(camera);
 
-	camera->m_Transform.Rotate(glm::vec3(glm::radians(30.0f), 0.0f, 0.0f));
-	camera->m_Transform.Translate(glm::vec3(0.0f, 0.0f, 2.0f));
-
-	//TODO: Rework filepath system, use std::path!
+	transform.Rotate(glm::vec3(glm::radians(30.0f), 0.0f, 0.0f));
+	transform.Translate(glm::vec3(0.0f, 0.0f, 2.0f));
 }
 
 void ExampleApplication::OnUpdate()
@@ -55,48 +56,61 @@ void ExampleApplication::OnUpdate()
 	}
 
 	const float speed = 2.0f;
-	std::shared_ptr<Camera> camera = viewport->GetCamera();
+	std::shared_ptr<Entity> camera = viewport->GetCamera();
+	if (!camera)
+	{
+		return;
+	}
+
+	Camera& cameraComponent = camera->GetComponent<Camera>();
+	Transform& transform = camera->GetComponent<Transform>();
+
+	if (!viewport->IsFocused() || !Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
+	{
+		return;
+	}
+
 	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_W))
 	{
-		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetForward() * (float)Time::GetDeltaTime() * speed);
+		transform.Translate(transform.GetPosition() + transform.GetForward() * (float)Time::GetDeltaTime() * speed);
 	}
 	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_S))
 	{
-		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetForward() * -(float)Time::GetDeltaTime() * speed);
+		transform.Translate(transform.GetPosition() + transform.GetForward() * -(float)Time::GetDeltaTime() * speed);
 	}
 	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_D))
 	{
-		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetRight() * (float)Time::GetDeltaTime() * speed);
+		transform.Translate(transform.GetPosition() + transform.GetRight() * (float)Time::GetDeltaTime() * speed);
 	}
 	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_A))
 	{
-		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetRight() * -(float)Time::GetDeltaTime() * speed);
+		transform.Translate(transform.GetPosition() + transform.GetRight() * -(float)Time::GetDeltaTime() * speed);
 	}
 
 	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL))
 	{
-		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetUp() * -(float)Time::GetDeltaTime() * speed);
+		transform.Translate(transform.GetPosition() + transform.GetUp() * -(float)Time::GetDeltaTime() * speed);
 	}
 	else if (Input::KeyBoard::IsKeyDown(Keycode::SPACE))
 	{
-		camera->m_Transform.Translate(camera->m_Transform.GetPosition() + camera->m_Transform.GetUp() * (float)Time::GetDeltaTime() * speed);
+		transform.Translate(transform.GetPosition() + transform.GetUp() * (float)Time::GetDeltaTime() * speed);
 	}
 
 	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_UP))
 	{
-		camera->m_Transform.Rotate(camera->m_Transform.GetRotation() + glm::vec3(1.0f * Time::GetDeltaTime() * speed, 0.0f, 0.0f));
+		transform.Rotate(transform.GetRotation() + glm::vec3(1.0f * Time::GetDeltaTime() * speed, 0.0f, 0.0f));
 	}
 	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_DOWN))
 	{
-		camera->m_Transform.Rotate(camera->m_Transform.GetRotation() + glm::vec3(-1.0f * Time::GetDeltaTime() * speed, 0.0f, 0.0f));
+		transform.Rotate(transform.GetRotation() + glm::vec3(-1.0f * Time::GetDeltaTime() * speed, 0.0f, 0.0f));
 	}
 	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_RIGHT))
 	{
-		camera->m_Transform.Rotate(camera->m_Transform.GetRotation() + glm::vec3(0.0f, -1.0f * Time::GetDeltaTime() * speed, 0.0f));
+		transform.Rotate(transform.GetRotation() + glm::vec3(0.0f, -1.0f * Time::GetDeltaTime() * speed, 0.0f));
 	}
 	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT))
 	{
-		camera->m_Transform.Rotate(camera->m_Transform.GetRotation() + glm::vec3(0.0f, 1.0f * Time::GetDeltaTime() * speed, 0.0f));
+		transform.Rotate(transform.GetRotation() + glm::vec3(0.0f, 1.0f * Time::GetDeltaTime() * speed, 0.0f));
 	}
 }
 

@@ -1,0 +1,390 @@
+- UUID: 5954f8d4-b9d6-4582-98a3-78d336517293
+  Name: Camera
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [3.01706171, 3.33255005, 0.0250379592]
+    Rotation: [-0.709363103, 1.4073298, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  Camera:
+    Fov: 1.57079637
+    Type: 1
+    ZNear: 0.100000001
+    ZFar: 1000
+    Viewport: Main
+- UUID: 7d82fdfe-4569-46b7-9cd1-60c78040bbd4
+  Name: sponza.obj
+  IsEnabled: true
+  Childs:
+    - ab862aa1-1bee-429b-b1d3-5780be6e28c7
+    - f7ce42bb-2408-4098-af17-0d475e0f3892
+    - af8b23a2-5be2-4e8f-9c50-ccf93fab8ae4
+    - a8b8d557-a6a2-426d-b453-d92190cebde3
+    - 6da26933-49a5-493c-82d7-f59692749764
+    - 365547ed-3445-4478-b5d4-6fca32018e28
+    - cbd03c21-a037-4daf-a131-620a534fc0dd
+    - b30d81c9-10c8-4545-8728-b4553bb73b0a
+    - 0f5e60f5-78ae-4593-8449-2ed19a07e3cd
+    - 532057a4-c06d-4917-ad4c-30997aa04700
+    - d5d925b7-643e-4fec-8186-453f471d7803
+    - cd7727ba-5543-4cc7-a26e-af70160d49a3
+    - 822bc5c9-ddfc-4176-a3e6-6eda3c3126bb
+    - 5e563ec8-410b-4bb7-b527-308625c3a4a3
+    - 64973a53-8900-4558-8679-6cc7a3c7289d
+    - 182f6cfc-e4fa-4c97-8e7e-8e9144b5dff1
+    - 541c7fc7-ea1f-44b6-8c65-e137348e6fcf
+    - b4e0aa27-0694-4ef6-b4c4-abc55ab3ca8d
+    - 6933f3b4-133d-435d-bfa6-e183643d88e7
+    - 17fdf3ba-4e57-459d-94ad-cae1aa3f0622
+    - 023f3915-1494-49be-b5cd-d29afa629288
+    - 366dc7ec-2126-4411-be13-2cdcbcb5653f
+    - 7ac42a32-3fe5-4808-9046-3eccb2b2f478
+    - 5c700848-8d9a-4b5e-a57f-6454683c6b26
+    - 98d38ed3-c391-4cf6-8c76-d6d08f2ebb57
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+- UUID: ab862aa1-1bee-429b-b1d3-5780be6e28c7
+  Name: sponza_378_sponza_378_Material__25
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: d75b1050-e332-46b4-b26b-24f894885e35
+    Material: 6af0a30c-7f4c-4a22-8741-adb863eff980
+- UUID: f7ce42bb-2408-4098-af17-0d475e0f3892
+  Name: sponza_378_sponza_378_Material__298
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 8d9277c6-4a70-4910-b674-3b0753dba87c
+    Material: 7cfa20e7-da67-4f2f-bb10-a1dc03726ffc
+- UUID: af8b23a2-5be2-4e8f-9c50-ccf93fab8ae4
+  Name: sponza_257_sponza_257_Material__47
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: ac8a68de-f37a-48b9-ab80-621df84c4477
+    Material: eb6f4508-645b-4f2a-9537-bf80e0193a5e
+- UUID: a8b8d557-a6a2-426d-b453-d92190cebde3
+  Name: sponza_369_sponza_369_Material__57
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 34496957-da59-4ad5-9b0c-200c48cf52a3
+    Material: 4ead4482-37b9-4c59-a328-c9ade1f8b70a
+- UUID: 6da26933-49a5-493c-82d7-f59692749764
+  Name: sponza_39_sponza_39_arch
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 05aa1517-6a8a-4616-ba14-29accfdd1152
+    Material: 0d3098da-7105-435b-909b-d19e92feff01
+- UUID: 365547ed-3445-4478-b5d4-6fca32018e28
+  Name: sponza_382_sponza_382_bricks
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 53fbd273-8524-4a65-b927-f270ce363dbb
+    Material: 66f8d9c1-ccbf-48e1-a3cf-be95a41b066e
+- UUID: cbd03c21-a037-4daf-a131-620a534fc0dd
+  Name: sponza_38_sponza_38_ceiling
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 1e58005b-521b-4f39-a79e-6859e33542e4
+    Material: 18093ab2-862e-455d-9d7e-d262724c26b9
+- UUID: b30d81c9-10c8-4545-8728-b4553bb73b0a
+  Name: sponza_339_sponza_339_chain
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 54c3eeec-6e1f-4d5a-9dc6-5a51f19ebbb2
+    Material: 5a1ea1ac-50d4-46ee-bd1a-7b4b24933a0f
+- UUID: 0f5e60f5-78ae-4593-8449-2ed19a07e3cd
+  Name: sponza_10_sponza_10_column_a
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 99cdb1ba-ec2c-4b40-ae21-1a94e05f8d60
+    Material: 2c1aaf5b-7c8e-4d43-92ad-e480d374d5fd
+- UUID: 532057a4-c06d-4917-ad4c-30997aa04700
+  Name: sponza_141_sponza_141_column_b
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 4e0f21f0-69ad-42ff-928d-b7547df39bfb
+    Material: 55ec435f-d397-47e5-a71f-dce22d012da9
+- UUID: d5d925b7-643e-4fec-8186-453f471d7803
+  Name: sponza_83_sponza_83_column_c
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: fa4ac2d7-6012-4df8-9af8-6b2af3e7d6ff
+    Material: d8442baa-b53f-4b1a-8982-cf5ad6910748
+- UUID: cd7727ba-5543-4cc7-a26e-af70160d49a3
+  Name: sponza_72_sponza_72_details
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 3a724793-9877-4a8b-97df-038725693ef0
+    Material: e9947e57-4983-4126-bcdd-f6c93c71f4d9
+- UUID: 822bc5c9-ddfc-4176-a3e6-6eda3c3126bb
+  Name: sponza_288_sponza_288_fabric_a
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: b90df7a1-a697-4b14-b4d5-16e876ca433c
+    Material: dd0e0471-beb0-4471-8fe8-fbdf62508178
+- UUID: 5e563ec8-410b-4bb7-b527-308625c3a4a3
+  Name: sponza_325_sponza_325_fabric_c
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 1d2f039f-c75e-44cd-8aa7-e545fb0240bc
+    Material: 499fa7bc-0a99-46ca-a7b3-bcde84959a3d
+- UUID: 64973a53-8900-4558-8679-6cc7a3c7289d
+  Name: sponza_289_sponza_289_fabric_d
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: a93f208b-021b-4e6e-8f43-9ade3fd9d269
+    Material: 93e9cdc7-0da6-41f2-83ad-4151e38dbf0c
+- UUID: 182f6cfc-e4fa-4c97-8e7e-8e9144b5dff1
+  Name: sponza_285_sponza_285_fabric_e
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 5eec18c4-daf9-4a55-8c7e-bcbe17cba0da
+    Material: 0ff2bfb7-e1ba-43ca-80ab-8a3123e326ec
+- UUID: 541c7fc7-ea1f-44b6-8c65-e137348e6fcf
+  Name: sponza_327_sponza_327_fabric_f
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: b9ea99f3-3873-4171-97c7-e058c1e86e1f
+    Material: a10bdfac-b8fd-4ae8-af18-922986034ed3
+- UUID: b4e0aa27-0694-4ef6-b4c4-abc55ab3ca8d
+  Name: sponza_326_sponza_326_fabric_g
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 57d36870-2575-412f-bd6a-fc93a52d62d3
+    Material: f250eb78-e118-4703-8c7b-1e20b856e977
+- UUID: 6933f3b4-133d-435d-bfa6-e183643d88e7
+  Name: sponza_271_sponza_271_flagpole
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 9d84b1c6-c77b-40c2-8687-77dfac0c15b2
+    Material: f3b13e37-3ef1-4927-8b13-f3b55d5dbcc8
+- UUID: 17fdf3ba-4e57-459d-94ad-cae1aa3f0622
+  Name: sponza_18_sponza_18_floor
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 51ede385-96fc-4b0f-9f56-87aeea5a87c5
+    Material: fd1aa144-f824-4bca-9f02-a65c3aa342f6
+- UUID: 023f3915-1494-49be-b5cd-d29afa629288
+  Name: sponza_275_sponza_275_leaf
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: e0b74b44-44cf-482b-b6d6-5247257b67ce
+    Material: c8ea6c3a-5fe4-4291-91eb-99c46641fe13
+- UUID: 366dc7ec-2126-4411-be13-2cdcbcb5653f
+  Name: sponza_381_sponza_381_roof
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 12ea635b-334f-41c5-b66b-16a32d10a0b6
+    Material: cfb06a2e-053b-4319-a95c-9fdac0076283
+- UUID: 7ac42a32-3fe5-4808-9046-3eccb2b2f478
+  Name: sponza_373_sponza_373_vase
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 8dd07629-459a-47d5-8f07-906616f7db43
+    Material: 5caad1d6-9b64-4096-b17a-0d6ea7e602ae
+- UUID: 5c700848-8d9a-4b5e-a57f-6454683c6b26
+  Name: sponza_344_sponza_344_vase_hanging
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: a1a018cb-0bee-460a-901b-b68132bb3ecb
+    Material: fdfa53f3-4174-403c-a991-3b24371c2519
+- UUID: 98d38ed3-c391-4cf6-8c76-d6d08f2ebb57
+  Name: sponza_369_sponza_369_vase_round
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 5b666e02-4234-4f07-ba9e-1e867c3effc0
+    Material: bfa02670-9785-4c01-8ced-b40f972ed2ad
+- UUID: edac4be8-9256-414a-9cd1-81eb57b15656
+  Name: PointLight
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 1.39999998, 0]
+    Rotation: [0, 0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  PointLight:
+    Color: [1, 1, 1]
+    Constant: 0
+    Quadratic: 0.115000002
+    Linear: 0

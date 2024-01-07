@@ -12,6 +12,13 @@ namespace Pengine
 	const std::string GBuffer = "GBuffer";
 	const std::string Deferred = "Deferred";
 	
+	class FrameBuffer;
+	class Window;
+	class Camera;
+	class Renderer;
+	class Scene;
+	class Entity;
+
 	class PENGINE_API RenderPass
 	{
 	public:
@@ -31,7 +38,7 @@ namespace Pengine
 		struct SubmitInfo
 		{
 			std::shared_ptr<RenderPass> renderPass;
-			std::shared_ptr<class FrameBuffer> frameBuffer;
+			std::shared_ptr<FrameBuffer> frameBuffer;
 			void* frame;
 			uint32_t width;
 			uint32_t height;
@@ -39,9 +46,10 @@ namespace Pengine
 
 		struct RenderCallbackInfo
 		{
-			class Renderer* renderer;
-			std::shared_ptr<class Window> window;
-			std::shared_ptr<class Camera> camera;
+			std::shared_ptr<Window> window;
+			std::shared_ptr<Renderer> renderer;
+			std::shared_ptr<Scene> scene;
+			std::shared_ptr<Entity> camera;
 			SubmitInfo submitInfo;
 		};
 

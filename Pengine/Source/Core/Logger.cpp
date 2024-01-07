@@ -28,6 +28,7 @@ void Logger::FatalError(const std::string& message)
 {
 	GetInstance().m_OutFile << "[" << Time::GetDate() << "] FATAL_ERROR:" << message << std::endl;
 	std::cout << RED << "FATAL_ERROR:" << message << RESET << std::endl;
+	GetInstance().m_OutFile.close();
 	throw std::runtime_error(message);
 }
 

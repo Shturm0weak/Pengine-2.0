@@ -148,7 +148,7 @@ void VulkanBuffer::WriteToBuffer(void *data, size_t size, size_t offset)
     }
     else
     {
-        char *memOffset = (char *)m_Mapped;
+        char*memOffset = (char*)m_Mapped;
         memOffset += offset;
         memcpy(memOffset, data, size);
     }
