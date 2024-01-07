@@ -93,6 +93,8 @@ namespace Pengine
 
 		uint32_t m_GizmoOperation = 0;
 
+		int m_TransformSystem = 0;
+
 		bool m_DrawVecLabel = true;
 
 		std::shared_ptr<Entity> m_MovingCamera;

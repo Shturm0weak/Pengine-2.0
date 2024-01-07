@@ -62,11 +62,11 @@ namespace Pengine
 
 		void CopyGlobal(const Transform& transform);
 
-		glm::mat4 GetPositionMat4(System system = System::GLOBAL, bool isTransformed = true) const;
+		//glm::mat4 GetPositionMat4(System system = System::GLOBAL) const;
 		
-		glm::mat4 GetRotationMat4(System system = System::GLOBAL, bool isTransformed = true) const;
+		//glm::mat4 GetRotationMat4(System system = System::GLOBAL) const;
 		
-		glm::mat4 GetScaleMat4(System system = System::GLOBAL, bool isTransformed = true) const;
+		//glm::mat4 GetScaleMat4(System system = System::GLOBAL) const;
 		
 		glm::vec3 GetPreviousPosition(System system = System::GLOBAL) const;
 		

@@ -66,6 +66,10 @@ namespace Pengine
 
 		void RemoveChild(std::shared_ptr<Entity> child);
 
+		bool HasAsChild(std::shared_ptr<Entity> child, bool recursevely = false);
+
+		bool HasAsParent(std::shared_ptr<Entity> parent, bool recursevely = false);
+
 		const std::vector<std::shared_ptr<Entity>>& GetChilds() const { return m_Childs; }
 
 		const std::string& GetName() const { return m_Name; }

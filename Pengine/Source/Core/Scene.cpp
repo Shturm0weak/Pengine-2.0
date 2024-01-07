@@ -62,6 +62,16 @@ std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name, const UUID&
 
 void Scene::DeleteEntity(std::shared_ptr<Entity> entity)
 {
+	for (std::shared_ptr<Entity> child : entity->GetChilds())
+	{
+		DeleteEntity(child);
+	}
+
+	if (std::shared_ptr<Entity> parent = entity->GetParent())
+	{
+		parent->RemoveChild(entity);
+	}
+
 	if (entity->GetHandle() != entt::tombstone)
 	{
 		m_Registry.destroy(entity->GetHandle());

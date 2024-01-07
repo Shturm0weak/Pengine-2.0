@@ -576,6 +576,30 @@ void Editor::DrawScene(std::shared_ptr<Scene> scene)
 
 	if (ImGui::TreeNodeEx((void*)&scene, 0, scene->GetName().c_str()))
 	{
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GAMEOBJECT"))
+			{
+				std::string uuid((const char*)payload->Data);
+				uuid.resize(payload->DataSize);
+				auto callback = [scene, uuid]()
+				{
+					std::shared_ptr<Entity> entity = scene->FindEntityByUUID(uuid);
+					if (entity)
+					{
+						if (std::shared_ptr<Entity> parent = entity->GetParent())
+						{
+							parent->RemoveChild(entity);
+						}
+					}
+				};
+
+				NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+				EventSystem::GetInstance().SendEvent(event);
+			}
+			ImGui::EndDragDropTarget();
+		}
+
 		ImGui::TreePop();
 
 		const std::vector<std::shared_ptr<Entity>>& entities = scene->GetEntities();
@@ -615,6 +639,43 @@ void Editor::DrawNode(std::shared_ptr<Entity> entity, ImGuiTreeNodeFlags flags)
 
 	const bool opened = ImGui::TreeNodeEx((void*)entity.get(), flags, entity->GetName().c_str());
 	style->Colors[ImGuiCol_Text] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	if (ImGui::BeginDragDropSource())
+	{
+		ImGui::SetDragDropPayload("GAMEOBJECT", (const void*)entity->GetUUID().Get().c_str(), entity->GetUUID().Get().size());
+		ImGui::EndDragDropSource();
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GAMEOBJECT"))
+		{
+			std::string uuid((const char*)payload->Data);
+			uuid.resize(payload->DataSize);
+			auto callback = [entity, uuid]()
+			{
+				std::shared_ptr<Entity> child = entity->GetScene()->FindEntityByUUID(uuid);
+				if (child)
+				{
+					if (entity->HasAsParent(child, true) || (entity->HasParent() && entity->GetParent() == child))
+					{
+						return;
+					}
+
+					if (std::shared_ptr<Entity> parent = child->GetParent())
+					{
+						parent->RemoveChild(child);
+					}
+
+					entity->AddChild(child);
+				}
+			};
+
+			NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+			EventSystem::GetInstance().SendEvent(event);
+		}
+		ImGui::EndDragDropTarget();
+	}
 
 	if (ImGui::IsItemHovered() && Input::Mouse::IsMouseReleased(Keycode::MOUSE_BUTTON_1))
 	{
@@ -772,15 +833,43 @@ void Editor::TransformComponent(std::shared_ptr<Entity> entity)
 			transform.SetFollowOwner(followOwner);
 		}
 
-		glm::vec3 position = transform.GetPosition(Transform::System::LOCAL);
-		glm::vec3 rotation = glm::degrees(transform.GetRotation(Transform::System::LOCAL));
-		glm::vec3 scale = transform.GetScale(Transform::System::LOCAL);
+		const char* types[] = { "Local", "Global" };
+		ImGui::Combo("System", &m_TransformSystem, types, 2);
+
+		std::shared_ptr<Entity> parent;
+		glm::vec3 position;
+		glm::vec3 rotation;
+		glm::vec3 scale;
+		if (m_TransformSystem == 0)
+		{
+			position = transform.GetPosition(Transform::System::LOCAL);
+			rotation = glm::degrees(transform.GetRotation(Transform::System::LOCAL));
+			scale = transform.GetScale(Transform::System::LOCAL);
+		}
+		else if (m_TransformSystem == 1)
+		{
+			if (parent = entity->GetParent())
+			{
+				parent->RemoveChild(entity);
+			}
+
+			position = transform.GetPosition(Transform::System::GLOBAL);
+			rotation = glm::degrees(transform.GetRotation(Transform::System::GLOBAL));
+			scale = transform.GetScale(Transform::System::GLOBAL);
+		}
+
 		DrawVec3Control("Translation", position);
 		DrawVec3Control("Rotation", rotation, 0.0f, { -360.0f, 360.0f }, 1.0f);
 		DrawVec3Control("Scale", scale, 1.0f, { 0.0f, 25.0f });
+
 		transform.Scale(scale);
 		transform.Translate(position);
 		transform.Rotate(glm::radians(rotation));
+
+		if (parent)
+		{
+			parent->AddChild(entity);
+		}
 	}
 }
 
@@ -804,10 +893,6 @@ void Editor::GameObjectPopUpMenu(std::shared_ptr<Scene> scene)
 					{
 						if (std::shared_ptr<Entity> entity = scene->FindEntityByUUID(uuid))
 						{
-							for(std::shared_ptr<Entity> child : entity->GetChilds())
-							{
-								scene->DeleteEntity(child);
-							}
 							scene->DeleteEntity(entity);
 						}
 					};
@@ -1078,6 +1163,11 @@ void Editor::Manipulate()
 			if (ImGuizmo::IsUsing())
 			{
 				glm::vec3 position, rotation, scale;
+
+				transformMat4 = glm::inverse(transform.GetTransform() *
+					glm::inverse(transform.GetTransform(Transform::System::LOCAL))) *
+					transformMat4;
+
 				Utils::DecomposeTransform(transformMat4, position, rotation, scale);
 
 				transform.Translate(position);

@@ -25,83 +25,83 @@ void Transform::CopyGlobal(const Transform& transform)
 	m_FollowOwner = transform.m_FollowOwner;
 }
 
-glm::mat4 Transform::GetPositionMat4(System system, bool isTransformed) const
-{
-	switch (system)
-	{
-	case System::LOCAL:
-	{
-		return m_PositionMat4;
-		break;
-	}
-	case System::GLOBAL:
-	{
-		glm::mat4 positionMat4 = m_PositionMat4;
-		if (m_Entity->HasParent())
-		{
-			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
-			positionMat4 = (isTransformed ? parent.GetTransform() : parent.GetPositionMat4()) * positionMat4;
-		}
-		return positionMat4;
-		break;
-	}
-	default:
-		return glm::mat4();
-		break;
-	}
-}
-
-glm::mat4 Transform::GetRotationMat4(System system, bool isTransformed) const
-{
-	switch (system)
-	{
-	case System::LOCAL:
-	{
-		return m_RotationMat4;
-		break;
-	}
-	case System::GLOBAL:
-	{
-		glm::mat4 rotationMat4 = m_RotationMat4;
-		if (m_Entity->HasParent())
-		{
-			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
-			rotationMat4 = (isTransformed ? parent.GetRotationMat4() * parent.GetScaleMat4() : parent.GetRotationMat4()) * rotationMat4;
-		}
-		return rotationMat4;
-		break;
-	}
-	default:
-		return glm::mat4();
-		break;
-	}
-}
-
-glm::mat4 Transform::GetScaleMat4(System system, bool isTransformed) const
-{
-	switch (system)
-	{
-	case System::LOCAL:
-	{
-		return m_ScaleMat4;
-		break;
-	}
-	case System::GLOBAL:
-	{
-		glm::mat4 scaleMat4 = m_ScaleMat4;
-		if (m_Entity->HasParent())
-		{
-			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
-			scaleMat4 = parent.GetScaleMat4() * scaleMat4;
-		}
-		return scaleMat4;
-		break;
-	}
-	default:
-		return glm::mat4();
-		break;
-	}
-}
+//glm::mat4 Transform::GetPositionMat4(System system) const
+//{
+//	switch (system)
+//	{
+//	case System::LOCAL:
+//	{
+//		return m_PositionMat4;
+//		break;
+//	}
+//	case System::GLOBAL:
+//	{
+//		glm::mat4 positionMat4 = m_PositionMat4;
+//		if (m_Entity->HasParent())
+//		{
+//			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+//			positionMat4 *= parent.GetPositionMat4();
+//		}
+//		return positionMat4;
+//		break;
+//	}
+//	default:
+//		return glm::mat4();
+//		break;
+//	}
+//}
+//
+//glm::mat4 Transform::GetRotationMat4(System system) const
+//{
+//	switch (system)
+//	{
+//	case System::LOCAL:
+//	{
+//		return m_RotationMat4;
+//		break;
+//	}
+//	case System::GLOBAL:
+//	{
+//		glm::mat4 rotationMat4 = m_RotationMat4;
+//		if (m_Entity->HasParent())
+//		{
+//			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+//			rotationMat4 *= parent.GetRotationMat4();
+//		}
+//		return rotationMat4;
+//		break;
+//	}
+//	default:
+//		return glm::mat4();
+//		break;
+//	}
+//}
+//
+//glm::mat4 Transform::GetScaleMat4(System system) const
+//{
+//	switch (system)
+//	{
+//	case System::LOCAL:
+//	{
+//		return m_ScaleMat4;
+//		break;
+//	}
+//	case System::GLOBAL:
+//	{
+//		glm::mat4 scaleMat4 = m_ScaleMat4;
+//		if (m_Entity->HasParent())
+//		{
+//			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+//			scaleMat4 *= parent.GetScaleMat4();
+//		}
+//		return scaleMat4;
+//		break;
+//	}
+//	default:
+//		return glm::mat4();
+//		break;
+//	}
+//}
 
 glm::vec3 Transform::GetPreviousPosition(System system) const
 {
@@ -166,7 +166,7 @@ glm::vec3 Transform::GetPosition(System system) const
 	}
 	case System::GLOBAL:
 	{
-		return Utils::GetPosition(GetPositionMat4(system));
+		return Utils::GetPosition(GetTransform(system));
 		break;
 	}
 	default:
@@ -212,7 +212,7 @@ glm::vec3 Transform::GetScale(System system) const
 	}
 	case System::GLOBAL:
 	{
-		return Utils::GetScale(GetScaleMat4(system));
+		return Utils::GetScale(GetTransform(system));
 		break;
 	}
 	default:
