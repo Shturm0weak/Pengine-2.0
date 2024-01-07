@@ -39,6 +39,12 @@ namespace Pengine
 
 		virtual void ImGuiRenderPass(void* frame) = 0;
 
+		virtual void DisableCursor() = 0;
+
+		virtual void ShowCursor() = 0;
+
+		virtual void HideCursor() = 0;
+
 		void SetIsRunning(bool isRunning) { m_IsRunning = isRunning; };
 
 		bool IsRunning() const { return m_IsRunning; }

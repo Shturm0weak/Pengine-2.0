@@ -43,6 +43,12 @@ namespace Pengine
 
 			virtual void ImGuiRenderPass(void* frame) override;
 
+			virtual void DisableCursor() override;
+
+			virtual void ShowCursor() override;
+
+			virtual void HideCursor() override;
+
 			GLFWwindow* GetRawWindow() { return m_Window; }
 
 			ImGui_ImplVulkanH_Window& GetVulkanWindow() { return m_VulkanWindow; }

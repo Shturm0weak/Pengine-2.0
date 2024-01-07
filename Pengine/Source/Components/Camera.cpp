@@ -34,6 +34,7 @@ void Camera::Move(Camera&& camera) noexcept
 
 void Camera::UpdateViewProjection()
 {
+	// Potential bad performance impact! Maybe need to reinvent!
 	if (m_Entity && m_Entity->HasComponent<Transform>())
 	{
 		m_ViewMat4 = glm::inverse(m_Entity->GetComponent<Transform>().GetTransform());

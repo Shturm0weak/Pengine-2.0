@@ -49,69 +49,6 @@ void ExampleApplication::OnStart()
 
 void ExampleApplication::OnUpdate()
 {
-	std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport("Main");
-	if (!viewport->IsFocused())
-	{
-		return;
-	}
-
-	const float speed = 2.0f;
-	std::shared_ptr<Entity> camera = viewport->GetCamera();
-	if (!camera)
-	{
-		return;
-	}
-
-	Camera& cameraComponent = camera->GetComponent<Camera>();
-	Transform& transform = camera->GetComponent<Transform>();
-
-	if (!viewport->IsFocused() || !Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
-	{
-		return;
-	}
-
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_W))
-	{
-		transform.Translate(transform.GetPosition() + transform.GetForward() * (float)Time::GetDeltaTime() * speed);
-	}
-	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_S))
-	{
-		transform.Translate(transform.GetPosition() + transform.GetForward() * -(float)Time::GetDeltaTime() * speed);
-	}
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_D))
-	{
-		transform.Translate(transform.GetPosition() + transform.GetRight() * (float)Time::GetDeltaTime() * speed);
-	}
-	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_A))
-	{
-		transform.Translate(transform.GetPosition() + transform.GetRight() * -(float)Time::GetDeltaTime() * speed);
-	}
-
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL))
-	{
-		transform.Translate(transform.GetPosition() + transform.GetUp() * -(float)Time::GetDeltaTime() * speed);
-	}
-	else if (Input::KeyBoard::IsKeyDown(Keycode::SPACE))
-	{
-		transform.Translate(transform.GetPosition() + transform.GetUp() * (float)Time::GetDeltaTime() * speed);
-	}
-
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_UP))
-	{
-		transform.Rotate(transform.GetRotation() + glm::vec3(1.0f * Time::GetDeltaTime() * speed, 0.0f, 0.0f));
-	}
-	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_DOWN))
-	{
-		transform.Rotate(transform.GetRotation() + glm::vec3(-1.0f * Time::GetDeltaTime() * speed, 0.0f, 0.0f));
-	}
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_RIGHT))
-	{
-		transform.Rotate(transform.GetRotation() + glm::vec3(0.0f, -1.0f * Time::GetDeltaTime() * speed, 0.0f));
-	}
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT))
-	{
-		transform.Rotate(transform.GetRotation() + glm::vec3(0.0f, 1.0f * Time::GetDeltaTime() * speed, 0.0f));
-	}
 }
 
 void ExampleApplication::OnClose()

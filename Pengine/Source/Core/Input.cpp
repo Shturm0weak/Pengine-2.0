@@ -6,6 +6,9 @@ std::unordered_map<int, int> Input::s_ActionsByKeycode;
 std::function<bool(int)> Input::s_IsMouseDownCallback;
 std::function<bool(int)> Input::s_IsKeyDownCallback;
 Input::JoyStickInfo Input::s_JoyStick;
+glm::dvec2 Input::s_MousePosition;
+glm::dvec2 Input::s_MousePositionPrevious;
+glm::dvec2 Input::s_MousePositionDelta;
 
 bool Input::Mouse::IsMouseDown(int button)
 {
@@ -37,6 +40,21 @@ bool Input::Mouse::IsMouseReleased(int button)
     }
 
     return false;
+}
+
+glm::dvec2 Input::Mouse::GetMousePosition()
+{
+    return s_MousePosition;
+}
+
+glm::dvec2 Input::Mouse::GetMousePositionPrevious()
+{
+    return s_MousePositionPrevious;
+}
+
+glm::dvec2 Input::Mouse::GetMousePositionDelta()
+{
+    return s_MousePositionDelta;
 }
 
 bool Input::KeyBoard::IsKeyDown(int keycode)
@@ -76,6 +94,8 @@ bool Input::KeyBoard::IsKeyReleased(int keycode)
 
 void Input::ResetInput()
 {
+    s_MousePositionDelta = { 0.0, 0.0 };
+
     s_JoyStick.Update();
 
     for (auto keyByKeycode = s_ActionsByKeycode.begin(); keyByKeycode != s_ActionsByKeycode.end(); keyByKeycode++)
@@ -108,6 +128,13 @@ void Input::MouseButtonCallback(int button, int action, int mods)
     {
         s_ActionsByKeycode.insert(std::make_pair(button, action));
     }
+}
+
+void Input::MousePositionCallback(double x, double y)
+{
+    s_MousePositionPrevious = s_MousePosition;
+    s_MousePosition = { x, y };
+    s_MousePositionDelta = s_MousePosition - s_MousePositionPrevious;
 }
 
 void Input::SetIsMouseDownCallback(const std::function<bool(int)>& callback)

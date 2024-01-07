@@ -7,6 +7,7 @@
 #include "../Core/TextureManager.h"
 #include "../Core/Serializer.h"
 #include "../Core/Time.h"
+#include "../Core/WindowManager.h"
 #include "../Core/ViewportManager.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
@@ -31,9 +32,9 @@ void Editor::Update(std::shared_ptr<Scene> scene)
 	m_MaterialMenu.Update(*this);
 
 	ImGui::Begin("Settings");
-	ImGui::Text("FPS: %.0f", 1.0f / Time::GetDeltaTime());
+	ImGui::Text("FPS: %.0f", 1.0f / (float)Time::GetDeltaTime());
 	ImGui::Text("DrawCalls: %d", drawCallsCount);
-	ImGui::Text("Triangles: %d", vertexCount);
+	ImGui::Text("Triangles: %d", (int)vertexCount);
 	drawCallsCount = 0;
 	vertexCount = 0;
 	ImGui::Text("Meshes: %d", (int)MeshManager::GetInstance().GetMeshes().size());
@@ -41,6 +42,30 @@ void Editor::Update(std::shared_ptr<Scene> scene)
 	ImGui::Text("Materials: %d", (int)MaterialManager::GetInstance().GetMaterials().size());
 	ImGui::Text("Textures: %d", (int)TextureManager::GetInstance().GetTextures().size());
 	ImGui::End();
+
+	if (Input::Mouse::IsMouseReleased(Keycode::MOUSE_BUTTON_2))
+	{
+		m_MovingCamera = nullptr;
+	}
+
+	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
+	{
+		if (viewport->IsHovered() && Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
+		{
+			m_MovingCamera = viewport->GetCamera();
+		}
+
+		if (m_MovingCamera)
+		{
+			WindowManager::GetInstance().GetCurrentWindow()->DisableCursor();
+			MoveCamera(m_MovingCamera);
+			break;
+		}
+		else
+		{
+			WindowManager::GetInstance().GetCurrentWindow()->ShowCursor();
+		}
+	}
 }
 
 bool Editor::DrawVec2Control(const std::string& label, glm::vec2& values, float resetValue, const glm::vec2& limits, float speed, float columnWidth)
@@ -1062,6 +1087,70 @@ void Editor::Manipulate()
 		};
 
 		viewport->SetDrawGizmosCallback(callback);
+	}
+}
+
+void Editor::MoveCamera(std::shared_ptr<Entity> camera)
+{
+	if (!camera)
+	{
+		return;
+	}
+
+	Camera& cameraComponent = camera->GetComponent<Camera>();
+	Transform& transform = camera->GetComponent<Transform>();
+
+	glm::vec3 rotation = transform.GetRotation();
+	if (rotation.y > glm::two_pi<float>() || rotation.y < -glm::two_pi<float>())
+	{
+		rotation.y = 0.0f;
+	}
+	if (rotation.x > glm::two_pi<float>() || rotation.x < -glm::two_pi<float>())
+	{
+		rotation.x = 0.0f;
+	}
+
+	transform.Rotate(glm::vec3(rotation.x, rotation.y, 0.0f));
+
+	const float rotationSpeed = 1.0f;
+
+	glm::vec2 delta = Input::Mouse::GetMousePositionDelta() * 0.1;
+
+	transform.Rotate(glm::vec3(rotation.x - glm::radians(delta.y),
+		rotation.y - glm::radians(delta.x), 0));
+
+	const float defaultSpeed = 2.0f;
+	float speed = defaultSpeed;
+
+	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_SHIFT))
+	{
+		speed *= 10.0f;
+	}
+
+	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_W))
+	{
+		transform.Translate(transform.GetPosition() + transform.GetForward() * (float)Time::GetDeltaTime() * speed);
+	}
+	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_S))
+	{
+		transform.Translate(transform.GetPosition() + transform.GetForward() * -(float)Time::GetDeltaTime() * speed);
+	}
+	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_D))
+	{
+		transform.Translate(transform.GetPosition() + transform.GetRight() * (float)Time::GetDeltaTime() * speed);
+	}
+	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_A))
+	{
+		transform.Translate(transform.GetPosition() + transform.GetRight() * -(float)Time::GetDeltaTime() * speed);
+	}
+
+	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL))
+	{
+		transform.Translate(transform.GetPosition() + transform.GetUp() * -(float)Time::GetDeltaTime() * speed);
+	}
+	else if (Input::KeyBoard::IsKeyDown(Keycode::SPACE))
+	{
+		transform.Translate(transform.GetPosition() + transform.GetUp() * (float)Time::GetDeltaTime() * speed);
 	}
 }
 

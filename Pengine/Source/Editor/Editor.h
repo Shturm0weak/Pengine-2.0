@@ -72,6 +72,8 @@ namespace Pengine
 
 		void Manipulate();
 
+		void MoveCamera(std::shared_ptr<Entity> camera);
+
 		struct MaterialMenu
 		{
 			std::shared_ptr<Material> material = nullptr;
@@ -92,6 +94,8 @@ namespace Pengine
 		uint32_t m_GizmoOperation = 0;
 
 		bool m_DrawVecLabel = true;
+
+		std::shared_ptr<Entity> m_MovingCamera;
 	};
 
 }

@@ -16,6 +16,12 @@ namespace Pengine
             static bool IsMousePressed(int button);
 
             static bool IsMouseReleased(int button);
+
+            static glm::dvec2 GetMousePosition();
+            
+            static glm::dvec2 GetMousePositionPrevious();
+            
+            static glm::dvec2 GetMousePositionDelta();
         };
 
         struct KeyBoard
@@ -42,6 +48,8 @@ namespace Pengine
 
         static void MouseButtonCallback(int button, int action, int mods);
 
+        static void MousePositionCallback(double x, double y);
+
         static void SetIsMouseDownCallback(const std::function<bool(int)>& callback);
 
         static void SetIsKeyDownCallback(const std::function<bool(int)>& callback);
@@ -54,6 +62,10 @@ namespace Pengine
         static std::function<bool(int)> s_IsMouseDownCallback;
 
         static std::function<bool(int)> s_IsKeyDownCallback;
+
+        static glm::dvec2 s_MousePosition;
+        static glm::dvec2 s_MousePositionPrevious;
+        static glm::dvec2 s_MousePositionDelta;
 
         struct JoyStickInfo
         {

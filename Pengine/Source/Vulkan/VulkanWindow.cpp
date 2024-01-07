@@ -76,6 +76,13 @@ VulkanWindow::VulkanWindow(const std::string& name, const glm::ivec2& size)
 	};
 	glfwSetMouseButtonCallback(m_Window, mouseButtonCallback);
 
+	auto cursorPositionCallback = [](GLFWwindow* window, double x, double y)
+	{
+		Input::MousePositionCallback(x, y);
+		ImGui_ImplGlfw_CursorPosCallback(window, x, y);
+	};
+	glfwSetCursorPosCallback(m_Window, cursorPositionCallback);
+
 	auto isKeyDownCallback = [this](int keycode)
 	{
 		return glfwGetKey(m_Window, keycode);
@@ -371,6 +378,21 @@ void VulkanWindow::ImGuiRenderPass(void* frame)
 	vkCmdEndRenderPass(imGuiFrame->CommandBuffer);
 
 	Vk::device->CommandEndLabel(imGuiFrame->CommandBuffer);
+}
+
+void VulkanWindow::DisableCursor()
+{
+	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void VulkanWindow::ShowCursor()
+{
+	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+void VulkanWindow::HideCursor()
+{
+	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
 
 VkExtent2D VulkanWindow::GetExtent() const
