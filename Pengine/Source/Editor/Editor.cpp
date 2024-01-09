@@ -14,6 +14,8 @@
 #include "../EventSystem/ResizeEvent.h"
 #include "../Editor/ImGuizmo.h"
 
+#include <fstream>
+
 using namespace Pengine;
 
 Editor::Editor()
@@ -30,6 +32,8 @@ void Editor::Update(std::shared_ptr<Scene> scene)
 	AssetBrowser();
 
 	m_MaterialMenu.Update(*this);
+	m_CreateFileMenu.Update();
+	m_DeleteFileMenu.Update();
 
 	ImGui::Begin("Settings");
 	ImGui::Text("FPS: %.0f", 1.0f / (float)Time::GetDeltaTime());
@@ -959,6 +963,19 @@ void Editor::AssetBrowser()
 
 		bool iconHovered = false;
 
+		if (ImGui::BeginPopupContextWindow())
+		{
+			if (ImGui::MenuItem("Create Scene"))
+			{
+				m_CreateFileMenu.opened = true;
+				m_CreateFileMenu.filepath = m_CurrentDirectory;
+				m_CreateFileMenu.format = FileFormats::Scene();
+				m_CreateFileMenu.name[0] = '\0';
+			}
+
+			ImGui::EndPopup();
+		}
+
 		for (auto& directoryIter : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
 			const std::string path = Utils::Replace(directoryIter.path().string(), '\\', '/');
@@ -1042,7 +1059,11 @@ void Editor::AssetBrowser()
 						Serializer::LoadIntermediate(Utils::Erase(path, m_RootDirectory.string() + "/"));
 					}
 				}
-
+				else if (ImGui::MenuItem("Delete file"))
+				{
+					m_DeleteFileMenu.opened = true;
+					m_DeleteFileMenu.filepath = path;
+				}
 				ImGui::EndPopup();
 			}
 
@@ -1476,6 +1497,60 @@ void Editor::MaterialMenu::Update(Editor& editor)
 			}
 		}
 
+		ImGui::End();
+	}
+}
+
+void Editor::CreateFileMenu::Update()
+{
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoCollapse;
+	if (opened && ImGui::Begin("Create File", &opened, flags))
+	{
+		ImGui::InputText("Filename", name, 64);
+		if (ImGui::Button("Create"))
+		{
+			MakeFile(filepath / (name + format));
+
+			opened = false;
+		}
+
+		ImGui::End();
+	}
+}
+
+void Editor::CreateFileMenu::MakeFile(const std::filesystem::path filepath)
+{
+	std::ofstream out(filepath, std::ostream::binary);
+	out.close();
+}
+
+void Editor::DeleteFileMenu::Update()
+{
+	ImGui::SetNextWindowSize({ 250.0f, 60.0f });
+	if (opened && ImGui::Begin("Deleting directory or file", &opened,
+		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar))
+	{
+		ImGui::Text("Are you sure you want to delete\n%s?", Utils::EraseDirectoryFromFilePath(filepath.string()).c_str());
+		if (ImGui::Button("Yes"))
+		{
+			if (Utils::GetFileFormat(filepath.string()).empty())
+			{
+				Utils::DeleteDirectory(filepath.wstring(), true);
+			}
+			else
+			{
+				std::filesystem::remove(filepath);
+			}
+
+			opened = false;
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("No"))
+		{
+			opened = false;
+		}
 		ImGui::End();
 	}
 }

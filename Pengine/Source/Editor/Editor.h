@@ -82,6 +82,29 @@ namespace Pengine
 			void Update(Editor& editor);
 		} m_MaterialMenu;
 
+		struct CreateFileMenu
+		{
+			char name[64];
+
+			bool opened = false;
+
+			std::filesystem::path filepath;
+			std::string format;
+
+			void Update();
+
+			void MakeFile(const std::filesystem::path filepath);
+		} m_CreateFileMenu;
+
+		struct DeleteFileMenu
+		{
+			bool opened = false;
+
+			std::filesystem::path filepath;
+
+			void Update();
+		} m_DeleteFileMenu;
+
 		std::set<std::string> m_SelectedEntities;
 
 		std::filesystem::path m_RootDirectory = std::filesystem::current_path();
