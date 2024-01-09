@@ -65,9 +65,8 @@ void Entity::AddChild(std::shared_ptr<Entity> child)
 		Transform& transform = GetComponent<Transform>();
 		Transform& childTransform = child->GetComponent<Transform>();
 
-		const glm::vec3 position = Utils::GetPosition(glm::inverse(transform.GetTransform()) * childTransform.GetTransform());
-		const glm::vec3 rotation = childTransform.GetRotation() - transform.GetRotation();
-		const glm::vec3 scale = childTransform.GetScale() / transform.GetScale();
+		glm::vec3 position, rotation, scale;
+		Utils::DecomposeTransform(glm::inverse(transform.GetTransform()) * childTransform.GetTransform(), position, rotation, scale);
 
 		m_Childs.emplace_back(child);
 		child->SetParent(shared_from_this());
@@ -90,9 +89,8 @@ void Entity::RemoveChild(std::shared_ptr<Entity> child)
 		Transform& transform = GetComponent<Transform>();
 		Transform& childTransform = child->GetComponent<Transform>();
 
-		const glm::vec3 position = childTransform.GetPosition();
-		const glm::vec3 rotation = childTransform.GetRotation();
-		const glm::vec3 scale = childTransform.GetScale();
+		glm::vec3 position, rotation, scale;
+		Utils::DecomposeTransform(childTransform.GetTransform(), position, rotation, scale);
 
 		auto childToErase = std::find(m_Childs.begin(), m_Childs.end(), child);
 		if (childToErase != m_Childs.end())

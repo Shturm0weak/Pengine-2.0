@@ -4,8 +4,8 @@
   Childs:
     []
   Transform:
-    Position: [3.01706171, 3.33255005, 0.0250379592]
-    Rotation: [-0.709363103, 1.4073298, 0]
+    Position: [4.14805746, 2.784904, -1.93499303]
+    Rotation: [-0.43534565, 2.42660856, 0]
     Scale: [1, 1, 1]
     FollowOwner: true
   Camera:
@@ -46,7 +46,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Scale: [0.00999999978, 0.00999999512, 0.00999999512]
     FollowOwner: true
 - UUID: ab862aa1-1bee-429b-b1d3-5780be6e28c7
   Name: sponza_378_sponza_378_Material__25
@@ -55,8 +55,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: d75b1050-e332-46b4-b26b-24f894885e35
@@ -68,8 +68,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 8d9277c6-4a70-4910-b674-3b0753dba87c
@@ -81,8 +81,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: ac8a68de-f37a-48b9-ab80-621df84c4477
@@ -94,8 +94,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 34496957-da59-4ad5-9b0c-200c48cf52a3
@@ -107,8 +107,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 05aa1517-6a8a-4616-ba14-29accfdd1152
@@ -120,8 +120,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 53fbd273-8524-4a65-b927-f270ce363dbb
@@ -133,8 +133,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 1e58005b-521b-4f39-a79e-6859e33542e4
@@ -146,8 +146,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 54c3eeec-6e1f-4d5a-9dc6-5a51f19ebbb2
@@ -159,8 +159,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 99cdb1ba-ec2c-4b40-ae21-1a94e05f8d60
@@ -172,8 +172,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 4e0f21f0-69ad-42ff-928d-b7547df39bfb
@@ -185,8 +185,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: fa4ac2d7-6012-4df8-9af8-6b2af3e7d6ff
@@ -198,8 +198,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 3a724793-9877-4a8b-97df-038725693ef0
@@ -211,8 +211,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: b90df7a1-a697-4b14-b4d5-16e876ca433c
@@ -224,8 +224,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 1d2f039f-c75e-44cd-8aa7-e545fb0240bc
@@ -237,8 +237,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: a93f208b-021b-4e6e-8f43-9ade3fd9d269
@@ -250,8 +250,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 5eec18c4-daf9-4a55-8c7e-bcbe17cba0da
@@ -263,8 +263,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: b9ea99f3-3873-4171-97c7-e058c1e86e1f
@@ -276,8 +276,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 57d36870-2575-412f-bd6a-fc93a52d62d3
@@ -289,8 +289,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 9d84b1c6-c77b-40c2-8687-77dfac0c15b2
@@ -302,8 +302,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 51ede385-96fc-4b0f-9f56-87aeea5a87c5
@@ -315,8 +315,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: e0b74b44-44cf-482b-b6d6-5247257b67ce
@@ -328,8 +328,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 12ea635b-334f-41c5-b66b-16a32d10a0b6
@@ -341,8 +341,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 8dd07629-459a-47d5-8f07-906616f7db43
@@ -354,8 +354,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: a1a018cb-0bee-460a-901b-b68132bb3ecb
@@ -367,8 +367,8 @@
     []
   Transform:
     Position: [0, 0, 0]
-    Rotation: [0, 0, 0]
-    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    Rotation: [0, -0, 0]
+    Scale: [0.00999999046, 0.00999998581, 0.00999998581]
     FollowOwner: true
   Renderer3D:
     Mesh: 5b666e02-4234-4f07-ba9e-1e867c3effc0
@@ -381,10 +381,49 @@
   Transform:
     Position: [0, 1.39999998, 0]
     Rotation: [0, 0, 0]
-    Scale: [1, 1, 1]
+    Scale: [1, 3.41615057, 3.41615057]
     FollowOwner: true
   PointLight:
     Color: [1, 1, 1]
     Constant: 0
     Quadratic: 0.115000002
     Linear: 0
+- UUID: 7d1377aa-e717-41d2-8757-b14b75b1c5ea
+  Name: Cone1
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 2, 0]
+    Rotation: [0, 0, 0.785398185]
+    Scale: [0.5, 0.5, 0.5]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 586836b8-70bd-4cd2-96e7-091e462677be
+    Material: 0dafd034-cf38-4841-993a-4dab159d8fc8
+- UUID: ee7eda77-656c-40d2-a24c-c2a45452ee79
+  Name: Cone2
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [2, 2, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.5, 0.5, 0.5]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 586836b8-70bd-4cd2-96e7-091e462677be
+    Material: 0dafd034-cf38-4841-993a-4dab159d8fc8
+- UUID: ee7eda77-656c-40d2-a24c-c2a45452ee78
+  Name: Cone3
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [4, 2, 0]
+    Rotation: [0, 0, 0]
+    Scale: [0.5, 0.5, 0.5]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 586836b8-70bd-4cd2-96e7-091e462677be
+    Material: 0dafd034-cf38-4841-993a-4dab159d8fc8

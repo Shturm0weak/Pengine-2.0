@@ -30,17 +30,18 @@ void main()
 
 	if(use > 0.5f)
 	{
+		vec3 ambient = color * vec3(0.3f);
 	    vec3 lightDir = normalize(lightPosition - position);
-	    float diff = max(dot(normal, lightDir), 0.0);
-	    vec3 diffuse = color * diff * albedoColor;
-	    
+	    float diff = max(dot(normal, lightDir), 0.0f);
+	    vec3 diffuse = color * diff;
+
 	    float distance    = length(lightPosition - position);
-	    float attenuation = 1.0 / (constant + linear * distance + quadratic * (distance * distance));
+	    float attenuation = 1.0f / (constant + linear * distance + quadratic * (distance * distance));
 
 	    diffuse   *= attenuation;
-	        
-	    vec3 result = diffuse;
-	    outColor = vec4(result, 1.0);
+
+	    vec3 result = (ambient + diffuse) * albedoColor;
+	    outColor = vec4(result, 1.0f);
 	}
 	else
 	{

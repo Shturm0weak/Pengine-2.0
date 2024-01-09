@@ -62,9 +62,9 @@ std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name, const UUID&
 
 void Scene::DeleteEntity(std::shared_ptr<Entity> entity)
 {
-	for (std::shared_ptr<Entity> child : entity->GetChilds())
+	while (!entity->GetChilds().empty())
 	{
-		DeleteEntity(child);
+		DeleteEntity(entity->GetChilds().back());
 	}
 
 	if (std::shared_ptr<Entity> parent = entity->GetParent())

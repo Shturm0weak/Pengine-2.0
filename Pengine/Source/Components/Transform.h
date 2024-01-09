@@ -21,7 +21,6 @@ namespace Pengine
 		glm::mat4 m_PositionMat4;
 		glm::mat4 m_RotationMat4;
 		glm::mat4 m_ScaleMat4;
-		glm::mat3 m_InverseTransformMat3;
 		glm::vec3 m_PreviousPosition;
 		glm::vec3 m_PositionDelta;
 		glm::vec3 m_PreviousScale;
@@ -62,11 +61,11 @@ namespace Pengine
 
 		void CopyGlobal(const Transform& transform);
 
-		//glm::mat4 GetPositionMat4(System system = System::GLOBAL) const;
+		glm::mat4 GetPositionMat4(System system = System::GLOBAL) const;
 		
-		//glm::mat4 GetRotationMat4(System system = System::GLOBAL) const;
+		glm::mat4 GetRotationMat4(System system = System::GLOBAL) const;
 		
-		//glm::mat4 GetScaleMat4(System system = System::GLOBAL) const;
+		glm::mat4 GetScaleMat4(System system = System::GLOBAL) const;
 		
 		glm::vec3 GetPreviousPosition(System system = System::GLOBAL) const;
 		
@@ -115,8 +114,6 @@ namespace Pengine
 		void ClearOnTranslationCallbacks() { m_OnTranslationCallbacks.clear(); }
 		
 		void ClearOnScaleCallbacks() { m_OnScaleCallbacks.clear(); }
-		
-		void SetRotationMat4(const glm::mat4& rotationMat4);
 
 		void Translate(const glm::vec3& position);
 		
