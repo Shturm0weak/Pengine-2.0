@@ -3,6 +3,8 @@
 #include "../Core/Core.h"
 #include "../Graphics/Pipeline.h"
 
+#include <vulkan/vulkan.h>
+
 namespace Pengine
 {
 
@@ -66,6 +68,8 @@ namespace Pengine
             void CreateShaderModule(const std::string& code, VkShaderModule* shaderModule);
 
             std::string CompileShaderModule(const std::string& filepath, ShaderType type);
+
+            void Reflect(const std::string& spv);
 
             VkPipeline m_GraphicsPipeline;
             VkPipelineLayout m_PipelineLayout;

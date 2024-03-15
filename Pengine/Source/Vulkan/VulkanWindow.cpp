@@ -237,7 +237,7 @@ void* VulkanWindow::BeginFrame()
 	VkResult result = vkAcquireNextImageKHR(
 		device->GetDevice(),
 		m_VulkanWindow.Swapchain,
-		std::numeric_limits<uint64_t>::max(),
+		(std::numeric_limits<uint64_t>::max)(),
 		imageAcquiredSemaphore,
 		VK_NULL_HANDLE,
 		&m_VulkanWindow.FrameIndex);

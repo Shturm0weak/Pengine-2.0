@@ -18,7 +18,8 @@ namespace Pengine
 			TRANSFER_DST
 		};
 
-		static std::shared_ptr<Buffer> Create(uint64_t instanceSize,
+		static std::shared_ptr<Buffer> Create(
+			size_t instanceSize,
 			uint32_t instanceCount, std::vector<Usage> usage);
 
 		Buffer() = default;

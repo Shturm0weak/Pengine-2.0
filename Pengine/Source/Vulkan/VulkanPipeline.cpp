@@ -11,8 +11,11 @@
 #include "../Core/Serializer.h"
 #include "../Core/ViewportManager.h"
 #include "../Graphics/Renderer.h"
+#include "../Source/SPIRV-Reflect/spirv_reflect.h"
 
 #include <shaderc/shaderc.hpp>
+
+#include <glfw3.h>
 
 using namespace Pengine;
 using namespace Vk;
@@ -315,7 +318,35 @@ std::string VulkanPipeline::CompileShaderModule(const std::string& filepath, Sha
         Serializer::SerializeShaderCache(filepath, spv);
     }
     
+    Reflect(spv);
+
     return spv;
+}
+
+void VulkanPipeline::Reflect(const std::string& spv)
+{
+    // In progress.
+    SpvReflectShaderModule module = {};
+    SpvReflectResult result = spvReflectCreateShaderModule(spv.size(), spv.data(), &module);
+    if (result != SPV_REFLECT_RESULT_SUCCESS)
+    {
+        FATAL_ERROR("Failed to get spirv reflection");
+    }
+
+    uint32_t count = 0;
+    result = spvReflectEnumerateDescriptorBindings(&module, &count, NULL);
+    assert(result == SPV_REFLECT_RESULT_SUCCESS);
+    SpvReflectDescriptorBinding** input_vars =
+        (SpvReflectDescriptorBinding**)malloc(count * sizeof(SpvReflectDescriptorBinding*));
+    result = spvReflectEnumerateDescriptorBindings(&module, &count, input_vars);
+    assert(result == SPV_REFLECT_RESULT_SUCCESS);
+
+    for (uint32_t i = 0; i < count; i++)
+    {
+        const auto var = input_vars[i];
+    }
+
+    spvReflectDestroyShaderModule(&module);
 }
 
 void VulkanPipeline::Bind(VkCommandBuffer commandBuffer)

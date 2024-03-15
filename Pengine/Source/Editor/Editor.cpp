@@ -16,6 +16,11 @@
 
 #include <fstream>
 
+#define GLFW_INCLUDE_VULKAN
+#include <glfw3.h>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <glfw3native.h>
+
 using namespace Pengine;
 
 Editor::Editor()
@@ -586,14 +591,17 @@ void Editor::DrawScene(std::shared_ptr<Scene> scene)
 			{
 				std::string uuid((const char*)payload->Data);
 				uuid.resize(payload->DataSize);
-				auto callback = [scene, uuid]()
+				auto callback = [weakScene = std::weak_ptr<Scene>(scene), uuid]()
 				{
-					std::shared_ptr<Entity> entity = scene->FindEntityByUUID(uuid);
-					if (entity)
+					if (std::shared_ptr<Scene> scene = weakScene.lock())
 					{
-						if (std::shared_ptr<Entity> parent = entity->GetParent())
+						std::shared_ptr<Entity> entity = scene->FindEntityByUUID(uuid);
+						if (entity)
 						{
-							parent->RemoveChild(entity);
+							if (std::shared_ptr<Entity> parent = entity->GetParent())
+							{
+								parent->RemoveChild(entity);
+							}
 						}
 					}
 				};
@@ -656,22 +664,25 @@ void Editor::DrawNode(std::shared_ptr<Entity> entity, ImGuiTreeNodeFlags flags)
 		{
 			std::string uuid((const char*)payload->Data);
 			uuid.resize(payload->DataSize);
-			auto callback = [entity, uuid]()
+			auto callback = [weakEntity = std::weak_ptr<Entity>(entity), uuid]()
 			{
-				std::shared_ptr<Entity> child = entity->GetScene()->FindEntityByUUID(uuid);
-				if (child)
+				if (std::shared_ptr<Entity> entity = weakEntity.lock())
 				{
-					if (entity->HasAsParent(child, true) || (entity->HasParent() && entity->GetParent() == child))
+					std::shared_ptr<Entity> child = entity->GetScene()->FindEntityByUUID(uuid);
+					if (child)
 					{
-						return;
-					}
+						if (entity->HasAsParent(child, true) || (entity->HasParent() && entity->GetParent() == child))
+						{
+							return;
+						}
 
-					if (std::shared_ptr<Entity> parent = child->GetParent())
-					{
-						parent->RemoveChild(child);
-					}
+						if (std::shared_ptr<Entity> parent = child->GetParent())
+						{
+							parent->RemoveChild(child);
+						}
 
-					entity->AddChild(child);
+						entity->AddChild(child);
+					}
 				}
 			};
 
@@ -893,11 +904,14 @@ void Editor::GameObjectPopUpMenu(std::shared_ptr<Scene> scene)
 			{
 				for (const std::string& uuid : m_SelectedEntities)
 				{
-					auto callback = [scene, uuid]()
+					auto callback = [weakScene = std::weak_ptr<Scene>(scene), uuid]()
 					{
-						if (std::shared_ptr<Entity> entity = scene->FindEntityByUUID(uuid))
+						if (std::shared_ptr<Scene> scene = weakScene.lock())
 						{
-							scene->DeleteEntity(entity);
+							if (std::shared_ptr<Entity> entity = scene->FindEntityByUUID(uuid))
+							{
+								scene->DeleteEntity(entity);
+							}
 						}
 					};
 
@@ -1255,11 +1269,11 @@ void Editor::MoveCamera(std::shared_ptr<Entity> camera)
 		transform.Translate(transform.GetPosition() + transform.GetRight() * -(float)Time::GetDeltaTime() * speed);
 	}
 
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL))
+	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_Q))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetUp() * -(float)Time::GetDeltaTime() * speed);
 	}
-	else if (Input::KeyBoard::IsKeyDown(Keycode::SPACE))
+	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_E))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetUp() * (float)Time::GetDeltaTime() * speed);
 	}
@@ -1535,7 +1549,7 @@ void Editor::DeleteFileMenu::Update()
 		{
 			if (Utils::GetFileFormat(filepath.string()).empty())
 			{
-				Utils::DeleteDirectory(filepath.wstring(), true);
+				//Utils::DeleteDirectory(filepath.wstring(), true);
 			}
 			else
 			{

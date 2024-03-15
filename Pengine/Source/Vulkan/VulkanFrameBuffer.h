@@ -4,6 +4,8 @@
 #include "../Graphics/FrameBuffer.h"
 #include "../Vulkan/VulkanFrameBuffer.h"
 
+#include <vulkan/vulkan.h>
+
 namespace Pengine
 {
 

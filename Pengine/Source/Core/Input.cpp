@@ -1,5 +1,10 @@
 #include "Input.h"
 
+#define GLFW_INCLUDE_VULKAN
+#include <glfw3.h>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <glfw3native.h>
+
 using namespace Pengine;
 
 std::unordered_map<int, int> Input::s_ActionsByKeycode;

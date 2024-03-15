@@ -69,7 +69,7 @@ namespace Pengine
 
         struct JoyStickInfo
         {
-            int id = GLFW_JOYSTICK_1;
+            int id = 0;
             int isPresent = 0;
 
             std::unordered_map<int, float> valuesByAxes; // First - axis, second - value.

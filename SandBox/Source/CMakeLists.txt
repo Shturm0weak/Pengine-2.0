@@ -22,8 +22,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE EnTT)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Pengine/Source)
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor)
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/Includes)
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/Includes/GLFW)
 
 add_compile_definitions(_UNICODE)
 add_compile_definitions(UNICODE)

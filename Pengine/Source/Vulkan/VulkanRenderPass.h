@@ -3,6 +3,8 @@
 #include "../Core/Core.h"
 #include "../Graphics/RenderPass.h"
 
+#include <vulkan/vulkan.h>
+
 namespace Pengine
 {
 

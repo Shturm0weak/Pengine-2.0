@@ -1,6 +1,5 @@
 #include "WindowManager.h"
 
-//#include "../SoftwareRenderer/SrWindow.h"
 #include "../Vulkan/VulkanWindow.h"
 
 using namespace Pengine;
@@ -15,10 +14,6 @@ WindowManager& WindowManager::GetInstance()
 std::shared_ptr<Window> WindowManager::Create(const std::string& name, const glm::ivec2& size)
 {
 	std::shared_ptr<Window> window = nullptr;
-	//if (graphicsAPI == GraphicsAPI::Software)
-	//{
-	//	window = std::make_shared<SrWindow>(name, size);
-	//}
 	if (graphicsAPI == GraphicsAPI::Vk)
 	{
 		window = std::make_shared<VulkanWindow>(name, size);

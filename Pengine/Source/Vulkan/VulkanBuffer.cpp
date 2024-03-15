@@ -16,7 +16,9 @@ using namespace Vk;
  *
  * @return VkResult of the buffer mapping call
  */
-VkDeviceSize VulkanBuffer::GetAlignment(VkDeviceSize instanceSize, VkDeviceSize minOffsetAlignment)
+VkDeviceSize VulkanBuffer::GetAlignment(
+    VkDeviceSize instanceSize,
+    VkDeviceSize minOffsetAlignment)
 {
     if (minOffsetAlignment > 0)
     {
@@ -26,7 +28,9 @@ VkDeviceSize VulkanBuffer::GetAlignment(VkDeviceSize instanceSize, VkDeviceSize 
     return instanceSize;
 }
 
-std::shared_ptr<VulkanBuffer> VulkanBuffer::Create(uint64_t instanceSize, uint32_t instanceCount,
+std::shared_ptr<VulkanBuffer> VulkanBuffer::Create(
+    size_t instanceSize,
+    uint32_t instanceCount,
     std::vector<Usage> usage)
 {
     bool isTransferSrc = false;

@@ -5,18 +5,12 @@
 
 #include "../Core/FileFormatNames.h"
 #include "../Core/Logger.h"
-#include "../SoftwareRenderer/SrTexture.h"
 #include "../Vulkan/VulkanTexture.h"
 
 using namespace Pengine;
 
 std::shared_ptr<Texture> Texture::Create(CreateInfo textureCreateInfo)
 {
-	/*if (graphicsAPI == GraphicsAPI::Software)
-	{
-		return std::make_shared<SrTexture>(textureCreateInfo);
-	}
-	else*/
 	if (graphicsAPI == GraphicsAPI::Vk)
 	{
 		return std::make_shared<Vk::VulkanTexture>(textureCreateInfo);

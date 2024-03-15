@@ -59,7 +59,9 @@ namespace Pengine
         class ParentInitializer
         {
         public:
-            ParentInitializer(const std::string& child, const std::string& newParent,
+            ParentInitializer(
+                const std::string& child,
+                const std::string& newParent,
                 size_t offset)
             {
                 if (child == newParent)

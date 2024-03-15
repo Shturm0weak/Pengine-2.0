@@ -3,6 +3,8 @@
 #include "../Core/Core.h"
 #include "../Graphics/Buffer.h"
 
+#include <vulkan/vulkan.h>
+
 namespace Pengine
 {
 
@@ -12,8 +14,10 @@ namespace Pengine
         class PENGINE_API VulkanBuffer : public Buffer
         {
         public:
-            static std::shared_ptr<VulkanBuffer> Create(uint64_t instanceSize,
-                uint32_t instanceCount, std::vector<Usage> usage);
+            static std::shared_ptr<VulkanBuffer> Create(
+                size_t instanceSize,
+                uint32_t instanceCount,
+                std::vector<Usage> usage);
 
             static VkBufferUsageFlagBits ConvertUsage(Usage usage);
 
@@ -62,7 +66,8 @@ namespace Pengine
             VkDeviceSize GetBufferSize() const { return m_BufferSize; }
 
         private:
-            static VkDeviceSize GetAlignment(VkDeviceSize instanceSize,
+            static VkDeviceSize GetAlignment(
+                VkDeviceSize instanceSize,
                 VkDeviceSize minOffsetAlignment);
 
             void* m_Mapped = nullptr;
