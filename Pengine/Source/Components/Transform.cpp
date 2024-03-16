@@ -406,14 +406,3 @@ void Transform::Scale(const glm::vec3& scale)
 
 	scaleCallbacks(*this);
 }
-
-void Transform::LogTransform()
-{
-	const glm::vec3 position = GetPosition();
-	const glm::vec3 rotation = GetRotation();
-	const glm::vec3 scale = GetScale();
-	printf_s("Transform\n");
-	printf_s("Position X : %.3f Y : %.3f Z : %.3f\n", position.x, position.y, position.z);
-	printf_s("Rotation X: %.3f Y: %.3f Z: %.3f\n", rotation.x, rotation.y, rotation.z);
-	printf_s("Scale X: %.3f Y: %.3f Z: %.3f\n", scale.x, scale.y, scale.z);
-}

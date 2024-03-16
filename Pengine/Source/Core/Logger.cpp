@@ -4,7 +4,7 @@
 
 using namespace Pengine;
 
-constexpr char* logFilepath = "Log.txt";
+constexpr char const* logFilepath = "Log.txt";
 
 void Logger::Log(const std::string& message, const char* color)
 {

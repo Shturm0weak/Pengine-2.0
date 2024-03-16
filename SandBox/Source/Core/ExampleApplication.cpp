@@ -5,7 +5,6 @@
 #include "Core/MaterialManager.h"
 #include "Core/MeshManager.h"
 #include "Core/RenderPassManager.h"
-#include "Core/Serializer.h"
 #include "Components/Camera.h"
 #include "Components/Renderer3D.h"
 

@@ -7,8 +7,8 @@
 #include "../Vulkan/VulkanDevice.h"
 #include "../Vulkan/VulkanDescriptors.h"
 
-#include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
+#include <imgui/imgui.h>
+#include <imgui/backends/imgui_impl_glfw.h>
 
 #include <locale>
 
@@ -358,7 +358,7 @@ void VulkanWindow::ImGuiRenderPass(void* frame)
 	viewport.height = static_cast<float>(m_VulkanWindow.Height);
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
-	VkRect2D scissor{ { 0, 0}, { m_VulkanWindow.Width, m_VulkanWindow.Height } };
+	VkRect2D scissor{ { 0, 0}, { (uint32_t)m_VulkanWindow.Width, (uint32_t)m_VulkanWindow.Height } };
 	vkCmdSetViewport(imGuiFrame->CommandBuffer, 0, 1, &viewport);
 	vkCmdSetScissor(imGuiFrame->CommandBuffer, 0, 1, &scissor);
 
@@ -404,7 +404,7 @@ void VulkanWindow::InitializeImGui()
 {
 	// Create Descriptor Pool
 	{
-		VkDescriptorPoolSize poolSizes[] =
+		std::vector<VkDescriptorPoolSize> poolSizes =
 		{
 			{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
 			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
@@ -421,9 +421,9 @@ void VulkanWindow::InitializeImGui()
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-		poolInfo.maxSets = 1000 * ARRAYSIZE(poolSizes);
-		poolInfo.poolSizeCount = (uint32_t)ARRAYSIZE(poolSizes);
-		poolInfo.pPoolSizes = poolSizes;
+		poolInfo.maxSets = 1000 * poolSizes.size();
+		poolInfo.poolSizeCount = (uint32_t)poolSizes.size();
+		poolInfo.pPoolSizes = poolSizes.data();
 		if (vkCreateDescriptorPool(device->GetDevice(), &poolInfo, nullptr, &g_DescriptorPool) !=
 			VK_SUCCESS)
 		{
@@ -479,7 +479,7 @@ void VulkanWindow::InitializeImGui()
 
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF("D:/Pengine/Vendor/imgui/misc/fonts/Calibri.ttf", 16);
+	io.Fonts->AddFontFromFileTTF("../Vendor/imgui/misc/fonts/Calibri.ttf", 16);
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	ImGui::StyleColorsDark();

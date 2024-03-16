@@ -32,7 +32,7 @@ namespace Pengine
 			VkDescriptorSet GetDescriptorSet() const;
 
 		private:
-			std::unordered_map<int, VkWriteDescriptorSet> m_WritesByLocation;
+			std::unordered_map<uint32_t, VkWriteDescriptorSet> m_WritesByLocation;
 			std::vector<VkDescriptorImageInfo> m_ImageInfos;
 			std::vector<VkDescriptorBufferInfo> m_BufferInfos;
 			std::vector<VkDescriptorSet> m_DescriptorSet;

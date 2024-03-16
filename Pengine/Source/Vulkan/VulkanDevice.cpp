@@ -3,9 +3,6 @@
 #include "../Core/Window.h"
 #include "../Core/Logger.h"
 
-#define VMA_IMPLEMENTATION
-#include <vma/vk_mem_alloc.h>
-
 #include <cstring>
 #include <iostream>
 #include <set>
@@ -209,20 +206,6 @@ void VulkanDevice::CreateCommandPool()
     }
 }
 
-void VulkanDevice::CreateVmaAllocator()
-{
-    VmaAllocatorCreateInfo vmaAllocatorCreateInfo{};
-    vmaAllocatorCreateInfo.device = m_Device;
-    vmaAllocatorCreateInfo.instance = m_Instance;
-    vmaAllocatorCreateInfo.physicalDevice = m_PhysicalDevice;
-    vmaAllocatorCreateInfo.vulkanApiVersion = VK_API_VERSION_1_3;
-
-    if (vmaCreateAllocator(&vmaAllocatorCreateInfo, &m_Allocator) != VK_SUCCESS)
-    {
-        FATAL_ERROR("Failed to create vma allocator!")
-    }
-}
-
 void VulkanDevice::CreateSurface(GLFWwindow* window)
 {
     if (glfwCreateWindowSurface(m_Instance, window, nullptr, &m_Surface) != VK_SUCCESS)
@@ -296,6 +279,11 @@ bool VulkanDevice::CheckValidationLayerSupport()
 
     std::vector<VkLayerProperties> availableLayers(layerCount);
     vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+    for (const auto& layer : availableLayers)
+    {
+        std::cout << layer.layerName << std::endl;
+    }
 
     for (const char* layerName : validationLayers)
     {
@@ -488,7 +476,6 @@ VulkanDevice::VulkanDevice(GLFWwindow* window, const std::string& applicationNam
     PickPhysicalDevice();
     CreateLogicalDevice();
     CreateCommandPool();
-    CreateVmaAllocator();
 }
 
 VulkanDevice::~VulkanDevice()
@@ -502,7 +489,6 @@ VulkanDevice::~VulkanDevice()
     //vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
 
     vkDestroyCommandPool(m_Device, m_CommandPool, nullptr);
-    vmaDestroyAllocator(m_Allocator);
     vkDestroyDevice(m_Device, nullptr);
     vkDestroyInstance(m_Instance, nullptr);
 }

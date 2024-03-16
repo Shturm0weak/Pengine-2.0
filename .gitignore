@@ -1,10 +1,8 @@
 #Directories
 Build/
-SandBox/Meshes/LargeFIles
+*build*/
+.idea/
+SandBox/Meshes/LargeFiles/BistroOptimized/
 
 # Shader Cache
 *.spv
-
-# Libs
-shaderc_r.lib
-shaderc_d.lib

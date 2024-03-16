@@ -8,6 +8,8 @@
 #include "UniformWriter.h"
 #include "UniformLayout.h"
 
+#include "../Utils/Utils.h"
+
 namespace Pengine
 {
 

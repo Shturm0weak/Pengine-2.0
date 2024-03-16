@@ -255,63 +255,63 @@ namespace YAML
 	};
 }
 
-YAML::Emitter& operator<<(YAML::Emitter& out, glm::vec2& v)
+YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
 {
 	out << YAML::Flow;
 	out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
 	return out;
 }
 
-YAML::Emitter& operator<<(YAML::Emitter& out, glm::vec3& v)
+YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
 {
 	out << YAML::Flow;
 	out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
 	return out;
 }
 
-YAML::Emitter& operator<<(YAML::Emitter& out, glm::vec4& v)
+YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec4& v)
 {
 	out << YAML::Flow;
 	out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
 	return out;
 }
 
-YAML::Emitter& operator<<(YAML::Emitter& out, glm::ivec2& v)
+YAML::Emitter& operator<<(YAML::Emitter& out, const glm::ivec2& v)
 {
 	out << YAML::Flow;
 	out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
 	return out;
 }
 
-YAML::Emitter& operator<<(YAML::Emitter& out, glm::ivec3& v)
+YAML::Emitter& operator<<(YAML::Emitter& out, const glm::ivec3& v)
 {
 	out << YAML::Flow;
 	out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
 	return out;
 }
 
-YAML::Emitter& operator<<(YAML::Emitter& out, glm::ivec4& v)
+YAML::Emitter& operator<<(YAML::Emitter& out, const glm::ivec4& v)
 {
 	out << YAML::Flow;
 	out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
 	return out;
 }
 
-YAML::Emitter& operator<<(YAML::Emitter& out, glm::dvec2& v)
+YAML::Emitter& operator<<(YAML::Emitter& out, const glm::dvec2& v)
 {
 	out << YAML::Flow;
 	out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
 	return out;
 }
 
-YAML::Emitter& operator<<(YAML::Emitter& out, glm::dvec3& v)
+YAML::Emitter& operator<<(YAML::Emitter& out, const glm::dvec3& v)
 {
 	out << YAML::Flow;
 	out << YAML::BeginSeq << v.x << v.y << v.z << YAML::EndSeq;
 	return out;
 }
 
-YAML::Emitter& operator<<(YAML::Emitter& out, glm::dvec4& v)
+YAML::Emitter& operator<<(YAML::Emitter& out, const glm::dvec4& v)
 {
 	out << YAML::Flow;
 	out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
@@ -357,7 +357,7 @@ EngineConfig Serializer::DeserializeEngineConfig(const std::string& filepath)
 	}
 	else
 	{
-		engineConfig.graphicsAPI = GraphicsAPI::Software;
+		engineConfig.graphicsAPI = GraphicsAPI::Vk;
 	}
 
 	Logger::Log("Engine config has been loaded!", BOLDGREEN);

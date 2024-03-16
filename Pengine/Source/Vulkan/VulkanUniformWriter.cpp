@@ -28,7 +28,7 @@ void VulkanUniformWriter::WriteBuffer(uint32_t location,
         FATAL_ERROR("Layout does not contain specified binding!")
     }
 
-    auto& bindingDescription = m_Layout->GetBindingByLocation(location);
+    const auto& bindingDescription = m_Layout->GetBindingByLocation(location);
 
     m_BufferInfos.emplace_back(std::static_pointer_cast<VulkanBuffer>(buffer)->DescriptorInfo(size, offset));
 
@@ -50,7 +50,7 @@ void VulkanUniformWriter::WriteTexture(uint32_t location,
         FATAL_ERROR("Layout does not contain specified binding!")
     }
 
-    auto& bindingDescription = m_Layout->GetBindingByLocation(location);
+    const auto& bindingDescription = m_Layout->GetBindingByLocation(location);
 
     m_ImageInfos.emplace_back(std::static_pointer_cast<VulkanTexture>(texture)->GetDescriptorInfo());
 
@@ -76,7 +76,7 @@ void VulkanUniformWriter::WriteTextures(uint32_t location, std::vector<std::shar
         FATAL_ERROR("Layout does not contain specified binding!")
     }
 
-    auto& bindingDescription = m_Layout->GetBindingByLocation(location);
+    const auto& bindingDescription = m_Layout->GetBindingByLocation(location);
 
     size_t const index = m_ImageInfos.size();
     for (const auto& texture : textures)

@@ -4,12 +4,13 @@ project(Pengine VERSION 1.0)
 
 set(APP_NAME "SandBox")
 
-set(GlfwPath "C:/GLFW")
-set(GlfwLibPath ${GlfwPath}/Lib)
-set(GlfwIncludePath ${GlfwPath}/Includes)
-set(VulkanPath "C:/VulkanSDK/1.3.268.0")
-set(VulkanLibPath ${VulkanPath}/Lib)
-set(VulkanIncludePath ${VulkanPath}/Include)
+if (WIN32)
+	set(GLFW_PATH "C:/GLFW")
+	set(GLFW_PATH_LIB ${GLFW_PATH}/Lib)
+	set(GLFW_PATH_INCLUDE ${GLFW_PATH}/Includes)
+endif ()
+
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 add_subdirectory(Vendor/imgui Vendor/imgui/Build)
 add_subdirectory(Vendor/yaml-cpp Vendor/yaml-cpp/Build)

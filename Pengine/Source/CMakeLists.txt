@@ -85,8 +85,8 @@ set(VULKAN_SOURCES
 source_group("Vulkan" FILES ${VULKAN_SOURCES})
 
 set(SPIRV_REFLECT_SOURCES
-	${VulkanPath}/Source/SPIRV-Reflect/spirv_reflect.c
-	${VulkanPath}/Source/SPIRV-Reflect/spirv_reflect.h
+	$ENV{SPIRV_REFLECT}/SPIRV-Reflect/spirv_reflect.c
+	$ENV{SPIRV_REFLECT}/SPIRV-Reflect/spirv_reflect.h
 )
 source_group("SpirvReflect" FILES ${SPIRV_REFLECT_SOURCES})
 
@@ -119,61 +119,94 @@ add_library(${PROJECT_NAME} SHARED
 	${EVENT_SYSTEM_SOURCES}
 	${EDITOR_SOURCES})
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY
-  MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+if (MSVC)
+	set_property(TARGET ${PROJECT_NAME} PROPERTY
+		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif ()
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC PENGINE_ENGINE=1)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE YAML)
 target_link_libraries(${PROJECT_NAME} PRIVATE ImGui)
-target_link_libraries(${PROJECT_NAME} PRIVATE EnTT)
 target_link_libraries(${PROJECT_NAME} PRIVATE assimp)
 
-find_library(GLFW_LIBRARY NAMES glfw3 HINTS ${GlfwLibPath} REQUIRED)
+if (WIN32)
+	find_library(GLFW_LIBRARY NAMES glfw3 HINTS ${GLFW_PATH_LIB} REQUIRED)
+elseif (UNIX)
+	find_package(glfw3 3.3 REQUIRED)
+	set(GLFW_LIBRARY glfw)
+endif ()
+
 if (GLFW_LIBRARY)
 	message(${GLFW_LIBRARY} " has been found")
+	target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIBRARY})
 else ()
 	message(FATAL_ERROR "GLFW library has not been found")
 endif ()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIBRARY})
+if (WIN32)
+	set(VULKAN_LIBRARY_NAME vulkan-1)
+elseif (UNIX)
+	set(VULKAN_LIBRARY_NAME vulkan)
+endif()
 
-find_library(VULKAN_LIBRARY NAMES vulkan-1 HINTS ${VulkanLibPath} REQUIRED)
+find_library(VULKAN_LIBRARY NAMES ${VULKAN_LIBRARY_NAME} HINTS $ENV{VULKAN_LIB} REQUIRED)
 if (VULKAN_LIBRARY)
 	message(${VULKAN_LIBRARY} " has been found")
+	target_link_libraries(${PROJECT_NAME} PRIVATE ${VULKAN_LIBRARY})
 else ()
 	message(FATAL_ERROR "Vulkan library has not been found")
 endif ()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${VULKAN_LIBRARY})
+if (WIN32)
+	find_library(SHADERC_COMBINED_R_LIBRARY NAMES shaderc_combined HINTS $ENV{VULKAN_LIB} REQUIRED)
+	if (SHADERC_COMBINED_R_LIBRARY)
+		message(${SHADERC_COMBINED_R_LIBRARY} " has been found")
+	else ()
+		message(FATAL_ERROR "Shaderc combined library release has not been found")
+	endif ()
 
-find_library(SHADERC_COMBINED_R_LIBRARY NAMES shaderc_combined HINTS ${VulkanLibPath} REQUIRED)
-if (SHADERC_COMBINED_R_LIBRARY)
-	message(${SHADERC_COMBINED_R_LIBRARY} " has been found")
-else ()
-	message(FATAL_ERROR "Shaderc combined library release has not been found")
+	find_library(SHADERC_COMBINED_D_LIBRARY NAMES shaderc_combinedd HINTS $ENV{VULKAN_LIB} REQUIRED)
+	if (SHADERC_COMBINED_D_LIBRARY)
+		message(${SHADERC_COMBINED_D_LIBRARY} " has been found")
+	else ()
+		message(FATAL_ERROR "Shaderc combined library debug has not been found")
+	endif ()
+
+	target_link_libraries(${PROJECT_NAME} PRIVATE debug ${SHADERC_COMBINED_D_LIBRARY} optimized ${SHADERC_COMBINED_R_LIBRARY})
+elseif (UNIX)
+	find_library(SHADERC_LIBRARY NAMES libshaderc_combined.a HINTS $ENV{VULKAN_LIB} REQUIRED)
+	if (SHADERC_LIBRARY)
+		message(${SHADERC_LIBRARY} " has been found")
+	else ()
+		message("Shaderc combined has not been found")
+	endif ()
+	target_link_libraries(${PROJECT_NAME} PRIVATE ${SHADERC_LIBRARY})
 endif ()
-
-find_library(SHADERC_COMBINED_D_LIBRARY NAMES shaderc_combinedd HINTS ${VulkanLibPath} REQUIRED)
-if (SHADERC_COMBINED_D_LIBRARY)
-	message(${SHADERC_COMBINED_D_LIBRARY} " has been found")
-else ()
-	message(FATAL_ERROR "Shaderc combined library debug has not been found")
-endif ()
-
-target_link_libraries(${PROJECT_NAME} PRIVATE debug ${SHADERC_COMBINED_D_LIBRARY} optimized ${SHADERC_COMBINED_R_LIBRARY})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor)
-target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/ImGui)
+target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/yaml-cpp)
+target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/imgui)
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/assimp/include)
-target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/shaderc/libshaderc/include)
-target_include_directories(${PROJECT_NAME} PRIVATE ${GlfwIncludePath})
-target_include_directories(${PROJECT_NAME} PRIVATE ${VulkanIncludePath})
+
+if (WIN32)
+	target_include_directories(${PROJECT_NAME} PRIVATE ${GLFW_PATH_INCLUDE})
+endif ()
+
+target_include_directories(${PROJECT_NAME} PRIVATE $ENV{VULKAN_INCLUDE})
+target_include_directories(${PROJECT_NAME} PRIVATE $ENV{SPIRV_REFLECT})
 
 add_compile_definitions(_UNICODE)
 add_compile_definitions(UNICODE)
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>
-	${CMAKE_BINARY_DIR}/${APP_NAME}/Build/$<CONFIG>)
+if (WIN32)
+	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		$<TARGET_FILE_DIR:${PROJECT_NAME}>
+		${CMAKE_BINARY_DIR}/${APP_NAME}/Build/$<CONFIG>)
+elseif (UNIX)
+	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_directory
+			$<TARGET_FILE_DIR:${PROJECT_NAME}>
+			${CMAKE_BINARY_DIR}/${APP_NAME}/Build)
+endif ()

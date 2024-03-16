@@ -120,8 +120,6 @@ namespace Pengine
 		void Rotate(const glm::vec3& rotation);
 		
 		void Scale(const glm::vec3& scale);
-
-		void LogTransform();
 	};
 
 }

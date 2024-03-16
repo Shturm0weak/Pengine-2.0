@@ -1,0 +1,19 @@
+Mat:
+  Basemat: Materials/MeshBase.basemat
+  Pipelines:
+    - RenderPass: GBuffer
+      Uniforms:
+        - Name: material
+          Values:
+            - Name: color
+              Value: [0.470400006, 0.470400006, 0.470400006, 1]
+            - Name: other
+              Value: [0, 0, 0, 0]
+            - Name: __unused1
+              Value: [0, 0, 0, 0]
+            - Name: __unused2
+              Value: [0, 0, 0, 0]
+        - Name: normalTexture
+          Value: White
+        - Name: albedoTexture
+          Value: Meshes/LargeFiles/SponzaOptimized/textures/sponza_curtain_blue_diff.tga

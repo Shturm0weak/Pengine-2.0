@@ -3,11 +3,7 @@
 #include "../Core/Core.h"
 
 #define GLFW_INCLUDE_VULKAN
-#include <glfw3.h>
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include <glfw3native.h>
-
-#include <vma/vk_mem_alloc.h>
+#include <GLFW/glfw3.h>
 
 #include <vector>
 
@@ -128,8 +124,6 @@ namespace Pengine
 
             void CreateCommandPool();
 
-            void CreateVmaAllocator();
-
             bool IsDeviceSuitable(VkPhysicalDevice device);
 
             std::vector<const char*> GetRequiredExtensions();
@@ -150,7 +144,6 @@ namespace Pengine
             VkDebugUtilsMessengerEXT m_DebugMessenger;
             VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
             VkCommandPool m_CommandPool;
-            VmaAllocator m_Allocator;
 
             VkDevice m_Device;
             VkSurfaceKHR m_Surface;

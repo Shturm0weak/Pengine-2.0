@@ -9,12 +9,19 @@
 #pragma warning(disable : 26495)
 #define _CRT_OBSOLETE_NO_WARNINGS
 
-#ifdef PENGINE_ENGINE
-#define PENGINE_API __declspec(dllexport)
-#else
-#define PENGINE_API __declspec(dllimport)
+#ifdef _WIN32
+	#ifdef PENGINE_ENGINE
+		#define PENGINE_API __declspec(dllexport)
+	#else
+		#define PENGINE_API __declspec(dllimport)
+	#endif
+#elif __linux__
+	#ifdef PENGINE_ENGINE
+		#define PENGINE_API __attribute__((visibility("default")))
+	#else
+		#define PENGINE_API
+	#endif
 #endif
-
 #include <algorithm>
 #include <array>
 #include <functional>
@@ -34,7 +41,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/quaternion.hpp"
 
-#include "entt/entt.hpp"
+#include <entt/src/entt/entt.hpp>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -44,8 +51,8 @@
 #define MAX_MATERIALS 500
 #define MAX_TEXTURES 32
 
-inline constexpr char* none = "None";
-inline constexpr char* plane = "Plane";
+inline constexpr char const* none = "None";
+inline constexpr char const* plane = "Plane";
 
 template<typename T>
 std::string GetTypeName()

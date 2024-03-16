@@ -9,13 +9,9 @@
 #include "../Core/Logger.h"
 #include "../Core/Timer.h"
 #include "../Core/Serializer.h"
-#include "../Core/ViewportManager.h"
-#include "../Graphics/Renderer.h"
-#include "../Source/SPIRV-Reflect/spirv_reflect.h"
 
+#include <SPIRV-Reflect/spirv_reflect.h>
 #include <shaderc/shaderc.hpp>
-
-#include <glfw3.h>
 
 using namespace Pengine;
 using namespace Vk;

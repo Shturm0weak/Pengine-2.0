@@ -25,7 +25,7 @@ namespace Pengine
 			return { matPtr[0], matPtr[5], matPtr[10] };
 		}
 
-		inline std::wstring StringToWString(const std::string& str)
+		/*inline std::wstring StringToWString(const std::string& str)
 		{
 			std::wstring wstr;
 			size_t size;
@@ -41,7 +41,7 @@ namespace Pengine
 			str.resize(wstr.size());
 			wcstombs_s(&size, &str[0], str.size() + 1, wstr.c_str(), wstr.size());
 			return str;
-		}
+		}*/
 
 		inline bool Contains(const std::string& string, const std::string& content)
 		{

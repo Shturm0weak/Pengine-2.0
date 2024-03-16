@@ -1,6 +1,6 @@
 #include "TextureManager.h"
 
-#include "FIleFormatNames.h"
+#include "FileFormatNames.h"
 
 #include "../Utils/Utils.h"
 

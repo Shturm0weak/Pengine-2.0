@@ -27,7 +27,7 @@ int main()
 	}
 	catch (const std::runtime_error& runtimeError)
 	{
-		__debugbreak();
+		//__debugbreak();
 	}
 
 	return 0;

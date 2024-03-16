@@ -79,8 +79,9 @@ VulkanTexture::VulkanTexture(CreateInfo textureCreateInfo)
         .AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
         .Build();
 
+    VkDescriptorImageInfo descriptorImageInfo = GetDescriptorInfo();
     VulkanDescriptorWriter(*setLayout, *descriptorPool)
-        .WriteImage(0, &GetDescriptorInfo())
+        .WriteImage(0, &descriptorImageInfo)
         .Build(m_DescriptorSet);
 }
 
@@ -93,7 +94,8 @@ VulkanTexture::~VulkanTexture()
     vkDestroyImage(device->GetDevice(), m_Image, nullptr);
     vkFreeMemory(device->GetDevice(), m_ImageMemory, nullptr);
 
-    descriptorPool->FreeDescriptors(std::vector<VkDescriptorSet>{ m_DescriptorSet });
+    std::vector<VkDescriptorSet> descriptorSets = { m_DescriptorSet };
+    descriptorPool->FreeDescriptors(descriptorSets);
 }
 
 VkDescriptorImageInfo VulkanTexture::GetDescriptorInfo()
