@@ -9,9 +9,9 @@ namespace Pengine
 	class PENGINE_API EntryPoint
 	{
 	public:
-		EntryPoint(Application* application);
+		explicit EntryPoint(Application* application);
 
-		void Run();
+		void Run() const;
 
 	private:
 		Application* m_Application = nullptr;

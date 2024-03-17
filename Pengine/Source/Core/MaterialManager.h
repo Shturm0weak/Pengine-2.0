@@ -12,6 +12,9 @@ namespace Pengine
 	public:
 		static MaterialManager& GetInstance();
 
+		MaterialManager(const MaterialManager&) = delete;
+		MaterialManager& operator=(const MaterialManager&) = delete;
+
 		std::shared_ptr<Material> LoadMaterial(const std::string& filepath);
 
 		std::shared_ptr<BaseMaterial> LoadBaseMaterial(const std::string& filepath);
@@ -21,10 +24,10 @@ namespace Pengine
 		std::shared_ptr<BaseMaterial> GetBaseMaterial(const std::string& filepath);
 
 		std::shared_ptr<Material> Inherit(const std::string& name, const std::string& filepath,
-			std::shared_ptr<BaseMaterial> baseMaterial);
+			const std::shared_ptr<BaseMaterial>& baseMaterial);
 
 		std::shared_ptr<Material> Clone(const std::string& name, const std::string& filepath,
-			std::shared_ptr<Material> material);
+			const std::shared_ptr<Material>& material);
 
 		const std::unordered_map<std::string, std::shared_ptr<Material>>& GetMaterials() const { return m_MaterialsByFilepath; }
 		
@@ -35,8 +38,6 @@ namespace Pengine
 	private:
 		MaterialManager() = default;
 		~MaterialManager() = default;
-		MaterialManager(const MaterialManager&) = delete;
-		MaterialManager& operator=(const MaterialManager&) = delete;
 
 		std::unordered_map<std::string, std::shared_ptr<Material>> m_MaterialsByFilepath;
 		std::unordered_map<std::string, std::shared_ptr<BaseMaterial>> m_BaseMaterialsByFilepath;

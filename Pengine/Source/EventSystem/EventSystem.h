@@ -4,9 +4,6 @@
 #include "Event.h"
 
 #include <deque>
-#include <map>
-#include <unordered_map>
-#include <vector>
 
 namespace Pengine
 {
@@ -20,18 +17,20 @@ namespace Pengine
 		};
 
 		static EventSystem& GetInstance();
+
+		EventSystem(const EventSystem&) = delete;
+
+		bool AlreadySended(const Event* event);
 		
-		bool AlreadySended(Event* event);
-		
-		bool AlreadyRegistered(Event::Type type, void* client);
+		bool AlreadyRegistered(Event::Type type, const void* client);
 		
 		void SetProcessingEventsEnabled(bool enabled);
 		
-		void RegisterClient(Event::Type type, ClientCreateInfo info);
+		void RegisterClient(Event::Type type, const ClientCreateInfo& info);
 
-		void UnregisterClient(Event::Type type, void* client);
+		void UnregisterClient(Event::Type type, const void* client);
 		
-		void UnregisterAll(void* client);
+		void UnregisterAll(const void* client);
 		
 		void SendEvent(Event* event);
 
@@ -41,7 +40,6 @@ namespace Pengine
 
 	private:
 		EventSystem() = default;
-		EventSystem(const EventSystem&) = delete;
 		EventSystem& operator=(const EventSystem&) { return *this; }
 		~EventSystem();
 

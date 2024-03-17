@@ -1,14 +1,14 @@
 #include "RenderPassManager.h"
 
-#include "SceneManager.h"
 #include "Logger.h"
-#include "TextureSlots.h"
 #include "MaterialManager.h"
 #include "MeshManager.h"
+#include "SceneManager.h"
 
 #include "../Components/Camera.h"
-#include "../Components/Renderer3D.h"
 #include "../Components/PointLight.h"
+#include "../Components/Renderer3D.h"
+#include "../Components/Transform.h"
 #include "../Graphics/Renderer.h"
 
 using namespace Pengine;
@@ -29,8 +29,8 @@ std::shared_ptr<RenderPass> RenderPassManager::Create(const RenderPass::CreateIn
 
 std::shared_ptr<RenderPass> RenderPassManager::GetRenderPass(const std::string& type) const
 {
-	auto renderPassByName = m_RenderPassesByType.find(type);
-	if (renderPassByName != m_RenderPassesByType.end())
+	if (const auto renderPassByName = m_RenderPassesByType.find(type);
+		renderPassByName != m_RenderPassesByType.end())
 	{
 		return renderPassByName->second;
 	}
@@ -130,22 +130,21 @@ void RenderPassManager::CreateGBuffer()
 
 	//TODO: all these staging buffers make written to the gpu memory in the end of commands recording.
 	createInfo.buffersByName["GlobalBuffer"] = Buffer::Create(sizeof(GlobalData), 1,
-		std::vector<Buffer::Usage>{ Buffer::Usage::TRANSFER_SRC,
-		Buffer::Usage::UNIFORM_BUFFER });
+		{ Buffer::Usage::TRANSFER_SRC, Buffer::Usage::UNIFORM_BUFFER });
 
 	createInfo.buffersByName["InstanceBuffer"] = nullptr;
 
-	createInfo.createCallback = [](RenderPass& renderPass)
+	createInfo.createCallback = [](const RenderPass& renderPass)
 	{
 		renderPass.GetUniformWriter()->WriteBuffer("GlobalBuffer", renderPass.GetBuffer("GlobalBuffer"));
 		renderPass.GetUniformWriter()->Flush();
 	};
 
-	createInfo.renderCallback = [createInfo](RenderPass::RenderCallbackInfo renderInfo)
+	createInfo.renderCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		GlobalData globalData{};
 		globalData.viewProjectionMat4 = renderInfo.camera->GetComponent<Camera>().GetViewProjectionMat4();
-		renderInfo.submitInfo.renderPass->GetBuffer("GlobalBuffer")->WriteToBuffer((void*)&globalData);
+		renderInfo.submitInfo.renderPass->GetBuffer("GlobalBuffer")->WriteToBuffer(&globalData);
 
 		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
@@ -154,9 +153,9 @@ void RenderPassManager::CreateGBuffer()
 		MaterialByBaseMaterial materialMeshGameObjects;
 
 		size_t renderableCount = 0;
-		std::shared_ptr<Scene> scene = renderInfo.scene;
+		const std::shared_ptr<Scene> scene = renderInfo.scene;
 		entt::registry& registry = scene->GetRegistry();
-		auto r3dView = registry.view<Renderer3D>();
+		const auto r3dView = registry.view<Renderer3D>();
 		for (const entt::entity& entity : r3dView)
 		{
 			Renderer3D& r3d = registry.get<Renderer3D>(entity);
@@ -175,8 +174,7 @@ void RenderPassManager::CreateGBuffer()
 		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
 		{
 			instanceBuffer = Buffer::Create(sizeof(InstanceData), renderableCount,
-				std::vector<Buffer::Usage>{ Buffer::Usage::TRANSFER_SRC,
-				Buffer::Usage::VERTEX_BUFFER });
+				{ Buffer::Usage::TRANSFER_SRC, Buffer::Usage::VERTEX_BUFFER });
 
 			renderInfo.submitInfo.renderPass->SetBuffer("InstanceBuffer", instanceBuffer);
 		}
@@ -186,7 +184,7 @@ void RenderPassManager::CreateGBuffer()
 		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
 		for (const auto& [baseMaterial, meshesByMaterial] : materialMeshGameObjects)
 		{
-			std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderInfo.submitInfo.renderPass->GetType());
+			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderInfo.submitInfo.renderPass->GetType());
 			if (!pipeline)
 			{
 				continue;
@@ -199,7 +197,8 @@ void RenderPassManager::CreateGBuffer()
 
 			for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
 			{
-				std::shared_ptr<UniformWriter> materialUniformWriter = material->GetUniformWriter(renderInfo.submitInfo.renderPass->GetType());
+				const std::shared_ptr<UniformWriter> materialUniformWriter = material->GetUniformWriter(
+					renderInfo.submitInfo.renderPass->GetType());
 				materialUniformWriter->WriteTexture("albedoTexture", material->GetTexture("albedoTexture"));
 				materialUniformWriter->WriteTexture("normalTexture", material->GetTexture("normalTexture"));
 				materialUniformWriter->Flush();
@@ -210,7 +209,7 @@ void RenderPassManager::CreateGBuffer()
 
 					for (const entt::entity& entity : entities)
 					{
-						InstanceData data;
+						InstanceData data{};
 						Transform& transform = registry.get<Transform>(entity);
 						data.transform = transform.GetTransform();
 						data.inverseTransform = glm::transpose(transform.GetInverseTransform());
@@ -275,25 +274,25 @@ void RenderPassManager::CreateDeferred()
 		{ 0, sizeof(Vertex), Vertex::InputRate::VERTEX }
 	};
 
-	std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
+	const std::shared_ptr<Mesh> planeMesh = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
 
-	createInfo.renderCallback = [createInfo, planeWeak = std::weak_ptr<Mesh>(plane)](RenderPass::RenderCallbackInfo renderInfo)
+	createInfo.renderCallback = [planeWeak = std::weak_ptr<Mesh>(planeMesh)](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		std::shared_ptr<Mesh> plane = planeWeak.lock();
+		const std::shared_ptr<Mesh> plane = planeWeak.lock();
 		if (!plane)
 		{
 			return;
 		}
 
-		std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Deferred.basemat");
-		std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderInfo.submitInfo.renderPass->GetType());
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Deferred.basemat");
+		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderInfo.submitInfo.renderPass->GetType());
 		if (!pipeline)
 		{
 			return;
 		}
 
 		// TODO: Maybe move somewhere else on initialization!
-		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(GBuffer);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(GBuffer);
 		pipeline->GetUniformWriter()->WriteTexture("albedoTexture", frameBuffer->GetAttachment(0));
 		pipeline->GetUniformWriter()->WriteTexture("normalTexture", frameBuffer->GetAttachment(1));
 		pipeline->GetUniformWriter()->WriteTexture("positionTexture", frameBuffer->GetAttachment(2));
@@ -302,7 +301,7 @@ void RenderPassManager::CreateDeferred()
 		for (const entt::entity& entity : pointLightView)
 		{
 			PointLight& pl = renderInfo.scene->GetRegistry().get<PointLight>(entity);
-			Transform& transform = renderInfo.scene->GetRegistry().get<Transform>(entity);
+			const Transform& transform = renderInfo.scene->GetRegistry().get<Transform>(entity);
 			baseMaterial->SetValue("Light", "color", pl.color);
 			glm::vec3 lightPosition = transform.GetPosition();
 			baseMaterial->SetValue("Light", "lightPosition", lightPosition);

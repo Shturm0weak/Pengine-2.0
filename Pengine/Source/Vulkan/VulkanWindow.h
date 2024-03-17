@@ -8,64 +8,59 @@
 
 #include <imgui/backends/imgui_impl_vulkan.h>
 
-namespace Pengine
+namespace Pengine::Vk
 {
 
-	namespace Vk
+	class PENGINE_API VulkanWindow final : public Window
 	{
+	public:
+		VulkanWindow(const std::string& name, const glm::ivec2& size);
+		virtual ~VulkanWindow() override;
+		VulkanWindow(const VulkanWindow&) = delete;
+		VulkanWindow& operator=(const VulkanWindow&) = delete;
 
-		class PENGINE_API VulkanWindow : public Window
-		{
-		public:
-			VulkanWindow(const std::string& name, const glm::ivec2& size);
-			~VulkanWindow();
-			VulkanWindow(const VulkanWindow&) = delete;
-			VulkanWindow& operator=(const VulkanWindow&) = delete;
+		virtual void Update() override;
 
-			virtual void Update() override;
+		virtual bool Resize(const glm::ivec2& size) override;
 
-			virtual bool Resize(const glm::ivec2& size) override;
+		virtual void NewFrame() override;
 
-			virtual void NewFrame() override;
+		virtual void EndFrame() override;
 
-			virtual void EndFrame() override;
+		virtual void Clear(const glm::vec4& color) override;
 
-			virtual void Clear(const glm::vec4& color) override;
+		virtual void Present(std::shared_ptr<Texture> texture) override;
 
-			virtual void Present(std::shared_ptr<Texture> texture) override;
+		virtual void ShutDownPrepare() override;
 
-			virtual void ShutDownPrepare() override;
+		virtual void ImGuiBegin() override;
 
-			virtual void ImGuiBegin() override;
+		virtual void ImGuiEnd() override;
 
-			virtual void ImGuiEnd() override;
+		virtual void* BeginFrame() override;
 
-			virtual void* BeginFrame() override;
+		virtual void EndFrame(void* frame) override;
 
-			virtual void EndFrame(void* frame) override;
+		virtual void ImGuiRenderPass(void* frame) override;
 
-			virtual void ImGuiRenderPass(void* frame) override;
+		virtual void DisableCursor() override;
 
-			virtual void DisableCursor() override;
+		virtual void ShowCursor() override;
 
-			virtual void ShowCursor() override;
+		virtual void HideCursor() override;
 
-			virtual void HideCursor() override;
+		[[nodiscard]] GLFWwindow* GetRawWindow() const { return m_Window; }
 
-			GLFWwindow* GetRawWindow() { return m_Window; }
+		[[nodiscard]] ImGui_ImplVulkanH_Window& GetVulkanWindow() { return m_VulkanWindow; }
 
-			ImGui_ImplVulkanH_Window& GetVulkanWindow() { return m_VulkanWindow; }
+		[[nodiscard]] VkExtent2D GetExtent() const;
 
-			VkExtent2D GetExtent() const;
+	private:
+		void InitializeImGui();
 
-		private:
-			void InitializeImGui();
-
-			GLFWwindow* m_Window = nullptr;
-			ImGui_ImplVulkanH_Window m_VulkanWindow;
-			VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
-		};
-
-	}
+		GLFWwindow* m_Window = nullptr;
+		ImGui_ImplVulkanH_Window m_VulkanWindow{};
+		VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
+	};
 
 }

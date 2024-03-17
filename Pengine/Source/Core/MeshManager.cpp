@@ -5,8 +5,6 @@
 #include "Logger.h"
 #include "Serializer.h"
 
-#include "FileFormatNames.h"
-
 using namespace Pengine;
 
 MeshManager& MeshManager::GetInstance()
@@ -42,7 +40,7 @@ std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::string& filepath)
 		mesh = Serializer::DeserializeMesh(filepath);
 		if (!mesh)
 		{
-			FATAL_ERROR(filepath + ":There is no such mesh!")
+			FATAL_ERROR(filepath + ":There is no such mesh!");
 		}
 
 		m_MeshesByFilepath.emplace(filepath, mesh);

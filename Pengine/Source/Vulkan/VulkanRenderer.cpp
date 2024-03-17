@@ -8,22 +8,24 @@
 #include "VulkanUniformWriter.h"
 #include "VulkanWindow.h"
 
-#include "../Core/Logger.h"
-
 using namespace Pengine;
 using namespace Vk;
 
 VulkanRenderer::VulkanRenderer(const glm::ivec2& size)
-    : Renderer(size)
 {
 
 }
 
-void VulkanRenderer::Render(std::shared_ptr<Mesh> mesh,
-    std::shared_ptr<Pipeline> pipeline, std::shared_ptr<Buffer> instanceBuffer, size_t instanceBufferOffset, size_t count,
-    const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters, RenderPass::SubmitInfo renderPassSubmitInfo)
+void VulkanRenderer::Render(
+	const std::shared_ptr<Mesh>& mesh,
+    const std::shared_ptr<Pipeline>& pipeline,
+    const std::shared_ptr<Buffer>& instanceBuffer,
+    const size_t instanceBufferOffset,
+    const size_t count,
+    const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
+    const RenderPass::SubmitInfo& renderPassSubmitInfo)
 {
-    ImGui_ImplVulkanH_Frame* frame = static_cast<ImGui_ImplVulkanH_Frame*>(renderPassSubmitInfo.frame);
+    const ImGui_ImplVulkanH_Frame* frame = static_cast<ImGui_ImplVulkanH_Frame*>(renderPassSubmitInfo.frame);
 
     std::shared_ptr<VulkanPipeline> vkPipeline;
     if (pipeline)
@@ -62,9 +64,9 @@ void VulkanRenderer::Render(std::shared_ptr<Mesh> mesh,
     DrawIndexed(frame->CommandBuffer, mesh->GetIndexCount(), count);
 }
 
-void VulkanRenderer::BeginRenderPass(RenderPass::SubmitInfo renderPassSubmitInfo)
+void VulkanRenderer::BeginRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo)
 {
-    ImGui_ImplVulkanH_Frame* frame = static_cast<ImGui_ImplVulkanH_Frame*>(renderPassSubmitInfo.frame);
+    const ImGui_ImplVulkanH_Frame* frame = static_cast<ImGui_ImplVulkanH_Frame*>(renderPassSubmitInfo.frame);
  
     Vk::device->CommandBeginLabel(renderPassSubmitInfo.renderPass->GetType(), frame->CommandBuffer, { 0.5f, 1.0f, 0.5f, 1.0f });
 
@@ -105,41 +107,42 @@ void VulkanRenderer::BeginRenderPass(RenderPass::SubmitInfo renderPassSubmitInfo
     viewport.height = -static_cast<float>(renderPassSubmitInfo.height);
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
-    VkRect2D scissor{ { 0, 0}, { renderPassSubmitInfo.width, renderPassSubmitInfo.height } };
+    const VkRect2D scissor{ { 0, 0}, { renderPassSubmitInfo.width, renderPassSubmitInfo.height } };
     vkCmdSetViewport(frame->CommandBuffer, 0, 1, &viewport);
     vkCmdSetScissor(frame->CommandBuffer, 0, 1, &scissor);
 }
 
-void VulkanRenderer::EndRenderPass(RenderPass::SubmitInfo renderPassSubmitInfo)
+void VulkanRenderer::EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo)
 {
-    ImGui_ImplVulkanH_Frame* frame = static_cast<ImGui_ImplVulkanH_Frame*>(renderPassSubmitInfo.frame);
+    const ImGui_ImplVulkanH_Frame* frame = static_cast<ImGui_ImplVulkanH_Frame*>(renderPassSubmitInfo.frame);
     vkCmdEndRenderPass(frame->CommandBuffer);
     Vk::device->CommandEndLabel(frame->CommandBuffer);
 }
 
-void VulkanRenderer::BindBuffers(VkCommandBuffer commandBuffer,
-    std::shared_ptr<Buffer> vertexBuffer,
-    std::shared_ptr<Buffer> instanceBuffer,
-    std::shared_ptr<Buffer> indexBuffer,
-    size_t instanceBufferOffset)
+void VulkanRenderer::BindBuffers(
+	const VkCommandBuffer commandBuffer,
+    const std::shared_ptr<Buffer>& vertexBuffer,
+    const std::shared_ptr<Buffer>& instanceBuffer,
+    const std::shared_ptr<Buffer>& indexBuffer,
+    const size_t instanceBufferOffset)
 {
-    VkDeviceSize vertexOffsets[] = { 0 };
+    constexpr VkDeviceSize vertexOffsets[] = { 0 };
 
-    VkBuffer vertexBuffers[] = { std::static_pointer_cast<VulkanBuffer>(vertexBuffer)->GetBuffer() };
+    const VkBuffer vertexBuffers[] = { std::static_pointer_cast<VulkanBuffer>(vertexBuffer)->GetBuffer() };
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, vertexOffsets);
 
     if (instanceBuffer)
     {
-        VkDeviceSize offsetsInstance[] = { instanceBufferOffset };
+        const VkDeviceSize offsetsInstance[] = { instanceBufferOffset };
 
-        VkBuffer instanceBuffers[] = { std::static_pointer_cast<VulkanBuffer>(instanceBuffer)->GetBuffer() };
+        const VkBuffer instanceBuffers[] = { std::static_pointer_cast<VulkanBuffer>(instanceBuffer)->GetBuffer() };
         vkCmdBindVertexBuffers(commandBuffer, 1, 1, instanceBuffers, offsetsInstance);
     }
 
     vkCmdBindIndexBuffer(commandBuffer, std::static_pointer_cast<VulkanBuffer>(indexBuffer)->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
 }
 
-void VulkanRenderer::DrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount)
+void VulkanRenderer::DrawIndexed(const VkCommandBuffer commandBuffer, const uint32_t indexCount, const uint32_t instanceCount)
 {
     drawCallsCount++;
     vkCmdDrawIndexed(commandBuffer, indexCount, instanceCount, 0, 0, 0);

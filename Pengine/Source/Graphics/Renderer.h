@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Core/Core.h"
-#include "../Core/TextureSlots.h"
 #include "../Graphics/Buffer.h"
 #include "../Graphics/FrameBuffer.h"
 #include "../Graphics/RenderPass.h"
@@ -22,34 +21,39 @@ namespace Pengine
 	public:
 		static std::shared_ptr<Renderer> Create(const glm::ivec2& size);
 
-		Renderer(const glm::ivec2& size);
-		~Renderer();
+		explicit Renderer();
+		virtual ~Renderer();
 		Renderer(const Renderer&) = delete;
+		Renderer(Renderer&&) = delete;
 		Renderer& operator=(const Renderer&) = delete;
+		Renderer& operator=(Renderer&&) = delete;
 
 		void Update(
 			void* frame,
-			std::shared_ptr<Window> window,
-			std::shared_ptr<Scene> scene,
-			std::shared_ptr<Entity> camera);
+			const std::shared_ptr<Window>& window,
+			const std::shared_ptr<Scene>& scene,
+			const std::shared_ptr<Entity>& camera);
 
 		std::shared_ptr<FrameBuffer> GetRenderPassFrameBuffer(const std::string& type) const;
 
 		void SetFrameBufferToRenderPass(const std::string& type,
-			std::shared_ptr<FrameBuffer> frameBuffer);
+			const std::shared_ptr<FrameBuffer>& frameBuffer);
 
-		void Resize(const glm::ivec2& size);
+		void Resize(const glm::ivec2& size) const;
 
-		virtual void Render(std::shared_ptr<Mesh> mesh,
-			std::shared_ptr<Pipeline> pipeline, std::shared_ptr<Buffer> instanceBuffer,
-			size_t instanceBufferOffset, size_t count,
+		virtual void Render(
+			const std::shared_ptr<Mesh>& mesh,
+			const std::shared_ptr<Pipeline>& pipeline,
+			const std::shared_ptr<Buffer>& instanceBuffer,
+			size_t instanceBufferOffset,
+			size_t count,
 			const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
-			RenderPass::SubmitInfo renderPassSubmitInfo) = 0;
+			const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
+
 	protected:
+		virtual void BeginRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
 
-		virtual void BeginRenderPass(RenderPass::SubmitInfo renderPassSubmitInfo) = 0;
-
-		virtual void EndRenderPass(RenderPass::SubmitInfo renderPassSubmitInfo) = 0;
+		virtual void EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
 
 		std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> m_FrameBuffersByRenderPassType;
 	};

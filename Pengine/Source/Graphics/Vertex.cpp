@@ -6,7 +6,7 @@ std::vector<Vertex::BindingDescription> Vertex::GetDefaultVertexBindingDescripti
 {
 	return
 	{
-		{ 0, sizeof(Vertex), Vertex::InputRate::VERTEX }
+		{ 0, sizeof(Vertex), InputRate::VERTEX }
 	};
 }
 

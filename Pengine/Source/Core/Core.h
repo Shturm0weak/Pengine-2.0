@@ -7,7 +7,7 @@
 #pragma warning(disable : 26812)
 #pragma warning(disable : 26451)
 #pragma warning(disable : 26495)
-#define _CRT_OBSOLETE_NO_WARNINGS
+#define CRT_OBSOLETE_NO_WARNINGS
 
 #ifdef _WIN32
 	#ifdef PENGINE_ENGINE
@@ -57,8 +57,7 @@ inline constexpr char const* plane = "Plane";
 template<typename T>
 std::string GetTypeName()
 {
-	std::string typeName = typeid(T).name();
-	if (typeName.find(std::string("class")) == 0)
+	if (const std::string typeName = typeid(T).name(); typeName.find(std::string("class")) == 0)
 	{
 		return typeName.substr(sizeof("class"));
 	}
@@ -66,10 +65,8 @@ std::string GetTypeName()
 	{
 		return typeName.substr(sizeof("struct"));
 	}
-	else
-	{
-		return typeName;
-	}
+
+	return typeid(T).name();
 }
 
 enum class GraphicsAPI
@@ -99,4 +96,5 @@ namespace Pengine
 		inline uint32_t swapChainImageCount = 0;
 		inline uint32_t swapChainImageIndex = 0;
 	}
+
 }

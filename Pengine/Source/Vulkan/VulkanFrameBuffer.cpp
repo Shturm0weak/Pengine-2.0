@@ -10,8 +10,8 @@ using namespace Pengine;
 using namespace Vk;
 
 VulkanFrameBuffer::VulkanFrameBuffer(
-    std::vector<Texture::CreateInfo> const& attachments,
-    std::shared_ptr<RenderPass> renderPass)
+    const std::vector<Texture::CreateInfo>& attachments,
+    const std::shared_ptr<RenderPass>& renderPass)
 	: FrameBuffer(attachments, renderPass)
 {
     if (m_AttachmentCreateInfos.empty())
@@ -51,7 +51,7 @@ void VulkanFrameBuffer::Resize(const glm::ivec2& size)
             std::shared_ptr<Texture> texture = Texture::Create(textureCreateInfo);
             m_Attachments[frameIndex].emplace_back(texture);
 
-            std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(texture);
+            const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(texture);
             imageViews.emplace_back(vkTexture->GetImageView());
             vkTexture->TransitionToRead();
         }
@@ -71,7 +71,7 @@ void VulkanFrameBuffer::Resize(const glm::ivec2& size)
             nullptr,
             &m_FrameBuffers[frameIndex]) != VK_SUCCESS)
         {
-            FATAL_ERROR("Failed to create framebuffer!")
+            FATAL_ERROR("Failed to create framebuffer!");
         }
     }
 }
@@ -80,7 +80,7 @@ void VulkanFrameBuffer::Clear()
 {
     vkDeviceWaitIdle(device->GetDevice());
 
-    for (VkFramebuffer frameBuffer : m_FrameBuffers)
+    for (const VkFramebuffer frameBuffer : m_FrameBuffers)
     {
         vkDestroyFramebuffer(device->GetDevice(), frameBuffer, nullptr);
     }
@@ -89,20 +89,20 @@ void VulkanFrameBuffer::Clear()
     m_Attachments.clear();
 }
 
-void VulkanFrameBuffer::TransitionToRead()
+void VulkanFrameBuffer::TransitionToRead() const
 {
-    for (size_t imageIndex = 0; imageIndex < m_Attachments[swapChainImageIndex].size(); imageIndex++)
+    for (const auto& attachment : m_Attachments[swapChainImageIndex])
     {
-        std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(m_Attachments[swapChainImageIndex][imageIndex]);
+        const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(attachment);
         vkTexture->TransitionToRead();
     }
 }
 
-void VulkanFrameBuffer::TransitionToColorAttachment()
+void VulkanFrameBuffer::TransitionToColorAttachment() const
 {
-    for (size_t imageIndex = 0; imageIndex < m_Attachments[swapChainImageIndex].size(); imageIndex++)
-    {
-        std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(m_Attachments[swapChainImageIndex][imageIndex]);
+	for (const auto& attachment : m_Attachments[swapChainImageIndex])
+	{
+        const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(attachment);
         vkTexture->TransitionToColorAttachment();
     }
 }

@@ -1,8 +1,6 @@
 #include "EntryPoint.h"
 
-#include "Scene.h"
 #include "Input.h"
-#include "Logger.h"
 #include "MaterialManager.h"
 #include "MeshManager.h"
 #include "RenderPassManager.h"
@@ -14,23 +12,23 @@
 #include "WindowManager.h"
 
 #include "../Components/Camera.h"
+#include "../Editor/Editor.h"
 #include "../EventSystem/EventSystem.h"
 #include "../Graphics/Renderer.h"
-#include "../Editor/Editor.h"
 
 using namespace Pengine;
 
 EntryPoint::EntryPoint(Application* application)
 	: m_Application(application)
 {
-	EngineConfig engineConfig = Serializer::DeserializeEngineConfig("Configs/Engine.yaml");
-	graphicsAPI = engineConfig.graphicsAPI;
+	const auto [configGraphicsAPI] = Serializer::DeserializeEngineConfig("Configs/Engine.yaml");
+	graphicsAPI = configGraphicsAPI;
 }
 
-void EntryPoint::Run()
+void EntryPoint::Run() const
 {
 	EventSystem& eventSystem = EventSystem::GetInstance();
-	std::shared_ptr<Window> mainWindow = WindowManager::GetInstance().Create("Pengine",
+	const std::shared_ptr<Window> mainWindow = WindowManager::GetInstance().Create("Pengine",
 		{ 800, 800 });
 	WindowManager::GetInstance().SetCurrentWindow(mainWindow);
 
@@ -39,7 +37,7 @@ void EntryPoint::Run()
 	RenderPassManager::GetInstance();
 	m_Application->OnPreStart();
 
-	std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().Create("Main", { 800, 800 });
+	ViewportManager::GetInstance().Create("Main", { 800, 800 });
 	Serializer::GenerateFilesUUID(std::filesystem::current_path());
 
 	TextureManager::GetInstance().LoadFromFolder("Editor/Images");
@@ -50,7 +48,7 @@ void EntryPoint::Run()
 	{
 		Time::GetInstance().Update();
 
-		for (auto window : WindowManager::GetInstance().GetWindows())
+		for (const auto& window : WindowManager::GetInstance().GetWindows())
 		{
 			if (!window->IsRunning())
 			{
@@ -69,17 +67,18 @@ void EntryPoint::Run()
 			m_Application->OnUpdate();
 
 			window->ImGuiBegin();
-			for (const auto& viewport : ViewportManager::GetInstance().GetViewports())
+			for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
 			{
-				std::shared_ptr<Entity> camera = viewport.second->GetCamera();
-				if (camera && camera->HasComponent<Camera>())
+				if (const std::shared_ptr<Entity> camera = viewport->GetCamera();
+					camera && camera->HasComponent<Camera>())
 				{
-					viewport.second->Update(
-						camera->GetComponent<Camera>().GetRenderer()->GetRenderPassFrameBuffer(Deferred)->GetAttachment(0));
+					viewport->Update(
+						camera->GetComponent<Camera>().GetRenderer()->GetRenderPassFrameBuffer(
+							Deferred)->GetAttachment(0));
 				}
 				else
 				{
-					viewport.second->Update(TextureManager::GetInstance().GetWhite());
+					viewport->Update(TextureManager::GetInstance().GetWhite());
 				}
 			}
 
@@ -89,9 +88,9 @@ void EntryPoint::Run()
 
 			if (void* frame = window->BeginFrame())
 			{
-				for (const auto& viewport : ViewportManager::GetInstance().GetViewports())
+				for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
 				{
-					if (std::shared_ptr<Entity> camera = viewport.second->GetCamera())
+					if (const std::shared_ptr<Entity> camera = viewport->GetCamera())
 					{
 						if (camera->HasComponent<Camera>())
 						{
@@ -104,7 +103,7 @@ void EntryPoint::Run()
 						}
 						else
 						{
-							viewport.second->SetCamera({});
+							viewport->SetCamera({});
 						}
 					}
 				}

@@ -8,12 +8,12 @@ void EventSystem::DispatchEvent(Event* event)
 {
 	if (event->GetType() == Event::Type::OnNextFrame)
 	{
-		static_cast<NextFrameEvent*>(event)->Run();
+		dynamic_cast<NextFrameEvent*>(event)->Run();
 		return;
 	}
 
 	auto range = m_Database.equal_range(event->GetType());
-	for (auto client = range.first; client != range.second; client++)
+	for (auto client = range.first; client != range.second; ++client)
 	{
 		(*client).second.callback(event);
 	}
@@ -31,26 +31,25 @@ EventSystem& EventSystem::GetInstance()
 	return eventSystem;
 }
 
-bool EventSystem::AlreadySended(Event* event)
+bool EventSystem::AlreadySended(const Event* event)
 {
-	auto currentEvent = std::find_if(m_CurrentEvents.begin(), m_CurrentEvents.end(),
-		[=](Event* currentEvent)
+	const auto foundEvent = std::find_if(m_CurrentEvents.begin(), m_CurrentEvents.end(),
+		[=](const Event* currentEvent)
 	{
 		return event->GetType() == currentEvent->GetType();
-	}
-	);
+	});
 
-	return currentEvent != m_CurrentEvents.end();
+	return foundEvent != m_CurrentEvents.end();
 }
 
-bool EventSystem::AlreadyRegistered(Event::Type type, void* client)
+bool EventSystem::AlreadyRegistered(const Event::Type type, const void* client)
 {
 	bool alreadyRegistered = false;
 
 	auto range = m_Database.equal_range(type);
 
 	for (auto clientInfo = range.first;
-		clientInfo != range.second; clientInfo++)
+		clientInfo != range.second; ++clientInfo)
 	{
 		if ((*clientInfo).second.client == client)
 		{
@@ -67,7 +66,7 @@ void EventSystem::SetProcessingEventsEnabled(bool enabled)
 	m_IsProcessingEvents = enabled;
 }
 
-void EventSystem::RegisterClient(Event::Type type, ClientCreateInfo info)
+void EventSystem::RegisterClient(Event::Type type, const ClientCreateInfo& info)
 {
 	if (!info.client || AlreadyRegistered(type, info.client))
 	{
@@ -77,7 +76,7 @@ void EventSystem::RegisterClient(Event::Type type, ClientCreateInfo info)
 	m_Database.insert(std::make_pair(type, info));
 }
 
-void EventSystem::UnregisterClient(Event::Type type, void* client)
+void EventSystem::UnregisterClient(const Event::Type type, const void* client)
 {
 	auto range = m_Database.equal_range(type);
 
@@ -91,9 +90,9 @@ void EventSystem::UnregisterClient(Event::Type type, void* client)
 	}
 }
 
-void EventSystem::UnregisterAll(void* client)
+void EventSystem::UnregisterAll(const void* client)
 {
-	if (m_Database.size() > 0)
+	if (!m_Database.empty())
 	{
 		auto clientInfo = m_Database.begin();
 		while (clientInfo != m_Database.end())
@@ -104,7 +103,7 @@ void EventSystem::UnregisterAll(void* client)
 			}
 			else
 			{
-				clientInfo++;
+				++clientInfo;
 			}
 		}
 	}
@@ -138,7 +137,7 @@ void EventSystem::ProcessEvents()
 
 	m_IsDispatchingEvents = true;
 
-	while (m_CurrentEvents.size() > 0)
+	while (!m_CurrentEvents.empty())
 	{
 		Event* currentEvent = m_CurrentEvents.front();
 		m_CurrentEvents.pop_front();

@@ -353,30 +353,32 @@ namespace Pengine
 			std::vector<Usage> usage;
 		};
 
-		static std::shared_ptr<Texture> Create(CreateInfo textureCreateInfo);
+		static std::shared_ptr<Texture> Create(const CreateInfo& textureCreateInfo);
 
 		static std::shared_ptr<Texture> Load(const std::string& filepath);
 		
-		Texture(CreateInfo textureCreateInfo);
+		explicit Texture(const CreateInfo& textureCreateInfo);
 		virtual ~Texture() = default;
 		Texture(const Texture&) = delete;
+		Texture(Texture&&) = delete;
 		Texture& operator=(const Texture&) = delete;
+		Texture& operator=(Texture&&) = delete;
 
-		virtual void* GetId() const { return nullptr;  }
+		[[nodiscard]] virtual void* GetId() const { return nullptr;  }
 
 		virtual void GenerateMipMaps() = 0;
 
-		glm::ivec2 GetSize() const { return m_Size; }
+		[[nodiscard]] glm::ivec2 GetSize() const { return m_Size; }
 
-		int GetChannels() const { return m_Channels; }
+		[[nodiscard]] int GetChannels() const { return m_Channels; }
 
-		std::vector<uint8_t> GetData() const { return m_Data; }
+		[[nodiscard]] std::vector<uint8_t> GetData() const { return m_Data; }
 
-		Format GetFormat() const { return m_Format; }
+		[[nodiscard]] Format GetFormat() const { return m_Format; }
 
-		AspectMask GetAspectMask() const { return m_AspectMask; }
+		[[nodiscard]] AspectMask GetAspectMask() const { return m_AspectMask; }
 
-		uint32_t GetMipLevels() const { return m_MipLevels; }
+		[[nodiscard]] uint32_t GetMipLevels() const { return m_MipLevels; }
 
 	protected:
 		glm::ivec2 m_Size = { 0, 0 };
@@ -386,8 +388,8 @@ namespace Pengine
 
 		std::vector<uint8_t> m_Data;
 
-		Format m_Format;
-		AspectMask m_AspectMask;
+		Format m_Format{};
+		AspectMask m_AspectMask{};
 	};
 
 }

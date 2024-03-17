@@ -5,26 +5,23 @@
 
 #include <vulkan/vulkan.h>
 
-namespace Pengine
+namespace Pengine::Vk
 {
 
-	namespace Vk
+	class PENGINE_API VulkanRenderPass final : public RenderPass
 	{
+	public:
+		explicit VulkanRenderPass(const CreateInfo& createInfo);
+		virtual ~VulkanRenderPass() override;
+		VulkanRenderPass(const RenderPass&) = delete;
+		VulkanRenderPass(RenderPass&&) = delete;
+		VulkanRenderPass& operator=(const RenderPass&) = delete;
+		VulkanRenderPass& operator=(RenderPass&&) = delete;
 
-		class PENGINE_API VulkanRenderPass : public RenderPass
-		{
-		public:
-			VulkanRenderPass(const CreateInfo& createInfo);
-			~VulkanRenderPass();
-			VulkanRenderPass(const RenderPass&) = delete;
-			VulkanRenderPass& operator=(const RenderPass&) = delete;
+		VkRenderPass GetRenderPass() const { return m_RenderPass; }
 
-			VkRenderPass GetRenderPass() const { return m_RenderPass; }
-
-		private:
-			VkRenderPass m_RenderPass;
-		};
-	
-	}
+	private:
+		VkRenderPass m_RenderPass{};
+	};
 
 }

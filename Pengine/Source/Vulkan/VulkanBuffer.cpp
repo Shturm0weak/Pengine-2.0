@@ -17,8 +17,8 @@ using namespace Vk;
  * @return VkResult of the buffer mapping call
  */
 VkDeviceSize VulkanBuffer::GetAlignment(
-    VkDeviceSize instanceSize,
-    VkDeviceSize minOffsetAlignment)
+    const VkDeviceSize instanceSize,
+    const VkDeviceSize minOffsetAlignment)
 {
     if (minOffsetAlignment > 0)
     {
@@ -29,14 +29,14 @@ VkDeviceSize VulkanBuffer::GetAlignment(
 }
 
 std::shared_ptr<VulkanBuffer> VulkanBuffer::Create(
-    size_t instanceSize,
-    uint32_t instanceCount,
-    std::vector<Usage> usage)
+    const size_t instanceSize,
+    const uint32_t instanceCount,
+    const std::vector<Usage>& usage)
 {
     bool isTransferSrc = false;
 
     VkBufferUsageFlags usageFlags{};
-    for (Usage usageFlag : usage)
+    for (const Usage usageFlag : usage)
     {
         usageFlags |= ConvertUsage(usageFlag);
 
@@ -59,7 +59,7 @@ std::shared_ptr<VulkanBuffer> VulkanBuffer::Create(
     return std::make_shared<VulkanBuffer>(instanceSize, instanceCount, usageFlags, memoryFlags);
 }
 
-VkBufferUsageFlagBits VulkanBuffer::ConvertUsage(Usage usage)
+VkBufferUsageFlagBits VulkanBuffer::ConvertUsage(const Usage usage)
 {
     switch (usage)
     {
@@ -80,7 +80,7 @@ VkBufferUsageFlagBits VulkanBuffer::ConvertUsage(Usage usage)
     FATAL_ERROR("Failed to convert buffer usage!");
 }
 
-Buffer::Usage VulkanBuffer::ConvertUsage(VkBufferUsageFlagBits usage)
+Buffer::Usage VulkanBuffer::ConvertUsage(const VkBufferUsageFlagBits usage)
 {
     switch (usage)
     {
@@ -99,21 +99,22 @@ Buffer::Usage VulkanBuffer::ConvertUsage(VkBufferUsageFlagBits usage)
     }
 
     FATAL_ERROR("Failed to convert buffer usage!");
+	return {};
 }
 
 VulkanBuffer::VulkanBuffer(
-    VkDeviceSize instanceSize,
-    uint32_t instanceCount,
-    VkBufferUsageFlags usageFlags,
-    VkMemoryPropertyFlags memoryPropertyFlags,
-    VkDeviceSize minOffsetAlignment)
-    : m_InstanceSize(instanceSize)
-    , m_InstanceCount(instanceCount)
+    const VkDeviceSize instanceSize,
+    const uint32_t instanceCount,
+    const VkBufferUsageFlags usageFlags,
+    const VkMemoryPropertyFlags memoryPropertyFlags,
+    const VkDeviceSize minOffsetAlignment)
+	: m_InstanceCount(instanceCount)
+    , m_InstanceSize(instanceSize)
     , m_UsageFlags(usageFlags)
     , m_MemoryPropertyFlags(memoryPropertyFlags)
 {
     m_AlignmentSize = GetAlignment(instanceSize, minOffsetAlignment);
-    m_BufferSize = m_AlignmentSize * instanceCount;
+	m_BufferSize = m_AlignmentSize * instanceCount;
     device->CreateBuffer(m_BufferSize, usageFlags, memoryPropertyFlags, m_Buffer, m_Memory);
 }
 
@@ -140,7 +141,7 @@ void* VulkanBuffer::GetData()
  * @param offset (Optional) Byte offset from beginning of mapped region
  *
  */
-void VulkanBuffer::WriteToBuffer(void *data, size_t size, size_t offset)
+void VulkanBuffer::WriteToBuffer(void *data, const size_t size, const size_t offset)
 {
     Map(size, offset);
 
@@ -152,7 +153,7 @@ void VulkanBuffer::WriteToBuffer(void *data, size_t size, size_t offset)
     }
     else
     {
-        char*memOffset = (char*)m_Mapped;
+        char* memOffset = static_cast<char*>(m_Mapped);
         memOffset += offset;
         memcpy(memOffset, data, size);
     }
@@ -160,9 +161,9 @@ void VulkanBuffer::WriteToBuffer(void *data, size_t size, size_t offset)
     Unmap();
 }
 
-void VulkanBuffer::Copy(std::shared_ptr<Buffer> buffer)
+void VulkanBuffer::Copy(const std::shared_ptr<Buffer>& buffer)
 {
-    std::shared_ptr<VulkanBuffer> vkBuffer = std::static_pointer_cast<VulkanBuffer>(buffer);
+    const std::shared_ptr<VulkanBuffer> vkBuffer = std::static_pointer_cast<VulkanBuffer>(buffer);
     device->CopyBuffer(vkBuffer->GetBuffer(), m_Buffer, vkBuffer->GetBufferSize());
 }
 
@@ -175,12 +176,12 @@ void VulkanBuffer::Copy(std::shared_ptr<Buffer> buffer)
  *
  * @return VkResult of the buffer mapping call
  */
-void VulkanBuffer::Map(size_t size, size_t offset)
+void VulkanBuffer::Map(const size_t size, const size_t offset)
 {
     assert(m_Buffer && m_Memory && "Called map on buffer before create");
     if (vkMapMemory(device->GetDevice(), m_Memory, offset, size, 0, &m_Mapped))
     {
-        FATAL_ERROR("Failed to map buffer!")
+        FATAL_ERROR("Failed to map buffer!");
     }
 }
 
@@ -209,7 +210,7 @@ void VulkanBuffer::Unmap()
  *
  * @return VkResult of the flush call
  */
-VkResult VulkanBuffer::Flush(VkDeviceSize size, VkDeviceSize offset)
+VkResult VulkanBuffer::Flush(const VkDeviceSize size, const VkDeviceSize offset) const
 {
     VkMappedMemoryRange mappedRange{};
     mappedRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
@@ -230,7 +231,7 @@ VkResult VulkanBuffer::Flush(VkDeviceSize size, VkDeviceSize offset)
  *
  * @return VkResult of the invalidate call
  */
-VkResult VulkanBuffer::Invalidate(VkDeviceSize size, VkDeviceSize offset)
+VkResult VulkanBuffer::Invalidate(const VkDeviceSize size, const VkDeviceSize offset) const
 {
     VkMappedMemoryRange mappedRange{};
     mappedRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
@@ -248,7 +249,7 @@ VkResult VulkanBuffer::Invalidate(VkDeviceSize size, VkDeviceSize offset)
  *
  * @return VkDescriptorBufferInfo of specified offset and range
  */
-VkDescriptorBufferInfo VulkanBuffer::DescriptorInfo(VkDeviceSize size, VkDeviceSize offset)
+VkDescriptorBufferInfo VulkanBuffer::DescriptorInfo(const VkDeviceSize size, const VkDeviceSize offset) const
 {
     return VkDescriptorBufferInfo{
         m_Buffer,
@@ -264,7 +265,7 @@ VkDescriptorBufferInfo VulkanBuffer::DescriptorInfo(VkDeviceSize size, VkDeviceS
  * @param index Used in offset calculation
  *
  */
-void VulkanBuffer::WriteToIndex(void *data, int index)
+void VulkanBuffer::WriteToIndex(void *data, const int index)
 {
   WriteToBuffer(data, m_InstanceSize, index * m_AlignmentSize);
 }
@@ -275,7 +276,7 @@ void VulkanBuffer::WriteToIndex(void *data, int index)
  * @param index Used in offset calculation
  *
  */
-VkResult VulkanBuffer::FlushIndex(int index) { return Flush(m_AlignmentSize, index * m_AlignmentSize); }
+VkResult VulkanBuffer::FlushIndex(const int index) const { return Flush(m_AlignmentSize, index * m_AlignmentSize); }
 
 /**
  * Create a buffer info descriptor
@@ -284,7 +285,7 @@ VkResult VulkanBuffer::FlushIndex(int index) { return Flush(m_AlignmentSize, ind
  *
  * @return VkDescriptorBufferInfo for instance at index
  */
-VkDescriptorBufferInfo VulkanBuffer::DescriptorInfoForIndex(int index)
+VkDescriptorBufferInfo VulkanBuffer::DescriptorInfoForIndex(const int index) const
 {
   return DescriptorInfo(m_AlignmentSize, index * m_AlignmentSize);
 }
@@ -298,7 +299,7 @@ VkDescriptorBufferInfo VulkanBuffer::DescriptorInfoForIndex(int index)
  *
  * @return VkResult of the invalidate call
  */
-VkResult VulkanBuffer::InvalidateIndex(int index)
+VkResult VulkanBuffer::InvalidateIndex(const int index) const
 {
   return Invalidate(m_AlignmentSize, index * m_AlignmentSize);
 }

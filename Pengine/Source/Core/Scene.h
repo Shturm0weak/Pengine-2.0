@@ -13,11 +13,11 @@ namespace Pengine
 		Scene(const std::string& name, const std::string& filepath);
 		Scene(const Scene& scene);
 		~Scene();
-		void operator=(const Scene& scene);
+		Scene& operator=(const Scene& scene);
 
 		std::shared_ptr<Entity> CreateEntity(const std::string& name = "Unnamed", const UUID& uuid = UUID());
 
-		void DeleteEntity(std::shared_ptr<Entity> entity);
+		void DeleteEntity(std::shared_ptr<Entity>& entity);
 
 		std::shared_ptr<Entity> FindEntityByUUID(const std::string& uuid);
 

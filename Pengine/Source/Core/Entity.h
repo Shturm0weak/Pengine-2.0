@@ -10,13 +10,13 @@ namespace Pengine
 	class PENGINE_API Entity : public std::enable_shared_from_this<Entity>
 	{
 	public:
-		Entity(
+		explicit Entity(
 			std::shared_ptr<Scene> scene,
-			const std::string& name = "Unnamed",
-			const UUID& uuid = UUID());
+			std::string name = "Unnamed",
+			UUID uuid = UUID());
 		Entity(const Entity& entity);
 		Entity(Entity&& entity) noexcept;
-		~Entity();
+		~Entity() = default;
 
 		entt::registry& GetRegistry() const;
 
@@ -24,13 +24,13 @@ namespace Pengine
 
 		entt::entity GetHandle() const { return m_Handle; }
 
-		std::size_t operator()() const { return (size_t)m_Handle; }
+		std::size_t operator()() const { return static_cast<size_t>(m_Handle); }
 
 		bool operator==(const Entity& entity) const { return m_Handle == entity.m_Handle; }
 
-		void operator=(const Entity& entity);
+		Entity& operator=(const Entity& entity);
 
-		void operator=(Entity&& entity) noexcept;
+		Entity& operator=(Entity&& entity) noexcept;
 
 		template<typename T, typename ...Args>
 		T& AddComponent(Args&&... args)
@@ -51,36 +51,36 @@ namespace Pengine
 		}
 
 		template<typename T>
-		void RemoveComponent()
+		void RemoveComponent() const
 		{
 			m_Registry->remove<T>(m_Handle);
 		}
 
 		bool HasParent() const { return m_Parent != nullptr && m_Handle != entt::tombstone; }
 
-		void SetParent(std::shared_ptr<Entity> parent) { m_Parent = parent; }
+		void SetParent(const std::shared_ptr<Entity>& parent) { m_Parent = parent; }
 
 		std::shared_ptr<Entity> GetParent() const { return m_Parent; }
 
-		void AddChild(std::shared_ptr<Entity> child);
+		void AddChild(const std::shared_ptr<Entity>& child);
 
-		void RemoveChild(std::shared_ptr<Entity> child);
+		void RemoveChild(const std::shared_ptr<Entity>& child);
 
-		bool HasAsChild(std::shared_ptr<Entity> child, bool recursevely = false);
+		bool HasAsChild(const std::shared_ptr<Entity>& child, bool recursevely = false);
 
-		bool HasAsParent(std::shared_ptr<Entity> parent, bool recursevely = false);
+		bool HasAsParent(const std::shared_ptr<Entity>& parent, bool recursevely = false);
 
 		const std::vector<std::shared_ptr<Entity>>& GetChilds() const { return m_Childs; }
 
 		const std::string& GetName() const { return m_Name; }
 
-		void SetName(const std::string name) { m_Name = name; }
+		void SetName(const std::string& name) { m_Name = name; }
 
 		const UUID& GetUUID() const { return m_UUID; }
 
 		bool IsEnabled() const { return m_IsEnabled; }
 
-		void SetEnabled(bool isEnabled) { m_IsEnabled = isEnabled; }
+		void SetEnabled(const bool isEnabled) { m_IsEnabled = isEnabled; }
 
 	private:
 		void Copy(const Entity& entity);
@@ -91,7 +91,7 @@ namespace Pengine
 		std::shared_ptr<Entity> m_Parent;
 		std::vector<std::shared_ptr<Entity>> m_Childs;
 		std::shared_ptr<Scene> m_Scene;
-		entt::registry* m_Registry;
+		entt::registry* m_Registry = nullptr;
 		std::string m_Name;
 		UUID m_UUID;
 
@@ -107,6 +107,6 @@ struct std::hash<Pengine::Entity>
 {
 	std::size_t operator()(const Pengine::Entity& entity) const noexcept
 	{
-		return (std::size_t)entity.GetHandle();
+		return static_cast<size_t>(entity.GetHandle());
 	}
 };

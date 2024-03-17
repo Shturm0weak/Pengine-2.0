@@ -54,4 +54,21 @@ namespace Pengine
 		return m_UUID;
 	}
 
+	UUID& UUID::operator=(const UUID& uuid)
+	{
+		if (this != &uuid)
+		{
+			m_UUID = uuid.m_UUID;
+		}
+
+		return *this;
+	}
+
+	UUID& UUID::operator=(UUID&& uuid) noexcept
+	{
+		m_UUID = std::move(uuid.m_UUID);
+		uuid.m_UUID.clear();
+		return *this;
+	}
+
 }

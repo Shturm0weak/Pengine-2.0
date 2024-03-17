@@ -10,7 +10,7 @@ namespace Pengine
 	class PENGINE_API Window
 	{
 	public:
-		Window(const std::string& name, const glm::ivec2& size);
+		Window(std::string name, const glm::ivec2& size);
 		virtual ~Window() = default;
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
@@ -45,18 +45,17 @@ namespace Pengine
 
 		virtual void HideCursor() = 0;
 
-		void SetIsRunning(bool isRunning) { m_IsRunning = isRunning; };
+		void SetIsRunning(const bool isRunning) { m_IsRunning = isRunning; };
 
-		bool IsRunning() const { return m_IsRunning; }
+		[[nodiscard]] bool IsRunning() const { return m_IsRunning; }
 
-		bool IsMinimized() const { return m_IsMinimized; }
+		[[nodiscard]] bool IsMinimized() const { return m_IsMinimized; }
 
-		glm::ivec2 GetSize() const { return m_Size; }
+		[[nodiscard]] glm::ivec2 GetSize() const { return m_Size; }
 
 	protected:
-		glm::ivec2 m_Size = { 0, 0 };
-
 		std::string m_Name;
+		glm::ivec2 m_Size = { 0, 0 };
 
 	private:
 		bool m_IsRunning = true;

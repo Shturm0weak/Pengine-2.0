@@ -6,18 +6,18 @@
 namespace Pengine
 {
 
-	class PENGINE_API ResizeEvent : public Event
+	class PENGINE_API ResizeEvent final : public Event
 	{
 	public:
-		glm::ivec2 GetSize() const { return m_Size; }
+		[[nodiscard]] glm::ivec2 GetSize() const { return m_Size; }
 
-		std::string GetViewportName() const { return m_ViewportName; }
+		[[nodiscard]] std::string GetViewportName() const { return m_ViewportName; }
 
-		ResizeEvent(const glm::ivec2& size, const std::string& viewportName, Event::Type type,
-			void* sender = nullptr, bool sendedOnce = false)
+		ResizeEvent(const glm::ivec2& size, std::string viewportName, const Type type,
+			void* sender = nullptr, const bool sendedOnce = false)
 			: Event(type, sender, sendedOnce)
 			, m_Size(size)
-			, m_ViewportName(viewportName)
+			, m_ViewportName(std::move(viewportName))
 		{
 		}
 

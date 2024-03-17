@@ -7,7 +7,6 @@
 #include "VulkanUniformWriter.h"
 
 #include "../Core/Logger.h"
-#include "../Core/Timer.h"
 #include "../Core/Serializer.h"
 
 #include <SPIRV-Reflect/spirv_reflect.h>
@@ -56,8 +55,8 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
     pipelineConfigInfo.renderPass = std::static_pointer_cast<VulkanRenderPass>(
         pipelineCreateInfo.renderPass)->GetRenderPass();
     pipelineConfigInfo.pipelineLayout = m_PipelineLayout;
-    pipelineConfigInfo.depthStencilInfo.depthWriteEnable = (VkBool32)pipelineCreateInfo.depthWrite;
-    pipelineConfigInfo.depthStencilInfo.depthTestEnable = (VkBool32)pipelineCreateInfo.depthTest;
+    pipelineConfigInfo.depthStencilInfo.depthWriteEnable = static_cast<VkBool32>(pipelineCreateInfo.depthWrite);
+    pipelineConfigInfo.depthStencilInfo.depthTestEnable = static_cast<VkBool32>(pipelineCreateInfo.depthTest);
     pipelineConfigInfo.rasterizationInfo.cullMode = ConvertCullMode(pipelineCreateInfo.cullMode);
     pipelineConfigInfo.rasterizationInfo.polygonMode = ConvertPolygonMode(pipelineCreateInfo.polygonMode);
     pipelineConfigInfo.colorBlendAttachments.clear();
@@ -105,8 +104,8 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
     auto attributeDescriptions = CreateAttributeDescriptions(pipelineCreateInfo.renderPass->GetAttributeDescriptions());
     VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo{};
     vertexInputCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    vertexInputCreateInfo.vertexAttributeDescriptionCount = (uint32_t)attributeDescriptions.size();
-    vertexInputCreateInfo.vertexBindingDescriptionCount = (uint32_t)bindingDescriptions.size();
+    vertexInputCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+    vertexInputCreateInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
     vertexInputCreateInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
     vertexInputCreateInfo.pVertexBindingDescriptions = bindingDescriptions.data();
 
@@ -133,7 +132,7 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
     if (vkCreateGraphicsPipelines(device->GetDevice(), VK_NULL_HANDLE, 1,
         &vkPipelineCreateInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS)
     {
-        FATAL_ERROR("Failed to create graphics pipeline!")
+        FATAL_ERROR("Failed to create graphics pipeline!");
     }
 }
 
@@ -148,7 +147,7 @@ VulkanPipeline::~VulkanPipeline()
     vkDestroyPipeline(device->GetDevice(), m_GraphicsPipeline, nullptr);
 }
 
-VkCullModeFlagBits VulkanPipeline::ConvertCullMode(CullMode cullMode)
+VkCullModeFlagBits VulkanPipeline::ConvertCullMode(const CullMode cullMode)
 {
     switch (cullMode)
     {
@@ -162,10 +161,11 @@ VkCullModeFlagBits VulkanPipeline::ConvertCullMode(CullMode cullMode)
         return VK_CULL_MODE_FRONT_AND_BACK;
     }
 
-    FATAL_ERROR("Failed to convert cull mode!")
+    FATAL_ERROR("Failed to convert cull mode!");
+	return VkCullModeFlagBits::VK_CULL_MODE_NONE;
 }
 
-Pipeline::CullMode VulkanPipeline::ConvertCullMode(VkCullModeFlagBits cullMode)
+Pipeline::CullMode VulkanPipeline::ConvertCullMode(const VkCullModeFlagBits cullMode)
 {
     switch (cullMode)
     {
@@ -179,10 +179,11 @@ Pipeline::CullMode VulkanPipeline::ConvertCullMode(VkCullModeFlagBits cullMode)
         return Pengine::Pipeline::CullMode::FRONT_AND_BACK;
     }
 
-    FATAL_ERROR("Failed to convert cull mode!")
+    FATAL_ERROR("Failed to convert cull mode!");
+	return CullMode::NONE;
 }
 
-VkPolygonMode VulkanPipeline::ConvertPolygonMode(Pipeline::PolygonMode polygonMode)
+VkPolygonMode VulkanPipeline::ConvertPolygonMode(const PolygonMode polygonMode)
 {
     switch (polygonMode)
     {
@@ -192,10 +193,11 @@ VkPolygonMode VulkanPipeline::ConvertPolygonMode(Pipeline::PolygonMode polygonMo
         return VK_POLYGON_MODE_LINE;
     }
 
-    FATAL_ERROR("Failed to convert polygon mode!")
+    FATAL_ERROR("Failed to convert polygon mode!");
+	return {};
 }
 
-Pipeline::PolygonMode VulkanPipeline::ConvertPolygonMode(VkPolygonMode polygonMode)
+Pipeline::PolygonMode VulkanPipeline::ConvertPolygonMode(const VkPolygonMode polygonMode)
 {
     switch (polygonMode)
     {
@@ -205,11 +207,12 @@ Pipeline::PolygonMode VulkanPipeline::ConvertPolygonMode(VkPolygonMode polygonMo
         return Pengine::Pipeline::PolygonMode::LINE;
     }
 
-    FATAL_ERROR("Failed to convert polygon mode!")
+    FATAL_ERROR("Failed to convert polygon mode!");
+	return {};
 }
 
 std::vector<VkVertexInputBindingDescription> VulkanPipeline::CreateBindingDescriptions(
-    std::vector<Vertex::BindingDescription> bindingDescriptions)
+    const std::vector<Vertex::BindingDescription>& bindingDescriptions)
 {
     std::vector<VkVertexInputBindingDescription> vkBindingDescriptions(bindingDescriptions.size());
     for (size_t i = 0; i < bindingDescriptions.size(); i++)
@@ -223,7 +226,7 @@ std::vector<VkVertexInputBindingDescription> VulkanPipeline::CreateBindingDescri
 }
 
 std::vector<VkVertexInputAttributeDescription> VulkanPipeline::CreateAttributeDescriptions(
-    std::vector<Vertex::AttributeDescription> attributeDescriptions)
+    const std::vector<Vertex::AttributeDescription>& attributeDescriptions)
 {
     std::vector<VkVertexInputAttributeDescription> vkAttributeDescriptions(attributeDescriptions.size());
     for (size_t i = 0; i < attributeDescriptions.size(); i++)
@@ -237,7 +240,7 @@ std::vector<VkVertexInputAttributeDescription> VulkanPipeline::CreateAttributeDe
     return vkAttributeDescriptions;
 }
 
-VkVertexInputRate VulkanPipeline::ConvertVertexInputRate(Vertex::InputRate vertexInputRate)
+VkVertexInputRate VulkanPipeline::ConvertVertexInputRate(const Vertex::InputRate vertexInputRate)
 {
     switch (vertexInputRate)
     {
@@ -247,10 +250,11 @@ VkVertexInputRate VulkanPipeline::ConvertVertexInputRate(Vertex::InputRate verte
         return VK_VERTEX_INPUT_RATE_INSTANCE;
     }
 
-    FATAL_ERROR("Failed to convert vertex input rate!")
+    FATAL_ERROR("Failed to convert vertex input rate!");
+	return VkVertexInputRate::VK_VERTEX_INPUT_RATE_MAX_ENUM;
 }
 
-Vertex::InputRate VulkanPipeline::ConvertVertexInputRate(VkVertexInputRate vertexInputRate)
+Vertex::InputRate VulkanPipeline::ConvertVertexInputRate(const VkVertexInputRate vertexInputRate)
 {
     switch (vertexInputRate)
     {
@@ -260,7 +264,8 @@ Vertex::InputRate VulkanPipeline::ConvertVertexInputRate(VkVertexInputRate verte
         return Pengine::Vertex::InputRate::INSTANCE;
     }
 
-    FATAL_ERROR("Failed to convert vertex input rate!")
+    FATAL_ERROR("Failed to convert vertex input rate!");
+	return {};
 }
 
 void VulkanPipeline::CreateShaderModule(const std::string& code,
@@ -274,11 +279,11 @@ void VulkanPipeline::CreateShaderModule(const std::string& code,
     if (vkCreateShaderModule(device->GetDevice(), &shaderModuleCreateInfo, nullptr,
         shaderModule) != VK_SUCCESS)
     {
-        FATAL_ERROR("Failed to create shader module!")
+        FATAL_ERROR("Failed to create shader module!");
     }
 }
 
-std::string VulkanPipeline::CompileShaderModule(const std::string& filepath, ShaderType type)
+std::string VulkanPipeline::CompileShaderModule(const std::string& filepath, const ShaderType type)
 {
     shaderc_shader_kind kind;
     switch (type)
@@ -345,7 +350,7 @@ void VulkanPipeline::Reflect(const std::string& spv)
     spvReflectDestroyShaderModule(&module);
 }
 
-void VulkanPipeline::Bind(VkCommandBuffer commandBuffer)
+void VulkanPipeline::Bind(const VkCommandBuffer commandBuffer) const
 {
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline);
 }

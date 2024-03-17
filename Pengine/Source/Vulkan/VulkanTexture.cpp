@@ -1,8 +1,8 @@
 #include "VulkanTexture.h"
 
-#include "VulkanDevice.h"
 #include "VulkanBuffer.h"
 #include "VulkanDescriptors.h"
+#include "VulkanDevice.h"
 
 #include "../Core/Logger.h"
 
@@ -11,7 +11,7 @@
 using namespace Pengine;
 using namespace Vk;
 
-VulkanTexture::VulkanTexture(CreateInfo textureCreateInfo)
+VulkanTexture::VulkanTexture(const CreateInfo& textureCreateInfo)
     : Texture(textureCreateInfo)
 {
     VkFormat format = ConvertFormat(m_Format);
@@ -34,7 +34,7 @@ VulkanTexture::VulkanTexture(CreateInfo textureCreateInfo)
 
     for (Usage usage : textureCreateInfo.usage)
     {
-        imageInfo.usage |= VulkanTexture::ConvertUsage(usage);
+        imageInfo.usage |= ConvertUsage(usage);
     }
 
     device->CreateImageWithInfo(
@@ -48,10 +48,10 @@ VulkanTexture::VulkanTexture(CreateInfo textureCreateInfo)
         std::shared_ptr<Buffer> stagingBuffer = Buffer::Create(
             textureCreateInfo.channels,
             m_Size.x * m_Size.y,
-            std::vector<Buffer::Usage>{ Buffer::Usage::TRANSFER_SRC }
+            { Buffer::Usage::TRANSFER_SRC }
         );
 
-        stagingBuffer->WriteToBuffer((void*)m_Data.data());
+        stagingBuffer->WriteToBuffer(m_Data.data());
 
         TransitionToWrite();
 
@@ -108,8 +108,11 @@ VkDescriptorImageInfo VulkanTexture::GetDescriptorInfo()
     return descriptorImageInfo;
 }
 
-VkImageView VulkanTexture::CreateImageView(VkImage image, VkFormat format,
-    VkImageAspectFlagBits aspectMask, int mipLevels)
+VkImageView VulkanTexture::CreateImageView(
+	const VkImage image,
+	const VkFormat format,
+    const VkImageAspectFlagBits aspectMask,
+    const uint32_t mipLevels)
 {
     VkImageViewCreateInfo viewInfo{};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -125,13 +128,13 @@ VkImageView VulkanTexture::CreateImageView(VkImage image, VkFormat format,
     VkImageView imageView;
     if (vkCreateImageView(device->GetDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS)
     {
-        FATAL_ERROR("Failed to create texture image view!")
+        FATAL_ERROR("Failed to create texture image view!");
     }
 
     return imageView;
 }
 
-VkSampler VulkanTexture::CreateSampler(uint32_t mipLevels)
+VkSampler VulkanTexture::CreateSampler(const uint32_t mipLevels)
 {
     VkSamplerCreateInfo samplerInfo{};
     samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
@@ -154,13 +157,13 @@ VkSampler VulkanTexture::CreateSampler(uint32_t mipLevels)
     VkSampler sampler;
     if (vkCreateSampler(device->GetDevice(), &samplerInfo, nullptr, &sampler) != VK_SUCCESS)
     {
-        FATAL_ERROR("Failed to create texture sampler!")
+        FATAL_ERROR("Failed to create texture sampler!");
     }
 
     return sampler;
 }
 
-VkFormat VulkanTexture::ConvertFormat(Format format)
+VkFormat VulkanTexture::ConvertFormat(const Format format)
 {
     switch (format)
     {
@@ -666,10 +669,11 @@ VkFormat VulkanTexture::ConvertFormat(Format format)
         return VK_FORMAT_UNDEFINED;
     }
 
-    FATAL_ERROR("Failed to convert format!")
+    FATAL_ERROR("Failed to convert format!");
+	return VK_FORMAT_UNDEFINED;
 }
 
-Texture::Format VulkanTexture::ConvertFormat(VkFormat format)
+Texture::Format VulkanTexture::ConvertFormat(const VkFormat format)
 {
     switch (format)
     {
@@ -1175,10 +1179,11 @@ Texture::Format VulkanTexture::ConvertFormat(VkFormat format)
         return Pengine::Texture::Format::UNDEFINED;
     }
 
-    FATAL_ERROR("Failed to convert format!")
+    FATAL_ERROR("Failed to convert format!");
+	return Texture::Format::UNDEFINED;
 }
 
-VkImageAspectFlagBits VulkanTexture::ConvertAspectMask(AspectMask aspectMask)
+VkImageAspectFlagBits VulkanTexture::ConvertAspectMask(const AspectMask aspectMask)
 {
     switch (aspectMask)
     {
@@ -1188,10 +1193,11 @@ VkImageAspectFlagBits VulkanTexture::ConvertAspectMask(AspectMask aspectMask)
         return VK_IMAGE_ASPECT_DEPTH_BIT;
     }
 
-    FATAL_ERROR("Failed to convert aspect mask!")
+    FATAL_ERROR("Failed to convert aspect mask!");
+	return VK_IMAGE_ASPECT_NONE;
 }
 
-Texture::AspectMask VulkanTexture::ConvertAspectMask(VkImageAspectFlagBits aspectMask)
+Texture::AspectMask VulkanTexture::ConvertAspectMask(const VkImageAspectFlagBits aspectMask)
 {
     switch (aspectMask)
     {
@@ -1201,10 +1207,11 @@ Texture::AspectMask VulkanTexture::ConvertAspectMask(VkImageAspectFlagBits aspec
         return Pengine::Texture::AspectMask::DEPTH;
     }
 
-    FATAL_ERROR("Failed to convert aspect mask!")
+    FATAL_ERROR("Failed to convert aspect mask!");
+	return {};
 }
 
-VkImageLayout VulkanTexture::ConvertLayout(Layout layout)
+VkImageLayout VulkanTexture::ConvertLayout(const Layout layout)
 {
     switch (layout)
     {
@@ -1220,10 +1227,11 @@ VkImageLayout VulkanTexture::ConvertLayout(Layout layout)
         return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
     }
 
-    FATAL_ERROR("Failed to convert texture layout!")
+    FATAL_ERROR("Failed to convert texture layout!");
+	return VK_IMAGE_LAYOUT_UNDEFINED;
 }
 
-Texture::Layout VulkanTexture::ConvertLayout(VkImageLayout layout)
+Texture::Layout VulkanTexture::ConvertLayout(const VkImageLayout layout)
 {
     switch (layout)
     {
@@ -1239,7 +1247,8 @@ Texture::Layout VulkanTexture::ConvertLayout(VkImageLayout layout)
         return Pengine::Texture::Layout::DEPTH_STENCIL_READ_ONLY_OPTIMAL;
     }
 
-    FATAL_ERROR("Failed to convert texture layout!")
+    FATAL_ERROR("Failed to convert texture layout!");
+	return Texture::Layout::UNDEFINED;
 }
 
 VkImageUsageFlagBits VulkanTexture::ConvertUsage(Usage usage)
@@ -1258,10 +1267,11 @@ VkImageUsageFlagBits VulkanTexture::ConvertUsage(Usage usage)
         return VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
     }
 
-    FATAL_ERROR("Failed to convert usage!")
+    FATAL_ERROR("Failed to convert usage!");
+	return VK_IMAGE_USAGE_FLAG_BITS_MAX_ENUM;
 }
 
-Texture::Usage VulkanTexture::ConvertUsage(VkImageUsageFlagBits usage)
+Texture::Usage VulkanTexture::ConvertUsage(const VkImageUsageFlagBits usage)
 {
     switch (usage)
     {
@@ -1277,20 +1287,21 @@ Texture::Usage VulkanTexture::ConvertUsage(VkImageUsageFlagBits usage)
         return Pengine::Texture::Usage::COLOR_ATTACHMENT;
     }
 
-    FATAL_ERROR("Failed to convert usage!")
+    FATAL_ERROR("Failed to convert usage!");
+	return {};
 }
 
 void VulkanTexture::GenerateMipMaps()
 {
-    Vk::device->GenerateMipMaps(m_Image, VulkanTexture::ConvertFormat(m_Format), m_Size.x, m_Size.y, m_MipLevels);
+    Vk::device->GenerateMipMaps(m_Image, ConvertFormat(m_Format), m_Size.x, m_Size.y, m_MipLevels);
 }
 
 void VulkanTexture::TransitionToWrite()
 {
     device->TransitionImageLayout(
         m_Image,
-        VulkanTexture::ConvertFormat(m_Format),
-        VulkanTexture::ConvertAspectMask(m_AspectMask),
+        ConvertFormat(m_Format),
+        ConvertAspectMask(m_AspectMask),
         m_Layout,
         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
         m_MipLevels);
@@ -1302,8 +1313,8 @@ void VulkanTexture::TransitionToRead()
 {
     device->TransitionImageLayout(
         m_Image,
-        VulkanTexture::ConvertFormat(m_Format),
-        VulkanTexture::ConvertAspectMask(m_AspectMask),
+        ConvertFormat(m_Format),
+        ConvertAspectMask(m_AspectMask),
         m_Layout,
         VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
         m_MipLevels);
@@ -1315,8 +1326,8 @@ void VulkanTexture::TransitionToColorAttachment()
 {
     device->TransitionImageLayout(
         m_Image,
-        VulkanTexture::ConvertFormat(m_Format),
-        VulkanTexture::ConvertAspectMask(m_AspectMask),
+        ConvertFormat(m_Format),
+        ConvertAspectMask(m_AspectMask),
         m_Layout,
         VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         m_MipLevels);

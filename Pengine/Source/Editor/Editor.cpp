@@ -1,18 +1,22 @@
 #include "Editor.h"
 
-#include "../Core/Input.h"
+#include "../Components/Camera.h"
+#include "../Components/PointLight.h"
+#include "../Components/Renderer3D.h"
+#include "../Components/Transform.h"
 #include "../Core/FileFormatNames.h"
+#include "../Core/Input.h"
+#include "../Core/KeyCode.h"
 #include "../Core/MaterialManager.h"
 #include "../Core/MeshManager.h"
-#include "../Core/TextureManager.h"
 #include "../Core/Serializer.h"
+#include "../Core/TextureManager.h"
 #include "../Core/Time.h"
-#include "../Core/WindowManager.h"
 #include "../Core/ViewportManager.h"
+#include "../Core/WindowManager.h"
+#include "../Editor/ImGuizmo.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
-#include "../EventSystem/ResizeEvent.h"
-#include "../Editor/ImGuizmo.h"
 
 #include <fstream>
 
@@ -26,7 +30,7 @@ Editor::Editor()
 	SetDarkThemeColors();
 }
 
-void Editor::Update(std::shared_ptr<Scene> scene)
+void Editor::Update(const std::shared_ptr<Scene>& scene)
 {
 	Manipulate();
 
@@ -39,15 +43,15 @@ void Editor::Update(std::shared_ptr<Scene> scene)
 	m_DeleteFileMenu.Update();
 
 	ImGui::Begin("Settings");
-	ImGui::Text("FPS: %.0f", 1.0f / (float)Time::GetDeltaTime());
+	ImGui::Text("FPS: %.0f", 1.0f / static_cast<float>(Time::GetDeltaTime()));
 	ImGui::Text("DrawCalls: %d", drawCallsCount);
-	ImGui::Text("Triangles: %d", (int)vertexCount);
+	ImGui::Text("Triangles: %d", static_cast<int>(vertexCount));
 	drawCallsCount = 0;
 	vertexCount = 0;
-	ImGui::Text("Meshes: %d", (int)MeshManager::GetInstance().GetMeshes().size());
-	ImGui::Text("BaseMaterials: %d", (int)MaterialManager::GetInstance().GetBaseMaterials().size());
-	ImGui::Text("Materials: %d", (int)MaterialManager::GetInstance().GetMaterials().size());
-	ImGui::Text("Textures: %d", (int)TextureManager::GetInstance().GetTextures().size());
+	ImGui::Text("Meshes: %d", static_cast<int>(MeshManager::GetInstance().GetMeshes().size()));
+	ImGui::Text("BaseMaterials: %d", static_cast<int>(MaterialManager::GetInstance().GetBaseMaterials().size()));
+	ImGui::Text("Materials: %d", static_cast<int>(MaterialManager::GetInstance().GetMaterials().size()));
+	ImGui::Text("Textures: %d", static_cast<int>(TextureManager::GetInstance().GetTextures().size()));
 	ImGui::End();
 
 	if (Input::Mouse::IsMouseReleased(Keycode::MOUSE_BUTTON_2))
@@ -75,11 +79,15 @@ void Editor::Update(std::shared_ptr<Scene> scene)
 	}
 }
 
-bool Editor::DrawVec2Control(const std::string& label, glm::vec2& values, float resetValue, const glm::vec2& limits, float speed, float columnWidth)
+bool Editor::DrawVec2Control(
+	const std::string& label,
+	glm::vec2& values,
+	const float resetValue,
+	const glm::vec2& limits,
+	const float speed,
+	const float columnWidth) const
 {
 	bool changed = false;
-
-	ImGuiIO& io = ImGui::GetIO();
 
 	ImGui::PushID(label.c_str());
 
@@ -138,12 +146,15 @@ bool Editor::DrawVec2Control(const std::string& label, glm::vec2& values, float 
 	return changed;
 }
 
-bool Editor::DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue,
-	const glm::vec2& limits, float speed, float columnWidth)
+bool Editor::DrawVec3Control(
+	const std::string& label,
+	glm::vec3& values,
+	const float resetValue,
+	const glm::vec2& limits,
+	const float speed,
+	const float columnWidth) const
 {
 	bool changed = false;
-
-	ImGuiIO& io = ImGui::GetIO();
 
 	ImGui::PushID(label.c_str());
 
@@ -220,11 +231,15 @@ bool Editor::DrawVec3Control(const std::string& label, glm::vec3& values, float 
 	return changed;
 }
 
-bool Editor::DrawVec4Control(const std::string& label, glm::vec4& values, float resetValue, const glm::vec2& limits, float speed, float columnWidth)
+bool Editor::DrawVec4Control(
+	const std::string& label,
+	glm::vec4& values,
+	const float resetValue,
+	const glm::vec2& limits,
+	const float speed,
+	const float columnWidth) const
 {
 	bool changed = false;
-
-	ImGuiIO& io = ImGui::GetIO();
 
 	ImGui::PushID(label.c_str());
 
@@ -319,11 +334,15 @@ bool Editor::DrawVec4Control(const std::string& label, glm::vec4& values, float 
 	return changed;
 }
 
-bool Editor::DrawIVec2Control(const std::string& label, glm::ivec2& values, float resetValue, const glm::vec2& limits, float speed, float columnWidth)
+bool Editor::DrawIVec2Control(
+	const std::string& label,
+	glm::ivec2& values,
+	const float resetValue,
+	const glm::vec2& limits,
+	const float speed,
+	const float columnWidth) const
 {
 	bool changed = false;
-
-	ImGuiIO& io = ImGui::GetIO();
 
 	ImGui::PushID(label.c_str());
 
@@ -343,7 +362,7 @@ bool Editor::DrawIVec2Control(const std::string& label, glm::ivec2& values, floa
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 	if (ImGui::Button("X", buttonSize))
 	{
-		values.x = resetValue;
+		values.x = static_cast<int>(resetValue);
 		changed = true;
 	}
 	ImGui::PopStyleColor(3);
@@ -361,7 +380,7 @@ bool Editor::DrawIVec2Control(const std::string& label, glm::ivec2& values, floa
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
 	if (ImGui::Button("Y", buttonSize))
 	{
-		values.y = resetValue;
+		values.y = static_cast<int>(resetValue);
 		changed = true;
 	}
 	ImGui::PopStyleColor(3);
@@ -382,11 +401,15 @@ bool Editor::DrawIVec2Control(const std::string& label, glm::ivec2& values, floa
 	return changed;
 }
 
-bool Editor::DrawIVec3Control(const std::string& label, glm::ivec3& values, float resetValue, const glm::vec2& limits, float speed, float columnWidth)
+bool Editor::DrawIVec3Control(
+	const std::string& label,
+	glm::ivec3& values,
+	const float resetValue,
+	const glm::vec2& limits,
+	const float speed,
+	const float columnWidth) const
 {
 	bool changed = false;
-
-	ImGuiIO& io = ImGui::GetIO();
 
 	ImGui::PushID(label.c_str());
 
@@ -406,7 +429,7 @@ bool Editor::DrawIVec3Control(const std::string& label, glm::ivec3& values, floa
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 	if (ImGui::Button("X", buttonSize))
 	{
-		values.x = resetValue;
+		values.x = static_cast<int>(resetValue);
 		changed = true;
 	}
 	ImGui::PopStyleColor(3);
@@ -424,7 +447,7 @@ bool Editor::DrawIVec3Control(const std::string& label, glm::ivec3& values, floa
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
 	if (ImGui::Button("Y", buttonSize))
 	{
-		values.y = resetValue;
+		values.y = static_cast<int>(resetValue);
 		changed = true;
 	}
 	ImGui::PopStyleColor(3);
@@ -442,7 +465,7 @@ bool Editor::DrawIVec3Control(const std::string& label, glm::ivec3& values, floa
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
 	if (ImGui::Button("Z", buttonSize))
 	{
-		values.z = resetValue;
+		values.z = static_cast<int>(resetValue);
 		changed = true;
 	}
 	ImGui::PopStyleColor(3);
@@ -463,7 +486,13 @@ bool Editor::DrawIVec3Control(const std::string& label, glm::ivec3& values, floa
 	return changed;
 }
 
-bool Editor::DrawIVec4Control(const std::string& label, glm::ivec4& values, float resetValue, const glm::vec2& limits, float speed, float columnWidth)
+bool Editor::DrawIVec4Control(
+	const std::string& label,
+	glm::ivec4& values,
+	const float resetValue,
+	const glm::vec2& limits,
+	const float speed,
+	const float columnWidth) const
 {
 	bool changed = false;
 
@@ -487,7 +516,7 @@ bool Editor::DrawIVec4Control(const std::string& label, glm::ivec4& values, floa
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
 	if (ImGui::Button("X", buttonSize))
 	{
-		values.x = resetValue;
+		values.x = static_cast<int>(resetValue);
 		changed = true;
 	}
 	ImGui::PopStyleColor(3);
@@ -505,7 +534,7 @@ bool Editor::DrawIVec4Control(const std::string& label, glm::ivec4& values, floa
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
 	if (ImGui::Button("Y", buttonSize))
 	{
-		values.y = resetValue;
+		values.y = static_cast<int>(resetValue);
 		changed = true;
 	}
 	ImGui::PopStyleColor(3);
@@ -523,7 +552,7 @@ bool Editor::DrawIVec4Control(const std::string& label, glm::ivec4& values, floa
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
 	if (ImGui::Button("Z", buttonSize))
 	{
-		values.z = resetValue;
+		values.z = static_cast<int>(resetValue);
 		changed = true;
 	}
 	ImGui::PopStyleColor(3);
@@ -541,7 +570,7 @@ bool Editor::DrawIVec4Control(const std::string& label, glm::ivec4& values, floa
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.7f, 0.7f, 0.7f, 1.0f });
 	if (ImGui::Button("W", buttonSize))
 	{
-		values.w = resetValue;
+		values.w = static_cast<int>(resetValue);
 		changed = true;
 	}
 	ImGui::PopStyleColor(3);
@@ -562,7 +591,7 @@ bool Editor::DrawIVec4Control(const std::string& label, glm::ivec4& values, floa
 	return changed;
 }
 
-void Editor::Hierarchy(std::shared_ptr<Scene> scene)
+void Editor::Hierarchy(const std::shared_ptr<Scene>& scene)
 {
 	if (ImGui::Begin("Hierarchy"))
 	{
@@ -577,7 +606,7 @@ void Editor::Hierarchy(std::shared_ptr<Scene> scene)
 	}
 }
 
-void Editor::DrawScene(std::shared_ptr<Scene> scene)
+void Editor::DrawScene(const std::shared_ptr<Scene>& scene)
 {
 	Indent indent;
 
@@ -591,12 +620,11 @@ void Editor::DrawScene(std::shared_ptr<Scene> scene)
 				uuid.resize(payload->DataSize);
 				auto callback = [weakScene = std::weak_ptr<Scene>(scene), uuid]()
 				{
-					if (std::shared_ptr<Scene> scene = weakScene.lock())
+					if (const std::shared_ptr<Scene> currentScene = weakScene.lock())
 					{
-						std::shared_ptr<Entity> entity = scene->FindEntityByUUID(uuid);
-						if (entity)
+						if (const std::shared_ptr<Entity> entity = currentScene->FindEntityByUUID(uuid); entity)
 						{
-							if (std::shared_ptr<Entity> parent = entity->GetParent())
+							if (const std::shared_ptr<Entity> parent = entity->GetParent())
 							{
 								parent->RemoveChild(entity);
 							}
@@ -613,7 +641,7 @@ void Editor::DrawScene(std::shared_ptr<Scene> scene)
 		ImGui::TreePop();
 
 		const std::vector<std::shared_ptr<Entity>>& entities = scene->GetEntities();
-		for (std::shared_ptr<Entity> entity : entities)
+		for (const std::shared_ptr<Entity>& entity : entities)
 		{
 			if (entity->HasParent())
 			{
@@ -629,9 +657,9 @@ void Editor::DrawScene(std::shared_ptr<Scene> scene)
 	}
 }
 
-void Editor::DrawNode(std::shared_ptr<Entity> entity, ImGuiTreeNodeFlags flags)
+void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags flags)
 {
-	flags |= entity->GetChilds().size() == 0 ? ImGuiTreeNodeFlags_Leaf : 0;
+	flags |= entity->GetChilds().empty() ? ImGuiTreeNodeFlags_Leaf : 0;
 
 	Indent indent;
 
@@ -664,22 +692,23 @@ void Editor::DrawNode(std::shared_ptr<Entity> entity, ImGuiTreeNodeFlags flags)
 			uuid.resize(payload->DataSize);
 			auto callback = [weakEntity = std::weak_ptr<Entity>(entity), uuid]()
 			{
-				if (std::shared_ptr<Entity> entity = weakEntity.lock())
+				if (const std::shared_ptr<Entity>& currentEntity = weakEntity.lock())
 				{
-					std::shared_ptr<Entity> child = entity->GetScene()->FindEntityByUUID(uuid);
+					const std::shared_ptr<Entity>& child = currentEntity->GetScene()->FindEntityByUUID(uuid);
 					if (child)
 					{
-						if (entity->HasAsParent(child, true) || (entity->HasParent() && entity->GetParent() == child))
+						if (currentEntity->HasAsParent(child, true) ||
+							(currentEntity->HasParent() && currentEntity->GetParent() == child))
 						{
 							return;
 						}
 
-						if (std::shared_ptr<Entity> parent = child->GetParent())
+						if (const std::shared_ptr<Entity>& parent = child->GetParent())
 						{
 							parent->RemoveChild(child);
 						}
 
-						entity->AddChild(child);
+						currentEntity->AddChild(child);
 					}
 				}
 			};
@@ -707,9 +736,9 @@ void Editor::DrawNode(std::shared_ptr<Entity> entity, ImGuiTreeNodeFlags flags)
 	}
 }
 
-void Editor::DrawChilds(std::shared_ptr<Entity> entity)
+void Editor::DrawChilds(const std::shared_ptr<Entity>& entity)
 {
-	for (std::shared_ptr<Entity> child : entity->GetChilds())
+	for (const std::shared_ptr<Entity>& child : entity->GetChilds())
 	{
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= m_SelectedEntities.count(child->GetUUID()) ?
@@ -719,12 +748,11 @@ void Editor::DrawChilds(std::shared_ptr<Entity> entity)
 	}
 }
 
-
-void Editor::Properties(std::shared_ptr<Scene> scene)
+void Editor::Properties(const std::shared_ptr<Scene>& scene)
 {
 	if (ImGui::Begin("Properties"))
 	{
-		for (const std::string entityUUID : m_SelectedEntities)
+		for (const std::string& entityUUID : m_SelectedEntities)
 		{
 			std::shared_ptr<Entity> entity = scene->FindEntityByUUID(entityUUID);
 			if (!entity)
@@ -763,7 +791,7 @@ void Editor::Properties(std::shared_ptr<Scene> scene)
 	}
 }
 
-void Editor::CameraComponent(std::shared_ptr<Entity> entity)
+void Editor::CameraComponent(const std::shared_ptr<Entity>& entity)
 {
 	if (!entity->HasComponent<Camera>())
 	{
@@ -781,7 +809,7 @@ void Editor::CameraComponent(std::shared_ptr<Entity> entity)
 	{
 		Indent indent;
 
-		int type = (int)camera.GetType();
+		int type = static_cast<int>(camera.GetType());
 		const char* types[] = { "ORTHOGRAPHIC", "PERSPECTIVE" };
 		if (ImGui::Combo("Camera type", &type, types, 2))
 		{
@@ -806,7 +834,7 @@ void Editor::CameraComponent(std::shared_ptr<Entity> entity)
 			camera.SetZNear(zNear);
 		}
 
-		std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport("Main");
+		const std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport("Main");
 		if (viewport->GetCamera() == entity)
 		{
 			bool setToMainViewport = true;
@@ -823,7 +851,7 @@ void Editor::CameraComponent(std::shared_ptr<Entity> entity)
 	}
 }
 
-void Editor::TransformComponent(std::shared_ptr<Entity> entity)
+void Editor::TransformComponent(const std::shared_ptr<Entity>& entity)
 {
 	if (!entity->HasComponent<Transform>())
 	{
@@ -886,7 +914,7 @@ void Editor::TransformComponent(std::shared_ptr<Entity> entity)
 	}
 }
 
-void Editor::GameObjectPopUpMenu(std::shared_ptr<Scene> scene)
+void Editor::GameObjectPopUpMenu(const std::shared_ptr<Scene>& scene)
 {
 	if (ImGui::BeginPopupContextWindow())
 	{
@@ -904,11 +932,11 @@ void Editor::GameObjectPopUpMenu(std::shared_ptr<Scene> scene)
 				{
 					auto callback = [weakScene = std::weak_ptr<Scene>(scene), uuid]()
 					{
-						if (std::shared_ptr<Scene> scene = weakScene.lock())
+						if (const std::shared_ptr<Scene>& currentScene = weakScene.lock())
 						{
-							if (std::shared_ptr<Entity> entity = scene->FindEntityByUUID(uuid))
+							if (std::shared_ptr<Entity> entity = currentScene->FindEntityByUUID(uuid))
 							{
-								scene->DeleteEntity(entity);
+								currentScene->DeleteEntity(entity);
 							}
 						}
 					};
@@ -1031,7 +1059,7 @@ void Editor::AssetBrowser()
 			}
 			else if (FileFormats::IsTexture(path))
 			{
-				if (std::shared_ptr<Texture> texture = TextureManager::GetInstance().GetTexture(path))
+				if (const std::shared_ptr<Texture>& texture = TextureManager::GetInstance().GetTexture(path))
 				{
 					currentIcon = (ImTextureID)texture->GetId();
 				}
@@ -1055,7 +1083,7 @@ void Editor::AssetBrowser()
 			if (ImGui::BeginDragDropSource())
 			{
 				const char* assetPath = path.c_str();
-				size_t size = strlen(assetPath);
+				const size_t size = strlen(assetPath);
 				ImGui::SetDragDropPayload("ASSETS_BROWSER_ITEM", assetPath, size);
 				ImGui::EndDragDropSource();
 			}
@@ -1167,14 +1195,14 @@ void Editor::Manipulate()
 			continue;
 		}
 
-		auto callback = [this](const glm::vec2& position, const glm::ivec2 size, std::shared_ptr<Entity> camera)
+		auto callback = [this](const glm::vec2& position, const glm::ivec2 size, const std::shared_ptr<Entity>& camera)
 		{
 			if (m_SelectedEntities.empty())
 			{
 				return;
 			}
 
-			std::shared_ptr<Entity> entity = camera->GetScene()->FindEntityByUUID(*m_SelectedEntities.begin());
+			const std::shared_ptr<Entity> entity = camera->GetScene()->FindEntityByUUID(*m_SelectedEntities.begin());
 			if (!entity)
 			{
 				return;
@@ -1213,14 +1241,13 @@ void Editor::Manipulate()
 	}
 }
 
-void Editor::MoveCamera(std::shared_ptr<Entity> camera)
+void Editor::MoveCamera(const std::shared_ptr<Entity>& camera)
 {
 	if (!camera)
 	{
 		return;
 	}
 
-	Camera& cameraComponent = camera->GetComponent<Camera>();
 	Transform& transform = camera->GetComponent<Transform>();
 
 	glm::vec3 rotation = transform.GetRotation();
@@ -1277,7 +1304,7 @@ void Editor::MoveCamera(std::shared_ptr<Entity> camera)
 	}
 }
 
-void Editor::ComponentsPopUpMenu(std::shared_ptr<Entity> entity)
+void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
 {
 	if (ImGui::BeginPopupContextWindow())
 	{
@@ -1300,7 +1327,7 @@ void Editor::ComponentsPopUpMenu(std::shared_ptr<Entity> entity)
 	}
 }
 
-void Editor::Renderer3DComponent(std::shared_ptr<Entity> entity)
+void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 {
 	if (!entity->HasComponent<Renderer3D>())
 	{
@@ -1380,7 +1407,7 @@ void Editor::Renderer3DComponent(std::shared_ptr<Entity> entity)
 	}
 }
 
-void Editor::PointLightComponent(std::shared_ptr<Entity> entity)
+void Editor::PointLightComponent(const std::shared_ptr<Entity>& entity)
 {
 	if (!entity->HasComponent<PointLight>())
 	{
@@ -1415,7 +1442,7 @@ Editor::Indent::~Indent()
 	ImGui::Unindent();
 }
 
-void Editor::MaterialMenu::Update(Editor& editor)
+void Editor::MaterialMenu::Update(const Editor& editor)
 {
 	if (!material)
 	{
@@ -1432,15 +1459,15 @@ void Editor::MaterialMenu::Update(Editor& editor)
 		ImGui::Text("Name: %s", material->GetName().c_str());
 		ImGui::Text("Filepath: %s", material->GetFilepath().c_str());
 
-		for (auto [renderPass, pipeline] : material->GetBaseMaterial()->GetPipelinesByRenderPass())
+		for (const auto& [renderPass, pipeline] : material->GetBaseMaterial()->GetPipelinesByRenderPass())
 		{
 			if (ImGui::CollapsingHeader(renderPass.c_str()))
 			{
-				for (auto [location, binding] : pipeline->GetChildUniformLayout()->GetBindingsByLocation())
+				for (const auto& [location, binding] : pipeline->GetChildUniformLayout()->GetBindingsByLocation())
 				{
 					if (binding.type == UniformLayout::Type::SAMPLER)
 					{
-						if (std::shared_ptr<Texture> texture = material->GetTexture(binding.name))
+						if (const std::shared_ptr<Texture>& texture = material->GetTexture(binding.name))
 						{
 							ImGui::Text("%s", texture->GetFilepath().c_str());
 							ImGui::Image(ImTextureID(texture->GetId()), { 128, 128 });
@@ -1530,7 +1557,7 @@ void Editor::CreateFileMenu::Update()
 	}
 }
 
-void Editor::CreateFileMenu::MakeFile(const std::filesystem::path filepath)
+void Editor::CreateFileMenu::MakeFile(const std::filesystem::path& filepath)
 {
 	std::ofstream out(filepath, std::ostream::binary);
 	out.close();

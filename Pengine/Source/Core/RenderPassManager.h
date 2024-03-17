@@ -18,6 +18,9 @@ namespace Pengine
 	public:
 		static RenderPassManager& GetInstance();
 
+		RenderPassManager(const RenderPassManager&) = delete;
+		RenderPassManager& operator=(const RenderPassManager&) = delete;
+
 		std::shared_ptr<RenderPass> Create(const RenderPass::CreateInfo& createInfo);
 
 		std::shared_ptr<RenderPass> GetRenderPass(const std::string& type) const;
@@ -29,14 +32,12 @@ namespace Pengine
 	private:
 		RenderPassManager();
 		~RenderPassManager() = default;
-		RenderPassManager(const RenderPassManager&) = delete;
-		RenderPassManager& operator=(const RenderPassManager&) = delete;
-
-		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
 
 		void CreateGBuffer();
 
 		void CreateDeferred();
+
+		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
 	};
 
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Core/Core.h"
-#include "../Core/Asset.h"
 
 #include "Texture.h"
 #include "UniformWriter.h"
@@ -63,36 +62,38 @@ namespace Pengine
 			std::vector<Vertex::BindingDescription> bindingDescriptions;
 			std::unordered_map<uint32_t, UniformLayout::Binding> uniformBindings;
 			std::unordered_map<std::string, std::shared_ptr<Buffer>> buffersByName;
-			std::function<void(RenderCallbackInfo)> renderCallback;
+			std::function<void(const RenderCallbackInfo&)> renderCallback;
 			std::function<void(RenderPass& renderPass)> createCallback;
 		};
 
 		static std::shared_ptr<RenderPass> Create(const CreateInfo& createInfo);
 
-		RenderPass(const CreateInfo& createInfo);
+		explicit RenderPass(const CreateInfo& createInfo);
 		virtual ~RenderPass() = default;
 		RenderPass(const RenderPass&) = delete;
+		RenderPass(RenderPass&&) = delete;
 		RenderPass& operator=(const RenderPass&) = delete;
+		RenderPass& operator=(RenderPass&&) = delete;
 
-		const std::string& GetType() const { return m_Type; }
+		[[nodiscard]] const std::string& GetType() const { return m_Type; }
 
-		std::vector<glm::vec4> GetClearColors() const { return m_ClearColors; }
+		[[nodiscard]] std::vector<glm::vec4> GetClearColors() const { return m_ClearColors; }
 
-		std::vector<ClearDepth> GetClearDepth() const { return m_ClearDepths; }
+		[[nodiscard]] std::vector<ClearDepth> GetClearDepth() const { return m_ClearDepths; }
 
-		std::shared_ptr<UniformWriter> GetUniformWriter() const { return m_UniformWriter; }
+		[[nodiscard]] std::shared_ptr<UniformWriter> GetUniformWriter() const { return m_UniformWriter; }
 
-		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
+		[[nodiscard]] std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
 
-		void SetBuffer(const std::string& name, std::shared_ptr<Buffer> buffer);
+		void SetBuffer(const std::string& name, const std::shared_ptr<Buffer>& buffer);
 
-		void Render(RenderCallbackInfo renderInfo);
+		void Render(const RenderCallbackInfo& renderInfo) const;
 
-		const std::vector<Vertex::AttributeDescription>& GetAttributeDescriptions() const { return m_AttributeDescriptions;  }
+		[[nodiscard]] const std::vector<Vertex::AttributeDescription>& GetAttributeDescriptions() const { return m_AttributeDescriptions;  }
 
-		const std::vector<Vertex::BindingDescription>& GetBindingDescriptions() const { return m_BindingDescriptions; }
+		[[nodiscard]] const std::vector<Vertex::BindingDescription>& GetBindingDescriptions() const { return m_BindingDescriptions; }
 
-		const std::vector<AttachmentDescription>& GetAttachmentDescriptions() const { return m_AttachmentDescriptions; }
+		[[nodiscard]] const std::vector<AttachmentDescription>& GetAttachmentDescriptions() const { return m_AttachmentDescriptions; }
 
 	private:
 		std::vector<Vertex::AttributeDescription> m_AttributeDescriptions;

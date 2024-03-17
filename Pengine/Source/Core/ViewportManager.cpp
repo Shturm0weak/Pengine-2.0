@@ -18,14 +18,14 @@ std::shared_ptr<Viewport> ViewportManager::Create(const std::string& name, const
 	return viewport;
 }
 
-std::shared_ptr<Viewport> ViewportManager::GetViewport(const std::string& name)
+std::shared_ptr<Viewport> ViewportManager::GetViewport(const std::string& name) const
 {
 	return Utils::Find<std::shared_ptr<Viewport>>(name, m_Viewports);
 }
 
-bool ViewportManager::Destroy(std::shared_ptr<Viewport> viewport)
+bool ViewportManager::Destroy(const std::shared_ptr<Viewport>& viewport)
 {
-	for (auto viewportIter = m_Viewports.begin(); viewportIter != m_Viewports.end(); viewportIter++)
+	for (auto viewportIter = m_Viewports.begin(); viewportIter != m_Viewports.end(); ++viewportIter)
 	{
 		if (viewportIter->second == viewport)
 		{

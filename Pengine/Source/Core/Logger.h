@@ -11,6 +11,9 @@ namespace Pengine
 	class PENGINE_API Logger
 	{
 	public:
+		Logger(const Logger&) = delete;
+		Logger& operator=(const Logger&) = delete;
+
 		static void Log(const std::string& message, const char* color = RESET);
 
 		static void Warning(const std::string& message);
@@ -22,14 +25,12 @@ namespace Pengine
 	private:
 		Logger();
 		~Logger();
-		Logger(const Logger&) = delete;
-		Logger& operator=(const Logger&) = delete;
 
 		static Logger& GetInstance();
 
 		std::ofstream m_OutFile;
 	};
 
-#define FATAL_ERROR(message) Logger::FatalError(std::string(message) + " At: " + __FILE__ + " " + std::to_string(__LINE__));
+#define FATAL_ERROR(message) Logger::FatalError(std::string(message) + " At: " + __FILE__ + " " + std::to_string(__LINE__))
 
 }

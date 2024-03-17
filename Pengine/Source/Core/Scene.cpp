@@ -34,6 +34,7 @@ Scene::~Scene()
 
 Scene::Scene(const Scene& scene)
 	: Asset(scene.GetName(), scene.GetFilepath())
+	, enable_shared_from_this(scene)
 {
 	Copy(scene);
 }
@@ -47,9 +48,14 @@ void Scene::Clear()
 	m_Entities.clear();
 }
 
-void Scene::operator=(const Scene& scene)
+Scene& Scene::operator=(const Scene& scene)
 {
-	Copy(scene);
+	if(this != &scene)
+	{
+		Copy(scene);
+	}
+
+	return *this;
 }
 
 std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name, const UUID& uuid)
@@ -60,14 +66,15 @@ std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name, const UUID&
 	return entity;
 }
 
-void Scene::DeleteEntity(std::shared_ptr<Entity> entity)
+void Scene::DeleteEntity(std::shared_ptr<Entity>& entity)
 {
 	while (!entity->GetChilds().empty())
 	{
-		DeleteEntity(entity->GetChilds().back());
+		std::shared_ptr<Entity> child = entity->GetChilds().back();
+		DeleteEntity(child);
 	}
 
-	if (std::shared_ptr<Entity> parent = entity->GetParent())
+	if (const std::shared_ptr<Entity> parent = entity->GetParent())
 	{
 		parent->RemoveChild(entity);
 	}
@@ -76,9 +83,9 @@ void Scene::DeleteEntity(std::shared_ptr<Entity> entity)
 	{
 		m_Registry.destroy(entity->GetHandle());
 	}
-	
-	auto entityToErase = std::find(m_Entities.begin(), m_Entities.end(), entity);
-	if (entityToErase != m_Entities.end())
+
+	if (const auto entityToErase = std::find(m_Entities.begin(), m_Entities.end(), entity);
+		entityToErase != m_Entities.end())
 	{
 		m_Entities.erase(entityToErase);
 	}

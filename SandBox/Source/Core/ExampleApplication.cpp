@@ -1,12 +1,9 @@
 #include "ExampleApplication.h"
 
 #include "Core/Input.h"
-#include "Core/Time.h"
 #include "Core/MaterialManager.h"
-#include "Core/MeshManager.h"
-#include "Core/RenderPassManager.h"
 #include "Components/Camera.h"
-#include "Components/Renderer3D.h"
+#include "Components/Transform.h"
 
 using namespace Pengine;
 
@@ -24,7 +21,7 @@ void ExampleApplication::OnStart()
 	whiteTextureCreateInfo.format = Texture::Format::R8G8B8A8_SRGB;
 	whiteTextureCreateInfo.size = { 1, 1 };
 	whiteTextureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_DST };
-	std::vector<uint8_t> pixels = {
+	const std::vector<uint8_t> pixels = {
 		255,
 		255,
 		255,
@@ -33,7 +30,7 @@ void ExampleApplication::OnStart()
 	whiteTextureCreateInfo.data = pixels;
 	TextureManager::GetInstance().Create(whiteTextureCreateInfo);
 
-	std::shared_ptr<Scene> scene = SceneManager::GetInstance().Create("Default", "Main");
+	const std::shared_ptr<Scene> scene = SceneManager::GetInstance().Create("Default", "Main");
 
 	std::shared_ptr<Entity> camera = scene->CreateEntity("Camera");
 	Transform& transform = camera->AddComponent<Transform>(camera);

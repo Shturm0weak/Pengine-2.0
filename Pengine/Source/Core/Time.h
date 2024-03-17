@@ -10,24 +10,25 @@ namespace Pengine
 	public:
 		static const std::string& GetDate() { return GetInstance().m_CurrentDate; }
 
-		static const double GetTime() { return GetInstance().m_GlobalTime; }
+		static double GetTime() { return GetInstance().m_GlobalTime; }
 
-		static const double GetDeltaTime() { return GetInstance().m_DeltaTime; }
+		static double GetDeltaTime() { return GetInstance().m_DeltaTime; }
+
+		Time(const Time&) = delete;
+		Time& operator=(const Time&) = delete;
 
 	private:
 		Time();
 		~Time() = default;
-		Time(const Time&) = delete;
-		Time& operator=(const Time&) = delete;
 
 		static Time& GetInstance();
 
 		void Update();
 
 		std::string m_CurrentDate;
-		double m_DeltaTime;
-		double m_GlobalTime;
-		double m_LastTime;
+		double m_DeltaTime = 0.0;
+		double m_GlobalTime = 0.0;
+		double m_LastTime = 0.0;
 
 		friend class EntryPoint;
 	};

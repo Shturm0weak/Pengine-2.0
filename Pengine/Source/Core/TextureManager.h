@@ -11,6 +11,9 @@ namespace Pengine
 	public:
 		static TextureManager& GetInstance();
 
+		TextureManager(const TextureManager&) = delete;
+		TextureManager& operator=(const TextureManager&) = delete;
+
 		std::shared_ptr<Texture> Create(const Texture::CreateInfo& createInfo);
 
 		std::shared_ptr<Texture> Load(const std::string& filepath);
@@ -28,8 +31,6 @@ namespace Pengine
 	private:
 		TextureManager() = default;
 		~TextureManager() = default;
-		TextureManager(const TextureManager&) = delete;
-		TextureManager& operator=(const TextureManager&) = delete;
 
 		std::unordered_map<std::string, std::shared_ptr<Texture>> m_TexturesByFilepath;
 	};

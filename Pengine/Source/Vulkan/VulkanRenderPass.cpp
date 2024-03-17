@@ -77,13 +77,12 @@ VulkanRenderPass::VulkanRenderPass(const CreateInfo& createInfo)
     if (vkCreateRenderPass(device->GetDevice(), &renderPassCreateInfo,
         nullptr, &m_RenderPass) != VK_SUCCESS)
     {
-        FATAL_ERROR("Failed to create render pass!")
+        FATAL_ERROR("Failed to create render pass!");
     }
 }
 
 VulkanRenderPass::~VulkanRenderPass()
 {
     vkDeviceWaitIdle(device->GetDevice());
-
 	vkDestroyRenderPass(device->GetDevice(), m_RenderPass, nullptr);
 }

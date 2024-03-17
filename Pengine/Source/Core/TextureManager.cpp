@@ -35,10 +35,8 @@ std::shared_ptr<Texture> TextureManager::Load(const std::string& filepath)
 			m_TexturesByFilepath[filepath] = texture;
 			return texture;
 		}
-		else
-		{
-			return GetWhite();
-		}
+
+		return GetWhite();
 	}
 }
 
@@ -65,8 +63,8 @@ std::vector<std::shared_ptr<Texture>> TextureManager::LoadFromFolder(const std::
 
 std::shared_ptr<Texture> TextureManager::GetTexture(const std::string& filepath) const
 {
-	auto textureByFilepath = m_TexturesByFilepath.find(filepath);
-	if (textureByFilepath != m_TexturesByFilepath.end())
+	if (const auto textureByFilepath = m_TexturesByFilepath.find(filepath);
+		textureByFilepath != m_TexturesByFilepath.end())
 	{
 		return textureByFilepath->second;
 	}

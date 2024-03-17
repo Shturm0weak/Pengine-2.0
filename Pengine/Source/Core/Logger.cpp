@@ -42,7 +42,7 @@ Logger::~Logger()
 	m_OutFile.close();
 }
 
-Logger& Pengine::Logger::GetInstance()
+Logger& Logger::GetInstance()
 {
 	static Logger logger;
 	return logger;

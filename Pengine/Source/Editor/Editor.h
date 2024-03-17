@@ -2,9 +2,6 @@
 
 #include "../Core/Core.h"
 #include "../Core/Scene.h"
-#include "../Components/Camera.h"
-#include "../Components/Renderer3D.h"
-#include "../Components/PointLight.h"
 
 #include <filesystem>
 
@@ -16,7 +13,7 @@ namespace Pengine
 	public:
 		Editor();
 
-		void Update(std::shared_ptr<Scene> scene);
+		void Update(const std::shared_ptr<Scene>& scene);
 
 	private:
 		class Indent
@@ -27,44 +24,44 @@ namespace Pengine
 		};
 
 		bool DrawVec2Control(const std::string& label, glm::vec2& values, float resetValue = 0.0f,
-			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f);
+			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f) const;
 
 		bool DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f,
-			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f);
+			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f) const;
 
 		bool DrawVec4Control(const std::string& label, glm::vec4& values, float resetValue = 0.0f,
-			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f);
+			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f) const;
 
 		bool DrawIVec2Control(const std::string& label, glm::ivec2& values, float resetValue = 0.0f,
-			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f);
+			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f) const;
 
 		bool DrawIVec3Control(const std::string& label, glm::ivec3& values, float resetValue = 0.0f,
-			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f);
+			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f) const;
 
 		bool DrawIVec4Control(const std::string& label, glm::ivec4& values, float resetValue = 0.0f,
-			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f);
+			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f) const;
 
-		void Hierarchy(std::shared_ptr<Scene> scene);
+		void Hierarchy(const std::shared_ptr<Scene>& scene);
 
-		void DrawScene(std::shared_ptr<Scene> scene);
+		void DrawScene(const std::shared_ptr<Scene>& scene);
 
-		void DrawNode(std::shared_ptr<Entity> entity, ImGuiTreeNodeFlags flags);
+		void DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags flags);
 
-		void DrawChilds(std::shared_ptr<Entity> entity);
+		void DrawChilds(const std::shared_ptr<Entity>& entity);
 
-		void Properties(std::shared_ptr<Scene> scene);
+		void Properties(const std::shared_ptr<Scene>& scene);
 
-		void CameraComponent(std::shared_ptr<Entity> entity);
+		void CameraComponent(const std::shared_ptr<Entity>& entity);
 
-		void TransformComponent(std::shared_ptr<Entity> entity);
+		void TransformComponent(const std::shared_ptr<Entity>& entity);
 
-		void Renderer3DComponent(std::shared_ptr<Entity> entity);
+		void Renderer3DComponent(const std::shared_ptr<Entity>& entity);
 
-		void PointLightComponent(std::shared_ptr<Entity> entity);
+		void PointLightComponent(const std::shared_ptr<Entity>& entity);
 
-		void GameObjectPopUpMenu(std::shared_ptr<Scene> scene);
+		void GameObjectPopUpMenu(const std::shared_ptr<Scene>& scene);
 
-		void ComponentsPopUpMenu(std::shared_ptr<Entity> entity);
+		void ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity);
 
 		void AssetBrowser();
 
@@ -72,14 +69,14 @@ namespace Pengine
 
 		void Manipulate();
 
-		void MoveCamera(std::shared_ptr<Entity> camera);
+		void MoveCamera(const std::shared_ptr<Entity>& camera);
 
 		struct MaterialMenu
 		{
-			std::shared_ptr<Material> material = nullptr;
+			std::shared_ptr<class Material> material = nullptr;
 			bool opened = false;
 
-			void Update(Editor& editor);
+			void Update(const Editor& editor);
 		} m_MaterialMenu;
 
 		struct CreateFileMenu
@@ -93,7 +90,7 @@ namespace Pengine
 
 			void Update();
 
-			void MakeFile(const std::filesystem::path filepath);
+			static void MakeFile(const std::filesystem::path& filepath);
 		} m_CreateFileMenu;
 
 		struct DeleteFileMenu

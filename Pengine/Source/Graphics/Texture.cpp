@@ -3,18 +3,20 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#include "../Core/FileFormatNames.h"
 #include "../Core/Logger.h"
 #include "../Vulkan/VulkanTexture.h"
 
 using namespace Pengine;
 
-std::shared_ptr<Texture> Texture::Create(CreateInfo textureCreateInfo)
+std::shared_ptr<Texture> Texture::Create(const CreateInfo& textureCreateInfo)
 {
 	if (graphicsAPI == GraphicsAPI::Vk)
 	{
 		return std::make_shared<Vk::VulkanTexture>(textureCreateInfo);
 	}
+
+	FATAL_ERROR("Failed to create the texture, no graphics API implementation");
+	return nullptr;
 }
 
 std::shared_ptr<Texture> Texture::Load(const std::string& filepath)
@@ -37,7 +39,7 @@ std::shared_ptr<Texture> Texture::Load(const std::string& filepath)
 
 	textureCreateInfo.data.resize(textureCreateInfo.size.x * textureCreateInfo.size.y * textureCreateInfo.channels);
 	memcpy(textureCreateInfo.data.data(), data, textureCreateInfo.data.size());
-	delete data;
+	stbi_image_free(data);
 
 	textureCreateInfo.mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(
 		textureCreateInfo.size.x, textureCreateInfo.size.y)))) + 1;
@@ -46,13 +48,10 @@ std::shared_ptr<Texture> Texture::Load(const std::string& filepath)
 	if (textureCreateInfo.data.empty())
 	{
 		Logger::Error("Texture can't be loaded from the filepath " + filepath);
-
 		return nullptr;
 	}
-	else
-	{
-		Logger::Log("Texture:" + textureCreateInfo.filepath + " has been loaded!", GREEN);
-	}
+
+	Logger::Log("Texture:" + textureCreateInfo.filepath + " has been loaded!", GREEN);
 
 	/*if (graphicsAPI == GraphicsAPI::Software)
 	{
@@ -63,9 +62,12 @@ std::shared_ptr<Texture> Texture::Load(const std::string& filepath)
 	{
 		return std::make_shared<Vk::VulkanTexture>(textureCreateInfo);
 	}
+
+	FATAL_ERROR("Failed to create the renderer, no graphics API implementation");
+	return nullptr;
 }
 
-Texture::Texture(CreateInfo textureCreateInfo)
+Texture::Texture(const CreateInfo& textureCreateInfo)
 	: Asset(textureCreateInfo.name, textureCreateInfo.filepath)
 {
 	m_Size = textureCreateInfo.size;

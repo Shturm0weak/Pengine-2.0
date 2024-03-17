@@ -2,7 +2,6 @@
 
 #include "../Core/Core.h"
 #include "../Core/Asset.h"
-#include "../Core/TextureSlots.h"
 
 #include "Pipeline.h"
 #include "UniformWriter.h"
@@ -13,7 +12,7 @@
 namespace Pengine
 {
 
-	class PENGINE_API BaseMaterial : public Asset
+	class PENGINE_API BaseMaterial final : public Asset
 	{
 	public:
 		static std::shared_ptr<BaseMaterial> Create(
@@ -44,7 +43,7 @@ namespace Pengine
 	};
 
 	template<typename T>
-	inline void BaseMaterial::SetValue(const std::string& bufferName, const std::string& name, T& value)
+	void BaseMaterial::SetValue(const std::string& bufferName, const std::string& name, T& value)
 	{
 		for (const auto& [renderPass, pipeline] : m_PipelinesByRenderPass)
 		{
@@ -53,12 +52,12 @@ namespace Pengine
 				continue;
 			}
 
-			const UniformLayout::Binding& binding = pipeline->GetUniformWriter()->GetLayout()->GetBindingByName(bufferName);
-			if (binding.type == UniformLayout::Type::BUFFER)
+			if (const UniformLayout::Binding& binding = pipeline->GetUniformWriter()->GetLayout()->GetBindingByName(bufferName);
+				binding.type == UniformLayout::Type::BUFFER)
 			{
 				if (auto variable = binding.GetValue(name))
 				{
-					std::shared_ptr<Buffer> buffer = pipeline->GetBuffer(bufferName);
+					const std::shared_ptr<Buffer> buffer = pipeline->GetBuffer(bufferName);
 					void* data = buffer->GetData();
 					Utils::SetValue(data, variable->offset, value);
 				}

@@ -2,8 +2,6 @@
 
 #include "../Core/Serializer.h"
 #include "../Core/TextureManager.h"
-#include "../Core/ViewportManager.h"
-#include "../Core/Logger.h"
 
 #include "Renderer.h"
 
@@ -17,16 +15,16 @@ std::shared_ptr<Material> Material::Create(const std::string& name, const std::s
 
 std::shared_ptr<Material> Material::Load(const std::string& filepath)
 {
-	return Material::Create(filepath, filepath, Serializer::LoadMaterial(filepath));
+	return Create(filepath, filepath, Serializer::LoadMaterial(filepath));
 }
 
-void Material::Save(std::shared_ptr<Material> material)
+void Material::Save(const std::shared_ptr<Material>& material)
 {
 	Serializer::SerializeMaterial(material);
 }
 
 std::shared_ptr<Material> Material::Inherit(const std::string& name, const std::string& filepath,
-	std::shared_ptr<BaseMaterial> baseMaterial)
+	const std::shared_ptr<BaseMaterial>& baseMaterial)
 {
 	CreateInfo createInfo{};
 	createInfo.baseMaterial = baseMaterial;
@@ -42,11 +40,11 @@ std::shared_ptr<Material> Material::Inherit(const std::string& name, const std::
 		}
 	}
 
-	return Material::Create(name, filepath, createInfo);
+	return Create(name, filepath, createInfo);
 }
 
 std::shared_ptr<Material> Material::Clone(const std::string& name, const std::string& filepath,
-	std::shared_ptr<Material> material)
+	const std::shared_ptr<Material>& material)
 {
 	CreateInfo createInfo{};
 	createInfo.baseMaterial = material->GetBaseMaterial();
@@ -61,8 +59,8 @@ std::shared_ptr<Material> Material::Clone(const std::string& name, const std::st
 			}
 			else if (binding.type == UniformLayout::Type::BUFFER)
 			{
-				std::shared_ptr<Buffer> buffer = pipeline->GetBuffer(binding.name);
-				void* data = (char*)buffer->GetData() + buffer->GetInstanceSize() * material->GetIndex();
+				const std::shared_ptr<Buffer> buffer = pipeline->GetBuffer(binding.name);
+				void* data = static_cast<char*>(buffer->GetData()) + buffer->GetInstanceSize() * material->GetIndex();
 
 				auto& uniformBufferInfo = createInfo.renderPassInfo[renderPass].uniformBuffersByName[binding.name];
 
@@ -97,7 +95,7 @@ std::shared_ptr<Material> Material::Clone(const std::string& name, const std::st
 		}
 	}
 
-	return Material::Create(name, filepath, createInfo);
+	return Create(name, filepath, createInfo);
 }
 
 Material::Material(const std::string& name, const std::string& filepath,
@@ -105,7 +103,7 @@ Material::Material(const std::string& name, const std::string& filepath,
 	: Asset(name, filepath)
 	, m_BaseMaterial(createInfo.baseMaterial)
 {
-	m_Index = m_BaseMaterial->m_MaterialsSize;
+	m_Index = static_cast<int>(m_BaseMaterial->m_MaterialsSize);
 	m_BaseMaterial->m_MaterialsSize++;
 
 	for (const auto& [renderPass, renderPassInfo] : createInfo.renderPassInfo)
@@ -115,9 +113,9 @@ Material::Material(const std::string& name, const std::string& filepath,
 			continue;
 		}
 
-		std::shared_ptr<Pipeline> pipeline = m_BaseMaterial->GetPipeline(renderPass);
-		std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetChildUniformLayout();
-		std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
+		const std::shared_ptr<Pipeline> pipeline = m_BaseMaterial->GetPipeline(renderPass);
+		const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetChildUniformLayout();
+		const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
 		m_UniformWriterByRenderPass[renderPass] = uniformWriter;
 
 		for (const auto& [name, filepath] : renderPassInfo.texturesByName)
@@ -127,13 +125,13 @@ Material::Material(const std::string& name, const std::string& filepath,
 
 		for (const auto& [bufferName, bufferInfo] : renderPassInfo.uniformBuffersByName)
 		{
-			std::shared_ptr<Buffer> buffer = pipeline->GetBuffer(bufferName);
-			UniformLayout::Binding binding = uniformLayout->GetBindingByName(bufferName);
+			const std::shared_ptr<Buffer> buffer = pipeline->GetBuffer(bufferName);
+			const UniformLayout::Binding binding = uniformLayout->GetBindingByName(bufferName);
 
 			uniformWriter->WriteBuffer(bufferName, buffer, buffer->GetInstanceSize(), buffer->GetInstanceSize() * m_Index);
 			uniformWriter->Flush();
 
-			void* data = (char*)buffer->GetData() + buffer->GetInstanceSize() * m_Index;
+			void* data = static_cast<char*>(buffer->GetData()) + buffer->GetInstanceSize() * m_Index;
 
 			for (const auto& value : binding.values)
 			{
@@ -202,7 +200,7 @@ Material::Material(const std::string& name, const std::string& filepath,
 							{
 								RenderPassAttachmentInfo renderPassAttachmentInfo{};
 
-								std::string renderPassType = Utils::EraseFromFront(loadedValue, '/');
+								const std::string renderPassType = Utils::EraseFromFront(loadedValue, '/');
 								renderPassAttachmentInfo.attachment = std::stoi(Utils::EraseFromFront(renderPassType, '/'));
 								renderPassAttachmentInfo.renderPassType = Utils::EraseFromBack(renderPassType, '/');
 								m_RenderPassAttachments.emplace(loadedValueName, renderPassAttachmentInfo);
@@ -235,7 +233,7 @@ std::shared_ptr<Texture> Material::GetTexture(const std::string& name) const
 	return Utils::Find(name, m_TexturesByName);
 }
 
-void Material::SetTexture(const std::string& name, std::shared_ptr<Texture> texture)
+void Material::SetTexture(const std::string& name, const std::shared_ptr<Texture>& texture)
 {
 	m_TexturesByName[name] = texture;
 }

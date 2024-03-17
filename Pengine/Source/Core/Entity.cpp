@@ -8,18 +8,18 @@
 using namespace Pengine;
 
 Entity::Entity(std::shared_ptr<Scene> scene,
-	const std::string& name,
-	const UUID& uuid)
-	: m_Scene(scene)
+	std::string name,
+	UUID uuid)
+	: m_Scene(std::move(scene))
 	, m_Registry(&m_Scene->GetRegistry())
-	, m_Name(name)
-	, m_UUID(uuid)
+	, m_Name(std::move(name))
+	, m_UUID(std::move(uuid))
 {
 	m_Handle = m_Registry->create();
-	//Logger::Log("Create Entity");
 }
 
 Entity::Entity(const Entity& entity)
+	: enable_shared_from_this(entity)
 {
 	Copy(entity);
 }
@@ -27,11 +27,6 @@ Entity::Entity(const Entity& entity)
 Entity::Entity(Entity&& entity) noexcept
 {
 	Move(std::move(entity));
-}
-
-Entity::~Entity()
-{
-	//Logger::Log("Destroy Entity");
 }
 
 entt::registry& Entity::GetRegistry() const
@@ -48,25 +43,35 @@ std::shared_ptr<Scene> Entity::GetScene() const
 	return m_Scene;
 }
 
-void Entity::operator=(const Entity& entity)
+Entity& Entity::operator=(const Entity& entity)
 {
-	Copy(entity);
+	if (this != &entity)
+	{
+		Copy(entity);
+	}
+
+	return *this;
 }
 
-void Entity::operator=(Entity&& entity) noexcept
+Entity& Entity::operator=(Entity&& entity) noexcept
 {
 	Move(std::move(entity));
+	return *this;
 }
 
-void Entity::AddChild(std::shared_ptr<Entity> child)
+void Entity::AddChild(const std::shared_ptr<Entity>& child)
 {
 	if (HasComponent<Transform>() && child->HasComponent<Transform>())
 	{
-		Transform& transform = GetComponent<Transform>();
+		const Transform& transform = GetComponent<Transform>();
 		Transform& childTransform = child->GetComponent<Transform>();
 
 		glm::vec3 position, rotation, scale;
-		Utils::DecomposeTransform(glm::inverse(transform.GetTransform()) * childTransform.GetTransform(), position, rotation, scale);
+		Utils::DecomposeTransform(
+			glm::inverse(transform.GetTransform()) * childTransform.GetTransform(),
+			position,
+			rotation,
+			scale);
 
 		m_Childs.emplace_back(child);
 		child->SetParent(shared_from_this());
@@ -82,18 +87,17 @@ void Entity::AddChild(std::shared_ptr<Entity> child)
 	}
 }
 
-void Entity::RemoveChild(std::shared_ptr<Entity> child)
+void Entity::RemoveChild(const std::shared_ptr<Entity>& child)
 {
 	if (HasComponent<Transform>() && child->HasComponent<Transform>())
 	{
-		Transform& transform = GetComponent<Transform>();
 		Transform& childTransform = child->GetComponent<Transform>();
 
 		glm::vec3 position, rotation, scale;
 		Utils::DecomposeTransform(childTransform.GetTransform(), position, rotation, scale);
 
-		auto childToErase = std::find(m_Childs.begin(), m_Childs.end(), child);
-		if (childToErase != m_Childs.end())
+		if (const auto childToErase = std::find(m_Childs.begin(), m_Childs.end(), child);
+			childToErase != m_Childs.end())
 		{
 			m_Childs.erase(childToErase);
 		}
@@ -105,8 +109,8 @@ void Entity::RemoveChild(std::shared_ptr<Entity> child)
 	}
 	else
 	{
-		auto childToErase = std::find(m_Childs.begin(), m_Childs.end(), child);
-		if (childToErase != m_Childs.end())
+		if (const auto childToErase = std::find(m_Childs.begin(), m_Childs.end(), child);
+			childToErase != m_Childs.end())
 		{
 			m_Childs.erase(childToErase);
 		}
@@ -114,19 +118,19 @@ void Entity::RemoveChild(std::shared_ptr<Entity> child)
 	}
 }
 
-bool Entity::HasAsChild(std::shared_ptr<Entity> child, bool recursevely)
+bool Entity::HasAsChild(const std::shared_ptr<Entity>& child, const bool recursevely)
 {
-	auto childToHave = std::find(m_Childs.begin(), m_Childs.end(), child);
-	if (childToHave != m_Childs.end())
+	if (const auto childToHave = std::find(m_Childs.begin(), m_Childs.end(), child);
+		childToHave != m_Childs.end())
 	{
 		return true;
 	}
 
 	if (recursevely)
 	{
-		for (std::shared_ptr<Entity> child : m_Childs)
+		for (const std::shared_ptr<Entity>& currentChild : m_Childs)
 		{
-			if (child->HasAsChild(child, recursevely))
+			if (currentChild->HasAsChild(child, recursevely))
 			{
 				return true;
 			}
@@ -136,7 +140,7 @@ bool Entity::HasAsChild(std::shared_ptr<Entity> child, bool recursevely)
 	return false;
 }
 
-bool Entity::HasAsParent(std::shared_ptr<Entity> parent, bool recursevely)
+bool Entity::HasAsParent(const std::shared_ptr<Entity>& parent, const bool recursevely)
 {
 	if (!HasParent())
 	{
@@ -169,8 +173,6 @@ void Entity::Copy(const Entity& entity)
 	m_Name = entity.GetName();
 	m_UUID = entity.GetUUID();
 	m_IsEnabled = entity.IsEnabled();
-
-	//Logger::Log("Copy Entity");
 }
 
 void Entity::Move(Entity&& entity) noexcept
@@ -187,6 +189,4 @@ void Entity::Move(Entity&& entity) noexcept
 	entity.m_Scene = nullptr;
 	entity.m_Parent = nullptr;
 	entity.m_Childs.clear();
-
-	//Logger::Log("Move Entity");
 }

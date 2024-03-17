@@ -20,7 +20,7 @@ VulkanWindow::VulkanWindow(const std::string& name, const glm::ivec2& size)
 {
 	if (!glfwInit())
 	{
-		FATAL_ERROR("Failed to initialize GLFW!")
+		FATAL_ERROR("Failed to initialize GLFW!");
 	}
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -32,7 +32,7 @@ VulkanWindow::VulkanWindow(const std::string& name, const glm::ivec2& size)
 	{
 		glfwTerminate();
 
-		FATAL_ERROR("Failed to create window!")
+		FATAL_ERROR("Failed to create window!");
 	}
 
 	glfwMakeContextCurrent(m_Window);
@@ -40,10 +40,10 @@ VulkanWindow::VulkanWindow(const std::string& name, const glm::ivec2& size)
 	glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* rawWindow, int width, int height)
 	{
 		std::vector<std::shared_ptr<Window>> windows = WindowManager::GetInstance().GetWindows();
-		for (std::shared_ptr<Window> window : windows)
+		for (const std::shared_ptr<Window>& window : windows)
 		{
-			std::shared_ptr<VulkanWindow> vulkanWindow = std::static_pointer_cast<VulkanWindow>(window);
-			if (vulkanWindow && vulkanWindow->GetRawWindow() == rawWindow)
+			if (const std::shared_ptr<VulkanWindow> vulkanWindow = std::static_pointer_cast<VulkanWindow>(window);
+				vulkanWindow && vulkanWindow->GetRawWindow() == rawWindow)
 			{
 				vulkanWindow->Resize({ width, height });
 			}
@@ -185,7 +185,7 @@ void VulkanWindow::ImGuiBegin()
 
 	if (optFullscreen)
 	{
-		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(viewport->Pos);
 		ImGui::SetNextWindowSize(viewport->Size);
 		ImGui::SetNextWindowViewport(viewport->ID);
@@ -209,7 +209,7 @@ void VulkanWindow::ImGuiBegin()
 		ImGui::PopStyleVar(2);
 	}
 
-	ImGuiIO& io = ImGui::GetIO();
+	const ImGuiIO& io = ImGui::GetIO();
 	ImGuiStyle& style = ImGui::GetStyle();
 	const float minWinSizeX = style.WindowMinSize.x;
 	style.WindowMinSize.x = 370.0f;
@@ -232,9 +232,9 @@ void VulkanWindow::ImGuiEnd()
 
 void* VulkanWindow::BeginFrame()
 {
-	VkSemaphore imageAcquiredSemaphore = m_VulkanWindow.FrameSemaphores[m_VulkanWindow.SemaphoreIndex].ImageAcquiredSemaphore;
+	const VkSemaphore imageAcquiredSemaphore = m_VulkanWindow.FrameSemaphores[m_VulkanWindow.SemaphoreIndex].ImageAcquiredSemaphore;
 
-	VkResult result = vkAcquireNextImageKHR(
+	const VkResult result = vkAcquireNextImageKHR(
 		device->GetDevice(),
 		m_VulkanWindow.Swapchain,
 		(std::numeric_limits<uint64_t>::max)(),
@@ -246,14 +246,14 @@ void* VulkanWindow::BeginFrame()
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR)
 	{
-		FATAL_ERROR("Failed to recreate swap chain image!")
-
-			return nullptr;
+		FATAL_ERROR("Failed to recreate swap chain image!");
+		return nullptr;
 	}
 
 	if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 	{
-		FATAL_ERROR("Failed to acquire swap chain image!")
+		FATAL_ERROR("Failed to acquire swap chain image!");
+		return nullptr;
 	}
 
 	ImGui_ImplVulkanH_Frame* frame =
@@ -261,24 +261,28 @@ void* VulkanWindow::BeginFrame()
 
 	if (vkWaitForFences(device->GetDevice(), 1, &frame->Fence, VK_TRUE, UINT64_MAX))
 	{
-		FATAL_ERROR("Failed to wait for fences!")
+		FATAL_ERROR("Failed to wait for fences!");
+		return nullptr;
 	}
 
 	if (vkResetFences(device->GetDevice(), 1, &frame->Fence))
 	{
-		FATAL_ERROR("Failed to reset fences!")
+		FATAL_ERROR("Failed to reset fences!");
+		return nullptr;
 	}
 
 	if (vkResetCommandPool(device->GetDevice(), frame->CommandPool, 0))
 	{
-		FATAL_ERROR("Failed to reset command pool!")
+		FATAL_ERROR("Failed to reset command pool!");
+		return nullptr;
 	}
 
 	VkCommandBufferBeginInfo beginInfo{};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	if (vkBeginCommandBuffer(frame->CommandBuffer, &beginInfo) != VK_SUCCESS)
 	{
-		FATAL_ERROR("Failed to begin recording command buffer!")
+		FATAL_ERROR("Failed to begin recording command buffer!");
+		return nullptr;
 	}
 
 	return frame;
@@ -286,19 +290,19 @@ void* VulkanWindow::BeginFrame()
 
 void VulkanWindow::EndFrame(void* frame)
 {
-	ImGui_ImplVulkanH_Frame* imGuiFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+	const ImGui_ImplVulkanH_Frame* imGuiFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
 
-	VkCommandBuffer commandBuffer = imGuiFrame->CommandBuffer;
+	const VkCommandBuffer commandBuffer = imGuiFrame->CommandBuffer;
 
 	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
 	{
-		FATAL_ERROR("Failed to record command buffer!")
+		FATAL_ERROR("Failed to record command buffer!");
 	}
 
 	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	constexpr VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	submitInfo.waitSemaphoreCount = 1;
 	submitInfo.pWaitSemaphores = &m_VulkanWindow.FrameSemaphores[m_VulkanWindow.SemaphoreIndex].ImageAcquiredSemaphore;
 	submitInfo.pWaitDstStageMask = waitStages;
@@ -310,7 +314,7 @@ void VulkanWindow::EndFrame(void* frame)
 	if (vkQueueSubmit(device->GetGraphicsQueue(), 1, &submitInfo,
 		imGuiFrame->Fence) != VK_SUCCESS)
 	{
-		FATAL_ERROR("Failed to submit draw command buffer!")
+		FATAL_ERROR("Failed to submit draw command buffer!");
 	}
 
 	VkPresentInfoKHR presentInfo{};
@@ -321,15 +325,14 @@ void VulkanWindow::EndFrame(void* frame)
 	presentInfo.pSwapchains = &m_VulkanWindow.Swapchain;
 	presentInfo.pImageIndices = &m_VulkanWindow.FrameIndex;
 
-	auto result = vkQueuePresentKHR(device->GetPresentQueue(), &presentInfo);
-
+	const VkResult result = vkQueuePresentKHR(device->GetPresentQueue(), &presentInfo);
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
 	{
 		Resize(GetSize());
 	}
 	else if (result != VK_SUCCESS)
 	{
-		FATAL_ERROR("Failed to present swap chain image!")
+		FATAL_ERROR("Failed to present swap chain image!");
 	}
 
 	m_VulkanWindow.SemaphoreIndex = (m_VulkanWindow.SemaphoreIndex + 1) % m_VulkanWindow.ImageCount;
@@ -337,7 +340,7 @@ void VulkanWindow::EndFrame(void* frame)
 
 void VulkanWindow::ImGuiRenderPass(void* frame)
 {
-	ImGui_ImplVulkanH_Frame* imGuiFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+	const ImGui_ImplVulkanH_Frame* imGuiFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
 
 	Vk::device->CommandBeginLabel("ImGui", imGuiFrame->CommandBuffer, { 0.5f, 1.0f, 0.5f, 1.0f });
 
@@ -363,6 +366,7 @@ void VulkanWindow::ImGuiRenderPass(void* frame)
 	vkCmdSetScissor(imGuiFrame->CommandBuffer, 0, 1, &scissor);
 
 	ImGui::Render();
+
 	ImDrawData* drawData = ImGui::GetDrawData();
 	if (drawData)
 	{
@@ -404,7 +408,7 @@ void VulkanWindow::InitializeImGui()
 {
 	// Create Descriptor Pool
 	{
-		std::vector<VkDescriptorPoolSize> poolSizes =
+		const std::vector<VkDescriptorPoolSize> poolSizes =
 		{
 			{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
 			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
@@ -422,7 +426,7 @@ void VulkanWindow::InitializeImGui()
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 		poolInfo.maxSets = 1000 * poolSizes.size();
-		poolInfo.poolSizeCount = (uint32_t)poolSizes.size();
+		poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 		poolInfo.pPoolSizes = poolSizes.data();
 		if (vkCreateDescriptorPool(device->GetDevice(), &poolInfo, nullptr, &g_DescriptorPool) !=
 			VK_SUCCESS)
@@ -433,18 +437,18 @@ void VulkanWindow::InitializeImGui()
 
 	// Create Framebuffers
 	m_VulkanWindow.Surface = device->GetSurface();
-	const VkFormat requestSurfaceImageFormat[] = 
+	constexpr VkFormat requestSurfaceImageFormat[] =
 	{ 
 		VK_FORMAT_B8G8R8A8_UNORM,
 		VK_FORMAT_R8G8B8A8_UNORM,
 		VK_FORMAT_B8G8R8_UNORM,
 		VK_FORMAT_R8G8B8_UNORM
 	};
-	const VkColorSpaceKHR requestSurfaceColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
+	constexpr VkColorSpaceKHR requestSurfaceColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
 	m_VulkanWindow.SurfaceFormat = ImGui_ImplVulkanH_SelectSurfaceFormat(
 		device->GetPhysicalDevice(),
 		m_VulkanWindow.Surface, requestSurfaceImageFormat,
-		(size_t)IM_ARRAYSIZE(requestSurfaceImageFormat),
+		IM_ARRAYSIZE(requestSurfaceImageFormat),
 		requestSurfaceColorSpace);
 
 #define UNLIMITED_FRAME_RATE
@@ -501,8 +505,8 @@ void VulkanWindow::InitializeImGui()
 	// Upload Fonts
 	{
 		// Use any command queue
-		VkCommandPool commandPool = m_VulkanWindow.Frames[m_VulkanWindow.FrameIndex].CommandPool;
-		VkCommandBuffer commandBuffer = m_VulkanWindow.Frames[m_VulkanWindow.FrameIndex].CommandBuffer;
+		const VkCommandPool commandPool = m_VulkanWindow.Frames[m_VulkanWindow.FrameIndex].CommandPool;
+		const VkCommandBuffer commandBuffer = m_VulkanWindow.Frames[m_VulkanWindow.FrameIndex].CommandBuffer;
 
 		if (vkResetCommandPool(device->GetDevice(), commandPool, 0) != VK_SUCCESS)
 		{

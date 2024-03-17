@@ -4,36 +4,35 @@
 #include "../Core/Asset.h"
 
 #include "Buffer.h"
-#include "RenderPass.h"
-#include "Texture.h"
 
 namespace Pengine
 {
 
-	class PENGINE_API Mesh : public Asset
+	class PENGINE_API Mesh final : public Asset
 	{
 	public:
 		Mesh(const std::string& name, const std::string& filepath,
 			std::vector<float>& vertices, std::vector<uint32_t>& indices);
-		virtual ~Mesh() = default;
 		Mesh(const Mesh&) = delete;
+		Mesh(Mesh&&) = delete;
 		Mesh& operator=(const Mesh&) = delete;
+		Mesh& operator=(Mesh&&) = delete;
 
-		std::shared_ptr<Buffer> GetVertices() const { return m_Vertices; }
+		[[nodiscard]] std::shared_ptr<Buffer> GetVertices() const { return m_Vertices; }
 
-		std::shared_ptr<Buffer> GetIndices() const { return m_Indices; }
+		[[nodiscard]] std::shared_ptr<Buffer> GetIndices() const { return m_Indices; }
 
-		std::shared_ptr<Buffer> GetVertexBuffer() const { return m_Vertices; }
+		[[nodiscard]] std::shared_ptr<Buffer> GetVertexBuffer() const { return m_Vertices; }
 
-		std::shared_ptr<Buffer> GetIndexBuffer() const { return m_Indices; };
+		[[nodiscard]] std::shared_ptr<Buffer> GetIndexBuffer() const { return m_Indices; };
 
-		const std::vector<float>& GetRawVertices() const { return m_RawVertices; }
+		[[nodiscard]] const std::vector<float>& GetRawVertices() const { return m_RawVertices; }
 
-		const std::vector<uint32_t>& GetRawIndices() const { return m_RawIndices; };
+		[[nodiscard]] const std::vector<uint32_t>& GetRawIndices() const { return m_RawIndices; };
 
-		int GetVertexCount() const { return m_VertexCount; }
+		[[nodiscard]] int GetVertexCount() const { return m_VertexCount; }
 
-		int GetIndexCount() const { return m_IndexCount; }
+		[[nodiscard]] int GetIndexCount() const { return m_IndexCount; }
 
 	protected:
 		std::shared_ptr<Buffer> m_Vertices;

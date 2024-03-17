@@ -17,9 +17,9 @@ std::shared_ptr<BaseMaterial> BaseMaterial::Create(
 
 std::shared_ptr<BaseMaterial> BaseMaterial::Load(const std::string& filepath)
 {
-	std::vector<Pipeline::CreateInfo> pipelineCreateInfos = Serializer::LoadBaseMaterial(filepath);
+	const std::vector<Pipeline::CreateInfo> pipelineCreateInfos = Serializer::LoadBaseMaterial(filepath);
 
-	return BaseMaterial::Create(filepath, filepath, pipelineCreateInfos);
+	return Create(filepath, filepath, pipelineCreateInfos);
 }
 
 BaseMaterial::BaseMaterial(
@@ -30,7 +30,7 @@ BaseMaterial::BaseMaterial(
 {
 	for (const auto& pipelineCreateInfo : pipelineCreateInfos)
 	{
-		auto pipeline = Pipeline::Create(pipelineCreateInfo);
+		const auto pipeline = Pipeline::Create(pipelineCreateInfo);
 		m_PipelinesByRenderPass[pipelineCreateInfo.renderPass->GetType()] = pipeline;
 	}
 }
@@ -42,8 +42,8 @@ BaseMaterial::~BaseMaterial()
 
 std::shared_ptr<Pipeline> BaseMaterial::GetPipeline(const std::string& type) const
 {
-	auto pipelineByRenderPass = m_PipelinesByRenderPass.find(type);
-	if (pipelineByRenderPass != m_PipelinesByRenderPass.end())
+	if (const auto pipelineByRenderPass = m_PipelinesByRenderPass.find(type);
+		pipelineByRenderPass != m_PipelinesByRenderPass.end())
 	{
 		return pipelineByRenderPass->second;
 	}

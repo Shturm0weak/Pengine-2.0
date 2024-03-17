@@ -11,11 +11,14 @@ namespace Pengine
 	public:
 		static ViewportManager& GetInstance();
 
+		ViewportManager(const ViewportManager&) = delete;
+		ViewportManager& operator=(const ViewportManager&) = delete;
+
 		std::shared_ptr<Viewport> Create(const std::string& name, const glm::ivec2& size);
 
-		std::shared_ptr<Viewport> GetViewport(const std::string& name);
+		std::shared_ptr<Viewport> GetViewport(const std::string& name) const;
 
-		bool Destroy(std::shared_ptr<Viewport> viewport);
+		bool Destroy(const std::shared_ptr<Viewport>& viewport);
 
 		std::unordered_map<std::string, std::shared_ptr<Viewport>> GetViewports() const { return m_Viewports; }
 
@@ -24,8 +27,6 @@ namespace Pengine
 	private:
 		ViewportManager() = default;
 		~ViewportManager();
-		ViewportManager(const ViewportManager&) = delete;
-		ViewportManager& operator=(const ViewportManager&) = delete;
 
 		std::unordered_map<std::string, std::shared_ptr<Viewport>> m_Viewports;
 	};

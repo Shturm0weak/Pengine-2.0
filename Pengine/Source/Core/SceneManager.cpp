@@ -1,9 +1,6 @@
 #include "SceneManager.h"
 
 #include "MaterialManager.h"
-#include "MeshManager.h"
-
-#include "../Components/Renderer3D.h"
 
 using namespace Pengine;
 
@@ -25,8 +22,8 @@ std::shared_ptr<Scene> SceneManager::Create(const std::string& name, const std::
 
 std::shared_ptr<Scene> SceneManager::GetSceneByName(const std::string& name) const
 {
-	auto sceneByName = m_ScenesByName.find(name);
-	if (sceneByName != m_ScenesByName.end())
+	if (const auto sceneByName = m_ScenesByName.find(name);
+		sceneByName != m_ScenesByName.end())
 	{
 		return sceneByName->second;
 	}
@@ -36,8 +33,8 @@ std::shared_ptr<Scene> SceneManager::GetSceneByName(const std::string& name) con
 
 std::shared_ptr<Scene> SceneManager::GetSceneByTag(const std::string& tag) const
 {
-	auto sceneByTag = m_ScenesByTag.find(tag);
-	if (sceneByTag != m_ScenesByTag.end())
+	if (const auto sceneByTag = m_ScenesByTag.find(tag);
+		sceneByTag != m_ScenesByTag.end())
 	{
 		return sceneByTag->second;
 	}
@@ -47,11 +44,11 @@ std::shared_ptr<Scene> SceneManager::GetSceneByTag(const std::string& tag) const
 
 void SceneManager::Delete(const std::string& name)
 {
-	auto sceneByName = m_ScenesByName.find(name);
-	if (sceneByName != m_ScenesByName.end())
+	if (const auto sceneByName = m_ScenesByName.find(name);
+		sceneByName != m_ScenesByName.end())
 	{
-		auto sceneByTag = m_ScenesByTag.find(sceneByName->second->GetTag());
-		if (sceneByTag != m_ScenesByTag.end())
+		if (const auto sceneByTag = m_ScenesByTag.find(sceneByName->second->GetTag());
+			sceneByTag != m_ScenesByTag.end())
 		{
 			m_ScenesByTag.erase(sceneByTag);
 		}
@@ -63,16 +60,16 @@ void SceneManager::Delete(const std::string& name)
 
 void SceneManager::ShutDown()
 {
-	for (auto sceneByName : m_ScenesByName)
+	for (const auto& [name, scene] : m_ScenesByName)
 	{
-		sceneByName.second->Clear();
+		scene->Clear();
 	}
 
 	m_ScenesByName.clear();
 
-	for (auto sceneByTag : m_ScenesByTag)
+	for (const auto& [tag, scene] : m_ScenesByTag)
 	{
-		sceneByTag.second->Clear();
+		scene->Clear();
 	}
 
 	m_ScenesByTag.clear();

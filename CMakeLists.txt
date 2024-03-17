@@ -10,7 +10,9 @@ if (WIN32)
 	set(GLFW_PATH_INCLUDE ${GLFW_PATH}/Includes)
 endif ()
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+if (UNIX)
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif ()
 
 add_subdirectory(Vendor/imgui Vendor/imgui/Build)
 add_subdirectory(Vendor/yaml-cpp Vendor/yaml-cpp/Build)

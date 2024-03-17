@@ -43,7 +43,7 @@ VulkanUniformLayout::VulkanUniformLayout(const std::unordered_map<uint32_t, Bind
             nullptr,
             &descriptorSetLayout) != VK_SUCCESS)
         {
-            FATAL_ERROR("failed to create descriptor set layout!")
+            FATAL_ERROR("failed to create descriptor set layout!");
         }
     }
 }
@@ -58,7 +58,7 @@ VulkanUniformLayout::~VulkanUniformLayout()
     }
 }
 
-VkDescriptorType VulkanUniformLayout::ConvertDescriptorType(Type type)
+VkDescriptorType VulkanUniformLayout::ConvertDescriptorType(const Type type)
 {
     switch (type)
     {
@@ -70,10 +70,11 @@ VkDescriptorType VulkanUniformLayout::ConvertDescriptorType(Type type)
         return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     }
 
-    FATAL_ERROR("Failed to convert descriptor type!")
+    FATAL_ERROR("Failed to convert descriptor type!");
+	return VkDescriptorType::VK_DESCRIPTOR_TYPE_MAX_ENUM;
 }
 
-UniformLayout::Type VulkanUniformLayout::ConvertDescriptorType(VkDescriptorType type)
+UniformLayout::Type VulkanUniformLayout::ConvertDescriptorType(const VkDescriptorType type)
 {
     switch (type)
     {
@@ -83,10 +84,11 @@ UniformLayout::Type VulkanUniformLayout::ConvertDescriptorType(VkDescriptorType 
         return Pengine::UniformLayout::Type::BUFFER;
     }
 
-    FATAL_ERROR("Failed to convert descriptor type!")
+    FATAL_ERROR("Failed to convert descriptor type!");
+	return {};
 }
 
-VkShaderStageFlagBits VulkanUniformLayout::ConvertDescriptorStage(Stage stage)
+VkShaderStageFlagBits VulkanUniformLayout::ConvertDescriptorStage(const Stage stage)
 {
     switch (stage)
     {
@@ -96,10 +98,11 @@ VkShaderStageFlagBits VulkanUniformLayout::ConvertDescriptorStage(Stage stage)
         return VK_SHADER_STAGE_FRAGMENT_BIT;
     }
 
-    FATAL_ERROR("Failed to convert descriptor stage!")
+    FATAL_ERROR("Failed to convert descriptor stage!");
+	return VkShaderStageFlagBits::VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM;
 }
 
-UniformLayout::Stage VulkanUniformLayout::ConvertDescriptorStage(VkShaderStageFlagBits stage)
+UniformLayout::Stage VulkanUniformLayout::ConvertDescriptorStage(const VkShaderStageFlagBits stage)
 {
     switch (stage)
     {
@@ -109,5 +112,6 @@ UniformLayout::Stage VulkanUniformLayout::ConvertDescriptorStage(VkShaderStageFl
         return Pengine::UniformLayout::Stage::FRAGMENT;
     }
 
-    FATAL_ERROR("Failed to convert descriptor stage!")
+    FATAL_ERROR("Failed to convert descriptor stage!");
+	return {};
 }

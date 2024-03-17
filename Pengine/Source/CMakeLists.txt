@@ -18,7 +18,7 @@ source_group("Components" FILES ${COMPONENTS_SOURCES})
 
 set(CORE_SOURCES
 	Core/Asset.h
-	Core/Application.cpp Core/Application.h
+	Core/Application.h
 	Core/ColoredOutput.h
 	Core/Core.h
 	Core/Entity.cpp Core/Entity.h
@@ -91,7 +91,7 @@ set(SPIRV_REFLECT_SOURCES
 source_group("SpirvReflect" FILES ${SPIRV_REFLECT_SOURCES})
 
 set(UTILS_SOURCES
-	Utils/Utils.cpp Utils/Utils.h
+	Utils/Utils.h
 )
 source_group("Utils" FILES ${UTILS_SOURCES})
 
@@ -118,11 +118,6 @@ add_library(${PROJECT_NAME} SHARED
 	${CONFIGS_SOURCES}
 	${EVENT_SYSTEM_SOURCES}
 	${EDITOR_SOURCES})
-
-if (MSVC)
-	set_property(TARGET ${PROJECT_NAME} PROPERTY
-		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif ()
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC PENGINE_ENGINE=1)
 
@@ -206,7 +201,7 @@ if (WIN32)
 		${CMAKE_BINARY_DIR}/${APP_NAME}/Build/$<CONFIG>)
 elseif (UNIX)
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_directory
-			$<TARGET_FILE_DIR:${PROJECT_NAME}>
-			${CMAKE_BINARY_DIR}/${APP_NAME}/Build)
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		$<TARGET_FILE_DIR:${PROJECT_NAME}>
+		${CMAKE_BINARY_DIR}/${APP_NAME}/Build)
 endif ()

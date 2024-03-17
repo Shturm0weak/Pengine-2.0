@@ -19,15 +19,15 @@ namespace Pengine
 			OnSetScroll
 		};
 
-		Type GetType() const { return m_Type; }
+		[[nodiscard]] Type GetType() const { return m_Type; }
 
-		void* GetSender() const { return m_Sender; }
+		[[nodiscard]] void* GetSender() const { return m_Sender; }
 
-		bool GetSendedOnce() const { return m_SendedOnce; }
+		[[nodiscard]] bool GetSendedOnce() const { return m_SendedOnce; }
 
-		Event(Type type, void* sender, bool sendedOnce = false)
-			: m_Type(type)
-			, m_Sender(sender)
+		Event(const Type type, void* sender, const bool sendedOnce = false)
+			: m_Sender(sender)
+			, m_Type(type)
 			, m_SendedOnce(sendedOnce)
 		{
 		}

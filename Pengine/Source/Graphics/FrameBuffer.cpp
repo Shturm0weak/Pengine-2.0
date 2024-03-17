@@ -5,11 +5,12 @@
 
 using namespace Pengine;
 
-std::shared_ptr<FrameBuffer> Pengine::FrameBuffer::Create(std::shared_ptr<RenderPass> renderPass)
+std::shared_ptr<FrameBuffer> FrameBuffer::Create(const std::shared_ptr<RenderPass>& renderPass)
 {
 	if (!renderPass)
 	{
-		FATAL_ERROR("Render pass is nullptr!")
+		FATAL_ERROR("Render pass is nullptr!");
+		return nullptr;
 	}
 
 	std::vector<Texture::CreateInfo> attachments;
@@ -34,15 +35,18 @@ std::shared_ptr<FrameBuffer> Pengine::FrameBuffer::Create(std::shared_ptr<Render
 	{
 		return std::make_shared<Vk::VulkanFrameBuffer>(attachments, renderPass);
 	}
+
+	FATAL_ERROR("Failed to create the framebuffer, no graphics API implementation");
+	return nullptr;
 }
 
 FrameBuffer::FrameBuffer(std::vector<Texture::CreateInfo> const& attachments,
 	std::shared_ptr<RenderPass> renderPass)
-	: m_RenderPass(renderPass)
+	: m_RenderPass(std::move(renderPass))
 	, m_AttachmentCreateInfos(attachments)
 {
 	if (attachments.empty())
 	{
-		FATAL_ERROR("Render pass attachments must contain at least one attachment!")
+		FATAL_ERROR("Render pass attachments must contain at least one attachment!");
 	}
 }

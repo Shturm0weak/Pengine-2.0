@@ -1,6 +1,5 @@
 #include "Transform.h"
 
-#include "../Core/Logger.h"
 #include "../Utils/Utils.h"
 
 using namespace Pengine;
@@ -25,7 +24,7 @@ void Transform::CopyGlobal(const Transform& transform)
 	m_FollowOwner = transform.m_FollowOwner;
 }
 
-glm::mat4 Transform::GetPositionMat4(System system) const
+glm::mat4 Transform::GetPositionMat4(const System system) const
 {
 	switch (system)
 	{
@@ -38,7 +37,7 @@ glm::mat4 Transform::GetPositionMat4(System system) const
 		glm::mat4 positionMat4 = m_PositionMat4;
 		if (m_Entity->HasParent())
 		{
-			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			positionMat4 *= parent.GetPositionMat4();
 		}
 		return positionMat4;
@@ -48,7 +47,7 @@ glm::mat4 Transform::GetPositionMat4(System system) const
 	}
 }
 
-glm::mat4 Transform::GetRotationMat4(System system) const
+glm::mat4 Transform::GetRotationMat4(const System system) const
 {
 	switch (system)
 	{
@@ -61,7 +60,7 @@ glm::mat4 Transform::GetRotationMat4(System system) const
 		glm::mat4 rotationMat4 = m_RotationMat4;
 		if (m_Entity->HasParent())
 		{
-			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			rotationMat4 *= parent.GetRotationMat4();
 		}
 		return rotationMat4;
@@ -71,7 +70,7 @@ glm::mat4 Transform::GetRotationMat4(System system) const
 	}
 }
 
-glm::mat4 Transform::GetScaleMat4(System system) const
+glm::mat4 Transform::GetScaleMat4(const System system) const
 {
 	switch (system)
 	{
@@ -84,7 +83,7 @@ glm::mat4 Transform::GetScaleMat4(System system) const
 		glm::mat4 scaleMat4 = m_ScaleMat4;
 		if (m_Entity->HasParent())
 		{
-			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			scaleMat4 *= parent.GetScaleMat4();
 		}
 		return scaleMat4;
@@ -94,7 +93,7 @@ glm::mat4 Transform::GetScaleMat4(System system) const
 	}
 }
 
-glm::vec3 Transform::GetPreviousPosition(System system) const
+glm::vec3 Transform::GetPreviousPosition(const System system) const
 {
 	switch (system)
 	{
@@ -107,17 +106,17 @@ glm::vec3 Transform::GetPreviousPosition(System system) const
 		glm::vec3 previousPosition = m_PreviousPosition;
 		if (m_Entity->HasParent())
 		{
-			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			previousPosition = parent.GetTransform() * glm::vec4(previousPosition, 1.0f);
 		}
 		return previousPosition;
 	}
 	default:
-		return glm::vec3();
+		return {};
 	}
 }
 
-glm::vec3 Transform::GetPositionDelta(System system) const
+glm::vec3 Transform::GetPositionDelta(const System system) const
 {
 	switch (system)
 	{
@@ -130,17 +129,17 @@ glm::vec3 Transform::GetPositionDelta(System system) const
 		glm::vec3 positionDelta = m_PositionDelta;
 		if (m_Entity->HasParent())
 		{
-			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			positionDelta = parent.GetTransform() * glm::vec4(positionDelta, 1.0f);
 		}
 		return positionDelta;
 	}
 	default:
-		return glm::vec3();
+		return {};
 	}
 }
 
-glm::vec3 Transform::GetPosition(System system) const
+glm::vec3 Transform::GetPosition(const System system) const
 {
 	switch (system)
 	{
@@ -153,11 +152,11 @@ glm::vec3 Transform::GetPosition(System system) const
 		return Utils::GetPosition(GetTransform(system));
 	}
 	default:
-		return glm::vec3();
+		return {};
 	}
 }
 
-glm::vec3 Transform::GetRotation(System system) const
+glm::vec3 Transform::GetRotation(const System system) const
 {
 	switch (system)
 	{
@@ -170,17 +169,17 @@ glm::vec3 Transform::GetRotation(System system) const
 		glm::vec3 rotation = m_Rotation;
 		if (m_Entity->HasParent())
 		{
-			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			rotation += parent.GetRotation();
 		}
 		return rotation;
 	}
 	default:
-		return glm::vec3();
+		return {};
 	}
 }
 
-glm::vec3 Transform::GetScale(System system) const
+glm::vec3 Transform::GetScale(const System system) const
 {
 	switch (system)
 	{
@@ -193,17 +192,17 @@ glm::vec3 Transform::GetScale(System system) const
 		glm::vec3 scale = Utils::GetScale(m_ScaleMat4);
 		if (m_Entity->HasParent())
 		{
-			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			scale *= parent.GetScale();
 		}
 		return scale;
 	}
 	default:
-		return glm::vec3();
+		return {};
 	}
 }
 
-glm::mat4 Transform::GetTransform(System system) const
+glm::mat4 Transform::GetTransform(const System system) const
 {
 	switch (system)
 	{
@@ -214,30 +213,29 @@ glm::mat4 Transform::GetTransform(System system) const
 	case System::GLOBAL:
 	{
 		glm::mat4 transformMat4 = m_TransformMat4;
-
 		if (m_Entity->HasParent())
 		{
-			Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
+			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			transformMat4 = parent.GetTransform() * transformMat4;
 		}
 		return transformMat4;
 	}
 	default:
-		return glm::mat4();
+		return glm::mat4(1.0f);
 	}
 }
 
-glm::mat3 Transform::GetInverseTransform(System system) const
+glm::mat3 Transform::GetInverseTransform(const System system) const
 {
 	return glm::inverse(GetTransform(system));
 }
 
 void Transform::Move(Transform&& transform) noexcept
 {
-	m_Rotation = std::move(transform.m_Rotation);
-	m_PositionMat4 = std::move(transform.m_PositionMat4);
-	m_ScaleMat4 = std::move(transform.m_ScaleMat4);
-	m_RotationMat4 = std::move(transform.m_RotationMat4);
+	m_Rotation = transform.m_Rotation;
+	m_PositionMat4 = transform.m_PositionMat4;
+	m_ScaleMat4 = transform.m_ScaleMat4;
+	m_RotationMat4 = transform.m_RotationMat4;
 	m_FollowOwner = transform.m_FollowOwner;
 }
 
@@ -259,31 +257,30 @@ void Transform::UpdateTransforms()
 	m_TransformMat4 = m_PositionMat4 * m_RotationMat4 * m_ScaleMat4;
 }
 
-void Transform::operator=(const Transform& transform)
+Transform& Transform::operator=(const Transform& transform)
 {
-	Copy(transform);
+	if (this != &transform)
+	{
+		Copy(transform);
+	}
+
+	return *this;
 }
 
-void Transform::operator=(Transform&& transform) noexcept
+Transform& Transform::operator=(Transform&& transform) noexcept
 {
 	Move(std::move(transform));
-}
-
-Transform::~Transform()
-{
-	Logger::Log("Destroy Transform");
+	return *this;
 }
 
 Transform::Transform(const Transform& transform)
 {
-	Logger::Log("Copy Transform");
 	Copy(transform);
 }
 
 Transform::Transform(Transform&& transform) noexcept
 {
 	Move(std::move(transform));
-	Logger::Log("Move Transform");
 }
 
 Transform::Transform(
@@ -291,10 +288,8 @@ Transform::Transform(
 	const glm::vec3& position,
 	const glm::vec3& scale,
 	const glm::vec3& rotation)
-	: m_Entity(entity)
+	: m_Entity(std::move(entity))
 {
-	Logger::Log("Create Transform");
-
 	Translate(position);
 	Rotate(rotation);
 	Scale(scale);
@@ -302,8 +297,7 @@ Transform::Transform(
 
 void Transform::RemoveOnRotationCallback(const std::string& label)
 {
-	auto callback = m_OnRotationCallbacks.find(label);
-	if (callback != m_OnRotationCallbacks.end())
+	if (const auto callback = m_OnRotationCallbacks.find(label); callback != m_OnRotationCallbacks.end())
 	{
 		m_OnRotationCallbacks.erase(callback);
 	}
@@ -311,8 +305,7 @@ void Transform::RemoveOnRotationCallback(const std::string& label)
 
 void Transform::RemoveOnTranslationCallback(const std::string& label)
 {
-	auto callback = m_OnTranslationCallbacks.find(label);
-	if (callback != m_OnTranslationCallbacks.end())
+	if (const auto callback = m_OnTranslationCallbacks.find(label); callback != m_OnTranslationCallbacks.end())
 	{
 		m_OnTranslationCallbacks.erase(callback);
 	}
@@ -320,8 +313,7 @@ void Transform::RemoveOnTranslationCallback(const std::string& label)
 
 void Transform::RemoveOnScaleCallback(const std::string& label)
 {
-	auto callback = m_OnScaleCallbacks.find(label);
-	if (callback != m_OnScaleCallbacks.end())
+	if (const auto callback = m_OnScaleCallbacks.find(label); callback != m_OnScaleCallbacks.end())
 	{
 		m_OnScaleCallbacks.erase(callback);
 	}
@@ -337,14 +329,14 @@ void Transform::Translate(const glm::vec3& position)
 
 	UpdateTransforms();
 
-	std::function<void(Transform&)> translationCallbacks = [&translationCallbacks](Transform& transform)
+	std::function<void(Transform&)> translationCallbacks = [&translationCallbacks](const Transform& transform)
 	{
-		for (auto& onTranslationCallback : transform.m_OnTranslationCallbacks)
+		for (const auto& [name, callback] : transform.m_OnTranslationCallbacks)
 		{
-			onTranslationCallback.second();
+			callback();
 		}
 
-		for (const std::shared_ptr<Entity> child : transform.m_Entity->GetChilds())
+		for (const std::shared_ptr<Entity>& child : transform.m_Entity->GetChilds())
 		{
 			translationCallbacks(child->GetComponent<Transform>());
 		}
@@ -365,14 +357,14 @@ void Transform::Rotate(const glm::vec3& rotation)
 	UpdateTransforms();
 	UpdateVectors();
 
-	std::function<void(Transform&)> rotationCallbacks = [&rotationCallbacks](Transform& transform)
+	std::function<void(Transform&)> rotationCallbacks = [&rotationCallbacks](const Transform& transform)
 	{
-		for (auto& onRotationCallback : transform.m_OnRotationCallbacks)
+		for (const auto& [name, callback] : transform.m_OnRotationCallbacks)
 		{
-			onRotationCallback.second();
+			callback();
 		}
 
-		for (const std::shared_ptr<Entity> child : transform.m_Entity->GetChilds())
+		for (const std::shared_ptr<Entity>& child : transform.m_Entity->GetChilds())
 		{
 			rotationCallbacks(child->GetComponent<Transform>());
 		}
@@ -391,14 +383,14 @@ void Transform::Scale(const glm::vec3& scale)
 
 	UpdateTransforms();
 
-	std::function<void(Transform&)> scaleCallbacks = [&scaleCallbacks](Transform& transform)
+	std::function<void(Transform&)> scaleCallbacks = [&scaleCallbacks](const Transform& transform)
 	{
-		for (auto& onScaleCallback : transform.m_OnScaleCallbacks)
+		for (auto& [name, callback] : transform.m_OnScaleCallbacks)
 		{
-			onScaleCallback.second();
+			callback();
 		}
 
-		for (const std::shared_ptr<Entity> child : transform.m_Entity->GetChilds())
+		for (const std::shared_ptr<Entity>& child : transform.m_Entity->GetChilds())
 		{
 			scaleCallbacks(child->GetComponent<Transform>());
 		}

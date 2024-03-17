@@ -1,17 +1,17 @@
 #include "VulkanUniformWriter.h"
 
 #include "VulkanBuffer.h"
-#include "VulkanDevice.h"
 #include "VulkanDescriptors.h"
-#include "VulkanUniformLayout.h"
+#include "VulkanDevice.h"
 #include "VulkanTexture.h"
+#include "VulkanUniformLayout.h"
 
 #include "../Core/Logger.h"
 
 using namespace Pengine;
 using namespace Vk;
 
-VulkanUniformWriter::VulkanUniformWriter(std::shared_ptr<UniformLayout> layout)
+VulkanUniformWriter::VulkanUniformWriter(const std::shared_ptr<UniformLayout>& layout)
     : UniformWriter(layout)
 {
     m_DescriptorSet.resize(Vk::swapChainImageCount);
@@ -20,12 +20,15 @@ VulkanUniformWriter::VulkanUniformWriter(std::shared_ptr<UniformLayout> layout)
     m_BufferInfos.reserve(512);
 }
 
-void VulkanUniformWriter::WriteBuffer(uint32_t location,
-	std::shared_ptr<Buffer> buffer, size_t size, size_t offset)
+void VulkanUniformWriter::WriteBuffer(
+	const uint32_t location,
+	const std::shared_ptr<Buffer>& buffer,
+	const size_t size,
+	const size_t offset)
 {
     if (m_Layout->GetBindingsByLocation().count(location) == 0)
     {
-        FATAL_ERROR("Layout does not contain specified binding!")
+        FATAL_ERROR("Layout does not contain specified binding!");
     }
 
     const auto& bindingDescription = m_Layout->GetBindingByLocation(location);
@@ -42,12 +45,13 @@ void VulkanUniformWriter::WriteBuffer(uint32_t location,
     m_WritesByLocation[location] = write;
 }
 
-void VulkanUniformWriter::WriteTexture(uint32_t location,
-	std::shared_ptr<Texture> texture)
+void VulkanUniformWriter::WriteTexture(
+	const uint32_t location,
+	const std::shared_ptr<Texture>& texture)
 {
     if (m_Layout->GetBindingsByLocation().count(location) == 0)
     {
-        FATAL_ERROR("Layout does not contain specified binding!")
+        FATAL_ERROR("Layout does not contain specified binding!");
     }
 
     const auto& bindingDescription = m_Layout->GetBindingByLocation(location);
@@ -64,21 +68,23 @@ void VulkanUniformWriter::WriteTexture(uint32_t location,
     m_WritesByLocation[location] = write;
 }
 
-void VulkanUniformWriter::WriteTextures(uint32_t location, std::vector<std::shared_ptr<Texture>> textures)
+void VulkanUniformWriter::WriteTextures(
+	const uint32_t location,
+	const std::vector<std::shared_ptr<Texture>>& textures)
 {
     if (textures.size() > MAX_TEXTURES || m_ImageInfos.size() > MAX_TEXTURES)
     {
-        FATAL_ERROR("Textures size exceeds the maximum texture slots size!")
+        FATAL_ERROR("Textures size exceeds the maximum texture slots size!");
     }
 
     if (m_Layout->GetBindingsByLocation().count(location) == 0)
     {
-        FATAL_ERROR("Layout does not contain specified binding!")
+        FATAL_ERROR("Layout does not contain specified binding!");
     }
 
     const auto& bindingDescription = m_Layout->GetBindingByLocation(location);
 
-    size_t const index = m_ImageInfos.size();
+    const size_t index = m_ImageInfos.size();
     for (const auto& texture : textures)
     {
         m_ImageInfos.emplace_back(std::static_pointer_cast<VulkanTexture>(texture)->GetDescriptorInfo());
@@ -94,17 +100,25 @@ void VulkanUniformWriter::WriteTextures(uint32_t location, std::vector<std::shar
     m_WritesByLocation[location] = write;
 }
 
-void VulkanUniformWriter::WriteBuffer(const std::string& name, std::shared_ptr<Buffer> buffer, size_t size, size_t offset)
+void VulkanUniformWriter::WriteBuffer(
+	const std::string& name,
+	const std::shared_ptr<Buffer>& buffer,
+	const size_t size,
+	const size_t offset)
 {
     WriteBuffer(m_Layout->GetBindingLocationByName(name), buffer, size, offset);
 }
 
-void VulkanUniformWriter::WriteTexture(const std::string& name, std::shared_ptr<Texture> texture)
+void VulkanUniformWriter::WriteTexture(
+	const std::string& name,
+	const std::shared_ptr<Texture>& texture)
 {
     WriteTexture(m_Layout->GetBindingLocationByName(name), texture);
 }
 
-void VulkanUniformWriter::WriteTextures(const std::string& name, std::vector<std::shared_ptr<Texture>> textures)
+void VulkanUniformWriter::WriteTextures(
+	const std::string& name,
+	const std::vector<std::shared_ptr<Texture>>& textures)
 {
     WriteTextures(m_Layout->GetBindingLocationByName(name), textures);
 }
@@ -119,7 +133,7 @@ void VulkanUniformWriter::Flush()
             if (!descriptorPool->AllocateDescriptorSet(
                 std::static_pointer_cast<VulkanUniformLayout>(m_Layout)->GetDescriptorSetLayout(), descriptorSet))
             {
-                FATAL_ERROR("Failed to allocate descriptor set!")
+                FATAL_ERROR("Failed to allocate descriptor set!");
             }
 
             m_DescriptorSet.emplace_back(descriptorSet);
@@ -133,7 +147,7 @@ void VulkanUniformWriter::Flush()
             if (!descriptorPool->AllocateDescriptorSet(
                 std::static_pointer_cast<VulkanUniformLayout>(m_Layout)->GetDescriptorSetLayout(), descriptorSet))
             {
-                FATAL_ERROR("Failed to allocate descriptor set!")
+                FATAL_ERROR("Failed to allocate descriptor set!");
             }
 
             std::vector<VkWriteDescriptorSet> writes;
@@ -143,7 +157,12 @@ void VulkanUniformWriter::Flush()
                 writes.emplace_back(write);
             }
 
-            vkUpdateDescriptorSets(device->GetDevice(), writes.size(), writes.data(), 0, nullptr);
+            vkUpdateDescriptorSets(
+            	device->GetDevice(),
+            	writes.size(),
+            	writes.data(),
+            	0,
+            	nullptr);
         }
 
         m_Initialized = true;

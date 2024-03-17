@@ -1,83 +1,82 @@
 #pragma once
 
 #include "Core.h"
-#include "KeyCode.h"
 
 namespace Pengine
 {
 
-    class PENGINE_API Input
-    {
-    public:
-        struct Mouse
-        {
-            static bool IsMouseDown(int button);
+	class PENGINE_API Input
+	{
+	public:
+		struct Mouse
+		{
+			static bool IsMouseDown(int button);
 
-            static bool IsMousePressed(int button);
+			static bool IsMousePressed(int button);
 
-            static bool IsMouseReleased(int button);
+			static bool IsMouseReleased(int button);
 
-            static glm::dvec2 GetMousePosition();
-            
-            static glm::dvec2 GetMousePositionPrevious();
-            
-            static glm::dvec2 GetMousePositionDelta();
-        };
+			static glm::dvec2 GetMousePosition();
 
-        struct KeyBoard
-        {
-            static bool IsKeyDown(int keycode);
+			static glm::dvec2 GetMousePositionPrevious();
 
-            static bool IsKeyPressed(int keycode);
+			static glm::dvec2 GetMousePositionDelta();
+		};
 
-            static bool IsKeyReleased(int keycode);
-        };
+		struct KeyBoard
+		{
+			static bool IsKeyDown(int keycode);
 
-        struct JoyStick
-        {
-            static bool IsButtonDown(int buttonCode);
+			static bool IsKeyPressed(int keycode);
 
-            static bool IsButtonPressed(int buttonCode);
+			static bool IsKeyReleased(int keycode);
+		};
 
-            static bool IsButtonReleased(int buttonCode);
+		struct JoyStick
+		{
+			static bool IsButtonDown(int buttonCode);
 
-            static float GetAxis(int axisCode);
-        };
+			static bool IsButtonPressed(int buttonCode);
 
-        static void KeyCallback(int key, int scancode, int action, int mods);
+			static bool IsButtonReleased(int buttonCode);
 
-        static void MouseButtonCallback(int button, int action, int mods);
+			static float GetAxis(int axisCode);
+		};
 
-        static void MousePositionCallback(double x, double y);
+		static void KeyCallback(int key, int scancode, int action, int mods);
 
-        static void SetIsMouseDownCallback(const std::function<bool(int)>& callback);
+		static void MouseButtonCallback(int button, int action, int mods);
 
-        static void SetIsKeyDownCallback(const std::function<bool(int)>& callback);
+		static void MousePositionCallback(double x, double y);
 
-        static void ResetInput();
+		static void SetIsMouseDownCallback(const std::function<bool(int)>& callback);
 
-    private:
-        static std::unordered_map<int, int> s_ActionsByKeycode; // First - keycode, second - action.
+		static void SetIsKeyDownCallback(const std::function<bool(int)>& callback);
 
-        static std::function<bool(int)> s_IsMouseDownCallback;
+		static void ResetInput();
 
-        static std::function<bool(int)> s_IsKeyDownCallback;
+	private:
+		static std::unordered_map<int, int> s_ActionsByKeycode; // First - keycode, second - action.
 
-        static glm::dvec2 s_MousePosition;
-        static glm::dvec2 s_MousePositionPrevious;
-        static glm::dvec2 s_MousePositionDelta;
+		static std::function<bool(int)> s_IsMouseDownCallback;
 
-        struct JoyStickInfo
-        {
-            int id = 0;
-            int isPresent = 0;
+		static std::function<bool(int)> s_IsKeyDownCallback;
 
-            std::unordered_map<int, float> valuesByAxes; // First - axis, second - value.
-            std::unordered_map<int, int> buttonsByKeycode; // First - keycode, second - action.
-            std::unordered_map<int, int> previuosButtonsByKeycode; // First - keycode, second - action.
+		static glm::dvec2 s_MousePosition;
+		static glm::dvec2 s_MousePositionPrevious;
+		static glm::dvec2 s_MousePositionDelta;
 
-            void Update();
-        } static s_JoyStick;
-    };
+		struct JoyStickInfo
+		{
+			int id = 0;
+			int isPresent = 0;
+
+			std::unordered_map<int, float> valuesByAxes;		   // First - axis, second - value.
+			std::unordered_map<int, int> buttonsByKeycode;		   // First - keycode, second - action.
+			std::unordered_map<int, int> previuosButtonsByKeycode; // First - keycode, second - action.
+
+			void Update();
+		} static s_JoyStick;
+	};
 
 }

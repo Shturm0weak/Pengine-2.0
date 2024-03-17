@@ -3,44 +3,43 @@
 #include "../Core/Core.h"
 #include "../Graphics/Buffer.h"
 #include "../Graphics/Renderer.h"
+#include "../Graphics/Mesh.h"
 
 #include <imgui/backends/imgui_impl_vulkan.h>
 
-namespace Pengine
+namespace Pengine::Vk
 {
 
-	namespace Vk
+	class PENGINE_API VulkanRenderer final : public Renderer
 	{
+	public:
+		explicit VulkanRenderer(const glm::ivec2& size);
+		virtual ~VulkanRenderer() override = default;
+		VulkanRenderer(const VulkanRenderer&) = delete;
+		VulkanRenderer& operator=(const VulkanRenderer&) = delete;
 
-		class PENGINE_API VulkanRenderer : public Renderer
-		{
-		public:
-			VulkanRenderer(const glm::ivec2& size);
-			~VulkanRenderer() = default;
-			VulkanRenderer(const VulkanRenderer&) = delete;
-			VulkanRenderer& operator=(const VulkanRenderer&) = delete;
+	protected:
+		virtual void BeginRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) override;
 
-		protected:
-			virtual void BeginRenderPass(RenderPass::SubmitInfo renderPassSubmitInfo) override;
+		virtual void EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) override;
 
-			virtual void EndRenderPass(RenderPass::SubmitInfo renderPassSubmitInfo) override;
+		virtual void Render(
+			const std::shared_ptr<Mesh>& mesh,
+			const std::shared_ptr<Pipeline>& pipeline,
+			const std::shared_ptr<Buffer>& instanceBuffer,
+			size_t instanceBufferOffset, size_t count,
+			const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
+			const RenderPass::SubmitInfo& renderPassSubmitInfo) override;
 
-			virtual void Render(std::shared_ptr<Mesh> mesh,
-				std::shared_ptr<Pipeline> pipeline, std::shared_ptr<Buffer> instanceBuffer,
-				size_t instanceBufferOffset, size_t count,
-				const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
-				RenderPass::SubmitInfo renderPassSubmitInfo) override;
+	private:
+		static void BindBuffers(
+			VkCommandBuffer commandBuffer,
+			const std::shared_ptr<Buffer>& vertexBuffer,
+			const std::shared_ptr<Buffer>& instanceBuffer,
+			const std::shared_ptr<Buffer>& indexBuffer,
+			size_t instanceBufferOffset);
 
-		private:
-			void BindBuffers(VkCommandBuffer commandBuffer,
-				std::shared_ptr<Buffer> vertexBuffer,
-				std::shared_ptr<Buffer> instanceBuffer,
-				std::shared_ptr<Buffer> indexBuffer,
-				size_t instanceBufferOffset);
-
-			void DrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount);
-		};
-
-	}
+		static void DrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount);
+	};
 
 }

@@ -5,11 +5,10 @@
 
 using namespace Pengine;
 
-Window::Window(const std::string& name, const glm::ivec2& size)
-	: m_Name(name)
+Window::Window(std::string name, const glm::ivec2& size)
+	: m_Name(std::move(name))
 	, m_Size(size)
 {
-
 }
 
 bool Window::Resize(const glm::ivec2& size)

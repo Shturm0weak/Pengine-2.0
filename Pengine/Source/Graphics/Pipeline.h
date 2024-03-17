@@ -2,7 +2,8 @@
 
 #include "../Core/Core.h"
 
-#include "Mesh.h"
+#include "RenderPass.h"
+#include "UniformLayout.h"
 
 namespace Pengine
 {
@@ -52,16 +53,18 @@ namespace Pengine
 
 		static std::shared_ptr<Pipeline> Create(const CreateInfo& pipelineCreateInfo);
 
-		Pipeline(const CreateInfo& pipelineCreateInfo);
+		explicit Pipeline(const CreateInfo& pipelineCreateInfo);
 		virtual ~Pipeline() = default;
 		Pipeline(const Pipeline&) = delete;
+		Pipeline(Pipeline&&) = delete;
 		Pipeline& operator=(const Pipeline&) = delete;
+		Pipeline& operator=(Pipeline&&) = delete;
 
-		std::shared_ptr<UniformWriter> GetUniformWriter() const { return m_UniformWriter; }
+		[[nodiscard]] std::shared_ptr<UniformWriter> GetUniformWriter() const { return m_UniformWriter; }
 
-		std::shared_ptr<UniformLayout> GetChildUniformLayout() const { return m_ChildUniformLayout; }
+		[[nodiscard]] std::shared_ptr<UniformLayout> GetChildUniformLayout() const { return m_ChildUniformLayout; }
 
-		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
+		[[nodiscard]] std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
 
 		CreateInfo createInfo;
 

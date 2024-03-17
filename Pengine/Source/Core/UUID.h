@@ -1,17 +1,13 @@
 #pragma once
 
-#include "../Core/Core.h"
+#include "Core.h"
 
 namespace Pengine
 {
 
 	class PENGINE_API UUID
 	{
-	private:
-
-		std::string m_UUID;
 	public:
-
 		std::string Generate();
 
 		UUID()
@@ -19,13 +15,11 @@ namespace Pengine
 			Generate();
 		}
 
-		UUID(const std::string& uuid)
-			: m_UUID(uuid)
+		UUID(std::string uuid)
+			: m_UUID(std::move(uuid))
 		{}
 
-		UUID(const UUID& uuid)
-			: m_UUID(uuid.m_UUID)
-		{}
+		UUID(const UUID& uuid) = default;
 
 		UUID(UUID&& uuid) noexcept
 		{
@@ -35,11 +29,14 @@ namespace Pengine
 
 		~UUID() = default;
 
-		void operator=(const UUID& uuid) { m_UUID = uuid.m_UUID; }
-		void operator=(UUID&& uuid) noexcept { m_UUID = uuid.m_UUID; }
+		UUID& operator=(const UUID& uuid);
+		UUID& operator=(UUID&& uuid) noexcept;
 
 		operator const std::string&() const { return m_UUID; }
-		const std::string& Get() const { return m_UUID; }
+		[[nodiscard]] const std::string& Get() const { return m_UUID; }
+
+	private:
+		std::string m_UUID;
 	};
 
 }

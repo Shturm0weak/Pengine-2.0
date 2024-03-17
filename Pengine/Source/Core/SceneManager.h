@@ -11,6 +11,9 @@ namespace Pengine
 	public:
 		static SceneManager& GetInstance();
 
+		SceneManager(const SceneManager&) = delete;
+		SceneManager& operator=(const SceneManager&) = delete;
+
 		std::shared_ptr<Scene> Create(const std::string& name, const std::string& tag);
 
 		std::shared_ptr<Scene> GetSceneByName(const std::string& name) const;
@@ -26,8 +29,6 @@ namespace Pengine
 	private:
 		SceneManager() = default;
 		~SceneManager() = default;
-		SceneManager(const SceneManager&) = delete;
-		SceneManager& operator=(const SceneManager&) = delete;
 
 		std::unordered_map<std::string, std::shared_ptr<Scene>> m_ScenesByName;
 		std::unordered_map<std::string, std::shared_ptr<Scene>> m_ScenesByTag;

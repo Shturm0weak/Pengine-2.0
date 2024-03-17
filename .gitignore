@@ -6,3 +6,7 @@ SandBox/Meshes/LargeFiles/BistroOptimized/
 
 # Shader Cache
 *.spv
+
+# User settings
+.clang-tidy
+.clang-format

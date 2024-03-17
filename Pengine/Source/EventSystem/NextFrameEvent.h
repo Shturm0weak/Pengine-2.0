@@ -6,17 +6,17 @@
 namespace Pengine
 {
 
-	class PENGINE_API NextFrameEvent : public Event
+	class PENGINE_API NextFrameEvent final : public Event
 	{
 	public:
-		NextFrameEvent(const std::function<void()>& callback, Event::Type type,
-			void* sender = nullptr, bool sendedOnce = false)
+		NextFrameEvent(const std::function<void()>& callback, const Type type,
+			void* sender = nullptr, const bool sendedOnce = false)
 			: Event(type, sender, sendedOnce)
 			, m_Callback(callback)
 		{
 		}
 
-		void Run()
+		void Run() const
 		{
 			if (m_Callback)
 			{

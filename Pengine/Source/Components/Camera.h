@@ -2,7 +2,6 @@
 
 #include "../Core/Core.h"
 #include "../Core/Entity.h"
-#include "../Components/Transform.h"
 
 namespace Pengine
 {
@@ -18,23 +17,23 @@ namespace Pengine
 			PERSPECTIVE
 		};
 
-		Camera(std::shared_ptr<Entity> entity);
+		explicit Camera(std::shared_ptr<Entity> entity);
 		Camera(const Camera& camera);
 		Camera(Camera&& camera) noexcept;
-		void operator=(const Camera& camera);
-		void operator=(Camera&& camera) noexcept;
+		Camera& operator=(const Camera& camera);
+		Camera& operator=(Camera&& camera) noexcept;
 
-		glm::mat4 GetViewProjectionMat4() const { return m_ViewProjectionMat4; }
+		[[nodiscard]] glm::mat4 GetViewProjectionMat4() const { return m_ViewProjectionMat4; }
 
-		glm::mat4 GetProjectionMat4() const { return m_ProjectionMat4; }
+		[[nodiscard]] glm::mat4 GetProjectionMat4() const { return m_ProjectionMat4; }
 
-		glm::mat4 GetViewMat4() const { return m_ViewMat4; }
+		[[nodiscard]] glm::mat4 GetViewMat4() const { return m_ViewMat4; }
 
-		glm::vec2 GetSize() const { return m_Size; }
+		[[nodiscard]] glm::vec2 GetSize() const { return m_Size; }
 
 		void SetSize(const glm::vec2& size);
 
-		Type GetType() const { return m_Type; }
+		[[nodiscard]] Type GetType() const { return m_Type; }
 
 		void SetOrthographic(const glm::ivec2& size);
 
@@ -44,32 +43,32 @@ namespace Pengine
 
 		void UpdateProjection();
 
-		float GetAspect() const { return (float)m_Size.x / (float)m_Size.y; }
+		[[nodiscard]] float GetAspect() const { return static_cast<float>(m_Size.x) / static_cast<float>(m_Size.y); }
 
-		float GetFov() const { return m_Fov; }
+		[[nodiscard]] float GetFov() const { return m_Fov; }
 
 		void SetFov(float fov);
 
-		float GetZNear() const { return m_Znear; }
+		[[nodiscard]] float GetZNear() const { return m_Znear; }
 
 		void SetZNear(float zNear);
 
-		float GetZFar() const { return m_Zfar; }
+		[[nodiscard]] float GetZFar() const { return m_Zfar; }
 
 		void SetZFar(float zFar);
 
-		std::shared_ptr<Renderer> GetRenderer() const { return m_Renderer; }
+		[[nodiscard]] std::shared_ptr<Renderer> GetRenderer() const { return m_Renderer; }
 
-		std::shared_ptr<Entity> GetEntity() { return m_Entity; }
+		[[nodiscard]] std::shared_ptr<Entity> GetEntity() const { return m_Entity; }
 
-		const std::string& GetViewport() const { return m_Viewport; }
+		[[nodiscard]] const std::string& GetViewport() const { return m_Viewport; }
 
 		void SetViewport(const std::string& viewport) { m_Viewport = viewport; }
 
 	private:
-		glm::mat4 m_ViewMat4;
-		glm::mat4 m_ProjectionMat4;
-		glm::mat4 m_ViewProjectionMat4;
+		glm::mat4 m_ViewMat4{};
+		glm::mat4 m_ProjectionMat4{};
+		glm::mat4 m_ViewProjectionMat4{};
 
 		std::shared_ptr<Renderer> m_Renderer;
 

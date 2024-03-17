@@ -2,12 +2,10 @@
 
 #include "FileFormatNames.h"
 #include "Logger.h"
-#include "MaterialManager.h"
-#include "Serializer.h"
 #include "SceneManager.h"
+#include "Serializer.h"
 
 #include "../Components/Camera.h"
-#include "../Components/Renderer3D.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 #include "../EventSystem/ResizeEvent.h"
@@ -15,14 +13,14 @@
 
 using namespace Pengine;
 
-Viewport::Viewport(const std::string& name, const glm::ivec2& size)
-	: m_Name(name)
+Viewport::Viewport(std::string name, const glm::ivec2& size)
+	: m_Name(std::move(name))
 	, m_Size(size)
 {
 	Resize(size);
 }
 
-void Viewport::Update(std::shared_ptr<Texture> viewportTexture)
+void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 {
 	if (!viewportTexture)
 	{
@@ -37,7 +35,7 @@ void Viewport::Update(std::shared_ptr<Texture> viewportTexture)
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
 		{
-			std::string path((const char*)payload->Data);
+			std::string path(static_cast<const char*>(payload->Data));
 			path.resize(payload->DataSize);
 
 			std::shared_ptr<Scene> scene;
@@ -50,9 +48,9 @@ void Viewport::Update(std::shared_ptr<Texture> viewportTexture)
 			{
 				auto callback = [weakScene = std::weak_ptr<Scene>(scene), path]()
 				{
-					if (std::shared_ptr<Scene> scene = weakScene.lock())
+					if (const std::shared_ptr<Scene> currentScene = weakScene.lock())
 					{
-						Serializer::DeserializePrefab(path, scene);
+						Serializer::DeserializePrefab(path, currentScene);
 					}
 				};
 
@@ -63,9 +61,9 @@ void Viewport::Update(std::shared_ptr<Texture> viewportTexture)
 			{
 				auto callback = [weakScene = std::weak_ptr<Scene>(scene), path]()
 				{
-					if (std::shared_ptr<Scene> scene = weakScene.lock())
+					if (std::shared_ptr<Scene> currentScene = weakScene.lock())
 					{
-						SceneManager::GetInstance().Delete(scene->GetName());
+						SceneManager::GetInstance().Delete(currentScene->GetName());
 					}
 
 					Serializer::DeserializeScene(path);
@@ -98,7 +96,7 @@ void Viewport::Update(std::shared_ptr<Texture> viewportTexture)
 	ImGui::End();
 }
 
-void Viewport::SetCamera(std::shared_ptr<Entity> camera)
+void Viewport::SetCamera(const std::shared_ptr<Entity>& camera)
 {
 	if (!camera || !camera->HasComponent<Camera>())
 	{
@@ -119,7 +117,7 @@ void Viewport::SetCamera(std::shared_ptr<Entity> camera)
 	}
 }
 
-void Viewport::SetDrawGizmosCallback(const std::function<void(const glm::vec2& position, const glm::ivec2 size, std::shared_ptr<Entity> camera)>& drawGizmosCallback)
+void Viewport::SetDrawGizmosCallback(const std::function<void(const glm::vec2& position, glm::ivec2 size, std::shared_ptr<Entity> camera)>& drawGizmosCallback)
 {
 	m_DrawGizmosCallback = drawGizmosCallback;
 }

@@ -9,6 +9,8 @@ namespace Pengine
 	{
 	public:
 
+		virtual ~Application() = default;
+
 		virtual void OnPreStart() {}
 
 		virtual void OnStart() {}

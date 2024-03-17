@@ -9,7 +9,7 @@
 namespace Pengine
 {
 
-	class PENGINE_API Material : public Asset
+	class PENGINE_API Material final : public Asset
 	{
 	public:
 		struct UniformBufferInfo
@@ -39,13 +39,13 @@ namespace Pengine
 
 		static std::shared_ptr<Material> Load(const std::string& filepath);
 
-		static void Save(std::shared_ptr<Material> material);
+		static void Save(const std::shared_ptr<Material>& material);
 
 		static std::shared_ptr<Material> Inherit(const std::string& name, const std::string& filepath,
-			std::shared_ptr<BaseMaterial> baseMaterial);
+			const std::shared_ptr<BaseMaterial>& baseMaterial);
 
 		static std::shared_ptr<Material> Clone(const std::string& name, const std::string& filepath,
-			std::shared_ptr<Material> material);
+			const std::shared_ptr<Material>& material);
 
 		Material(const std::string& name, const std::string& filepath,
 			const CreateInfo& createInfo);
@@ -59,11 +59,11 @@ namespace Pengine
 
 		std::shared_ptr<Texture> GetTexture(const std::string& name) const;
 
-		void SetTexture(const std::string& name, std::shared_ptr<Texture> texture);
+		void SetTexture(const std::string& name, const std::shared_ptr<Texture>& texture);
 
-		const std::unordered_map<std::string, std::shared_ptr<class Texture>>& GetTextures() const { return m_TexturesByName; }
+		const std::unordered_map<std::string, std::shared_ptr<Texture>>& GetTextures() const { return m_TexturesByName; }
 
-		int const GetIndex() const { return m_Index; }
+		int GetIndex() const { return m_Index; }
 
 		template<typename T>
 		void SetValue(const std::string& bufferName, const std::string& name, T& value);
@@ -76,7 +76,7 @@ namespace Pengine
 		std::unordered_map<std::string, RenderPassAttachmentInfo> m_RenderPassAttachments;
 
 	private:
-		std::unordered_map<std::string, std::shared_ptr<class Texture>> m_TexturesByName;
+		std::unordered_map<std::string, std::shared_ptr<Texture>> m_TexturesByName;
 
 		std::shared_ptr<BaseMaterial> m_BaseMaterial;
 		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPass;
@@ -85,17 +85,17 @@ namespace Pengine
 	};
 
 	template<typename T>
-	inline void Material::SetValue(const std::string& bufferName, const std::string& name, T& value)
+	void Material::SetValue(const std::string& bufferName, const std::string& name, T& value)
 	{
 		for (const auto& [renderPass, uniformWriter] : m_UniformWriterByRenderPass)
 		{
-			const UniformLayout::Binding& binding = uniformWriter->GetLayout()->GetBindingByName(bufferName);
-			if (binding.type == UniformLayout::Type::BUFFER)
+			if (const UniformLayout::Binding& binding = uniformWriter->GetLayout()->GetBindingByName(bufferName);
+				binding.type == UniformLayout::Type::BUFFER)
 			{
 				if (auto variable = binding.GetValue(name))
 				{
-					std::shared_ptr<Buffer> buffer = m_BaseMaterial->GetPipeline(renderPass)->GetBuffer(bufferName);
-					void* data = (char*)buffer->GetData() + buffer->GetInstanceSize() * m_Index;
+					const std::shared_ptr<Buffer> buffer = m_BaseMaterial->GetPipeline(renderPass)->GetBuffer(bufferName);
+					void* data = static_cast<char*>(buffer->GetData()) + buffer->GetInstanceSize() * m_Index;
 					Utils::SetValue(data, variable->offset, value);
 				}
 			}

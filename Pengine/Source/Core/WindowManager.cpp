@@ -23,9 +23,9 @@ std::shared_ptr<Window> WindowManager::Create(const std::string& name, const glm
 	return window;
 }
 
-bool WindowManager::Destroy(std::shared_ptr<Window> window)
+bool WindowManager::Destroy(const std::shared_ptr<Window>& window)
 {
-	for (auto windowIter = m_Windows.begin(); windowIter != m_Windows.end(); windowIter++)
+	for (auto windowIter = m_Windows.begin(); windowIter != m_Windows.end(); ++windowIter)
 	{
 		if (*windowIter == window)
 		{

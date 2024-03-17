@@ -12,6 +12,9 @@ namespace Pengine
 	public:
 		static MeshManager& GetInstance();
 
+		MeshManager(const MeshManager&) = delete;
+		MeshManager& operator=(const MeshManager&) = delete;
+
 		std::shared_ptr<Mesh> CreateMesh(const std::string& name, const std::string& filepath,
 			std::vector<float>& vertices, std::vector<uint32_t>& indices);
 
@@ -26,8 +29,6 @@ namespace Pengine
 	private:
 		MeshManager() = default;
 		~MeshManager() = default;
-		MeshManager(const MeshManager&) = delete;
-		MeshManager& operator=(const MeshManager&) = delete;
 
 		std::unordered_map<std::string, std::shared_ptr<Mesh>> m_MeshesByFilepath;
 	};

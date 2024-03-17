@@ -42,13 +42,13 @@ namespace Pengine
 			
 			Type type;
 
-			std::optional<Variable> GetValue(const std::string& name) const;
+			[[nodiscard]] std::optional<Variable> GetValue(const std::string& name) const;
 		};
 
 		static std::shared_ptr<UniformLayout> Create(
 			const std::unordered_map<uint32_t, Binding>& bindings);
 
-		UniformLayout(const std::unordered_map<uint32_t, Binding>& bindings);
+		explicit UniformLayout(const std::unordered_map<uint32_t, Binding>& bindings);
 		virtual ~UniformLayout() = default;
 		UniformLayout(const UniformLayout&) = delete;
 		UniformLayout& operator=(const UniformLayout&) = delete;

@@ -1,23 +1,11 @@
 #include "Renderer.h"
 
-#include "../Core/FileFormatNames.h"
 #include "../Core/Logger.h"
-#include "../Core/TextureManager.h"
-#include "../Core/Time.h"
 #include "../Core/RenderPassManager.h"
 #include "../Core/Scene.h"
-#include "../Core/SceneManager.h"
 #include "../Core/Serializer.h"
-#include "../Core/ViewportManager.h"
-#include "../Core/WindowManager.h"
-#include "../Components/Camera.h"
-#include "../Components/Renderer3D.h"
-#include "../Components/PointLight.h"
-#include "../EventSystem/EventSystem.h"
-#include "../EventSystem/ResizeEvent.h"
 #include "../Vulkan/VulkanRenderer.h"
 #include "../Vulkan/VulkanWindow.h"
-#include "../Utils/Utils.h"
 
 #include <filesystem>
 
@@ -29,16 +17,19 @@ std::shared_ptr<Renderer> Renderer::Create(const glm::ivec2& size)
 	{
 		return std::make_shared<Vk::VulkanRenderer>(size);
 	}
+
+	FATAL_ERROR("Failed to create the renderer, no graphics API implementation");
+	return nullptr;
 }
 
-Renderer::Renderer(const glm::ivec2& size)
+Renderer::Renderer()
 {
 	for (const auto& type : renderPassesOrder)
 	{
 		if (std::shared_ptr<RenderPass> renderPass =
 			RenderPassManager::GetInstance().GetRenderPass(type))
 		{
-			std::shared_ptr<FrameBuffer> frameBuffer = FrameBuffer::Create(renderPass);
+			const std::shared_ptr<FrameBuffer> frameBuffer = FrameBuffer::Create(renderPass);
 
 			SetFrameBufferToRenderPass(type, frameBuffer);
 		}
@@ -52,9 +43,9 @@ Renderer::~Renderer()
 
 void Renderer::Update(
 	void* frame,
-	std::shared_ptr<Window> window,
-	std::shared_ptr<Scene> scene,
-	std::shared_ptr<Entity> camera)
+	const std::shared_ptr<Window>& window,
+	const std::shared_ptr<Scene>& scene,
+	const std::shared_ptr<Entity>& camera)
 {
 	if (!scene)
 	{
@@ -63,13 +54,13 @@ void Renderer::Update(
 
 	for (const auto& type : renderPassesOrder)
 	{
-		std::shared_ptr<RenderPass> renderPass = RenderPassManager::GetInstance().GetRenderPass(type);
+		const std::shared_ptr<RenderPass> renderPass = RenderPassManager::GetInstance().GetRenderPass(type);
 		if (!renderPass)
 		{
 			continue;
 		}
 
-		std::shared_ptr<FrameBuffer> frameBuffer = GetRenderPassFrameBuffer(renderPass->GetType());
+		const std::shared_ptr<FrameBuffer> frameBuffer = GetRenderPassFrameBuffer(renderPass->GetType());
 
 		RenderPass::SubmitInfo renderPassSubmitInfo;
 		renderPassSubmitInfo.width = frameBuffer->GetSize().x;
@@ -95,8 +86,8 @@ void Renderer::Update(
 
 std::shared_ptr<FrameBuffer> Renderer::GetRenderPassFrameBuffer(const std::string& type) const
 {
-	auto frameBufferByRenderPassType = m_FrameBuffersByRenderPassType.find(type);
-	if (frameBufferByRenderPassType != m_FrameBuffersByRenderPassType.end())
+	if (const auto frameBufferByRenderPassType = m_FrameBuffersByRenderPassType.find(type);
+		frameBufferByRenderPassType != m_FrameBuffersByRenderPassType.end())
 	{
 		return frameBufferByRenderPassType->second;
 	}
@@ -104,25 +95,25 @@ std::shared_ptr<FrameBuffer> Renderer::GetRenderPassFrameBuffer(const std::strin
 	return nullptr;
 }
 
-void Renderer::SetFrameBufferToRenderPass(const std::string& type, std::shared_ptr<FrameBuffer> frameBuffer)
+void Renderer::SetFrameBufferToRenderPass(const std::string& type, const std::shared_ptr<FrameBuffer>& frameBuffer)
 {
 	if (!frameBuffer)
 	{
-		FATAL_ERROR("Frame buffer is nullptr!")
+		FATAL_ERROR("Frame buffer is nullptr!");
 	}
 
 	m_FrameBuffersByRenderPassType[type] = frameBuffer;
 }
 
-void Renderer::Resize(const glm::ivec2& size)
+void Renderer::Resize(const glm::ivec2& size) const
 {
-	if (std::shared_ptr<FrameBuffer> frameBuffer =
+	if (const std::shared_ptr<FrameBuffer> frameBuffer =
 		GetRenderPassFrameBuffer(GBuffer))
 	{
 		frameBuffer->Resize(size);
 	}
 
-	if (std::shared_ptr<FrameBuffer> frameBuffer =
+	if (const std::shared_ptr<FrameBuffer> frameBuffer =
 		GetRenderPassFrameBuffer(Deferred))
 	{
 		frameBuffer->Resize(size);

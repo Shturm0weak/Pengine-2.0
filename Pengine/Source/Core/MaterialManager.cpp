@@ -21,7 +21,7 @@ std::shared_ptr<Material> MaterialManager::LoadMaterial(const std::string& filep
 		material = Material::Load(filepath);
 		if (!material)
 		{
-			FATAL_ERROR(filepath + ":There is no such material!")
+			FATAL_ERROR(filepath + ":There is no such material!");
 		}
 
 		m_MaterialsByFilepath.emplace(filepath, material);
@@ -41,7 +41,7 @@ std::shared_ptr<BaseMaterial> MaterialManager::LoadBaseMaterial(const std::strin
 		baseMaterial = BaseMaterial::Load(filepath);
 		if (!baseMaterial)
 		{
-			FATAL_ERROR(filepath + ":There is no such base material!")
+			FATAL_ERROR(filepath + ":There is no such base material!");
 		}
 
 		m_BaseMaterialsByFilepath.emplace(filepath, baseMaterial);
@@ -52,8 +52,8 @@ std::shared_ptr<BaseMaterial> MaterialManager::LoadBaseMaterial(const std::strin
 
 std::shared_ptr<Material> MaterialManager::GetMaterial(const std::string& filepath)
 {
-	auto materialByFilepath = m_MaterialsByFilepath.find(filepath);
-	if (materialByFilepath != m_MaterialsByFilepath.end())
+	if (const auto materialByFilepath = m_MaterialsByFilepath.find(filepath);
+		materialByFilepath != m_MaterialsByFilepath.end())
 	{
 		return materialByFilepath->second;
 	}
@@ -63,8 +63,8 @@ std::shared_ptr<Material> MaterialManager::GetMaterial(const std::string& filepa
 
 std::shared_ptr<BaseMaterial> MaterialManager::GetBaseMaterial(const std::string& filepath)
 {
-	auto baseMaterialByFilepath = m_BaseMaterialsByFilepath.find(filepath);
-	if (baseMaterialByFilepath != m_BaseMaterialsByFilepath.end())
+	if (const auto baseMaterialByFilepath = m_BaseMaterialsByFilepath.find(filepath);
+		baseMaterialByFilepath != m_BaseMaterialsByFilepath.end())
 	{
 		return baseMaterialByFilepath->second;
 	}
@@ -73,7 +73,7 @@ std::shared_ptr<BaseMaterial> MaterialManager::GetBaseMaterial(const std::string
 }
 
 std::shared_ptr<Material> MaterialManager::Inherit(const std::string& name, const std::string& filepath,
-	std::shared_ptr<BaseMaterial> baseMaterial)
+	const std::shared_ptr<BaseMaterial>& baseMaterial)
 {
 	std::shared_ptr<Material> inheritedMaterial = Material::Inherit(name, filepath, baseMaterial);
 	m_MaterialsByFilepath[filepath] = inheritedMaterial;
@@ -81,7 +81,8 @@ std::shared_ptr<Material> MaterialManager::Inherit(const std::string& name, cons
 	return inheritedMaterial;
 }
 
-std::shared_ptr<Material> MaterialManager::Clone(const std::string& name, const std::string& filepath, std::shared_ptr<Material> material)
+std::shared_ptr<Material> MaterialManager::Clone(const std::string& name, const std::string& filepath,
+	const std::shared_ptr<Material>& material)
 {
 	std::shared_ptr<Material> clonedMaterial = Material::Clone(name, filepath, material);
 	m_MaterialsByFilepath[filepath] = clonedMaterial;

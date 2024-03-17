@@ -8,10 +8,10 @@ using namespace Pengine;
 using namespace Vk;
 
 VulkanDescriptorSetLayout::Builder & VulkanDescriptorSetLayout::Builder::AddBinding(
-    uint32_t binding,
-    VkDescriptorType descriptorType,
-    VkShaderStageFlags stageFlags,
-    uint32_t count)
+    const uint32_t binding,
+    const VkDescriptorType descriptorType,
+    const VkShaderStageFlags stageFlags,
+    const uint32_t count)
 {
     assert(m_Bindings.count(binding) == 0 && "Binding already in use");
     VkDescriptorSetLayoutBinding layoutBinding{};
@@ -29,13 +29,13 @@ std::unique_ptr<VulkanDescriptorSetLayout> VulkanDescriptorSetLayout::Builder::B
 }
 
 VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(
-    std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings)
+    const std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding>& bindings)
     : m_Bindings{bindings}
 {
     std::vector<VkDescriptorSetLayoutBinding> setLayoutBindings{};
-    for (const auto& kv : bindings)
+    for (const auto& [index, binding] : bindings)
     {
-        setLayoutBindings.push_back(kv.second);
+        setLayoutBindings.push_back(binding);
     }
 
     VkDescriptorSetLayoutCreateInfo descriptorSetLayoutInfo{};
@@ -49,7 +49,7 @@ VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(
         nullptr,
         &m_DescriptorSetLayout) != VK_SUCCESS)
     {
-        FATAL_ERROR("failed to create descriptor set layout!")
+        FATAL_ERROR("failed to create descriptor set layout!");
     }
 }
 
@@ -61,19 +61,19 @@ VulkanDescriptorSetLayout::~VulkanDescriptorSetLayout()
 }
 
 VulkanDescriptorPool::Builder & VulkanDescriptorPool::Builder::AddPoolSize(
-    VkDescriptorType descriptorType, uint32_t count)
+    const VkDescriptorType descriptorType, const uint32_t count)
 {
     m_PoolSizes.push_back({ descriptorType, count });
     return *this;
 }
 
 VulkanDescriptorPool::Builder & VulkanDescriptorPool::Builder::SetPoolFlags(
-    VkDescriptorPoolCreateFlags flags)
+    const VkDescriptorPoolCreateFlags flags)
 {
     m_PoolFlags = flags;
     return *this;
 }
-VulkanDescriptorPool::Builder & VulkanDescriptorPool::Builder::SetMaxSets(uint32_t count)
+VulkanDescriptorPool::Builder & VulkanDescriptorPool::Builder::SetMaxSets(const uint32_t count)
 {
     m_MaxSets = count;
     return *this;
@@ -85,8 +85,8 @@ std::shared_ptr<VulkanDescriptorPool> VulkanDescriptorPool::Builder::Build() con
 }
 
 VulkanDescriptorPool::VulkanDescriptorPool(
-    uint32_t maxSets,
-    VkDescriptorPoolCreateFlags poolFlags,
+    const uint32_t maxSets,
+    const VkDescriptorPoolCreateFlags poolFlags,
     const std::vector<VkDescriptorPoolSize> &poolSizes)
 {
     VkDescriptorPoolCreateInfo descriptorPoolInfo{};
@@ -102,7 +102,7 @@ VulkanDescriptorPool::VulkanDescriptorPool(
         &m_DescriptorPool) !=
         VK_SUCCESS)
     {
-        FATAL_ERROR("failed to create descriptor pool!")
+        FATAL_ERROR("failed to create descriptor pool!");
     }
 }
 
@@ -113,7 +113,7 @@ VulkanDescriptorPool::~VulkanDescriptorPool()
     vkDestroyDescriptorPool(device->GetDevice(), m_DescriptorPool, nullptr);
 }
 
-bool VulkanDescriptorPool::AllocateDescriptorSet(const VkDescriptorSetLayout descriptorSetLayout,
+bool VulkanDescriptorPool::AllocateDescriptorSet(const VkDescriptorSetLayout& descriptorSetLayout,
     VkDescriptorSet &descriptor) const
 {
     VkDescriptorSetAllocateInfo allocInfo{};
@@ -131,7 +131,7 @@ bool VulkanDescriptorPool::AllocateDescriptorSet(const VkDescriptorSetLayout des
     return true;
 }
 
-void VulkanDescriptorPool::FreeDescriptors(std::vector<VkDescriptorSet> &descriptors) const
+void VulkanDescriptorPool::FreeDescriptors(const std::vector<VkDescriptorSet>& descriptors) const
 {
     vkFreeDescriptorSets(
         device->GetDevice(),
@@ -140,7 +140,7 @@ void VulkanDescriptorPool::FreeDescriptors(std::vector<VkDescriptorSet> &descrip
         descriptors.data());
 }
 
-void VulkanDescriptorPool::ResetPool()
+void VulkanDescriptorPool::ResetPool() const
 {
     vkDeviceWaitIdle(device->GetDevice());
 
@@ -151,18 +151,18 @@ VulkanDescriptorWriter::VulkanDescriptorWriter(VulkanDescriptorSetLayout &setLay
     : m_SetLayout{setLayout}, m_Pool{pool} {}
 
 VulkanDescriptorWriter &VulkanDescriptorWriter::WriteBuffer(
-    uint32_t binding, VkDescriptorBufferInfo *bufferInfo)
+    const uint32_t binding, const VkDescriptorBufferInfo* bufferInfo)
 {
     if (m_SetLayout.m_Bindings.count(binding) == 0)
     {
-        FATAL_ERROR("Layout does not contain specified binding")
+        FATAL_ERROR("Layout does not contain specified binding");
     }
 
     auto &bindingDescription = m_SetLayout.m_Bindings[binding];
 
     if (bindingDescription.descriptorCount != 1)
     {
-        FATAL_ERROR("Binding single descriptor info, but binding expects multiple")
+        FATAL_ERROR("Binding single descriptor info, but binding expects multiple");
     }
 
     VkWriteDescriptorSet write{};
@@ -177,7 +177,7 @@ VulkanDescriptorWriter &VulkanDescriptorWriter::WriteBuffer(
 }
 
 VulkanDescriptorWriter & VulkanDescriptorWriter::WriteImage(
-    uint32_t binding, VkDescriptorImageInfo *imageInfo)
+    const uint32_t binding, const VkDescriptorImageInfo* imageInfo)
 {
     assert(m_SetLayout.m_Bindings.count(binding) == 1 && "Layout does not contain specified binding");
 
@@ -200,8 +200,7 @@ VulkanDescriptorWriter & VulkanDescriptorWriter::WriteImage(
 
 bool VulkanDescriptorWriter::Build(VkDescriptorSet &set)
 {
-    bool success = m_Pool.AllocateDescriptorSet(m_SetLayout.GetDescriptorSetLayout(), set);
-    if (!success)
+    if (!m_Pool.AllocateDescriptorSet(m_SetLayout.GetDescriptorSetLayout(), set))
     {
         return false;
     }
@@ -210,12 +209,17 @@ bool VulkanDescriptorWriter::Build(VkDescriptorSet &set)
     return true;
 }
 
-void VulkanDescriptorWriter::Overwrite(VkDescriptorSet &set)
+void VulkanDescriptorWriter::Overwrite(const VkDescriptorSet &set)
 {
-    for (auto &write : m_Writes)
+    for (auto& write : m_Writes)
     {
         write.dstSet = set;
     }
 
-    vkUpdateDescriptorSets(device->GetDevice(), m_Writes.size(), m_Writes.data(), 0, nullptr);
+    vkUpdateDescriptorSets(
+    	device->GetDevice(),
+    	m_Writes.size(),
+    	m_Writes.data(),
+    	0,
+    	nullptr);
 }

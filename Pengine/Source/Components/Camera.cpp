@@ -1,8 +1,9 @@
 #include "Camera.h"
 
+#include "Transform.h"
+
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
-#include "../EventSystem/ResizeEvent.h"
 #include "../Graphics/Renderer.h"
 
 using namespace Pengine;
@@ -22,9 +23,9 @@ void Camera::Copy(const Camera& camera)
 
 void Camera::Move(Camera&& camera) noexcept
 {
-	m_ViewMat4 = std::move(camera.m_ViewMat4);
-	m_ProjectionMat4 = std::move(camera.m_ProjectionMat4);
-	m_ViewProjectionMat4 = std::move(camera.m_ViewProjectionMat4);
+	m_ViewMat4 = camera.m_ViewMat4;
+	m_ProjectionMat4 = camera.m_ProjectionMat4;
+	m_ViewProjectionMat4 = camera.m_ViewProjectionMat4;
 	m_Fov = camera.GetFov();
 	m_Type = camera.GetType();
 	m_Zfar = camera.GetZFar();
@@ -43,7 +44,7 @@ void Camera::UpdateViewProjection()
 }
 
 Camera::Camera(std::shared_ptr<Entity> entity)
-	: m_Entity(entity)
+	: m_Entity(std::move(entity))
 {
 	m_Renderer = Renderer::Create(m_Size);
 
@@ -67,14 +68,20 @@ Camera::Camera(Camera&& camera) noexcept
 	Move(std::move(camera));
 }
 
-void Camera::operator=(const Camera& camera)
+Camera& Camera::operator=(const Camera& camera)
 {
-	Copy(camera);
+	if (this != &camera)
+	{
+		Copy(camera);
+	}
+
+	return *this;
 }
 
-void Camera::operator=(Camera&& camera) noexcept
+Camera& Camera::operator=(Camera&& camera) noexcept
 {
 	Move(std::move(camera));
+	return *this;
 }
 
 void Camera::SetSize(const glm::vec2& size)
@@ -129,7 +136,7 @@ void Camera::SetPerspective(const glm::ivec2& size)
 	UpdateViewProjection();
 }
 
-void Camera::SetType(Type type)
+void Camera::SetType(const Type type)
 {
 	m_Type = type;
 
@@ -154,21 +161,21 @@ void Camera::UpdateProjection()
 	}
 }
 
-void Camera::SetFov(float fov)
+void Camera::SetFov(const float fov)
 {
 	m_Fov = fov;
 
 	UpdateProjection();
 }
 
-void Camera::SetZNear(float zNear)
+void Camera::SetZNear(const float zNear)
 {
 	m_Znear = zNear;
 
 	UpdateProjection();
 }
 
-void Camera::SetZFar(float zFar)
+void Camera::SetZFar(const float zFar)
 {
 	m_Zfar = zFar;
 
