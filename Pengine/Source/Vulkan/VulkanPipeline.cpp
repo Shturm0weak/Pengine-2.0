@@ -301,8 +301,8 @@ std::string VulkanPipeline::CompileShaderModule(const std::string& filepath, con
     std::string spv = Serializer::DeserializeShaderCache(filepath);
     if (spv.empty())
     {
-        shaderc::Compiler compiler;
-        shaderc::CompileOptions options;
+        shaderc::Compiler compiler{};
+        shaderc::CompileOptions options{};
         options.SetOptimizationLevel(shaderc_optimization_level_size);
 
         shaderc::SpvCompilationResult module =

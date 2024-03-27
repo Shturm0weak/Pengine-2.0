@@ -1003,16 +1003,21 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::string& filepath)
 	return std::make_shared<Mesh>(meshName, filepath, vertices, indices);
 }
 
-void Serializer::SerializeShaderCache(std::string filepath, const std::string& code)
+void Serializer::SerializeShaderCache(const std::string& filepath, const std::string& code)
 {
 	const char* directory = "Shaders/Cache/";
-	filepath = directory + Utils::EraseDirectoryFromFilePath(filepath) + FileFormats::Spv();
-	std::ofstream out(filepath, std::ostream::binary);
+	const std::filesystem::path cacheFilepath = directory +
+		Utils::EraseDirectoryFromFilePath(filepath) + FileFormats::Spv();
+	std::ofstream out(cacheFilepath, std::ostream::binary);
+
+	const size_t lastWriteTime = std::filesystem::last_write_time(filepath).time_since_epoch().count();
+
+	out.write((char*)&lastWriteTime, sizeof(size_t));
 	out.write(code.data(), code.size());
 	out.close();
 }
 
-std::string Serializer::DeserializeShaderCache(std::string filepath)
+std::string Serializer::DeserializeShaderCache(const std::string& filepath)
 {
 	if (filepath.empty())
 	{
@@ -1020,17 +1025,27 @@ std::string Serializer::DeserializeShaderCache(std::string filepath)
 	}
 
 	const char* directory = "Shaders/Cache/";
-	filepath = directory + Utils::EraseDirectoryFromFilePath(filepath) + FileFormats::Spv();
-	if (std::filesystem::exists(filepath))
+	const std::filesystem::path cacheFilepath = directory +
+		Utils::EraseDirectoryFromFilePath(filepath) + FileFormats::Spv();
+	if (std::filesystem::exists(cacheFilepath))
 	{
-		std::ifstream in(filepath, std::ifstream::binary);
+		std::ifstream in(cacheFilepath, std::ifstream::binary);
 
 		in.seekg(0, std::ifstream::end);
-		const int size = in.tellg();
+		auto size = in.tellg();
+		size -= sizeof(size_t);
 		in.seekg(0, std::ifstream::beg);
 
 		std::string data;
 		data.resize(size);
+
+		size_t lastWriteTime = 0;
+		in.read((char*)&lastWriteTime, sizeof(size_t));
+
+		if(lastWriteTime != std::filesystem::last_write_time(filepath).time_since_epoch().count())
+		{
+			return {};
+		}
 
 		in.read(data.data(), size);
 

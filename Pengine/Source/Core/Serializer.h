@@ -40,9 +40,9 @@ namespace Pengine
 
 		static std::shared_ptr<Mesh> DeserializeMesh(const std::string& filepath);
 
-		static void SerializeShaderCache(std::string filepath, const std::string& code);
+		static void SerializeShaderCache(const std::string& filepath, const std::string& code);
 
-		static std::string DeserializeShaderCache(std::string filepath);
+		static std::string DeserializeShaderCache(const std::string& filepath);
 
 		static std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> LoadIntermediate(const std::string& filepath);
 
