@@ -191,9 +191,6 @@ endif ()
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{VULKAN_INCLUDE})
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{SPIRV_REFLECT})
 
-add_compile_definitions(_UNICODE)
-add_compile_definitions(UNICODE)
-
 if (WIN32)
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
