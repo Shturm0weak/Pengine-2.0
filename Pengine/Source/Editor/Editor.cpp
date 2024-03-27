@@ -1262,14 +1262,14 @@ void Editor::MoveCamera(const std::shared_ptr<Entity>& camera)
 
 	transform.Rotate(glm::vec3(rotation.x, rotation.y, 0.0f));
 
-	const float rotationSpeed = 1.0f;
+	constexpr double rotationSpeed = 90.0f;
 
-	glm::vec2 delta = Input::Mouse::GetMousePositionDelta() * 0.1;
+	const glm::vec2 delta = Input::Mouse::GetMousePositionDelta() * rotationSpeed * Time::GetDeltaTime();
 
 	transform.Rotate(glm::vec3(rotation.x - glm::radians(delta.y),
 		rotation.y - glm::radians(delta.x), 0));
 
-	const float defaultSpeed = 2.0f;
+	constexpr float defaultSpeed = 2.0f;
 	float speed = defaultSpeed;
 
 	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_SHIFT))

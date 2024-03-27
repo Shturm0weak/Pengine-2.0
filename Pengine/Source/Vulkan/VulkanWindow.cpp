@@ -499,7 +499,9 @@ void VulkanWindow::InitializeImGui()
 	initializeInfo.ImageCount = m_VulkanWindow.ImageCount;
 	initializeInfo.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 	initializeInfo.UseDynamicRendering = false;
-	ImGui_ImplVulkan_Init(&initializeInfo, m_VulkanWindow.RenderPass);
+	initializeInfo.RenderPass = m_VulkanWindow.RenderPass;
+
+	ImGui_ImplVulkan_Init(&initializeInfo);
 	ImGui_ImplVulkan_SetMinImageCount(imageCount);
 
 	// Upload Fonts
@@ -521,7 +523,7 @@ void VulkanWindow::InitializeImGui()
 			FATAL_ERROR("Failed to begin command pool!");
 		}
 
-		ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
+		ImGui_ImplVulkan_CreateFontsTexture();
 
 		VkSubmitInfo endInfo{};
 		endInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -537,6 +539,6 @@ void VulkanWindow::InitializeImGui()
 		}
 
 		vkDeviceWaitIdle(device->GetDevice());
-		ImGui_ImplVulkan_DestroyFontUploadObjects();
+		ImGui_ImplVulkan_DestroyFontsTexture();
 	}
 }
