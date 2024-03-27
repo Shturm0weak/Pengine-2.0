@@ -3,7 +3,7 @@
 #include "../Core/Core.h"
 #include "../Graphics/Texture.h"
 
-#include <vulkan/vulkan.h>
+#include <vma/vk_mem_alloc.h>
 
 namespace Pengine::Vk
 {
@@ -66,7 +66,8 @@ namespace Pengine::Vk
         VkSampler m_Sampler{};
         VkImage m_Image{};
         VkImageLayout m_ImageLayout{};
-        VkDeviceMemory m_ImageMemory{};
+    	VmaAllocation m_VmaAllocation = VK_NULL_HANDLE;
+    	VmaAllocationInfo m_VmaAllocationInfo{};
         VkImageView m_View{};
         VkDescriptorSet m_DescriptorSet{};
         VkImageLayout m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;

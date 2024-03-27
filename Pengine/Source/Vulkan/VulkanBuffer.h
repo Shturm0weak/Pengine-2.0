@@ -3,7 +3,7 @@
 #include "../Core/Core.h"
 #include "../Graphics/Buffer.h"
 
-#include <vulkan/vulkan.h>
+#include <vma/vk_mem_alloc.h>
 
 namespace Pengine::Vk
 {
@@ -14,7 +14,12 @@ namespace Pengine::Vk
         static std::shared_ptr<VulkanBuffer> Create(
             size_t instanceSize,
             uint32_t instanceCount,
-            const std::vector<Usage>& usage);
+            Usage usage,
+            MemoryType memoryType);
+
+    	static std::shared_ptr<VulkanBuffer> CreateStagingBuffer(
+    		VkDeviceSize instanceSize,
+			uint32_t instanceCount);
 
         static VkBufferUsageFlagBits ConvertUsage(Usage usage);
 
@@ -22,9 +27,11 @@ namespace Pengine::Vk
 
         VulkanBuffer(
             VkDeviceSize instanceSize,
-            uint32_t instanceCount,
-            VkBufferUsageFlags usageFlags,
-            VkMemoryPropertyFlags memoryPropertyFlags,
+			uint32_t instanceCount,
+			VkBufferUsageFlags bufferUsageFlags,
+			VmaMemoryUsage memoryUsage,
+			VmaAllocationCreateFlags memoryFlags,
+			MemoryType memoryType,
             VkDeviceSize minOffsetAlignment = 1);
         ~VulkanBuffer() override;
         VulkanBuffer(const VkBuffer&) = delete;
@@ -32,53 +39,46 @@ namespace Pengine::Vk
         VulkanBuffer& operator=(const VkBuffer&) = delete;
     	VulkanBuffer& operator=(VkBuffer&&) = delete;
 
-        [[nodiscard]] virtual void* GetData() override;
+    	[[nodiscard]] virtual void* GetData() const override;
 
-        virtual void WriteToBuffer(void* data, size_t size = -1,
+        virtual void WriteToBuffer(void* data, size_t size,
             size_t offset = 0) override;
 
-        virtual void Copy(const std::shared_ptr<Buffer>& buffer) override;
+        virtual void Copy(
+        	const std::shared_ptr<Buffer>& buffer,
+        	size_t dstOffset) override;
+
+        [[nodiscard]] virtual size_t GetSize() const override { return m_BufferSize; }
 
         [[nodiscard]] virtual uint32_t GetInstanceCount() const override { return m_InstanceCount; }
 
         [[nodiscard]] virtual size_t GetInstanceSize() const override { return m_InstanceSize; }
 
-        virtual void Map(size_t size = -1, size_t offset = 0) override;
-
-        virtual void Unmap() override;
-
-        [[nodiscard]] VkResult Flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0) const;
     	[[nodiscard]] VkDescriptorBufferInfo DescriptorInfo(VkDeviceSize size = VK_WHOLE_SIZE,
             VkDeviceSize offset = 0) const;
-        [[nodiscard]] VkResult Invalidate(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0) const;
-
-        void WriteToIndex(void* data, int index);
-    	[[nodiscard]] VkResult FlushIndex(int index) const;
-        [[nodiscard]] VkDescriptorBufferInfo DescriptorInfoForIndex(int index) const;
-        [[nodiscard]] VkResult InvalidateIndex(int index) const;
 
         [[nodiscard]] VkBuffer GetBuffer() const { return m_Buffer; }
-        [[nodiscard]] void* GetMappedMemory() const { return m_Mapped; }
         [[nodiscard]] VkDeviceSize GetAlignmentSize() const { return m_AlignmentSize; }
         [[nodiscard]] VkBufferUsageFlags GetUsageFlags() const { return m_UsageFlags; }
-        [[nodiscard]] VkMemoryPropertyFlags GetMemoryPropertyFlags() const { return m_MemoryPropertyFlags; }
-        [[nodiscard]] VkDeviceSize GetBufferSize() const { return m_BufferSize; }
+        [[nodiscard]] VmaMemoryUsage GetMemoryUsage() const { return m_MemoryUsage; }
+        [[nodiscard]] VmaAllocationCreateFlags GetMemoryFlags() const { return m_MemoryFlags; }
 
     private:
         static VkDeviceSize GetAlignment(
             VkDeviceSize instanceSize,
             VkDeviceSize minOffsetAlignment);
 
-        void* m_Mapped = nullptr;
         VkBuffer m_Buffer = VK_NULL_HANDLE;
-        VkDeviceMemory m_Memory = VK_NULL_HANDLE;
+        VmaAllocation m_VmaAllocation = VK_NULL_HANDLE;
+    	VmaAllocationInfo m_VmaAllocationInfo{};
 
         VkDeviceSize m_BufferSize;
         uint32_t m_InstanceCount;
         VkDeviceSize m_InstanceSize;
         VkDeviceSize m_AlignmentSize;
         VkBufferUsageFlags m_UsageFlags;
-        VkMemoryPropertyFlags m_MemoryPropertyFlags;
+    	VmaMemoryUsage m_MemoryUsage;
+    	VmaAllocationCreateFlags m_MemoryFlags;
     };
 
 }

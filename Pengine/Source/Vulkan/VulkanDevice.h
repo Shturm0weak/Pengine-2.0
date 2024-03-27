@@ -5,6 +5,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <vma/vk_mem_alloc.h>
+
 #include <vector>
 
 namespace Pengine::Vk
@@ -60,34 +62,45 @@ namespace Pengine::Vk
 
         [[nodiscard]] SwapChainSupportDetails GetSwapChainSupport() const { return QuerySwapChainSupport(m_PhysicalDevice); }
 
-        uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const;
+    	[[nodiscard]] uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const;
 
         [[nodiscard]] QueueFamilyIndices FindPhysicalQueueFamilies() const { return FindQueueFamilies(m_PhysicalDevice); }
 
         [[nodiscard]] VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates,
             VkImageTiling tiling, VkFormatFeatureFlags features) const;
 
+		[[nodiscard]] uint32_t GetVulkanApiVersion() const { return m_ApiVersion; }
+
+    	[[nodiscard]] VmaAllocator GetVmaAllocator() const { return m_VmaAllocator; }
+
         void CreateBuffer(
-            VkDeviceSize size,
-            VkBufferUsageFlags usage,
-            VkMemoryPropertyFlags properties,
-            VkBuffer& buffer,
-            VkDeviceMemory& bufferMemory) const;
+			VkDeviceSize size,
+			VkBufferUsageFlags bufferUsage,
+			VmaMemoryUsage memoryUsage,
+			VmaAllocationCreateFlags memoryFlags,
+			VkBuffer& buffer,
+			VmaAllocation& vmaAllocation,
+			VmaAllocationInfo& vmaAllocationInfo) const;
 
         [[nodiscard]] VkCommandBuffer BeginSingleTimeCommands() const;
 
         void EndSingleTimeCommands(VkCommandBuffer commandBuffer) const;
 
-        void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) const;
+        void CopyBuffer(
+        	VkBuffer srcBuffer,
+        	VkBuffer dstBuffer,
+        	VkDeviceSize size,
+        	VkDeviceSize srcOffset = 0,
+        	VkDeviceSize dstOffset = 0) const;
 
         void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height,
             uint32_t layerCount);
 
-        void CreateImageWithInfo(
+        void CreateImage(
             const VkImageCreateInfo& imageInfo,
-            VkMemoryPropertyFlags properties,
             VkImage& image,
-            VkDeviceMemory& imageMemory) const;
+            VmaAllocation& vmaAllocation,
+            VmaAllocationInfo& vmaAllocationInfo) const;
 
         void TransitionImageLayout(
             VkImage image,
@@ -128,6 +141,8 @@ namespace Pengine::Vk
 
         void CreateCommandPool();
 
+		void CreateVmaAllocator();
+
         bool IsDeviceSuitable(VkPhysicalDevice device);
 
         [[nodiscard]] std::vector<const char*> GetRequiredExtensions() const;
@@ -140,7 +155,7 @@ namespace Pengine::Vk
 
         void HasGflwRequiredInstanceExtensions() const;
 
-        bool CheckDeviceExtensionSupport(VkPhysicalDevice device) const;
+        bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
 
         [[nodiscard]] SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device) const;
 
@@ -149,18 +164,22 @@ namespace Pengine::Vk
         VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
         VkCommandPool m_CommandPool;
 
-            VkDevice m_Device;
-            VkSurfaceKHR m_Surface;
-            VkQueue m_GraphicsQueue;
-            VkQueue m_PresentQueue;
-            uint32_t m_GraphicsFamilyIndex;
-            uint32_t m_PresentFamilyIndex;
+        VkDevice m_Device;
+        VkSurfaceKHR m_Surface;
+        VkQueue m_GraphicsQueue;
+        VkQueue m_PresentQueue;
+        uint32_t m_GraphicsFamilyIndex;
+        uint32_t m_PresentFamilyIndex;
 
-            PFN_vkCmdBeginDebugUtilsLabelEXT m_VkCmdBeginDebugUtilsLabelEXT;
-            PFN_vkCmdEndDebugUtilsLabelEXT m_VkCmdEndDebugUtilsLabelEXT;
+		uint32_t m_ApiVersion = VK_API_VERSION_1_3;
 
-            const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
-            const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-        };
+		VmaAllocator m_VmaAllocator;
+
+        PFN_vkCmdBeginDebugUtilsLabelEXT m_VkCmdBeginDebugUtilsLabelEXT;
+        PFN_vkCmdEndDebugUtilsLabelEXT m_VkCmdEndDebugUtilsLabelEXT;
+
+        const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
+        const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+    };
 
 }

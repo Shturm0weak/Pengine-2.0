@@ -10,38 +10,47 @@ namespace Pengine
 	public:
 		enum class Usage
 		{
-			STORAGE_BUFFER,
 			UNIFORM_BUFFER,
 			VERTEX_BUFFER,
-			INDEX_BUFFER,
-			TRANSFER_SRC,
-			TRANSFER_DST
+			INDEX_BUFFER
+		};
+
+		enum class MemoryType
+		{
+			CPU,
+			GPU
 		};
 
 		static std::shared_ptr<Buffer> Create(
 			size_t instanceSize,
 			uint32_t instanceCount,
-			const std::vector<Usage>& usage);
+			Usage usage,
+			MemoryType memoryType);
 
-		Buffer() = default;
+		Buffer(MemoryType memoryType);
 		virtual ~Buffer() = default;
 		Buffer(const Buffer&) = delete;
 		Buffer& operator=(const Buffer&) = delete;
 
-		virtual void Map(size_t size = -1, size_t offset = 0) = 0;
+		[[nodiscard]] virtual void* GetData() const = 0;
 
-		virtual void Unmap() = 0;
-
-		virtual void* GetData() = 0;
-
-		virtual void WriteToBuffer(void* data, size_t size = -1,
+		virtual void WriteToBuffer(void* data, size_t size,
 			size_t offset = 0) = 0;
 
-		virtual void Copy(const std::shared_ptr<Buffer>& buffer) = 0;
+		virtual void Copy(
+			const std::shared_ptr<Buffer>& buffer,
+			size_t dstOffset) = 0;
+
+		[[nodiscard]] virtual size_t GetSize() const = 0;
 
 		[[nodiscard]] virtual uint32_t GetInstanceCount() const = 0;
 
 		[[nodiscard]] virtual size_t GetInstanceSize() const = 0;
+
+		[[nodiscard]] MemoryType GetMemoryType() const { return m_MemoryType; }
+
+	protected:
+		MemoryType m_MemoryType = MemoryType::CPU;
 	};
 
 }

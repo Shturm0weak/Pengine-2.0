@@ -37,26 +37,24 @@ VulkanTexture::VulkanTexture(const CreateInfo& textureCreateInfo)
         imageInfo.usage |= ConvertUsage(usage);
     }
 
-    device->CreateImageWithInfo(
+    device->CreateImage(
         imageInfo,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
         m_Image,
-        m_ImageMemory);
+        m_VmaAllocation,
+        m_VmaAllocationInfo);
 
     if (!m_Data.empty())
     {
-        std::shared_ptr<Buffer> stagingBuffer = Buffer::Create(
+        std::shared_ptr<VulkanBuffer> stagingBuffer = VulkanBuffer::CreateStagingBuffer(
             textureCreateInfo.channels,
-            m_Size.x * m_Size.y,
-            { Buffer::Usage::TRANSFER_SRC }
-        );
+            m_Size.x * m_Size.y);
 
-        stagingBuffer->WriteToBuffer(m_Data.data());
+        stagingBuffer->WriteToBuffer(m_Data.data(), stagingBuffer->GetSize());
 
         TransitionToWrite();
 
         device->CopyBufferToImage(
-            std::static_pointer_cast<VulkanBuffer>(stagingBuffer)->GetBuffer(),
+            stagingBuffer->GetBuffer(),
             m_Image,
             static_cast<uint32_t>(m_Size.x),
             static_cast<uint32_t>(m_Size.y),
@@ -91,8 +89,7 @@ VulkanTexture::~VulkanTexture()
 
     vkDestroySampler(device->GetDevice(), m_Sampler, nullptr);
     vkDestroyImageView(device->GetDevice(), m_View, nullptr);
-    vkDestroyImage(device->GetDevice(), m_Image, nullptr);
-    vkFreeMemory(device->GetDevice(), m_ImageMemory, nullptr);
+	vmaDestroyImage(device->GetVmaAllocator(), m_Image, m_VmaAllocation);
 
     std::vector<VkDescriptorSet> descriptorSets = { m_DescriptorSet };
     descriptorPool->FreeDescriptors(descriptorSets);

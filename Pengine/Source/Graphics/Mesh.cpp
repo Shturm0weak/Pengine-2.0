@@ -12,33 +12,20 @@ Mesh::Mesh(const std::string& name, const std::string& filepath,
 {
 	m_VertexCount = static_cast<int>(m_RawVertices.size());
 	m_IndexCount = static_cast<int>(m_RawIndices.size());
-	std::shared_ptr<Buffer> stagingBuffer = Buffer::Create(
-		sizeof(m_RawVertices[0]),
-		m_RawVertices.size(),
-		{ Buffer::Usage::TRANSFER_SRC });
-
-	stagingBuffer->WriteToBuffer(m_RawVertices.data());
 
 	m_Vertices = Buffer::Create(
 		sizeof(m_RawVertices[0]),
 		m_RawVertices.size(),
-		{ Buffer::Usage::TRANSFER_DST, Buffer::Usage::VERTEX_BUFFER});
+		Buffer::Usage::VERTEX_BUFFER,
+		Buffer::MemoryType::GPU);
 
-	m_Vertices->Copy(stagingBuffer);
-	stagingBuffer.reset();
-
-	stagingBuffer = Buffer::Create(
-		sizeof(m_RawIndices[0]),
-		m_RawIndices.size(),
-		{ Buffer::Usage::TRANSFER_SRC });
-
-	stagingBuffer->WriteToBuffer(m_RawIndices.data());
+	m_Vertices->WriteToBuffer(m_RawVertices.data(), m_Vertices->GetSize());
 
 	m_Indices = Buffer::Create(
 		sizeof(m_RawIndices[0]),
 		m_RawIndices.size(),
-		{ Buffer::Usage::TRANSFER_DST, Buffer::Usage::INDEX_BUFFER });
+		Buffer::Usage::INDEX_BUFFER,
+		Buffer::MemoryType::GPU);
 
-	m_Indices->Copy(stagingBuffer);
-	stagingBuffer.reset();
+	m_Indices->WriteToBuffer(m_RawIndices.data(), m_Indices->GetSize());
 }

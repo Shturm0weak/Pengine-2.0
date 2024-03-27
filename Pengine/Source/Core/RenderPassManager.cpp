@@ -129,8 +129,11 @@ void RenderPassManager::CreateGBuffer()
 	};
 
 	//TODO: all these staging buffers make written to the gpu memory in the end of commands recording.
-	createInfo.buffersByName["GlobalBuffer"] = Buffer::Create(sizeof(GlobalData), 1,
-		{ Buffer::Usage::TRANSFER_SRC, Buffer::Usage::UNIFORM_BUFFER });
+	createInfo.buffersByName["GlobalBuffer"] = Buffer::Create(
+		sizeof(GlobalData),
+		1,
+		Buffer::Usage::UNIFORM_BUFFER,
+		Buffer::MemoryType::CPU);
 
 	createInfo.buffersByName["InstanceBuffer"] = nullptr;
 
@@ -144,7 +147,9 @@ void RenderPassManager::CreateGBuffer()
 	{
 		GlobalData globalData{};
 		globalData.viewProjectionMat4 = renderInfo.camera->GetComponent<Camera>().GetViewProjectionMat4();
-		renderInfo.submitInfo.renderPass->GetBuffer("GlobalBuffer")->WriteToBuffer(&globalData);
+		renderInfo.submitInfo.renderPass->GetBuffer("GlobalBuffer")->WriteToBuffer(
+			&globalData,
+			sizeof(GlobalData));
 
 		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
@@ -173,8 +178,11 @@ void RenderPassManager::CreateGBuffer()
 		std::shared_ptr<Buffer> instanceBuffer = renderInfo.submitInfo.renderPass->GetBuffer("InstanceBuffer");
 		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
 		{
-			instanceBuffer = Buffer::Create(sizeof(InstanceData), renderableCount,
-				{ Buffer::Usage::TRANSFER_SRC, Buffer::Usage::VERTEX_BUFFER });
+			instanceBuffer = Buffer::Create(
+				sizeof(InstanceData),
+				renderableCount,
+				Buffer::Usage::VERTEX_BUFFER,
+				Buffer::MemoryType::CPU);
 
 			renderInfo.submitInfo.renderPass->SetBuffer("InstanceBuffer", instanceBuffer);
 		}
@@ -238,7 +246,7 @@ void RenderPassManager::CreateGBuffer()
 		// just once when all instance data is collected.
 		if (instanceBuffer && !instanceDatas.empty())
 		{
-			instanceBuffer->WriteToBuffer(instanceDatas.data());
+			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(InstanceData));
 		}
 	};
 

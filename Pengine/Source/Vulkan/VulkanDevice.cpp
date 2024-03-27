@@ -3,6 +3,9 @@
 #include "../Core/Window.h"
 #include "../Core/Logger.h"
 
+#define VMA_IMPLEMENTATION
+#include <vma/vk_mem_alloc.h>
+
 #include <cstring>
 #include <iostream>
 #include <set>
@@ -68,7 +71,7 @@ void VulkanDevice::CreateInstance(const std::string& applicationName)
     appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
     appInfo.pEngineName = "Pengine";
     appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.apiVersion = VK_API_VERSION_1_3;
+    appInfo.apiVersion = GetVulkanApiVersion();
 
     VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -190,18 +193,33 @@ void VulkanDevice::CreateLogicalDevice()
 
 void VulkanDevice::CreateCommandPool()
 {
-    QueueFamilyIndices queueFamilyIndices = FindPhysicalQueueFamilies();
+	QueueFamilyIndices queueFamilyIndices = FindPhysicalQueueFamilies();
 
-    VkCommandPoolCreateInfo poolInfo{};
-    poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily;
-    poolInfo.flags =
-        VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+	VkCommandPoolCreateInfo poolInfo{};
+	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily;
+	poolInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
-    if (vkCreateCommandPool(m_Device, &poolInfo, nullptr, &m_CommandPool) != VK_SUCCESS)
-    {
-        FATAL_ERROR("Failed to create command pool!");
-    }
+	if (vkCreateCommandPool(m_Device, &poolInfo, nullptr, &m_CommandPool) != VK_SUCCESS)
+	{
+		FATAL_ERROR("Failed to create command pool!");
+	}
+}
+
+void VulkanDevice::CreateVmaAllocator()
+{
+	VmaAllocatorCreateInfo allocatorInfo = {};
+
+    allocatorInfo.physicalDevice = m_PhysicalDevice;
+    allocatorInfo.device = m_Device;
+    allocatorInfo.instance = m_Instance;
+    allocatorInfo.vulkanApiVersion = GetVulkanApiVersion();
+
+	const VkResult result = vmaCreateAllocator(&allocatorInfo, &m_VmaAllocator);
+	if (result != VK_SUCCESS)
+	{
+		FATAL_ERROR("Failed to create Vma allocator!");
+	}
 }
 
 void VulkanDevice::CreateSurface(GLFWwindow* window)
@@ -349,7 +367,7 @@ void VulkanDevice::HasGflwRequiredInstanceExtensions() const
     }
 }
 
-bool VulkanDevice::CheckDeviceExtensionSupport(const VkPhysicalDevice device) const
+bool VulkanDevice::CheckDeviceExtensionSupport(const VkPhysicalDevice device)
 {
     uint32_t extensionCount;
     vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
@@ -363,7 +381,7 @@ bool VulkanDevice::CheckDeviceExtensionSupport(const VkPhysicalDevice device) co
 
     std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
 
-    for (const auto &extension : availableExtensions)
+    for (const auto& extension : availableExtensions)
     {
         requiredExtensions.erase(extension.extensionName);
     }
@@ -473,6 +491,7 @@ VulkanDevice::VulkanDevice(GLFWwindow* window, const std::string& applicationNam
     CreateSurface(window);
     PickPhysicalDevice();
     CreateLogicalDevice();
+	CreateVmaAllocator();
     CreateCommandPool();
 }
 
@@ -486,6 +505,7 @@ VulkanDevice::~VulkanDevice()
     // Deleted via VulkanWindow::~VulkanWindow() -> ImGui_ImplVulkanH_DestroyWindow();
     //vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
 
+	vmaDestroyAllocator(m_VmaAllocator);
     vkDestroyCommandPool(m_Device, m_CommandPool, nullptr);
     vkDestroyDevice(m_Device, nullptr);
     vkDestroyInstance(m_Instance, nullptr);
@@ -511,36 +531,33 @@ uint32_t VulkanDevice::FindMemoryType(const uint32_t typeFilter, const VkMemoryP
 
 void VulkanDevice::CreateBuffer(
     const VkDeviceSize size,
-    const VkBufferUsageFlags usage,
-    const VkMemoryPropertyFlags properties,
-    VkBuffer &buffer,
-    VkDeviceMemory &bufferMemory) const
+    const VkBufferUsageFlags bufferUsage,
+    const VmaMemoryUsage memoryUsage,
+    const VmaAllocationCreateFlags memoryFlags,
+    VkBuffer& buffer,
+    VmaAllocation& vmaAllocation,
+    VmaAllocationInfo& vmaAllocationInfo) const
 {
-    VkBufferCreateInfo bufferInfo{};
-    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    bufferInfo.size = size;
-    bufferInfo.usage = usage;
-    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    VkBufferCreateInfo bufferCreateInfo{};
+    bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferCreateInfo.size = size;
+    bufferCreateInfo.usage = bufferUsage;
+    bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if (vkCreateBuffer(m_Device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS)
+	VmaAllocationCreateInfo allocationCreateInfo{};
+	allocationCreateInfo.usage = memoryUsage;
+	allocationCreateInfo.flags = memoryFlags;
+
+    if (vmaCreateBuffer(
+    	m_VmaAllocator,
+    	&bufferCreateInfo,
+    	&allocationCreateInfo,
+    	&buffer,
+    	&vmaAllocation,
+    	&vmaAllocationInfo) != VK_SUCCESS)
     {
         FATAL_ERROR("Failed to create buffer!");
     }
-
-    VkMemoryRequirements memRequirements;
-    vkGetBufferMemoryRequirements(m_Device, buffer, &memRequirements);
-
-    VkMemoryAllocateInfo allocInfo{};
-    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, properties);
-
-    if (vkAllocateMemory(m_Device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
-    {
-        FATAL_ERROR("Failed to allocate buffer memory!");
-    }
-
-    vkBindBufferMemory(m_Device, buffer, bufferMemory, 0);
 }
 
 VkCommandBuffer VulkanDevice::BeginSingleTimeCommands() const
@@ -581,13 +598,15 @@ void VulkanDevice::EndSingleTimeCommands(const VkCommandBuffer commandBuffer) co
 void VulkanDevice::CopyBuffer(
 	const VkBuffer srcBuffer,
 	const VkBuffer dstBuffer,
-	const VkDeviceSize size) const
+	const VkDeviceSize size,
+	const VkDeviceSize srcOffset,
+	const VkDeviceSize dstOffset) const
 {
     const VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
 
     VkBufferCopy copyRegion{};
-    copyRegion.srcOffset = 0;  // Optional
-    copyRegion.dstOffset = 0;  // Optional
+    copyRegion.srcOffset = srcOffset;
+    copyRegion.dstOffset = dstOffset;
     copyRegion.size = size;
     vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
 
@@ -613,8 +632,8 @@ void VulkanDevice::CopyBufferToImage(
     region.imageSubresource.baseArrayLayer = 0;
     region.imageSubresource.layerCount = layerCount;
 
-    region.imageOffset = {0, 0, 0};
-    region.imageExtent = {width, height, 1};
+    region.imageOffset = { 0, 0, 0 };
+    region.imageExtent = { width, height, 1 };
 
     vkCmdCopyBufferToImage(
         commandBuffer,
@@ -627,33 +646,24 @@ void VulkanDevice::CopyBufferToImage(
     EndSingleTimeCommands(commandBuffer);
 }
 
-void VulkanDevice::CreateImageWithInfo(
-	const VkImageCreateInfo &imageInfo,
-    const VkMemoryPropertyFlags properties,
-    VkImage &image,
-    VkDeviceMemory& imageMemory) const
+void VulkanDevice::CreateImage(
+	const VkImageCreateInfo& imageInfo,
+	VkImage& image,
+	VmaAllocation& vmaAllocation,
+	VmaAllocationInfo& vmaAllocationInfo) const
 {
-    if (vkCreateImage(m_Device, &imageInfo, nullptr, &image) != VK_SUCCESS)
+	VmaAllocationCreateInfo allocationCreateInfo{};
+	allocationCreateInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
+
+	if (vmaCreateImage(
+		m_VmaAllocator,
+		&imageInfo,
+		&allocationCreateInfo,
+		&image,
+		&vmaAllocation,
+		&vmaAllocationInfo) != VK_SUCCESS)
     {
         FATAL_ERROR("Failed to create image!");
-    }
-
-    VkMemoryRequirements memRequirements;
-    vkGetImageMemoryRequirements(m_Device, image, &memRequirements);
-
-    VkMemoryAllocateInfo allocInfo{};
-    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, properties);
-
-    if (vkAllocateMemory(m_Device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
-    {
-        FATAL_ERROR("Failed to allocate image memory!");
-    }
-
-    if (vkBindImageMemory(m_Device, image, imageMemory, 0) != VK_SUCCESS)
-    {
-        FATAL_ERROR("Failed to bind image memory!");
     }
 }
 

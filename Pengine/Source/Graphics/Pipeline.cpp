@@ -36,13 +36,13 @@ Pipeline::Pipeline(const CreateInfo& pipelineCreateInfo) : createInfo(pipelineCr
 					bufferSize += Utils::StringTypeToSize(value.type);
 				}
 
-				// Performance issue can appear due to Buffer::Usage::TRANSFER_SRC.
+				// Performance issue can appear due to Buffer::MemoryType::CPU.
 				const auto buffer = Buffer::Create(
 					bufferSize,
 					1,
-					{Buffer::Usage::TRANSFER_SRC, Buffer::Usage::UNIFORM_BUFFER});
+					Buffer::Usage::UNIFORM_BUFFER,
+					Buffer::MemoryType::CPU);
 
-				buffer->Map();
 				m_BuffersByName[binding.name] = buffer;
 				m_UniformWriter->WriteBuffer(location, buffer);
 			}
@@ -63,13 +63,13 @@ Pipeline::Pipeline(const CreateInfo& pipelineCreateInfo) : createInfo(pipelineCr
 					bufferSize += Utils::StringTypeToSize(value.type);
 				}
 
-				// Performance issue can appear due to Buffer::Usage::TRANSFER_SRC.
+				// Performance issue can appear due to Buffer::MemoryType::CPU.
 				const auto buffer = Buffer::Create(
 					bufferSize,
 					MAX_MATERIALS,
-					{Buffer::Usage::TRANSFER_SRC, Buffer::Usage::UNIFORM_BUFFER});
+					Buffer::Usage::UNIFORM_BUFFER,
+					Buffer::MemoryType::CPU);
 
-				buffer->Map();
 				m_BuffersByName[binding.name] = buffer;
 			}
 		}
