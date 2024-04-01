@@ -10,7 +10,7 @@ namespace Pengine
 	class PENGINE_API Scene : public Asset, public std::enable_shared_from_this<Scene>
 	{
 	public:
-		Scene(const std::string& name, const std::string& filepath);
+		Scene(const std::string& name, const std::filesystem::path& filepath);
 		Scene(const Scene& scene);
 		~Scene();
 		Scene& operator=(const Scene& scene);
@@ -27,7 +27,7 @@ namespace Pengine
 
 		void SetTag(const std::string& tag) { m_Tag = tag; }
 
-		void SetFilepath(const std::string& filepath) { m_Filepath = filepath; }
+		void SetFilepath(const std::filesystem::path& filepath) { m_Filepath = filepath; }
 
 		std::string GetTag() const { return m_Tag; }
 

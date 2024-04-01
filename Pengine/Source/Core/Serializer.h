@@ -20,35 +20,35 @@ namespace Pengine
 	class PENGINE_API Serializer
 	{
 	public:
-		static EngineConfig DeserializeEngineConfig(const std::string& filepath);
+		static EngineConfig DeserializeEngineConfig(const std::filesystem::path& filepath);
 
 		static void GenerateFilesUUID(const std::filesystem::path& directory);
 
-		static std::string GenerateFileUUID(const std::string& filepath);
+		static std::string GenerateFileUUID(const std::filesystem::path& filepath);
 
 		//static void SerializeUUID();
 
 		//static void LoadFilesUUID();
 
-		static std::vector<Pipeline::CreateInfo> LoadBaseMaterial(const std::string& filepath);
+		static std::vector<Pipeline::CreateInfo> LoadBaseMaterial(const std::filesystem::path& filepath);
 
-		static Material::CreateInfo LoadMaterial(const std::string& filepath);
+		static Material::CreateInfo LoadMaterial(const std::filesystem::path& filepath);
 
 		static void SerializeMaterial(const std::shared_ptr<Material>& material);
 
-		static void SerializeMesh(const std::string& directory, const std::shared_ptr<Mesh>& mesh);
+		static void SerializeMesh(const std::filesystem::path& directory, const std::shared_ptr<Mesh>& mesh);
 
-		static std::shared_ptr<Mesh> DeserializeMesh(const std::string& filepath);
+		static std::shared_ptr<Mesh> DeserializeMesh(const std::filesystem::path& filepath);
 
-		static void SerializeShaderCache(const std::string& filepath, const std::string& code);
+		static void SerializeShaderCache(const std::filesystem::path& filepath, const std::string& code);
 
-		static std::string DeserializeShaderCache(const std::string& filepath);
+		static std::string DeserializeShaderCache(const std::filesystem::path& filepath);
 
-		static std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> LoadIntermediate(const std::string& filepath);
+		static std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> LoadIntermediate(const std::filesystem::path& filepath);
 
-		static std::shared_ptr<Mesh> GenerateMesh(aiMesh* aiMesh, const std::string& directory);
+		static std::shared_ptr<Mesh> GenerateMesh(aiMesh* aiMesh, const std::filesystem::path& directory);
 
-		static std::shared_ptr<Material> GenerateMaterial(const aiMaterial* aiMaterial, const std::string& directory);
+		static std::shared_ptr<Material> GenerateMaterial(const aiMaterial* aiMaterial, const std::filesystem::path& directory);
 
 		static std::shared_ptr<Entity> GenerateEntity(const aiNode* aiNode,
 			const std::unordered_map<size_t, std::shared_ptr<Mesh>>& meshesByIndex,
@@ -59,9 +59,9 @@ namespace Pengine
 		static std::shared_ptr<Entity> DeserializeEntity(const YAML::Node& in, const std::shared_ptr<Scene>& scene,
 			std::vector<std::string>& childs);
 
-		static void SerializePrefab(const std::string& filepath, const std::shared_ptr<Entity>& entity);
+		static void SerializePrefab(const std::filesystem::path& filepath, const std::shared_ptr<Entity>& entity);
 
-		static void DeserializePrefab(const std::string& filepath, const std::shared_ptr<Scene>& scene);
+		static void DeserializePrefab(const std::filesystem::path& filepath, const std::shared_ptr<Scene>& scene);
 
 		static void SerializeTransform(YAML::Emitter& out, const std::shared_ptr<Entity>& entity);
 
@@ -79,9 +79,9 @@ namespace Pengine
 
 		static void DeserializeCamera(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
 
-		static void SerializeScene(const std::string& filepath, const std::shared_ptr<Scene>& scene);
+		static void SerializeScene(const std::filesystem::path& filepath, const std::shared_ptr<Scene>& scene);
 
-		static std::shared_ptr<Scene> DeserializeScene(const std::string& filepath);
+		static std::shared_ptr<Scene> DeserializeScene(const std::filesystem::path& filepath);
 	};
 
 }

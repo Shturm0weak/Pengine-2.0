@@ -31,6 +31,6 @@ namespace Pengine
 		std::ofstream m_OutFile;
 	};
 
-#define FATAL_ERROR(message) Logger::FatalError(std::string(message) + " At: " + __FILE__ + " " + std::to_string(__LINE__))
+#define FATAL_ERROR(message) Logger::FatalError(std::string(message) + " At: " + __FILE__ + " " + std::to_string(__LINE__)); throw std::runtime_error(message)
 
 }

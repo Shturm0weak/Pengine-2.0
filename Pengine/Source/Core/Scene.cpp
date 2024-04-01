@@ -21,7 +21,7 @@ void Scene::Copy(const Scene& scene)
 	//}
 }
 
-Scene::Scene(const std::string& name, const std::string& filepath)
+Scene::Scene(const std::string& name, const std::filesystem::path& filepath)
 	: Asset(name, filepath)
 {
 

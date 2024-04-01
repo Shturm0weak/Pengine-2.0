@@ -347,7 +347,7 @@ namespace Pengine
 			int channels = 0;
 			uint32_t mipLevels = 1;
 			std::string name;
-			std::string filepath;
+			std::filesystem::path filepath;
 			Format format;
 			AspectMask aspectMask;
 			std::vector<Usage> usage;
@@ -355,7 +355,7 @@ namespace Pengine
 
 		static std::shared_ptr<Texture> Create(const CreateInfo& textureCreateInfo);
 
-		static std::shared_ptr<Texture> Load(const std::string& filepath);
+		static std::shared_ptr<Texture> Load(const std::filesystem::path& filepath);
 		
 		explicit Texture(const CreateInfo& textureCreateInfo);
 		virtual ~Texture() = default;

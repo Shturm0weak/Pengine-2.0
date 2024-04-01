@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <array>
 #include <functional>
+#include <filesystem>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -54,6 +55,14 @@
 inline constexpr char const* none = "None";
 inline constexpr char const* plane = "Plane";
 
+struct path_hash
+{
+	std::size_t operator()(const std::filesystem::path& path) const
+	{
+		return hash_value(path);
+	}
+};
+
 template<typename T>
 std::string GetTypeName()
 {
@@ -80,8 +89,8 @@ inline GraphicsAPI graphicsAPI;
 
 namespace Pengine
 {
-	inline std::unordered_map<std::string, std::string> filepathByUuid;
-	inline std::unordered_map<std::string, std::string> uuidByFilepath;
+	inline std::unordered_map<std::string, std::filesystem::path> filepathByUuid;
+	inline std::map<std::filesystem::path, std::string> uuidByFilepath;
 
 	// TODO: Maybe move this somewhere!
 	inline int drawCallsCount;

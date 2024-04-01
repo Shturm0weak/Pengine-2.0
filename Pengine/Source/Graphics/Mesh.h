@@ -11,8 +11,11 @@ namespace Pengine
 	class PENGINE_API Mesh final : public Asset
 	{
 	public:
-		Mesh(const std::string& name, const std::string& filepath,
-			std::vector<float>& vertices, std::vector<uint32_t>& indices);
+		Mesh(
+			const std::string& name,
+			const std::filesystem::path& filepath,
+			std::vector<float>& vertices,
+			std::vector<uint32_t>& indices);
 		Mesh(const Mesh&) = delete;
 		Mesh(Mesh&&) = delete;
 		Mesh& operator=(const Mesh&) = delete;

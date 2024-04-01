@@ -4,12 +4,6 @@ project(Pengine VERSION 1.0)
 
 set(APP_NAME "SandBox")
 
-if (WIN32)
-	set(GLFW_PATH "C:/GLFW")
-	set(GLFW_PATH_LIB ${GLFW_PATH}/Lib)
-	set(GLFW_PATH_INCLUDE ${GLFW_PATH}/Includes)
-endif ()
-
 if (UNIX)
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif ()

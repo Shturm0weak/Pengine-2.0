@@ -15,14 +15,17 @@ namespace Pengine
 		MeshManager(const MeshManager&) = delete;
 		MeshManager& operator=(const MeshManager&) = delete;
 
-		std::shared_ptr<Mesh> CreateMesh(const std::string& name, const std::string& filepath,
-			std::vector<float>& vertices, std::vector<uint32_t>& indices);
+		std::shared_ptr<Mesh> CreateMesh(
+			const std::string& name,
+			const std::filesystem::path& filepath,
+			std::vector<float>& vertices,
+			std::vector<uint32_t>& indices);
 
-		std::shared_ptr<Mesh> LoadMesh(const std::string& filepath);
+		std::shared_ptr<Mesh> LoadMesh(const std::filesystem::path& filepath);
 
-		std::shared_ptr<Mesh> GetMesh(const std::string& filepath);
+		std::shared_ptr<Mesh> GetMesh(const std::filesystem::path& filepath);
 
-		const std::unordered_map<std::string, std::shared_ptr<Mesh>>& GetMeshes() const { return m_MeshesByFilepath; }
+		const std::unordered_map<std::filesystem::path, std::shared_ptr<Mesh>, path_hash>& GetMeshes() const { return m_MeshesByFilepath; }
 
 		void ShutDown();
 
@@ -30,7 +33,7 @@ namespace Pengine
 		MeshManager() = default;
 		~MeshManager() = default;
 
-		std::unordered_map<std::string, std::shared_ptr<Mesh>> m_MeshesByFilepath;
+		std::unordered_map<std::filesystem::path, std::shared_ptr<Mesh>, path_hash> m_MeshesByFilepath;
 	};
 
 }

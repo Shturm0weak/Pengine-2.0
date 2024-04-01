@@ -34,20 +34,20 @@ namespace Pengine
 			std::shared_ptr<BaseMaterial> baseMaterial;
 		};
 
-		static std::shared_ptr<Material> Create(const std::string& name, const std::string& filepath,
+		static std::shared_ptr<Material> Create(const std::string& name, const std::filesystem::path& filepath,
 			const CreateInfo& createInfo);
 
-		static std::shared_ptr<Material> Load(const std::string& filepath);
+		static std::shared_ptr<Material> Load(const std::filesystem::path& filepath);
 
 		static void Save(const std::shared_ptr<Material>& material);
 
-		static std::shared_ptr<Material> Inherit(const std::string& name, const std::string& filepath,
+		static std::shared_ptr<Material> Inherit(const std::string& name, const std::filesystem::path& filepath,
 			const std::shared_ptr<BaseMaterial>& baseMaterial);
 
-		static std::shared_ptr<Material> Clone(const std::string& name, const std::string& filepath,
+		static std::shared_ptr<Material> Clone(const std::string& name, const std::filesystem::path& filepath,
 			const std::shared_ptr<Material>& material);
 
-		Material(const std::string& name, const std::string& filepath,
+		Material(const std::string& name, const std::filesystem::path& filepath,
 			const CreateInfo& createInfo);
 		~Material();
 		Material(const Material&) = delete;

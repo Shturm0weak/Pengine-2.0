@@ -1,5 +1,6 @@
 #include "Core/EntryPoint.h"
 #include "ExampleApplication.h"
+#include "Core/Logger.h"
 
 //int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, int nCmdShow)
 //{
@@ -27,7 +28,7 @@ int main()
 	}
 	catch (const std::runtime_error& runtimeError)
 	{
-		//__debugbreak();
+		
 	}
 
 	return 0;

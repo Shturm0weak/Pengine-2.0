@@ -1,6 +1,7 @@
 #Directories
-Build/
+*Build*/
 *build*/
+.vscode/
 .idea/
 SandBox/Meshes/LargeFiles/BistroOptimized/
 

@@ -950,7 +950,7 @@ void Editor::GameObjectPopUpMenu(const std::shared_ptr<Scene>& scene)
 
 		if (ImGui::MenuItem("Save Scene"))
 		{
-			std::string sceneFilepath = scene->GetFilepath();
+			std::string sceneFilepath = scene->GetFilepath().string();
 			if (sceneFilepath == none)
 			{
 				sceneFilepath = "Scenes/" + scene->GetName() + FileFormats::Scene();
@@ -1018,19 +1018,21 @@ void Editor::AssetBrowser()
 
 		for (auto& directoryIter : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
-			const std::string path = Utils::Replace(directoryIter.path().string(), '\\', '/');
-			if (Utils::Contains(path, ".cpp") || Utils::Contains(path, ".h"))
+			const std::filesystem::path path = directoryIter.path();
+			if (Utils::Contains(path.string(), ".cpp") || Utils::Contains(path.string(), ".h"))
 			{
 				continue;
 			}
 
-			const std::string filename = Utils::EraseDirectoryFromFilePath(path);
+			const std::string filename = path.filename().string();
 			const std::string format = Utils::GetFileFormat(path);
 			ImTextureID currentIcon;
 
 			if (FileFormats::IsAsset(format))
 			{
-				if (!std::filesystem::exists(path + FileFormats::Meta()))
+				std::filesystem::path metaFilePath = path;
+				metaFilePath.concat(FileFormats::Meta());
+				if (!std::filesystem::exists(metaFilePath))
 				{
 					Serializer::GenerateFileUUID(path);
 				}
@@ -1057,7 +1059,7 @@ void Editor::AssetBrowser()
 			{
 				currentIcon = meshIconId;
 			}
-			else if (FileFormats::IsTexture(path))
+			else if (FileFormats::IsTexture(format))
 			{
 				if (const std::shared_ptr<Texture>& texture = TextureManager::GetInstance().GetTexture(path))
 				{
@@ -1082,7 +1084,8 @@ void Editor::AssetBrowser()
 
 			if (ImGui::BeginDragDropSource())
 			{
-				const char* assetPath = path.c_str();
+				std::string dragDropSource = path.string();
+				const char* assetPath = dragDropSource.data();
 				const size_t size = strlen(assetPath);
 				ImGui::SetDragDropPayload("ASSETS_BROWSER_ITEM", assetPath, size);
 				ImGui::EndDragDropSource();
@@ -1096,7 +1099,7 @@ void Editor::AssetBrowser()
 				{
 					if (ImGui::MenuItem("Generate meshes"))
 					{
-						Serializer::LoadIntermediate(Utils::Erase(path, m_RootDirectory.string() + "/"));
+						Serializer::LoadIntermediate(Utils::Erase(path.string(), m_RootDirectory.string() + "/"));
 					}
 				}
 				else if (ImGui::MenuItem("Delete file"))
@@ -1363,9 +1366,7 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 
 				if (FileFormats::Mesh() == Utils::GetFileFormat(path))
 				{
-					path = Utils::Erase(path, m_RootDirectory.string() + "/");
-
-					r3d.mesh = MeshManager::GetInstance().LoadMesh(path);
+					r3d.mesh = MeshManager::GetInstance().LoadMesh(Utils::GetShortFilepath(path));
 				}
 			}
 
@@ -1569,12 +1570,12 @@ void Editor::DeleteFileMenu::Update()
 	if (opened && ImGui::Begin("Deleting directory or file", &opened,
 		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar))
 	{
-		ImGui::Text("Are you sure you want to delete\n%s?", Utils::EraseDirectoryFromFilePath(filepath.string()).c_str());
+		ImGui::Text("Are you sure you want to delete\n%s?", filepath.filename().c_str());
 		if (ImGui::Button("Yes"))
 		{
 			if (Utils::GetFileFormat(filepath.string()).empty())
 			{
-				//Utils::DeleteDirectory(filepath.wstring(), true);
+				std::filesystem::remove_all(filepath);
 			}
 			else
 			{

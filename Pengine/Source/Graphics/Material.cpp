@@ -7,15 +7,15 @@
 
 using namespace Pengine;
 
-std::shared_ptr<Material> Material::Create(const std::string& name, const std::string& filepath,
+std::shared_ptr<Material> Material::Create(const std::string& name, const std::filesystem::path& filepath,
 	const CreateInfo& createInfo)
 {
 	return std::make_shared<Material>(name, filepath, createInfo);
 }
 
-std::shared_ptr<Material> Material::Load(const std::string& filepath)
+std::shared_ptr<Material> Material::Load(const std::filesystem::path& filepath)
 {
-	return Create(filepath, filepath, Serializer::LoadMaterial(filepath));
+	return Create(Utils::GetFilename(filepath), filepath, Serializer::LoadMaterial(filepath));
 }
 
 void Material::Save(const std::shared_ptr<Material>& material)
@@ -23,7 +23,7 @@ void Material::Save(const std::shared_ptr<Material>& material)
 	Serializer::SerializeMaterial(material);
 }
 
-std::shared_ptr<Material> Material::Inherit(const std::string& name, const std::string& filepath,
+std::shared_ptr<Material> Material::Inherit(const std::string& name, const std::filesystem::path& filepath,
 	const std::shared_ptr<BaseMaterial>& baseMaterial)
 {
 	CreateInfo createInfo{};
@@ -43,7 +43,7 @@ std::shared_ptr<Material> Material::Inherit(const std::string& name, const std::
 	return Create(name, filepath, createInfo);
 }
 
-std::shared_ptr<Material> Material::Clone(const std::string& name, const std::string& filepath,
+std::shared_ptr<Material> Material::Clone(const std::string& name, const std::filesystem::path& filepath,
 	const std::shared_ptr<Material>& material)
 {
 	CreateInfo createInfo{};
@@ -55,7 +55,7 @@ std::shared_ptr<Material> Material::Clone(const std::string& name, const std::st
 		{
 			if (binding.type == UniformLayout::Type::SAMPLER)
 			{
-				createInfo.renderPassInfo[renderPass].texturesByName[binding.name] = material->GetTexture(binding.name)->GetFilepath();
+				createInfo.renderPassInfo[renderPass].texturesByName[binding.name] = material->GetTexture(binding.name)->GetFilepath().string();
 			}
 			else if (binding.type == UniformLayout::Type::BUFFER)
 			{
@@ -98,7 +98,7 @@ std::shared_ptr<Material> Material::Clone(const std::string& name, const std::st
 	return Create(name, filepath, createInfo);
 }
 
-Material::Material(const std::string& name, const std::string& filepath,
+Material::Material(const std::string& name, const std::filesystem::path& filepath,
 	const CreateInfo& createInfo)
 	: Asset(name, filepath)
 	, m_BaseMaterial(createInfo.baseMaterial)

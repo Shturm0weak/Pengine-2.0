@@ -17,13 +17,14 @@ namespace Pengine
 	public:
 		static std::shared_ptr<BaseMaterial> Create(
 			const std::string& name,
-			const std::string& filepath, 
+			const std::filesystem::path& filepath,
 			const std::vector<Pipeline::CreateInfo>& pipelineCreateInfos);
 
-		static std::shared_ptr<BaseMaterial> Load(const std::string& filepath);
+		static std::shared_ptr<BaseMaterial> Load(const std::filesystem::path& filepath);
 
 		BaseMaterial(
-			const std::string& name, const std::string& filepath,
+			const std::string& name,
+			const std::filesystem::path& filepath,
 			const std::vector<Pipeline::CreateInfo>& pipelineCreateInfos);
 		~BaseMaterial();
 		BaseMaterial(const BaseMaterial&) = delete;

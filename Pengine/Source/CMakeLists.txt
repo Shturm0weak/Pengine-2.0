@@ -35,7 +35,6 @@ set(CORE_SOURCES
 	Core/SceneManager.cpp Core/SceneManager.h
 	Core/Serializer.cpp Core/Serializer.h
 	Core/TextureManager.cpp Core/TextureManager.h
-	Core/TextureSlots.cpp Core/TextureSlots.h
 	Core/Time.cpp Core/Time.h
 	Core/Timer.cpp Core/Timer.h
 	Core/UUID.cpp Core/UUID.h
@@ -125,13 +124,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE YAML)
 target_link_libraries(${PROJECT_NAME} PRIVATE ImGui)
 target_link_libraries(${PROJECT_NAME} PRIVATE assimp)
 
-if (WIN32)
-	find_library(GLFW_LIBRARY NAMES glfw3 HINTS ${GLFW_PATH_LIB} REQUIRED)
-elseif (UNIX)
-	find_package(glfw3 3.3 REQUIRED)
-	set(GLFW_LIBRARY glfw)
-endif ()
-
+find_library(GLFW_LIBRARY NAMES glfw glfw3 HINTS $ENV{GLFW_PATH_LIB} REQUIRED)
 if (GLFW_LIBRARY)
 	message(${GLFW_LIBRARY} " has been found")
 	target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIBRARY})
@@ -139,13 +132,7 @@ else ()
 	message(FATAL_ERROR "GLFW library has not been found")
 endif ()
 
-if (WIN32)
-	set(VULKAN_LIBRARY_NAME vulkan-1)
-elseif (UNIX)
-	set(VULKAN_LIBRARY_NAME vulkan)
-endif()
-
-find_library(VULKAN_LIBRARY NAMES ${VULKAN_LIBRARY_NAME} HINTS $ENV{VULKAN_LIB} REQUIRED)
+find_library(VULKAN_LIBRARY NAMES vulkan vulkan-1 HINTS $ENV{VULKAN_LIB} REQUIRED)
 if (VULKAN_LIBRARY)
 	message(${VULKAN_LIBRARY} " has been found")
 	target_link_libraries(${PROJECT_NAME} PRIVATE ${VULKAN_LIBRARY})
@@ -184,10 +171,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/yaml-cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/imgui)
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/assimp/include)
 
-if (WIN32)
-	target_include_directories(${PROJECT_NAME} PRIVATE ${GLFW_PATH_INCLUDE})
-endif ()
-
+target_include_directories(${PROJECT_NAME} PRIVATE $ENV{GLFW_INCLUDE})
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{VULKAN_INCLUDE})
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{SPIRV_REFLECT})
 

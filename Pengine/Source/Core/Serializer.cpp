@@ -255,6 +255,12 @@ namespace YAML
 	};
 }
 
+YAML::Emitter& operator<<(YAML::Emitter& out, const std::filesystem::path &filepath)
+{
+	out << filepath.string();
+	return out;
+}
+
 YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
 {
 	out << YAML::Flow;
@@ -330,11 +336,11 @@ YAML::Emitter& operator<<(YAML::Emitter& out, const float* v)
 	return out;
 }
 
-EngineConfig Serializer::DeserializeEngineConfig(const std::string& filepath)
+EngineConfig Serializer::DeserializeEngineConfig(const std::filesystem::path& filepath)
 {
 	if (filepath.empty() || filepath == none)
 	{
-		FATAL_ERROR(filepath + ":Failed to load engine config! Filepath is incorrect!");
+		FATAL_ERROR(filepath.string() + ":Failed to load engine config! Filepath is incorrect!");
 	}
 
 	std::ifstream stream(filepath);
@@ -347,7 +353,7 @@ EngineConfig Serializer::DeserializeEngineConfig(const std::string& filepath)
 	YAML::Node data = YAML::LoadMesh(stringStream.str());
 	if (!data)
 	{
-		FATAL_ERROR(filepath + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
+		FATAL_ERROR(filepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
 	}
 
 	EngineConfig engineConfig{};
@@ -372,8 +378,9 @@ void Serializer::GenerateFilesUUID(const std::filesystem::path& directory)
 	{
 		if (!entry.is_directory())
 		{
-			const std::string filepath = Utils::GetShortFilepath(entry.path().string());
-			const std::string metaFilepath = filepath + ".meta";
+			const std::filesystem::path filepath = entry.path();
+			std::filesystem::path metaFilepath = filepath;
+			metaFilepath.concat(FileFormats::Meta());
 
 			if (!Utils::FindUuid(filepath).empty())
 			{
@@ -398,28 +405,29 @@ void Serializer::GenerateFilesUUID(const std::filesystem::path& directory)
 					YAML::Node data = YAML::LoadMesh(stringStream.str());
 					if (!data)
 					{
-						FATAL_ERROR(filepath + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
+						FATAL_ERROR(filepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
 					}
 
 					UUID uuid;
 					if (YAML::Node uuidData = data["UUID"]; !uuidData)
 					{
-						FATAL_ERROR(filepath + ":Failed to load meta file!");
+						FATAL_ERROR(filepath.string() + ":Failed to load meta file!");
 					}
 					else
 					{
 						uuid = uuidData.as<std::string>();
 					}
 
-					filepathByUuid[uuid] = filepath;
-					uuidByFilepath[filepath] = uuid;
+					const std::filesystem::path shortFilepath = Utils::GetShortFilepath(filepath);
+					filepathByUuid[uuid] = shortFilepath;
+					uuidByFilepath[shortFilepath] = uuid;
 				}
 			}
 		}
 	}
 }
 
-std::string Serializer::GenerateFileUUID(const std::string& filepath)
+std::string Serializer::GenerateFileUUID(const std::filesystem::path& filepath)
 {
 	UUID uuid = Utils::FindUuid(filepath);
 	if (!uuid.Get().empty())
@@ -436,7 +444,9 @@ std::string Serializer::GenerateFileUUID(const std::string& filepath)
 
 	out << YAML::EndMap;
 
-	std::ofstream fout(filepath + ".meta");
+	std::filesystem::path metaFilepath = filepath;
+	metaFilepath.concat(".meta"); 
+	std::ofstream fout(metaFilepath);
 	fout << out.c_str();
 	fout.close();
 
@@ -446,11 +456,11 @@ std::string Serializer::GenerateFileUUID(const std::string& filepath)
 	return uuid;
 }
 
-std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::string& filepath)
+std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::filesystem::path& filepath)
 {
 	if (!std::filesystem::exists(filepath))
 	{
-		FATAL_ERROR(filepath + ":Failed to load! The file doesn't exist");
+		FATAL_ERROR(filepath.string() + ":Failed to load! The file doesn't exist");
 	}
 
 	std::ifstream stream(filepath);
@@ -463,13 +473,13 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::string
 	YAML::Node data = YAML::LoadMesh(stringStream.str());
 	if (!data)
 	{
-		FATAL_ERROR(filepath + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
+		FATAL_ERROR(filepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
 	}
 
 	YAML::Node materialData = data["Basemat"];
 	if (!materialData)
 	{
-		FATAL_ERROR(filepath + ":Base material file doesn't contain identification line or is empty!");
+		FATAL_ERROR(filepath.string() + ":Base material file doesn't contain identification line or is empty!");
 	}
 
 	std::vector<Pipeline::CreateInfo> pipelineCreateInfos;
@@ -554,7 +564,7 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::string
 					}
 					else
 					{
-						FATAL_ERROR(filepath + ":No count field is set for sampler array!");
+						FATAL_ERROR(filepath.string() + ":No count field is set for sampler array!");
 					}
 				}
 				else if (type == "Sampler")
@@ -630,16 +640,16 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::string
 		pipelineCreateInfos.emplace_back(pipelineCreateInfo);
 	}
 
-	Logger::Log("BaseMaterial:" + filepath + " has been deserialized!", GREEN);
+	Logger::Log("BaseMaterial:" + filepath.string() + " has been deserialized!", GREEN);
 
 	return pipelineCreateInfos;
 }
 
-Material::CreateInfo Serializer::LoadMaterial(const std::string& filepath)
+Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filepath)
 {
 	if (!std::filesystem::exists(filepath))
 	{
-		FATAL_ERROR(filepath + ":Failed to load! The file doesn't exist");
+		FATAL_ERROR(filepath.string() + ":Failed to load! The file doesn't exist");
 	}
 
 	std::ifstream stream(filepath);
@@ -652,13 +662,13 @@ Material::CreateInfo Serializer::LoadMaterial(const std::string& filepath)
 	YAML::Node data = YAML::LoadMesh(stringStream.str());
 	if (!data)
 	{
-		FATAL_ERROR(filepath + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
+		FATAL_ERROR(filepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
 	}
 
 	YAML::Node materialData = data["Mat"];
 	if (!materialData)
 	{
-		FATAL_ERROR(filepath + ":Base material file doesn't contain identification line or is empty!");
+		FATAL_ERROR(filepath.string() + ":Base material file doesn't contain identification line or is empty!");
 	}
 
 	Material::CreateInfo createInfo;
@@ -682,7 +692,7 @@ Material::CreateInfo Serializer::LoadMaterial(const std::string& filepath)
 		}
 		else
 		{
-			FATAL_ERROR(filepath + ":There is no RenderPass field!");
+			FATAL_ERROR(filepath.string() + ":There is no RenderPass field!");
 		}
 
 		Material::RenderPassInfo renderPassInfo{};
@@ -759,7 +769,7 @@ Material::CreateInfo Serializer::LoadMaterial(const std::string& filepath)
 		createInfo.renderPassInfo.emplace(renderPass, renderPassInfo);
 	}
 
-	Logger::Log("Material:" + filepath + " has been deserialized!", GREEN);
+	Logger::Log("Material:" + filepath.string() + " has been deserialized!", GREEN);
 
 	return createInfo;
 }
@@ -870,18 +880,17 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material)
 		GenerateFileUUID(material->GetFilepath());
 	}
 
-	Logger::Log("Material:" + material->GetFilepath() + " has been serialized!", GREEN);
+	Logger::Log("Material:" + material->GetFilepath().string() + " has been serialized!", GREEN);
 }
 
-void Serializer::SerializeMesh(const std::string& directory,  const std::shared_ptr<Mesh>& mesh)
+void Serializer::SerializeMesh(const std::filesystem::path& directory,  const std::shared_ptr<Mesh>& mesh)
 {
-	std::string meshName = mesh->GetName();
-	std::string meshFilepath = mesh->GetFilepath();
+	const std::string meshName = mesh->GetName();
 
 	size_t dataSize = mesh->GetVertexCount() * sizeof(float) +
 		mesh->GetIndexCount() * sizeof(uint32_t) +
 		mesh->GetName().size() +
-		mesh->GetFilepath().size() +
+		mesh->GetFilepath().string().size() +
 		4 * 4; // Plus 4 numbers for these 4 fields sizes.
 
 	int offset = 0;
@@ -918,7 +927,8 @@ void Serializer::SerializeMesh(const std::string& directory,  const std::shared_
 		offset += mesh->GetIndexCount() * static_cast<int>(sizeof(uint32_t));
 	}
 
-	const std::string outMeshFilepath = directory + "/" + meshName + FileFormats::Mesh();
+	std::filesystem::path outMeshFilepath = directory / meshName;
+	outMeshFilepath.replace_extension(FileFormats::Mesh());
 	std::ofstream out(outMeshFilepath, std::ostream::binary);
 
 	out.write(data, static_cast<std::streamsize>(dataSize));
@@ -932,20 +942,20 @@ void Serializer::SerializeMesh(const std::string& directory,  const std::shared_
 		GenerateFileUUID(mesh->GetFilepath());
 	}
 
-	Logger::Log("Mesh:" + outMeshFilepath + " has been serialized!", GREEN);
+	Logger::Log("Mesh:" + outMeshFilepath.string() + " has been serialized!", GREEN);
 }
 
-std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::string& filepath)
+std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& filepath)
 {
 	if (!std::filesystem::exists(filepath))
 	{
-		Logger::Error(filepath + ": doesn't exist!");
+		Logger::Error(filepath.string() + ": doesn't exist!");
 		return nullptr;
 	}
 
 	if (FileFormats::Mesh() != Utils::GetFileFormat(filepath))
 	{
-		Logger::Error(filepath + ": is not mesh asset!");
+		Logger::Error(filepath.string() + ": is not mesh asset!");
 		return nullptr;
 	}
 
@@ -998,16 +1008,22 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::string& filepath)
 
 	delete[] data;
 
-	Logger::Log("Mesh:" + filepath + " has been deserialized!", GREEN);
+	Logger::Log("Mesh:" + filepath.string() + " has been deserialized!", GREEN);
 
 	return std::make_shared<Mesh>(meshName, filepath, vertices, indices);
 }
 
-void Serializer::SerializeShaderCache(const std::string& filepath, const std::string& code)
+void Serializer::SerializeShaderCache(const std::filesystem::path& filepath, const std::string& code)
 {
-	const char* directory = "Shaders/Cache/";
-	const std::filesystem::path cacheFilepath = directory +
-		Utils::EraseDirectoryFromFilePath(filepath) + FileFormats::Spv();
+	const std::filesystem::path directory = "Shaders/Cache/";
+
+	if (!std::filesystem::exists(directory))
+	{
+		std::filesystem::create_directories(directory);
+	}
+
+	std::filesystem::path cacheFilepath = directory / filepath.filename();
+	cacheFilepath.concat(FileFormats::Spv());
 	std::ofstream out(cacheFilepath, std::ostream::binary);
 
 	const size_t lastWriteTime = std::filesystem::last_write_time(filepath).time_since_epoch().count();
@@ -1017,16 +1033,16 @@ void Serializer::SerializeShaderCache(const std::string& filepath, const std::st
 	out.close();
 }
 
-std::string Serializer::DeserializeShaderCache(const std::string& filepath)
+std::string Serializer::DeserializeShaderCache(const std::filesystem::path& filepath)
 {
 	if (filepath.empty())
 	{
 		return {};
 	}
 
-	const char* directory = "Shaders/Cache/";
-	const std::filesystem::path cacheFilepath = directory +
-		Utils::EraseDirectoryFromFilePath(filepath) + FileFormats::Spv();
+	const std::filesystem::path directory = "Shaders/Cache/";
+	std::filesystem::path cacheFilepath = directory / filepath.filename();
+	cacheFilepath.concat(FileFormats::Spv());
 	if (std::filesystem::exists(cacheFilepath))
 	{
 		std::ifstream in(cacheFilepath, std::ifstream::binary);
@@ -1058,16 +1074,16 @@ std::string Serializer::DeserializeShaderCache(const std::string& filepath)
 }
 
 std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>>
-Serializer::LoadIntermediate(const std::string& filepath)
+Serializer::LoadIntermediate(const std::filesystem::path& filepath)
 {
-	const std::string directory = Utils::ExtractDirectoryFromFilePath(filepath);
+	const std::filesystem::path directory = filepath.parent_path();
 
 	Assimp::Importer import;
 	constexpr auto importFlags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_PreTransformVertices |
 		aiProcess_OptimizeMeshes | aiProcess_RemoveRedundantMaterials | aiProcess_ImproveCacheLocality |
 		aiProcess_JoinIdenticalVertices | aiProcess_GenUVCoords | aiProcess_SortByPType | aiProcess_FindInstances |
 		aiProcess_ValidateDataStructure | aiProcess_FindDegenerates | aiProcess_FindInvalidData;
-	const aiScene* scene = import.ReadFile(filepath, importFlags);
+	const aiScene* scene = import.ReadFile(filepath.string(), importFlags);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -1096,7 +1112,9 @@ Serializer::LoadIntermediate(const std::string& filepath)
 	if (std::shared_ptr<Entity> root = GenerateEntity(scene->mRootNode, meshesByIndex, materialsByMeshes);
 		root->GetChilds().size() > 0)
 	{
-		SerializePrefab(directory + "/" + root->GetName() + FileFormats::Prefab(), root);
+		std::filesystem::path prefabFilepath = directory / root->GetName();
+		prefabFilepath.replace_extension(FileFormats::Prefab());
+		SerializePrefab(prefabFilepath, root);
 	}
 
 	SceneManager::GetInstance().Delete("GenerateGameObject");
@@ -1104,20 +1122,21 @@ Serializer::LoadIntermediate(const std::string& filepath)
 	return {};
 }
 
-std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::string& directory)
+std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesystem::path& directory)
 {
 	std::vector<float> vertices;
 	std::vector<uint32_t> indices;
 
 	std::string defaultMeshName = aiMesh->mName.C_Str();
 	std::string meshName = defaultMeshName;
-	std::string meshFilepath = directory + "/" + meshName + FileFormats::Mesh();
+	std::filesystem::path meshFilepath = directory / meshName;
+	meshFilepath.replace_extension(FileFormats::Mesh());
 
 	int containIndex = 0;
 	while (MeshManager::GetInstance().GetMesh(meshFilepath))
 	{
 		meshName = defaultMeshName + "_" + std::to_string(containIndex);
-		meshFilepath = directory + "/" + meshName + FileFormats::Mesh();
+		meshFilepath.replace_filename(meshName);
 		containIndex++;
 	}
 
@@ -1240,12 +1259,12 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::string
 	}
 
 	std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(meshName, meshFilepath, vertices, indices);
-	SerializeMesh(Utils::ExtractDirectoryFromFilePath(mesh->GetFilepath()), mesh);
+	SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
 
 	return mesh;
 }
 
-std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMaterial, const std::string& directory)
+std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMaterial, const std::filesystem::path& directory)
 {
 	aiString aiMaterialName;
 	aiMaterial->Get(AI_MATKEY_NAME, aiMaterialName);
@@ -1256,7 +1275,8 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		return MaterialManager::GetInstance().LoadMaterial("Materials/MeshBase.mat");
 	}
 
-	std::string materialFilepath = directory + "/" + materialName + ".mat";
+	std::filesystem::path materialFilepath = directory / materialName;
+	materialFilepath.concat(FileFormats::Mat());
 
 	const std::shared_ptr<Material> meshBaseMaterial = MaterialManager::GetInstance().LoadMaterial("Materials/MeshBase.mat");
 	std::shared_ptr<Material> material = MaterialManager::GetInstance().Clone(materialName, materialFilepath, meshBaseMaterial);
@@ -1271,9 +1291,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	if (numTextures > 0)
 	{
 		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), aiTextureName);
-		std::string textureFilepath = aiTextureName.C_Str();
-		textureFilepath = Utils::Replace(textureFilepath, '\\', '/');
-		textureFilepath = directory + "/" + textureFilepath;
+		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
 
 		material->SetTexture("albedoTexture", TextureManager::GetInstance().Load(textureFilepath));
 	}
@@ -1282,9 +1300,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	if (numTextures > 0)
 	{
 		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_NORMALS, 0), aiTextureName);
-		std::string textureFilepath = aiTextureName.C_Str();
-		textureFilepath = Utils::Replace(textureFilepath, '\\', '/');
-		textureFilepath = directory + "/" + textureFilepath;
+		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
 
 		material->SetTexture("normalTexture", TextureManager::GetInstance().Load(textureFilepath));
 
@@ -1424,7 +1440,7 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 	return entity;
 }
 
-void Serializer::SerializePrefab(const std::string& filepath, const std::shared_ptr<Entity>& entity)
+void Serializer::SerializePrefab(const std::filesystem::path& filepath, const std::shared_ptr<Entity>& entity)
 {
 	YAML::Emitter out;
 
@@ -1439,11 +1455,11 @@ void Serializer::SerializePrefab(const std::string& filepath, const std::shared_
 	fout.close();
 }
 
-void Serializer::DeserializePrefab(const std::string& filepath, const std::shared_ptr<Scene>& scene)
+void Serializer::DeserializePrefab(const std::filesystem::path& filepath, const std::shared_ptr<Scene>& scene)
 {
 	if (filepath.empty() || filepath == none || Utils::GetFileFormat(filepath) != FileFormats::Prefab())
 	{
-		Logger::Error(filepath + ":Failed to load prefab! Filepath is incorrect!");
+		Logger::Error(filepath.string() + ":Failed to load prefab! Filepath is incorrect!");
 		return;
 	}
 
@@ -1457,7 +1473,7 @@ void Serializer::DeserializePrefab(const std::string& filepath, const std::share
 	YAML::Node data = YAML::LoadMesh(stringStream.str());
 	if (!data)
 	{
-		FATAL_ERROR(filepath + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
+		FATAL_ERROR(filepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
 	}
 
 	std::unordered_map<std::shared_ptr<Entity>, std::vector<std::string>> childsUUIDByEntity;
@@ -1483,7 +1499,7 @@ void Serializer::DeserializePrefab(const std::string& filepath, const std::share
 		}
 	}
 
-	Logger::Log("Prefab:" + filepath + " has been deserialized!", GREEN);
+	Logger::Log("Prefab:" + filepath.string() + " has been deserialized!", GREEN);
 }
 
 void Serializer::SerializeTransform(YAML::Emitter& out, const std::shared_ptr<Entity>& entity)
@@ -1556,6 +1572,11 @@ void Serializer::SerializeRenderer3D(YAML::Emitter& out, const std::shared_ptr<E
 	out << YAML::Key << "Mesh" << YAML::Value << Utils::FindUuid(r3d.mesh->GetFilepath());
 	out << YAML::Key << "Material" << YAML::Value << Utils::FindUuid(r3d.material->GetFilepath());
 
+	if (Utils::FindUuid(r3d.material->GetFilepath()).empty())
+	{
+		Logger::Error("error");
+	}
+
 	out << YAML::EndMap;
 }
 
@@ -1574,7 +1595,7 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 		{
 			const std::string uuid = meshData.as<std::string>();
 			const std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().LoadMesh(
-				Utils::GetShortFilepath(Utils::Find(uuid, filepathByUuid)));
+				Utils::Find(uuid, filepathByUuid));
 			r3d.mesh = mesh;
 		}
 
@@ -1582,7 +1603,7 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 		{
 			const std::string uuid = materialData.as<std::string>();
 			const std::shared_ptr<Material> material = MaterialManager::GetInstance().LoadMaterial(
-				Utils::GetShortFilepath(Utils::Find(uuid, filepathByUuid)));
+				Utils::Find(uuid, filepathByUuid));
 			r3d.material = material;
 		}
 	}
@@ -1705,7 +1726,7 @@ void Serializer::DeserializeCamera(const YAML::Node& in, const std::shared_ptr<E
 	}
 }
 
-void Serializer::SerializeScene(const std::string& filepath, const std::shared_ptr<Scene>& scene)
+void Serializer::SerializeScene(const std::filesystem::path& filepath, const std::shared_ptr<Scene>& scene)
 {
 	if (!scene)
 	{
@@ -1728,14 +1749,14 @@ void Serializer::SerializeScene(const std::string& filepath, const std::shared_p
 	fout << out.c_str();
 	fout.close();
 
-	Logger::Log("Scene:" + filepath + " has been serialized!", GREEN);
+	Logger::Log("Scene:" + filepath.string() + " has been serialized!", GREEN);
 }
 
-std::shared_ptr<Scene> Serializer::DeserializeScene(const std::string& filepath)
+std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path& filepath)
 {
 	if (filepath.empty() || filepath == none || Utils::GetFileFormat(filepath) != FileFormats::Scene())
 	{
-		Logger::Error(filepath + ":Failed to load scene! Filepath is incorrect!");
+		Logger::Error(filepath.string() + ":Failed to load scene! Filepath is incorrect!");
 		return nullptr;
 	}
 
@@ -1749,11 +1770,11 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::string& filepath)
 	YAML::Node data = YAML::LoadMesh(stringStream.str());
 	if (!data)
 	{
-		FATAL_ERROR(filepath + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
+		FATAL_ERROR(filepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
 	}
 
 	std::shared_ptr<Scene> scene = SceneManager::GetInstance().Create(
-		Utils::EraseFileFormat(Utils::EraseDirectoryFromFilePath(filepath)),
+		Utils::GetFilename(filepath),
 		"Main");
 	scene->SetFilepath(filepath);
 
@@ -1780,7 +1801,7 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::string& filepath)
 		}
 	}
 
-	Logger::Log("Scene:" + filepath + " has been deserialized!", GREEN);
+	Logger::Log("Scene:" + filepath.string() + " has been deserialized!", GREEN);
 
 	return scene;
 }

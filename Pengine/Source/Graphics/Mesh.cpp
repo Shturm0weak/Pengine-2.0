@@ -4,8 +4,11 @@
 
 using namespace Pengine;
 
-Mesh::Mesh(const std::string& name, const std::string& filepath,
-	std::vector<float>& vertices, std::vector<uint32_t>& indices)
+Mesh::Mesh(
+	const std::string& name,
+	const std::filesystem::path& filepath,
+	std::vector<float>& vertices,
+	std::vector<uint32_t>& indices)
 	: Asset(name, filepath)
 	, m_RawVertices(std::move(vertices))
 	, m_RawIndices(std::move(indices))

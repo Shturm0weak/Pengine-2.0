@@ -2,13 +2,15 @@
 
 #include "Core.h"
 
+#include <filesystem>
+
 namespace Pengine
 {
 
 	class PENGINE_API Asset
 	{
 	public:
-		Asset(std::string name, std::string filepath)
+		Asset(std::string name, std::filesystem::path filepath)
 			: m_Name(std::move(name))
 			, m_Filepath(std::move(filepath))
 		{}
@@ -20,11 +22,11 @@ namespace Pengine
 
 		[[nodiscard]] const std::string& GetName() const { return m_Name; }
 
-		[[nodiscard]] const std::string& GetFilepath() const { return m_Filepath; }
+		[[nodiscard]] const std::filesystem::path& GetFilepath() const { return m_Filepath; }
 
 	protected:
 		std::string m_Name = none;
-		std::string m_Filepath = none;
+		std::filesystem::path m_Filepath = none;
 	};
 
 }

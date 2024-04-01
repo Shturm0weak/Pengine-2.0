@@ -21,7 +21,7 @@ std::shared_ptr<Texture> TextureManager::Create(const Texture::CreateInfo& creat
 	return texture;
 }
 
-std::shared_ptr<Texture> TextureManager::Load(const std::string& filepath)
+std::shared_ptr<Texture> TextureManager::Load(const std::filesystem::path& filepath)
 {
 	if (std::shared_ptr<Texture> texture = GetTexture(filepath))
 	{
@@ -40,7 +40,7 @@ std::shared_ptr<Texture> TextureManager::Load(const std::string& filepath)
 	}
 }
 
-std::vector<std::shared_ptr<Texture>> TextureManager::LoadFromFolder(const std::string& directory)
+std::vector<std::shared_ptr<Texture>> TextureManager::LoadFromFolder(const std::filesystem::path& directory)
 {
 	std::vector<std::shared_ptr<Texture>> textures;
 
@@ -48,12 +48,9 @@ std::vector<std::shared_ptr<Texture>> TextureManager::LoadFromFolder(const std::
 	{
 		if (!entry.is_directory())
 		{
-			std::string filepath = entry.path().string();
-			filepath = Utils::Replace(filepath, '\\', '/');
-
-			if (FileFormats::IsTexture(Utils::GetFileFormat(filepath)))
+			if (FileFormats::IsTexture(Utils::GetFileFormat(entry.path())))
 			{
-				textures.emplace_back(Load(filepath));
+				textures.emplace_back(Load(entry.path()));
 			}
 		}
 	}
@@ -61,7 +58,7 @@ std::vector<std::shared_ptr<Texture>> TextureManager::LoadFromFolder(const std::
 	return textures;
 }
 
-std::shared_ptr<Texture> TextureManager::GetTexture(const std::string& filepath) const
+std::shared_ptr<Texture> TextureManager::GetTexture(const std::filesystem::path& filepath) const
 {
 	if (const auto textureByFilepath = m_TexturesByFilepath.find(filepath);
 		textureByFilepath != m_TexturesByFilepath.end())

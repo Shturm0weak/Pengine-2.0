@@ -5,6 +5,7 @@
 
 #include "../Core/Logger.h"
 #include "../Vulkan/VulkanTexture.h"
+#include "../Utils/Utils.h"
 
 using namespace Pengine;
 
@@ -19,18 +20,18 @@ std::shared_ptr<Texture> Texture::Create(const CreateInfo& textureCreateInfo)
 	return nullptr;
 }
 
-std::shared_ptr<Texture> Texture::Load(const std::string& filepath)
+std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath)
 {
 	stbi_set_flip_vertically_on_load(true);
 
 	CreateInfo textureCreateInfo{};
-	textureCreateInfo.name = filepath;
+	textureCreateInfo.name = Utils::GetFilename(filepath);
 	textureCreateInfo.filepath = filepath;
 	textureCreateInfo.aspectMask = AspectMask::COLOR;
 
 	textureCreateInfo.format = Format::R8G8B8A8_SRGB;
 	void* data = stbi_load(
-		filepath.c_str(),
+		filepath.string().c_str(),
 		&textureCreateInfo.size.x,
 		&textureCreateInfo.size.y,
 		&textureCreateInfo.channels,
@@ -47,17 +48,12 @@ std::shared_ptr<Texture> Texture::Load(const std::string& filepath)
 
 	if (textureCreateInfo.data.empty())
 	{
-		Logger::Error("Texture can't be loaded from the filepath " + filepath);
+		Logger::Error("Texture can't be loaded from the filepath " + filepath.string());
 		return nullptr;
 	}
 
-	Logger::Log("Texture:" + textureCreateInfo.filepath + " has been loaded!", GREEN);
+	Logger::Log("Texture:" + textureCreateInfo.filepath.string() + " has been loaded!", GREEN);
 
-	/*if (graphicsAPI == GraphicsAPI::Software)
-	{
-		return std::make_shared<SrTexture>(textureCreateInfo);
-	}
-	else*/
 	if (graphicsAPI == GraphicsAPI::Vk)
 	{
 		return std::make_shared<Vk::VulkanTexture>(textureCreateInfo);

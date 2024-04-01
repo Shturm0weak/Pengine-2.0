@@ -21,95 +21,68 @@ namespace Pengine::Utils
 		return { matPtr[0], matPtr[5], matPtr[10] };
 	}
 
-	/*inline std::wstring StringToWString(const std::string& str)
-	{
-		std::wstring wstr;
-		size_t size;
-		wstr.resize(str.size());
-		mbstowcs_s(&size, &wstr[0], wstr.size() + 1, str.c_str(), str.size());
-		return wstr;
-	}
-
-	inline std::string WStringToString(const std::wstring& wstr)
-	{
-		std::string str;
-		size_t size;
-		str.resize(wstr.size());
-		wcstombs_s(&size, &str[0], str.size() + 1, wstr.c_str(), wstr.size());
-		return str;
-	}*/
-
 	inline bool Contains(const std::string& string, const std::string& content)
 	{
 		return string.find(content) != std::string::npos;
 	}
 
-	inline std::string GetFileFormat(const std::string& filepath)
+	inline std::string GetFileFormat(const std::filesystem::path& filepath)
 	{
-		const size_t index = filepath.find_last_of('.');
-		if (index == std::string::npos)
+		if (filepath.has_extension())
 		{
-			return {};
-		}
-
-		return filepath.substr(index, filepath.size() - 1);
-	}
-
-	inline std::string EraseFileFormat(const std::string& filepath)
-	{
-		const size_t index = filepath.find_last_of('.');
-		if (index == std::string::npos)
-		{
-			return {};
-		}
-
-		return filepath.substr(0, index);
-	}
-
-	template<typename T>
-	T Find(const std::string& name, std::unordered_map<std::string, T> map)
-	{
-		auto iter = map.find(name);
-		if (iter != map.end())
-		{
-			return iter->second;
+			return filepath.extension().string();
 		}
 
 		return {};
 	}
 
-	template<typename T>
-	T Find(const std::wstring& name, std::unordered_map<std::wstring, T> map)
+	inline std::string GetFilename(const std::filesystem::path& filepath)
 	{
-		auto iter = map.find(name);
-		if (iter != map.end())
+		return filepath.filename().replace_extension().string();
+	}
+
+	inline std::filesystem::path EraseFileFormat(const std::filesystem::path& filepath)
+	{
+		if (filepath.has_extension())
 		{
-			return iter->second;
+			return std::filesystem::path(filepath).replace_extension("").string();
 		}
 
 		return {};
 	}
 
 	template<typename T, typename U>
-	T Find(const U& key, std::unordered_map<U, T> map)
+	T Find(const U& key, const std::unordered_map<U, T>& map)
 	{
-		auto iter = map.find(key);
-		if (iter != map.end())
+		auto foundItem = map.find(key);
+		if (foundItem != map.end())
 		{
-			return iter->second;
+			return foundItem->second;
+		}
+
+		return {};
+	}
+
+	template<typename T, typename U>
+	T Find(const U& key, const std::map<U, T>& map)
+	{
+		auto foundItem = map.find(key);
+		if (foundItem != map.end())
+		{
+			return foundItem->second;
 		}
 
 		return {};
 	}
 
 	template<typename T>
-	bool Find(T key, std::vector<T> vector)
+	bool Find(const T& key, const std::vector<T>& vector)
 	{
 		return std::find(vector.begin(), vector.end(), key) != vector.end();
 	}
 
 	template<typename T>
-	bool Erase(std::vector<T>& vector, T item)
+	bool Erase(std::vector<T>& vector, const T& item)
 	{
 		auto foundItem = std::find(vector.begin(), vector.end(), item);
 		if (foundItem != vector.end())
@@ -119,6 +92,16 @@ namespace Pengine::Utils
 		}
 
 		return false;
+	}
+
+	inline std::string Erase(std::string string, const std::string& what)
+	{
+		if (const size_t index = string.find(what); index != std::string::npos)
+		{
+			return string.erase(index, index + what.size());
+		}
+
+	 	return string;
 	}
 
 	inline size_t StringTypeToSize(const std::string& type)
@@ -182,53 +165,9 @@ namespace Pengine::Utils
 		return replacedString;
 	}
 
-	inline std::string Erase(std::string string, std::string what)
-	{
-		what = Replace(what, '\\', '/');
-
-		if (const std::string::size_type index = string.find(what); index != std::string::npos)
-		{
-			string.erase(index, what.size());
-		}
-
-		return string;
-	}
-
-	inline std::string EraseDirectoryFromFilePath(const std::string& path)
-	{
-		size_t slash = path.find_last_of('/');
-		if (slash == std::string::npos)
-		{
-			slash = path.find_last_of('\\');
-		}
-
-		return path.substr(slash + 1, path.size() - slash);
-	}
-
-	inline std::string ExtractDirectoryFromFilePath(const std::string& path)
-	{
-		size_t slash = path.find_last_of('/');
-		if (slash == std::string::npos)
-		{
-			slash = path.find_last_of('\\');
-		}
-
-		return path.substr(0, slash);
-	}
-
-	inline std::string FindUuid(const std::string& filepath)
+	inline std::string FindUuid(const std::filesystem::path& filepath)
 	{
 		return Find(filepath, uuidByFilepath);
-	}
-
-	inline std::string EraseFromString(std::string string, const std::string& what)
-	{
-		if (const size_t index = string.find(what); index != std::string::npos)
-		{
-			return string.erase(index, index + what.size());
-		}
-
-		return string;
 	}
 
 	inline std::string EraseFromBack(std::string string, const char what)
@@ -251,13 +190,9 @@ namespace Pengine::Utils
 		return string;
 	}
 
-	inline std::string GetShortFilepath(std::string filepath)
+	inline std::string GetShortFilepath(std::filesystem::path filepath)
 	{
-		std::string currentFilepath = std::filesystem::current_path().string();
-		currentFilepath = Replace(currentFilepath, '\\', '/') + "/";
-		filepath = Replace(filepath, '\\', '/');
-
-		return EraseFromString(filepath, currentFilepath);
+		return Erase(filepath.string(), std::filesystem::current_path().string() + "/");
 	}
 
 	inline bool DecomposeTransform(const glm::mat4& transform, glm::vec3& translation, glm::vec3& rotation, glm::vec3& scale)
@@ -396,78 +331,5 @@ namespace Pengine::Utils
 		}
 		return true;
 	}
-
-//	PENGINE_API inline int DeleteDirectory(const std::wstring& refcstrRootDirectory,
-//		bool              bDeleteSubdirectories = false)
-//	{
-//		bool            bSubdirectory = false;       // Flag, indicating whether
-//													 // subdirectories have been found
-//		HANDLE          hFile;                       // Handle to directory
-//		std::wstring     strFilePath;                // Filepath
-//		std::wstring     strPattern;                 // Pattern
-//		WIN32_FIND_DATA FileInformation;             // File information
-
-
-//		strPattern = refcstrRootDirectory + L"\\*.*";
-//		hFile = ::FindFirstFile(strPattern.c_str(), &FileInformation);
-//		if (hFile != INVALID_HANDLE_VALUE)
-//		{
-//			do
-//			{
-//				if (FileInformation.cFileName[0] != '.')
-//				{
-//					strFilePath.erase();
-//					strFilePath = refcstrRootDirectory + L"\\" + FileInformation.cFileName;
-
-//					if (FileInformation.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-//					{
-//						if (bDeleteSubdirectories)
-//						{
-//							// Delete subdirectory
-//							int iRC = DeleteDirectory(strFilePath, bDeleteSubdirectories);
-//							if (iRC)
-//								return iRC;
-//						}
-//						else
-//							bSubdirectory = true;
-//					}
-//					else
-//					{
-//						// Set file attributes
-//						if (::SetFileAttributes(strFilePath.c_str(),
-//							FILE_ATTRIBUTE_NORMAL) == FALSE)
-//							return ::GetLastError();
-
-//						// Delete file
-//						if (::DeleteFile(strFilePath.c_str()) == FALSE)
-//							return ::GetLastError();
-//					}
-//				}
-//			} while (::FindNextFile(hFile, &FileInformation) == TRUE);
-
-//			// Close handle
-//			::FindClose(hFile);
-
-//			DWORD dwError = ::GetLastError();
-//			if (dwError != ERROR_NO_MORE_FILES)
-//				return dwError;
-//			else
-//			{
-//				if (!bSubdirectory)
-//				{
-//					// Set directory attributes
-//					if (::SetFileAttributes(refcstrRootDirectory.c_str(),
-//						FILE_ATTRIBUTE_NORMAL) == FALSE)
-//						return ::GetLastError();
-
-//					// Delete directory
-//					if (::RemoveDirectory(refcstrRootDirectory.c_str()) == FALSE)
-//						return ::GetLastError();
-//				}
-//			}
-//		}
-
-//		return 0;
-//	}
 
 }
