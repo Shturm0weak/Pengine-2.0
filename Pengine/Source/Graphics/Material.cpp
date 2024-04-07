@@ -57,7 +57,7 @@ std::shared_ptr<Material> Material::Clone(const std::string& name, const std::fi
 			{
 				createInfo.renderPassInfo[renderPass].texturesByName[binding.name] = material->GetTexture(binding.name)->GetFilepath().string();
 			}
-			else if (binding.type == UniformLayout::Type::BUFFER)
+			else if (binding.type == UniformLayout::Type::UNIFORM_BUFFER)
 			{
 				const std::shared_ptr<Buffer> buffer = pipeline->GetBuffer(binding.name);
 				void* data = static_cast<char*>(buffer->GetData()) + buffer->GetInstanceSize() * material->GetIndex();

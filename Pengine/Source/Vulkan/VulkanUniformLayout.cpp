@@ -19,7 +19,7 @@ VulkanUniformLayout::VulkanUniformLayout(const std::unordered_map<uint32_t, Bind
         VkDescriptorSetLayoutBinding layoutBinding{};
         layoutBinding.binding = binding.first;
         layoutBinding.descriptorType = ConvertDescriptorType(binding.second.type);
-        layoutBinding.descriptorCount = binding.second.type == Type::SAMPLER_ARRAY ? MAX_TEXTURES : 1;
+        layoutBinding.descriptorCount = 1; // TODO: here was check for sampler array
         layoutBinding.pImmutableSamplers = 0;
         for (const auto& stage : binding.second.stages)
         {
@@ -62,12 +62,30 @@ VkDescriptorType VulkanUniformLayout::ConvertDescriptorType(const Type type)
 {
     switch (type)
     {
-    case Pengine::UniformLayout::Type::SAMPLER_ARRAY:
-        return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    case Pengine::UniformLayout::Type::SAMPLER:
-        return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    case Pengine::UniformLayout::Type::BUFFER:
-        return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        case Pengine::UniformLayout::Type::SAMPLER:
+            return VK_DESCRIPTOR_TYPE_SAMPLER;
+        case Pengine::UniformLayout::Type::COMBINED_IMAGE_SAMPLER:
+            return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        case Pengine::UniformLayout::Type::SAMPLED_IMAGE:
+            return VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+        case Pengine::UniformLayout::Type::STORAGE_IMAGE:
+            return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+        case Pengine::UniformLayout::Type::UNIFORM_TEXEL_BUFFER:
+            return VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+        case Pengine::UniformLayout::Type::STORAGE_TEXEL_BUFFER:
+            return VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+        case Pengine::UniformLayout::Type::UNIFORM_BUFFER:
+            return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        case Pengine::UniformLayout::Type::STORAGE_BUFFER:
+            return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        case Pengine::UniformLayout::Type::UNIFORM_BUFFER_DYNAMIC:
+            return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+        case Pengine::UniformLayout::Type::STORAGE_BUFFER_DYNAMIC:
+            return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
+        case Pengine::UniformLayout::Type::INPUT_ATTACHMENT:
+            return VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+        case Pengine::UniformLayout::Type::ACCELERATION_STRUCTURE_KHR:
+            return VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR;
     }
 
     FATAL_ERROR("Failed to convert descriptor type!");
@@ -78,10 +96,30 @@ UniformLayout::Type VulkanUniformLayout::ConvertDescriptorType(const VkDescripto
 {
     switch (type)
     {
-    case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
-        return Pengine::UniformLayout::Type::SAMPLER;
-    case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
-        return Pengine::UniformLayout::Type::BUFFER;
+        case VK_DESCRIPTOR_TYPE_SAMPLER:
+            return Pengine::UniformLayout::Type::SAMPLER;
+        case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
+            return Pengine::UniformLayout::Type::COMBINED_IMAGE_SAMPLER;
+        case VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE:
+            return Pengine::UniformLayout::Type::SAMPLED_IMAGE;
+        case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
+            return Pengine::UniformLayout::Type::STORAGE_IMAGE;
+        case VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER:
+            return Pengine::UniformLayout::Type::UNIFORM_TEXEL_BUFFER;
+        case VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER:
+            return Pengine::UniformLayout::Type::STORAGE_TEXEL_BUFFER;
+        case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
+            return Pengine::UniformLayout::Type::UNIFORM_BUFFER;
+        case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER:
+            return Pengine::UniformLayout::Type::STORAGE_BUFFER;
+        case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC:
+            return Pengine::UniformLayout::Type::UNIFORM_BUFFER_DYNAMIC;
+        case VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC:
+            return Pengine::UniformLayout::Type::STORAGE_BUFFER_DYNAMIC;
+        case VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT:
+            return Pengine::UniformLayout::Type::INPUT_ATTACHMENT;
+        case VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR:
+            return Pengine::UniformLayout::Type::ACCELERATION_STRUCTURE_KHR;
     }
 
     FATAL_ERROR("Failed to convert descriptor type!");

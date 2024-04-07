@@ -54,7 +54,7 @@ namespace Pengine
 			}
 
 			if (const UniformLayout::Binding& binding = pipeline->GetUniformWriter()->GetLayout()->GetBindingByName(bufferName);
-				binding.type == UniformLayout::Type::BUFFER)
+				binding.type == UniformLayout::Type::UNIFORM_BUFFER)
 			{
 				if (auto variable = binding.GetValue(name))
 				{

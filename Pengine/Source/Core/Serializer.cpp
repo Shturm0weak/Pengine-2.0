@@ -557,7 +557,7 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::filesy
 			{
 				if (const std::string& type = typeData.as<std::string>(); type == "SamplerArray")
 				{
-					binding.type = UniformLayout::Type::SAMPLER_ARRAY;
+					binding.type = UniformLayout::Type::COMBINED_IMAGE_SAMPLER;
 					if (const auto& countData = uniformData["Count"])
 					{
 						binding.count = countData.as<int>();
@@ -573,7 +573,7 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::filesy
 				}
 				else if (type == "Buffer")
 				{
-					binding.type = UniformLayout::Type::BUFFER;
+					binding.type = UniformLayout::Type::UNIFORM_BUFFER;
 				}
 			}
 
@@ -707,7 +707,7 @@ Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filep
 
 			if (UniformLayout::Binding binding = createInfo.baseMaterial->GetPipeline(renderPass)->
 				GetChildUniformLayout()->GetBindingByName(uniformName);
-				binding.type == UniformLayout::Type::BUFFER)
+				binding.type == UniformLayout::Type::UNIFORM_BUFFER)
 			{
 				Material::UniformBufferInfo uniformBufferInfo{};
 
@@ -811,7 +811,7 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material)
 				// TODO: Better to use uuid for assets instead of filepaths!
 				out << YAML::Key << "Value" << YAML::Value << material->GetTexture(binding.name)->GetFilepath();
 			}
-			else if (binding.type == UniformLayout::Type::BUFFER)
+			else if (binding.type == UniformLayout::Type::UNIFORM_BUFFER)
 			{
 				std::shared_ptr<Buffer> buffer = pipeline->GetBuffer(binding.name);
 				void* data = static_cast<char*>(buffer->GetData()) + buffer->GetInstanceSize() * material->GetIndex();

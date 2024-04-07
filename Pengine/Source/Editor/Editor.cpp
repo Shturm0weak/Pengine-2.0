@@ -1490,7 +1490,7 @@ void Editor::MaterialMenu::Update(const Editor& editor)
 							}
 						}
 					}
-					else if (binding.type == UniformLayout::Type::BUFFER)
+					else if (binding.type == UniformLayout::Type::UNIFORM_BUFFER)
 					{
 						ImGui::Text("%s", binding.name.c_str());
 

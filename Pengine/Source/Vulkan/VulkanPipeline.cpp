@@ -327,27 +327,48 @@ std::string VulkanPipeline::CompileShaderModule(const std::string& filepath, con
 void VulkanPipeline::Reflect(const std::string& spv)
 {
     // In progress.
-    SpvReflectShaderModule module = {};
-    SpvReflectResult result = spvReflectCreateShaderModule(spv.size(), spv.data(), &module);
+    SpvReflectShaderModule reflectModule = {};
+    SpvReflectResult result = spvReflectCreateShaderModule(spv.size(), spv.data(), &reflectModule);
     if (result != SPV_REFLECT_RESULT_SUCCESS)
     {
-        FATAL_ERROR("Failed to get spirv reflection");
+        FATAL_ERROR("Failed to get spirv reflection!");
     }
 
     uint32_t count = 0;
-    result = spvReflectEnumerateDescriptorBindings(&module, &count, NULL);
-    assert(result == SPV_REFLECT_RESULT_SUCCESS);
-    SpvReflectDescriptorBinding** input_vars =
-        (SpvReflectDescriptorBinding**)malloc(count * sizeof(SpvReflectDescriptorBinding*));
-    result = spvReflectEnumerateDescriptorBindings(&module, &count, input_vars);
-    assert(result == SPV_REFLECT_RESULT_SUCCESS);
-
-    for (uint32_t i = 0; i < count; i++)
+    result = spvReflectEnumerateDescriptorSets(&reflectModule, &count, NULL);
+    if (result != SPV_REFLECT_RESULT_SUCCESS)
     {
-        const auto var = input_vars[i];
+        FATAL_ERROR("Failed to reflect to enumerate descriptor sets!");
     }
 
-    spvReflectDestroyShaderModule(&module);
+    std::vector<SpvReflectDescriptorSet*> reflectSets(count);
+    result = spvReflectEnumerateDescriptorSets(&reflectModule, &count, reflectSets.data());
+    if (result != SPV_REFLECT_RESULT_SUCCESS)
+    {
+        FATAL_ERROR("Failed to reflect to enumerate descriptor sets!");
+    }
+
+    ReflectShaderModule shaderModule{};
+    shaderModule.stage = VulkanUniformLayout::ConvertDescriptorStage(static_cast<VkShaderStageFlagBits>(reflectModule.shader_stage));
+    for (const auto& reflectSet : reflectSets)
+    {
+        ReflectDescriptorSetLayout& setLayout = shaderModule.setLayouts.emplace_back();
+        setLayout.set = reflectSet->set;
+        for (uint32_t bindingIndex = 0; bindingIndex < reflectSet->binding_count; ++bindingIndex)
+        {
+            const SpvReflectDescriptorBinding& reflectBinding = *(reflectSet->bindings[bindingIndex]);
+            ReflectDescriptorSetBinding& binding = setLayout.bindings.emplace_back();
+            binding.binding = reflectBinding.binding;
+            binding.type = VulkanUniformLayout::ConvertDescriptorType(static_cast<VkDescriptorType>(reflectBinding.descriptor_type));
+            binding.count = 1;
+            for (uint32_t dimIndex = 0; dimIndex < reflectBinding.array.dims_count; ++dimIndex)
+            {
+                binding.count *= reflectBinding.array.dims[dimIndex];
+            }
+        }
+    }
+    
+    spvReflectDestroyShaderModule(&reflectModule);
 }
 
 void VulkanPipeline::Bind(const VkCommandBuffer commandBuffer) const

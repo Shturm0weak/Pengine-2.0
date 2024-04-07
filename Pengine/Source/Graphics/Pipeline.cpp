@@ -28,7 +28,7 @@ Pipeline::Pipeline(const CreateInfo& pipelineCreateInfo) : createInfo(pipelineCr
 
 		for (const auto& [location, binding] : layout->GetBindingsByLocation())
 		{
-			if (binding.type == UniformLayout::Type::BUFFER)
+			if (binding.type == UniformLayout::Type::UNIFORM_BUFFER)
 			{
 				size_t bufferSize = 0;
 				for (const auto& value : binding.values)
@@ -55,7 +55,7 @@ Pipeline::Pipeline(const CreateInfo& pipelineCreateInfo) : createInfo(pipelineCr
 		m_ChildUniformLayout = UniformLayout::Create(pipelineCreateInfo.childUniformBindings);
 		for (const auto& [location, binding] : m_ChildUniformLayout->GetBindingsByLocation())
 		{
-			if (binding.type == UniformLayout::Type::BUFFER)
+			if (binding.type == UniformLayout::Type::UNIFORM_BUFFER)
 			{
 				size_t bufferSize = 0;
 				for (const auto& value : binding.values)

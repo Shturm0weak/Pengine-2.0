@@ -90,7 +90,7 @@ inline GraphicsAPI graphicsAPI;
 namespace Pengine
 {
 	inline std::unordered_map<std::string, std::filesystem::path> filepathByUuid;
-	inline std::map<std::filesystem::path, std::string> uuidByFilepath;
+	inline std::unordered_map<std::filesystem::path, std::string, path_hash> uuidByFilepath;
 
 	// TODO: Maybe move this somewhere!
 	inline int drawCallsCount;

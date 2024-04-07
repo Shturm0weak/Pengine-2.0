@@ -90,7 +90,7 @@ namespace Pengine
 		for (const auto& [renderPass, uniformWriter] : m_UniformWriterByRenderPass)
 		{
 			if (const UniformLayout::Binding& binding = uniformWriter->GetLayout()->GetBindingByName(bufferName);
-				binding.type == UniformLayout::Type::BUFFER)
+				binding.type == UniformLayout::Type::UNIFORM_BUFFER)
 			{
 				if (auto variable = binding.GetValue(name))
 				{

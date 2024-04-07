@@ -37,6 +37,26 @@ namespace Pengine
 			bool blendEnabled = false;
 		};
 
+		struct ReflectDescriptorSetBinding
+		{
+			std::string name;
+			uint32_t binding = 0;
+			uint32_t count = 0;
+			UniformLayout::Type type;
+		};
+
+		struct ReflectDescriptorSetLayout
+		{
+			uint32_t set = 0;
+			std::vector<ReflectDescriptorSetBinding> bindings;	
+		};
+
+		struct ReflectShaderModule
+		{
+			std::vector<ReflectDescriptorSetLayout> setLayouts;
+			UniformLayout::Stage stage;
+		};
+
 		struct CreateInfo
 		{
 			std::unordered_map<uint32_t, UniformLayout::Binding> uniformBindings;

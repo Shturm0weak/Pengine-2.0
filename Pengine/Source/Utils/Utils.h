@@ -167,7 +167,13 @@ namespace Pengine::Utils
 
 	inline std::string FindUuid(const std::filesystem::path& filepath)
 	{
-		return Find(filepath, uuidByFilepath);
+		auto foundItem = uuidByFilepath.find(filepath);
+		if (foundItem != uuidByFilepath.end())
+		{
+			return foundItem->second;
+		}
+
+		return {};
 	}
 
 	inline std::string EraseFromBack(std::string string, const char what)

@@ -115,7 +115,7 @@ void RenderPassManager::CreateGBuffer()
 	UniformLayout::Binding binding;
 	binding.name = "GlobalBuffer";
 	binding.stages = { UniformLayout::Stage::VERTEX };
-	binding.type = UniformLayout::Type::BUFFER;
+	binding.type = UniformLayout::Type::UNIFORM_BUFFER;
 	UniformLayout::Variable viewProjectionMat4;
 	viewProjectionMat4.name = "viewProjectionMat4";
 	viewProjectionMat4.type = "mat4";
