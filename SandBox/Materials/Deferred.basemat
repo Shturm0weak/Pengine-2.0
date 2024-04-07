@@ -7,59 +7,17 @@ Basemat:
       PolygonMode: Fill
       Vertex: Shaders/Deferred.vert
       Fragment: Shaders/Deferred.frag
-      
-      Uniforms:
-
+      DescriptorSets:
+        - Type: BaseMaterial
+          Set: 0
+      VertexInputBindingDescriptions:
         - Binding: 0
-          Name: albedoTexture
-          Type: Sampler
-          InputRate: Per BaseMaterial
-          Stages:
-            - Fragment
-
-        - Binding: 1
-          Name: normalTexture
-          Type: Sampler
-          InputRate: Per BaseMaterial
-          Stages:
-            - Fragment
-
-        - Binding: 2
-          Name: positionTexture
-          Type: Sampler
-          InputRate: Per BaseMaterial
-          Stages:
-            - Fragment
-
-        - Binding: 3
-          Name: Light
-          Type: Buffer
-          InputRate: Per BaseMaterial
-          Values:
-            - Type: vec3
-              Name: color
-
-            - Type: float
-              Name: constant
-
-            - Type: float
-              Name: linear
-
-            - Type: float
-              Name: quadratic
-
-            - Type: float
-              Name: use
-
-            - Type: float
-              Name: __unused1
-
-            - Type: vec3
-              Name: lightPosition
-
-            - Type: float
-              Name: __unused2
-          Stages:
-            - Fragment
+          InputRate: Vertex
+          Names:
+            - positionA
+            - uvA
+            - normalA
+            - tangentA
+            - bitangentA
       ColorBlendStates:
         - BlendEnabled: false

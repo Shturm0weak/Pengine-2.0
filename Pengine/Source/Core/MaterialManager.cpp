@@ -72,15 +72,6 @@ std::shared_ptr<BaseMaterial> MaterialManager::GetBaseMaterial(const std::filesy
 	return nullptr;
 }
 
-std::shared_ptr<Material> MaterialManager::Inherit(const std::string& name, const std::filesystem::path& filepath,
-	const std::shared_ptr<BaseMaterial>& baseMaterial)
-{
-	std::shared_ptr<Material> inheritedMaterial = Material::Inherit(name, filepath, baseMaterial);
-	m_MaterialsByFilepath[filepath] = inheritedMaterial;
-
-	return inheritedMaterial;
-}
-
 std::shared_ptr<Material> MaterialManager::Clone(const std::string& name, const std::filesystem::path& filepath,
 	const std::shared_ptr<Material>& material)
 {

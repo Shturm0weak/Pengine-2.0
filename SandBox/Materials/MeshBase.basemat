@@ -7,40 +7,25 @@ Basemat:
       PolygonMode: Fill
       Vertex: Shaders/GBuffer.vert
       Fragment: Shaders/GBuffer.frag
-      Uniforms:
-
+      DescriptorSets:
+        - Type: RenderPass
+          Set: 0
+        - Type: Material
+          Set: 1
+      VertexInputBindingDescriptions:
         - Binding: 0
-          Name: albedoTexture
-          Type: Sampler
-          InputRate: Per Material
-          Stages:
-            - Fragment
-
+          InputRate: Vertex
+          Names:
+            - positionA
+            - uvA
+            - normalA
+            - tangentA
+            - bitangentA
         - Binding: 1
-          Name: normalTexture
-          Type: Sampler
-          InputRate: Per Material
-          Stages:
-            - Fragment
-
-        - Binding: 2
-          Name: material
-          Type: Buffer
-          InputRate: Per Material
-          Values:
-            - Type: color
-              Name: color
-
-            - Type: vec4
-              Name: other
-
-            - Type: vec4
-              Name: __unused1
-
-            - Type: vec4
-              Name: __unused2
-          Stages:
-            - Fragment
+          InputRate: Instance
+          Names:
+            - transformA
+            - inverseTransformA
       ColorBlendStates:
         - BlendEnabled: false
         - BlendEnabled: false

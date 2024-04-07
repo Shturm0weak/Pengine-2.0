@@ -1,0 +1,19 @@
+Basemat:
+  Pipelines:
+    - RenderPass: DefaultReflection
+      DepthTest: false
+      DepthWrite: false
+      CullMode: None
+      PolygonMode: Fill
+      Vertex: Shaders/DefaultReflection.vert
+      Fragment: Shaders/DefaultReflection.frag
+      DescriptorSets:
+        - Type: RenderPass
+          Set: 0
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Names:
+            - positionA
+      ColorBlendStates:
+        - BlendEnabled: false

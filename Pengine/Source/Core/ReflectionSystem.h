@@ -212,7 +212,7 @@ namespace Pengine
 
 #define PROPERTY(_type, _name, _value)                                                                                 \
 	_type _name = _value;                                                                                              \
-                                                                                                                       \
+																													   \
 private:                                                                                                               \
 	ReflectionSystem::ReflectionWrapper ___ReflectionWrapper_##_name = ReflectionSystem::ReflectionWrapper(            \
 		[baseClass = this]                                                                                             \

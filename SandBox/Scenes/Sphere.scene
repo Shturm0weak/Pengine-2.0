@@ -1,0 +1,44 @@
+- UUID: a10078ba-52fe-453c-b2ab-e7f8ae420894
+  Name: Camera
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-4.33820391, 3.50906157, 2.27921677]
+    Rotation: [-0.578264534, -1.00707233, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  Camera:
+    Fov: 1.57079637
+    Type: 1
+    ZNear: 0.100000001
+    ZFar: 1000
+    Viewport: Main
+- UUID: 604ed03c-d774-434d-ae83-e6164d93e2e9
+  Name: Sphere
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, 0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 6c89d2ce-0c6c-4acb-86d8-6d6f5763355e
+    Material: fd4da90d-9009-4e8a-b0ea-014fa1d8a7a2
+- UUID: 7a81c822-0d2f-4c3a-b06f-4a2d945be43a
+  Name: PointLight
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-2.01205206, 1.59219527, 0]
+    Rotation: [0, -0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  PointLight:
+    Color: [1, 1, 1]
+    Constant: 1
+    Quadratic: 0.0320000015
+    Linear: 0.0900000036

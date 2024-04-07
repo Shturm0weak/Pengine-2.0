@@ -23,10 +23,9 @@ namespace Pengine
 
 		std::shared_ptr<BaseMaterial> GetBaseMaterial(const std::filesystem::path& filepath);
 
-		std::shared_ptr<Material> Inherit(const std::string& name, const std::filesystem::path& filepath,
-			const std::shared_ptr<BaseMaterial>& baseMaterial);
-
-		std::shared_ptr<Material> Clone(const std::string& name, const std::filesystem::path& filepath,
+		std::shared_ptr<Material> Clone(
+			const std::string& name,
+			const std::filesystem::path& filepath,
 			const std::shared_ptr<Material>& material);
 
 		const std::unordered_map<std::filesystem::path, std::shared_ptr<Material>, path_hash>& GetMaterials() const { return m_MaterialsByFilepath; }

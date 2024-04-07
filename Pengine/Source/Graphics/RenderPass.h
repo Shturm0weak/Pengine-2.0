@@ -3,13 +3,14 @@
 #include "../Core/Core.h"
 
 #include "Texture.h"
+#include "Format.h"
 #include "UniformWriter.h"
-#include "Vertex.h"
 
 namespace Pengine
 {
 	const std::string GBuffer = "GBuffer";
 	const std::string Deferred = "Deferred";
+	const std::string DefaultReflection = "DefaultReflection";
 	
 	class FrameBuffer;
 	class Window;
@@ -31,7 +32,7 @@ namespace Pengine
 		{
 			glm::ivec2 size = { 1, 1 };
 			Texture::Layout layout;
-			Texture::Format format;
+			Format format;
 		};
 
 		struct SubmitInfo
@@ -58,12 +59,9 @@ namespace Pengine
 			std::vector<glm::vec4> clearColors;
 			std::vector<ClearDepth> clearDepths;
 			std::vector<AttachmentDescription> attachmentDescriptions;
-			std::vector<Vertex::AttributeDescription> attributeDescriptions;
-			std::vector<Vertex::BindingDescription> bindingDescriptions;
-			std::unordered_map<uint32_t, UniformLayout::Binding> uniformBindings;
 			std::unordered_map<std::string, std::shared_ptr<Buffer>> buffersByName;
 			std::function<void(const RenderCallbackInfo&)> renderCallback;
-			std::function<void(RenderPass& renderPass)> createCallback;
+			std::function<void(RenderPass&)> createCallback;
 		};
 
 		static std::shared_ptr<RenderPass> Create(const CreateInfo& createInfo);
@@ -87,25 +85,24 @@ namespace Pengine
 
 		void SetBuffer(const std::string& name, const std::shared_ptr<Buffer>& buffer);
 
+		void SetUniformWriter(std::shared_ptr<UniformWriter> uniformWriter);
+
 		void Render(const RenderCallbackInfo& renderInfo) const;
-
-		[[nodiscard]] const std::vector<Vertex::AttributeDescription>& GetAttributeDescriptions() const { return m_AttributeDescriptions;  }
-
-		[[nodiscard]] const std::vector<Vertex::BindingDescription>& GetBindingDescriptions() const { return m_BindingDescriptions; }
 
 		[[nodiscard]] const std::vector<AttachmentDescription>& GetAttachmentDescriptions() const { return m_AttachmentDescriptions; }
 
 	private:
-		std::vector<Vertex::AttributeDescription> m_AttributeDescriptions;
-		std::vector<Vertex::BindingDescription> m_BindingDescriptions;
 		std::vector<AttachmentDescription> m_AttachmentDescriptions; 
 		std::vector<glm::vec4> m_ClearColors;
 		std::vector<ClearDepth> m_ClearDepths;
 		std::shared_ptr<UniformWriter> m_UniformWriter;
 		std::string m_Type = none;
 		std::function<void(RenderCallbackInfo)> m_RenderCallback;
-		std::function<void(RenderPass& renderPass)> m_CreateCallback;
+		std::function<void(RenderPass&)> m_CreateCallback;
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
+		bool m_IsInitialized = false;
+
+		friend class Renderer;
 	};
 
 }

@@ -82,6 +82,11 @@ namespace Pengine
 		static void SerializeScene(const std::filesystem::path& filepath, const std::shared_ptr<Scene>& scene);
 
 		static std::shared_ptr<Scene> DeserializeScene(const std::filesystem::path& filepath);
+
+	private:
+		static void ParseUniformValues(
+			const YAML::detail::iterator_value& data,
+			Pipeline::UniformInfo& uniformsInfo);
 	};
 
 }

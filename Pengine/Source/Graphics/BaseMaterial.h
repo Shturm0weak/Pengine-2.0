@@ -6,6 +6,7 @@
 #include "Pipeline.h"
 #include "UniformWriter.h"
 #include "UniformLayout.h"
+#include "WriterBufferHelper.h"
 
 #include "../Utils/Utils.h"
 
@@ -30,40 +31,43 @@ namespace Pengine
 		BaseMaterial(const BaseMaterial&) = delete;
 		BaseMaterial& operator=(const BaseMaterial&) = delete;
 
-		std::shared_ptr<Pipeline> GetPipeline(const std::string& type) const;
+		std::shared_ptr<Pipeline> GetPipeline(const std::string& renderPassName) const;
 
 		std::unordered_map<std::string, std::shared_ptr<Pipeline>> GetPipelinesByRenderPass() const { return m_PipelinesByRenderPass; }
 
-		size_t m_MaterialsSize = 0;
+		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& renderPassName) const;
+
+		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
+
+		bool GetUniformDetails(
+			const std::string& uniformBufferName,
+			const std::string& valueName,
+			uint32_t& size,
+			uint32_t& offset) const;
+
+		std::optional<ShaderReflection::ReflectVariable> GetUniformValue(
+			const std::string& uniformBufferName,
+			const std::string& valueName);
 
 		template<typename T>
-		void SetValue(const std::string& bufferName, const std::string& name, T& value);
+		void WriteToBuffer(
+			const std::string& uniformBufferName,
+			const std::string& valueName,
+			T& value);
 
 	private:
 		std::unordered_map<std::string, std::shared_ptr<Pipeline>> m_PipelinesByRenderPass;
+		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPass;
+		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
 	};
 
 	template<typename T>
-	void BaseMaterial::SetValue(const std::string& bufferName, const std::string& name, T& value)
+	inline void BaseMaterial::WriteToBuffer(
+		const std::string& uniformBufferName,
+		const std::string& valueName,
+		T& value)
 	{
-		for (const auto& [renderPass, pipeline] : m_PipelinesByRenderPass)
-		{
-			if (!pipeline->GetUniformWriter())
-			{
-				continue;
-			}
-
-			if (const UniformLayout::Binding& binding = pipeline->GetUniformWriter()->GetLayout()->GetBindingByName(bufferName);
-				binding.type == UniformLayout::Type::BUFFER)
-			{
-				if (auto variable = binding.GetValue(name))
-				{
-					const std::shared_ptr<Buffer> buffer = pipeline->GetBuffer(bufferName);
-					void* data = buffer->GetData();
-					Utils::SetValue(data, variable->offset, value);
-				}
-			}
-		}
+		WriterBufferHelper::WriteToBuffer(this, GetBuffer(uniformBufferName), uniformBufferName, valueName, value);
 	}
 
 }

@@ -7,7 +7,7 @@
 using namespace Pengine;
 
 std::shared_ptr<UniformLayout> UniformLayout::Create(
-	const std::unordered_map<uint32_t, Binding>& bindings)
+	const std::vector<ShaderReflection::ReflectDescriptorSetBinding>& bindings)
 {
 	if (graphicsAPI == GraphicsAPI::Vk)
 	{
@@ -18,60 +18,46 @@ std::shared_ptr<UniformLayout> UniformLayout::Create(
 	return nullptr;
 }
 
-UniformLayout::UniformLayout(const std::unordered_map<uint32_t, Binding>& bindings)
-	: m_BindingsByLocation(bindings)
+UniformLayout::UniformLayout(const std::vector<ShaderReflection::ReflectDescriptorSetBinding>& bindings)
+	: m_Bindings(bindings)
 {
-	for (const auto& [location, binding] : bindings)
-	{
-		m_BindingLocationsByName[binding.name] = location;
-	}
 }
 
-uint32_t UniformLayout::GetBindingLocationByName(const std::string& name) const
+std::optional<ShaderReflection::ReflectDescriptorSetBinding> UniformLayout::GetBindingByLocation(const uint32_t location) const
 {
-	if (const auto bindingLocationByName = m_BindingLocationsByName.find(name);
-		bindingLocationByName != m_BindingLocationsByName.end())
+	for (const auto& binding : m_Bindings)
 	{
-		return bindingLocationByName->second;
-	}
-
-	FATAL_ERROR("No location at this " + name +  " name!");
-	return -1;
-}
-
-UniformLayout::Binding UniformLayout::GetBindingByLocation(const uint32_t location) const
-{
-	if (const auto bindingByLocation = m_BindingsByLocation.find(location);
-		bindingByLocation != m_BindingsByLocation.end())
-	{
-		return bindingByLocation->second;
-	}
-
-	FATAL_ERROR("No binding at this " + std::to_string(location) + " location!");
-	return {};
-}
-
-UniformLayout::Binding UniformLayout::GetBindingByName(const std::string& name) const
-{
-	if (const auto bindingLocationByName = m_BindingLocationsByName.find(name);
-		bindingLocationByName != m_BindingLocationsByName.end())
-	{
-		return GetBindingByLocation(bindingLocationByName->second);
-	}
-
-	FATAL_ERROR("No binding at this " + name + " name!");
-	return {};
-}
-
-std::optional<UniformLayout::Variable> UniformLayout::Binding::GetValue(const std::string& name) const
-{
-	for (const auto& value : values)
-	{
-		if (value.name == name)
+		if (binding.binding == location)
 		{
-			return value;
+			return binding;
 		}
 	}
 
 	return std::nullopt;
+}
+
+std::optional<ShaderReflection::ReflectDescriptorSetBinding> UniformLayout::GetBindingByName(const std::string& name) const
+{
+	for (const auto& binding : m_Bindings)
+	{
+		if (binding.name == name)
+		{
+			return binding;
+		}
+	}
+
+	return std::nullopt;
+}
+
+uint32_t UniformLayout::GetBindingLocationByName(const std::string& name) const
+{
+	for (const auto& binding : m_Bindings)
+	{
+		if (binding.name == name)
+		{
+			return binding.binding;
+		}
+	}
+
+	return -1;
 }

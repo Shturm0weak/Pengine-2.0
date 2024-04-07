@@ -1220,6 +1220,13 @@ void Editor::Manipulate()
 			glm::mat4 projectionMat4 = cameraComponent.GetProjectionMat4();
 			glm::mat4 viewMat4 = cameraComponent.GetViewMat4();
 			Transform& transform = entity->GetComponent<Transform>();
+			Transform& cameraTransform = camera->GetComponent<Transform>();
+
+			if (glm::dot(cameraTransform.GetForward(), transform.GetPosition() - cameraTransform.GetPosition()) < 0)
+			{
+				return;
+			}
+
 			glm::mat4 transformMat4 = transform.GetTransform();
 			ImGuizmo::Manipulate(glm::value_ptr(viewMat4), glm::value_ptr(projectionMat4),
 				(ImGuizmo::OPERATION)m_GizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(transformMat4));
@@ -1458,78 +1465,94 @@ void Editor::MaterialMenu::Update(const Editor& editor)
 		}
 
 		ImGui::Text("Name: %s", material->GetName().c_str());
-		ImGui::Text("Filepath: %s", material->GetFilepath().c_str());
+		ImGui::Text("Filepath: %s", material->GetFilepath().string().c_str());
 
-		for (const auto& [renderPass, pipeline] : material->GetBaseMaterial()->GetPipelinesByRenderPass())
+		for (const auto& [renderPassName, pipeline] : material->GetBaseMaterial()->GetPipelinesByRenderPass())
 		{
-			if (ImGui::CollapsingHeader(renderPass.c_str()))
+			if (ImGui::CollapsingHeader(renderPassName.c_str()))
 			{
-				for (const auto& [location, binding] : pipeline->GetChildUniformLayout()->GetBindingsByLocation())
+				for (const auto& [set, uniformLayout] : pipeline->GetUniformLayouts())
 				{
-					if (binding.type == UniformLayout::Type::SAMPLER)
+					const auto& descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL);
+					if (!descriptorSetIndex || descriptorSetIndex.value() != set)
 					{
-						if (const std::shared_ptr<Texture>& texture = material->GetTexture(binding.name))
+						continue;
+					}
+
+					const std::shared_ptr<UniformWriter> uniformWriter = material->GetUniformWriter(renderPassName);
+
+					for (const auto& binding : uniformLayout->GetBindings())
+					{
+						if (binding.type == ShaderReflection::Type::COMBINED_IMAGE_SAMPLER)
 						{
-							ImGui::Text("%s", texture->GetFilepath().c_str());
-							ImGui::Image(ImTextureID(texture->GetId()), { 128, 128 });
-
-							if (ImGui::BeginDragDropTarget())
+							if (const std::shared_ptr<Texture>& texture = uniformWriter->GetTexture(binding.name))
 							{
-								if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+								ImGui::Text("%s", texture->GetFilepath().string().c_str());
+								ImGui::Image(ImTextureID(texture->GetId()), { 128, 128 });
+
+								if (ImGui::BeginDragDropTarget())
 								{
-									std::string path((const char*)payload->Data);
-									path.resize(payload->DataSize);
-
-									if (FileFormats::IsTexture(Utils::GetFileFormat(path)))
+									if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
 									{
-										material->SetTexture(binding.name, TextureManager::GetInstance().Load(path));
-									}
-								}
+										std::string path((const char*)payload->Data);
+										path.resize(payload->DataSize);
 
-								ImGui::EndDragDropTarget();
+										if (FileFormats::IsTexture(Utils::GetFileFormat(path)))
+										{
+											material->GetUniformWriter(renderPassName)->WriteTexture(binding.name, TextureManager::GetInstance().Load(path));
+										}
+									}
+
+									ImGui::EndDragDropTarget();
+								}
 							}
 						}
-					}
-					else if (binding.type == UniformLayout::Type::BUFFER)
-					{
-						ImGui::Text("%s", binding.name.c_str());
-
-						auto buffer = pipeline->GetBuffer(binding.name);
-						void* data = (char*)buffer->GetData() + buffer->GetInstanceSize() * material->GetIndex();
-						for (const auto& variable : binding.values)
+						else if (binding.type == ShaderReflection::Type::UNIFORM_BUFFER)
 						{
-							if (!variable.name.empty() && variable.name[0] == '_')
+							const std::shared_ptr<Buffer> buffer = material->GetBuffer(binding.name);
+							if (!buffer)
 							{
 								continue;
 							}
 
-							if (variable.type == "vec2")
+							ImGui::Text("%s", binding.name.c_str());
+
+							void* data = (char*)buffer->GetData();
+
+							std::function<void(const ShaderReflection::ReflectVariable&)> drawVariable = [&](const ShaderReflection::ReflectVariable& variable)
+								{
+									if (variable.type == ShaderReflection::ReflectVariable::Type::FLOAT)
+									{
+										ImGui::SliderFloat(variable.name.c_str(), &Utils::GetValue<float>(data, variable.offset), 0.0f, 1.0f);
+									}
+									if (variable.type == ShaderReflection::ReflectVariable::Type::INT)
+									{
+										ImGui::InputInt(variable.name.c_str(), &Utils::GetValue<int>(data, variable.offset));
+									}
+									if (variable.type == ShaderReflection::ReflectVariable::Type::VEC2)
+									{
+										editor.DrawVec2Control(variable.name.c_str(), Utils::GetValue<glm::vec2>(data, variable.offset));
+									}
+									if (variable.type == ShaderReflection::ReflectVariable::Type::VEC3)
+									{
+										editor.DrawVec3Control(variable.name.c_str(), Utils::GetValue<glm::vec3>(data, variable.offset));
+									}
+									if (variable.type == ShaderReflection::ReflectVariable::Type::VEC4)
+									{
+										editor.DrawVec4Control(variable.name.c_str(), Utils::GetValue<glm::vec4>(data, variable.offset));
+									}
+									else if (variable.type == ShaderReflection::ReflectVariable::Type::STRUCT)
+									{
+										for (const auto& memberVariable : variable.variables)
+										{
+											drawVariable(memberVariable);
+										}
+									}
+								};
+
+							for (const auto& variable : binding.buffer->variables)
 							{
-								editor.DrawVec2Control(variable.name, Utils::GetValue<glm::vec2>(data, variable.offset));
-							}
-							else if (variable.type == "vec3")
-							{
-								editor.DrawVec3Control(variable.name, Utils::GetValue<glm::vec3>(data, variable.offset));
-							}
-							else if (variable.type == "vec4")
-							{
-								editor.DrawVec4Control(variable.name, Utils::GetValue<glm::vec4>(data, variable.offset));
-							}
-							else if (variable.type == "color")
-							{
-								ImGui::ColorEdit4(variable.name.c_str(), &Utils::GetValue<glm::vec4>(data, variable.offset)[0]);
-							}
-							else if (variable.type == "float")
-							{
-								ImGui::InputFloat(variable.name.c_str(), &Utils::GetValue<float>(data, variable.offset));
-							}
-							else if (variable.type == "int")
-							{
-								ImGui::InputInt(variable.name.c_str(), &Utils::GetValue<int>(data, variable.offset));
-							}
-							else if (variable.type == "sampler")
-							{
-								ImGui::InputInt(variable.name.c_str(), &Utils::GetValue<int>(data, variable.offset));
+								drawVariable(variable);
 							}
 						}
 					}

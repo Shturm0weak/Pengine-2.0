@@ -11,26 +11,25 @@ namespace Pengine::Vk
 	class PENGINE_API VulkanUniformLayout final: public UniformLayout
 	{
 	public:
-		explicit VulkanUniformLayout(const std::unordered_map<uint32_t, Binding>& bindings);
+		explicit VulkanUniformLayout(const std::vector<ShaderReflection::ReflectDescriptorSetBinding>& bindings);
 		virtual ~VulkanUniformLayout() override;
 		VulkanUniformLayout(const VulkanUniformLayout&) = delete;
 		VulkanUniformLayout(VulkanUniformLayout&&) = delete;
 		VulkanUniformLayout& operator=(const VulkanUniformLayout&) = delete;
 		VulkanUniformLayout& operator=(VulkanUniformLayout&&) = delete;
 
-		VkDescriptorSetLayout GetDescriptorSetLayout() const { return m_DescriptorSetLayout[Vk::swapChainImageIndex]; }
+		VkDescriptorSetLayout GetDescriptorSetLayout() const { return m_DescriptorSetLayout; }
 
-		static VkDescriptorType ConvertDescriptorType(Type type);
+		static VkDescriptorType ConvertDescriptorType(ShaderReflection::Type type);
 
-		static Type ConvertDescriptorType(VkDescriptorType type);
+		static ShaderReflection::Type ConvertDescriptorType(VkDescriptorType type);
 
-		static VkShaderStageFlagBits ConvertDescriptorStage(Stage stage);
+		static VkShaderStageFlagBits ConvertDescriptorStage(ShaderReflection::Stage stage);
 
-		static Stage ConvertDescriptorStage(VkShaderStageFlagBits stage);
+		static ShaderReflection::Stage ConvertDescriptorStage(VkShaderStageFlagBits stage);
 
 	private:
-		std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> m_BindingsByLocation;
-		std::vector<VkDescriptorSetLayout> m_DescriptorSetLayout;
+		VkDescriptorSetLayout m_DescriptorSetLayout;
 	};
 
 }

@@ -4,6 +4,7 @@
 
 #include "RenderPass.h"
 #include "UniformLayout.h"
+#include "ShaderReflection.h"
 
 namespace Pengine
 {
@@ -37,12 +38,48 @@ namespace Pengine
 			bool blendEnabled = false;
 		};
 
+		enum class DescriptorSetIndexType
+		{
+			RENDERPASS,
+			BASE_MATERIAL,
+			MATERIAL
+		};
+
+		enum class InputRate
+		{
+			VERTEX,
+			INSTANCE
+		};
+
+		struct BindingDescription
+		{
+			uint32_t binding;
+			InputRate inputRate;
+			std::vector<std::string> names;
+		};
+
+		struct UniformBufferInfo
+		{
+			std::unordered_map<std::string, int> intValuesByName;
+			std::unordered_map<std::string, float> floatValuesByName;
+			std::unordered_map<std::string, glm::vec2> vec2ValuesByName;
+			std::unordered_map<std::string, glm::vec3> vec3ValuesByName;
+			std::unordered_map<std::string, glm::vec4> vec4ValuesByName;
+		};
+
+		struct UniformInfo
+		{
+			std::unordered_map<std::string, UniformBufferInfo> uniformBuffersByName;
+			std::unordered_map<std::string, std::string> texturesByName;
+		};
+
 		struct CreateInfo
 		{
-			std::unordered_map<uint32_t, UniformLayout::Binding> uniformBindings;
-			std::unordered_map<uint32_t, UniformLayout::Binding> childUniformBindings;
+			std::vector<BindingDescription> bindingDescriptions;
+			std::map<DescriptorSetIndexType, uint32_t> descriptorSetIndicesByType;
 			std::vector<BlendStateAttachment> colorBlendStateAttachments;
 			std::shared_ptr<RenderPass> renderPass;
+			UniformInfo uniformInfo;
 			std::string vertexFilepath;
 			std::string fragmentFilepath;
 			CullMode cullMode;
@@ -60,21 +97,21 @@ namespace Pengine
 		Pipeline& operator=(const Pipeline&) = delete;
 		Pipeline& operator=(Pipeline&&) = delete;
 
-		[[nodiscard]] std::shared_ptr<UniformWriter> GetUniformWriter() const { return m_UniformWriter; }
+		std::shared_ptr<UniformLayout> GetUniformLayout(const uint32_t descriptorSet) const;
 
-		[[nodiscard]] std::shared_ptr<UniformLayout> GetChildUniformLayout() const { return m_ChildUniformLayout; }
+		const std::map<uint32_t, std::shared_ptr<UniformLayout>>& GetUniformLayouts() const { return m_UniformLayoutsByDescriptorSet; }
 
-		[[nodiscard]] std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
+		const std::optional<uint32_t> GetDescriptorSetIndexByType(const DescriptorSetIndexType type) const;
 
-		CreateInfo createInfo;
+		const CreateInfo& GetCreateInfo() const { return m_CreateInfo; }
 
 	protected:
-		static std::string ReadFile(const std::string & filepath);
 
-		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
+		CreateInfo m_CreateInfo;
 
-		std::shared_ptr<UniformWriter> m_UniformWriter;
-		std::shared_ptr<UniformLayout> m_ChildUniformLayout;
+		ShaderReflection::ReflectShaderModule m_ReflectVertexShaderModule;
+		ShaderReflection::ReflectShaderModule m_ReflectFragmentShaderModule;
+		std::map<uint32_t, std::shared_ptr<UniformLayout>> m_UniformLayoutsByDescriptorSet;
 	};
 
 }

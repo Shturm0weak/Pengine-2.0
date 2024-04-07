@@ -3,17 +3,15 @@ Mat:
   Pipelines:
     - RenderPass: GBuffer
       Uniforms:
+        - Name: albedoTexture
+          Value: D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures/sponza_curtain_diff.tga
+        - Name: normalTexture
+          Value: White
         - Name: material
           Values:
             - Name: color
               Value: [0.470400006, 0.470400006, 0.470400006, 1]
-            - Name: other
-              Value: [0, 0, 0, 0]
-            - Name: __unused1
-              Value: [0, 0, 0, 0]
-            - Name: __unused2
-              Value: [0, 0, 0, 0]
-        - Name: normalTexture
-          Value: White
-        - Name: albedoTexture
-          Value: Meshes/LargeFiles/SponzaOptimized/textures/sponza_curtain_diff.tga
+              Type: vec4
+            - Name: useNormalMap
+              Value: 0
+              Type: int

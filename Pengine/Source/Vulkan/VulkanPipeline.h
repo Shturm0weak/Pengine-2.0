@@ -4,74 +4,87 @@
 #include "../Graphics/Pipeline.h"
 
 #include <vulkan/vulkan.h>
+#include <SPIRV-Reflect/spirv_reflect.h>
 
 namespace Pengine::Vk
 {
 
-    struct PipelineConfigInfo
-    {
-        PipelineConfigInfo(PipelineConfigInfo const&) = delete;
-        PipelineConfigInfo& operator=(PipelineConfigInfo const&) = delete;
+	struct PipelineConfigInfo
+	{
+		PipelineConfigInfo(PipelineConfigInfo const&) = delete;
+		PipelineConfigInfo& operator=(PipelineConfigInfo const&) = delete;
 
-        VkPipelineViewportStateCreateInfo viewportInfo;
-        VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
-        VkPipelineRasterizationStateCreateInfo rasterizationInfo;
-        VkPipelineMultisampleStateCreateInfo multisampleInfo;
-        std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
-        VkPipelineColorBlendStateCreateInfo colorBlendInfo;
-        VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
-        std::vector<VkDynamicState> dynamicStateEnables;
-        VkPipelineDynamicStateCreateInfo dynamicStateInfo;
-        VkPipelineLayout pipelineLayout = nullptr;
-        VkRenderPass renderPass = nullptr;
-        uint32_t subpass = 0;
-    };
+		VkPipelineViewportStateCreateInfo viewportInfo;
+		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
+		VkPipelineRasterizationStateCreateInfo rasterizationInfo;
+		VkPipelineMultisampleStateCreateInfo multisampleInfo;
+		std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments;
+		VkPipelineColorBlendStateCreateInfo colorBlendInfo;
+		VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
+		std::vector<VkDynamicState> dynamicStateEnables;
+		VkPipelineDynamicStateCreateInfo dynamicStateInfo;
+		VkPipelineLayout pipelineLayout = nullptr;
+		VkRenderPass renderPass = nullptr;
+		uint32_t subpass = 0;
+	};
 
-    class PENGINE_API VulkanPipeline final : public Pipeline
-    {
-    public:
-        static void DefaultPipelineConfigInfo(PipelineConfigInfo& pipelineConfigInfo);
+	class PENGINE_API VulkanPipeline final : public Pipeline
+	{
+	public:
+		static void DefaultPipelineConfigInfo(PipelineConfigInfo& pipelineConfigInfo);
 
-        void Bind(VkCommandBuffer commandBuffer) const;
+		void Bind(VkCommandBuffer commandBuffer) const;
 
-        explicit VulkanPipeline(const CreateInfo& pipelineCreateInfo);
-        virtual ~VulkanPipeline() override;
-        VulkanPipeline(const VulkanPipeline&) = delete;
-        VulkanPipeline& operator=(const VulkanPipeline&) = delete;
+		explicit VulkanPipeline(const CreateInfo& pipelineCreateInfo);
+		virtual ~VulkanPipeline() override;
+		VulkanPipeline(const VulkanPipeline&) = delete;
+		VulkanPipeline& operator=(const VulkanPipeline&) = delete;
 
-        static VkCullModeFlagBits ConvertCullMode(CullMode cullMode);
+		static VkCullModeFlagBits ConvertCullMode(CullMode cullMode);
 
-        static CullMode ConvertCullMode(VkCullModeFlagBits cullMode);
+		static CullMode ConvertCullMode(VkCullModeFlagBits cullMode);
 
-        static VkPolygonMode ConvertPolygonMode(PolygonMode polygonMode);
+		static VkPolygonMode ConvertPolygonMode(PolygonMode polygonMode);
 
-        static PolygonMode ConvertPolygonMode(VkPolygonMode polygonMode);
+		static PolygonMode ConvertPolygonMode(VkPolygonMode polygonMode);
 
-        VkPipeline GetPipeline() const { return m_GraphicsPipeline; }
+		VkPipeline GetPipeline() const { return m_GraphicsPipeline; }
 
-        VkPipelineLayout GetPipelineLayout() const { return m_PipelineLayout; }
+		VkPipelineLayout GetPipelineLayout() const { return m_PipelineLayout; }
 
-    private:
-        static std::vector<VkVertexInputBindingDescription> CreateBindingDescriptions(
-            const std::vector<Vertex::BindingDescription>& bindingDescriptions);
+	private:
+		static std::vector<VkVertexInputBindingDescription> CreateBindingDescriptions(
+			const ShaderReflection::ReflectShaderModule& reflectShaderModule,
+			const std::vector<BindingDescription>& bindingDescriptions);
 
-        static std::vector<VkVertexInputAttributeDescription> CreateAttributeDescriptions(
-            const std::vector<Vertex::AttributeDescription>& attributeDescriptions);
+		static std::vector<VkVertexInputAttributeDescription> CreateAttributeDescriptions(
+			const ShaderReflection::ReflectShaderModule& reflectShaderModule,
+			const std::vector<BindingDescription>& bindingDescriptions);
 
-        static VkVertexInputRate ConvertVertexInputRate(Vertex::InputRate vertexInputRate);
+		static VkVertexInputRate ConvertVertexInputRate(InputRate vertexInputRate);
 
-        static Vertex::InputRate ConvertVertexInputRate(VkVertexInputRate vertexInputRate);
+		static InputRate ConvertVertexInputRate(VkVertexInputRate vertexInputRate);
 
-        static void CreateShaderModule(const std::string& code, VkShaderModule* shaderModule);
+		static void CreateShaderModule(const std::string& code, VkShaderModule* shaderModule);
 
-        std::string CompileShaderModule(const std::string& filepath, ShaderType type);
+		std::string CompileShaderModule(const std::string& filepath, ShaderType type);
 
-        static void Reflect(const std::string& spv);
+		static ShaderReflection::ReflectShaderModule Reflect(const std::string& spv);
 
-        VkPipeline m_GraphicsPipeline{};
-        VkPipelineLayout m_PipelineLayout{};
-        VkShaderModule m_VertShaderModule{};
-        VkShaderModule m_FragShaderModule{};
-    };
+		static void ReflectDescriptorSets(
+			SpvReflectShaderModule& reflectModule,
+			ShaderReflection::ReflectShaderModule& reflectShaderModule);
+
+		static void ReflectInputVariables(
+			SpvReflectShaderModule& reflectModule,
+			ShaderReflection::ReflectShaderModule& reflectShaderModule);
+
+		void CreateDescriptorSetLayouts(const ShaderReflection::ReflectShaderModule& reflectShaderModule);
+
+		VkPipeline m_GraphicsPipeline{};
+		VkPipelineLayout m_PipelineLayout{};
+		VkShaderModule m_VertexShaderModule{};
+		VkShaderModule m_FragmentShaderModule{};
+	};
 
 }

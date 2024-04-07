@@ -34,12 +34,16 @@ namespace Pengine
 
 		[[nodiscard]] virtual void* GetData() const = 0;
 
-		virtual void WriteToBuffer(void* data, size_t size,
+		virtual void WriteToBuffer(
+			void* data,
+			size_t size,
 			size_t offset = 0) = 0;
 
 		virtual void Copy(
 			const std::shared_ptr<Buffer>& buffer,
 			size_t dstOffset) = 0;
+
+		virtual void Flush() = 0;
 
 		[[nodiscard]] virtual size_t GetSize() const = 0;
 

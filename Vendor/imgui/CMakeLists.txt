@@ -9,13 +9,13 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP")
 
 set(SOURCE_FILES
-${PROJECT_SOURCE_DIR}/imgui.cpp ${PROJECT_SOURCE_DIR}/imgui.h
-${PROJECT_SOURCE_DIR}/imgui_demo.cpp
-${PROJECT_SOURCE_DIR}/imgui_draw.cpp
-${PROJECT_SOURCE_DIR}/imgui_tables.cpp
-${PROJECT_SOURCE_DIR}/imgui_widgets.cpp
-${PROJECT_SOURCE_DIR}/backends/imgui_impl_glfw.cpp ${PROJECT_SOURCE_DIR}/backends/imgui_impl_glfw.h
-${PROJECT_SOURCE_DIR}/backends/imgui_impl_vulkan.cpp ${PROJECT_SOURCE_DIR}/backends/imgui_impl_vulkan.h)
+    ${PROJECT_SOURCE_DIR}/imgui.cpp ${PROJECT_SOURCE_DIR}/imgui.h
+    ${PROJECT_SOURCE_DIR}/imgui_demo.cpp
+    ${PROJECT_SOURCE_DIR}/imgui_draw.cpp
+    ${PROJECT_SOURCE_DIR}/imgui_tables.cpp
+    ${PROJECT_SOURCE_DIR}/imgui_widgets.cpp
+    ${PROJECT_SOURCE_DIR}/backends/imgui_impl_glfw.cpp ${PROJECT_SOURCE_DIR}/backends/imgui_impl_glfw.h
+    ${PROJECT_SOURCE_DIR}/backends/imgui_impl_vulkan.cpp ${PROJECT_SOURCE_DIR}/backends/imgui_impl_vulkan.h)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)

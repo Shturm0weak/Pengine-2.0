@@ -37,6 +37,8 @@ namespace Pengine
 
 		void CreateDeferred();
 
+		void CreateDefaultReflection();
+
 		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
 	};
 

@@ -18,7 +18,7 @@ void ExampleApplication::OnStart()
 	whiteTextureCreateInfo.channels = 4;
 	whiteTextureCreateInfo.filepath = "White";
 	whiteTextureCreateInfo.name = "White";
-	whiteTextureCreateInfo.format = Texture::Format::R8G8B8A8_SRGB;
+	whiteTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
 	whiteTextureCreateInfo.size = { 1, 1 };
 	whiteTextureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_DST };
 	const std::vector<uint8_t> pixels = {

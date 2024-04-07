@@ -13,15 +13,17 @@ layout(location = 1) out vec3 worldPosition;
 layout(location = 2) out vec2 uv;
 layout(location = 3) out mat3 TBN;
 
-layout(std140, set = 0, binding = 0) uniform GlobalBuffer
+#include "Shaders/Includes/Camera.h"
+
+layout(set = 0, binding = 0) uniform GlobalBuffer
 {
-	mat4 viewProjectionMat4;
+	Camera camera;
 };
 
 void main()
 {
 	worldPosition = (transformA * vec4(positionA, 1.0)).xyz;
-	gl_Position = viewProjectionMat4 * vec4(worldPosition, 1.0);
+	gl_Position = camera.viewProjectionMat4 * vec4(worldPosition, 1.0);
 	normal = normalize(inverseTransformA * normalA);
 	vec3 tangent = normalize(inverseTransformA * tangentA);
 	vec3 bitangent = normalize(inverseTransformA * bitangentA);

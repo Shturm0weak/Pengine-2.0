@@ -2,70 +2,33 @@
 
 #include "../Core/Core.h"
 
+#include "ShaderReflection.h"
+
 namespace Pengine
 {
 
 	class PENGINE_API UniformLayout
 	{
 	public:
-		enum class Stage
-		{
-			VERTEX,
-			FRAGMENT
-		};
-
-		enum class Type
-		{
-			SAMPLER,
-			SAMPLER_ARRAY,
-			BUFFER
-		};
-
-		struct Variable
-		{
-			std::string name;
-			std::string type;
-			size_t offset = 0;
-		};
-
-		struct Binding
-		{
-			std::vector<Variable> values;
-			std::vector<Stage> stages;
-			std::string name;
-			std::string info;
-			
-			/**
-			* Used for sampler array for now.
-			*/
-			size_t count;
-			
-			Type type;
-
-			[[nodiscard]] std::optional<Variable> GetValue(const std::string& name) const;
-		};
 
 		static std::shared_ptr<UniformLayout> Create(
-			const std::unordered_map<uint32_t, Binding>& bindings);
+			const std::vector<ShaderReflection::ReflectDescriptorSetBinding>& bindings);
 
-		explicit UniformLayout(const std::unordered_map<uint32_t, Binding>& bindings);
+		explicit UniformLayout(const std::vector<ShaderReflection::ReflectDescriptorSetBinding>& bindings);
 		virtual ~UniformLayout() = default;
 		UniformLayout(const UniformLayout&) = delete;
 		UniformLayout& operator=(const UniformLayout&) = delete;
 
-		Binding GetBindingByLocation(uint32_t location) const;
-
-		Binding GetBindingByName(const std::string& name) const;
+		std::optional<ShaderReflection::ReflectDescriptorSetBinding> GetBindingByLocation(const uint32_t location) const;
+		
+		std::optional<ShaderReflection::ReflectDescriptorSetBinding> GetBindingByName(const std::string& name) const;
 
 		uint32_t GetBindingLocationByName(const std::string& name) const;
 
-		const std::unordered_map<uint32_t, Binding>& GetBindingsByLocation() { return m_BindingsByLocation; };
-
-		const std::unordered_map<std::string, uint32_t>& GetBindingLocationsByName() { return m_BindingLocationsByName; };
+		const std::vector<ShaderReflection::ReflectDescriptorSetBinding>& GetBindings() const { return m_Bindings; }
 
 	protected:
-		std::unordered_map<uint32_t, Binding> m_BindingsByLocation;
-		std::unordered_map<std::string, uint32_t> m_BindingLocationsByName;
+		std::vector<ShaderReflection::ReflectDescriptorSetBinding> m_Bindings;
 	};
 
 }
