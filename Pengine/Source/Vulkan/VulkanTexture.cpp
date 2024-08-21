@@ -4,6 +4,7 @@
 #include "VulkanDescriptors.h"
 #include "VulkanDevice.h"
 #include "VulkanFormat.h"
+#include "VulkanSamplerManager.h"
 
 #include "../Core/Logger.h"
 
@@ -88,7 +89,6 @@ VulkanTexture::~VulkanTexture()
 {
 	vkDeviceWaitIdle(device->GetDevice());
 
-	vkDestroySampler(device->GetDevice(), m_Sampler, nullptr);
 	vkDestroyImageView(device->GetDevice(), m_View, nullptr);
 	vmaDestroyImage(device->GetVmaAllocator(), m_Image, m_VmaAllocation);
 
@@ -152,13 +152,7 @@ VkSampler VulkanTexture::CreateSampler(const uint32_t mipLevels)
 	samplerInfo.minLod = 0.0f;
 	samplerInfo.maxLod = static_cast<float>(mipLevels - 1);
 
-	VkSampler sampler;
-	if (vkCreateSampler(device->GetDevice(), &samplerInfo, nullptr, &sampler) != VK_SUCCESS)
-	{
-		FATAL_ERROR("Failed to create texture sampler!");
-	}
-
-	return sampler;
+	return VulkanSamplerManager::GetInstance().CreateSampler(samplerInfo);
 }
 
 VkImageAspectFlagBits VulkanTexture::ConvertAspectMask(const AspectMask aspectMask)

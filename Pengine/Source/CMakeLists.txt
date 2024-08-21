@@ -81,6 +81,7 @@ set(VULKAN_SOURCES
 	Vulkan/VulkanPipeline.cpp Vulkan/VulkanPipeline.h
 	Vulkan/VulkanRenderer.cpp Vulkan/VulkanRenderer.h
 	Vulkan/VulkanRenderPass.cpp Vulkan/VulkanRenderPass.h
+	Vulkan/VulkanSamplerManager.cpp Vulkan/VulkanSamplerManager.h
 	Vulkan/VulkanTexture.cpp Vulkan/VulkanTexture.h
 	Vulkan/VulkanUniformLayout.cpp Vulkan/VulkanUniformLayout.h
 	Vulkan/VulkanUniformWriter.cpp Vulkan/VulkanUniformWriter.h

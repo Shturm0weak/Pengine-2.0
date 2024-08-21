@@ -6,6 +6,7 @@
 #include "../Utils/Utils.h"
 #include "../Vulkan/VulkanDevice.h"
 #include "../Vulkan/VulkanDescriptors.h"
+#include "../Vulkan/VulkanSamplerManager.h"
 
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_glfw.h>
@@ -103,6 +104,9 @@ VulkanWindow::~VulkanWindow()
 	ImGui::DestroyContext();
 
 	ImGui_ImplVulkanH_DestroyWindow(device->GetInstance(), device->GetDevice(), &m_VulkanWindow, nullptr);
+	
+	VulkanSamplerManager::GetInstance().ShutDown();
+
 	vkDestroyDescriptorPool(device->GetDevice(), g_DescriptorPool, nullptr);
 	descriptorPool.reset();
 	device.reset();
