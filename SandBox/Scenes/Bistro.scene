@@ -4,8 +4,8 @@
   Childs:
     []
   Transform:
-    Position: [-2.62088323, 2.61100507, -3.03075433]
-    Rotation: [-0.431756109, 3.3862803, 0]
+    Position: [-11.0188751, 7.29367256, -2.9750061]
+    Rotation: [-0.496604502, -1.96999526, 0]
     Scale: [1, 1, 1]
     FollowOwner: true
   Camera:
@@ -153,7 +153,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
 - UUID: a5d961d9-8eec-418d-aa09-9264565a301b
   Name: Mesh.1291
@@ -163,7 +163,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: cde1038c-273b-4598-ba0f-99ff29cb925c
@@ -176,7 +176,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 69d9bf54-b81b-4ad2-a9ce-99aebddae96e
@@ -189,7 +189,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 2c082af1-431b-4612-85ae-2694d6bbbe74
@@ -202,7 +202,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: aba0344f-d2e0-4009-a17f-5bb2ba9ed3a3
@@ -215,7 +215,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 292edafc-8f67-49b7-96f7-34de6341e1aa
@@ -228,7 +228,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 223964fd-a561-4307-97ad-11b71ef0c99c
@@ -241,7 +241,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: ca48b883-3335-4cb5-90d9-6e50aac8ec62
@@ -254,7 +254,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 9e0c17d7-36fc-40b9-bcf5-223a42cf8e42
@@ -267,7 +267,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: aa9ee117-525a-49a3-a51b-9cf512df4ab9
@@ -280,7 +280,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: f432b281-dede-4461-a185-b2f4ff3956f1
@@ -293,7 +293,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: d5910055-1e46-4b8f-a8b0-6072d6fda8c9
@@ -306,7 +306,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 05658108-90b1-4813-ac37-134b22e4ebb4
@@ -319,7 +319,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 39395294-11d7-4b90-9eea-214920a5de40
@@ -332,7 +332,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 03f340ee-79ae-4d4a-8d9e-33dfdb77603b
@@ -345,7 +345,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: f77d8fe9-6f2b-48ec-91cd-fd3c375ef41d
@@ -358,7 +358,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: bd4fcbfb-e103-46ac-ba8f-337ac4e83896
@@ -371,7 +371,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 5407a46e-a328-4af2-a50c-7084e376ded9
@@ -384,7 +384,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 0b26f35e-671e-4d18-b793-e7d0a3edfdac
@@ -397,7 +397,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 6795c765-3fa0-487e-98ff-da58d97b170c
@@ -410,7 +410,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 57ef648b-44fa-4589-8eed-d9ca7ce2d307
@@ -423,7 +423,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: aedf5904-3180-41f3-a6f5-1d6b8fb21070
@@ -436,7 +436,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 71fcd06f-2d4d-482f-92a1-673fb685d66c
@@ -449,7 +449,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 40f8b77f-d96f-442e-813c-d2fc945afbd9
@@ -462,7 +462,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 33d004eb-48b0-4d0b-a17b-b838b1ced9fa
@@ -475,7 +475,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 40d8a03d-69b9-49de-8bda-b9798486d257
@@ -488,7 +488,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: dc2443d4-48a3-42bb-a3a9-c1893287223a
@@ -501,7 +501,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 6829a128-4bdd-4f0c-86a0-6fecbf9527ec
@@ -514,7 +514,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: c6c12a53-13f3-4d0a-bc44-653e4c9a1eaa
@@ -527,7 +527,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 41e08151-a515-4723-9d37-341a2282e364
@@ -540,7 +540,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: a098681f-5bed-44d6-8fbe-f1332ea0aa7d
@@ -553,7 +553,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 10840527-7934-4d7e-b7f0-b01c8b453e9c
@@ -566,7 +566,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 37317ad8-1a5f-4020-b5f8-40c0073ed8b0
@@ -579,7 +579,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 7c97a7de-28ae-4924-b825-5b350ea5b603
@@ -592,7 +592,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 3bfcb912-ec91-4c6b-ac68-268e1b5f0c63
@@ -605,7 +605,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: f12a858c-35ab-48e4-96cd-61e197fb5b70
@@ -618,7 +618,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 4e596792-c74f-440c-928a-68a4f67a2e4d
@@ -631,7 +631,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: e3cef031-5633-435c-a67d-fced617f020d
@@ -644,7 +644,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 6b141142-5ac7-4163-9d62-f80d3e3353c1
@@ -657,7 +657,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: acb48e82-9269-4f0a-94cd-18935d14a3e9
@@ -670,7 +670,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 5a4ab985-d966-426c-afb6-e92a89e4f035
@@ -683,7 +683,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: b1366d91-45a5-4717-a6b5-8fa81b9f842d
@@ -696,7 +696,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 6fa8c681-3c2a-4305-8566-5c97ca156c55
@@ -709,7 +709,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: daef64e7-6939-4033-8109-c53bcbed2d06
@@ -722,7 +722,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 3adc65af-452b-43ae-86ce-a5c0803f896c
@@ -735,7 +735,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 6b4329b7-d5c3-40aa-a88c-a3cf2272067b
@@ -748,7 +748,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 6c489b21-e9be-42fb-8d5b-d43312eb0fbd
@@ -761,7 +761,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 8d450a90-7372-42a0-bd51-5e225a09df57
@@ -774,7 +774,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 83ade588-c878-4c64-a4de-fafe8aa75a6d
@@ -787,7 +787,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 3f39859f-51f3-4d6e-bce4-1b43cfa66fa5
@@ -800,7 +800,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 703e0fc6-0e30-48be-bd1b-7dcae9c5610f
@@ -813,7 +813,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: ce0652eb-6e65-4c83-8ecc-8b7370dd1708
@@ -826,7 +826,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: df01cef7-df07-4a9e-ab41-35fc4f4c6a4e
@@ -839,7 +839,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 1a49b2f6-7065-4ec0-844a-9e4efbb503fa
@@ -852,7 +852,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 12fdeacb-1aa0-4689-bdec-7898a84e5817
@@ -865,7 +865,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 6c1e4720-d03b-4896-8e52-ad4678029386
@@ -878,7 +878,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: abdccd48-b867-4f1e-a7e0-cfafef2a65ae
@@ -891,7 +891,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: e358c187-66d3-4603-8f71-bb7e60c7f1c4
@@ -904,7 +904,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 88858c62-0121-4ef5-9efe-e310f77bd4f8
@@ -917,7 +917,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: a20d6891-28fe-4d55-b789-dd203dc452e1
@@ -930,7 +930,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 7bf9bfcb-e6f1-4b5d-b625-dd727a580b5d
@@ -943,7 +943,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 7737cde1-a026-488f-a75d-a310e03fda22
@@ -956,7 +956,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: b82a2c7a-845b-4c51-89de-ec285dc0f043
@@ -969,7 +969,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: b92699dd-a3b3-494e-897f-26873b3deb6c
@@ -982,7 +982,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: af414cfd-a23f-41dd-8c3f-79dd1e24d607
@@ -995,7 +995,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: b4047bfc-d9ab-4b48-9181-14699c8d99b3
@@ -1008,7 +1008,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: d5b765b8-2489-4368-aa29-cb65638e9ab8
@@ -1021,7 +1021,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 8283ef50-16b1-4e3f-a0ae-e8aba5cd385e
@@ -1034,7 +1034,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 62a0b63d-3896-46f5-8671-2e083879b62a
@@ -1047,7 +1047,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: ee7fc3df-1915-4b88-a4b4-17966dc12e4f
@@ -1060,7 +1060,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 4c07f0f8-2e04-4c46-8cc8-378b68f0fb46
@@ -1073,7 +1073,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: b87b0275-252a-415d-a7c9-1db6cdd5ce15
@@ -1086,7 +1086,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 7aca97aa-427a-4579-b69d-bc0c8fea41f8
@@ -1099,7 +1099,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 2464fdfb-5749-40ef-8888-e170cdd23549
@@ -1112,7 +1112,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 11bad339-94cf-48de-9ffd-c1572d921ee4
@@ -1125,7 +1125,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 7259802e-bc1c-41ec-a559-cf576ab6f78c
@@ -1138,7 +1138,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 64117990-4b4c-4cef-b78f-60fb1ec6b5e7
@@ -1151,7 +1151,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 2694e9cf-d545-4921-9040-bf9e70f9ba26
@@ -1164,7 +1164,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 87b256f4-41f5-4d47-9565-a447f4a2365c
@@ -1177,7 +1177,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: b7bc36d7-4d82-47a8-bdb7-46c3991f7f48
@@ -1190,7 +1190,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: cecbe7f3-3f81-4630-b6ec-3065647ca98b
@@ -1203,7 +1203,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: cc2f9578-7822-44e2-b3ee-766107f12dd3
@@ -1216,7 +1216,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 55fb2ac7-701a-4b56-b244-9743dc33b4f8
@@ -1229,7 +1229,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: f4ce2330-8fe2-4f53-96d5-3b5b5d40ea1b
@@ -1242,7 +1242,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 43f0a39f-59b0-4cf0-8888-a564c245b881
@@ -1255,7 +1255,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 86404f53-d486-4f5b-94ac-c83494363677
@@ -1268,7 +1268,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 40e50fa0-282f-4daa-804c-e6c74137939d
@@ -1281,7 +1281,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: bcd2e560-d54a-4601-901c-e1684a4aa7c6
@@ -1294,7 +1294,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 94884141-761d-461d-a8b9-87f9b0abaf5d
@@ -1307,7 +1307,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 988c25a4-d175-4627-a898-160eea88b7e5
@@ -1320,7 +1320,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 7b3480d3-dcde-494a-80fe-b3065c576d6a
@@ -1333,7 +1333,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: c132ffc0-e9a9-4fff-b66b-22aa90f0433e
@@ -1346,7 +1346,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: d9b5e2f5-4f2d-4cdf-878c-4e7e15ca1baf
@@ -1359,7 +1359,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 1b4a7965-b3b5-4e35-95ee-6c0c645e31b9
@@ -1372,7 +1372,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 754f2a94-e3bb-4df2-b321-bc4b8643578d
@@ -1385,7 +1385,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 77e2493b-8e76-4b29-8c7a-dbe5507f7dc3
@@ -1398,7 +1398,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 830b3092-474c-45c3-9967-2197fb720727
@@ -1411,7 +1411,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: bc8aff8d-bb3e-472a-84ae-d71aaa062e0e
@@ -1424,7 +1424,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 9ab407e6-1f19-4760-9c01-7e4e12fc25bf
@@ -1437,7 +1437,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 4f688c4f-3752-44ad-873a-d7c87639036d
@@ -1450,7 +1450,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 56ca3894-2727-4baf-83a1-ceee60f55f08
@@ -1463,7 +1463,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: e7623a31-2277-4182-b5b6-aaebcc61b387
@@ -1476,7 +1476,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: ffff3db1-bf7f-454e-89c2-6b895584220f
@@ -1489,7 +1489,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 70eeaf8a-62d3-49fb-860d-a198912cc15f
@@ -1502,7 +1502,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 6fe990f7-339d-4b52-84f6-801f69f29f59
@@ -1515,7 +1515,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 35742490-6355-422c-b2f4-0e57ea8c0993
@@ -1528,7 +1528,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: db883939-1e06-4693-872e-7efa3fd2d990
@@ -1541,7 +1541,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 9d533d8c-5e0e-43d2-8ed6-df5ace044244
@@ -1554,7 +1554,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 957b4946-25fb-4fe3-b39d-16bf3f8cb8c2
@@ -1567,7 +1567,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: d8eb83d3-0996-47aa-8006-6e3a60890f4a
@@ -1580,7 +1580,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: a5f383a3-19d6-47b9-bb05-101fdc67a991
@@ -1593,7 +1593,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 58337341-1700-4c28-be70-a689f3f17221
@@ -1606,7 +1606,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: e48c4dc4-97a3-4042-ae70-0a882a957d70
@@ -1619,7 +1619,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: d2c8aae2-4222-4242-a880-231c736f417d
@@ -1632,7 +1632,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 5f00ed46-78c4-4d19-b2ef-5d378d5a480b
@@ -1645,7 +1645,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 11a0929a-b246-46c3-9241-6e21fc2176be
@@ -1658,7 +1658,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: e0161665-2fab-4bad-b3af-f2792322c97a
@@ -1671,7 +1671,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 8bd28574-9f2b-44b4-9460-88c5e65ef974
@@ -1684,7 +1684,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 7d6a3010-317c-4f3c-9bd7-02cc2e2b8345
@@ -1697,7 +1697,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: f8f81306-c503-4c63-aa36-8238d15d6fd1
@@ -1710,7 +1710,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: b32736a9-deff-4f9a-b0f1-407eb56e7799
@@ -1723,7 +1723,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 7b842371-e375-4f3b-b337-d09315140b03
@@ -1736,7 +1736,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 5fa704b4-103c-466f-b758-447e60990af2
@@ -1749,7 +1749,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 4f37f8b1-ba5a-434c-b87b-511e77e47f7a
@@ -1762,7 +1762,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 0ab48aa2-06ad-4b16-81ac-5663d362110d
@@ -1775,7 +1775,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 7d30d979-40e9-400b-a42e-752f5a1edc30
@@ -1788,7 +1788,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 6e6a08d1-aa7c-4255-a0ba-d294ffa26f85
@@ -1801,7 +1801,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: a573e276-6959-4c8c-a474-5068d7402376
@@ -1814,7 +1814,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: c9cbef5e-1056-46e8-90d8-c7a4847267ec
@@ -1827,7 +1827,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: b0850ca6-3ee4-4e7a-99b5-09d4e4185fd3
@@ -1840,7 +1840,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: cc112817-3f73-4d2b-b14e-9fcc4100537e
@@ -1853,7 +1853,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 1d8d01ea-6cf4-4f5e-bdb2-81e130775736
@@ -1866,7 +1866,7 @@
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, -0, 0]
-    Scale: [1, 1, 1]
+    Scale: [3, 3, 3]
     FollowOwner: true
   Renderer3D:
     Mesh: 50a32f22-e763-4e30-93b6-28cf1ddee814
@@ -1876,6 +1876,8 @@
   IsEnabled: true
   Childs:
     - c8cd8434-45fe-49b6-ae8e-c0600501a399
+    - ca5e72be-a400-42d6-ba3f-ded62a547463
+    - 6afc8822-196c-433a-b86f-428ff8c8d0db
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, 0, 0]
@@ -1887,12 +1889,42 @@
   Childs:
     []
   Transform:
-    Position: [-1.34731972, 1.34249711, -1.28957093]
+    Position: [-3.99516201, 3.94323134, -3.88943124]
     Rotation: [0, 0, 0]
     Scale: [1, 1, 1]
     FollowOwner: true
   PointLight:
     Color: [1, 1, 1]
     Constant: 0
-    Quadratic: 0.150000006
+    Quadratic: 0.0199999996
+    Linear: 0
+- UUID: ca5e72be-a400-42d6-ba3f-ded62a547463
+  Name: PointLight2
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-8.92183113, 3.83412552, 1.99935567]
+    Rotation: [0, 0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  PointLight:
+    Color: [1, 1, 1]
+    Constant: 0
+    Quadratic: 0.0199999996
+    Linear: 0
+- UUID: 6afc8822-196c-433a-b86f-428ff8c8d0db
+  Name: PointLight3
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-1.92116547, 4.03280973, 4.31584072]
+    Rotation: [0, 0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  PointLight:
+    Color: [1, 1, 1]
+    Constant: 0
+    Quadratic: 0.0199999996
     Linear: 0

@@ -17,6 +17,8 @@ namespace Pengine
 
 		std::shared_ptr<Entity> CreateEntity(const std::string& name = "Unnamed", const UUID& uuid = UUID());
 
+		std::shared_ptr<Entity> CloneEntity(std::shared_ptr<Entity> entity);
+
 		void DeleteEntity(std::shared_ptr<Entity>& entity);
 
 		std::shared_ptr<Entity> FindEntityByUUID(const std::string& uuid);

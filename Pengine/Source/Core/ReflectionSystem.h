@@ -88,7 +88,6 @@ namespace Pengine
 
 		struct RegisteredClass
 		{
-			std::function<void(void*)> m_AddComponentCallBack;
 			std::vector<std::function<void(void*, void*)>> m_CopyPropertyCallBacks;
 			std::unordered_map<std::string, Property> m_PropertiesByName;
 			std::vector<std::pair<std::string, size_t>> m_Parents;
@@ -233,6 +232,9 @@ private:                                                                        
 					{ static_cast<decltype(baseClass)>(a)->_name = static_cast<decltype(baseClass)>(b)->_name; });     \
 			}                                                                                                          \
 		});
+
+#define PROPERTY(_type, _name)                                                                                         \
+	_type _name = {};                                                                                                  \
 
 #define COPY_PROPERTIES(_component)                                                                                    \
 	std::function<void(const std::string&, size_t)> copyProperties =                                                   \

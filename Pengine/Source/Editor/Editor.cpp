@@ -924,6 +924,17 @@ void Editor::GameObjectPopUpMenu(const std::shared_ptr<Scene>& scene)
 			entity->AddComponent<Transform>(entity);
 		}
 
+		if (ImGui::MenuItem("Clone Gameobject"))
+		{
+			if (!m_SelectedEntities.empty())
+			{
+				if (std::shared_ptr<Entity> entity = scene->FindEntityByUUID(*m_SelectedEntities.rbegin()))
+				{
+					scene->CloneEntity(entity);
+				}
+			}
+		}
+
 		if (!m_SelectedEntities.empty())
 		{
 			if (ImGui::MenuItem("Delete Selected"))

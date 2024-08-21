@@ -24,6 +24,15 @@ void Transform::CopyGlobal(const Transform& transform)
 	m_FollowOwner = transform.m_FollowOwner;
 }
 
+void Transform::SetEntity(std::shared_ptr<Entity> entity)
+{
+	m_Entity = entity;
+
+	Translate(GetPosition());
+	Rotate(GetRotation());
+	Scale(GetScale());
+}
+
 glm::mat4 Transform::GetPositionMat4(const System system) const
 {
 	switch (system)
@@ -35,7 +44,7 @@ glm::mat4 Transform::GetPositionMat4(const System system) const
 	case System::GLOBAL:
 	{
 		glm::mat4 positionMat4 = m_PositionMat4;
-		if (m_Entity->HasParent())
+		if (m_Entity && m_Entity->HasParent())
 		{
 			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			positionMat4 *= parent.GetPositionMat4();
@@ -58,7 +67,7 @@ glm::mat4 Transform::GetRotationMat4(const System system) const
 	case System::GLOBAL:
 	{
 		glm::mat4 rotationMat4 = m_RotationMat4;
-		if (m_Entity->HasParent())
+		if (m_Entity && m_Entity->HasParent())
 		{
 			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			rotationMat4 *= parent.GetRotationMat4();
@@ -81,7 +90,7 @@ glm::mat4 Transform::GetScaleMat4(const System system) const
 	case System::GLOBAL:
 	{
 		glm::mat4 scaleMat4 = m_ScaleMat4;
-		if (m_Entity->HasParent())
+		if (m_Entity && m_Entity->HasParent())
 		{
 			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			scaleMat4 *= parent.GetScaleMat4();
@@ -104,7 +113,7 @@ glm::vec3 Transform::GetPreviousPosition(const System system) const
 	case System::GLOBAL:
 	{
 		glm::vec3 previousPosition = m_PreviousPosition;
-		if (m_Entity->HasParent())
+		if (m_Entity && m_Entity->HasParent())
 		{
 			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			previousPosition = parent.GetTransform() * glm::vec4(previousPosition, 1.0f);
@@ -127,7 +136,7 @@ glm::vec3 Transform::GetPositionDelta(const System system) const
 	case System::GLOBAL:
 	{
 		glm::vec3 positionDelta = m_PositionDelta;
-		if (m_Entity->HasParent())
+		if (m_Entity && m_Entity->HasParent())
 		{
 			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			positionDelta = parent.GetTransform() * glm::vec4(positionDelta, 1.0f);
@@ -167,7 +176,7 @@ glm::vec3 Transform::GetRotation(const System system) const
 	case System::GLOBAL:
 	{
 		glm::vec3 rotation = m_Rotation;
-		if (m_Entity->HasParent())
+		if (m_Entity && m_Entity->HasParent())
 		{
 			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			rotation += parent.GetRotation();
@@ -190,7 +199,7 @@ glm::vec3 Transform::GetScale(const System system) const
 	case System::GLOBAL:
 	{
 		glm::vec3 scale = Utils::GetScale(m_ScaleMat4);
-		if (m_Entity->HasParent())
+		if (m_Entity && m_Entity->HasParent())
 		{
 			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			scale *= parent.GetScale();
@@ -213,7 +222,7 @@ glm::mat4 Transform::GetTransform(const System system) const
 	case System::GLOBAL:
 	{
 		glm::mat4 transformMat4 = m_TransformMat4;
-		if (m_Entity->HasParent())
+		if (m_Entity && m_Entity->HasParent())
 		{
 			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
 			transformMat4 = parent.GetTransform() * transformMat4;
@@ -336,6 +345,11 @@ void Transform::Translate(const glm::vec3& position)
 			callback();
 		}
 
+		if (!transform.m_Entity)
+		{
+			return;
+		}
+
 		for (const std::shared_ptr<Entity>& child : transform.m_Entity->GetChilds())
 		{
 			translationCallbacks(child->GetComponent<Transform>());
@@ -364,6 +378,11 @@ void Transform::Rotate(const glm::vec3& rotation)
 			callback();
 		}
 
+		if (!transform.m_Entity)
+		{
+			return;
+		}
+
 		for (const std::shared_ptr<Entity>& child : transform.m_Entity->GetChilds())
 		{
 			rotationCallbacks(child->GetComponent<Transform>());
@@ -388,6 +407,11 @@ void Transform::Scale(const glm::vec3& scale)
 		for (auto& [name, callback] : transform.m_OnScaleCallbacks)
 		{
 			callback();
+		}
+
+		if (!transform.m_Entity)
+		{
+			return;
 		}
 
 		for (const std::shared_ptr<Entity>& child : transform.m_Entity->GetChilds())

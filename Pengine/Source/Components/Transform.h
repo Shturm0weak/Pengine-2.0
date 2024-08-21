@@ -61,6 +61,8 @@ namespace Pengine
 
 		void CopyGlobal(const Transform& transform);
 
+		void SetEntity(std::shared_ptr<Entity> entity);
+
 		[[nodiscard]] glm::mat4 GetPositionMat4(System system = System::GLOBAL) const;
 		
 		[[nodiscard]] glm::mat4 GetRotationMat4(System system = System::GLOBAL) const;

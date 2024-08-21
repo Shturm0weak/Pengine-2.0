@@ -4,8 +4,8 @@
   Childs:
     []
   Transform:
-    Position: [-13.5408096, 1.84800828, -2.12285757]
-    Rotation: [-0.216216296, 4.00496674, 0]
+    Position: [-7.14421129, 6.11021137, 0.488295078]
+    Rotation: [-0.0484821796, 4.72121859, 0]
     Scale: [1, 1, 1]
     FollowOwner: true
   Camera:
@@ -400,6 +400,66 @@
     FollowOwner: true
   PointLight:
     Color: [0, 0.405063152, 1]
+    Constant: 0
+    Quadratic: 0.0700000003
+    Linear: 0
+- UUID: a26c90d6-0432-45d2-9f51-37eeb091f8ee
+  Name: PointLight3
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-0.297869444, 1.88086009, -0.296274364]
+    Rotation: [0, -0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  PointLight:
+    Color: [0.481012702, 1, 0]
+    Constant: 0
+    Quadratic: 0.0700000003
+    Linear: 0
+- UUID: 1c26a884-b795-4517-810e-2ca7201054a9
+  Name: PointLight4
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [9.62968063, 5.78072596, -4.57111263]
+    Rotation: [0, -0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  PointLight:
+    Color: [1, 0, 0]
+    Constant: 0
+    Quadratic: 0.0700000003
+    Linear: 0
+- UUID: bb1641d2-d901-498a-8dfc-0f5fa5b0d3fd
+  Name: PointLight5
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-12.192337, 5.78069735, -4.53441668]
+    Rotation: [0, -0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  PointLight:
+    Color: [0, 1, 0.962025166]
+    Constant: 0
+    Quadratic: 0.0700000003
+    Linear: 0
+- UUID: 91b1076c-9bd9-4545-9f7e-8e6ea716418d
+  Name: PointLight6
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-2.06821585, 5.78069735, 3.36410165]
+    Rotation: [0, -0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  PointLight:
+    Color: [0.683544159, 0, 1]
     Constant: 0
     Quadratic: 0.0700000003
     Linear: 0

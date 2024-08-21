@@ -62,7 +62,7 @@ namespace Pengine
 
 		std::shared_ptr<Entity> GetParent() const { return m_Parent; }
 
-		void AddChild(const std::shared_ptr<Entity>& child);
+		void AddChild(const std::shared_ptr<Entity>& child, const bool saveTransform = true);
 
 		void RemoveChild(const std::shared_ptr<Entity>& child);
 

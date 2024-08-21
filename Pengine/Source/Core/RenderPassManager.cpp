@@ -306,10 +306,6 @@ void RenderPassManager::CreateDeferred()
 		baseMaterial->WriteToBuffer("Lights", "pointLightsCount", pointLightsCount);
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
-		if (pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERPASS))
-		{
-			uniformWriters.emplace_back(renderInfo.submitInfo.renderPass->GetUniformWriter());
-		}
 		if (pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::BASE_MATERIAL))
 		{
 			uniformWriters.emplace_back(baseMaterialUniformWriter);

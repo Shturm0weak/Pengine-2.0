@@ -3,6 +3,8 @@
 #include "Logger.h"
 #include "Viewport.h"
 
+#include "../Components/Transform.h"
+
 using namespace Pengine;
 
 void Scene::Copy(const Scene& scene)
@@ -64,6 +66,44 @@ std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name, const UUID&
 	m_Entities.emplace_back(entity);
 
 	return entity;
+}
+
+std::shared_ptr<Entity> Scene::CloneEntity(std::shared_ptr<Entity> entity)
+{
+	std::function<std::shared_ptr<Entity>(std::shared_ptr<Entity>)> cloneEntity = [this, &cloneEntity](std::shared_ptr<Entity> entity)
+	{
+		std::shared_ptr<Entity> newEntity = CreateEntity(entity->GetName() + "Clone");
+
+		for (auto [id, storage] : m_Registry.storage())
+		{
+			if (storage.contains(entity->GetHandle()))
+			{
+				storage.push(newEntity->GetHandle(), storage.value(entity->GetHandle()));
+			}
+		}
+
+		// Transform requires to explicitly set the entity or set it as a constructor argument.
+		if (newEntity->HasComponent<Transform>())
+		{
+			newEntity->GetComponent<Transform>().SetEntity(newEntity);
+		}
+
+		for (std::shared_ptr<Entity> child : entity->GetChilds())
+		{
+			newEntity->AddChild(cloneEntity(child), false);
+		}
+
+		return newEntity;
+	};
+
+	std::shared_ptr<Entity> newEntity = cloneEntity(entity);
+
+	if (entity->HasParent())
+	{
+		entity->GetParent()->AddChild(newEntity);
+	}
+
+	return newEntity;
 }
 
 void Scene::DeleteEntity(std::shared_ptr<Entity>& entity)
