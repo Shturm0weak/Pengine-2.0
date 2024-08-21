@@ -59,7 +59,7 @@ Entity& Entity::operator=(Entity&& entity) noexcept
 	return *this;
 }
 
-void Entity::AddChild(const std::shared_ptr<Entity>& child)
+void Entity::AddChild(const std::shared_ptr<Entity>& child, const bool saveTransform)
 {
 	if (HasComponent<Transform>() && child->HasComponent<Transform>())
 	{
@@ -76,9 +76,12 @@ void Entity::AddChild(const std::shared_ptr<Entity>& child)
 		m_Childs.emplace_back(child);
 		child->SetParent(shared_from_this());
 
-		childTransform.Translate(position);
-		childTransform.Rotate(rotation);
-		childTransform.Scale(scale);
+		if (saveTransform)
+		{
+			childTransform.Translate(position);
+			childTransform.Rotate(rotation);
+			childTransform.Scale(scale);
+		}
 	}
 	else
 	{

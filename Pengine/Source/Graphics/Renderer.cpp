@@ -60,6 +60,15 @@ void Renderer::Update(
 			continue;
 		}
 
+		if (!renderPass->m_IsInitialized)
+		{
+			if (renderPass->m_CreateCallback)
+			{
+				renderPass->m_CreateCallback(*renderPass.get());
+				renderPass->m_IsInitialized = true;
+			}
+		}
+
 		const std::shared_ptr<FrameBuffer> frameBuffer = GetRenderPassFrameBuffer(renderPass->GetType());
 
 		RenderPass::SubmitInfo renderPassSubmitInfo;

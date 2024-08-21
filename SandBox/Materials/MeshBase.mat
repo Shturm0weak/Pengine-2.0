@@ -10,4 +10,8 @@ Mat:
         - Name: material
           Values:
             - Name: color
+              Type: vec4
               Value: [1, 1, 1, 1]
+            - Name: useNormalMap
+              Type: int
+              Value: 0

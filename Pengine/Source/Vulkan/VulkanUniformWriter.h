@@ -13,8 +13,8 @@ namespace Pengine::Vk
 	class PENGINE_API VulkanUniformWriter final : public UniformWriter
 	{
 	public:
-		explicit VulkanUniformWriter(const std::shared_ptr<UniformLayout>& layout);
-		virtual ~VulkanUniformWriter() override = default;
+		explicit VulkanUniformWriter(std::shared_ptr<UniformLayout> uniformLayout);
+		virtual ~VulkanUniformWriter() override;
 		VulkanUniformWriter(const VulkanUniformWriter&) = delete;
 		VulkanUniformWriter& operator=(const VulkanUniformWriter&) = delete;
 
@@ -29,11 +29,15 @@ namespace Pengine::Vk
 		[[nodiscard]] VkDescriptorSet GetDescriptorSet() const;
 
 	private:
-		std::unordered_map<uint32_t, VkWriteDescriptorSet> m_WritesByLocation;
-		std::vector<VkDescriptorImageInfo> m_ImageInfos;
-		std::vector<VkDescriptorBufferInfo> m_BufferInfos;
-		std::vector<VkDescriptorSet> m_DescriptorSet;
-		bool m_Initialized = false;
+		struct DescriptorSetWrites
+		{
+			std::unordered_map<uint32_t, VkWriteDescriptorSet> m_WritesByLocation;
+			std::vector<VkDescriptorImageInfo> m_ImageInfos;
+			std::vector<VkDescriptorBufferInfo> m_BufferInfos;
+		};
+
+		std::vector<DescriptorSetWrites> m_DescriptorSetWrites;
+		std::vector<VkDescriptorSet> m_DescriptorSets;
 	};
 
 }

@@ -8,69 +8,65 @@
 namespace Pengine::Vk
 {
 
-    class PENGINE_API VulkanTexture final : public Texture
-    {
-    public:
-        explicit VulkanTexture(const CreateInfo& textureCreateInfo);
-        virtual ~VulkanTexture() override;
-        VulkanTexture(const VulkanTexture&) = delete;
-    	VulkanTexture(VulkanTexture&&) = delete;
-        VulkanTexture& operator=(const VulkanTexture&) = delete;
-    	VulkanTexture& operator=(VulkanTexture&&) = delete;
+	class PENGINE_API VulkanTexture final : public Texture
+	{
+	public:
+		explicit VulkanTexture(const CreateInfo& textureCreateInfo);
+		virtual ~VulkanTexture() override;
+		VulkanTexture(const VulkanTexture&) = delete;
+		VulkanTexture(VulkanTexture&&) = delete;
+		VulkanTexture& operator=(const VulkanTexture&) = delete;
+		VulkanTexture& operator=(VulkanTexture&&) = delete;
 
-        VkDescriptorImageInfo GetDescriptorInfo();
+		VkDescriptorImageInfo GetDescriptorInfo();
 
-        static VkImageView CreateImageView(
-        	VkImage image,
-        	VkFormat format,
-            VkImageAspectFlagBits aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-            uint32_t mipLevels = 1);
+		static VkImageView CreateImageView(
+			VkImage image,
+			VkFormat format,
+			VkImageAspectFlagBits aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+			uint32_t mipLevels = 1);
 
-        static VkSampler CreateSampler(uint32_t mipLevels = 1);
+		static VkSampler CreateSampler(uint32_t mipLevels = 1);
 
-        static VkFormat ConvertFormat(Format format);
+		static VkImageAspectFlagBits ConvertAspectMask(AspectMask aspectMask);
 
-        static Format ConvertFormat(VkFormat format);
+		static AspectMask ConvertAspectMask(VkImageAspectFlagBits aspectMask);
 
-        static VkImageAspectFlagBits ConvertAspectMask(AspectMask aspectMask);
+		static VkImageLayout ConvertLayout(Layout layout);
 
-        static AspectMask ConvertAspectMask(VkImageAspectFlagBits aspectMask);
+		static Layout ConvertLayout(VkImageLayout layout);
 
-        static VkImageLayout ConvertLayout(Layout layout);
+		static VkImageUsageFlagBits ConvertUsage(Usage usage);
 
-        static Layout ConvertLayout(VkImageLayout layout);
+		static Usage ConvertUsage(VkImageUsageFlagBits usage);
 
-        static VkImageUsageFlagBits ConvertUsage(Usage usage);
+		[[nodiscard]] virtual void* GetId() const override { return (void*)m_DescriptorSet; }
 
-        static Usage ConvertUsage(VkImageUsageFlagBits usage);
+		virtual void GenerateMipMaps() override;
 
-        [[nodiscard]] virtual void* GetId() const override { return (void*)m_DescriptorSet; }
+		[[nodiscard]] VkImageView GetImageView() const { return m_View; }
 
-        virtual void GenerateMipMaps() override;
+		[[nodiscard]] VkImage GetImage() const { return m_Image; }
 
-        [[nodiscard]] VkImageView GetImageView() const { return m_View; }
+		[[nodiscard]] VkSampler GetSampler() const { return m_Sampler; }
 
-        [[nodiscard]] VkImage GetImage() const { return m_Image; }
+		[[nodiscard]] VkImageLayout GetLayout() const { return m_Layout; }
 
-        [[nodiscard]] VkSampler GetSampler() const { return m_Sampler; }
+		void TransitionToWrite();
 
-        [[nodiscard]] VkImageLayout GetLayout() const { return m_Layout; }
+		void TransitionToRead();
 
-        void TransitionToWrite();
+		void TransitionToColorAttachment();
 
-        void TransitionToRead();
-
-        void TransitionToColorAttachment();
-
-    private:
-        VkSampler m_Sampler{};
-        VkImage m_Image{};
-        VkImageLayout m_ImageLayout{};
-    	VmaAllocation m_VmaAllocation = VK_NULL_HANDLE;
-    	VmaAllocationInfo m_VmaAllocationInfo{};
-        VkImageView m_View{};
-        VkDescriptorSet m_DescriptorSet{};
-        VkImageLayout m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
-    };
+	private:
+		VkSampler m_Sampler{};
+		VkImage m_Image{};
+		VkImageLayout m_ImageLayout{};
+		VmaAllocation m_VmaAllocation = VK_NULL_HANDLE;
+		VmaAllocationInfo m_VmaAllocationInfo{};
+		VkImageView m_View{};
+		VkDescriptorSet m_DescriptorSet{};
+		VkImageLayout m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
+	};
 
 }

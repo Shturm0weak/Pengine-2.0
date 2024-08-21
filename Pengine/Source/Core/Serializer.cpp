@@ -16,6 +16,8 @@
 
 #include "../Utils/Utils.h"
 
+#include "../Graphics/Vertex.h"
+
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
@@ -488,8 +490,8 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::filesy
 		Pipeline::CreateInfo pipelineCreateInfo{};
 		if (const auto& renderPassData = pipelineData["RenderPass"])
 		{
-			pipelineCreateInfo.renderPass = RenderPassManager::GetInstance().GetRenderPass(
-				renderPassData.as<std::string>());
+			const std::string name = renderPassData.as<std::string>();
+			pipelineCreateInfo.renderPass = RenderPassManager::GetInstance().GetRenderPass(name);
 		}
 
 		if (const auto& depthTestData = pipelineData["DepthTest"])
@@ -544,87 +546,60 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::filesy
 			pipelineCreateInfo.fragmentFilepath = fragmentData.as<std::string>();
 		}
 
-		for (const auto& uniformData : pipelineData["Uniforms"])
+		for (const auto& descriptorSetData : pipelineData["DescriptorSets"])
 		{
-			uint32_t location;
-			if (const auto& bindingData = uniformData["Binding"])
+			Pipeline::DescriptorSetIndexType type{};
+			if (const auto& typeData = descriptorSetData["Type"])
 			{
-				location = bindingData.as<uint32_t>();
-			}
-
-			UniformLayout::Binding binding{};
-			if (const auto& typeData = uniformData["Type"])
-			{
-				if (const std::string& type = typeData.as<std::string>(); type == "SamplerArray")
+				std::string typeName = typeData.as<std::string>();
+				if (typeName == "RenderPass")
 				{
-					binding.type = UniformLayout::Type::SAMPLER_ARRAY;
-					if (const auto& countData = uniformData["Count"])
-					{
-						binding.count = countData.as<int>();
-					}
-					else
-					{
-						FATAL_ERROR(filepath.string() + ":No count field is set for sampler array!");
-					}
+					type = Pipeline::DescriptorSetIndexType::RENDERPASS;
 				}
-				else if (type == "Sampler")
+				else if (typeName == "BaseMaterial")
 				{
-					binding.type = UniformLayout::Type::SAMPLER;
+					type = Pipeline::DescriptorSetIndexType::BASE_MATERIAL;
 				}
-				else if (type == "Buffer")
+				else if (typeName == "Material")
 				{
-					binding.type = UniformLayout::Type::BUFFER;
+					type = Pipeline::DescriptorSetIndexType::MATERIAL;
 				}
 			}
 
-			if (const auto& nameData = uniformData["Name"])
+			uint32_t set = 0;
+			if (const auto& setData = descriptorSetData["Set"])
 			{
-				binding.name = nameData.as<std::string>();
+				set = setData.as<uint32_t>();
 			}
 
-			size_t offset = 0;
-			for (const auto& valueData : uniformData["Values"])
+			pipelineCreateInfo.descriptorSetIndicesByType.emplace(type, set);
+		}
+
+		for (const auto& vertexInputBindingDescriptionData : pipelineData["VertexInputBindingDescriptions"])
+		{
+			auto& bindingDescription = pipelineCreateInfo.bindingDescriptions.emplace_back();
+
+			if (const auto& bindingData = vertexInputBindingDescriptionData["Binding"])
 			{
-				UniformLayout::Variable value;
-
-				if (const auto& typeData = valueData["Type"])
-				{
-					value.type = typeData.as<std::string>();
-				}
-
-				if (const auto& nameData = valueData["Name"])
-				{
-					value.name = nameData.as<std::string>();
-				}
-
-				value.offset = offset;
-
-				binding.values.emplace_back(value);
-				offset += Utils::StringTypeToSize(value.type);
+				bindingDescription.binding = bindingData.as<uint32_t>();
 			}
 
-			for (const auto& stageData : uniformData["Stages"])
+			if (const auto& inputRateData = vertexInputBindingDescriptionData["InputRate"])
 			{
-				if (const std::string& stage = stageData.as<std::string>(); stage == "Fragment")
+				std::string inputRateName = inputRateData.as<std::string>();
+				if (inputRateName == "Vertex")
 				{
-					binding.stages.emplace_back(UniformLayout::Stage::FRAGMENT);
+					bindingDescription.inputRate = Pipeline::InputRate::VERTEX;
 				}
-				else if (stage == "Vertex")
+				else if (inputRateName == "Instance")
 				{
-					binding.stages.emplace_back(UniformLayout::Stage::VERTEX);
+					bindingDescription.inputRate = Pipeline::InputRate::INSTANCE;
 				}
 			}
 
-			if (const auto& inputRateData = uniformData["InputRate"])
+			for (const auto& nameData : vertexInputBindingDescriptionData["Names"])
 			{
-				if (const std::string inputRate = inputRateData.as<std::string>(); inputRate == "Per BaseMaterial")
-				{
-					pipelineCreateInfo.uniformBindings[location] = binding;
-				}
-				else if (inputRate == "Per Material")
-				{
-					pipelineCreateInfo.childUniformBindings[location] = binding;
-				}
+				bindingDescription.names.emplace_back(nameData.as<std::string>());
 			}
 		}
 
@@ -636,6 +611,8 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::filesy
 					Pipeline::BlendStateAttachment{ blendEnabledData.as<bool>() });
 			}
 		}
+
+		ParseUniformValues(pipelineData, pipelineCreateInfo.uniformInfo);
 
 		pipelineCreateInfos.emplace_back(pipelineCreateInfo);
 	}
@@ -695,78 +672,10 @@ Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filep
 			FATAL_ERROR(filepath.string() + ":There is no RenderPass field!");
 		}
 
-		Material::RenderPassInfo renderPassInfo{};
+		Pipeline::UniformInfo uniformInfo{};
+		ParseUniformValues(pipelineData, uniformInfo);
 
-		for (const auto & uniformData : pipelineData["Uniforms"])
-		{
-			std::string uniformName;
-			if (const auto& nameData = uniformData["Name"])
-			{
-				uniformName = nameData.as<std::string>();
-			}
-
-			if (UniformLayout::Binding binding = createInfo.baseMaterial->GetPipeline(renderPass)->
-				GetChildUniformLayout()->GetBindingByName(uniformName);
-				binding.type == UniformLayout::Type::BUFFER)
-			{
-				Material::UniformBufferInfo uniformBufferInfo{};
-
-				for (const auto& valueData : uniformData["Values"])
-				{
-					std::string valueName;
-					if (const auto& nameData = valueData["Name"])
-					{
-						valueName = nameData.as<std::string>();
-					}
-
-					if (std::optional<UniformLayout::Variable> value = binding.GetValue(valueName))
-					{
-						if (const auto& bufferValueData = valueData["Value"])
-						{
-							if (value->type == "int")
-							{
-								uniformBufferInfo.intValuesByName.emplace(valueName, bufferValueData.as<int>());
-							}
-							else if (value->type == "sampler")
-							{
-								uniformBufferInfo.samplerValuesByName.emplace(valueName, bufferValueData.as<std::string>());
-							}
-							else if (value->type == "float")
-							{
-								uniformBufferInfo.floatValuesByName.emplace(valueName, bufferValueData.as<float>());
-							}
-							else if (value->type == "vec2")
-							{
-								uniformBufferInfo.vec2ValuesByName.emplace(valueName, bufferValueData.as<glm::vec2>());
-							}
-							else if (value->type == "vec3")
-							{
-								uniformBufferInfo.vec3ValuesByName.emplace(valueName, bufferValueData.as<glm::vec3>());
-							}
-							else if (value->type == "vec4")
-							{
-								uniformBufferInfo.vec4ValuesByName.emplace(valueName, bufferValueData.as<glm::vec4>());
-							}
-							else if (value->type == "color")
-							{
-								uniformBufferInfo.vec4ValuesByName.emplace(valueName, bufferValueData.as<glm::vec4>());
-							}
-						}
-					}
-				}
-
-				renderPassInfo.uniformBuffersByName.emplace(uniformName, uniformBufferInfo);
-			}
-			else if (binding.type == UniformLayout::Type::SAMPLER)
-			{
-				if (const auto& nameData = uniformData["Value"])
-				{
-					const std::string textureFilepath = nameData.as<std::string>();
-					renderPassInfo.texturesByName.emplace(uniformName, textureFilepath);
-				}
-			}
-		}
-		createInfo.renderPassInfo.emplace(renderPass, renderPassInfo);
+		createInfo.uniformInfos.emplace(renderPass, uniformInfo);
 	}
 
 	Logger::Log("Material:" + filepath.string() + " has been deserialized!", GREEN);
@@ -790,66 +699,64 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material)
 
 	out << YAML::BeginSeq;
 
-	for (const auto& [renderPass, pipeline] : material->GetBaseMaterial()->GetPipelinesByRenderPass())
+	for (const auto& [renderPassName, pipeline] : material->GetBaseMaterial()->GetPipelinesByRenderPass())
 	{
 		out << YAML::BeginMap;
 
-		out << YAML::Key << "RenderPass" << YAML::Value << renderPass;
+		out << YAML::Key << "RenderPass" << YAML::Value << renderPassName;
 
 		out << YAML::Key << "Uniforms";
 
 		out << YAML::BeginSeq;
 
-		for (const auto& [location, binding] : pipeline->GetChildUniformLayout()->GetBindingsByLocation())
+		for (const auto& binding : pipeline->GetUniformLayout(pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL).value_or(-1))->GetBindings())
 		{
 			out << YAML::BeginMap;
 
 			out << YAML::Key << "Name" << YAML::Value << binding.name;
 
-			if (binding.type == UniformLayout::Type::SAMPLER)
+			if (binding.type == ShaderReflection::Type::COMBINED_IMAGE_SAMPLER)
 			{
 				// TODO: Better to use uuid for assets instead of filepaths!
-				out << YAML::Key << "Value" << YAML::Value << material->GetTexture(binding.name)->GetFilepath();
+				out << YAML::Key << "Value" << YAML::Value << material->GetUniformWriter(renderPassName)->GetTexture(binding.name)->GetFilepath();
 			}
-			else if (binding.type == UniformLayout::Type::BUFFER)
+			else if (binding.type == ShaderReflection::Type::UNIFORM_BUFFER)
 			{
-				std::shared_ptr<Buffer> buffer = pipeline->GetBuffer(binding.name);
-				void* data = static_cast<char*>(buffer->GetData()) + buffer->GetInstanceSize() * material->GetIndex();
+				std::shared_ptr<Buffer> buffer = material->GetBuffer(binding.name);
+				void* data = buffer->GetData();
 
 				out << YAML::Key << "Values";
 
 				out << YAML::BeginSeq;
 
-				for (const auto& value : binding.values)
+				for (const auto& value : binding.buffer->variables)
 				{
 					out << YAML::BeginMap;
 
 					out << YAML::Key << "Name" << YAML::Value << value.name;
 
-					if (value.type == "vec2")
+					if (value.type == ShaderReflection::ReflectVariable::Type::VEC2)
 					{
 						out << YAML::Key << "Value" << YAML::Value << Utils::GetValue<glm::vec2>(data, value.offset);
 					}
-					else if (value.type == "vec3")
+					else if (value.type == ShaderReflection::ReflectVariable::Type::VEC3)
 					{
 						out << YAML::Key << "Value" << YAML::Value << Utils::GetValue<glm::vec3>(data, value.offset);
 					}
-					else if (value.type == "vec4" || value.type == "color")
+					else if (value.type == ShaderReflection::ReflectVariable::Type::VEC4)
 					{
 						out << YAML::Key << "Value" << YAML::Value << Utils::GetValue<glm::vec4>(data, value.offset);
 					}
-					else if (value.type == "float")
+					else if (value.type == ShaderReflection::ReflectVariable::Type::FLOAT)
 					{
 						out << YAML::Key << "Value" << YAML::Value << Utils::GetValue<float>(data, value.offset);
 					}
-					else if (value.type == "int")
+					else if (value.type == ShaderReflection::ReflectVariable::Type::INT)
 					{
 						out << YAML::Key << "Value" << YAML::Value << Utils::GetValue<int>(data, value.offset);
 					}
-					else if (value.type == "sampler")
-					{
-						// TODO: Fill the value when figure out how to handle sampler arrays!
-					}
+
+					out << YAML::Key << "Type" << ShaderReflection::ConvertTypeToString(value.type);
 
 					out << YAML::EndMap;
 				}
@@ -927,8 +834,7 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 		offset += mesh->GetIndexCount() * static_cast<int>(sizeof(uint32_t));
 	}
 
-	std::filesystem::path outMeshFilepath = directory / meshName;
-	outMeshFilepath.replace_extension(FileFormats::Mesh());
+	std::filesystem::path outMeshFilepath = directory / (meshName + FileFormats::Mesh());
 	std::ofstream out(outMeshFilepath, std::ostream::binary);
 
 	out.write(data, static_cast<std::streamsize>(dataSize));
@@ -1129,8 +1035,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 
 	std::string defaultMeshName = aiMesh->mName.C_Str();
 	std::string meshName = defaultMeshName;
-	std::filesystem::path meshFilepath = directory / meshName;
-	meshFilepath.replace_extension(FileFormats::Mesh());
+	std::filesystem::path meshFilepath = directory / (meshName + FileFormats::Mesh());
 
 	int containIndex = 0;
 	while (MeshManager::GetInstance().GetMesh(meshFilepath))
@@ -1279,12 +1184,13 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	materialFilepath.concat(FileFormats::Mat());
 
 	const std::shared_ptr<Material> meshBaseMaterial = MaterialManager::GetInstance().LoadMaterial("Materials/MeshBase.mat");
-	std::shared_ptr<Material> material = MaterialManager::GetInstance().Clone(materialName, materialFilepath, meshBaseMaterial);
-
+	const std::shared_ptr<Material> material = MaterialManager::GetInstance().Clone(materialName, materialFilepath, meshBaseMaterial);
+	const std::shared_ptr<UniformWriter> uniformWriter = material->GetUniformWriter(GBuffer);
+	
 	aiColor3D aiColor(0.0f, 0.0f, 0.0f);
 	aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, aiColor);
 	glm::vec4 color = { aiColor.r, aiColor.g, aiColor.b, 1.0f };
-	material->SetValue("material", "color", color);
+	material->WriteToBuffer("material", "color", color);
 
 	uint32_t numTextures = aiMaterial->GetTextureCount(aiTextureType_DIFFUSE);
 	aiString aiTextureName;
@@ -1293,7 +1199,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), aiTextureName);
 		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
 
-		material->SetTexture("albedoTexture", TextureManager::GetInstance().Load(textureFilepath));
+		uniformWriter->WriteTexture("albedoTexture", TextureManager::GetInstance().Load(textureFilepath));
 	}
 
 	numTextures = aiMaterial->GetTextureCount(aiTextureType_NORMALS);
@@ -1302,12 +1208,14 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_NORMALS, 0), aiTextureName);
 		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
 
-		material->SetTexture("normalTexture", TextureManager::GetInstance().Load(textureFilepath));
+		uniformWriter->WriteTexture("normalTexture", TextureManager::GetInstance().Load(textureFilepath));
 
-		constexpr float useNormalMap = 1.0f;
-		glm::vec4 other = { useNormalMap, 0.0f, 0.0f, 0.0f };
-		material->SetValue("material", "other", other);
+		constexpr int useNormalMap = 1;
+		material->WriteToBuffer("material", "useNormalMap", useNormalMap);
 	}
+
+	material->GetBuffer("material")->Flush();
+	uniformWriter->Flush();
 
 	Material::Save(material);
 
@@ -1804,4 +1712,74 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path&
 	Logger::Log("Scene:" + filepath.string() + " has been deserialized!", GREEN);
 
 	return scene;
+}
+
+void Serializer::ParseUniformValues(
+	const YAML::detail::iterator_value& data,
+	Pipeline::UniformInfo& uniformsInfo)
+{
+	for (const auto& uniformData : data["Uniforms"])
+	{
+		std::string uniformName;
+		if (const auto& nameData = uniformData["Name"])
+		{
+			uniformName = nameData.as<std::string>();
+		}
+
+		if (uniformData["Values"])
+		{
+			Pipeline::UniformBufferInfo uniformBufferInfo{};
+
+			for (const auto& valueData : uniformData["Values"])
+			{
+				std::string valueName;
+				if (const auto& nameData = valueData["Name"])
+				{
+					valueName = nameData.as<std::string>();
+				}
+
+				ShaderReflection::ReflectVariable::Type valueType;
+				if (const auto& typeData = valueData["Type"])
+				{
+					valueType = ShaderReflection::ConvertStringToType(typeData.as<std::string>());
+				}
+				else
+				{
+					Logger::Warning("Failed to load type of " + valueName);
+					continue;
+				}
+
+				if (const auto& bufferValueData = valueData["Value"])
+				{
+					if (valueType == ShaderReflection::ReflectVariable::Type::INT)
+					{
+						uniformBufferInfo.intValuesByName.emplace(valueName, bufferValueData.as<int>());
+					}
+					else if (valueType == ShaderReflection::ReflectVariable::Type::FLOAT)
+					{
+						uniformBufferInfo.floatValuesByName.emplace(valueName, bufferValueData.as<float>());
+					}
+					else if (valueType == ShaderReflection::ReflectVariable::Type::VEC2)
+					{
+						uniformBufferInfo.vec2ValuesByName.emplace(valueName, bufferValueData.as<glm::vec2>());
+					}
+					else if (valueType == ShaderReflection::ReflectVariable::Type::VEC3)
+					{
+						uniformBufferInfo.vec3ValuesByName.emplace(valueName, bufferValueData.as<glm::vec3>());
+					}
+					else if (valueType == ShaderReflection::ReflectVariable::Type::VEC4)
+					{
+						uniformBufferInfo.vec4ValuesByName.emplace(valueName, bufferValueData.as<glm::vec4>());
+					}
+				}
+			}
+			uniformsInfo.uniformBuffersByName.emplace(uniformName, uniformBufferInfo);
+		}
+
+		if (const auto& nameData = uniformData["Value"])
+		{
+			const std::string textureFilepath = nameData.as<std::string>();
+			uniformsInfo.texturesByName.emplace(uniformName, textureFilepath);
+		}
+	}
 }

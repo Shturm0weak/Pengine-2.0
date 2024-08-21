@@ -14,12 +14,8 @@ layout(set = 1, binding = 1) uniform sampler2D normalTexture;
 
 layout(set = 1, binding = 2) uniform material
 {
-	// Min alignment is 64 bits!
-
 	vec4 color;
-	vec4 other; // useNormalMap, unused, unused, unused
-	vec4 __unused1;
-	vec4 __unused2;
+	int useNormalMap;
 };
 
 void main()
@@ -32,10 +28,10 @@ void main()
 
 	outAlbedo = albedo;
 
-	if (other.x > 0.5f)
+	if (useNormalMap == 1)
 	{
 		vec3 normalMap = texture(normalTexture, uv).xyz;
-		normalMap *= normalMap * 2.0 - 1.0;
+		normalMap *= normalMap * 2.0f - 1.0f;
 		outNormal = vec4(normalize(TBN * normalMap), 1.0f);
 	}
 	else
@@ -43,5 +39,5 @@ void main()
 		outNormal = vec4(normal, 1.0f);
 	}
 
-	outPosition = vec4(worldPosition, 1.0);
+	outPosition = vec4(worldPosition, 1.0f);
 }

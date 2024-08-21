@@ -8,19 +8,27 @@ layout(set = 0, binding = 0) uniform sampler2D albedoTexture;
 layout(set = 0, binding = 1) uniform sampler2D normalTexture; 
 layout(set = 0, binding = 2) uniform sampler2D positionTexture; 
 
-layout(set = 0, binding = 3) uniform Light
+#include "Shaders/Includes/Light.h"
+
+layout(set = 0, binding = 3) uniform Lights
 {
-	vec3 color;
-	float constant;
-
-	float linear;
-	float quadratic;
-	float use;
-	float __unused1;
-
-	vec3 lightPosition;
-	float __unused2;
+	PointLight pointLights[32];
+	int pointLightsCount;
 };
+
+vec3 CalculatePointLight(PointLight light, vec3 position, vec3 normal)
+{
+	vec3 direction = normalize(light.position - position);
+	float diff = max(dot(normal, direction), 0.0f);
+	vec3 diffuse = light.color * diff;
+
+	float distance    = length(light.position - position);
+	float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+
+	diffuse   *= attenuation;
+
+	return diffuse;
+}
 
 void main()
 {
@@ -28,23 +36,12 @@ void main()
 	vec3 normal = texture(normalTexture, uv).xyz;
 	vec3 position = texture(positionTexture, uv).xyz;
 
-	if(use > 0.5f)
+	vec3 result = vec3(0.0f);
+
+	for (int i = 0; i < pointLightsCount; i++)
 	{
-		vec3 ambient = color * vec3(0.3f);
-		vec3 lightDir = normalize(lightPosition - position);
-		float diff = max(dot(normal, lightDir), 0.0f);
-		vec3 diffuse = color * diff;
-
-		float distance    = length(lightPosition - position);
-		float attenuation = 1.0f / (constant + linear * distance + quadratic * (distance * distance));
-
-		diffuse   *= attenuation;
-
-		vec3 result = (ambient + diffuse) * albedoColor;
-		outColor = vec4(result, 1.0f);
+		result += CalculatePointLight(pointLights[i], position, normal) * albedoColor;
 	}
-	else
-	{
-		outColor = vec4(0.0f);
-	}
+
+	outColor = vec4(result, 1.0f);
 }

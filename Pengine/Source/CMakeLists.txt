@@ -54,24 +54,29 @@ source_group("Editor" FILES ${EDITOR_SOURCES})
 set(GRAPHICS_SOURCES
 	Graphics/BaseMaterial.cpp Graphics/BaseMaterial.h
 	Graphics/Buffer.cpp Graphics/Buffer.h
+	Graphics/Format.h
 	Graphics/FrameBuffer.cpp Graphics/FrameBuffer.h
 	Graphics/Mesh.cpp Graphics/Mesh.h
 	Graphics/Material.cpp Graphics/Material.h
 	Graphics/Pipeline.cpp Graphics/Pipeline.h
 	Graphics/Renderer.cpp Graphics/Renderer.h
 	Graphics/RenderPass.cpp Graphics/RenderPass.h
+	Graphics/ShaderReflection.h
 	Graphics/stb_image.h
 	Graphics/Texture.cpp Graphics/Texture.h
 	Graphics/UniformLayout.cpp Graphics/UniformLayout.h
 	Graphics/UniformWriter.cpp Graphics/UniformWriter.h
-	Graphics/Vertex.cpp Graphics/Vertex.h
+	Graphics/Vertex.h
+	Graphics/WriterBufferHelper.h
 )
 source_group("Graphics" FILES ${GRAPHICS_SOURCES})
 
 set(VULKAN_SOURCES
+	Vulkan/ShaderIncluder.cpp Vulkan/ShaderIncluder.h
 	Vulkan/VulkanBuffer.cpp Vulkan/VulkanBuffer.h
 	Vulkan/VulkanDescriptors.cpp Vulkan/VulkanDescriptors.h
 	Vulkan/VulkanDevice.cpp Vulkan/VulkanDevice.h
+	Vulkan/VulkanFormat.h
 	Vulkan/VulkanFrameBuffer.cpp Vulkan/VulkanFrameBuffer.h
 	Vulkan/VulkanPipeline.cpp Vulkan/VulkanPipeline.h
 	Vulkan/VulkanRenderer.cpp Vulkan/VulkanRenderer.h

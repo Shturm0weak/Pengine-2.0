@@ -2,8 +2,11 @@
 
 #include "../Core/Core.h"
 #include "../Core/Asset.h"
+#include "../Core/Logger.h"
 
 #include "BaseMaterial.h"
+#include "WriterBufferHelper.h"
+
 #include "../Utils/Utils.h"
 
 namespace Pengine
@@ -12,44 +15,31 @@ namespace Pengine
 	class PENGINE_API Material final : public Asset
 	{
 	public:
-		struct UniformBufferInfo
-		{
-			std::unordered_map<std::string, int> intValuesByName;
-			std::unordered_map<std::string, float> floatValuesByName;
-			std::unordered_map<std::string, std::string> samplerValuesByName;
-			std::unordered_map<std::string, glm::vec2> vec2ValuesByName;
-			std::unordered_map<std::string, glm::vec3> vec3ValuesByName;
-			std::unordered_map<std::string, glm::vec4> vec4ValuesByName;
-		};
-
-		struct RenderPassInfo
-		{
-			std::unordered_map<std::string, UniformBufferInfo> uniformBuffersByName;
-			std::unordered_map<std::string, std::string> texturesByName;
-		};
+		
 
 		struct CreateInfo
 		{
-			std::unordered_map<std::string, RenderPassInfo> renderPassInfo;
+			std::unordered_map<std::string, Pipeline::UniformInfo> uniformInfos;
 			std::shared_ptr<BaseMaterial> baseMaterial;
 		};
 
-		static std::shared_ptr<Material> Create(const std::string& name, const std::filesystem::path& filepath,
+		static std::shared_ptr<Material> Create(
+			const std::string& name,
+			const std::filesystem::path& filepath,
 			const CreateInfo& createInfo);
 
 		static std::shared_ptr<Material> Load(const std::filesystem::path& filepath);
 
 		static void Save(const std::shared_ptr<Material>& material);
 
-		static std::shared_ptr<Material> Inherit(const std::string& name, const std::filesystem::path& filepath,
-			const std::shared_ptr<BaseMaterial>& baseMaterial);
-
-		static std::shared_ptr<Material> Clone(const std::string& name, const std::filesystem::path& filepath,
+		static std::shared_ptr<Material> Clone(
+			const std::string& name,
+			const std::filesystem::path& filepath,
 			const std::shared_ptr<Material>& material);
 
 		Material(const std::string& name, const std::filesystem::path& filepath,
 			const CreateInfo& createInfo);
-		~Material();
+		~Material() = default;
 		Material(const Material&) = delete;
 		Material& operator=(const Material&) = delete;
 
@@ -57,49 +47,27 @@ namespace Pengine
 
 		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& renderPassName) const;
 
-		std::shared_ptr<Texture> GetTexture(const std::string& name) const;
-
-		void SetTexture(const std::string& name, const std::shared_ptr<Texture>& texture);
-
-		const std::unordered_map<std::string, std::shared_ptr<Texture>>& GetTextures() const { return m_TexturesByName; }
-
-		int GetIndex() const { return m_Index; }
+		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
 
 		template<typename T>
-		void SetValue(const std::string& bufferName, const std::string& name, T& value);
-
-		struct RenderPassAttachmentInfo
-		{
-			std::string renderPassType;
-			int attachment;
-		};
-		std::unordered_map<std::string, RenderPassAttachmentInfo> m_RenderPassAttachments;
+		void WriteToBuffer(
+			const std::string& uniformBufferName,
+			const std::string& valueName,
+			T& value);
 
 	private:
-		std::unordered_map<std::string, std::shared_ptr<Texture>> m_TexturesByName;
-
 		std::shared_ptr<BaseMaterial> m_BaseMaterial;
 		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPass;
-
-		int m_Index = 0;
+		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
 	};
 
 	template<typename T>
-	void Material::SetValue(const std::string& bufferName, const std::string& name, T& value)
+	inline void Material::WriteToBuffer(
+		const std::string& uniformBufferName,
+		const std::string& valueName, 
+		T& value)
 	{
-		for (const auto& [renderPass, uniformWriter] : m_UniformWriterByRenderPass)
-		{
-			if (const UniformLayout::Binding& binding = uniformWriter->GetLayout()->GetBindingByName(bufferName);
-				binding.type == UniformLayout::Type::BUFFER)
-			{
-				if (auto variable = binding.GetValue(name))
-				{
-					const std::shared_ptr<Buffer> buffer = m_BaseMaterial->GetPipeline(renderPass)->GetBuffer(bufferName);
-					void* data = static_cast<char*>(buffer->GetData()) + buffer->GetInstanceSize() * m_Index;
-					Utils::SetValue(data, variable->offset, value);
-				}
-			}
-		}
+		WriterBufferHelper::WriteToBuffer(m_BaseMaterial.get(), GetBuffer(uniformBufferName), uniformBufferName, valueName, value);
 	}
 
 }

@@ -12,9 +12,9 @@ namespace Pengine
 	class PENGINE_API UniformWriter
 	{
 	public:
-		static std::shared_ptr<UniformWriter> Create(const std::shared_ptr<UniformLayout>& layout);
+		static std::shared_ptr<UniformWriter> Create(std::shared_ptr<UniformLayout> uniformLayout);
 
-		explicit UniformWriter(const std::shared_ptr<UniformLayout>& layout);
+		explicit UniformWriter(std::shared_ptr<UniformLayout> uniformLayout);
 		virtual ~UniformWriter() = default;
 		UniformWriter(const UniformWriter&) = delete;
 		UniformWriter& operator=(const UniformWriter&) = delete;
@@ -27,10 +27,14 @@ namespace Pengine
 		virtual void WriteTextures(const std::string& name, const std::vector<std::shared_ptr<Texture>>& textures) = 0;
 		virtual void Flush() = 0;
 
-		 [[nodiscard]] std::shared_ptr<UniformLayout> GetLayout() const { return m_Layout; }
+		const std::unordered_map<uint32_t, std::shared_ptr<Buffer>>& GetBuffersByLocation() const { return m_BuffersByLocation; }
+
+		std::shared_ptr<Texture> GetTexture(const std::string& name);
 
 	protected:
-		std::shared_ptr<UniformLayout> m_Layout;
+		std::shared_ptr<UniformLayout> m_UniformLayout;
+		std::unordered_map<uint32_t, std::shared_ptr<Buffer>> m_BuffersByLocation;
+		std::unordered_map<std::string, std::shared_ptr<Texture>> m_TexturesByName;
 	};
 
 }

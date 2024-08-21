@@ -1,11 +1,13 @@
 #pragma once
 
 #include "../Core/Core.h"
+#include "../Core/Logger.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/matrix_decompose.hpp"
 
 #include <filesystem>
+#include <fstream>
 
 namespace Pengine::Utils
 {
@@ -167,7 +169,13 @@ namespace Pengine::Utils
 
 	inline std::string FindUuid(const std::filesystem::path& filepath)
 	{
-		return Find(filepath, uuidByFilepath);
+		auto foundItem = uuidByFilepath.find(filepath);
+		if (foundItem != uuidByFilepath.end())
+		{
+			return foundItem->second;
+		}
+
+		return {};
 	}
 
 	inline std::string EraseFromBack(std::string string, const char what)
@@ -193,6 +201,27 @@ namespace Pengine::Utils
 	inline std::string GetShortFilepath(std::filesystem::path filepath)
 	{
 		return Erase(filepath.string(), std::filesystem::current_path().string() + "/");
+	}
+
+	inline std::string ReadFile(const std::filesystem::path& filepath)
+	{
+		std::ifstream file(filepath, std::ios::ate | std::ios::binary);
+
+		if (!file.is_open())
+		{
+			FATAL_ERROR("Failed to open file: " + filepath.string());
+		}
+
+		const size_t fileSize = file.tellg();
+
+		std::string buffer;
+		buffer.resize(fileSize);
+
+		file.seekg(0);
+		file.read(buffer.data(), static_cast<std::streamsize>(fileSize));
+		file.close();
+
+		return buffer;
 	}
 
 	inline bool DecomposeTransform(const glm::mat4& transform, glm::vec3& translation, glm::vec3& rotation, glm::vec3& scale)
