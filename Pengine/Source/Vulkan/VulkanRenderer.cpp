@@ -59,7 +59,7 @@ void VulkanRenderer::Render(
 			nullptr);
 	}
 
-	vertexCount += mesh->GetIndexCount() / 3;
+	vertexCount += (mesh->GetIndexCount() / 3) * count;
 	BindBuffers(frame->CommandBuffer, mesh->GetVertices(), instanceBuffer, mesh->GetIndices(), instanceBufferOffset);
 	DrawIndexed(frame->CommandBuffer, mesh->GetIndexCount(), count);
 }

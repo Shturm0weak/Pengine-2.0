@@ -33,14 +33,21 @@ vec3 CalculatePointLight(PointLight light, vec3 position, vec3 normal)
 void main()
 {
 	vec3 albedoColor = texture(albedoTexture, uv).xyz;
-	vec3 normal = texture(normalTexture, uv).xyz;
+	vec4 normal = texture(normalTexture, uv);
 	vec3 position = texture(positionTexture, uv).xyz;
 
 	vec3 result = vec3(0.0f);
 
-	for (int i = 0; i < pointLightsCount; i++)
+	if (normal.a == 0)
 	{
-		result += CalculatePointLight(pointLights[i], position, normal) * albedoColor;
+		result = albedoColor;
+	}
+	else
+	{
+		for (int i = 0; i < pointLightsCount; i++)
+		{
+			result += CalculatePointLight(pointLights[i], position, normal.xyz) * albedoColor;
+		}
 	}
 
 	outColor = vec4(result, 1.0f);

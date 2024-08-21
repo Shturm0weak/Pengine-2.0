@@ -58,7 +58,7 @@ void RenderPassManager::CreateGBuffer()
 	clearDepth.clearDepth = 1.0f;
 	clearDepth.clearStencil = 0;
 
-	glm::vec4 clearColor = { 0.0f, 0.0f, 0.0f, 0.0f };
+	glm::vec4 clearColor = { 0.4f, 0.4f, 0.4f, 1.0f };
 	glm::vec4 clearNormal = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glm::vec4 clearPosition = { 0.0f, 0.0f, 0.0f, 0.0f };
 

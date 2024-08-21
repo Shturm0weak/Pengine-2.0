@@ -1052,7 +1052,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 		vertices.emplace_back(vertex.y);
 		vertices.emplace_back(vertex.z);
 
-		if (aiMesh->mNumUVComponents[0] == 2)
+		if (aiMesh->HasTextureCoords(0))
 		{
 			aiVector3D uv = aiMesh->mTextureCoords[0][vertexIndex];
 			vertices.emplace_back(uv.x);
@@ -1107,7 +1107,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 			indices.emplace_back(aiMesh->mFaces[faceIndex].mIndices[i]);
 		}
 
-		if (!aiMesh->HasTangentsAndBitangents())
+		if (aiMesh->HasTextureCoords(0) && !aiMesh->HasTangentsAndBitangents())
 		{
 			size_t i0 = aiMesh->mFaces[faceIndex].mIndices[0];
 			size_t i1 = aiMesh->mFaces[faceIndex].mIndices[1];
