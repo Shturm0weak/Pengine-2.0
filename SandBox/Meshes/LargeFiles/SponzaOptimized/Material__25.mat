@@ -4,9 +4,9 @@ Mat:
     - RenderPass: GBuffer
       Uniforms:
         - Name: albedoTexture
-          Value: D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures/lion.tga
+          Value: 31d8d1c2-7c3e-406a-b016-090fd3198587
         - Name: normalTexture
-          Value: White
+          Value: ""
         - Name: material
           Values:
             - Name: color

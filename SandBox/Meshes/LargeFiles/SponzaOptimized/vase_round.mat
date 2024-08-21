@@ -4,9 +4,9 @@ Mat:
     - RenderPass: GBuffer
       Uniforms:
         - Name: albedoTexture
-          Value: D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures/vase_round.tga
+          Value: ed291732-e20e-4d4d-8657-f055118818bb
         - Name: normalTexture
-          Value: White
+          Value: ""
         - Name: material
           Values:
             - Name: color

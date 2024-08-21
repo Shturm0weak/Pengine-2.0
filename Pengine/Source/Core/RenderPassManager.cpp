@@ -116,12 +116,13 @@ void RenderPassManager::CreateGBuffer()
 	createInfo.renderCallback = [globalBufferName](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().GetBaseMaterial("Materials/DefaultReflection.basemat");
+		const glm::mat4 viewProjectionMat4 = renderInfo.camera->GetComponent<Camera>().GetViewProjectionMat4();
 		WriterBufferHelper::WriteToBuffer(
 			reflectionBaseMaterial.get(),
 			renderInfo.submitInfo.renderPass->GetBuffer(globalBufferName),
 			globalBufferName,
 			"camera.viewProjectionMat4",
-			renderInfo.camera->GetComponent<Camera>().GetViewProjectionMat4());
+			viewProjectionMat4);
 
 		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;

@@ -32,6 +32,11 @@ namespace Pengine::FileFormats
 		return ".dds";
 	}
 
+	inline const char* Tga()
+	{
+		return ".tga";
+	}
+
 	inline const char* Obj()
 	{
 		return ".obj";
@@ -77,7 +82,8 @@ namespace Pengine::FileFormats
 		return fileFormat == Png()
 			|| fileFormat == Jpeg()
 			|| fileFormat == Jpg()
-			|| fileFormat == Dds();
+			|| fileFormat == Dds()
+			|| fileFormat == Tga();
 	}
 
 	inline bool IsMeshIntermediate(const std::string& fileFormat)

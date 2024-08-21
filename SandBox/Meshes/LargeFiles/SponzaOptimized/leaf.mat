@@ -4,9 +4,9 @@ Mat:
     - RenderPass: GBuffer
       Uniforms:
         - Name: albedoTexture
-          Value: D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures/sponza_thorn_diff.tga
+          Value: ec7c15a5-e0bf-46a4-9e85-1dc30ab120c7
         - Name: normalTexture
-          Value: White
+          Value: ""
         - Name: material
           Values:
             - Name: color

@@ -717,8 +717,8 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material)
 
 			if (binding.type == ShaderReflection::Type::COMBINED_IMAGE_SAMPLER)
 			{
-				// TODO: Better to use uuid for assets instead of filepaths!
-				out << YAML::Key << "Value" << YAML::Value << material->GetUniformWriter(renderPassName)->GetTexture(binding.name)->GetFilepath();
+				out << YAML::Key << "Value" << YAML::Value << 
+				Utils::FindUuid(material->GetUniformWriter(renderPassName)->GetTexture(binding.name)->GetFilepath());
 			}
 			else if (binding.type == ShaderReflection::Type::UNIFORM_BUFFER)
 			{
@@ -1779,7 +1779,19 @@ void Serializer::ParseUniformValues(
 		if (const auto& nameData = uniformData["Value"])
 		{
 			const std::string textureFilepath = nameData.as<std::string>();
-			uniformsInfo.texturesByName.emplace(uniformName, textureFilepath);
+
+			if (textureFilepath.empty())
+			{
+				uniformsInfo.texturesByName.emplace(uniformName, TextureManager::GetInstance().GetWhite()->GetName());
+			}
+			else if (std::filesystem::exists(textureFilepath))
+			{
+				uniformsInfo.texturesByName.emplace(uniformName, textureFilepath);
+			}
+			else
+			{
+				uniformsInfo.texturesByName.emplace(uniformName, Utils::Find(textureFilepath, filepathByUuid).string());
+			}
 		}
 	}
 }
