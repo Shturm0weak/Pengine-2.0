@@ -4,18 +4,18 @@
   Childs:
     []
   Transform:
-    Position: [-4.33820391, 3.50906157, 2.27921677]
-    Rotation: [-0.578264534, -1.00707233, 0]
+    Position: [62.2990875, 49.8511505, 91.8146362]
+    Rotation: [-0.0482702293, 0.58723706, 0]
     Scale: [1, 1, 1]
     FollowOwner: true
   Camera:
-    Fov: 1.57079637
+    Fov: 1.04719758
     Type: 1
     ZNear: 0.100000001
     ZFar: 1000
     Viewport: Main
 - UUID: 604ed03c-d774-434d-ae83-e6164d93e2e9
-  Name: Sphere
+  Name: Dragon
   IsEnabled: true
   Childs:
     []
@@ -25,20 +25,65 @@
     Scale: [1, 1, 1]
     FollowOwner: true
   Renderer3D:
-    Mesh: 6c89d2ce-0c6c-4acb-86d8-6d6f5763355e
+    Mesh: 1cf2acbf-d704-41c1-b28e-85696a222de6
     Material: fd4da90d-9009-4e8a-b0ea-014fa1d8a7a2
 - UUID: 7a81c822-0d2f-4c3a-b06f-4a2d945be43a
-  Name: PointLight
+  Name: PointLight1
   IsEnabled: true
   Childs:
     []
   Transform:
-    Position: [-2.01205206, 1.59219527, 0]
+    Position: [-2.01204038, 29.6813068, 65.5396957]
     Rotation: [0, -0, 0]
     Scale: [1, 1, 1]
     FollowOwner: true
   PointLight:
     Color: [1, 1, 1]
-    Constant: 1
-    Quadratic: 0.0320000015
-    Linear: 0.0900000036
+    Constant: 0
+    Quadratic: 0
+    Linear: 0.159999996
+- UUID: 8e03f06a-7c65-45b1-afdc-04c4bd78ed39
+  Name: PointLight2
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [46.983593, 53.6624832, -0.622682333]
+    Rotation: [0, -0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  PointLight:
+    Color: [0.535277486, 1, 0.523206711]
+    Constant: 0
+    Quadratic: 0
+    Linear: 0.101999998
+- UUID: 0243ad63-5a28-4eef-bf5d-bebc68269491
+  Name: PointLight3
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-2.01204324, 80.5557251, 54.4891357]
+    Rotation: [0, -0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  PointLight:
+    Color: [1, 1, 1]
+    Constant: 0
+    Quadratic: 0
+    Linear: 0.0309999995
+- UUID: ca617a0d-6346-4456-9528-968c1fc83b2f
+  Name: PointLight4
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0.844220161, 122.621948, 14.9255524]
+    Rotation: [0, -0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  PointLight:
+    Color: [0.839662433, 1, 0.965496957]
+    Constant: 0
+    Quadratic: 0
+    Linear: 0.156000003

@@ -1,6 +1,7 @@
 #include "Editor.h"
 
 #include "../Components/Camera.h"
+#include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
 #include "../Components/Renderer3D.h"
 #include "../Components/Transform.h"
@@ -784,6 +785,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene)
 			CameraComponent(entity);
 			Renderer3DComponent(entity);
 			PointLightComponent(entity);
+			DirectionalLightComponent(entity);
 
 			ImGui::NewLine();
 		}
@@ -1344,6 +1346,10 @@ void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
 		{
 			entity->AddComponent<PointLight>();
 		}
+		else if (ImGui::MenuItem("DirectionalLight"))
+		{
+			entity->AddComponent<DirectionalLight>();
+		}
 		ImGui::EndPopup();
 	}
 }
@@ -1448,6 +1454,29 @@ void Editor::PointLightComponent(const std::shared_ptr<Entity>& entity)
 		ImGui::SliderFloat("Constant", &pointLight.constant, 0.0f, 1.0f);
 		ImGui::SliderFloat("Linear", &pointLight.linear, 0.0f, 1.0f);
 		ImGui::SliderFloat("Quadratic", &pointLight.quadratic, 0.0f, 1.0f);
+	}
+}
+
+void Editor::DirectionalLightComponent(const std::shared_ptr<Entity>& entity)
+{
+	if (!entity->HasComponent<DirectionalLight>())
+	{
+		return;
+	}
+
+	DirectionalLight& directionalLight = entity->GetComponent<DirectionalLight>();
+
+	if (ImGui::Button("X"))
+	{
+		entity->RemoveComponent<DirectionalLight>();
+	}
+	ImGui::SameLine();
+	if (ImGui::CollapsingHeader("DirectionalLight"))
+	{
+		Indent indent;
+
+		ImGui::ColorEdit3("Color", &directionalLight.color[0]);
+		ImGui::SliderFloat("Intensity", &directionalLight.intensity, 0.0f, 10.0f);
 	}
 }
 

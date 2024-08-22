@@ -504,7 +504,7 @@ void VulkanPipeline::ReflectDescriptorSets(
 					break;
 				}
 
-				if (member.member_count > 0)
+				if (member.member_count > 0 && member.array.dims_count == 1)
 				{
 					memberVariable.type = ShaderReflection::ReflectVariable::Type::STRUCT;
 					reflectStruct(memberVariable, member);

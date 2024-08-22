@@ -14,6 +14,9 @@ layout(set = 0, binding = 3) uniform Lights
 {
 	PointLight pointLights[32];
 	int pointLightsCount;
+
+	DirectionalLight directionalLight;
+	int hasDirectionalLight;
 };
 
 vec3 CalculatePointLight(PointLight light, vec3 position, vec3 normal)
@@ -30,6 +33,11 @@ vec3 CalculatePointLight(PointLight light, vec3 position, vec3 normal)
 	return diffuse;
 }
 
+vec3 CalculateDirectionalLight(DirectionalLight light, vec3 position, vec3 normal)
+{
+	return light.color * max(dot(normal, light.direction), 0.0f) * light.intensity;
+}
+
 void main()
 {
 	vec3 albedoColor = texture(albedoTexture, uv).xyz;
@@ -44,6 +52,11 @@ void main()
 	}
 	else
 	{
+		if (hasDirectionalLight == 1)
+		{
+			result += CalculateDirectionalLight(directionalLight, position, normal.xyz) * albedoColor;
+		}
+
 		for (int i = 0; i < pointLightsCount; i++)
 		{
 			result += CalculatePointLight(pointLights[i], position, normal.xyz) * albedoColor;

@@ -4,8 +4,8 @@
   Childs:
     []
   Transform:
-    Position: [-12.8783331, 2.22174311, 1.07104528]
-    Rotation: [-0.0373834707, 4.89452648, 0]
+    Position: [-10.622551, 2.50453186, 0.272952437]
+    Rotation: [-0.154030874, -1.41062129, 0]
     Scale: [1, 1, 1]
     FollowOwner: true
   Camera:
@@ -383,6 +383,7 @@
     - b5a93421-9663-4ab3-92de-75be0b6657bf
     - 4e8cefc2-11d9-4b6c-bd1d-ce4d7b56ce27
     - 415fe7d2-3fbf-48fb-bd3f-cf5e59540b2d
+    - 947f85b0-5da7-4fae-9a0d-ef7f280fad0b
   Transform:
     Position: [0, 0, 0]
     Rotation: [0, 0, 0]
@@ -478,3 +479,16 @@
     Constant: 0
     Quadratic: 0.0299999993
     Linear: 0
+- UUID: 947f85b0-5da7-4fae-9a0d-ef7f280fad0b
+  Name: Sun
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0.785398245, 0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  DirectionalLight:
+    Color: [1, 0.933664501, 0.772151887]
+    Intensity: 1

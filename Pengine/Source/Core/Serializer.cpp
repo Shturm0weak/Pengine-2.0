@@ -10,6 +10,7 @@
 #include "ViewportManager.h"
 
 #include "../Components/Camera.h"
+#include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
 #include "../Components/Renderer3D.h"
 #include "../Components/Transform.h"
@@ -1297,6 +1298,7 @@ void Serializer::SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entit
 	SerializeCamera(out, entity);
 	SerializeRenderer3D(out, entity);
 	SerializePointLight(out, entity);
+	SerializeDirectionalLight(out, entity);
 
 	out << YAML::EndMap;
 
@@ -1344,6 +1346,7 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 	DeserializeCamera(in, entity);
 	DeserializeRenderer3D(in, entity);
 	DeserializePointLight(in, entity);
+	DeserializeDirectionalLight(in, entity);
 
 	return entity;
 }
@@ -1567,6 +1570,48 @@ void Serializer::DeserializePointLight(const YAML::Node& in, const std::shared_p
 		if (const auto& linearData = pointLightData["Linear"])
 		{
 			pointLight.linear = linearData.as<float>();
+		}
+	}
+}
+
+void Serializer::SerializeDirectionalLight(YAML::Emitter& out, const std::shared_ptr<Entity>& entity)
+{
+	if (!entity->HasComponent<DirectionalLight>())
+	{
+		return;
+	}
+
+	const DirectionalLight& directionalLight = entity->GetComponent<DirectionalLight>();
+
+	out << YAML::Key << "DirectionalLight";
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "Color" << YAML::Value << directionalLight.color;
+	out << YAML::Key << "Intensity" << YAML::Value << directionalLight.intensity;
+
+	out << YAML::EndMap;
+}
+
+void Serializer::DeserializeDirectionalLight(const YAML::Node& in, const std::shared_ptr<Entity>& entity)
+{
+	if (const auto& directionalLightData = in["DirectionalLight"])
+	{
+		if (!entity->HasComponent<DirectionalLight>())
+		{
+			entity->AddComponent<DirectionalLight>();
+		}
+
+		DirectionalLight& directionalLight = entity->GetComponent<DirectionalLight>();
+
+		if (const auto& colorData = directionalLightData["Color"])
+		{
+			directionalLight.color = colorData.as<glm::vec3>();
+		}
+
+		if (const auto& intensityData = directionalLightData["Intensity"])
+		{
+			directionalLight.intensity = intensityData.as<float>();
 		}
 	}
 }

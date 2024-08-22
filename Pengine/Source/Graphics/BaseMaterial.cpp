@@ -216,19 +216,23 @@ bool BaseMaterial::GetUniformDetails(
 				currentParentOffset += instanceSize * *arrayIndex;
 			}
 
-			if (!variable->variables.empty())
+			if (valueName == searchingName)
+			{
+				offset = variable->offset + parentOffset;
+				size = variable->size;
+				return true;
+			}
+			else if (!variable->variables.empty())
 			{
 				return findVariable(
 					variable->variables,
 					valueName,
-					currentParentOffset,
+					currentParentOffset + variable->offset,
 					size,
 					offset);
 			}
 
-			offset = variable->offset + parentOffset;
-			size = variable->size;
-			return true;
+			return false;
 		};
 
 	for (const auto& [renderPassName, pipeline] : m_PipelinesByRenderPass)

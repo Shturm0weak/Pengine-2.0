@@ -8,3 +8,10 @@ struct PointLight
 	
 	float quadratic;
 };
+
+struct DirectionalLight
+{
+	vec3 color;
+	float intensity;
+	vec3 direction;
+};

@@ -6,6 +6,7 @@
 #include "SceneManager.h"
 
 #include "../Components/Camera.h"
+#include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
 #include "../Components/Renderer3D.h"
 #include "../Components/Transform.h"
@@ -305,6 +306,28 @@ void RenderPassManager::CreateDeferred()
 
 		int pointLightsCount = pointLightView.size();
 		baseMaterial->WriteToBuffer("Lights", "pointLightsCount", pointLightsCount);
+
+		auto directionalLightView = renderInfo.scene->GetRegistry().view<DirectionalLight>();
+		if (!directionalLightView.empty())
+		{
+			const entt::entity& entity = directionalLightView.back();
+			DirectionalLight& dl = renderInfo.scene->GetRegistry().get<DirectionalLight>(entity);
+			const Transform& transform = renderInfo.scene->GetRegistry().get<Transform>(entity);
+
+			baseMaterial->WriteToBuffer("Lights", "directionalLight.color", dl.color);
+			baseMaterial->WriteToBuffer("Lights", "directionalLight.intensity", dl.intensity);
+
+			const glm::vec3 direction = transform.GetForward();
+			baseMaterial->WriteToBuffer("Lights", "directionalLight.direction", direction);
+
+			int hasDirectionalLight = 1;
+			baseMaterial->WriteToBuffer("Lights", "hasDirectionalLight", hasDirectionalLight);
+		}
+		else
+		{
+			int hasDirectionalLight = 0;
+			baseMaterial->WriteToBuffer("Lights", "hasDirectionalLight", hasDirectionalLight);
+		}
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
 		if (pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::BASE_MATERIAL))

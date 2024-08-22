@@ -10,9 +10,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP")
 
 set(COMPONENTS_SOURCES
 	Components/Camera.cpp Components/Camera.h
-	Components/PointLight.cpp Components/PointLight.h
+	Components/DirectionalLight.h
+	Components/PointLight.h
 	Components/Transform.cpp Components/Transform.h
-	Components/Renderer3D.cpp Components/Renderer3D.h
+	Components/Renderer3D.h
 )
 source_group("Components" FILES ${COMPONENTS_SOURCES})
 
