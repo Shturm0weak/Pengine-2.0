@@ -14,7 +14,7 @@ For example how I set it:\
 `GLFW_INCLUDE = C:/GLFW/Includes`\
 `GLFW_PATH_LIB = C:/GLFW/Lib`\
 `VULKAN_INCLUDE = C:/VulkanSDK/1.3.268.0/Include`\
-`VULKAN_LIB = C:/VulkanSDK/1.3.268.0/Lib`\
+`VULKAN_LIB = C:/VulkanSDK/1.3.268.0/Lib`
 * Clone and run CMake.
 ```
 git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
