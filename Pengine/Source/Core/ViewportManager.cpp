@@ -1,5 +1,7 @@
 #include "ViewportManager.h"
 
+#include "Viewport.h"
+
 #include "../Utils/Utils.h"
 
 using namespace Pengine;

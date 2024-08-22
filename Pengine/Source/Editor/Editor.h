@@ -65,7 +65,9 @@ namespace Pengine
 
 		void ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity);
 
-		void AssetBrowser();
+		void MainMenuBar();
+
+		void AssetBrowser(const std::shared_ptr<Scene>& scene);
 
 		void SetDarkThemeColors();
 
@@ -103,6 +105,16 @@ namespace Pengine
 
 			void Update();
 		} m_DeleteFileMenu;
+
+		struct CreateViewportMenu
+		{
+			bool opened = false;
+
+			char name[64];
+			glm::ivec2 size = { 1024, 1024 };
+
+			void Update(const Editor& editor);
+		} m_CreateViewportMenu;
 
 		std::set<std::string> m_SelectedEntities;
 

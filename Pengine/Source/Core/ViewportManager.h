@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Core.h"
-#include "Viewport.h"
 
 namespace Pengine
 {
+
+	class Viewport;
 
 	class PENGINE_API ViewportManager
 	{

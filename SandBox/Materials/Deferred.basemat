@@ -8,7 +8,7 @@ Basemat:
       Vertex: Shaders/Deferred.vert
       Fragment: Shaders/Deferred.frag
       DescriptorSets:
-        - Type: BaseMaterial
+        - Type: Renderer
           Set: 0
       VertexInputBindingDescriptions:
         - Binding: 0

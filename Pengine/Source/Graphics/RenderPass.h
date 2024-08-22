@@ -30,7 +30,6 @@ namespace Pengine
 
 		struct AttachmentDescription
 		{
-			glm::ivec2 size = { 1, 1 };
 			Texture::Layout layout;
 			Format format;
 		};
@@ -39,6 +38,7 @@ namespace Pengine
 		{
 			std::shared_ptr<RenderPass> renderPass;
 			std::shared_ptr<FrameBuffer> frameBuffer;
+			glm::mat4 projection;
 			void* frame;
 			uint32_t width;
 			uint32_t height;

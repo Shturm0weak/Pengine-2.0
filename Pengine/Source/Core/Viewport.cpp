@@ -4,6 +4,7 @@
 #include "Logger.h"
 #include "SceneManager.h"
 #include "Serializer.h"
+#include "ViewportManager.h"
 
 #include "../Components/Camera.h"
 #include "../EventSystem/EventSystem.h"
@@ -22,12 +23,20 @@ Viewport::Viewport(std::string name, const glm::ivec2& size)
 
 void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 {
+	UpdateProjectionMat4();
+
 	if (!viewportTexture)
 	{
 		FATAL_ERROR("Viewport texture is nullptr!");
 	}
 
-	ImGui::Begin(m_Name.c_str());
+	if (!m_IsOpened)
+	{
+		ViewportManager::GetInstance().Destroy(shared_from_this());
+		return;
+	}
+
+	ImGui::Begin(m_Name.c_str(), &m_IsOpened);
 
 	ImGui::Image(viewportTexture->GetId(), ImVec2(m_Size.x, m_Size.y));
 
@@ -40,9 +49,9 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 			std::filesystem::path path = dragDropSource;
 
 			std::shared_ptr<Scene> scene;
-			if (m_Camera)
+			if (const std::shared_ptr<Entity> camera = m_Camera.lock())
 			{
-				scene = m_Camera->GetScene();
+				scene = camera->GetScene();
 			}
 
 			if (scene && FileFormats::Prefab() == Utils::GetFileFormat(path))
@@ -90,7 +99,10 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 
 	if (m_DrawGizmosCallback)
 	{
-		m_DrawGizmosCallback(m_Position, m_Size, m_Camera);
+		const std::shared_ptr<Entity> camera = m_Camera.lock();
+		{
+			m_DrawGizmosCallback(m_Position, m_Size, camera);
+		}
 		m_DrawGizmosCallback = {};
 	}
 
@@ -99,23 +111,22 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 
 void Viewport::SetCamera(const std::shared_ptr<Entity>& camera)
 {
-	if (!camera || !camera->HasComponent<Camera>())
+	std::shared_ptr<Entity> previousCamera = m_Camera.lock();
+	if (previousCamera && previousCamera->HasComponent<Camera>())
+	{
+		Camera& cameraComponent = m_Camera.lock()->GetComponent<Camera>();
+		cameraComponent.DeleteRenderTarget(m_Name);
+	}
+
+	m_Camera = camera;
+
+	if (!camera)
 	{
 		return;
 	}
 
-	if (m_Camera && m_Camera->HasComponent<Camera>())
-	{
-		m_Camera->GetComponent<Camera>().SetViewport(none);
-	}
-
-	m_Camera = camera;
-	Camera& cameraComponent = m_Camera->GetComponent<Camera>();
-	cameraComponent.SetViewport(m_Name);
-	if (m_Size.x != cameraComponent.GetSize().x || m_Size.y != cameraComponent.GetSize().y)
-	{
-		cameraComponent.SetSize(m_Size);
-	}
+	Camera& cameraComponent = camera->GetComponent<Camera>();
+	cameraComponent.CreateRenderTarget(m_Name, m_Size);
 }
 
 void Viewport::SetDrawGizmosCallback(const std::function<void(const glm::vec2& position, glm::ivec2 size, std::shared_ptr<Entity> camera)>& drawGizmosCallback)
@@ -127,11 +138,68 @@ void Viewport::Resize(const glm::ivec2& size)
 {
 	m_Size = size;
 
-	if (m_Camera)
+	if (const std::shared_ptr<Entity> camera = m_Camera.lock())
 	{
-		m_Camera->GetComponent<Camera>().SetSize(m_Size);
+		camera->GetComponent<Camera>().ResizeRenderTarget(m_Name, m_Size);
 	}
 	
 	ResizeEvent* event = new ResizeEvent(size, m_Name, Event::Type::OnResize, this);
 	EventSystem::GetInstance().SendEvent(event);
+}
+
+void Viewport::UpdateProjectionMat4()
+{
+	const std::shared_ptr<Entity> camera = m_Camera.lock();
+	if (!camera || !camera->HasComponent<Camera>())
+	{
+		return;
+	}
+
+	const Camera& cameraComponenet = camera->GetComponent<Camera>();
+
+	switch (cameraComponenet.GetType())
+	{
+	case Camera::Type::PERSPECTIVE:
+	{
+		SetPerspective(m_Size, cameraComponenet.GetZFar(), cameraComponenet.GetZNear(), cameraComponenet.GetFov());
+		break;
+	}
+	case Camera::Type::ORTHOGRAPHIC:
+	default:
+	{
+		SetOrthographic(m_Size, cameraComponenet.GetZFar(), cameraComponenet.GetZNear());
+		break;
+	}
+	}
+}
+
+void Viewport::SetOrthographic(const glm::ivec2& size, const float zFar, const float zNear)
+{
+	if (size.x == 0 || size.y == 0)
+	{
+		m_Size = { 1, 1 };
+	}
+	else
+	{
+		m_Size = size;
+	}
+
+	const float ratio = static_cast<float>(size.x) / static_cast<float>(size.y);
+	m_Projection = glm::ortho(-ratio, ratio, -1.0f,
+		1.0f, zFar, zNear);
+}
+
+void Viewport::SetPerspective(const glm::ivec2& size, const float zFar, const float zNear, const float fov)
+{
+	if (size.x == 0 || size.y == 0)
+	{
+		m_Size = { 1, 1 };
+	}
+	else
+	{
+		m_Size = size;
+	}
+
+	const float ratio = static_cast<float>(size.x) / static_cast<float>(size.y);
+	m_Projection = glm::perspective(fov, ratio, zNear, zFar);
 }

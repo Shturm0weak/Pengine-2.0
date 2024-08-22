@@ -4,6 +4,7 @@
 #include "Viewport.h"
 
 #include "../Components/Transform.h"
+#include "../Components/Camera.h"
 
 using namespace Pengine;
 
@@ -46,8 +47,8 @@ void Scene::Clear()
 	m_Name = none;
 	m_Filepath = none;
 
-	m_Registry.clear();
 	m_Entities.clear();
+	m_Registry.clear();
 }
 
 Scene& Scene::operator=(const Scene& scene)
@@ -82,10 +83,15 @@ std::shared_ptr<Entity> Scene::CloneEntity(std::shared_ptr<Entity> entity)
 			}
 		}
 
-		// Transform requires to explicitly set the entity or set it as a constructor argument.
+		// Transform and Camera requires to explicitly set the entity or set it as a constructor argument.
 		if (newEntity->HasComponent<Transform>())
 		{
 			newEntity->GetComponent<Transform>().SetEntity(newEntity);
+		}
+
+		if (newEntity->HasComponent<Camera>())
+		{
+			newEntity->GetComponent<Camera>().SetEntity(newEntity);
 		}
 
 		for (std::shared_ptr<Entity> child : entity->GetChilds())

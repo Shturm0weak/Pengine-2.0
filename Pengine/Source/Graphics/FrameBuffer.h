@@ -11,7 +11,7 @@ namespace Pengine
 	class PENGINE_API FrameBuffer
 	{
 	public:
-		static std::shared_ptr<FrameBuffer> Create(const std::shared_ptr<RenderPass>& renderPass);
+		static std::shared_ptr<FrameBuffer> Create(const std::shared_ptr<RenderPass>& renderPass, const glm::ivec2& size);
 
 		FrameBuffer(std::vector<Texture::CreateInfo> const& attachments,
 			std::shared_ptr<RenderPass> renderPass);

@@ -8,7 +8,7 @@ Basemat:
       Vertex: Shaders/GBuffer.vert
       Fragment: Shaders/GBuffer.frag
       DescriptorSets:
-        - Type: RenderPass
+        - Type: Renderer
           Set: 0
         - Type: Material
           Set: 1

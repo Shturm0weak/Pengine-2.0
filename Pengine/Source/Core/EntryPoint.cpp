@@ -9,6 +9,7 @@
 #include "TextureManager.h"
 #include "Time.h"
 #include "ViewportManager.h"
+#include "Viewport.h"
 #include "WindowManager.h"
 
 #include "../Components/Camera.h"
@@ -37,7 +38,6 @@ void EntryPoint::Run() const
 	RenderPassManager::GetInstance();
 	m_Application->OnPreStart();
 
-	ViewportManager::GetInstance().Create("Main", { 800, 800 });
 	Serializer::GenerateFilesUUID(std::filesystem::current_path());
 
 	TextureManager::GetInstance().LoadFromFolder("Editor/Images");
@@ -69,12 +69,16 @@ void EntryPoint::Run() const
 			window->ImGuiBegin();
 			for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
 			{
-				if (const std::shared_ptr<Entity> camera = viewport->GetCamera();
+				if (const std::shared_ptr<Entity> camera = viewport->GetCamera().lock();
 					camera && camera->HasComponent<Camera>())
 				{
-					viewport->Update(
-						camera->GetComponent<Camera>().GetRenderer()->GetRenderPassFrameBuffer(
-							Deferred)->GetAttachment(0));
+					Camera& cameraComponent = camera->GetComponent<Camera>();
+					const std::shared_ptr<Renderer> renderer = cameraComponent.GetRendererTarget(name);
+					if (!renderer)
+					{
+						continue;
+					}
+					viewport->Update(renderer->GetRenderPassFrameBuffer(Deferred)->GetAttachment(0));
 				}
 				else
 				{
@@ -90,16 +94,22 @@ void EntryPoint::Run() const
 			{
 				for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
 				{
-					if (const std::shared_ptr<Entity> camera = viewport->GetCamera())
+					if (const std::shared_ptr<Entity> camera = viewport->GetCamera().lock())
 					{
 						if (camera->HasComponent<Camera>())
 						{
 							Camera& cameraComponent = camera->GetComponent<Camera>();
-							cameraComponent.GetRenderer()->Update(
+							const std::shared_ptr<Renderer> renderer = cameraComponent.GetRendererTarget(name);
+							if (!renderer)
+							{
+								continue;
+							}
+							renderer->Update(
 								frame,
 								window,
 								camera->GetScene(),
-								camera);
+								camera,
+								viewport->GetProjectionMat4());
 						}
 						else
 						{

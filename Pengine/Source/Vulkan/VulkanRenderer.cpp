@@ -12,6 +12,7 @@ using namespace Pengine;
 using namespace Vk;
 
 VulkanRenderer::VulkanRenderer(const glm::ivec2& size)
+	: Renderer(size)
 {
 
 }

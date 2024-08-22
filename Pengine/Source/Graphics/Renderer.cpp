@@ -22,14 +22,14 @@ std::shared_ptr<Renderer> Renderer::Create(const glm::ivec2& size)
 	return nullptr;
 }
 
-Renderer::Renderer()
+Renderer::Renderer(const glm::ivec2& size)
 {
 	for (const auto& type : renderPassesOrder)
 	{
 		if (std::shared_ptr<RenderPass> renderPass =
 			RenderPassManager::GetInstance().GetRenderPass(type))
 		{
-			const std::shared_ptr<FrameBuffer> frameBuffer = FrameBuffer::Create(renderPass);
+			const std::shared_ptr<FrameBuffer> frameBuffer = FrameBuffer::Create(renderPass, size);
 
 			SetFrameBufferToRenderPass(type, frameBuffer);
 		}
@@ -45,7 +45,8 @@ void Renderer::Update(
 	void* frame,
 	const std::shared_ptr<Window>& window,
 	const std::shared_ptr<Scene>& scene,
-	const std::shared_ptr<Entity>& camera)
+	const std::shared_ptr<Entity>& camera,
+	const glm::mat4& projection)
 {
 	if (!scene)
 	{
@@ -77,6 +78,7 @@ void Renderer::Update(
 		renderPassSubmitInfo.frame = frame;
 		renderPassSubmitInfo.frameBuffer = frameBuffer;
 		renderPassSubmitInfo.renderPass = renderPass;
+		renderPassSubmitInfo.projection = projection;
 
 		BeginRenderPass(renderPassSubmitInfo);
 
@@ -91,6 +93,26 @@ void Renderer::Update(
 
 		EndRenderPass(renderPassSubmitInfo);
 	}
+}
+
+std::shared_ptr<UniformWriter> Renderer::GetUniformWriter(const std::string& renderPassName) const
+{
+	return Utils::Find(renderPassName, m_UniformWriterByRenderPassType);
+}
+
+void Renderer::SetUniformWriter(const std::string& renderPassName, std::shared_ptr<UniformWriter> uniformWriter)
+{
+	m_UniformWriterByRenderPassType[renderPassName] = uniformWriter;
+}
+
+std::shared_ptr<Buffer> Renderer::GetBuffer(const std::string& name) const
+{
+	return Utils::Find(name, m_BuffersByName);
+}
+
+void Renderer::SetBuffer(const std::string& name, std::shared_ptr<Buffer> buffer)
+{
+	m_BuffersByName[name] = buffer;
 }
 
 std::shared_ptr<FrameBuffer> Renderer::GetRenderPassFrameBuffer(const std::string& type) const

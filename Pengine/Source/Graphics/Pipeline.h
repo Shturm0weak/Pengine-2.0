@@ -40,6 +40,7 @@ namespace Pengine
 
 		enum class DescriptorSetIndexType
 		{
+			RENDERER,
 			RENDERPASS,
 			BASE_MATERIAL,
 			MATERIAL

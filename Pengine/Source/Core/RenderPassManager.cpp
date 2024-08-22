@@ -94,33 +94,34 @@ void RenderPassManager::CreateGBuffer()
 	createInfo.buffersByName["InstanceBuffer"] = nullptr;
 
 	const std::string globalBufferName = "GlobalBuffer";
-	createInfo.createCallback = [globalBufferName](RenderPass& renderPass)
-	{
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/DefaultReflection.basemat");
-		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(DefaultReflection);
-
-		std::optional<uint32_t> descriptorSet = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERPASS);
-		const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*descriptorSet);
-		const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
-
-		const std::shared_ptr<Buffer> buffer = Buffer::Create(
-			uniformLayout->GetBindingByName(globalBufferName)->buffer->size,
-			1,
-			Buffer::Usage::UNIFORM_BUFFER,
-			Buffer::MemoryType::CPU);
-
-		renderPass.SetBuffer(globalBufferName, buffer);
-		renderPass.SetUniformWriter(uniformWriter);
-		renderPass.GetUniformWriter()->WriteBuffer(globalBufferName, buffer);
-	};
 
 	createInfo.renderCallback = [globalBufferName](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().GetBaseMaterial("Materials/DefaultReflection.basemat");
-		const glm::mat4 viewProjectionMat4 = renderInfo.camera->GetComponent<Camera>().GetViewProjectionMat4();
+		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
+		const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/DefaultReflection.basemat");
+		if(!renderInfo.renderer->GetBuffer(globalBufferName))
+		{
+			const std::shared_ptr<Pipeline> pipeline = reflectionBaseMaterial->GetPipeline(DefaultReflection);
+
+			std::optional<uint32_t> descriptorSet = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER);
+			const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*descriptorSet);
+			const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
+
+			const std::shared_ptr<Buffer> buffer = Buffer::Create(
+				uniformLayout->GetBindingByName(globalBufferName)->buffer->size,
+				1,
+				Buffer::Usage::UNIFORM_BUFFER,
+				Buffer::MemoryType::CPU);
+
+			uniformWriter->WriteBuffer(globalBufferName, buffer);
+			renderInfo.renderer->SetBuffer(globalBufferName, buffer);
+			renderInfo.renderer->SetUniformWriter(renderPassName, uniformWriter);
+		}
+
+		const glm::mat4 viewProjectionMat4 = renderInfo.submitInfo.projection * renderInfo.camera->GetComponent<Camera>().GetViewMat4();
 		WriterBufferHelper::WriteToBuffer(
 			reflectionBaseMaterial.get(),
-			renderInfo.submitInfo.renderPass->GetBuffer(globalBufferName),
+			renderInfo.renderer->GetBuffer(globalBufferName),
 			globalBufferName,
 			"camera.viewProjectionMat4",
 			viewProjectionMat4);
@@ -149,6 +150,7 @@ void RenderPassManager::CreateGBuffer()
 			renderableCount++;
 		}
 
+		// TODO: send it to render uniform writer.
 		std::shared_ptr<Buffer> instanceBuffer = renderInfo.submitInfo.renderPass->GetBuffer("InstanceBuffer");
 		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
 		{
@@ -166,7 +168,7 @@ void RenderPassManager::CreateGBuffer()
 		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
 		for (const auto& [baseMaterial, meshesByMaterial] : materialMeshGameObjects)
 		{
-			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderInfo.submitInfo.renderPass->GetType());
+			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 			if (!pipeline)
 			{
 				continue;
@@ -188,6 +190,10 @@ void RenderPassManager::CreateGBuffer()
 					}
 
 					std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
+					if (pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER))
+					{
+						uniformWriters.emplace_back(renderInfo.renderer->GetUniformWriter(renderPassName));
+					}
 					if (pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERPASS))
 					{
 						uniformWriters.emplace_back(renderInfo.submitInfo.renderPass->GetUniformWriter());
@@ -195,12 +201,12 @@ void RenderPassManager::CreateGBuffer()
 					if (pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::BASE_MATERIAL))
 					{
 						const std::shared_ptr<UniformWriter> baseMaterialUniformWriter = baseMaterial->GetUniformWriter(
-							renderInfo.submitInfo.renderPass->GetType());
+							renderPassName);
 						uniformWriters.emplace_back(baseMaterialUniformWriter);
 					}
 					if (pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL))
 					{
-						uniformWriters.emplace_back(material->GetUniformWriter(renderInfo.submitInfo.renderPass->GetType()));
+						uniformWriters.emplace_back(material->GetUniformWriter(renderPassName));
 					}
 
 					for (const auto& uniformWriter : uniformWriters)
@@ -264,21 +270,49 @@ void RenderPassManager::CreateDeferred()
 			return;
 		}
 
+		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
+
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Deferred.basemat");
-		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderInfo.submitInfo.renderPass->GetType());
+		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 		if (!pipeline)
 		{
 			return;
 		}
 
-		const std::shared_ptr<UniformWriter> baseMaterialUniformWriter = baseMaterial->GetUniformWriter(
-			renderInfo.submitInfo.renderPass->GetType());
+		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderer->GetUniformWriter(renderPassName);
+		if (!renderUniformWriter)
+		{
+			std::shared_ptr<UniformLayout> renderUniformLayout =
+				pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER));
+			renderUniformWriter = UniformWriter::Create(renderUniformLayout);
+			renderInfo.renderer->SetUniformWriter(renderPassName, renderUniformWriter);
+
+			for (const auto& binding : renderUniformLayout->GetBindings())
+			{
+				if (binding.buffer && binding.buffer->name == "Lights")
+				{
+					const std::shared_ptr<Buffer> buffer = Buffer::Create(
+						binding.buffer->size,
+						1,
+						Buffer::Usage::UNIFORM_BUFFER,
+						Buffer::MemoryType::CPU);
+
+					renderInfo.renderer->SetBuffer("Lights", buffer);
+					renderUniformWriter->WriteBuffer(binding.buffer->name, buffer);
+					renderUniformWriter->Flush();
+
+					break;
+				}
+			}
+		}
 
 		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(GBuffer);
 
-		baseMaterialUniformWriter->WriteTexture("albedoTexture", frameBuffer->GetAttachment(0));
-		baseMaterialUniformWriter->WriteTexture("normalTexture", frameBuffer->GetAttachment(1));
-		baseMaterialUniformWriter->WriteTexture("positionTexture", frameBuffer->GetAttachment(2));
+		renderUniformWriter->WriteTexture("albedoTexture", frameBuffer->GetAttachment(0));
+		renderUniformWriter->WriteTexture("normalTexture", frameBuffer->GetAttachment(1));
+		renderUniformWriter->WriteTexture("positionTexture", frameBuffer->GetAttachment(2));
+
+		const std::shared_ptr<Buffer> lightsBuffer = renderInfo.renderer->GetBuffer("Lights");
 
 		auto pointLightView = renderInfo.scene->GetRegistry().view<PointLight>();
 		uint32_t lightIndex = 0;
@@ -294,18 +328,18 @@ void RenderPassManager::CreateDeferred()
 
 			const std::string valueNamePrefix = "pointLights[" + std::to_string(lightIndex) + "]";
 
-			baseMaterial->WriteToBuffer("Lights", valueNamePrefix + ".color", pl.color);
 			glm::vec3 lightPosition = transform.GetPosition();
-			baseMaterial->WriteToBuffer("Lights", valueNamePrefix + ".position", lightPosition);
-			baseMaterial->WriteToBuffer("Lights", valueNamePrefix + ".linear", pl.linear);
-			baseMaterial->WriteToBuffer("Lights", valueNamePrefix + ".quadratic", pl.quadratic);
-			baseMaterial->WriteToBuffer("Lights", valueNamePrefix + ".constant", pl.constant);
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", valueNamePrefix + ".position", lightPosition);
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", valueNamePrefix + ".color", pl.color);
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", valueNamePrefix + ".linear", pl.linear);
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", valueNamePrefix + ".quadratic", pl.quadratic);
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", valueNamePrefix + ".constant", pl.constant);
 
 			lightIndex++;
 		}
 
 		int pointLightsCount = pointLightView.size();
-		baseMaterial->WriteToBuffer("Lights", "pointLightsCount", pointLightsCount);
+		WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "pointLightsCount", pointLightsCount);
 
 		auto directionalLightView = renderInfo.scene->GetRegistry().view<DirectionalLight>();
 		if (!directionalLightView.empty())
@@ -314,26 +348,22 @@ void RenderPassManager::CreateDeferred()
 			DirectionalLight& dl = renderInfo.scene->GetRegistry().get<DirectionalLight>(entity);
 			const Transform& transform = renderInfo.scene->GetRegistry().get<Transform>(entity);
 
-			baseMaterial->WriteToBuffer("Lights", "directionalLight.color", dl.color);
-			baseMaterial->WriteToBuffer("Lights", "directionalLight.intensity", dl.intensity);
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "directionalLight.color", dl.color);
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "directionalLight.intensity", dl.intensity);
 
 			const glm::vec3 direction = transform.GetForward();
-			baseMaterial->WriteToBuffer("Lights", "directionalLight.direction", direction);
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "directionalLight.direction", direction);
 
 			int hasDirectionalLight = 1;
-			baseMaterial->WriteToBuffer("Lights", "hasDirectionalLight", hasDirectionalLight);
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "hasDirectionalLight", hasDirectionalLight);
 		}
 		else
 		{
 			int hasDirectionalLight = 0;
-			baseMaterial->WriteToBuffer("Lights", "hasDirectionalLight", hasDirectionalLight);
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "hasDirectionalLight", hasDirectionalLight);
 		}
 
-		std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
-		if (pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::BASE_MATERIAL))
-		{
-			uniformWriters.emplace_back(baseMaterialUniformWriter);
-		}
+		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = { renderUniformWriter };
 
 		for (const auto& uniformWriter : uniformWriters)
 		{

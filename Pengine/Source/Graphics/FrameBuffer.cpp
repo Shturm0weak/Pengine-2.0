@@ -5,7 +5,9 @@
 
 using namespace Pengine;
 
-std::shared_ptr<FrameBuffer> FrameBuffer::Create(const std::shared_ptr<RenderPass>& renderPass)
+std::shared_ptr<FrameBuffer> FrameBuffer::Create(
+	const std::shared_ptr<RenderPass>& renderPass,
+	const glm::ivec2& size)
 {
 	if (!renderPass)
 	{
@@ -23,7 +25,7 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(const std::shared_ptr<RenderPas
 		attachmentCreateInfo.filepath = none;
 		attachmentCreateInfo.format = attachment.format;
 		attachmentCreateInfo.channels = 4;
-		attachmentCreateInfo.size = attachment.size;
+		attachmentCreateInfo.size = size;
 		attachmentCreateInfo.aspectMask = isColor ? Texture::AspectMask::COLOR :
 			Texture::AspectMask::DEPTH;
 		attachmentCreateInfo.usage = { Texture::Usage::SAMPLED, 

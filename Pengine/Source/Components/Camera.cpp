@@ -5,54 +5,45 @@
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 #include "../Graphics/Renderer.h"
+#include "../Utils/Utils.h"
 
 using namespace Pengine;
 
 void Camera::Copy(const Camera& camera)
 {
 	m_ViewMat4 = camera.GetViewMat4();
-	m_ProjectionMat4 = camera.GetProjectionMat4();
-	m_ViewProjectionMat4 = camera.GetViewProjectionMat4();
-	m_Viewport = camera.GetViewport();
 	m_Fov = camera.GetFov();
 	m_Type = camera.GetType();
 	m_Zfar = camera.GetZFar();
 	m_Znear = camera.GetZNear();
-	m_Size = camera.GetSize();
 }
 
 void Camera::Move(Camera&& camera) noexcept
 {
 	m_ViewMat4 = camera.m_ViewMat4;
-	m_ProjectionMat4 = camera.m_ProjectionMat4;
-	m_ViewProjectionMat4 = camera.m_ViewProjectionMat4;
 	m_Fov = camera.GetFov();
 	m_Type = camera.GetType();
 	m_Zfar = camera.GetZFar();
 	m_Znear = camera.GetZNear();
-	m_Size = camera.GetSize();
 }
 
-void Camera::UpdateViewProjection()
+void Camera::UpdateViewMat4()
 {
 	// Potential bad performance impact! Maybe need to reinvent!
 	if (m_Entity && m_Entity->HasComponent<Transform>())
 	{
 		m_ViewMat4 = glm::inverse(m_Entity->GetComponent<Transform>().GetTransform());
 	}
-	m_ViewProjectionMat4 = m_ProjectionMat4 * m_ViewMat4;
 }
 
 Camera::Camera(std::shared_ptr<Entity> entity)
 	: m_Entity(std::move(entity))
 {
-	m_Renderer = Renderer::Create(m_Size);
-
 	if (m_Entity && m_Entity->HasComponent<Transform>())
 	{
 		Transform& transform = m_Entity->GetComponent<Transform>();
-		transform.SetOnRotationCallback("Camera", std::bind(&Camera::UpdateViewProjection, this));
-		transform.SetOnTranslationCallback("Camera", std::bind(&Camera::UpdateViewProjection, this));
+		transform.SetOnRotationCallback("Camera", std::bind(&Camera::UpdateViewMat4, this));
+		transform.SetOnTranslationCallback("Camera", std::bind(&Camera::UpdateViewMat4, this));
 	}
 
 	SetType(Type::PERSPECTIVE);
@@ -84,80 +75,70 @@ Camera& Camera::operator=(Camera&& camera) noexcept
 	return *this;
 }
 
-void Camera::SetSize(const glm::vec2& size)
+void Camera::SetEntity(std::shared_ptr<Entity> entity)
 {
-	m_Size = size;
+	m_Entity = entity;
 
-	if (m_Renderer)
+	if (m_Entity && m_Entity->HasComponent<Transform>())
 	{
-		auto callback = [this]()
-		{
-			m_Renderer->Resize(m_Size);
-		};
-
-		NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
-		EventSystem::GetInstance().SendEvent(event);
+		Transform& transform = m_Entity->GetComponent<Transform>();
+		transform.SetOnRotationCallback("Camera", std::bind(&Camera::UpdateViewMat4, this));
+		transform.SetOnTranslationCallback("Camera", std::bind(&Camera::UpdateViewMat4, this));
 	}
 
-	UpdateProjection();
-}
-
-void Camera::SetOrthographic(const glm::ivec2& size)
-{
-	if (size.x == 0 || size.y == 0)
-	{
-		m_Size = { 1, 1 };
-	}
-	else
-	{
-		m_Size = size;
-	}
-
-	const float ratio = GetAspect();
-	m_ProjectionMat4 = glm::ortho(-ratio, ratio, -1.0f,
-		1.0f, m_Znear, m_Zfar);
-
-	UpdateViewProjection();
-}
-
-void Camera::SetPerspective(const glm::ivec2& size)
-{
-	if (size.x == 0 || size.y == 0)
-	{
-		m_Size = { 1, 1 };
-	}
-	else
-	{
-		m_Size = size;
-	}
-
-	m_ProjectionMat4 = glm::perspective(m_Fov, GetAspect(), m_Znear, m_Zfar);
-
-	UpdateViewProjection();
+	SetType(Type::PERSPECTIVE);
 }
 
 void Camera::SetType(const Type type)
 {
 	m_Type = type;
 
-	UpdateProjection();
+	UpdateViewMat4();
 }
 
-void Camera::UpdateProjection()
+void Camera::CreateRenderTarget(const std::string& name, const glm::ivec2& size)
 {
-	switch (m_Type)
+	auto callback = [this, name, size]()
 	{
-	case Type::PERSPECTIVE:
+		m_RenderersByName[name] = Renderer::Create(size);
+	};
+
+	NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+	EventSystem::GetInstance().SendEvent(event);
+}
+
+void Camera::ResizeRenderTarget(const std::string& name, const glm::ivec2& size)
+{
+	if (std::shared_ptr<Renderer> renderer = GetRendererTarget(name))
 	{
-		SetPerspective(m_Size);
-		break;
+		auto callback = [weakRenderer = std::weak_ptr<Renderer>(renderer), size]()
+		{
+			if (std::shared_ptr<Renderer> renderer = weakRenderer.lock())
+			{
+				renderer->Resize(size);
+			}
+		};
+
+		NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+		EventSystem::GetInstance().SendEvent(event);
 	}
-	case Type::ORTHOGRAPHIC:
-	default:
+}
+
+void Camera::DeleteRenderTarget(const std::string& name)
+{
+	if (std::shared_ptr<Renderer> renderer = GetRendererTarget(name))
 	{
-		SetOrthographic(m_Size);
-		break;
-	}
+		auto callback = [weakRenderer = std::weak_ptr<Renderer>(renderer), name, this]()
+		{
+			if (std::shared_ptr<Renderer> renderer = weakRenderer.lock())
+			{
+				renderer = nullptr;
+				m_RenderersByName[name] = nullptr;
+			}
+		};
+
+		NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+		EventSystem::GetInstance().SendEvent(event);
 	}
 }
 
@@ -165,19 +146,24 @@ void Camera::SetFov(const float fov)
 {
 	m_Fov = fov;
 
-	UpdateProjection();
+	UpdateViewMat4();
 }
 
 void Camera::SetZNear(const float zNear)
 {
 	m_Znear = zNear;
 
-	UpdateProjection();
+	UpdateViewMat4();
 }
 
 void Camera::SetZFar(const float zFar)
 {
 	m_Zfar = zFar;
 
-	UpdateProjection();
+	UpdateViewMat4();
+}
+
+std::shared_ptr<Renderer> Camera::GetRendererTarget(const std::string& name) const
+{
+	return Utils::Find(name, m_RenderersByName);
 }

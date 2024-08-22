@@ -8,6 +8,7 @@
 #include "SceneManager.h"
 #include "TextureManager.h"
 #include "ViewportManager.h"
+#include "Viewport.h"
 
 #include "../Components/Camera.h"
 #include "../Components/DirectionalLight.h"
@@ -553,7 +554,11 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::filesy
 			if (const auto& typeData = descriptorSetData["Type"])
 			{
 				std::string typeName = typeData.as<std::string>();
-				if (typeName == "RenderPass")
+				if (typeName == "Renderer")
+				{
+					type = Pipeline::DescriptorSetIndexType::RENDERER;
+				}
+				else if (typeName == "RenderPass")
 				{
 					type = Pipeline::DescriptorSetIndexType::RENDERPASS;
 				}
@@ -1633,7 +1638,6 @@ void Serializer::SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entit
 	out << YAML::Key << "Type" << YAML::Value << static_cast<int>(camera.GetType());
 	out << YAML::Key << "ZNear" << YAML::Value << camera.GetZNear();
 	out << YAML::Key << "ZFar" << YAML::Value << camera.GetZFar();
-	out << YAML::Key << "Viewport" << YAML::Value << camera.GetViewport();
 
 	out << YAML::EndMap;
 }
@@ -1668,14 +1672,6 @@ void Serializer::DeserializeCamera(const YAML::Node& in, const std::shared_ptr<E
 		{
 			camera.SetZFar(zFarData.as<float>());
 		}
-
-		if (const auto& viewportData = cameraData["Viewport"])
-		{
-			if (const std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport(viewportData.as<std::string>()))
-			{
-				viewport->SetCamera(entity);
-			}
-		}
 	}
 }
 
@@ -1689,7 +1685,26 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 
 	YAML::Emitter out;
 
-	out << YAML::BeginSeq;
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "Viewports";
+	out << YAML::Value << YAML::BeginSeq;
+
+	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
+	{
+		if (const std::shared_ptr<Entity> camera = viewport->GetCamera().lock())
+		{
+			out << YAML::BeginMap;
+			out << YAML::Key << "Viewport" << YAML::Value << name;
+			out << YAML::Key << "Camera" << YAML::Value << camera->GetUUID();
+			out << YAML::EndMap;
+		}
+	}
+
+	out << YAML::EndSeq;
+
+	out << YAML::Key << "Scene";
+	out << YAML::Value << YAML::BeginSeq;
 
 	for (const auto& entity : scene->GetEntities())
 	{
@@ -1697,6 +1712,8 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 	}
 
 	out << YAML::EndSeq;
+
+	out << YAML::EndMap;
 
 	std::ofstream fout(filepath);
 	fout << out.c_str();
@@ -1732,7 +1749,7 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path&
 	scene->SetFilepath(filepath);
 
 	std::unordered_map<std::shared_ptr<Entity>, std::vector<std::string>> childsUUIDByEntity;
-	for (const auto& entityData : data)
+	for (const auto& entityData : data["Scene"])
 	{
 		std::vector<std::string> childs;
 		std::shared_ptr<Entity> entity = DeserializeEntity(entityData, scene, childs);
@@ -1750,6 +1767,29 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path&
 			else
 			{
 				FATAL_ERROR("Child entity is not valid!");
+			}
+		}
+	}
+
+	for (const auto& viewportData : data["Viewports"])
+	{
+		std::shared_ptr<Entity> camera;
+		if (const auto& cameraUuidData = viewportData["Camera"])
+		{
+			camera = scene->FindEntityByUUID(cameraUuidData.as<std::string>());
+		}
+
+		std::shared_ptr<Viewport> viewport;
+		if (const auto& viewportNameData = viewportData["Viewport"])
+		{
+			viewport = ViewportManager::GetInstance().GetViewport(viewportNameData.as<std::string>());
+		}
+
+		if (viewport)
+		{
+			if (camera)
+			{
+				viewport->SetCamera(camera);
 			}
 		}
 	}

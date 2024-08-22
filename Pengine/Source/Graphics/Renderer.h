@@ -21,7 +21,7 @@ namespace Pengine
 	public:
 		static std::shared_ptr<Renderer> Create(const glm::ivec2& size);
 
-		explicit Renderer();
+		explicit Renderer(const glm::ivec2& size);
 		virtual ~Renderer();
 		Renderer(const Renderer&) = delete;
 		Renderer(Renderer&&) = delete;
@@ -32,7 +32,16 @@ namespace Pengine
 			void* frame,
 			const std::shared_ptr<Window>& window,
 			const std::shared_ptr<Scene>& scene,
-			const std::shared_ptr<Entity>& camera);
+			const std::shared_ptr<Entity>& camera,
+			const glm::mat4& projection);
+
+		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& renderPassName) const;
+
+		void SetUniformWriter(const std::string& renderPassName, std::shared_ptr<UniformWriter> uniformWriter);
+
+		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
+
+		void SetBuffer(const std::string& name, std::shared_ptr<Buffer> buffer);
 
 		std::shared_ptr<FrameBuffer> GetRenderPassFrameBuffer(const std::string& type) const;
 
@@ -56,6 +65,8 @@ namespace Pengine
 		virtual void EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
 
 		std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> m_FrameBuffersByRenderPassType;
+		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPassType;
+		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
 	};
 
 }

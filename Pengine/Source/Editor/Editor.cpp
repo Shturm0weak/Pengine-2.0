@@ -8,12 +8,14 @@
 #include "../Core/FileFormatNames.h"
 #include "../Core/Input.h"
 #include "../Core/KeyCode.h"
+#include "../Core/SceneManager.h"
 #include "../Core/MaterialManager.h"
 #include "../Core/MeshManager.h"
 #include "../Core/Serializer.h"
 #include "../Core/TextureManager.h"
 #include "../Core/Time.h"
 #include "../Core/ViewportManager.h"
+#include "../Core/Viewport.h"
 #include "../Core/WindowManager.h"
 #include "../Editor/ImGuizmo.h"
 #include "../EventSystem/EventSystem.h"
@@ -29,19 +31,22 @@ using namespace Pengine;
 Editor::Editor()
 {
 	SetDarkThemeColors();
+	ViewportManager::GetInstance().Create("Main", { 800, 800 });
 }
 
 void Editor::Update(const std::shared_ptr<Scene>& scene)
 {
 	Manipulate();
 
+	MainMenuBar();
 	Hierarchy(scene);
 	Properties(scene);
-	AssetBrowser();
+	AssetBrowser(scene);
 
 	m_MaterialMenu.Update(*this);
 	m_CreateFileMenu.Update();
 	m_DeleteFileMenu.Update();
+	m_CreateViewportMenu.Update(*this);
 
 	ImGui::Begin("Settings");
 	ImGui::Text("FPS: %.0f", 1.0f / static_cast<float>(Time::GetDeltaTime()));
@@ -64,7 +69,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	{
 		if (viewport->IsHovered() && Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
 		{
-			m_MovingCamera = viewport->GetCamera();
+			m_MovingCamera = viewport->GetCamera().lock();
 		}
 
 		if (m_MovingCamera)
@@ -751,7 +756,7 @@ void Editor::DrawChilds(const std::shared_ptr<Entity>& entity)
 
 void Editor::Properties(const std::shared_ptr<Scene>& scene)
 {
-	if (ImGui::Begin("Properties"))
+	if (ImGui::Begin("Properties", nullptr))
 	{
 		for (const std::string& entityUUID : m_SelectedEntities)
 		{
@@ -836,19 +841,23 @@ void Editor::CameraComponent(const std::shared_ptr<Entity>& entity)
 			camera.SetZNear(zNear);
 		}
 
-		const std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport("Main");
-		if (viewport->GetCamera() == entity)
+		if (ImGui::BeginMenu("Viewports"))
 		{
-			bool setToMainViewport = true;
-			ImGui::Checkbox("Set to main viewport", &setToMainViewport);
-		}
-		else
-		{
-			bool setToMainViewport = false;
-			if (ImGui::Checkbox("Set to main viewport", &setToMainViewport))
+			for (const auto& viewport : ViewportManager::GetInstance().GetViewports())
 			{
-				viewport->SetCamera(entity);
+				if (ImGui::MenuItem(viewport.first.c_str()))
+				{
+					auto callback = [viewport, entity]()
+					{
+						viewport.second->SetCamera(entity);
+					};
+
+					NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+					EventSystem::GetInstance().SendEvent(event);
+				}
 			}
+			
+			ImGui::EndMenu();
 		}
 	}
 }
@@ -975,7 +984,7 @@ void Editor::GameObjectPopUpMenu(const std::shared_ptr<Scene>& scene)
 	}
 }
 
-void Editor::AssetBrowser()
+void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 {
 	if (ImGui::Begin("Asset browser"))
 	{
@@ -1115,6 +1124,24 @@ void Editor::AssetBrowser()
 						Serializer::LoadIntermediate(Utils::Erase(path.string(), m_RootDirectory.string() + "/"));
 					}
 				}
+				if (format == FileFormats::Scene())
+				{
+					if (ImGui::MenuItem("Load Scene"))
+					{ 
+						auto callback = [weakScene = std::weak_ptr<Scene>(scene), path]()
+						{
+							if (std::shared_ptr<Scene> currentScene = weakScene.lock())
+							{
+								SceneManager::GetInstance().Delete(currentScene->GetName());
+							}
+
+							Serializer::DeserializeScene(path);
+						};
+
+						NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+						EventSystem::GetInstance().SendEvent(event);
+					}
+				}
 				else if (ImGui::MenuItem("Delete file"))
 				{
 					m_DeleteFileMenu.opened = true;
@@ -1206,13 +1233,18 @@ void Editor::Manipulate()
 
 	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
 	{
-		if (!viewport || !viewport->GetCamera())
+		if (!viewport || !viewport->GetCamera().lock())
 		{
 			continue;
 		}
 
-		auto callback = [this](const glm::vec2& position, const glm::ivec2 size, const std::shared_ptr<Entity>& camera)
+		auto callback = [this, viewport](const glm::vec2& position, const glm::ivec2 size, const std::shared_ptr<Entity>& camera)
 		{
+			if (!viewport || !camera)
+			{
+				return;
+			}
+
 			if (m_SelectedEntities.empty())
 			{
 				return;
@@ -1230,7 +1262,7 @@ void Editor::Manipulate()
 			ImGuizmo::SetRect(position.x, position.y, size.x, size.y);
 
 			Camera& cameraComponent = camera->GetComponent<Camera>();
-			glm::mat4 projectionMat4 = cameraComponent.GetProjectionMat4();
+			glm::mat4 projectionMat4 = viewport->GetProjectionMat4();
 			glm::mat4 viewMat4 = cameraComponent.GetViewMat4();
 			Transform& transform = entity->GetComponent<Transform>();
 			Transform& cameraTransform = camera->GetComponent<Transform>();
@@ -1352,6 +1384,32 @@ void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
 		}
 		ImGui::EndPopup();
 	}
+}
+
+void Editor::MainMenuBar()
+{
+	ImGuiWindowClass windowClass;
+	windowClass.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
+	ImGui::SetNextWindowClass(&windowClass);
+
+	ImGui::Begin("MainMenuBar", nullptr,
+		ImGuiWindowFlags_MenuBar
+		| ImGuiWindowFlags_NoDecoration
+		| ImGuiWindowFlags_NoMove);
+
+	ImGui::BeginMenuBar();
+	if (ImGui::BeginMenu("Create"))
+	{
+		if (ImGui::MenuItem("Viewport"))
+		{
+			m_CreateViewportMenu.opened = true;
+			m_CreateViewportMenu.name[0] = '\0';
+		}
+		ImGui::EndMenu();
+	}
+	ImGui::EndMenuBar();
+
+	ImGui::End();
 }
 
 void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
@@ -1606,15 +1664,32 @@ void Editor::MaterialMenu::Update(const Editor& editor)
 
 void Editor::CreateFileMenu::Update()
 {
-	ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoCollapse;
-	if (opened && ImGui::Begin("Create File", &opened, flags))
+	if (!opened)
+	{
+		return;
+	}
+
+	ImGui::SetNextWindowSize({ 360.0f, 60.0f });
+	ImGui::SetNextWindowPos(ImGui::GetWindowViewport()->GetCenter(), 0, { 0.5f, 0.0f });
+	if (ImGui::Begin("Create File", &opened,
+		ImGuiWindowFlags_NoResize
+		| ImGuiWindowFlags_NoDocking
+		| ImGuiWindowFlags_NoCollapse
+		| ImGuiWindowFlags_NoMove
+		| ImGuiWindowFlags_NoSavedSettings))
 	{
 		ImGui::InputText("Filename", name, 64);
+		
+		ImGui::SameLine();
+
 		if (ImGui::Button("Create"))
 		{
-			MakeFile(filepath / (name + format));
+			if (name[0] != '\0')
+			{
+				MakeFile(filepath / (name + format));
 
-			opened = false;
+				opened = false;
+			}
 		}
 
 		ImGui::End();
@@ -1629,9 +1704,17 @@ void Editor::CreateFileMenu::MakeFile(const std::filesystem::path& filepath)
 
 void Editor::DeleteFileMenu::Update()
 {
+	if (!opened)
+	{
+		return;
+	}
+
 	ImGui::SetNextWindowSize({ 250.0f, 60.0f });
-	if (opened && ImGui::Begin("Deleting directory or file", &opened,
-		ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar))
+	ImGui::SetNextWindowPos(ImGui::GetWindowViewport()->GetCenter(), 0, { 0.5f, 0.0f });
+	if (ImGui::Begin("Deleting directory or file", &opened,
+		ImGuiWindowFlags_NoDecoration
+		| ImGuiWindowFlags_NoDocking
+		| ImGuiWindowFlags_NoSavedSettings))
 	{
 		ImGui::Text("Are you sure you want to delete\n%s?", filepath.filename().c_str());
 		if (ImGui::Button("Yes"))
@@ -1654,6 +1737,54 @@ void Editor::DeleteFileMenu::Update()
 		{
 			opened = false;
 		}
+		ImGui::End();
+	}
+}
+
+void Editor::CreateViewportMenu::Update(const Editor& editor)
+{
+	if (!opened)
+	{
+		return;
+	}
+
+	ImGui::SetNextWindowSize({ 350.0f, 80.0f });
+	ImGui::SetNextWindowPos(ImGui::GetWindowViewport()->GetCenter(), 0, { 0.5f, 0.0f });
+	if (ImGui::Begin("Create Viewport", &opened,
+		ImGuiWindowFlags_NoResize
+		| ImGuiWindowFlags_NoCollapse
+		| ImGuiWindowFlags_NoMove
+		| ImGuiWindowFlags_NoDocking
+		| ImGuiWindowFlags_NoSavedSettings))
+	{
+		ImGui::InputText("Name", name, 64);
+		
+		ImGui::SameLine();
+
+		if (ImGui::Button("Create"))
+		{
+			if (name[0] != '\0')
+			{
+				auto callback = [this]()
+				{
+					if (const std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport(name))
+					{
+						return;
+					}
+
+					ViewportManager::GetInstance().Create(name, size);
+					opened = false;
+					size = { 1024, 1024 };
+					name[0] = '\0';
+				};
+
+				NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+				EventSystem::GetInstance().SendEvent(event);
+			}
+		}
+
+		editor.DrawIVec2Control("Size", size, 1024, { 0, 2560 });
+
 		ImGui::End();
 	}
 }

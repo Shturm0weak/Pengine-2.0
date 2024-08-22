@@ -8,7 +8,7 @@ Basemat:
       Vertex: Shaders/DefaultReflection.vert
       Fragment: Shaders/DefaultReflection.frag
       DescriptorSets:
-        - Type: RenderPass
+        - Type: Renderer
           Set: 0
       VertexInputBindingDescriptions:
         - Binding: 0

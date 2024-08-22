@@ -2,6 +2,8 @@
 
 #include "Core/Input.h"
 #include "Core/MaterialManager.h"
+#include "Core/ViewportManager.h"
+#include "Core/Viewport.h"
 #include "Components/Camera.h"
 #include "Components/Transform.h"
 
@@ -29,18 +31,6 @@ void ExampleApplication::OnStart()
 	};
 	whiteTextureCreateInfo.data = pixels;
 	TextureManager::GetInstance().Create(whiteTextureCreateInfo);
-
-	const std::shared_ptr<Scene> scene = SceneManager::GetInstance().Create("Default", "Main");
-
-	std::shared_ptr<Entity> camera = scene->CreateEntity("Camera");
-	Transform& transform = camera->AddComponent<Transform>(camera);
-	Camera& cameraComponent = camera->AddComponent<Camera>(camera);
-
-	cameraComponent.SetType(Camera::Type::PERSPECTIVE);
-	ViewportManager::GetInstance().GetViewport("Main")->SetCamera(camera);
-
-	transform.Rotate(glm::vec3(glm::radians(30.0f), 0.0f, 0.0f));
-	transform.Translate(glm::vec3(0.0f, 0.0f, 2.0f));
 }
 
 void ExampleApplication::OnUpdate()
