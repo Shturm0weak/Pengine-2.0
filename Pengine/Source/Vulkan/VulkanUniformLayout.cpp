@@ -28,6 +28,15 @@ VulkanUniformLayout::VulkanUniformLayout(const std::vector<ShaderReflection::Ref
 	descriptorSetLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	descriptorSetLayoutCreateInfo.bindingCount = static_cast<uint32_t>(setLayoutBindings.size());
 	descriptorSetLayoutCreateInfo.pBindings = setLayoutBindings.data();
+	descriptorSetLayoutCreateInfo.flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT;
+
+	const std::vector<VkDescriptorBindingFlags> bindingFlags(bindings.size(), VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT);
+	VkDescriptorSetLayoutBindingFlagsCreateInfo descriptorSetLayoutBindingFlagsInfo{};
+	descriptorSetLayoutBindingFlagsInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
+	descriptorSetLayoutBindingFlagsInfo.bindingCount = static_cast<uint32_t>(bindingFlags.size());
+	descriptorSetLayoutBindingFlagsInfo.pBindingFlags = bindingFlags.data();
+
+	descriptorSetLayoutCreateInfo.pNext = &descriptorSetLayoutBindingFlagsInfo;
 
 	if (vkCreateDescriptorSetLayout(
 		device->GetDevice(),

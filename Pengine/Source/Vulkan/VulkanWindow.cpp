@@ -53,7 +53,7 @@ VulkanWindow::VulkanWindow(const std::string& name, const glm::ivec2& size)
 
 	device = std::make_unique<VulkanDevice>(m_Window, name);
 	descriptorPool = VulkanDescriptorPool::Builder()
-		.SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT)
+		.SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT)
 		.SetMaxSets(1000 * 2)
 		.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000)
 		.AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000)

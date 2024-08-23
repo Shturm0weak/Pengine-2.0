@@ -151,3 +151,16 @@ std::shared_ptr<Entity> Scene::FindEntityByUUID(const std::string& uuid)
 
 	return nullptr;
 }
+
+std::shared_ptr<Entity> Pengine::Scene::FindEntityByName(const std::string& name)
+{
+	for (std::shared_ptr<Entity> entity : m_Entities)
+	{
+		if (entity->GetName() == name)
+		{
+			return entity;
+		}
+	}
+
+	return nullptr;
+}

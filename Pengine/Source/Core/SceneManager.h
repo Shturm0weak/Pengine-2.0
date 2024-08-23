@@ -22,7 +22,11 @@ namespace Pengine
 
 		size_t GetScenesCount() const { return m_ScenesByName.size(); }
 
+		const std::unordered_map<std::string, std::shared_ptr<Scene>>& GetScenes() const { return m_ScenesByName; }
+
 		void Delete(const std::string& name);
+
+		void Delete(std::shared_ptr<Scene>& scene);
 
 		void ShutDown();
 

@@ -162,9 +162,21 @@ void VulkanDevice::CreateLogicalDevice()
 	deviceFeatures.samplerAnisotropy = VK_TRUE;
 	deviceFeatures.fillModeNonSolid = VK_TRUE;
 
+	VkPhysicalDeviceVulkan12Features vulkan12Features{};
+	vulkan12Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+
+	vulkan12Features.scalarBlockLayout = VK_TRUE;
+	vulkan12Features.descriptorBindingVariableDescriptorCount = VK_TRUE;
+	vulkan12Features.runtimeDescriptorArray = VK_TRUE;
+	vulkan12Features.descriptorIndexing = VK_TRUE;
+	vulkan12Features.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE;
+	vulkan12Features.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE;
+	vulkan12Features.descriptorBindingStorageImageUpdateAfterBind = VK_TRUE;
+	vulkan12Features.descriptorBindingUniformBufferUpdateAfterBind = VK_TRUE;
+
 	VkDeviceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-
+	createInfo.pNext = &vulkan12Features;
 	createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
 	createInfo.pQueueCreateInfos = queueCreateInfos.data();
 

@@ -91,8 +91,6 @@ void RenderPassManager::CreateGBuffer()
 		glm::mat3 inverseTransform;
 	};
 
-	createInfo.buffersByName["InstanceBuffer"] = nullptr;
-
 	const std::string globalBufferName = "GlobalBuffer";
 
 	createInfo.renderCallback = [globalBufferName](const RenderPass::RenderCallbackInfo& renderInfo)
@@ -151,7 +149,7 @@ void RenderPassManager::CreateGBuffer()
 		}
 
 		// TODO: send it to render uniform writer.
-		std::shared_ptr<Buffer> instanceBuffer = renderInfo.submitInfo.renderPass->GetBuffer("InstanceBuffer");
+		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderer->GetBuffer("InstanceBuffer");
 		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
 		{
 			instanceBuffer = Buffer::Create(
@@ -160,7 +158,7 @@ void RenderPassManager::CreateGBuffer()
 				Buffer::Usage::VERTEX_BUFFER,
 				Buffer::MemoryType::CPU);
 
-			renderInfo.submitInfo.renderPass->SetBuffer("InstanceBuffer", instanceBuffer);
+			renderInfo.renderer->SetBuffer("InstanceBuffer", instanceBuffer);
 		}
 
 		std::vector<InstanceData> instanceDatas;

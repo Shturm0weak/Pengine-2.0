@@ -23,6 +23,8 @@ namespace Pengine
 
 		std::shared_ptr<Entity> FindEntityByUUID(const std::string& uuid);
 
+		std::shared_ptr<Entity> FindEntityByName(const std::string& name);
+
 		const std::vector<std::shared_ptr<Entity>>& GetEntities() const { return m_Entities; }
 
 		void Clear();

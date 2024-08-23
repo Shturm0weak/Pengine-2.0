@@ -58,6 +58,29 @@ void SceneManager::Delete(const std::string& name)
 	}
 }
 
+void SceneManager::Delete(std::shared_ptr<Scene>& scene)
+{
+	for (auto sceneIterator = m_ScenesByName.begin(); sceneIterator != m_ScenesByName.end(); sceneIterator++)
+	{
+		if (sceneIterator->second == scene)
+		{
+			m_ScenesByName.erase(sceneIterator);
+			break;
+		}
+	}
+
+	for (auto sceneIterator = m_ScenesByTag.begin(); sceneIterator != m_ScenesByTag.end(); sceneIterator++)
+	{
+		if (sceneIterator->second == scene)
+		{
+			m_ScenesByTag.erase(sceneIterator);
+			break;
+		}
+	}
+
+	scene = nullptr;
+}
+
 void SceneManager::ShutDown()
 {
 	for (const auto& [name, scene] : m_ScenesByName)

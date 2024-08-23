@@ -1,40 +1,39 @@
-[Thu Aug 22 21:12:58 2024] Engine config has been loaded!
-[Thu Aug 22 21:12:58 2024] Graphics API:2
-[Thu Aug 22 21:12:58 2024] ERROR:Validation layer: loader_add_layer_properties: 'layers' tag not supported until file version 1.0.1, but C:\WINDOWS\System32\DriverStore\FileRepository\nv_dispi.inf_amd64_5714f0dca6485379\nv-vk64.json is reporting version 1
-[Thu Aug 22 21:12:58 2024] Available extensions:
-[Thu Aug 22 21:12:58 2024] 	VK_KHR_device_group_creation
-[Thu Aug 22 21:12:58 2024] 	VK_KHR_external_fence_capabilities
-[Thu Aug 22 21:12:58 2024] 	VK_KHR_external_memory_capabilities
-[Thu Aug 22 21:12:58 2024] 	VK_KHR_external_semaphore_capabilities
-[Thu Aug 22 21:12:58 2024] 	VK_KHR_get_physical_device_properties2
-[Thu Aug 22 21:12:58 2024] 	VK_KHR_get_surface_capabilities2
-[Thu Aug 22 21:12:58 2024] 	VK_KHR_surface
-[Thu Aug 22 21:12:58 2024] 	VK_KHR_surface_protected_capabilities
-[Thu Aug 22 21:12:58 2024] 	VK_KHR_win32_surface
-[Thu Aug 22 21:12:58 2024] 	VK_EXT_debug_report
-[Thu Aug 22 21:12:58 2024] 	VK_EXT_debug_utils
-[Thu Aug 22 21:12:58 2024] 	VK_EXT_surface_maintenance1
-[Thu Aug 22 21:12:58 2024] 	VK_EXT_swapchain_colorspace
-[Thu Aug 22 21:12:58 2024] 	VK_NV_external_memory_capabilities
-[Thu Aug 22 21:12:58 2024] 	VK_KHR_portability_enumeration
-[Thu Aug 22 21:12:58 2024] 	VK_LUNARG_direct_driver_loading
-[Thu Aug 22 21:12:58 2024] Required extensions:
-[Thu Aug 22 21:12:58 2024] 	VK_KHR_surface
-[Thu Aug 22 21:12:58 2024] 	VK_KHR_win32_surface
-[Thu Aug 22 21:12:58 2024] 	VK_EXT_debug_utils
-[Thu Aug 22 21:12:58 2024] Device count: 1
-[Thu Aug 22 21:12:58 2024] Physical device: NVIDIA GeForce RTX 3060 Ti
-[Thu Aug 22 21:12:58 2024] Texture:Editor/Images\FileIcon.png has been loaded!
-[Thu Aug 22 21:12:58 2024] Texture:Editor/Images\FolderIcon.png has been loaded!
-[Thu Aug 22 21:12:58 2024] Texture:Editor/Images\MaterialIcon.png has been loaded!
-[Thu Aug 22 21:12:58 2024] Texture:Editor/Images\MeshIcon.png has been loaded!
-[Thu Aug 22 21:12:58 2024] Texture:Editor/Images\MetaIcon.png has been loaded!
-[Thu Aug 22 21:12:58 2024] Texture:Editor/Images\PlayButton.png has been loaded!
-[Thu Aug 22 21:12:58 2024] Texture:Editor/Images\StopButton.png has been loaded!
-[Thu Aug 22 21:13:01 2024] Mesh:D:\Pengine\SandBox\Meshes\DragScream\Screaming dragon head 100mm.001.mesh has been deserialized!
-[Thu Aug 22 21:13:01 2024] BaseMaterial:Materials/MeshBase.basemat has been deserialized!
-[Thu Aug 22 21:13:01 2024] Material:D:\Pengine\SandBox\Materials\MeshBase.mat has been deserialized!
-[Thu Aug 22 21:13:01 2024] Scene:D:\Pengine\SandBox\Scenes\DragonHead.scene has been deserialized!
-[Thu Aug 22 21:13:01 2024] BaseMaterial:Materials/DefaultReflection.basemat has been deserialized!
-[Thu Aug 22 21:13:01 2024] Mesh:Meshes/Plane.mesh has been deserialized!
-[Thu Aug 22 21:13:01 2024] BaseMaterial:Materials/Deferred.basemat has been deserialized!
+[Fri Aug 23 03:13:51 2024] Engine config has been loaded!
+[Fri Aug 23 03:13:51 2024] Graphics API:2
+[Fri Aug 23 03:13:51 2024] Available extensions:
+[Fri Aug 23 03:13:51 2024] 	VK_KHR_device_group_creation
+[Fri Aug 23 03:13:51 2024] 	VK_KHR_external_fence_capabilities
+[Fri Aug 23 03:13:51 2024] 	VK_KHR_external_memory_capabilities
+[Fri Aug 23 03:13:51 2024] 	VK_KHR_external_semaphore_capabilities
+[Fri Aug 23 03:13:51 2024] 	VK_KHR_get_physical_device_properties2
+[Fri Aug 23 03:13:51 2024] 	VK_KHR_get_surface_capabilities2
+[Fri Aug 23 03:13:51 2024] 	VK_KHR_surface
+[Fri Aug 23 03:13:51 2024] 	VK_KHR_surface_protected_capabilities
+[Fri Aug 23 03:13:51 2024] 	VK_KHR_win32_surface
+[Fri Aug 23 03:13:51 2024] 	VK_EXT_debug_report
+[Fri Aug 23 03:13:51 2024] 	VK_EXT_debug_utils
+[Fri Aug 23 03:13:51 2024] 	VK_EXT_surface_maintenance1
+[Fri Aug 23 03:13:51 2024] 	VK_EXT_swapchain_colorspace
+[Fri Aug 23 03:13:51 2024] 	VK_NV_external_memory_capabilities
+[Fri Aug 23 03:13:51 2024] 	VK_KHR_portability_enumeration
+[Fri Aug 23 03:13:51 2024] 	VK_LUNARG_direct_driver_loading
+[Fri Aug 23 03:13:51 2024] Required extensions:
+[Fri Aug 23 03:13:51 2024] 	VK_KHR_surface
+[Fri Aug 23 03:13:51 2024] 	VK_KHR_win32_surface
+[Fri Aug 23 03:13:51 2024] Device count: 1
+[Fri Aug 23 03:13:51 2024] Physical device: NVIDIA GeForce RTX 3060 Ti
+[Fri Aug 23 03:13:51 2024] Texture:Editor/Images\FileIcon.png has been loaded!
+[Fri Aug 23 03:13:51 2024] Texture:Editor/Images\FolderIcon.png has been loaded!
+[Fri Aug 23 03:13:51 2024] Texture:Editor/Images\MaterialIcon.png has been loaded!
+[Fri Aug 23 03:13:51 2024] Texture:Editor/Images\MeshIcon.png has been loaded!
+[Fri Aug 23 03:13:51 2024] Texture:Editor/Images\MetaIcon.png has been loaded!
+[Fri Aug 23 03:13:51 2024] Texture:Editor/Images\PlayButton.png has been loaded!
+[Fri Aug 23 03:13:51 2024] Texture:Editor/Images\StopButton.png has been loaded!
+[Fri Aug 23 03:13:51 2024] Mesh:D:\Pengine\SandBox\Meshes\DragScream\Screaming dragon head 100mm.001.mesh has been deserialized!
+[Fri Aug 23 03:13:51 2024] BaseMaterial:Materials/MeshBase.basemat has been deserialized!
+[Fri Aug 23 03:13:51 2024] Material:D:\Pengine\SandBox\Materials\MeshBase.mat has been deserialized!
+[Fri Aug 23 03:13:51 2024] Scene:Scenes/DragonHead.scene has been deserialized!
+[Fri Aug 23 03:13:51 2024] Material:Materials/MeshBase.mat has been deserialized!
+[Fri Aug 23 03:13:51 2024] Mesh:Meshes/Plane.mesh has been deserialized!
+[Fri Aug 23 03:13:52 2024] BaseMaterial:Materials/DefaultReflection.basemat has been deserialized!
+[Fri Aug 23 03:13:52 2024] BaseMaterial:Materials/Deferred.basemat has been deserialized!
