@@ -1617,40 +1617,49 @@ void Editor::MaterialMenu::Update(const Editor& editor)
 
 							void* data = (char*)buffer->GetData();
 
-							std::function<void(const ShaderReflection::ReflectVariable&)> drawVariable = [&](const ShaderReflection::ReflectVariable& variable)
+							std::function<void(const ShaderReflection::ReflectVariable&, bool&)> drawVariable = [&](
+								const ShaderReflection::ReflectVariable& variable,
+								bool& isChanged)
+							{
+								if (variable.type == ShaderReflection::ReflectVariable::Type::FLOAT)
 								{
-									if (variable.type == ShaderReflection::ReflectVariable::Type::FLOAT)
+									isChanged += ImGui::SliderFloat(variable.name.c_str(), &Utils::GetValue<float>(data, variable.offset), 0.0f, 1.0f);
+								}
+								if (variable.type == ShaderReflection::ReflectVariable::Type::INT)
+								{
+									isChanged += ImGui::InputInt(variable.name.c_str(), &Utils::GetValue<int>(data, variable.offset));
+								}
+								if (variable.type == ShaderReflection::ReflectVariable::Type::VEC2)
+								{
+									isChanged += editor.DrawVec2Control(variable.name.c_str(), Utils::GetValue<glm::vec2>(data, variable.offset));
+								}
+								if (variable.type == ShaderReflection::ReflectVariable::Type::VEC3)
+								{
+									isChanged += editor.DrawVec3Control(variable.name.c_str(), Utils::GetValue<glm::vec3>(data, variable.offset));
+								}
+								if (variable.type == ShaderReflection::ReflectVariable::Type::VEC4)
+								{
+									isChanged += editor.DrawVec4Control(variable.name.c_str(), Utils::GetValue<glm::vec4>(data, variable.offset));
+								}
+								else if (variable.type == ShaderReflection::ReflectVariable::Type::STRUCT)
+								{
+									for (const auto& memberVariable : variable.variables)
 									{
-										ImGui::SliderFloat(variable.name.c_str(), &Utils::GetValue<float>(data, variable.offset), 0.0f, 1.0f);
+										drawVariable(memberVariable, isChanged);
 									}
-									if (variable.type == ShaderReflection::ReflectVariable::Type::INT)
-									{
-										ImGui::InputInt(variable.name.c_str(), &Utils::GetValue<int>(data, variable.offset));
-									}
-									if (variable.type == ShaderReflection::ReflectVariable::Type::VEC2)
-									{
-										editor.DrawVec2Control(variable.name.c_str(), Utils::GetValue<glm::vec2>(data, variable.offset));
-									}
-									if (variable.type == ShaderReflection::ReflectVariable::Type::VEC3)
-									{
-										editor.DrawVec3Control(variable.name.c_str(), Utils::GetValue<glm::vec3>(data, variable.offset));
-									}
-									if (variable.type == ShaderReflection::ReflectVariable::Type::VEC4)
-									{
-										editor.DrawVec4Control(variable.name.c_str(), Utils::GetValue<glm::vec4>(data, variable.offset));
-									}
-									else if (variable.type == ShaderReflection::ReflectVariable::Type::STRUCT)
-									{
-										for (const auto& memberVariable : variable.variables)
-										{
-											drawVariable(memberVariable);
-										}
-									}
-								};
+								}
+							};
 
+							bool isChanged = false;
 							for (const auto& variable : binding.buffer->variables)
 							{
-								drawVariable(variable);
+								drawVariable(variable, isChanged);
+							}
+
+							if (isChanged)
+							{
+								// Need to mark for flush that the buffer was changed.
+								buffer->WriteToBuffer(data, 0, 0);
 							}
 						}
 					}

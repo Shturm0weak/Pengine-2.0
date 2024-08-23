@@ -28,7 +28,7 @@ void main()
 
 	outAlbedo = albedo;
 
-	if (useNormalMap == 1)
+	if (useNormalMap > 0)
 	{
 		vec3 normalMap = texture(normalTexture, uv).xyz;
 		normalMap *= normalMap * 2.0f - 1.0f;
