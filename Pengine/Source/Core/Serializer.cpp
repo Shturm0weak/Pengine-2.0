@@ -1194,9 +1194,24 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	const std::shared_ptr<UniformWriter> uniformWriter = material->GetUniformWriter(GBuffer);
 	
 	aiColor3D aiColor(0.0f, 0.0f, 0.0f);
-	aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, aiColor);
-	glm::vec4 color = { aiColor.r, aiColor.g, aiColor.b, 1.0f };
-	material->WriteToBuffer("material", "color", color);
+	if (aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, aiColor) == aiReturn_SUCCESS)
+	{
+		glm::vec4 color = { aiColor.r, aiColor.g, aiColor.b, 1.0f };
+		material->WriteToBuffer("material", "color", color);
+	}
+
+	// Note: Not sure how to do it correctly.
+	/*float metallic = 0.0f;
+	if (aiMaterial->Get(AI_MATKEY_METALLIC_FACTOR, metallic) == aiReturn_SUCCESS)
+	{
+		material->WriteToBuffer("material", "metallic", metallic);
+	}
+	
+	float roughness = 0.0f;
+	if (aiMaterial->Get(AI_MATKEY_ROUGHNESS_FACTOR, roughness) == aiReturn_SUCCESS)
+	{
+		material->WriteToBuffer("material", "roughness", metallic);
+	}*/
 
 	uint32_t numTextures = aiMaterial->GetTextureCount(aiTextureType_DIFFUSE);
 	aiString aiTextureName;

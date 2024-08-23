@@ -527,7 +527,6 @@ void VulkanPipeline::ReflectDescriptorSets(
 				binding.name = reflectBinding.type_description->type_name;
 				binding.binding = reflectBinding.binding;
 				binding.type = VulkanUniformLayout::ConvertDescriptorType(static_cast<VkDescriptorType>(reflectBinding.descriptor_type));
-				binding.stage = reflectShaderModule.stage;
 				binding.count = 1;
 
 				ShaderReflection::ReflectVariable& buffer = binding.buffer.emplace();
@@ -543,7 +542,6 @@ void VulkanPipeline::ReflectDescriptorSets(
 				binding.name = reflectBinding.name;
 				binding.binding = reflectBinding.binding;
 				binding.type = VulkanUniformLayout::ConvertDescriptorType(static_cast<VkDescriptorType>(reflectBinding.descriptor_type));
-				binding.stage = reflectShaderModule.stage;
 				binding.count = 1;
 				for (uint32_t dimIndex = 0; dimIndex < reflectBinding.array.dims_count; ++dimIndex)
 				{

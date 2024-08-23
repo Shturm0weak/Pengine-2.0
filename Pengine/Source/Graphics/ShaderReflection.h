@@ -58,7 +58,6 @@ namespace Pengine::ShaderReflection
 		uint32_t binding = 0;
 		uint32_t count = 0;
 		Type type;
-		Stage stage;
 
 		std::optional<ReflectVariable> buffer;
 	};

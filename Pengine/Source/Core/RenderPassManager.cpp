@@ -62,9 +62,10 @@ void RenderPassManager::CreateGBuffer()
 	glm::vec4 clearColor = { 0.4f, 0.4f, 0.4f, 1.0f };
 	glm::vec4 clearNormal = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glm::vec4 clearPosition = { 0.0f, 0.0f, 0.0f, 0.0f };
+	glm::vec4 clearShading = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Format::B8G8R8A8_SRGB;
+	color.format = Format::R8G8B8A8_SRGB;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
 	RenderPass::AttachmentDescription normal{};
@@ -75,15 +76,19 @@ void RenderPassManager::CreateGBuffer()
 	position.format = Format::R16G16B16A16_SFLOAT;
 	position.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
+	RenderPass::AttachmentDescription shading{};
+	shading.format = Format::R8G8B8A8_SRGB;
+	shading.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+
 	RenderPass::AttachmentDescription depth{};
 	depth.format = Format::D32_SFLOAT;
 	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = GBuffer;
-	createInfo.clearColors = { clearColor, clearNormal, clearPosition };
+	createInfo.clearColors = { clearColor, clearNormal, clearPosition, clearShading };
 	createInfo.clearDepths = { clearDepth };
-	createInfo.attachmentDescriptions = { color, normal, position, depth };
+	createInfo.attachmentDescriptions = { color, normal, position, shading, depth };
 
 	struct InstanceData
 	{
@@ -123,6 +128,14 @@ void RenderPassManager::CreateGBuffer()
 			globalBufferName,
 			"camera.viewProjectionMat4",
 			viewProjectionMat4);
+
+		const glm::vec3 cameraPosition = renderInfo.camera->GetComponent<Transform>().GetPosition();
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			renderInfo.renderer->GetBuffer(globalBufferName),
+			globalBufferName,
+			"camera.position",
+			cameraPosition);
 
 		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
@@ -309,6 +322,7 @@ void RenderPassManager::CreateDeferred()
 		renderUniformWriter->WriteTexture("albedoTexture", frameBuffer->GetAttachment(0));
 		renderUniformWriter->WriteTexture("normalTexture", frameBuffer->GetAttachment(1));
 		renderUniformWriter->WriteTexture("positionTexture", frameBuffer->GetAttachment(2));
+		renderUniformWriter->WriteTexture("shadingTexture", frameBuffer->GetAttachment(3));
 
 		const std::shared_ptr<Buffer> lightsBuffer = renderInfo.renderer->GetBuffer("Lights");
 
@@ -361,7 +375,11 @@ void RenderPassManager::CreateDeferred()
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "hasDirectionalLight", hasDirectionalLight);
 		}
 
-		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = { renderUniformWriter };
+		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = 
+		{
+			renderInfo.renderer->GetUniformWriter(GBuffer),
+			renderUniformWriter
+		};
 
 		for (const auto& uniformWriter : uniformWriters)
 		{

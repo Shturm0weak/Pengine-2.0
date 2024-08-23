@@ -8,6 +8,7 @@ layout(location = 3) in mat3 TBN;
 layout(location = 0) out vec4 outAlbedo;
 layout(location = 1) out vec4 outNormal;
 layout(location = 2) out vec4 outPosition;
+layout(location = 3) out vec4 outShading;
 
 layout(set = 1, binding = 0) uniform sampler2D albedoTexture;
 layout(set = 1, binding = 1) uniform sampler2D normalTexture;
@@ -15,6 +16,9 @@ layout(set = 1, binding = 1) uniform sampler2D normalTexture;
 layout(set = 1, binding = 2) uniform material
 {
 	vec4 color;
+	float metallic;
+	float roughness;
+	float ao;
 	int useNormalMap;
 };
 
@@ -27,7 +31,7 @@ void main()
 	}
 
 	outAlbedo = albedo;
-
+	outShading = vec4(metallic, roughness, ao, 1.0f);
 	if (useNormalMap > 0)
 	{
 		vec3 normalMap = texture(normalTexture, uv).xyz;

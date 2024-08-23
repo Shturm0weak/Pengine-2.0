@@ -12,6 +12,15 @@ Mat:
             - Name: color
               Type: vec4
               Value: [1, 1, 1, 1]
+            - Name: metallic
+              Type: float
+              Value: 0.0
+            - Name: roughness
+              Type: float
+              Value: 1.0
+            - Name: ao
+              Type: float
+              Value: 1.0
             - Name: useNormalMap
               Type: int
               Value: 0

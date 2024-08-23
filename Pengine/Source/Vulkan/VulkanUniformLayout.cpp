@@ -19,7 +19,7 @@ VulkanUniformLayout::VulkanUniformLayout(const std::vector<ShaderReflection::Ref
 		layoutBinding.descriptorType = ConvertDescriptorType(binding.type);
 		layoutBinding.descriptorCount = binding.count;
 		layoutBinding.pImmutableSamplers = 0;
-		layoutBinding.stageFlags |= ConvertDescriptorStage(binding.stage);
+		layoutBinding.stageFlags = VK_SHADER_STAGE_ALL;
 		
 		setLayoutBindings.emplace_back(layoutBinding);
 	}
