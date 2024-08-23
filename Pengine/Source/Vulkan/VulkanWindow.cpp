@@ -339,7 +339,7 @@ void VulkanWindow::EndFrame(void* frame)
 		FATAL_ERROR("Failed to present swap chain image!");
 	}
 
-	m_VulkanWindow.SemaphoreIndex = (m_VulkanWindow.SemaphoreIndex + 1) % m_VulkanWindow.ImageCount;
+	m_VulkanWindow.SemaphoreIndex = (m_VulkanWindow.SemaphoreIndex + 1) % m_VulkanWindow.SemaphoreCount;
 }
 
 void VulkanWindow::ImGuiRenderPass(void* frame)
