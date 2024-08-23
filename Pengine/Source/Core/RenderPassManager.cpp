@@ -45,6 +45,38 @@ std::shared_ptr<RenderPass> RenderPassManager::GetRenderPass(const std::string& 
 void RenderPassManager::ShutDown()
 {
 	m_RenderPassesByType.clear();
+	m_LineRenderer.ShutDown();
+}
+
+std::vector<std::shared_ptr<UniformWriter>> RenderPassManager::GetUniformWriters(
+	std::shared_ptr<Pipeline> pipeline,
+	std::shared_ptr<class BaseMaterial> baseMaterial,
+	std::shared_ptr<class Material> material,
+	const RenderPass::RenderCallbackInfo& renderInfo)
+{
+	std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
+	for (const auto& [set, location] : pipeline->GetSortedDescriptorSets())
+	{
+		switch (location.first)
+		{
+		case Pipeline::DescriptorSetIndexType::RENDERER:
+			uniformWriters.emplace_back(renderInfo.renderer->GetUniformWriter(location.second));
+			break;
+		case Pipeline::DescriptorSetIndexType::RENDERPASS:
+			uniformWriters.emplace_back(RenderPassManager::GetInstance().GetRenderPass(location.second)->GetUniformWriter());
+			break;
+		case Pipeline::DescriptorSetIndexType::BASE_MATERIAL:
+			uniformWriters.emplace_back(baseMaterial->GetUniformWriter(location.second));
+			break;
+		case Pipeline::DescriptorSetIndexType::MATERIAL:
+			uniformWriters.emplace_back(material->GetUniformWriter(location.second));
+			break;
+		default:
+			break;
+		}
+	}
+
+	return uniformWriters;
 }
 
 RenderPassManager::RenderPassManager()
@@ -93,7 +125,7 @@ void RenderPassManager::CreateGBuffer()
 	createInfo.clearDepths = { clearDepth };
 	createInfo.attachmentDescriptions = { color, normal, position, shading, depth };
 
-	createInfo.renderCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
+	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
 
@@ -126,6 +158,11 @@ void RenderPassManager::CreateGBuffer()
 			{
 				continue;
 			}
+
+			const glm::mat4 transformMat4 = transform.GetTransform();
+			const glm::mat4 positionMat4 = transform.GetPositionMat4(Transform::System::LOCAL);
+			const glm::mat4 rotationMat4 = transform.GetRotationMat4(Transform::System::LOCAL);
+			const glm::mat4 scaleMat4 = transform.GetScaleMat4(Transform::System::LOCAL);
 
 			materialMeshGameObjects[r3d.material->GetBaseMaterial()][r3d.material][r3d.mesh].emplace_back(entity);
 
@@ -179,7 +216,9 @@ void RenderPassManager::CreateGBuffer()
 					}
 
 					renderInfo.renderer->Render(
-						mesh,
+						mesh->GetVertexBuffer(),
+						mesh->GetIndexBuffer(),
+						mesh->GetIndexCount(),
 						pipeline,
 						instanceBuffer,
 						instanceDataOffset * instanceBuffer->GetInstanceSize(),
@@ -196,6 +235,8 @@ void RenderPassManager::CreateGBuffer()
 		{
 			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(InstanceData));
 		}
+
+		m_LineRenderer.Render(renderInfo);
 
 		// Render SkyBox.
 		{
@@ -221,7 +262,9 @@ void RenderPassManager::CreateGBuffer()
 				}
 
 				renderInfo.renderer->Render(
-					cubeMesh,
+					cubeMesh->GetVertexBuffer(),
+					cubeMesh->GetIndexBuffer(),
+					cubeMesh->GetIndexCount(),
 					pipeline,
 					nullptr,
 					0,
@@ -370,7 +413,9 @@ void RenderPassManager::CreateDeferred()
 		}
 
 		renderInfo.renderer->Render(
-			plane,
+			plane->GetVertexBuffer(),
+			plane->GetIndexBuffer(),
+			plane->GetIndexCount(),
 			pipeline,
 			nullptr,
 			0,
@@ -546,7 +591,9 @@ void RenderPassManager::CreateAtmosphere()
 		}
 
 		renderInfo.renderer->Render(
-			plane,
+			plane->GetVertexBuffer(),
+			plane->GetIndexBuffer(),
+			plane->GetIndexCount(),
 			pipeline,
 			nullptr,
 			0,
@@ -694,7 +741,9 @@ void RenderPassManager::CreateTransparent()
 			}
 
 			renderInfo.renderer->Render(
-				renderData.r3d.mesh,
+				renderData.r3d.mesh->GetVertexBuffer(),
+				renderData.r3d.mesh->GetIndexBuffer(),
+				renderData.r3d.mesh->GetIndexCount(),
 				pipeline,
 				instanceBuffer,
 				instanceDataOffset * instanceBuffer->GetInstanceSize(),
@@ -712,35 +761,4 @@ void RenderPassManager::CreateTransparent()
 	};
 
 	Create(createInfo);
-}
-
-std::vector<std::shared_ptr<UniformWriter>> Pengine::RenderPassManager::GetUniformWriters(
-	std::shared_ptr<Pipeline> pipeline,
-	std::shared_ptr<class BaseMaterial> baseMaterial,
-	std::shared_ptr<class Material> material,
-	const RenderPass::RenderCallbackInfo& renderInfo)
-{
-	std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
-	for (const auto& [set, location] : pipeline->GetSortedDescriptorSets())
-	{
-		switch (location.first)
-		{
-		case Pipeline::DescriptorSetIndexType::RENDERER:
-			uniformWriters.emplace_back(renderInfo.renderer->GetUniformWriter(location.second));
-			break;
-		case Pipeline::DescriptorSetIndexType::RENDERPASS:
-			uniformWriters.emplace_back(RenderPassManager::GetInstance().GetRenderPass(location.second)->GetUniformWriter());
-			break;
-		case Pipeline::DescriptorSetIndexType::BASE_MATERIAL:
-			uniformWriters.emplace_back(baseMaterial->GetUniformWriter(location.second));
-			break;
-		case Pipeline::DescriptorSetIndexType::MATERIAL:
-			uniformWriters.emplace_back(material->GetUniformWriter(location.second));
-			break;
-		default:
-			break;
-		}
-	}
-
-	return uniformWriters;
 }

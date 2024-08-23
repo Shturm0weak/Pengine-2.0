@@ -133,9 +133,9 @@ void EntryPoint::Run() const
 
 	m_Application->OnClose();
 
+	SceneManager::GetInstance().ShutDown();
 	MaterialManager::GetInstance().ShutDown();
 	MeshManager::GetInstance().ShutDown();
-	SceneManager::GetInstance().ShutDown();
 	TextureManager::GetInstance().ShutDown();
 	RenderPassManager::GetInstance().ShutDown();
 	ViewportManager::GetInstance().ShutDown();

@@ -1,13 +1,6 @@
 #include "ExampleApplication.h"
 
-#include "Core/Input.h"
-#include "Core/MaterialManager.h"
-#include "Core/ViewportManager.h"
-#include "Core/Viewport.h"
-#include "Components/Camera.h"
-#include "Components/Transform.h"
-
-#include "Core/Serializer.h"
+#include "Core/TextureManager.h"
 
 using namespace Pengine;
 
@@ -33,8 +26,6 @@ void ExampleApplication::OnStart()
 	};
 	whiteTextureCreateInfo.data = pixels.data();
 	TextureManager::GetInstance().Create(whiteTextureCreateInfo);
-
-	//Serializer::DeserializeScene("Scenes/Bistro.scene");
 }
 
 void ExampleApplication::OnUpdate()

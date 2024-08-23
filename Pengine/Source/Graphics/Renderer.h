@@ -51,7 +51,9 @@ namespace Pengine
 		void Resize(const glm::ivec2& size) const;
 
 		virtual void Render(
-			const std::shared_ptr<Mesh>& mesh,
+			const std::shared_ptr<Buffer>& vertices,
+			const std::shared_ptr<Buffer>& indices,
+			const int indexCount,
 			const std::shared_ptr<Pipeline>& pipeline,
 			const std::shared_ptr<Buffer>& instanceBuffer,
 			size_t instanceBufferOffset,

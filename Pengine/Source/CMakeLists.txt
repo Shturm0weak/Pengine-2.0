@@ -28,6 +28,7 @@ set(CORE_SOURCES
 	Core/FileFormatNames.h
 	Core/Input.cpp Core/Input.h
 	Core/KeyCode.h
+	Core/LineRenderer.cpp Core/LineRenderer.h
 	Core/Logger.cpp Core/Logger.h
 	Core/MaterialManager.cpp Core/MaterialManager.h
 	Core/MeshManager.cpp Core/MeshManager.h
@@ -42,6 +43,7 @@ set(CORE_SOURCES
 	Core/UUID.cpp Core/UUID.h
 	Core/Viewport.cpp Core/Viewport.h
 	Core/ViewportManager.cpp Core/ViewportManager.h
+	Core/Visualizer.cpp Core/Visualizer.h
 	Core/Window.cpp Core/Window.h
 	Core/WindowManager.cpp Core/WindowManager.h
 )

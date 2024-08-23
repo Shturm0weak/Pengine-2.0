@@ -5,6 +5,7 @@ Basemat:
       DepthWrite: false
       CullMode: None
       PolygonMode: Fill
+      TopologyMode: TriangleList
       Vertex: Shaders/DefaultReflection.vert
       Fragment: Shaders/DefaultReflection.frag
       DescriptorSets:

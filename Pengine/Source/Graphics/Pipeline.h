@@ -12,6 +12,13 @@ namespace Pengine
 	class PENGINE_API Pipeline
 	{
 	public:
+		enum class TopologyMode
+		{
+			LINE_LIST,
+			POINT_LIST,
+			TRIANGLE_LIST
+		};
+
 		enum class CullMode
 		{
 			NONE,
@@ -100,6 +107,7 @@ namespace Pengine
 			std::map<Pipeline::ShaderType, std::string> shaderFilepathsByType;
 			CullMode cullMode = CullMode::NONE;
 			PolygonMode polygonMode = PolygonMode::FILL;
+			TopologyMode topologyMode = TopologyMode::TRIANGLE_LIST;
 			bool depthTest = true;
 			bool depthWrite = true;
 			DepthCompare depthCompare = DepthCompare::LESS_OR_EQUAL;

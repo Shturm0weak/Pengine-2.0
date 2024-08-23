@@ -2,31 +2,24 @@ Basemat:
   Pipelines:
     - RenderPass: GBuffer
       DepthTest: true
-      DepthWrite: false
-      DepthCompare: Equal
-      CullMode: Front
-      PolygonMode: Fill
-      TopologyMode: TriangleList
-      Vertex: Shaders/SkyBox.vert
-      Fragment: Shaders/SkyBox.frag
+      DepthWrite: true
+      CullMode: Back
+      PolygonMode: Line
+      TopologyMode: LineList
+      Vertex: Shaders/Line.vert
+      Fragment: Shaders/Line.frag
       DescriptorSets:
         - Type: Renderer
           RenderPass: DefaultReflection
           Set: 0
-        - Type: BaseMaterial
-          Set: 1
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex
           Names:
             - positionA
-            - uvA
-            - normalA
-            - tangentA
-            - bitangentA
+            - colorA
       ColorBlendStates:
         - BlendEnabled: false
         - BlendEnabled: false
         - BlendEnabled: false
         - BlendEnabled: false
-        

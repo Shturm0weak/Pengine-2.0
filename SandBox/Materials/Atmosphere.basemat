@@ -5,6 +5,7 @@ Basemat:
       DepthWrite: false
       CullMode: None
       PolygonMode: Fill
+      TopologyMode: TriangleList
       Vertex: Shaders/Atmosphere.vert
       Geometry: Shaders/Atmosphere.geom
       Fragment: Shaders/Atmosphere.frag
