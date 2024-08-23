@@ -601,12 +601,15 @@ void Editor::Hierarchy(const std::shared_ptr<Scene>& scene)
 {
 	if (ImGui::Begin("Hierarchy"))
 	{
-		if (ImGui::CollapsingHeader("Game Objects"))
+		if (scene)
 		{
-			DrawScene(scene);
-		}
+			if (ImGui::CollapsingHeader("Game Objects"))
+			{
+				DrawScene(scene);
+			}
 
-		GameObjectPopUpMenu(scene);
+			GameObjectPopUpMenu(scene);
+		}
 
 		ImGui::End();
 	}
