@@ -1,5 +1,7 @@
 #include "Mesh.h"
 
+#include "Vertex.h"
+
 #include "../Core/Logger.h"
 
 using namespace Pengine;
@@ -15,6 +17,43 @@ Mesh::Mesh(
 {
 	m_VertexCount = static_cast<int>(m_RawVertices.size());
 	m_IndexCount = static_cast<int>(m_RawIndices.size());
+
+	Vertex* vertex = static_cast<Vertex*>((void*)m_RawVertices.data());
+	const int vertexCount = m_VertexCount / (sizeof(Vertex) / sizeof(float));
+	for (size_t i = 0; i < vertexCount; i++)
+	{
+		if (vertex->position.x < m_BoundingBox.min.x)
+		{
+			m_BoundingBox.min.x = vertex->position.x;
+		}
+
+		if (vertex->position.y < m_BoundingBox.min.y)
+		{
+			m_BoundingBox.min.y = vertex->position.y;
+		}
+
+		if (vertex->position.z < m_BoundingBox.min.z)
+		{
+			m_BoundingBox.min.z = vertex->position.z;
+		}
+
+		if (vertex->position.x > m_BoundingBox.max.x)
+		{
+			m_BoundingBox.max.x = vertex->position.x;
+		}
+
+		if (vertex->position.y > m_BoundingBox.max.y)
+		{
+			m_BoundingBox.max.y = vertex->position.y;
+		}
+
+		if (vertex->position.z > m_BoundingBox.max.z)
+		{
+			m_BoundingBox.max.z = vertex->position.z;
+		}
+
+		vertex++;
+	}
 
 	m_Vertices = Buffer::Create(
 		sizeof(m_RawVertices[0]),

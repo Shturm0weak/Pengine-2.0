@@ -20,6 +20,7 @@ source_group("Components" FILES ${COMPONENTS_SOURCES})
 set(CORE_SOURCES
 	Core/Asset.h
 	Core/Application.h
+	Core/BoundingBox.h
 	Core/ColoredOutput.h
 	Core/Core.h
 	Core/Entity.cpp Core/Entity.h

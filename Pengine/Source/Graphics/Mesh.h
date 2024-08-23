@@ -2,6 +2,7 @@
 
 #include "../Core/Core.h"
 #include "../Core/Asset.h"
+#include "../Core/BoundingBox.h"
 
 #include "Buffer.h"
 
@@ -37,11 +38,14 @@ namespace Pengine
 
 		[[nodiscard]] int GetIndexCount() const { return m_IndexCount; }
 
+		[[nodiscard]] const BoundingBox& GetBoundingBox() const { return m_BoundingBox; }
+
 	protected:
 		std::shared_ptr<Buffer> m_Vertices;
 		std::shared_ptr<Buffer> m_Indices;
 		std::vector<float> m_RawVertices;
 		std::vector<uint32_t> m_RawIndices;
+		BoundingBox m_BoundingBox;
 		int m_VertexCount = 0;
 		int m_IndexCount = 0;
 	};
