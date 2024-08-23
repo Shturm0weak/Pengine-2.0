@@ -9,7 +9,7 @@ A simple 3D game engine.
 ### **Windows**
 * Download GLFW 64-bit Windows binaries from https://www.glfw.org/download.html.
 * Download Vulkan SDK from https://vulkan.lunarg.com.
-* Set up next environment variables: `SPIRV_REFLECT`, `VULKAN_INCLUDE`, `VULKAN_LIB`.\
+* Set up next environment variables: `GLFW_INCLUDE`, `GLFW_PATH_LIB`, `SPIRV_REFLECT`, `VULKAN_INCLUDE`, `VULKAN_LIB`.\
 For example how I set it:\
 `GLFW_INCLUDE = C:/GLFW/Includes`\
 `GLFW_PATH_LIB = C:/GLFW/Lib`\
