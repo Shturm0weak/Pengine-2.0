@@ -7,18 +7,24 @@ Mat:
           Value: eba1cb4a-5c25-4c94-ba2f-808782e6ee45
         - Name: normalTexture
           Value: ""
+        - Name: metalnessTexture
+          Value: ""
+        - Name: roughnessTexture
+          Value: ""
+        - Name: aoTexture
+          Value: ""
         - Name: material
           Values:
             - Name: color
               Value: [0.470400006, 0.470400006, 0.470400006, 1]
               Type: vec4
-            - Name: metallic
+            - Name: metallicFactor
               Value: 0
               Type: float
-            - Name: roughness
+            - Name: roughnessFactor
               Value: 1
               Type: float
-            - Name: ao
+            - Name: aoFactor
               Value: 1
               Type: float
             - Name: useNormalMap

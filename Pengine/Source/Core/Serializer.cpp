@@ -1245,6 +1245,33 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		material->WriteToBuffer("material", "useNormalMap", useNormalMap);
 	}
 
+	numTextures = aiMaterial->GetTextureCount(aiTextureType_METALNESS);
+	if (numTextures > 0)
+	{
+		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_METALNESS, 0), aiTextureName);
+		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
+
+		uniformWriter->WriteTexture("metalnessTexture", TextureManager::GetInstance().Load(textureFilepath));
+	}
+
+	numTextures = aiMaterial->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS);
+	if (numTextures > 0)
+	{
+		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE_ROUGHNESS, 0), aiTextureName);
+		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
+
+		uniformWriter->WriteTexture("roughnessTexture", TextureManager::GetInstance().Load(textureFilepath));
+	}
+
+	numTextures = aiMaterial->GetTextureCount(aiTextureType_AMBIENT_OCCLUSION);
+	if (numTextures > 0)
+	{
+		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_AMBIENT_OCCLUSION, 0), aiTextureName);
+		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
+
+		uniformWriter->WriteTexture("aoTexture", TextureManager::GetInstance().Load(textureFilepath));
+	}
+
 	material->GetBuffer("material")->Flush();
 	uniformWriter->Flush();
 

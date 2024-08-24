@@ -7,18 +7,24 @@ Mat:
           Value: ""
         - Name: normalTexture
           Value: ""
+        - Name: metalnessTexture
+          Value: ""
+        - Name: roughnessTexture
+          Value: ""
+        - Name: aoTexture
+          Value: ""
         - Name: material
           Values:
             - Name: color
               Type: vec4
               Value: [1, 1, 1, 1]
-            - Name: metallic
+            - Name: metallicFactor
               Type: float
               Value: 0.0
-            - Name: roughness
+            - Name: roughnessFactor
               Type: float
               Value: 1.0
-            - Name: ao
+            - Name: aoFactor
               Type: float
               Value: 1.0
             - Name: useNormalMap

@@ -12,13 +12,16 @@ layout(location = 3) out vec4 outShading;
 
 layout(set = 1, binding = 0) uniform sampler2D albedoTexture;
 layout(set = 1, binding = 1) uniform sampler2D normalTexture;
+layout(set = 1, binding = 2) uniform sampler2D metalnessTexture;
+layout(set = 1, binding = 3) uniform sampler2D roughnessTexture;
+layout(set = 1, binding = 4) uniform sampler2D aoTexture;
 
-layout(set = 1, binding = 2) uniform material
+layout(set = 1, binding = 5) uniform material
 {
 	vec4 color;
-	float metallic;
-	float roughness;
-	float ao;
+	float metallicFactor;
+	float roughnessFactor;
+	float aoFactor;
 	int useNormalMap;
 };
 
@@ -30,8 +33,17 @@ void main()
 		discard;
 	}
 
+	float metallic = texture(metalnessTexture, uv).r;
+	float roughness = texture(roughnessTexture, uv).r;
+	float ao = texture(aoTexture, uv).r;
+
 	outAlbedo = albedo;
-	outShading = vec4(metallic, roughness, ao, 1.0f);
+	outShading = vec4(
+		metallic * metallicFactor,
+		roughness * roughnessFactor,
+		ao * aoFactor,
+		1.0f);
+		
 	if (useNormalMap > 0)
 	{
 		vec3 normalMap = texture(normalTexture, uv).xyz;

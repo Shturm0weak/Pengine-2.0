@@ -1588,6 +1588,8 @@ void Editor::MaterialMenu::Update(const Editor& editor)
 						{
 							if (const std::shared_ptr<Texture>& texture = uniformWriter->GetTexture(binding.name))
 							{
+								ImGui::Text("%s", binding.name.c_str());
+								ImGui::SameLine();
 								ImGui::Text("%s", texture->GetFilepath().string().c_str());
 								ImGui::Image(ImTextureID(texture->GetId()), { 128, 128 });
 
