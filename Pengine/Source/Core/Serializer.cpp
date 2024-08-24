@@ -540,12 +540,22 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::filesy
 
 		if (const auto& vertexData = pipelineData["Vertex"])
 		{
-			pipelineCreateInfo.vertexFilepath = vertexData.as<std::string>();
+			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::VERTEX] = vertexData.as<std::string>();
 		}
 
 		if (const auto& fragmentData = pipelineData["Fragment"])
 		{
-			pipelineCreateInfo.fragmentFilepath = fragmentData.as<std::string>();
+			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::FRAGMENT] = fragmentData.as<std::string>();
+		}
+
+		if (const auto& geometryData = pipelineData["Geometry"])
+		{
+			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::GEOMETRY] = geometryData.as<std::string>();
+		}
+
+		if (const auto& computeData = pipelineData["Compute"])
+		{
+			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::COMPUTE] = computeData.as<std::string>();
 		}
 
 		for (const auto& descriptorSetData : pipelineData["DescriptorSets"])

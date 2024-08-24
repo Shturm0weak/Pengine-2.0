@@ -20,15 +20,28 @@ using namespace Vk;
 VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 	: Pipeline(pipelineCreateInfo)
 {
-	const std::string vertexSpv = CompileShaderModule(pipelineCreateInfo.vertexFilepath, ShaderType::VERTEX);
-	m_ReflectVertexShaderModule = Reflect(vertexSpv);
-	CreateShaderModule(vertexSpv, &m_VertexShaderModule);
-	CreateDescriptorSetLayouts(m_ReflectVertexShaderModule);
-	
-	const std::string fragmentSpv = CompileShaderModule(pipelineCreateInfo.fragmentFilepath, ShaderType::FRAGMENT);
-	m_ReflectFragmentShaderModule = Reflect(fragmentSpv);
-	CreateShaderModule(fragmentSpv, &m_FragmentShaderModule);
-	CreateDescriptorSetLayouts(m_ReflectFragmentShaderModule);
+
+	std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+	shaderStages.reserve(pipelineCreateInfo.shaderFilepathsByType.size());
+	for (const auto& [type, filepath] : pipelineCreateInfo.shaderFilepathsByType)
+	{
+		const std::string vertexSpv = CompileShaderModule(filepath, type);
+		m_ReflectShaderModulesByType[type] = Reflect(vertexSpv);
+		VkShaderModule shaderModule{};
+		CreateShaderModule(vertexSpv, &shaderModule);
+		m_ShaderModulesByType[type] = shaderModule;
+		CreateDescriptorSetLayouts(m_ReflectShaderModulesByType[type]);
+
+		VkPipelineShaderStageCreateInfo& shaderStage = shaderStages.emplace_back();
+
+		shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		shaderStage.stage = ConvertShaderStage(type);
+		shaderStage.module = shaderModule;
+		shaderStage.pName = "main";
+		shaderStage.flags = 0;
+		shaderStage.pNext = nullptr;
+		shaderStage.pSpecializationInfo = nullptr;
+	}
 
 	std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
 	for (const auto& [set, uniformLayout] : m_UniformLayoutsByDescriptorSet)
@@ -78,25 +91,8 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 	pipelineConfigInfo.colorBlendInfo.attachmentCount = pipelineConfigInfo.colorBlendAttachments.size();
 	pipelineConfigInfo.colorBlendInfo.pAttachments = pipelineConfigInfo.colorBlendAttachments.data();
 
-	VkPipelineShaderStageCreateInfo shaderStages[2];
-	shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-	shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-	shaderStages[0].module = m_VertexShaderModule;
-	shaderStages[0].pName = "main";
-	shaderStages[0].flags = 0;
-	shaderStages[0].pNext = nullptr;
-	shaderStages[0].pSpecializationInfo = nullptr;
-
-	shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-	shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-	shaderStages[1].module = m_FragmentShaderModule;
-	shaderStages[1].pName = "main";
-	shaderStages[1].flags = 0;
-	shaderStages[1].pNext = nullptr;
-	shaderStages[1].pSpecializationInfo = nullptr;
-
-	auto bindingDescriptions = CreateBindingDescriptions(m_ReflectVertexShaderModule, pipelineCreateInfo.bindingDescriptions);
-	auto attributeDescriptions = CreateAttributeDescriptions(m_ReflectVertexShaderModule, pipelineCreateInfo.bindingDescriptions);
+	auto bindingDescriptions = CreateBindingDescriptions(m_ReflectShaderModulesByType[ShaderType::VERTEX], pipelineCreateInfo.bindingDescriptions);
+	auto attributeDescriptions = CreateAttributeDescriptions(m_ReflectShaderModulesByType[ShaderType::VERTEX], pipelineCreateInfo.bindingDescriptions);
 	VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo{};
 	vertexInputCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vertexInputCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
@@ -135,8 +131,10 @@ VulkanPipeline::~VulkanPipeline()
 {
 	vkDeviceWaitIdle(device->GetDevice());
 
-	vkDestroyShaderModule(device->GetDevice(), m_VertexShaderModule, nullptr);
-	vkDestroyShaderModule(device->GetDevice(), m_FragmentShaderModule, nullptr);
+	for (auto& [type, shaderModule] : m_ShaderModulesByType)
+	{
+		vkDestroyShaderModule(device->GetDevice(), shaderModule, nullptr);
+	}
 
 	vkDestroyPipelineLayout(device->GetDevice(), m_PipelineLayout, nullptr);
 	vkDestroyPipeline(device->GetDevice(), m_GraphicsPipeline, nullptr);
@@ -203,6 +201,42 @@ Pipeline::PolygonMode VulkanPipeline::ConvertPolygonMode(const VkPolygonMode pol
 	}
 
 	FATAL_ERROR("Failed to convert polygon mode!");
+	return {};
+}
+
+VkShaderStageFlagBits VulkanPipeline::ConvertShaderStage(ShaderType stage)
+{
+	switch (stage)
+	{
+	case Pengine::Pipeline::ShaderType::VERTEX:
+		return VK_SHADER_STAGE_VERTEX_BIT;
+	case Pengine::Pipeline::ShaderType::FRAGMENT:
+		return VK_SHADER_STAGE_FRAGMENT_BIT;
+	case Pengine::Pipeline::ShaderType::GEOMETRY:
+		return VK_SHADER_STAGE_GEOMETRY_BIT;
+	case Pengine::Pipeline::ShaderType::COMPUTE:
+		return VK_SHADER_STAGE_COMPUTE_BIT;
+	}
+
+	FATAL_ERROR("Failed to convert shader type!");
+	return {};
+}
+
+Pipeline::ShaderType VulkanPipeline::ConvertShaderStage(VkShaderStageFlagBits stage)
+{
+	switch (stage)
+	{
+	case VK_SHADER_STAGE_VERTEX_BIT:
+		return Pengine::Pipeline::ShaderType::VERTEX;
+	case VK_SHADER_STAGE_FRAGMENT_BIT:
+		return Pengine::Pipeline::ShaderType::FRAGMENT;
+	case VK_SHADER_STAGE_GEOMETRY_BIT:
+		return Pengine::Pipeline::ShaderType::GEOMETRY;
+	case VK_SHADER_STAGE_COMPUTE_BIT:
+		return Pengine::Pipeline::ShaderType::COMPUTE;
+	}
+
+	FATAL_ERROR("Failed to convert shader type!");
 	return {};
 }
 
@@ -359,6 +393,12 @@ std::string VulkanPipeline::CompileShaderModule(const std::string& filepath, con
 		break;
 	case Pengine::Pipeline::ShaderType::FRAGMENT:
 		kind = shaderc_shader_kind::shaderc_glsl_fragment_shader;
+		break;
+	case Pengine::Pipeline::ShaderType::GEOMETRY:
+		kind = shaderc_shader_kind::shaderc_glsl_geometry_shader;
+		break;
+	case Pengine::Pipeline::ShaderType::COMPUTE:
+		kind = shaderc_shader_kind::shaderc_glsl_compute_shader;
 		break;
 	default:
 		return {};

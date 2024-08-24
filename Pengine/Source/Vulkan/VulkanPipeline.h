@@ -48,6 +48,10 @@ namespace Pengine::Vk
 
 		static PolygonMode ConvertPolygonMode(VkPolygonMode polygonMode);
 
+		static VkShaderStageFlagBits ConvertShaderStage(ShaderType stage);
+
+		static ShaderType ConvertShaderStage(VkShaderStageFlagBits stage);
+
 		VkPipeline GetPipeline() const { return m_GraphicsPipeline; }
 
 		VkPipelineLayout GetPipelineLayout() const { return m_PipelineLayout; }
@@ -83,8 +87,7 @@ namespace Pengine::Vk
 
 		VkPipeline m_GraphicsPipeline{};
 		VkPipelineLayout m_PipelineLayout{};
-		VkShaderModule m_VertexShaderModule{};
-		VkShaderModule m_FragmentShaderModule{};
+		std::map<ShaderType, VkShaderModule> m_ShaderModulesByType;
 	};
 
 }

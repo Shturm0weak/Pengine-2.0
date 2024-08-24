@@ -29,7 +29,9 @@ namespace Pengine
 		enum class ShaderType
 		{
 			VERTEX,
-			FRAGMENT
+			FRAGMENT,
+			GEOMETRY,
+			COMPUTE
 		};
 
 		struct BlendStateAttachment
@@ -81,8 +83,7 @@ namespace Pengine
 			std::vector<BlendStateAttachment> colorBlendStateAttachments;
 			std::shared_ptr<RenderPass> renderPass;
 			UniformInfo uniformInfo;
-			std::string vertexFilepath;
-			std::string fragmentFilepath;
+			std::map<Pipeline::ShaderType, std::string> shaderFilepathsByType;
 			CullMode cullMode;
 			PolygonMode polygonMode;
 			bool depthTest;
@@ -110,8 +111,7 @@ namespace Pengine
 
 		CreateInfo m_CreateInfo;
 
-		ShaderReflection::ReflectShaderModule m_ReflectVertexShaderModule;
-		ShaderReflection::ReflectShaderModule m_ReflectFragmentShaderModule;
+		std::map<ShaderType, ShaderReflection::ReflectShaderModule> m_ReflectShaderModulesByType;
 		std::map<uint32_t, std::shared_ptr<UniformLayout>> m_UniformLayoutsByDescriptorSet;
 	};
 
