@@ -800,7 +800,7 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 {
 	const std::string meshName = mesh->GetName();
 
-	size_t dataSize = mesh->GetVertexCount() * sizeof(float) +
+	size_t dataSize = mesh->GetVertexCount() * sizeof(Vertex) +
 		mesh->GetIndexCount() * sizeof(uint32_t) +
 		mesh->GetName().size() +
 		mesh->GetFilepath().string().size() +
@@ -825,8 +825,8 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 		offset += sizeof(int);
 
 		std::vector<float> vertices = mesh->GetRawVertices();
-		memcpy(&Utils::GetValue<char>(data, offset), vertices.data(), mesh->GetVertexCount() * sizeof(float));
-		offset += mesh->GetVertexCount() * static_cast<int>(sizeof(float));
+		memcpy(&Utils::GetValue<char>(data, offset), vertices.data(), mesh->GetVertexCount() * sizeof(Vertex));
+		offset += mesh->GetVertexCount() * static_cast<int>(sizeof(Vertex));
 	}
 
 	// Indices.

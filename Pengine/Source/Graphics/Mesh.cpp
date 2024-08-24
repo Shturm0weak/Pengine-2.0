@@ -15,12 +15,11 @@ Mesh::Mesh(
 	, m_RawVertices(std::move(vertices))
 	, m_RawIndices(std::move(indices))
 {
-	m_VertexCount = static_cast<int>(m_RawVertices.size());
+	m_VertexCount = static_cast<int>(m_RawVertices.size() / (sizeof(Vertex) / sizeof(float)));
 	m_IndexCount = static_cast<int>(m_RawIndices.size());
 
 	Vertex* vertex = static_cast<Vertex*>((void*)m_RawVertices.data());
-	const int vertexCount = m_VertexCount / (sizeof(Vertex) / sizeof(float));
-	for (size_t i = 0; i < vertexCount; i++)
+	for (size_t i = 0; i < m_VertexCount; i++)
 	{
 		if (vertex->position.x < m_BoundingBox.min.x)
 		{
