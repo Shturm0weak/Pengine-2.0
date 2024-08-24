@@ -437,7 +437,7 @@ void RenderPassManager::CreateAtmosphere()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::R16G16B16A16_SFLOAT;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.size = { 512, 512 };
+	color.size = { 256, 256 };
 	color.isCubeMap = true;
 
 	RenderPass::CreateInfo createInfo{};
@@ -484,13 +484,13 @@ void RenderPassManager::CreateAtmosphere()
 			"camera.projectionMat4",
 			renderInfo.submitInfo.projection);
 
-		const glm::mat4 rotationMat4 = renderInfo.camera->GetComponent<Transform>().GetRotationMat4();
+		const glm::mat4 inverseRotationMat4 = glm::inverse(renderInfo.camera->GetComponent<Transform>().GetRotationMat4());
 		WriterBufferHelper::WriteToBuffer(
 			reflectionBaseMaterial.get(),
 			renderInfo.renderer->GetBuffer(globalBufferName),
 			globalBufferName,
-			"camera.rotationMat4",
-			rotationMat4);
+			"camera.inverseRotationMat4",
+			inverseRotationMat4);
 
 		const glm::vec3 cameraPosition = renderInfo.camera->GetComponent<Transform>().GetPosition();
 		WriterBufferHelper::WriteToBuffer(
