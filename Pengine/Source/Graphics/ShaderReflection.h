@@ -7,12 +7,6 @@
 namespace Pengine::ShaderReflection
 {
 
-	enum class Stage
-	{
-		VERTEX,
-		FRAGMENT
-	};
-
 	enum class Type
 	{
 		SAMPLER,
@@ -81,7 +75,6 @@ namespace Pengine::ShaderReflection
 	{
 		std::vector<ReflectDescriptorSetLayout> setLayouts;
 		std::vector<AttributeDescription> attributeDescriptions;
-		Stage stage;
 	};
 
 	static ReflectVariable::Type ConvertStringToType(const std::string& type)

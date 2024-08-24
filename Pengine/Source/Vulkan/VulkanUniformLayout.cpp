@@ -121,31 +121,3 @@ ShaderReflection::Type VulkanUniformLayout::ConvertDescriptorType(const VkDescri
 	FATAL_ERROR("Failed to convert descriptor type!");
 	return {};
 }
-
-VkShaderStageFlagBits VulkanUniformLayout::ConvertDescriptorStage(const ShaderReflection::Stage stage)
-{
-	switch (stage)
-	{
-	case Pengine::ShaderReflection::Stage::VERTEX:
-		return VK_SHADER_STAGE_VERTEX_BIT;
-	case Pengine::ShaderReflection::Stage::FRAGMENT:
-		return VK_SHADER_STAGE_FRAGMENT_BIT;
-	}
-
-	FATAL_ERROR("Failed to convert descriptor stage!");
-	return VkShaderStageFlagBits::VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM;
-}
-
-ShaderReflection::Stage VulkanUniformLayout::ConvertDescriptorStage(const VkShaderStageFlagBits stage)
-{
-	switch (stage)
-	{
-	case VK_SHADER_STAGE_VERTEX_BIT:
-		return Pengine::ShaderReflection::Stage::VERTEX;
-	case VK_SHADER_STAGE_FRAGMENT_BIT:
-		return Pengine::ShaderReflection::Stage::FRAGMENT;
-	}
-
-	FATAL_ERROR("Failed to convert descriptor stage!");
-	return {};
-}

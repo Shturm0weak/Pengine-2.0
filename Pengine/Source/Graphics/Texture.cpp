@@ -72,4 +72,5 @@ Texture::Texture(const CreateInfo& textureCreateInfo)
 	m_Format = textureCreateInfo.format;
 	m_AspectMask = textureCreateInfo.aspectMask;
 	m_MipLevels = textureCreateInfo.mipLevels;
+	m_LayerCount = textureCreateInfo.isCubeMap ? 6 : 1;
 }

@@ -9,6 +9,7 @@ namespace Pengine
 	// TODO: move somewhere.
 	const std::vector<std::string> renderPassesOrder =
 	{
+		Atmosphere,
 		GBuffer,
 		Deferred,
 	};
@@ -38,6 +39,8 @@ namespace Pengine
 		void CreateDeferred();
 
 		void CreateDefaultReflection();
+
+		void CreateAtmosphere();
 
 		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
 	};

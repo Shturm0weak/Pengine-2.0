@@ -23,10 +23,12 @@ namespace Pengine::Vk
 		static VkImageView CreateImageView(
 			VkImage image,
 			VkFormat format,
-			VkImageAspectFlagBits aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-			uint32_t mipLevels = 1);
+			VkImageAspectFlagBits aspectMask,
+			uint32_t mipLevels,
+			uint32_t layerCount,
+			VkImageViewType imageViewType);
 
-		static VkSampler CreateSampler(uint32_t mipLevels = 1);
+		static VkSampler CreateSampler(uint32_t mipLevels);
 
 		static VkImageAspectFlagBits ConvertAspectMask(AspectMask aspectMask);
 

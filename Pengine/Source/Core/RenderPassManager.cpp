@@ -51,6 +51,7 @@ RenderPassManager::RenderPassManager()
 	CreateDefaultReflection();
 	CreateGBuffer();
 	CreateDeferred();
+	CreateAtmosphere();
 }
 
 void RenderPassManager::CreateGBuffer()
@@ -96,46 +97,46 @@ void RenderPassManager::CreateGBuffer()
 		glm::mat3 inverseTransform;
 	};
 
-	const std::string globalBufferName = "GlobalBuffer";
-
-	createInfo.renderCallback = [globalBufferName](const RenderPass::RenderCallbackInfo& renderInfo)
+	createInfo.renderCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
-		const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/DefaultReflection.basemat");
-		if(!renderInfo.renderer->GetBuffer(globalBufferName))
+
 		{
-			const std::shared_ptr<Pipeline> pipeline = reflectionBaseMaterial->GetPipeline(DefaultReflection);
+			std::shared_ptr<Mesh> cubeMesh = MeshManager::GetInstance().LoadMesh("Meshes/Cube.mesh");
+			std::shared_ptr<BaseMaterial> skyBoxBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/SkyBox.basemat");
 
-			std::optional<uint32_t> descriptorSet = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER);
-			const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*descriptorSet);
-			const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
+			const std::shared_ptr<Pipeline> pipeline = skyBoxBaseMaterial->GetPipeline(renderPassName);
+			if (pipeline)
+			{
+				std::shared_ptr<UniformWriter> uniformWriter = skyBoxBaseMaterial->GetUniformWriter(renderPassName);
+				uniformWriter->WriteTexture("SkyBox", renderInfo.renderer->GetRenderPassFrameBuffer(Atmosphere)->GetAttachment(0));
 
-			const std::shared_ptr<Buffer> buffer = Buffer::Create(
-				uniformLayout->GetBindingByName(globalBufferName)->buffer->size,
-				1,
-				Buffer::Usage::UNIFORM_BUFFER,
-				Buffer::MemoryType::CPU);
+				std::vector<std::shared_ptr<UniformWriter>> uniformWriters =
+				{
+					renderInfo.renderer->GetUniformWriter(renderPassName),
+					uniformWriter
+				};
 
-			uniformWriter->WriteBuffer(globalBufferName, buffer);
-			renderInfo.renderer->SetBuffer(globalBufferName, buffer);
-			renderInfo.renderer->SetUniformWriter(renderPassName, uniformWriter);
+				for (const auto& uniformWriter : uniformWriters)
+				{
+					uniformWriter->Flush();
+
+					for (const auto& [location, buffer] : uniformWriter->GetBuffersByLocation())
+					{
+						buffer->Flush();
+					}
+				}
+
+				renderInfo.renderer->Render(
+					cubeMesh,
+					pipeline,
+					nullptr,
+					0,
+					1,
+					uniformWriters,
+					renderInfo.submitInfo);
+			}
 		}
-
-		const glm::mat4 viewProjectionMat4 = renderInfo.submitInfo.projection * renderInfo.camera->GetComponent<Camera>().GetViewMat4();
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
-			renderInfo.renderer->GetBuffer(globalBufferName),
-			globalBufferName,
-			"camera.viewProjectionMat4",
-			viewProjectionMat4);
-
-		const glm::vec3 cameraPosition = renderInfo.camera->GetComponent<Transform>().GetPosition();
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
-			renderInfo.renderer->GetBuffer(globalBufferName),
-			globalBufferName,
-			"camera.position",
-			cameraPosition);
 
 		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
@@ -421,6 +422,149 @@ void RenderPassManager::CreateDefaultReflection()
 	createInfo.clearColors = { clearColor };
 	createInfo.clearDepths = { clearDepth };
 	createInfo.attachmentDescriptions = { color };
+
+	Create(createInfo);
+}
+
+void RenderPassManager::CreateAtmosphere()
+{
+	RenderPass::ClearDepth clearDepth{};
+	clearDepth.clearDepth = 1.0f;
+	clearDepth.clearStencil = 0;
+
+	glm::vec4 clearColor = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+	RenderPass::AttachmentDescription color{};
+	color.format = Format::R16G16B16A16_SFLOAT;
+	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.size = { 512, 512 };
+	color.isCubeMap = true;
+
+	RenderPass::CreateInfo createInfo{};
+	createInfo.type = Atmosphere;
+	createInfo.clearColors = { clearColor };
+	createInfo.clearDepths = { clearDepth };
+	createInfo.attachmentDescriptions = { color };
+
+	const std::string globalBufferName = "GlobalBuffer";
+	createInfo.renderCallback = [globalBufferName](const RenderPass::RenderCallbackInfo& renderInfo)
+	{
+		const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/DefaultReflection.basemat");
+		if (!renderInfo.renderer->GetBuffer(globalBufferName))
+		{
+			const std::shared_ptr<Pipeline> pipeline = reflectionBaseMaterial->GetPipeline(DefaultReflection);
+
+			std::optional<uint32_t> descriptorSet = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER);
+			const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*descriptorSet);
+			const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
+
+			const std::shared_ptr<Buffer> buffer = Buffer::Create(
+				uniformLayout->GetBindingByName(globalBufferName)->buffer->size,
+				1,
+				Buffer::Usage::UNIFORM_BUFFER,
+				Buffer::MemoryType::CPU);
+
+			uniformWriter->WriteBuffer(globalBufferName, buffer);
+			renderInfo.renderer->SetBuffer(globalBufferName, buffer);
+			renderInfo.renderer->SetUniformWriter(GBuffer, uniformWriter);
+		}
+
+		const glm::mat4 viewProjectionMat4 = renderInfo.submitInfo.projection * renderInfo.camera->GetComponent<Camera>().GetViewMat4();
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			renderInfo.renderer->GetBuffer(globalBufferName),
+			globalBufferName,
+			"camera.viewProjectionMat4",
+			viewProjectionMat4);
+
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			renderInfo.renderer->GetBuffer(globalBufferName),
+			globalBufferName,
+			"camera.projectionMat4",
+			renderInfo.submitInfo.projection);
+
+		const glm::mat4 rotationMat4 = renderInfo.camera->GetComponent<Transform>().GetRotationMat4();
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			renderInfo.renderer->GetBuffer(globalBufferName),
+			globalBufferName,
+			"camera.rotationMat4",
+			rotationMat4);
+
+		const glm::vec3 cameraPosition = renderInfo.camera->GetComponent<Transform>().GetPosition();
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			renderInfo.renderer->GetBuffer(globalBufferName),
+			globalBufferName,
+			"camera.position",
+			cameraPosition);
+
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
+		if (!plane)
+		{
+			return;
+		}
+
+		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
+
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Atmosphere.basemat");
+		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+		if (!pipeline)
+		{
+			return;
+		}
+
+		auto directionalLightView = renderInfo.scene->GetRegistry().view<DirectionalLight>();
+		if (!directionalLightView.empty())
+		{
+			const entt::entity& entity = directionalLightView.back();
+			DirectionalLight& dl = renderInfo.scene->GetRegistry().get<DirectionalLight>(entity);
+			const Transform& transform = renderInfo.scene->GetRegistry().get<Transform>(entity);
+
+			baseMaterial->WriteToBuffer("AtmosphereBuffer", "directionalLight.color", dl.color);
+			baseMaterial->WriteToBuffer("AtmosphereBuffer", "directionalLight.intensity", dl.intensity);
+
+			const glm::vec3 direction = transform.GetForward();
+			baseMaterial->WriteToBuffer("AtmosphereBuffer", "directionalLight.direction", direction);
+
+			int hasDirectionalLight = 1;
+			baseMaterial->WriteToBuffer("AtmosphereBuffer", "hasDirectionalLight", hasDirectionalLight);
+		}
+		else
+		{
+			int hasDirectionalLight = 0;
+			baseMaterial->WriteToBuffer("AtmosphereBuffer", "hasDirectionalLight", hasDirectionalLight);
+		}
+
+		const glm::vec2 faceSize = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName)->GetSize();
+		baseMaterial->WriteToBuffer("AtmosphereBuffer", "faceSize", faceSize);
+
+		std::vector<std::shared_ptr<UniformWriter>> uniformWriters =
+		{
+			renderInfo.renderer->GetUniformWriter(GBuffer),
+			baseMaterial->GetUniformWriter(renderPassName)
+		};
+
+		for (const auto& uniformWriter : uniformWriters)
+		{
+			uniformWriter->Flush();
+
+			for (const auto& [location, buffer] : uniformWriter->GetBuffersByLocation())
+			{
+				buffer->Flush();
+			}
+		}
+
+		renderInfo.renderer->Render(
+			plane,
+			pipeline,
+			nullptr,
+			0,
+			1,
+			uniformWriters,
+			renderInfo.submitInfo);
+	};
 
 	Create(createInfo);
 }

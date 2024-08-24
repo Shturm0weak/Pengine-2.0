@@ -41,6 +41,7 @@ void VulkanFrameBuffer::Resize(const glm::ivec2& size)
 	m_FrameBuffers.resize(swapChainImageCount);
 	m_Attachments.resize(swapChainImageCount);
 
+	uint32_t layers = 1;
 	for (size_t frameIndex = 0; frameIndex < swapChainImageCount; frameIndex++)
 	{
 		std::vector<VkImageView> imageViews;
@@ -54,6 +55,8 @@ void VulkanFrameBuffer::Resize(const glm::ivec2& size)
 			const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(texture);
 			imageViews.emplace_back(vkTexture->GetImageView());
 			vkTexture->TransitionToRead();
+
+			layers = std::max(layers, texture->GetLayerCount());
 		}
 
 		VkFramebufferCreateInfo framebufferInfo{};
@@ -63,7 +66,7 @@ void VulkanFrameBuffer::Resize(const glm::ivec2& size)
 		framebufferInfo.pAttachments = imageViews.data();
 		framebufferInfo.width = static_cast<uint32_t>(m_Size.x);
 		framebufferInfo.height = static_cast<uint32_t>(m_Size.y);
-		framebufferInfo.layers = 1;
+		framebufferInfo.layers = layers;
 
 		if (vkCreateFramebuffer(
 			device->GetDevice(),

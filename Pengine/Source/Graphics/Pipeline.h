@@ -29,8 +29,8 @@ namespace Pengine
 		enum class ShaderType
 		{
 			VERTEX,
-			FRAGMENT,
 			GEOMETRY,
+			FRAGMENT,
 			COMPUTE
 		};
 

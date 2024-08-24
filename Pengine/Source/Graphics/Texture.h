@@ -11,7 +11,6 @@ namespace Pengine
 	class PENGINE_API Texture : public Asset
 	{
 	public:
-		
 		enum class AspectMask
 		{
 			COLOR,
@@ -47,6 +46,7 @@ namespace Pengine
 			Format format;
 			AspectMask aspectMask;
 			std::vector<Usage> usage;
+			bool isCubeMap = false;
 		};
 
 		static std::shared_ptr<Texture> Create(const CreateInfo& textureCreateInfo);
@@ -76,11 +76,14 @@ namespace Pengine
 
 		[[nodiscard]] uint32_t GetMipLevels() const { return m_MipLevels; }
 
+		[[nodiscard]] uint32_t GetLayerCount() const { return m_LayerCount; }
+
 	protected:
 		glm::ivec2 m_Size = { 0, 0 };
 
 		int m_Channels = 0;
 		uint32_t m_MipLevels = 1;
+		uint32_t m_LayerCount = 1;
 
 		std::vector<uint8_t> m_Data;
 

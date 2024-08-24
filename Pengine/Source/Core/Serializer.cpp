@@ -912,9 +912,9 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 		const int verticesSize = Utils::GetValue<int>(data, offset);
 		offset += sizeof(int);
 
-		vertices.resize(verticesSize);
-		memcpy(vertices.data(), &Utils::GetValue<char>(data, offset), verticesSize * sizeof(float));
-		offset += verticesSize * static_cast<int>(sizeof(float));
+		vertices.resize(verticesSize * (sizeof(Vertex) / sizeof(float)));
+		memcpy(vertices.data(), &Utils::GetValue<char>(data, offset), verticesSize * sizeof(Vertex));
+		offset += verticesSize * static_cast<int>(sizeof(Vertex));
 	}
 
 	std::vector<uint32_t> indices;

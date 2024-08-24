@@ -24,10 +24,6 @@ namespace Pengine::Vk
 
 		static ShaderReflection::Type ConvertDescriptorType(VkDescriptorType type);
 
-		static VkShaderStageFlagBits ConvertDescriptorStage(ShaderReflection::Stage stage);
-
-		static ShaderReflection::Stage ConvertDescriptorStage(VkShaderStageFlagBits stage);
-
 	private:
 		VkDescriptorSetLayout m_DescriptorSetLayout;
 	};

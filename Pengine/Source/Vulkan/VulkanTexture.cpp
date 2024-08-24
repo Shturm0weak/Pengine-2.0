@@ -26,13 +26,13 @@ VulkanTexture::VulkanTexture(const CreateInfo& textureCreateInfo)
 	imageInfo.extent.height = static_cast<uint32_t>(m_Size.y);
 	imageInfo.extent.depth = 1;
 	imageInfo.mipLevels = m_MipLevels;
-	imageInfo.arrayLayers = 1;
+	imageInfo.arrayLayers = m_LayerCount;
 	imageInfo.format = format;
 	imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
 	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-	imageInfo.flags = 0; // Optional
+	imageInfo.flags = textureCreateInfo.isCubeMap ? VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT : 0;
 
 	for (Usage usage : textureCreateInfo.usage)
 	{
@@ -59,8 +59,7 @@ VulkanTexture::VulkanTexture(const CreateInfo& textureCreateInfo)
 			stagingBuffer->GetBuffer(),
 			m_Image,
 			static_cast<uint32_t>(m_Size.x),
-			static_cast<uint32_t>(m_Size.y),
-			1);
+			static_cast<uint32_t>(m_Size.y));
 
 		if (m_MipLevels > 1)
 		{
@@ -72,7 +71,13 @@ VulkanTexture::VulkanTexture(const CreateInfo& textureCreateInfo)
 		}
 	}
 
-	m_View = CreateImageView(m_Image, format, aspectMask, m_MipLevels);
+	m_View = CreateImageView(
+		m_Image,
+		format,
+		aspectMask,
+		m_MipLevels,
+		m_LayerCount,
+		textureCreateInfo.isCubeMap ? VK_IMAGE_VIEW_TYPE_CUBE : VK_IMAGE_VIEW_TYPE_2D);
 	m_Sampler = CreateSampler(m_MipLevels);
 
 	std::unique_ptr<VulkanDescriptorSetLayout> setLayout = VulkanDescriptorSetLayout::Builder()
@@ -110,18 +115,20 @@ VkImageView VulkanTexture::CreateImageView(
 	const VkImage image,
 	const VkFormat format,
 	const VkImageAspectFlagBits aspectMask,
-	const uint32_t mipLevels)
+	const uint32_t mipLevels,
+	uint32_t layerCount,
+	VkImageViewType imageViewType)
 {
 	VkImageViewCreateInfo viewInfo{};
 	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	viewInfo.image = image;
-	viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+	viewInfo.viewType = imageViewType;
 	viewInfo.format = format;
 	viewInfo.subresourceRange.aspectMask = aspectMask;
 	viewInfo.subresourceRange.baseMipLevel = 0;
 	viewInfo.subresourceRange.levelCount = mipLevels;
 	viewInfo.subresourceRange.baseArrayLayer = 0;
-	viewInfo.subresourceRange.layerCount = 1;
+	viewInfo.subresourceRange.layerCount = layerCount;
 
 	VkImageView imageView;
 	if (vkCreateImageView(device->GetDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS)
@@ -265,7 +272,7 @@ Texture::Usage VulkanTexture::ConvertUsage(const VkImageUsageFlagBits usage)
 
 void VulkanTexture::GenerateMipMaps()
 {
-	Vk::device->GenerateMipMaps(m_Image, ConvertFormat(m_Format), m_Size.x, m_Size.y, m_MipLevels);
+	Vk::device->GenerateMipMaps(m_Image, ConvertFormat(m_Format), m_Size.x, m_Size.y, m_MipLevels, m_LayerCount);
 }
 
 void VulkanTexture::TransitionToWrite()
@@ -276,7 +283,8 @@ void VulkanTexture::TransitionToWrite()
 		ConvertAspectMask(m_AspectMask),
 		m_Layout,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-		m_MipLevels);
+		m_MipLevels,
+		m_LayerCount);
 
 	m_Layout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 }
@@ -289,7 +297,8 @@ void VulkanTexture::TransitionToRead()
 		ConvertAspectMask(m_AspectMask),
 		m_Layout,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		m_MipLevels);
+		m_MipLevels,
+		m_LayerCount);
 
 	m_Layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 }
@@ -302,7 +311,8 @@ void VulkanTexture::TransitionToColorAttachment()
 		ConvertAspectMask(m_AspectMask),
 		m_Layout,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		m_MipLevels);
+		m_MipLevels,
+		m_LayerCount);
 
 	m_Layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 }

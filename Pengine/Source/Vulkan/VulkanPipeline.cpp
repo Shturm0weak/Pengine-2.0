@@ -102,8 +102,8 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 
 	VkGraphicsPipelineCreateInfo vkPipelineCreateInfo{};
 	vkPipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-	vkPipelineCreateInfo.stageCount = 2;
-	vkPipelineCreateInfo.pStages = &shaderStages[0];
+	vkPipelineCreateInfo.stageCount = shaderStages.size();
+	vkPipelineCreateInfo.pStages = shaderStages.data();
 	vkPipelineCreateInfo.pVertexInputState = &vertexInputCreateInfo;
 	vkPipelineCreateInfo.pInputAssemblyState = &pipelineConfigInfo.inputAssemblyInfo;
 	vkPipelineCreateInfo.pViewportState = &pipelineConfigInfo.viewportInfo;
@@ -552,7 +552,6 @@ void VulkanPipeline::ReflectDescriptorSets(
 			}
 		};
 
-	reflectShaderModule.stage = VulkanUniformLayout::ConvertDescriptorStage(static_cast<VkShaderStageFlagBits>(reflectModule.shader_stage));
 	for (const auto& reflectSet : reflectSets)
 	{
 		ShaderReflection::ReflectDescriptorSetLayout& setLayout = reflectShaderModule.setLayouts.emplace_back();

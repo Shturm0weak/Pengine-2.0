@@ -11,6 +11,7 @@ namespace Pengine
 	const std::string GBuffer = "GBuffer";
 	const std::string Deferred = "Deferred";
 	const std::string DefaultReflection = "DefaultReflection";
+	const std::string Atmosphere = "Atmosphere";
 	
 	class FrameBuffer;
 	class Window;
@@ -32,6 +33,8 @@ namespace Pengine
 		{
 			Texture::Layout layout;
 			Format format;
+			std::optional<glm::ivec2> size;
+			bool isCubeMap = false;
 		};
 
 		struct SubmitInfo

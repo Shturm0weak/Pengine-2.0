@@ -1,0 +1,29 @@
+Basemat:
+  Pipelines:
+    - RenderPass: GBuffer
+      DepthTest: false
+      DepthWrite: false
+      CullMode: Front
+      PolygonMode: Fill
+      Vertex: Shaders/SkyBox.vert
+      Fragment: Shaders/SkyBox.frag
+      DescriptorSets:
+        - Type: Renderer
+          Set: 0
+        - Type: BaseMaterial
+          Set: 1
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Names:
+            - positionA
+            - uvA
+            - normalA
+            - tangentA
+            - bitangentA
+      ColorBlendStates:
+        - BlendEnabled: false
+        - BlendEnabled: false
+        - BlendEnabled: false
+        - BlendEnabled: false
+        

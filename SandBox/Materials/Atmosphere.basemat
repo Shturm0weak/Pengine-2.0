@@ -1,0 +1,26 @@
+Basemat:
+  Pipelines:
+    - RenderPass: Atmosphere
+      DepthTest: false
+      DepthWrite: false
+      CullMode: None
+      PolygonMode: Fill
+      Vertex: Shaders/Atmosphere.vert
+      Geometry: Shaders/Atmosphere.geom
+      Fragment: Shaders/Atmosphere.frag
+      DescriptorSets:
+        - Type: Renderer
+          Set: 0
+        - Type: BaseMaterial
+          Set: 1
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Names:
+            - positionA
+            - uvA
+            - normalA
+            - tangentA
+            - bitangentA
+      ColorBlendStates:
+        - BlendEnabled: false

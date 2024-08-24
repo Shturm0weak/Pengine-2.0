@@ -93,8 +93,11 @@ namespace Pengine::Vk
 			VkDeviceSize srcOffset = 0,
 			VkDeviceSize dstOffset = 0) const;
 
-		void CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height,
-			uint32_t layerCount);
+		void CopyBufferToImage(
+			VkBuffer buffer,
+			VkImage image,
+			uint32_t width,
+			uint32_t height);
 
 		void CreateImage(
 			const VkImageCreateInfo& imageInfo,
@@ -108,14 +111,16 @@ namespace Pengine::Vk
 			VkImageAspectFlagBits aspectMask,
 			VkImageLayout oldLayout,
 			VkImageLayout newLayout,
-			uint32_t mipLevels = 1) const;
+			uint32_t mipLevels,
+			uint32_t layerCount) const;
 
 		void GenerateMipMaps(
 			VkImage image,
 			VkFormat imageFormat,
 			int32_t texWidth,
 			int32_t texHeight,
-			uint32_t mipLevels) const;
+			uint32_t mipLevels,
+			uint32_t layerCount) const;
 
 		VkPhysicalDeviceProperties properties;
 
