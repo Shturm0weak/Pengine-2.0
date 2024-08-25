@@ -45,7 +45,8 @@ namespace Pengine
 			RENDERER,
 			RENDERPASS,
 			BASE_MATERIAL,
-			MATERIAL
+			MATERIAL,
+			TOTAL
 		};
 
 		enum class InputRate
@@ -79,7 +80,7 @@ namespace Pengine
 		struct CreateInfo
 		{
 			std::vector<BindingDescription> bindingDescriptions;
-			std::map<DescriptorSetIndexType, uint32_t> descriptorSetIndicesByType;
+			std::map<DescriptorSetIndexType, std::map<std::string, uint32_t>> descriptorSetIndicesByType;
 			std::vector<BlendStateAttachment> colorBlendStateAttachments;
 			std::shared_ptr<RenderPass> renderPass;
 			UniformInfo uniformInfo;
@@ -103,7 +104,11 @@ namespace Pengine
 
 		const std::map<uint32_t, std::shared_ptr<UniformLayout>>& GetUniformLayouts() const { return m_UniformLayoutsByDescriptorSet; }
 
-		const std::optional<uint32_t> GetDescriptorSetIndexByType(const DescriptorSetIndexType type) const;
+		std::map<std::string, uint32_t> GetDescriptorSetIndexByType(const DescriptorSetIndexType type) const;
+
+		const std::optional<uint32_t> GetDescriptorSetIndexByType(const DescriptorSetIndexType type, const std::string& renderPassName) const;
+
+		const std::map<uint32_t, std::pair<DescriptorSetIndexType, std::string>>& GetSortedDescriptorSets() const { return m_SortedDescriptorSets;  }
 
 		const CreateInfo& GetCreateInfo() const { return m_CreateInfo; }
 
@@ -113,6 +118,7 @@ namespace Pengine
 
 		std::map<ShaderType, ShaderReflection::ReflectShaderModule> m_ReflectShaderModulesByType;
 		std::map<uint32_t, std::shared_ptr<UniformLayout>> m_UniformLayoutsByDescriptorSet;
+		std::map<uint32_t, std::pair<DescriptorSetIndexType, std::string>> m_SortedDescriptorSets;
 	};
 
 }

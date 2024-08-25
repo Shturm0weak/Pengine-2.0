@@ -16,17 +16,22 @@ namespace Pengine
 	class PENGINE_API BaseMaterial final : public Asset
 	{
 	public:
+		struct CreateInfo
+		{
+			std::vector<Pipeline::CreateInfo> pipelineCreateInfos;
+		};
+
 		static std::shared_ptr<BaseMaterial> Create(
 			const std::string& name,
 			const std::filesystem::path& filepath,
-			const std::vector<Pipeline::CreateInfo>& pipelineCreateInfos);
+			const CreateInfo& createInfo);
 
 		static std::shared_ptr<BaseMaterial> Load(const std::filesystem::path& filepath);
 
 		BaseMaterial(
 			const std::string& name,
 			const std::filesystem::path& filepath,
-			const std::vector<Pipeline::CreateInfo>& pipelineCreateInfos);
+			const CreateInfo& createInfo);
 		~BaseMaterial();
 		BaseMaterial(const BaseMaterial&) = delete;
 		BaseMaterial& operator=(const BaseMaterial&) = delete;

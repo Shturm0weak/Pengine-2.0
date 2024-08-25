@@ -1,17 +1,17 @@
 Basemat:
   Pipelines:
-    - RenderPass: GBuffer
-      DepthTest: false
+    - RenderPass: Transparent
+      DepthTest: true
       DepthWrite: false
-      CullMode: Front
+      CullMode: Back
       PolygonMode: Fill
-      Vertex: Shaders/SkyBox.vert
-      Fragment: Shaders/SkyBox.frag
+      Vertex: Shaders/Custom/EnergyShield.vert
+      Fragment: Shaders/Custom/EnergyShield.frag
       DescriptorSets:
         - Type: Renderer
           RenderPass: DefaultReflection
           Set: 0
-        - Type: BaseMaterial
+        - Type: Material
           Set: 1
       VertexInputBindingDescriptions:
         - Binding: 0
@@ -22,9 +22,11 @@ Basemat:
             - normalA
             - tangentA
             - bitangentA
+        - Binding: 1
+          InputRate: Instance
+          Names:
+            - transformA
+            - inverseTransformA
       ColorBlendStates:
-        - BlendEnabled: false
-        - BlendEnabled: false
-        - BlendEnabled: false
-        - BlendEnabled: false
+        - BlendEnabled: true
         

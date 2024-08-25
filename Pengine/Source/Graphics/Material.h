@@ -15,11 +15,17 @@ namespace Pengine
 	class PENGINE_API Material final : public Asset
 	{
 	public:
-		
+		struct Option
+		{
+			bool m_IsEnabled = false;
+			std::vector<std::string> m_Active;
+			std::vector<std::string> m_Inactive;
+		};
 
 		struct CreateInfo
 		{
 			std::unordered_map<std::string, Pipeline::UniformInfo> uniformInfos;
+			std::unordered_map<std::string, Option> optionsByName;
 			std::shared_ptr<BaseMaterial> baseMaterial;
 		};
 
@@ -49,6 +55,12 @@ namespace Pengine
 
 		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
 
+		bool IsPipelineEnabled(const std::string& renderPassName) const;
+
+		std::unordered_map<std::string, Option> GetOptionsByName() const { return m_OptionsByName; }
+
+		void SetOption(const std::string& name, bool isEnabled);
+
 		template<typename T>
 		void WriteToBuffer(
 			const std::string& uniformBufferName,
@@ -64,6 +76,8 @@ namespace Pengine
 		std::shared_ptr<BaseMaterial> m_BaseMaterial;
 		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPass;
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
+		std::unordered_map<std::string, Option> m_OptionsByName;
+		std::unordered_map<std::string, bool> m_PipelineStates;
 	};
 
 	template<typename T>

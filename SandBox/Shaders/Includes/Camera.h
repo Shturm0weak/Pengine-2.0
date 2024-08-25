@@ -5,4 +5,5 @@ struct Camera
 	mat4 inverseRotationMat4;
 	vec3 position;
 	vec3 direction;
+	float time;
 };

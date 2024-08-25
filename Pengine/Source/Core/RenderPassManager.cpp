@@ -4,6 +4,7 @@
 #include "MaterialManager.h"
 #include "MeshManager.h"
 #include "SceneManager.h"
+#include "Time.h"
 
 #include "../Components/Camera.h"
 #include "../Components/DirectionalLight.h"
@@ -106,11 +107,7 @@ void RenderPassManager::CreateGBuffer()
 				std::shared_ptr<UniformWriter> uniformWriter = skyBoxBaseMaterial->GetUniformWriter(renderPassName);
 				uniformWriter->WriteTexture("SkyBox", renderInfo.renderer->GetRenderPassFrameBuffer(Atmosphere)->GetAttachment(0));
 
-				std::vector<std::shared_ptr<UniformWriter>> uniformWriters =
-				{
-					renderInfo.renderer->GetUniformWriter(renderPassName),
-					uniformWriter
-				};
+				std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, skyBoxBaseMaterial, nullptr, renderInfo);
 
 				for (const auto& uniformWriter : uniformWriters)
 				{
@@ -147,7 +144,13 @@ void RenderPassManager::CreateGBuffer()
 		{
 			Renderer3D& r3d = registry.get<Renderer3D>(entity);
 
-			if (!r3d.mesh || !r3d.material || r3d.material->GetBufferValue<int>("GBufferMaterial", "material.isTransparent") == 1)
+			if (!r3d.mesh || !r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
+			{
+				continue;
+			}
+
+			const std::shared_ptr<Pipeline> pipeline = r3d.material->GetBaseMaterial()->GetPipeline(renderPassName);
+			if (!pipeline)
 			{
 				continue;
 			}
@@ -157,7 +160,6 @@ void RenderPassManager::CreateGBuffer()
 			renderableCount++;
 		}
 
-		// TODO: send it to render uniform writer.
 		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderer->GetBuffer("InstanceBuffer");
 		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
 		{
@@ -176,10 +178,6 @@ void RenderPassManager::CreateGBuffer()
 		for (const auto& [baseMaterial, meshesByMaterial] : materialMeshGameObjects)
 		{
 			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
-			if (!pipeline)
-			{
-				continue;
-			}
 
 			for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
 			{
@@ -196,25 +194,7 @@ void RenderPassManager::CreateGBuffer()
 						instanceDatas.emplace_back(data);
 					}
 
-					std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
-					if (pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER))
-					{
-						uniformWriters.emplace_back(renderInfo.renderer->GetUniformWriter(renderPassName));
-					}
-					if (pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERPASS))
-					{
-						uniformWriters.emplace_back(renderInfo.submitInfo.renderPass->GetUniformWriter());
-					}
-					if (pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::BASE_MATERIAL))
-					{
-						const std::shared_ptr<UniformWriter> baseMaterialUniformWriter = baseMaterial->GetUniformWriter(
-							renderPassName);
-						uniformWriters.emplace_back(baseMaterialUniformWriter);
-					}
-					if (pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL))
-					{
-						uniformWriters.emplace_back(material->GetUniformWriter(renderPassName));
-					}
+					std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
 
 					for (const auto& uniformWriter : uniformWriters)
 					{
@@ -290,7 +270,7 @@ void RenderPassManager::CreateDeferred()
 		if (!renderUniformWriter)
 		{
 			std::shared_ptr<UniformLayout> renderUniformLayout =
-				pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER));
+				pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, renderPassName));
 			renderUniformWriter = UniformWriter::Create(renderUniformLayout);
 			renderInfo.renderer->SetUniformWriter(renderPassName, renderUniformWriter);
 
@@ -371,11 +351,8 @@ void RenderPassManager::CreateDeferred()
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "hasDirectionalLight", hasDirectionalLight);
 		}
 
-		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = 
-		{
-			renderInfo.renderer->GetUniformWriter(GBuffer),
-			renderUniformWriter
-		};
+
+		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 
 		for (const auto& uniformWriter : uniformWriters)
 		{
@@ -449,7 +426,7 @@ void RenderPassManager::CreateAtmosphere()
 		{
 			const std::shared_ptr<Pipeline> pipeline = reflectionBaseMaterial->GetPipeline(DefaultReflection);
 
-			std::optional<uint32_t> descriptorSet = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER);
+			std::optional<uint32_t> descriptorSet = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, DefaultReflection);
 			const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*descriptorSet);
 			const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
 
@@ -461,7 +438,7 @@ void RenderPassManager::CreateAtmosphere()
 
 			uniformWriter->WriteBuffer(globalBufferName, buffer);
 			renderInfo.renderer->SetBuffer(globalBufferName, buffer);
-			renderInfo.renderer->SetUniformWriter(GBuffer, uniformWriter);
+			renderInfo.renderer->SetUniformWriter(DefaultReflection, uniformWriter);
 		}
 
 		const glm::mat4 viewProjectionMat4 = renderInfo.submitInfo.projection * renderInfo.camera->GetComponent<Camera>().GetViewMat4();
@@ -494,6 +471,14 @@ void RenderPassManager::CreateAtmosphere()
 			globalBufferName,
 			"camera.position",
 			cameraPosition);
+
+		const float time = Time::GetTime();
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			renderInfo.renderer->GetBuffer(globalBufferName),
+			globalBufferName,
+			"camera.time",
+			time);
 
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
 		if (!plane)
@@ -535,11 +520,7 @@ void RenderPassManager::CreateAtmosphere()
 		const glm::vec2 faceSize = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName)->GetSize();
 		baseMaterial->WriteToBuffer("AtmosphereBuffer", "faceSize", faceSize);
 
-		std::vector<std::shared_ptr<UniformWriter>> uniformWriters =
-		{
-			renderInfo.renderer->GetUniformWriter(GBuffer),
-			baseMaterial->GetUniformWriter(renderPassName)
-		};
+		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 
 		for (const auto& uniformWriter : uniformWriters)
 		{
@@ -621,7 +602,13 @@ void RenderPassManager::CreateTransparent()
 		{
 			Renderer3D& r3d = registry.get<Renderer3D>(entity);
 
-			if (!r3d.mesh || !r3d.material || r3d.material->GetBufferValue<int>("GBufferMaterial", "material.isTransparent") != 1)
+			if (!r3d.mesh || !r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
+			{
+				continue;
+			}
+
+			const std::shared_ptr<Pipeline> pipeline = r3d.material->GetBaseMaterial()->GetPipeline(renderPassName);
+			if (!pipeline)
 			{
 				continue;
 			}
@@ -668,10 +655,6 @@ void RenderPassManager::CreateTransparent()
 		for (const auto& renderData : renderDatas)
 		{
 			const std::shared_ptr<Pipeline> pipeline = renderData.r3d.material->GetBaseMaterial()->GetPipeline(renderPassName);
-			if (!pipeline)
-			{
-				continue;
-			}
 
 			const size_t instanceDataOffset = instanceDatas.size();
 
@@ -680,12 +663,12 @@ void RenderPassManager::CreateTransparent()
 			data.inverseTransform = glm::transpose(renderData.inversetransformMat3);
 			instanceDatas.emplace_back(data);
 
-			std::vector<std::shared_ptr<UniformWriter>> uniformWriters =
-			{
-				renderInfo.renderer->GetUniformWriter(GBuffer),
-				renderData.r3d.material->GetUniformWriter(GBuffer),
-				renderInfo.renderer->GetUniformWriter(Deferred)
-			};
+
+			std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(
+				pipeline,
+				renderData.r3d.material->GetBaseMaterial(),
+				renderData.r3d.material,
+				renderInfo);
 
 			for (const auto& uniformWriter : uniformWriters)
 			{
@@ -716,4 +699,35 @@ void RenderPassManager::CreateTransparent()
 	};
 
 	Create(createInfo);
+}
+
+std::vector<std::shared_ptr<UniformWriter>> Pengine::RenderPassManager::GetUniformWriters(
+	std::shared_ptr<Pipeline> pipeline,
+	std::shared_ptr<class BaseMaterial> baseMaterial,
+	std::shared_ptr<class Material> material,
+	const RenderPass::RenderCallbackInfo& renderInfo)
+{
+	std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
+	for (const auto& [set, location] : pipeline->GetSortedDescriptorSets())
+	{
+		switch (location.first)
+		{
+		case Pipeline::DescriptorSetIndexType::RENDERER:
+			uniformWriters.emplace_back(renderInfo.renderer->GetUniformWriter(location.second));
+			break;
+		case Pipeline::DescriptorSetIndexType::RENDERPASS:
+			uniformWriters.emplace_back(RenderPassManager::GetInstance().GetRenderPass(location.second)->GetUniformWriter());
+			break;
+		case Pipeline::DescriptorSetIndexType::BASE_MATERIAL:
+			uniformWriters.emplace_back(baseMaterial->GetUniformWriter(location.second));
+			break;
+		case Pipeline::DescriptorSetIndexType::MATERIAL:
+			uniformWriters.emplace_back(material->GetUniformWriter(location.second));
+			break;
+		default:
+			break;
+		}
+	}
+
+	return uniformWriters;
 }

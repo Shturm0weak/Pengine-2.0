@@ -30,7 +30,7 @@ namespace Pengine
 
 		//static void LoadFilesUUID();
 
-		static std::vector<Pipeline::CreateInfo> LoadBaseMaterial(const std::filesystem::path& filepath);
+		static BaseMaterial::CreateInfo LoadBaseMaterial(const std::filesystem::path& filepath);
 
 		static Material::CreateInfo LoadMaterial(const std::filesystem::path& filepath);
 

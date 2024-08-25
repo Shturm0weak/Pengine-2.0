@@ -11,34 +11,34 @@ using namespace Pengine;
 std::shared_ptr<BaseMaterial> BaseMaterial::Create(
 	const std::string& name,
 	const std::filesystem::path& filepath,
-	const std::vector<Pipeline::CreateInfo>& pipelineCreateInfos)
+	const CreateInfo& createInfo)
 {
-	return std::make_shared<BaseMaterial>(name, filepath, pipelineCreateInfos);
+	return std::make_shared<BaseMaterial>(name, filepath, createInfo);
 }
 
 std::shared_ptr<BaseMaterial> BaseMaterial::Load(const std::filesystem::path& filepath)
 {
-	const std::vector<Pipeline::CreateInfo> pipelineCreateInfos = Serializer::LoadBaseMaterial(filepath);
+	const CreateInfo createInfo = Serializer::LoadBaseMaterial(filepath);
 
-	return Create(Utils::GetFilename(filepath), filepath, pipelineCreateInfos);
+	return Create(Utils::GetFilename(filepath), filepath, createInfo);
 }
 
 BaseMaterial::BaseMaterial(
 	const std::string& name,
 	const std::filesystem::path& filepath,
-	const std::vector<Pipeline::CreateInfo>& pipelineCreateInfos)
+	const CreateInfo& createInfo)
 	: Asset(name, filepath)
 {
-	for (const Pipeline::CreateInfo& pipelineCreateInfo : pipelineCreateInfos)
+	for (const Pipeline::CreateInfo& pipelineCreateInfo : createInfo.pipelineCreateInfos)
 	{
 		const std::string renderPassName = pipelineCreateInfo.renderPass->GetType();
 
 		const std::shared_ptr<Pipeline> pipeline = Pipeline::Create(pipelineCreateInfo);
 
-		auto baseMaterialIndex = pipelineCreateInfo.descriptorSetIndicesByType.find(Pipeline::DescriptorSetIndexType::BASE_MATERIAL);
-		if (baseMaterialIndex != pipelineCreateInfo.descriptorSetIndicesByType.end())
+		auto baseMaterialIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::BASE_MATERIAL, renderPassName);
+		if (baseMaterialIndex)
 		{
-			const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(baseMaterialIndex->second);
+			const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*baseMaterialIndex);
 			const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
 			m_UniformWriterByRenderPass[renderPassName] = uniformWriter;
 			

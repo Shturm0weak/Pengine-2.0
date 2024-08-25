@@ -20,26 +20,34 @@ std::shared_ptr<Pipeline> Pipeline::Create(const CreateInfo& pipelineCreateInfo)
 Pipeline::Pipeline(const CreateInfo& pipelineCreateInfo)
 	: m_CreateInfo(pipelineCreateInfo)
 {
+	for (const auto& [type, setsByrenderPass] : pipelineCreateInfo.descriptorSetIndicesByType)
+	{
+		for (const auto& [renderPassName, set] : setsByrenderPass)
+		{
+			m_SortedDescriptorSets.emplace(set, std::make_pair(type, renderPassName));
+		}
+	}
+}
+
+std::map<std::string, uint32_t> Pipeline::GetDescriptorSetIndexByType(const DescriptorSetIndexType type) const
+{
+	return Utils::Find(type, m_CreateInfo.descriptorSetIndicesByType);
+}
+
+const std::optional<uint32_t> Pipeline::GetDescriptorSetIndexByType(const DescriptorSetIndexType type, const std::string& renderPassName) const
+{
+	std::map<std::string, uint32_t> descriptorSetsByRenderPass = GetDescriptorSetIndexByType(type);
+	
+	auto foundSet = descriptorSetsByRenderPass.find(renderPassName);
+	if (foundSet != descriptorSetsByRenderPass.end())
+	{
+		return foundSet->second;
+	}
+
+	return std::nullopt;
 }
 
 std::shared_ptr<UniformLayout> Pipeline::GetUniformLayout(const uint32_t descriptorSet) const
 {
-	auto uniformLayout = m_UniformLayoutsByDescriptorSet.find(descriptorSet);
-	if (uniformLayout != m_UniformLayoutsByDescriptorSet.end())
-	{
-		return uniformLayout->second;
-	}
-
-	return nullptr;
-}
-
-const std::optional<uint32_t> Pipeline::GetDescriptorSetIndexByType(const DescriptorSetIndexType type) const
-{
-	auto descriptorSetIndexByType = m_CreateInfo.descriptorSetIndicesByType.find(type);
-	if (descriptorSetIndexByType != m_CreateInfo.descriptorSetIndicesByType.end())
-	{
-		return descriptorSetIndexByType->second;
-	}
-
-	return std::nullopt;
+	return Utils::Find(descriptorSet, m_UniformLayoutsByDescriptorSet);
 }

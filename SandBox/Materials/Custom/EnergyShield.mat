@@ -1,0 +1,10 @@
+Mat:
+  Basemat: Materials/Custom/EnergyShield.basemat
+  Pipelines:
+    - RenderPass: Transparent
+      Uniforms:
+        - Name: EnergyShieldBuffer
+          Values:
+            - Name: color
+              Value: [1, 0, 0, 0.5]
+              Type: vec4
