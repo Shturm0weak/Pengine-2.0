@@ -29,7 +29,7 @@ Renderer::Renderer(const glm::ivec2& size)
 		if (std::shared_ptr<RenderPass> renderPass =
 			RenderPassManager::GetInstance().GetRenderPass(type))
 		{
-			const std::shared_ptr<FrameBuffer> frameBuffer = FrameBuffer::Create(renderPass, size);
+			const std::shared_ptr<FrameBuffer> frameBuffer = FrameBuffer::Create(renderPass, this, size);
 
 			SetFrameBufferToRenderPass(type, frameBuffer);
 		}

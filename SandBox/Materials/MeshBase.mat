@@ -13,20 +13,23 @@ Mat:
           Value: ""
         - Name: aoTexture
           Value: ""
-        - Name: material
+        - Name: GBufferMaterial
           Values:
-            - Name: color
+            - Name: material.color
               Type: vec4
               Value: [1, 1, 1, 1]
-            - Name: metallicFactor
+            - Name: material.metallicFactor
               Type: float
               Value: 0.0
-            - Name: roughnessFactor
+            - Name: material.roughnessFactor
               Type: float
               Value: 1.0
-            - Name: aoFactor
+            - Name: material.aoFactor
               Type: float
               Value: 1.0
-            - Name: useNormalMap
+            - Name: material.useNormalMap
+              Type: int
+              Value: 0
+            - Name: material.isTransparent
               Type: int
               Value: 0

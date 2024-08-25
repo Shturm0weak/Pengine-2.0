@@ -104,3 +104,5 @@ namespace Pengine
 	}
 
 }
+
+#undef NO_EDITOR

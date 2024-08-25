@@ -31,7 +31,12 @@ std::shared_ptr<Material> Material::Clone(
 
 	for (const auto& [renderPassName, pipeline] : createInfo.baseMaterial->GetPipelinesByRenderPass())
 	{
-		for (const auto& binding : pipeline->GetUniformLayout(pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL).value_or(-1))->GetBindings())
+		std::optional<uint32_t> descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL);
+		if (!descriptorSetIndex)
+		{
+			continue;
+		}
+		for (const auto& binding : pipeline->GetUniformLayout(*descriptorSetIndex)->GetBindings())
 		{
 			if (binding.type == ShaderReflection::Type::COMBINED_IMAGE_SAMPLER)
 			{
@@ -44,28 +49,43 @@ std::shared_ptr<Material> Material::Clone(
 
 				auto& uniformBufferInfo = createInfo.uniformInfos[renderPassName].uniformBuffersByName[binding.name];
 
-				for (const auto& value : binding.buffer->variables)
+				std::function<void(const ShaderReflection::ReflectVariable&, std::string)> copyValue = [data, &copyValue, &uniformBufferInfo]
+				(const ShaderReflection::ReflectVariable& value, std::string parentName)
 				{
+					parentName += value.name;
+
 					if (value.type == ShaderReflection::ReflectVariable::Type::VEC2)
 					{
-						uniformBufferInfo.vec2ValuesByName.emplace(value.name, Utils::GetValue<glm::vec2>(data, value.offset));
+						uniformBufferInfo.vec2ValuesByName.emplace(parentName, Utils::GetValue<glm::vec2>(data, value.offset));
 					}
 					else if (value.type == ShaderReflection::ReflectVariable::Type::VEC3)
 					{
-						uniformBufferInfo.vec3ValuesByName.emplace(value.name, Utils::GetValue<glm::vec3>(data, value.offset));
+						uniformBufferInfo.vec3ValuesByName.emplace(parentName, Utils::GetValue<glm::vec3>(data, value.offset));
 					}
 					else if (value.type == ShaderReflection::ReflectVariable::Type::VEC4)
 					{
-						uniformBufferInfo.vec4ValuesByName.emplace(value.name, Utils::GetValue<glm::vec4>(data, value.offset));
+						uniformBufferInfo.vec4ValuesByName.emplace(parentName, Utils::GetValue<glm::vec4>(data, value.offset));
 					}
 					else if (value.type == ShaderReflection::ReflectVariable::Type::FLOAT)
 					{
-						uniformBufferInfo.floatValuesByName.emplace(value.name, Utils::GetValue<float>(data, value.offset));
+						uniformBufferInfo.floatValuesByName.emplace(parentName, Utils::GetValue<float>(data, value.offset));
 					}
 					else if (value.type == ShaderReflection::ReflectVariable::Type::INT)
 					{
-						uniformBufferInfo.intValuesByName.emplace(value.name, Utils::GetValue<int>(data, value.offset));
+						uniformBufferInfo.intValuesByName.emplace(parentName, Utils::GetValue<int>(data, value.offset));
 					}
+					else if (value.type == ShaderReflection::ReflectVariable::Type::STRUCT)
+					{
+						for (const auto& memberValue : value.variables)
+						{
+							copyValue(memberValue, parentName + ".");
+						}
+					}
+				};
+
+				for (const auto& value : binding.buffer->variables)
+				{
+					copyValue(value, "");
 				}
 			}
 		}

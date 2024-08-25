@@ -12,6 +12,7 @@ namespace Pengine
 	const std::string Deferred = "Deferred";
 	const std::string DefaultReflection = "DefaultReflection";
 	const std::string Atmosphere = "Atmosphere";
+	const std::string Transparent = "Transparent";
 	
 	class FrameBuffer;
 	class Window;
@@ -29,12 +30,29 @@ namespace Pengine
 			uint32_t clearStencil;
 		};
 
+		enum class Load
+		{
+			LOAD = 0,
+			CLEAR = 1,
+			DONT_CARE = 2,
+		};
+
+		enum class Store
+		{
+			STORE = 0,
+			DONT_CARE = 1,
+			NONE = 1000301000,
+		};
+
 		struct AttachmentDescription
 		{
 			Texture::Layout layout;
 			Format format;
+			Load load = Load::CLEAR;
+			Store store = Store::STORE;
 			std::optional<glm::ivec2> size;
 			bool isCubeMap = false;
+			std::function<std::shared_ptr<FrameBuffer>(Renderer*, uint32_t&)> getFrameBufferCallback;
 		};
 
 		struct SubmitInfo

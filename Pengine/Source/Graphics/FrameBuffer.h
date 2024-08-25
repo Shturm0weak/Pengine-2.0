@@ -11,15 +11,26 @@ namespace Pengine
 	class PENGINE_API FrameBuffer
 	{
 	public:
-		static std::shared_ptr<FrameBuffer> Create(const std::shared_ptr<RenderPass>& renderPass, const glm::ivec2& size);
 
-		FrameBuffer(std::vector<Texture::CreateInfo> const& attachments,
-			std::shared_ptr<RenderPass> renderPass);
+		/**
+		 * @param renderer only needs to be passed if render pass has an attachment that references another render pass attachment.
+		 */
+		static std::shared_ptr<FrameBuffer> Create(
+			std::shared_ptr<RenderPass> renderPass,
+			Renderer* renderer,
+			const glm::ivec2& size);
+
+		FrameBuffer(
+			const std::vector<Texture::CreateInfo>& attachments,
+			std::shared_ptr<RenderPass> renderPass,
+			Renderer* renderer);
 		virtual ~FrameBuffer() = default;
 		FrameBuffer(const FrameBuffer&) = delete;
 		FrameBuffer& operator=(const FrameBuffer&) = delete;
 
-		[[nodiscard]] virtual std::shared_ptr<Texture> GetAttachment(size_t index) const = 0;
+		[[nodiscard]] virtual std::shared_ptr<Texture> GetAttachment(const size_t index, const uint32_t frameIndex = Vk::swapChainImageIndex) const = 0;
+
+		[[nodiscard]] virtual std::vector<std::shared_ptr<Texture>> GetAttachments() const = 0;
 
 		virtual void Resize(const glm::ivec2& size) = 0;
 
@@ -32,6 +43,7 @@ namespace Pengine
 	protected:
 		std::vector<Texture::CreateInfo> m_AttachmentCreateInfos;
 		std::shared_ptr<RenderPass> m_RenderPass;
+		Renderer* m_Renderer;
 		glm::ivec2 m_Size{};
 	};
 

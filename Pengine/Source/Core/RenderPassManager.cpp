@@ -52,6 +52,7 @@ RenderPassManager::RenderPassManager()
 	CreateGBuffer();
 	CreateDeferred();
 	CreateAtmosphere();
+	CreateTransparent();
 }
 
 void RenderPassManager::CreateGBuffer()
@@ -90,12 +91,6 @@ void RenderPassManager::CreateGBuffer()
 	createInfo.clearColors = { clearColor, clearNormal, clearPosition, clearShading };
 	createInfo.clearDepths = { clearDepth };
 	createInfo.attachmentDescriptions = { color, normal, position, shading, depth };
-
-	struct InstanceData
-	{
-		glm::mat4 transform;
-		glm::mat3 inverseTransform;
-	};
 
 	createInfo.renderCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
@@ -152,7 +147,7 @@ void RenderPassManager::CreateGBuffer()
 		{
 			Renderer3D& r3d = registry.get<Renderer3D>(entity);
 
-			if (!r3d.mesh || !r3d.material)
+			if (!r3d.mesh || !r3d.material || r3d.material->GetBufferValue<int>("GBufferMaterial", "material.isTransparent") == 1)
 			{
 				continue;
 			}
@@ -439,7 +434,7 @@ void RenderPassManager::CreateAtmosphere()
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	color.size = { 256, 256 };
 	color.isCubeMap = true;
-
+	
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = Atmosphere;
 	createInfo.clearColors = { clearColor };
@@ -564,6 +559,160 @@ void RenderPassManager::CreateAtmosphere()
 			1,
 			uniformWriters,
 			renderInfo.submitInfo);
+	};
+
+	Create(createInfo);
+}
+
+void RenderPassManager::CreateTransparent()
+{
+	RenderPass::ClearDepth clearDepth{};
+	clearDepth.clearDepth = 1.0f;
+	clearDepth.clearStencil = 0;
+
+	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	RenderPass::AttachmentDescription color{};
+	color.format = Format::R8G8B8A8_SRGB;
+	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::LOAD;
+	color.getFrameBufferCallback = [](Renderer* renderer, uint32_t& index)
+	{
+		index = 0;
+		return renderer->GetRenderPassFrameBuffer(Deferred);
+	};
+
+	RenderPass::AttachmentDescription depth{};
+	depth.format = Format::D32_SFLOAT;
+	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	depth.load = RenderPass::Load::LOAD;
+	depth.store = RenderPass::Store::NONE;
+	depth.getFrameBufferCallback = [](Renderer* renderer, uint32_t& index)
+	{
+		index = 4;
+		return renderer->GetRenderPassFrameBuffer(GBuffer);
+	};
+
+	RenderPass::CreateInfo createInfo{};
+	createInfo.type = Transparent;
+	createInfo.clearDepths = { clearDepth };
+	createInfo.clearColors = { clearColor };
+	createInfo.attachmentDescriptions = { color, depth };
+
+	createInfo.renderCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
+	{
+		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
+
+		struct RenderData
+		{
+			Renderer3D r3d;
+			glm::mat4 transformMat4;
+			glm::mat3 inversetransformMat3;
+			glm::vec3 position;
+		};
+
+		std::vector<RenderData> renderDatas;
+
+		size_t renderableCount = 0;
+		const std::shared_ptr<Scene> scene = renderInfo.scene;
+		entt::registry& registry = scene->GetRegistry();
+		const auto r3dView = registry.view<Renderer3D>();
+		for (const entt::entity& entity : r3dView)
+		{
+			Renderer3D& r3d = registry.get<Renderer3D>(entity);
+
+			if (!r3d.mesh || !r3d.material || r3d.material->GetBufferValue<int>("GBufferMaterial", "material.isTransparent") != 1)
+			{
+				continue;
+			}
+
+			Transform& transform = registry.get<Transform>(entity);
+
+			RenderData renderData;
+			renderData.r3d = r3d;
+			renderData.position = transform.GetPosition();
+			renderData.transformMat4 = transform.GetTransform();
+			renderData.inversetransformMat3 = transform.GetInverseTransform();
+			renderDatas.emplace_back(renderData);
+
+			renderableCount++;
+		}
+
+		const glm::vec3 cameraPosition = renderInfo.camera->GetComponent<Transform>().GetPosition();
+
+		auto isFurther = [cameraPosition](const RenderData& a, const RenderData& b)
+		{
+			float distance2A = glm::length2(cameraPosition - a.position);
+			float distance2B = glm::length2(cameraPosition - b.position);
+
+			return distance2A > distance2B;
+		};
+
+		std::sort(renderDatas.begin(), renderDatas.end(), isFurther);
+
+		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderer->GetBuffer("InstanceBufferTransparent");
+		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
+		{
+			instanceBuffer = Buffer::Create(
+				sizeof(InstanceData),
+				renderableCount,
+				Buffer::Usage::VERTEX_BUFFER,
+				Buffer::MemoryType::CPU);
+
+			renderInfo.renderer->SetBuffer("InstanceBufferTransparent", instanceBuffer);
+		}
+
+		std::vector<InstanceData> instanceDatas;
+
+		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
+		for (const auto& renderData : renderDatas)
+		{
+			const std::shared_ptr<Pipeline> pipeline = renderData.r3d.material->GetBaseMaterial()->GetPipeline(renderPassName);
+			if (!pipeline)
+			{
+				continue;
+			}
+
+			const size_t instanceDataOffset = instanceDatas.size();
+
+			InstanceData data{};
+			data.transform = renderData.transformMat4;
+			data.inverseTransform = glm::transpose(renderData.inversetransformMat3);
+			instanceDatas.emplace_back(data);
+
+			std::vector<std::shared_ptr<UniformWriter>> uniformWriters =
+			{
+				renderInfo.renderer->GetUniformWriter(GBuffer),
+				renderData.r3d.material->GetUniformWriter(GBuffer),
+				renderInfo.renderer->GetUniformWriter(Deferred)
+			};
+
+			for (const auto& uniformWriter : uniformWriters)
+			{
+				uniformWriter->Flush();
+
+				for (const auto& [location, buffer] : uniformWriter->GetBuffersByLocation())
+				{
+					buffer->Flush();
+				}
+			}
+
+			renderInfo.renderer->Render(
+				renderData.r3d.mesh,
+				pipeline,
+				instanceBuffer,
+				instanceDataOffset * instanceBuffer->GetInstanceSize(),
+				1,
+				uniformWriters,
+				renderInfo.submitInfo);
+		}
+
+		// Because these are all just commands and will be rendered later we can write the instance buffer
+		// just once when all instance data is collected.
+		if (instanceBuffer && !instanceDatas.empty())
+		{
+			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(InstanceData));
+		}
 	};
 
 	Create(createInfo);

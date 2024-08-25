@@ -5,8 +5,8 @@ Basemat:
       DepthWrite: true
       CullMode: Back
       PolygonMode: Fill
-      Vertex: Shaders/GBuffer.vert
-      Fragment: Shaders/GBuffer.frag
+      Vertex: Shaders/Opaque.vert
+      Fragment: Shaders/Opaque.frag
       DescriptorSets:
         - Type: Renderer
           Set: 0
@@ -31,4 +31,27 @@ Basemat:
         - BlendEnabled: false
         - BlendEnabled: false
         - BlendEnabled: false
+    - RenderPass: Transparent
+      DepthTest: true
+      DepthWrite: false
+      CullMode: Back
+      PolygonMode: Fill
+      Vertex: Shaders/Transparent.vert
+      Fragment: Shaders/Transparent.frag
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Names:
+            - positionA
+            - uvA
+            - normalA
+            - tangentA
+            - bitangentA
+        - Binding: 1
+          InputRate: Instance
+          Names:
+            - transformA
+            - inverseTransformA
+      ColorBlendStates:
+        - BlendEnabled: true
         

@@ -80,8 +80,8 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 			VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT |
 			VK_COLOR_COMPONENT_A_BIT;
 		colorBlendState.blendEnable = blendStateAttachment.blendEnabled;
-		colorBlendState.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		colorBlendState.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+		colorBlendState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		colorBlendState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
 		colorBlendState.colorBlendOp = VK_BLEND_OP_ADD;
 		colorBlendState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
 		colorBlendState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
@@ -683,8 +683,8 @@ void VulkanPipeline::DefaultPipelineConfigInfo(PipelineConfigInfo& pipelineConfi
 		VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT |
 		VK_COLOR_COMPONENT_A_BIT;
 	pipelineConfigInfo.colorBlendAttachments[0].blendEnable = VK_FALSE;
-	pipelineConfigInfo.colorBlendAttachments[0].srcColorBlendFactor = VK_BLEND_FACTOR_ONE;   // Optional
-	pipelineConfigInfo.colorBlendAttachments[0].dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;  // Optional
+	pipelineConfigInfo.colorBlendAttachments[0].srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;   // Optional
+	pipelineConfigInfo.colorBlendAttachments[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;  // Optional
 	pipelineConfigInfo.colorBlendAttachments[0].colorBlendOp = VK_BLEND_OP_ADD;              // Optional
 	pipelineConfigInfo.colorBlendAttachments[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;   // Optional
 	pipelineConfigInfo.colorBlendAttachments[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;  // Optional

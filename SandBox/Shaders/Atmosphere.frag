@@ -3,7 +3,7 @@
 layout(location = 0) out vec4 fragColor;
 
 #include "Shaders/Includes/Camera.h"
-#include "Shaders/Includes/Light.h"
+#include "Shaders/Includes/DirectionalLight.h"
 
 layout(set = 0, binding = 0) uniform GlobalBuffer
 {

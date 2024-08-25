@@ -55,6 +55,11 @@ namespace Pengine
 			const std::string& valueName,
 			T& value);
 
+		template<typename T>
+		T GetBufferValue(
+			const std::string& uniformBufferName,
+			const std::string& valueName);
+
 	private:
 		std::unordered_map<std::string, std::shared_ptr<Pipeline>> m_PipelinesByRenderPass;
 		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPass;
@@ -68,6 +73,12 @@ namespace Pengine
 		T& value)
 	{
 		WriterBufferHelper::WriteToBuffer(this, GetBuffer(uniformBufferName), uniformBufferName, valueName, value);
+	}
+
+	template<typename T>
+	inline T BaseMaterial::GetBufferValue(const std::string& uniformBufferName, const std::string& valueName)
+	{
+		WriterBufferHelper::GetBufferValue<T>(this, GetBuffer(uniformBufferName), uniformBufferName, valueName);
 	}
 
 }

@@ -12,16 +12,20 @@ namespace Pengine::Vk
 	class PENGINE_API VulkanFrameBuffer final : public FrameBuffer
 	{
 	public:
-		VulkanFrameBuffer(const std::vector<Texture::CreateInfo> & attachments,
-			const std::shared_ptr<RenderPass>& renderPass);
+		VulkanFrameBuffer(const std::vector<Texture::CreateInfo>& attachments,
+			std::shared_ptr<RenderPass> renderPass,
+			Renderer* renderer);
 		virtual ~VulkanFrameBuffer() override;
 		VulkanFrameBuffer(const VulkanFrameBuffer&) = delete;
 		VulkanFrameBuffer& operator=(const VulkanFrameBuffer&) = delete;
 
 		[[nodiscard]] VkFramebuffer GetFrameBuffer() const { return m_FrameBuffers[swapChainImageIndex]; }
 
-		[[nodiscard]] virtual std::shared_ptr<Texture> GetAttachment(const size_t index) const override
-			{ return m_Attachments[swapChainImageIndex][index]; }
+		[[nodiscard]] virtual std::shared_ptr<Texture> GetAttachment(const size_t index, const uint32_t frameIndex) const override
+		{ return m_Attachments[frameIndex][index]; }
+
+		[[nodiscard]] virtual std::vector<std::shared_ptr<Texture>> GetAttachments() const override
+		{ return m_Attachments[swapChainImageIndex]; }
 
 		virtual void Resize(const glm::ivec2& size) override;
 

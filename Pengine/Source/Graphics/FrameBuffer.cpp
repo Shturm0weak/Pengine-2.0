@@ -6,7 +6,8 @@
 using namespace Pengine;
 
 std::shared_ptr<FrameBuffer> FrameBuffer::Create(
-	const std::shared_ptr<RenderPass>& renderPass,
+	std::shared_ptr<RenderPass> renderPass,
+	Renderer* renderer,
 	const glm::ivec2& size)
 {
 	if (!renderPass)
@@ -37,20 +38,23 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 
 	if (graphicsAPI == GraphicsAPI::Vk)
 	{
-		return std::make_shared<Vk::VulkanFrameBuffer>(attachments, renderPass);
+		return std::make_shared<Vk::VulkanFrameBuffer>(attachments, renderPass, renderer);
 	}
 
 	FATAL_ERROR("Failed to create the framebuffer, no graphics API implementation");
 	return nullptr;
 }
 
-FrameBuffer::FrameBuffer(std::vector<Texture::CreateInfo> const& attachments,
-	std::shared_ptr<RenderPass> renderPass)
+FrameBuffer::FrameBuffer(
+	const std::vector<Texture::CreateInfo>& attachments,
+	std::shared_ptr<RenderPass> renderPass,
+	Renderer* renderer)
 	: m_RenderPass(std::move(renderPass))
 	, m_AttachmentCreateInfos(attachments)
+	, m_Renderer(renderer)
 {
-	if (attachments.empty())
+	/*if (attachments.empty())
 	{
 		FATAL_ERROR("Render pass attachments must contain at least one attachment!");
-	}
+	}*/
 }

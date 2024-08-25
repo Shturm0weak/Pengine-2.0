@@ -12,6 +12,7 @@ namespace Pengine
 		Atmosphere,
 		GBuffer,
 		Deferred,
+		Transparent
 	};
 
 	class PENGINE_API RenderPassManager
@@ -31,6 +32,13 @@ namespace Pengine
 		void ShutDown();
 
 	private:
+
+		struct InstanceData
+		{
+			glm::mat4 transform;
+			glm::mat3 inverseTransform;
+		};
+
 		RenderPassManager();
 		~RenderPassManager() = default;
 
@@ -41,6 +49,8 @@ namespace Pengine
 		void CreateDefaultReflection();
 
 		void CreateAtmosphere();
+
+		void CreateTransparent();
 
 		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
 	};

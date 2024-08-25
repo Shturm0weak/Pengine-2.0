@@ -11,15 +11,16 @@ using namespace Vk;
 
 VulkanFrameBuffer::VulkanFrameBuffer(
 	const std::vector<Texture::CreateInfo>& attachments,
-	const std::shared_ptr<RenderPass>& renderPass)
-	: FrameBuffer(attachments, renderPass)
+	std::shared_ptr<RenderPass> renderPass,
+	Renderer* renderer)
+	: FrameBuffer(attachments, renderPass, renderer)
 {
-	if (m_AttachmentCreateInfos.empty())
+	/*if (m_AttachmentCreateInfos.empty())
 	{
 		FATAL_ERROR("Frame buffer attachments are empty!");
-	}
+	}*/
 
-	Resize(attachments[0].size);
+	Resize(!m_AttachmentCreateInfos.empty() ? m_AttachmentCreateInfos[0].size : glm::ivec2{ 0, 0 });
 }
 
 VulkanFrameBuffer::~VulkanFrameBuffer()
@@ -41,22 +42,39 @@ void VulkanFrameBuffer::Resize(const glm::ivec2& size)
 	m_FrameBuffers.resize(swapChainImageCount);
 	m_Attachments.resize(swapChainImageCount);
 
+	const auto& renderPassAttachments = m_RenderPass->GetAttachmentDescriptions();
+
 	uint32_t layers = 1;
 	for (size_t frameIndex = 0; frameIndex < swapChainImageCount; frameIndex++)
 	{
 		std::vector<VkImageView> imageViews;
+		size_t textureIndex = 0;
 		for (Texture::CreateInfo& textureCreateInfo : m_AttachmentCreateInfos)
 		{
-			textureCreateInfo.size = m_Size;
+			std::shared_ptr<Texture> texture;
+			if (renderPassAttachments[textureIndex].getFrameBufferCallback && m_Renderer)
+			{
+				uint32_t attachmentIndex;
+				const std::shared_ptr<FrameBuffer> frameBuffer = renderPassAttachments[textureIndex].getFrameBufferCallback(m_Renderer, attachmentIndex);
+				texture = frameBuffer->GetAttachment(attachmentIndex, frameIndex);
+				const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(texture);
+				imageViews.emplace_back(vkTexture->GetImageView());
+			}
+			else
+			{
+				textureCreateInfo.size = m_Size;
 
-			std::shared_ptr<Texture> texture = Texture::Create(textureCreateInfo);
+				texture = Texture::Create(textureCreateInfo);
+
+				const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(texture);
+				imageViews.emplace_back(vkTexture->GetImageView());
+				vkTexture->TransitionToRead();
+			}
+			
 			m_Attachments[frameIndex].emplace_back(texture);
 
-			const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(texture);
-			imageViews.emplace_back(vkTexture->GetImageView());
-			vkTexture->TransitionToRead();
-
 			layers = std::max(layers, texture->GetLayerCount());
+			textureIndex++;
 		}
 
 		VkFramebufferCreateInfo framebufferInfo{};

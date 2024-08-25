@@ -33,7 +33,9 @@ void EntryPoint::Run() const
 		{ 800, 800 });
 	WindowManager::GetInstance().SetCurrentWindow(mainWindow);
 
+#ifndef NO_EDITOR
 	Editor editor;
+#endif
 
 	RenderPassManager::GetInstance();
 	m_Application->OnPreStart();
@@ -86,8 +88,9 @@ void EntryPoint::Run() const
 				}
 			}
 
+#ifndef NO_EDITOR
 			editor.Update(SceneManager::GetInstance().GetSceneByTag("Main"));
-
+#endif
 			window->ImGuiEnd();
 
 			if (void* frame = window->BeginFrame())

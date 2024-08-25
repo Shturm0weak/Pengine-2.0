@@ -22,8 +22,8 @@ VulkanRenderPass::VulkanRenderPass(const CreateInfo& createInfo)
 		VkAttachmentDescription attachment{};
 		attachment.format = ConvertFormat(attachmentDescription.format);
 		attachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		attachment.loadOp = (VkAttachmentLoadOp)attachmentDescription.load;
+		attachment.storeOp = (VkAttachmentStoreOp)attachmentDescription.store;
 		attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		attachment.initialLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;

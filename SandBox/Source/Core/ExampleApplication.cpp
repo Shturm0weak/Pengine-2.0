@@ -7,6 +7,8 @@
 #include "Components/Camera.h"
 #include "Components/Transform.h"
 
+#include "Core/Serializer.h"
+
 using namespace Pengine;
 
 void ExampleApplication::OnPreStart()
@@ -31,6 +33,8 @@ void ExampleApplication::OnStart()
 	};
 	whiteTextureCreateInfo.data = pixels;
 	TextureManager::GetInstance().Create(whiteTextureCreateInfo);
+
+	//Serializer::DeserializeScene("Scenes/Bistro.scene");
 }
 
 void ExampleApplication::OnUpdate()

@@ -725,7 +725,12 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material)
 
 		out << YAML::BeginSeq;
 
-		for (const auto& binding : pipeline->GetUniformLayout(pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL).value_or(-1))->GetBindings())
+		std::optional<uint32_t> descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL);
+		if (!descriptorSetIndex)
+		{
+			continue;
+		}
+		for (const auto& binding : pipeline->GetUniformLayout(*descriptorSetIndex)->GetBindings())
 		{
 			out << YAML::BeginMap;
 
@@ -745,11 +750,23 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material)
 
 				out << YAML::BeginSeq;
 
-				for (const auto& value : binding.buffer->variables)
+				std::function<void(const ShaderReflection::ReflectVariable&, std::string)> saveValue = [&saveValue, &out, &data]
+				(const ShaderReflection::ReflectVariable& value, std::string parentName)
 				{
+					parentName += value.name;
+
+					if (value.type == ShaderReflection::ReflectVariable::Type::STRUCT)
+					{
+						for (const auto& memberValue : value.variables)
+						{
+							saveValue(memberValue, parentName + ".");
+						}
+						return;
+					}
+
 					out << YAML::BeginMap;
 
-					out << YAML::Key << "Name" << YAML::Value << value.name;
+					out << YAML::Key << "Name" << YAML::Value << parentName;
 
 					if (value.type == ShaderReflection::ReflectVariable::Type::VEC2)
 					{
@@ -775,6 +792,10 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material)
 					out << YAML::Key << "Type" << ShaderReflection::ConvertTypeToString(value.type);
 
 					out << YAML::EndMap;
+				};
+				for (const auto& value : binding.buffer->variables)
+				{
+					saveValue(value, "");
 				}
 
 				out << YAML::EndSeq;
@@ -1207,7 +1228,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	if (aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, aiColor) == aiReturn_SUCCESS)
 	{
 		glm::vec4 color = { aiColor.r, aiColor.g, aiColor.b, 1.0f };
-		material->WriteToBuffer("material", "color", color);
+		material->WriteToBuffer("GBufferMaterial", "material.color", color);
 	}
 
 	// Note: Not sure how to do it correctly.
@@ -1242,7 +1263,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		uniformWriter->WriteTexture("normalTexture", TextureManager::GetInstance().Load(textureFilepath));
 
 		constexpr int useNormalMap = 1;
-		material->WriteToBuffer("material", "useNormalMap", useNormalMap);
+		material->WriteToBuffer("GBufferMaterial", "material.useNormalMap", useNormalMap);
 	}
 
 	numTextures = aiMaterial->GetTextureCount(aiTextureType_METALNESS);
@@ -1272,7 +1293,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		uniformWriter->WriteTexture("aoTexture", TextureManager::GetInstance().Load(textureFilepath));
 	}
 
-	material->GetBuffer("material")->Flush();
+	material->GetBuffer("GBufferMaterial")->Flush();
 	uniformWriter->Flush();
 
 	Material::Save(material);
