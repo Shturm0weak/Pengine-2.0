@@ -37,16 +37,16 @@ std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath)
 		&textureCreateInfo.channels,
 		STBI_rgb_alpha);
 	textureCreateInfo.channels = STBI_rgb_alpha;
+	textureCreateInfo.instanceSize = sizeof(uint8_t);
 
-	textureCreateInfo.data.resize(textureCreateInfo.size.x * textureCreateInfo.size.y * textureCreateInfo.channels);
-	memcpy(textureCreateInfo.data.data(), data, textureCreateInfo.data.size());
-	stbi_image_free(data);
+	const size_t size = textureCreateInfo.size.x * textureCreateInfo.size.y * textureCreateInfo.channels * textureCreateInfo.instanceSize;
+	textureCreateInfo.data = data;
 
 	textureCreateInfo.mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(
 		textureCreateInfo.size.x, textureCreateInfo.size.y)))) + 1;
 	textureCreateInfo.usage = { Usage::SAMPLED, Usage::TRANSFER_DST, Usage::TRANSFER_SRC };
 
-	if (textureCreateInfo.data.empty())
+	if (!textureCreateInfo.data)
 	{
 		Logger::Error("Texture can't be loaded from the filepath " + filepath.string());
 		return nullptr;
@@ -59,6 +59,8 @@ std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath)
 		return std::make_shared<Vk::VulkanTexture>(textureCreateInfo);
 	}
 
+	stbi_image_free(data);
+
 	FATAL_ERROR("Failed to create the renderer, no graphics API implementation");
 	return nullptr;
 }
@@ -68,9 +70,9 @@ Texture::Texture(const CreateInfo& textureCreateInfo)
 {
 	m_Size = textureCreateInfo.size;
 	m_Channels = textureCreateInfo.channels;
-	m_Data = textureCreateInfo.data;
 	m_Format = textureCreateInfo.format;
 	m_AspectMask = textureCreateInfo.aspectMask;
 	m_MipLevels = textureCreateInfo.mipLevels;
 	m_LayerCount = textureCreateInfo.isCubeMap ? 6 : 1;
+	m_InstanceSize = textureCreateInfo.instanceSize;
 }

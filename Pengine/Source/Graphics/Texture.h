@@ -38,9 +38,10 @@ namespace Pengine
 		struct CreateInfo
 		{
 			glm::ivec2 size = { 0, 0 };
-			std::vector<uint8_t> data;
-			int channels = 0;
+			void* data;
+			uint32_t instanceSize = sizeof(uint8_t);
 			uint32_t mipLevels = 1;
+			int channels = 0;
 			std::string name;
 			std::filesystem::path filepath;
 			Format format;
@@ -68,8 +69,6 @@ namespace Pengine
 
 		[[nodiscard]] int GetChannels() const { return m_Channels; }
 
-		[[nodiscard]] std::vector<uint8_t> GetData() const { return m_Data; }
-
 		[[nodiscard]] Format GetFormat() const { return m_Format; }
 
 		[[nodiscard]] AspectMask GetAspectMask() const { return m_AspectMask; }
@@ -84,8 +83,7 @@ namespace Pengine
 		int m_Channels = 0;
 		uint32_t m_MipLevels = 1;
 		uint32_t m_LayerCount = 1;
-
-		std::vector<uint8_t> m_Data;
+		uint32_t m_InstanceSize = sizeof(uint8_t);
 
 		Format m_Format{};
 		AspectMask m_AspectMask{};

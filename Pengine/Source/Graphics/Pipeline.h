@@ -75,6 +75,7 @@ namespace Pengine
 		{
 			std::unordered_map<std::string, UniformBufferInfo> uniformBuffersByName;
 			std::unordered_map<std::string, std::string> texturesByName;
+			std::unordered_map<std::string, UniformLayout::RenderTargetInfo> renderTargetsByName;
 		};
 
 		struct CreateInfo

@@ -293,12 +293,11 @@ void RenderPassManager::CreateDeferred()
 			}
 		}
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(GBuffer);
-
-		renderUniformWriter->WriteTexture("albedoTexture", frameBuffer->GetAttachment(0));
-		renderUniformWriter->WriteTexture("normalTexture", frameBuffer->GetAttachment(1));
-		renderUniformWriter->WriteTexture("positionTexture", frameBuffer->GetAttachment(2));
-		renderUniformWriter->WriteTexture("shadingTexture", frameBuffer->GetAttachment(3));
+		for (const auto& [name, renderTargetInfo] : pipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
+		{
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
+			renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
+		}
 
 		const std::shared_ptr<Buffer> lightsBuffer = renderInfo.renderer->GetBuffer("Lights");
 
@@ -471,6 +470,14 @@ void RenderPassManager::CreateAtmosphere()
 			globalBufferName,
 			"camera.position",
 			cameraPosition);
+
+		const glm::vec3 cameraDirection = glm::normalize(renderInfo.camera->GetComponent<Transform>().GetForward());
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			renderInfo.renderer->GetBuffer(globalBufferName),
+			globalBufferName,
+			"camera.direction",
+			cameraDirection);
 
 		const float time = Time::GetTime();
 		WriterBufferHelper::WriteToBuffer(

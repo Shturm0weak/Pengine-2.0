@@ -191,7 +191,7 @@ void* VulkanBuffer::GetData() const
 	return m_BufferDatas[swapChainImageIndex].m_VmaAllocationInfo.pMappedData;
 }
 
-void VulkanBuffer::WriteToBuffer(void *data, const size_t size, const size_t offset)
+void VulkanBuffer::WriteToBuffer(void* data, const size_t size, const size_t offset)
 {
 	if (m_UsageFlags & VkBufferUsageFlagBits::VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)
 	{

@@ -44,6 +44,8 @@ namespace Pengine
 
 		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
 
+		const std::unordered_map<std::string, UniformLayout::RenderTargetInfo>& GetRenderTargetsByName() const { return m_RenderTargetsByName; }
+
 		bool GetUniformDetails(
 			const std::string& uniformBufferName,
 			const std::string& valueName,
@@ -68,6 +70,7 @@ namespace Pengine
 	private:
 		std::unordered_map<std::string, std::shared_ptr<Pipeline>> m_PipelinesByRenderPass;
 		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPass;
+		std::unordered_map<std::string, UniformLayout::RenderTargetInfo> m_RenderTargetsByName;
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
 	};
 

@@ -2033,5 +2033,33 @@ void Serializer::ParseUniformValues(
 				uniformsInfo.texturesByName.emplace(uniformName, Utils::Find(textureFilepath, filepathByUuid).string());
 			}
 		}
+
+		if (const auto& nameData = uniformData["RenderTarget"])
+		{
+			std::string renderTargetName = nameData.as<std::string>();
+			size_t openBracketIndex = renderTargetName.find_first_of('[');
+			if (openBracketIndex != std::string::npos)
+			{
+				size_t closeBracketIndex = renderTargetName.find_last_of(']');
+				if (closeBracketIndex != std::string::npos)
+				{
+					UniformLayout::RenderTargetInfo renderTargetInfo{};
+
+					const std::string attachmentIndexString = renderTargetName.substr(openBracketIndex + 1, closeBracketIndex - openBracketIndex - 1);
+					renderTargetInfo.renderPassName = renderTargetName.substr(0, openBracketIndex);
+					renderTargetInfo.attachmentIndex = std::stoul(attachmentIndexString);
+
+					uniformsInfo.renderTargetsByName.emplace(uniformName, renderTargetInfo);
+				}
+				else
+				{
+					Logger::Warning(uniformName + ": no close bracket for render target!");
+				}
+			}
+			else
+			{
+				Logger::Warning(uniformName + ": no attachment index for render target!");
+			}
+		}
 	}
 }
