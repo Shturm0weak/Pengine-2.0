@@ -141,9 +141,7 @@ bool BaseMaterial::GetUniformDetails(
 		std::string,
 		const uint32_t,
 		uint32_t&,
-		uint32_t&)> findVariable;
-
-	findVariable = [&findVariable](
+		uint32_t&)> findVariable = [&findVariable](
 		const std::vector<ShaderReflection::ReflectVariable>& variables,
 		std::string valueName,
 		const uint32_t parentOffset,
@@ -235,6 +233,18 @@ bool BaseMaterial::GetUniformDetails(
 			return false;
 		};
 
+	auto foundBufferCache = m_UniformsCache.find(uniformBufferName);
+	if (foundBufferCache != m_UniformsCache.end())
+	{
+		auto foundValueCache = foundBufferCache->second.find(valueName);
+		if (foundValueCache != foundBufferCache->second.end())
+		{
+			size = foundValueCache->second.first;
+			offset = foundValueCache->second.second;
+			return true;
+		}
+	}
+
 	for (const auto& [renderPassName, pipeline] : m_PipelinesByRenderPass)
 	{
 		for (const auto& [set, layout] : pipeline->GetUniformLayouts())
@@ -244,6 +254,7 @@ bool BaseMaterial::GetUniformDetails(
 				if (binding.buffer && binding.name == uniformBufferName)
 				{
 					const bool found = findVariable(binding.buffer->variables, valueName, 0, size, offset);
+					m_UniformsCache[uniformBufferName][valueName] = std::make_pair(size, offset);
 
 					if (found)
 					{
