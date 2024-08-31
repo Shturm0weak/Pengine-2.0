@@ -45,13 +45,13 @@ VulkanTexture::VulkanTexture(const CreateInfo& textureCreateInfo)
 		m_VmaAllocation,
 		m_VmaAllocationInfo);
 
-	if (!m_Data.empty())
+	if (textureCreateInfo.data)
 	{
 		std::shared_ptr<VulkanBuffer> stagingBuffer = VulkanBuffer::CreateStagingBuffer(
-			textureCreateInfo.channels,
+			textureCreateInfo.channels * textureCreateInfo.instanceSize,
 			m_Size.x * m_Size.y);
 
-		stagingBuffer->WriteToBuffer(m_Data.data(), stagingBuffer->GetSize());
+		stagingBuffer->WriteToBuffer(textureCreateInfo.data, stagingBuffer->GetSize());
 
 		TransitionToWrite();
 

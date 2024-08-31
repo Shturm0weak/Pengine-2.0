@@ -9,10 +9,8 @@ Basemat:
       Geometry: Shaders/Atmosphere.geom
       Fragment: Shaders/Atmosphere.frag
       DescriptorSets:
-        - Type: Renderer
-          Set: 0
         - Type: BaseMaterial
-          Set: 1
+          Set: 0
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex

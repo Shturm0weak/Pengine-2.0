@@ -460,7 +460,7 @@ std::string Serializer::GenerateFileUUID(const std::filesystem::path& filepath)
 	return uuid;
 }
 
-std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::filesystem::path& filepath)
+BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::path& filepath)
 {
 	if (!std::filesystem::exists(filepath))
 	{
@@ -486,14 +486,18 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::filesy
 		FATAL_ERROR(filepath.string() + ":Base material file doesn't contain identification line or is empty!");
 	}
 
-	std::vector<Pipeline::CreateInfo> pipelineCreateInfos;
+	BaseMaterial::CreateInfo createInfo{};
+
+	std::vector<Pipeline::CreateInfo>& pipelineCreateInfos = createInfo.pipelineCreateInfos;
 	for (const auto& pipelineData : materialData["Pipelines"])
 	{
+		std::string renderPassName;
+
 		Pipeline::CreateInfo pipelineCreateInfo{};
 		if (const auto& renderPassData = pipelineData["RenderPass"])
 		{
-			const std::string name = renderPassData.as<std::string>();
-			pipelineCreateInfo.renderPass = RenderPassManager::GetInstance().GetRenderPass(name);
+			renderPassName = renderPassData.as<std::string>();
+			pipelineCreateInfo.renderPass = RenderPassManager::GetInstance().GetRenderPass(renderPassName);
 		}
 
 		if (const auto& depthTestData = pipelineData["DepthTest"])
@@ -582,13 +586,19 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::filesy
 				}
 			}
 
+			std::string attachedrenderPassName = renderPassName;
+			if (const auto& renderPassNameData = descriptorSetData["RenderPass"])
+			{
+				attachedrenderPassName = renderPassNameData.as<std::string>();
+			}
+
 			uint32_t set = 0;
 			if (const auto& setData = descriptorSetData["Set"])
 			{
 				set = setData.as<uint32_t>();
 			}
 
-			pipelineCreateInfo.descriptorSetIndicesByType.emplace(type, set);
+			pipelineCreateInfo.descriptorSetIndicesByType[type][attachedrenderPassName] = set;
 		}
 
 		for (const auto& vertexInputBindingDescriptionData : pipelineData["VertexInputBindingDescriptions"])
@@ -635,7 +645,7 @@ std::vector<Pipeline::CreateInfo> Serializer::LoadBaseMaterial(const std::filesy
 
 	Logger::Log("BaseMaterial:" + filepath.string() + " has been deserialized!", GREEN);
 
-	return pipelineCreateInfos;
+	return createInfo;
 }
 
 Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filepath)
@@ -676,6 +686,40 @@ Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filep
 		}
 	}
 
+	std::unordered_map<std::string, Material::Option>& optionsByName = createInfo.optionsByName;
+	for (const auto& optionData : materialData["Options"])
+	{
+		std::string name;
+		if (const auto& nameData = optionData["Name"])
+		{
+			name = nameData.as<std::string>();
+		}
+
+		if (name.empty())
+		{
+			Logger::Warning(filepath.string() + ": Option name is empty, option will be ignored!");
+			continue;
+		}
+
+		Material::Option option{};
+		if (const auto& isEnabledData = optionData["IsEnabled"])
+		{
+			option.m_IsEnabled = isEnabledData.as<bool>();
+		}
+
+		for (const auto& activeData : optionData["Active"])
+		{
+			option.m_Active.emplace_back(activeData.as<std::string>());
+		}
+
+		for (const auto& activeData : optionData["Inactive"])
+		{
+			option.m_Inactive.emplace_back(activeData.as<std::string>());
+		}
+
+		optionsByName.emplace(name, option);
+	}
+
 	for (const auto& pipelineData : materialData["Pipelines"])
 	{
 		std::string renderPass = none;
@@ -711,6 +755,44 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material)
 
 	out << YAML::Key << "Basemat" << YAML::Value << material->GetBaseMaterial()->GetFilepath();
 
+	out << YAML::Key << "Options";
+
+	out << YAML::BeginSeq;
+
+	for (const auto& [name, option] : material->GetOptionsByName())
+	{
+		out << YAML::BeginMap;
+
+		out << YAML::Key << "Name" << YAML::Value << name;
+		out << YAML::Key << "IsEnabled" << YAML::Value << option.m_IsEnabled;
+
+		out << YAML::Key << "Active";
+
+		out << YAML::BeginSeq;
+
+		for (const auto& active : option.m_Active)
+		{
+			out << active;
+		}
+
+		out << YAML::EndSeq;
+
+		out << YAML::Key << "Inactive";
+
+		out << YAML::BeginSeq;
+
+		for (const auto& inactive : option.m_Inactive)
+		{
+			out << inactive;
+		}
+
+		out << YAML::EndSeq;
+
+		out << YAML::EndMap;
+	}
+
+	out << YAML::EndSeq;
+
 	out << YAML::Key << "Pipelines";
 
 	out << YAML::BeginSeq;
@@ -725,7 +807,7 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material)
 
 		out << YAML::BeginSeq;
 
-		std::optional<uint32_t> descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL);
+		std::optional<uint32_t> descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, renderPassName);
 		if (!descriptorSetIndex)
 		{
 			continue;
@@ -1949,6 +2031,34 @@ void Serializer::ParseUniformValues(
 			else
 			{
 				uniformsInfo.texturesByName.emplace(uniformName, Utils::Find(textureFilepath, filepathByUuid).string());
+			}
+		}
+
+		if (const auto& nameData = uniformData["RenderTarget"])
+		{
+			std::string renderTargetName = nameData.as<std::string>();
+			size_t openBracketIndex = renderTargetName.find_first_of('[');
+			if (openBracketIndex != std::string::npos)
+			{
+				size_t closeBracketIndex = renderTargetName.find_last_of(']');
+				if (closeBracketIndex != std::string::npos)
+				{
+					UniformLayout::RenderTargetInfo renderTargetInfo{};
+
+					const std::string attachmentIndexString = renderTargetName.substr(openBracketIndex + 1, closeBracketIndex - openBracketIndex - 1);
+					renderTargetInfo.renderPassName = renderTargetName.substr(0, openBracketIndex);
+					renderTargetInfo.attachmentIndex = std::stoul(attachmentIndexString);
+
+					uniformsInfo.renderTargetsByName.emplace(uniformName, renderTargetInfo);
+				}
+				else
+				{
+					Logger::Warning(uniformName + ": no close bracket for render target!");
+				}
+			}
+			else
+			{
+				Logger::Warning(uniformName + ": no attachment index for render target!");
 			}
 		}
 	}

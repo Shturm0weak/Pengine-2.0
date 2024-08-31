@@ -1568,13 +1568,24 @@ void Editor::MaterialMenu::Update(const Editor& editor)
 		ImGui::Text("Name: %s", material->GetName().c_str());
 		ImGui::Text("Filepath: %s", material->GetFilepath().string().c_str());
 
+		if (ImGui::CollapsingHeader("Options"))
+		{
+			for (auto& [name, option] : material->GetOptionsByName())
+			{
+				if (ImGui::Checkbox(name.c_str(), &option.m_IsEnabled))
+				{
+					material->SetOption(name, option.m_IsEnabled);
+				}
+			}
+		}
+
 		for (const auto& [renderPassName, pipeline] : material->GetBaseMaterial()->GetPipelinesByRenderPass())
 		{
 			if (ImGui::CollapsingHeader(renderPassName.c_str()))
 			{
 				for (const auto& [set, uniformLayout] : pipeline->GetUniformLayouts())
 				{
-					const auto& descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL);
+					const auto& descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, renderPassName);
 					if (!descriptorSetIndex || descriptorSetIndex.value() != set)
 					{
 						continue;

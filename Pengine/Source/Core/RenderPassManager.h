@@ -52,6 +52,12 @@ namespace Pengine
 
 		void CreateTransparent();
 
+		static std::vector<std::shared_ptr<class UniformWriter>> GetUniformWriters(
+			std::shared_ptr<class Pipeline> pipeline,
+			std::shared_ptr<class BaseMaterial> baseMaterial,
+			std::shared_ptr<class Material> material,
+			const RenderPass::RenderCallbackInfo& renderInfo);
+
 		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
 	};
 

@@ -25,10 +25,10 @@ namespace Pengine
 
 			if (buffer && found)
 			{
-				if (sizeof(T) != size)
-				{
-					Logger::Warning("Failed to write to buffer: " + uniformBufferName + " | " + valueName + ", size is different!");
-				}
+				//if (sizeof(T) != size)
+				//{
+				//	Logger::Warning("Failed to write to buffer: " + uniformBufferName + " | " + valueName + ", size is different!");
+				//}
 
 				buffer->WriteToBuffer((void*)&value, size, offset);
 			}

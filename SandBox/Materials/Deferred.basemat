@@ -9,6 +9,10 @@ Basemat:
       Fragment: Shaders/Deferred.frag
       DescriptorSets:
         - Type: Renderer
+          RenderPass: DefaultReflection
+          Set: 0
+        - Type: Renderer
+          RenderPass: Deferred
           Set: 1
       VertexInputBindingDescriptions:
         - Binding: 0
@@ -21,3 +25,12 @@ Basemat:
             - bitangentA
       ColorBlendStates:
         - BlendEnabled: false
+      Uniforms:
+        - Name: albedoTexture
+          RenderTarget: "GBuffer[0]"
+        - Name: normalTexture
+          RenderTarget: "GBuffer[1]"
+        - Name: positionTexture
+          RenderTarget: "GBuffer[2]"
+        - Name: shadingTexture
+          RenderTarget: "GBuffer[3]"

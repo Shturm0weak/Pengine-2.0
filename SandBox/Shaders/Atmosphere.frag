@@ -2,15 +2,9 @@
 
 layout(location = 0) out vec4 fragColor;
 
-#include "Shaders/Includes/Camera.h"
 #include "Shaders/Includes/DirectionalLight.h"
 
-layout(set = 0, binding = 0) uniform GlobalBuffer
-{
-	Camera camera;
-};
-
-layout(set = 1, binding = 0) uniform AtmosphereBuffer
+layout(set = 0, binding = 0) uniform AtmosphereBuffer
 {
 	vec2 faceSize;
 	DirectionalLight directionalLight;

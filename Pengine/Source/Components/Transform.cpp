@@ -245,6 +245,7 @@ void Transform::Move(Transform&& transform) noexcept
 	m_PositionMat4 = transform.m_PositionMat4;
 	m_ScaleMat4 = transform.m_ScaleMat4;
 	m_RotationMat4 = transform.m_RotationMat4;
+	m_TransformMat4 = transform.m_TransformMat4;
 	m_FollowOwner = transform.m_FollowOwner;
 }
 

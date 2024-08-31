@@ -15,10 +15,10 @@ VulkanFrameBuffer::VulkanFrameBuffer(
 	Renderer* renderer)
 	: FrameBuffer(attachments, renderPass, renderer)
 {
-	/*if (m_AttachmentCreateInfos.empty())
+	if (m_AttachmentCreateInfos.empty())
 	{
 		FATAL_ERROR("Frame buffer attachments are empty!");
-	}*/
+	}
 
 	Resize(!m_AttachmentCreateInfos.empty() ? m_AttachmentCreateInfos[0].size : glm::ivec2{ 0, 0 });
 }

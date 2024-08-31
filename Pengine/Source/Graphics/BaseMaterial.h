@@ -16,17 +16,22 @@ namespace Pengine
 	class PENGINE_API BaseMaterial final : public Asset
 	{
 	public:
+		struct CreateInfo
+		{
+			std::vector<Pipeline::CreateInfo> pipelineCreateInfos;
+		};
+
 		static std::shared_ptr<BaseMaterial> Create(
 			const std::string& name,
 			const std::filesystem::path& filepath,
-			const std::vector<Pipeline::CreateInfo>& pipelineCreateInfos);
+			const CreateInfo& createInfo);
 
 		static std::shared_ptr<BaseMaterial> Load(const std::filesystem::path& filepath);
 
 		BaseMaterial(
 			const std::string& name,
 			const std::filesystem::path& filepath,
-			const std::vector<Pipeline::CreateInfo>& pipelineCreateInfos);
+			const CreateInfo& createInfo);
 		~BaseMaterial();
 		BaseMaterial(const BaseMaterial&) = delete;
 		BaseMaterial& operator=(const BaseMaterial&) = delete;
@@ -38,6 +43,8 @@ namespace Pengine
 		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& renderPassName) const;
 
 		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
+
+		const std::unordered_map<std::string, UniformLayout::RenderTargetInfo>& GetRenderTargetsByName() const { return m_RenderTargetsByName; }
 
 		bool GetUniformDetails(
 			const std::string& uniformBufferName,
@@ -63,6 +70,7 @@ namespace Pengine
 	private:
 		std::unordered_map<std::string, std::shared_ptr<Pipeline>> m_PipelinesByRenderPass;
 		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPass;
+		std::unordered_map<std::string, UniformLayout::RenderTargetInfo> m_RenderTargetsByName;
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
 	};
 

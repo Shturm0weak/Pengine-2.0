@@ -9,6 +9,7 @@ Basemat:
       Fragment: Shaders/Opaque.frag
       DescriptorSets:
         - Type: Renderer
+          RenderPass: DefaultReflection
           Set: 0
         - Type: Material
           Set: 1
@@ -38,6 +39,16 @@ Basemat:
       PolygonMode: Fill
       Vertex: Shaders/Transparent.vert
       Fragment: Shaders/Transparent.frag
+      DescriptorSets:
+        - Type: Renderer
+          RenderPass: DefaultReflection
+          Set: 0
+        - Type: Material
+          RenderPass: GBuffer
+          Set: 1
+        - Type: Renderer
+          RenderPass: Deferred
+          Set: 2
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex

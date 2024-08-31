@@ -25,13 +25,13 @@ void ExampleApplication::OnStart()
 	whiteTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
 	whiteTextureCreateInfo.size = { 1, 1 };
 	whiteTextureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_DST };
-	const std::vector<uint8_t> pixels = {
+	std::vector<uint8_t> pixels = {
 		255,
 		255,
 		255,
 		255
 	};
-	whiteTextureCreateInfo.data = pixels;
+	whiteTextureCreateInfo.data = pixels.data();
 	TextureManager::GetInstance().Create(whiteTextureCreateInfo);
 
 	//Serializer::DeserializeScene("Scenes/Bistro.scene");

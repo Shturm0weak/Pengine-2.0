@@ -28,10 +28,11 @@ std::shared_ptr<Material> Material::Clone(
 {
 	CreateInfo createInfo{};
 	createInfo.baseMaterial = material->GetBaseMaterial();
+	createInfo.optionsByName = material->GetOptionsByName();
 
 	for (const auto& [renderPassName, pipeline] : createInfo.baseMaterial->GetPipelinesByRenderPass())
 	{
-		std::optional<uint32_t> descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL);
+		std::optional<uint32_t> descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, renderPassName);
 		if (!descriptorSetIndex)
 		{
 			continue;
@@ -98,14 +99,20 @@ Material::Material(const std::string& name, const std::filesystem::path& filepat
 	const CreateInfo& createInfo)
 	: Asset(name, filepath)
 	, m_BaseMaterial(createInfo.baseMaterial)
+	, m_OptionsByName(createInfo.optionsByName)
 {
+	for (const auto& [name, option] : m_OptionsByName)
+	{
+		SetOption(name, option.m_IsEnabled);
+	}
+
 	for (const auto& [renderPassName, pipeline] : m_BaseMaterial->GetPipelinesByRenderPass())
 	{
 		const Pipeline::CreateInfo& pipelineCreateInfo = pipeline->GetCreateInfo();
-		auto baseMaterialIndex = pipelineCreateInfo.descriptorSetIndicesByType.find(Pipeline::DescriptorSetIndexType::MATERIAL);
-		if (baseMaterialIndex != pipelineCreateInfo.descriptorSetIndicesByType.end())
+		auto baseMaterialIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, renderPassName);
+		if (baseMaterialIndex)
 		{
-			const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(baseMaterialIndex->second);
+			const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*baseMaterialIndex);
 			const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
 			m_UniformWriterByRenderPass[renderPassName] = uniformWriter;
 
@@ -179,4 +186,36 @@ std::shared_ptr<UniformWriter> Material::GetUniformWriter(const std::string& ren
 std::shared_ptr<Buffer> Material::GetBuffer(const std::string& name) const
 {
 	return Utils::Find(name, m_BuffersByName);
+}
+
+bool Material::IsPipelineEnabled(const std::string& renderPassName) const
+{
+	auto pipelineState = m_PipelineStates.find(renderPassName);
+	if (pipelineState != m_PipelineStates.end())
+	{
+		return pipelineState->second;
+	}
+
+	return true;
+}
+
+void Material::SetOption(const std::string& name, bool isEnabled)
+{
+	auto foundOption = m_OptionsByName.find(name);
+	if (foundOption == m_OptionsByName.end())
+	{
+		return;
+	}
+
+	foundOption->second.m_IsEnabled = isEnabled;
+
+	for (const std::string& active : foundOption->second.m_Active)
+	{
+		m_PipelineStates[active] = isEnabled;
+	}
+
+	for (const std::string& inactive : foundOption->second.m_Inactive)
+	{
+		m_PipelineStates[inactive] = !isEnabled;
+	}
 }

@@ -22,7 +22,7 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 		const bool isColor = attachment.layout == Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
 		Texture::CreateInfo attachmentCreateInfo{};
-		attachmentCreateInfo.name = "RenderPassFrameBuffer";
+		attachmentCreateInfo.name = renderPass->GetType() + "FrameBuffer";
 		attachmentCreateInfo.filepath = none;
 		attachmentCreateInfo.format = attachment.format;
 		attachmentCreateInfo.channels = 4;
@@ -53,8 +53,8 @@ FrameBuffer::FrameBuffer(
 	, m_AttachmentCreateInfos(attachments)
 	, m_Renderer(renderer)
 {
-	/*if (attachments.empty())
+	if (attachments.empty())
 	{
 		FATAL_ERROR("Render pass attachments must contain at least one attachment!");
-	}*/
+	}
 }

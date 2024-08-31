@@ -1,5 +1,12 @@
 Mat:
   Basemat: Materials/MeshBase.basemat
+  Options:
+    - Name: Transparency
+      IsEnabled: false
+      Active:
+        - Transparent
+      Inactive:
+        - GBuffer
   Pipelines:
     - RenderPass: GBuffer
       Uniforms:
