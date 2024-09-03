@@ -1453,15 +1453,3 @@ if (ASSIMP_COVERALLS)
         ON                 # If we should upload.
         "${PROJECT_SOURCE_DIR}/cmake-modules/") # (Optional) Alternate project cmake module path.
 ENDIF()
-
-if (WIN32)
-  add_custom_command(TARGET assimp POST_BUILD
-    COMMAND "${CMAKE_COMMAND}" -E copy_directory
-    ${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin/$<CONFIG>
-    ${CMAKE_BINARY_DIR}/${APP_NAME}/Build/$<CONFIG>)
-elseif (UNIX)
-  add_custom_command(TARGET assimp POST_BUILD
-          COMMAND ${CMAKE_COMMAND} -E copy_directory
-          ${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin
-          ${CMAKE_BINARY_DIR}/${APP_NAME}/Build)
-endif ()

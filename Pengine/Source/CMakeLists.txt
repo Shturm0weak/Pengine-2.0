@@ -184,13 +184,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE $ENV{VULKAN_INCLUDE})
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{SPIRV_REFLECT})
 
 if (WIN32)
-	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		$<TARGET_FILE_DIR:${PROJECT_NAME}>
-		${CMAKE_BINARY_DIR}/${APP_NAME}/Build/$<CONFIG>)
+	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+		COMMAND "${CMAKE_COMMAND}" -E copy_directory
+		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin/$<CONFIG>
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
 elseif (UNIX)
-	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		$<TARGET_FILE_DIR:${PROJECT_NAME}>
-		${CMAKE_BINARY_DIR}/${APP_NAME}/Build)
+		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
 endif ()
