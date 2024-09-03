@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build
-        run: mkdir Build | cd Build | cmake ..
+        run: mkdir ${{github.workspace}}/Build | cd ${{github.workspace}}/Build | cmake ../${{github.workspace}}/Build
       - name: Compile
         run: \"C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/devenv.exe" Pengine.sln /Build Release
       - name: Test
