@@ -105,11 +105,16 @@ void RenderPassManager::CreateGBuffer()
 
 		size_t renderableCount = 0;
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
-		entt::registry& registry = scene->GetRegistry();
+		const entt::registry& registry = scene->GetRegistry();
 		const auto r3dView = registry.view<Renderer3D>();
 		for (const entt::entity& entity : r3dView)
 		{
-			Renderer3D& r3d = registry.get<Renderer3D>(entity);
+			const Renderer3D& r3d = registry.get<Renderer3D>(entity);
+			const Transform& transform = registry.get<Transform>(entity);
+			if (!transform.GetEntity()->IsEnabled())
+			{
+				continue;
+			}
 
 			if (!r3d.mesh || !r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
 			{
@@ -155,7 +160,7 @@ void RenderPassManager::CreateGBuffer()
 					for (const entt::entity& entity : entities)
 					{
 						InstanceData data{};
-						Transform& transform = registry.get<Transform>(entity);
+						const Transform& transform = registry.get<Transform>(entity);
 						data.transform = transform.GetTransform();
 						data.inverseTransform = glm::transpose(transform.GetInverseTransform());
 						instanceDatas.emplace_back(data);

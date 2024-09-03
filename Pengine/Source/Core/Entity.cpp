@@ -166,6 +166,20 @@ bool Entity::HasAsParent(const std::shared_ptr<Entity>& parent, const bool recur
 	return false;
 }
 
+bool Entity::IsEnabled() const
+{
+	bool enabled = true;
+
+	std::shared_ptr<const Entity> entity = shared_from_this();
+	while (entity)
+	{
+		enabled *= entity->m_IsEnabled;
+		entity = entity->GetParent();
+	}
+
+	return enabled;
+}
+
 void Entity::Copy(const Entity& entity)
 {
 	m_Handle = entity.GetHandle();

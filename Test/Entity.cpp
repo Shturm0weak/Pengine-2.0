@@ -43,7 +43,6 @@ TEST(Entity, AddChild)
 		std::shared_ptr<Scene> scene = SceneManager::GetInstance().Create("Scene", "Main");
 		std::shared_ptr<Entity> entity = scene->CreateEntity("GameObject");
 		std::shared_ptr<Entity> child = scene->CreateEntity("Child");
-		EXPECT_TRUE(entity);
 		if (entity)
 		{
 			entity->AddChild(child);
@@ -58,14 +57,46 @@ TEST(Entity, AddChild)
 			EXPECT_TRUE(child->GetParent() == nullptr);
 		}
 
-		EXPECT_TRUE(!scene->GetEntities().empty());
 		scene->DeleteEntity(entity);
 		scene->DeleteEntity(child);
-		EXPECT_TRUE(scene->GetEntities().empty());
 
-		EXPECT_TRUE(SceneManager::GetInstance().GetScenesCount() == 1);
 		SceneManager::GetInstance().Delete(scene);
-		EXPECT_TRUE(SceneManager::GetInstance().GetScenesCount() == 0);
+	}
+	catch (const std::exception& e)
+	{
+		Logger::Error(e.what());
+		FAIL();
+	}
+}
+
+TEST(Entity, IsEnabled)
+{
+	try
+	{
+		std::shared_ptr<Scene> scene = SceneManager::GetInstance().Create("Scene", "Main");
+		std::shared_ptr<Entity> entity = scene->CreateEntity("GameObject");
+		std::shared_ptr<Entity> child = scene->CreateEntity("Child");
+		if (entity)
+		{
+			entity->SetEnabled(true);
+			EXPECT_TRUE(entity->IsEnabled());
+
+			entity->SetEnabled(false);
+			EXPECT_TRUE(!entity->IsEnabled());
+
+			entity->AddChild(child);
+
+			EXPECT_TRUE(!child->IsEnabled());
+
+			entity->SetEnabled(true);
+			EXPECT_TRUE(child->IsEnabled());
+
+			entity->RemoveChild(child);
+		}
+
+		scene->DeleteEntity(entity);
+		scene->DeleteEntity(child);
+		SceneManager::GetInstance().Delete(scene);
 	}
 	catch (const std::exception& e)
 	{

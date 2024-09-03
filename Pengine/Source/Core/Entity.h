@@ -78,7 +78,7 @@ namespace Pengine
 
 		const UUID& GetUUID() const { return m_UUID; }
 
-		bool IsEnabled() const { return m_IsEnabled; }
+		bool IsEnabled() const;
 
 		void SetEnabled(const bool isEnabled) { m_IsEnabled = isEnabled; }
 

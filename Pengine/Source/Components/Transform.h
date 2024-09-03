@@ -63,6 +63,8 @@ namespace Pengine
 
 		void SetEntity(std::shared_ptr<Entity> entity);
 
+		[[nodiscard]] std::shared_ptr<Entity> GetEntity() const { return m_Entity; }
+
 		[[nodiscard]] glm::mat4 GetPositionMat4(System system = System::GLOBAL) const;
 		
 		[[nodiscard]] glm::mat4 GetRotationMat4(System system = System::GLOBAL) const;
