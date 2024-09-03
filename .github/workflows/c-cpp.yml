@@ -14,7 +14,7 @@ jobs:
         run: mkdir ${{github.workspace}}/Build
       - run: cmake -B ${{github.workspace}}/Build ${{github.workspace}}
       - name: Compile
-        run: C:/actions-runner/devenv.exe ${{github.workspace}}/Build/Pengine.sln /Build Release
+        run: '"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe" ${{github.workspace}}/Build/Pengine.sln /Build Release'
       - name: Test
         shell: bash
         run: Test/Build/Release/Test.exe
