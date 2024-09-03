@@ -12,4 +12,4 @@ jobs:
     steps:
       - name: Display the path
         shell: cmd
-        run: echo $PATH
+        run: cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
