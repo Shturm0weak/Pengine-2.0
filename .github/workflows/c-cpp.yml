@@ -9,14 +9,12 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-      - name: Setup Environment (PR)  
-        if: ${{ github.event_name == 'pull_request' }}  
-        shell: bash  
-        run: |  
-          echo "LAST_COMMIT_SHA=${{ github.event.pull_request.head.sha }}" >> ${GITHUB_ENV}  
-      - name: Setup Environment (Push)  
-        if: ${{ github.event_name == 'push' }}  
-        shell: bash  
+      - name: Setup Environment (PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo "LAST_COMMIT_SHA=${{ github.event.pull_request.head.sha }}" >> ${GITHUB_ENV}
+      - name: Setup Environment (Push)
+        if: ${{ github.event_name == 'push' }}
         run: |
           echo "LAST_COMMIT_SHA=${GITHUB_SHA}" >> ${GITHUB_ENV}
       - name: Create Folder
