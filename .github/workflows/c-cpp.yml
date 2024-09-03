@@ -1,5 +1,4 @@
 name: C/C++ CI
-
 on:
   push:
     branches: [ "main" ]
@@ -11,7 +10,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Create Folder
-        run: mkdir {{github.run_attempt}}/$GITHUB_RUN_ATTEMPT | cd {{github.run_attempt}}/$GITHUB_RUN_ATTEMPT
+        run: mkdir $GITHUB_SHA | cd $GITHUB_SHA
       - name: Clone
         run: git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
       - name: Build
