@@ -10,6 +10,8 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
+      - name: Create Folder
+        run: mkdir {{github.run_attempt}}/$GITHUB_RUN_ATTEMPT | cd {{github.run_attempt}}/$GITHUB_RUN_ATTEMPT
       - name: Clone
         run: git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
       - name: Build
