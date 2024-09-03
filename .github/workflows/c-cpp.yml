@@ -8,9 +8,13 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: self-hosted
     steps:
       - name: Clone
         run: git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
       - name: Build
         run: cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
+      - name: Compile
+        run: \"C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/devenv.exe" Pengine.sln /Build Release
+      - name: Test
+        run: cd Test/Build/Release && Test.exe
