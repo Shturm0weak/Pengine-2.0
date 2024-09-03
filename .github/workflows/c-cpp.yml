@@ -5,21 +5,16 @@ on:
   pull_request:
     branches: [ "main" ]
 
-env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  CL_PATH: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/devenv.exe"
-
 jobs:
   build-and-test:
     runs-on: self-hosted
     steps:
-      - run: echo $CL_PATH
       - uses: actions/checkout@v3
       - name: Build
         run: mkdir ${{github.workspace}}/Build
       - run: cmake -B ${{github.workspace}}/Build ${{github.workspace}}
       - name: Compile
-        run: $CL_PATH ${{github.workspace}}/Build/Pengine.sln /Build Release
+        run: C:/actions-runner/devenv.exe ${{github.workspace}}/Build/Pengine.sln /Build Release
       - name: Test
         shell: bash
         run: Test/Build/Release/Test.exe
