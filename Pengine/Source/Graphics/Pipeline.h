@@ -55,6 +55,18 @@ namespace Pengine
 			INSTANCE
 		};
 
+		enum class DepthCompare
+		{
+			NEVER = 0,
+			LESS = 1,
+			EQUAL = 2,
+			LESS_OR_EQUAL = 3,
+			GREATER = 4,
+			NOT_EQUAL = 5,
+			GREATER_OR_EQUAL = 6,
+			ALWAYS = 7
+		};
+
 		struct BindingDescription
 		{
 			uint32_t binding;
@@ -86,10 +98,11 @@ namespace Pengine
 			std::shared_ptr<RenderPass> renderPass;
 			UniformInfo uniformInfo;
 			std::map<Pipeline::ShaderType, std::string> shaderFilepathsByType;
-			CullMode cullMode;
-			PolygonMode polygonMode;
-			bool depthTest;
-			bool depthWrite;
+			CullMode cullMode = CullMode::NONE;
+			PolygonMode polygonMode = PolygonMode::FILL;
+			bool depthTest = true;
+			bool depthWrite = true;
+			DepthCompare depthCompare = DepthCompare::LESS_OR_EQUAL;
 		};
 
 		static std::shared_ptr<Pipeline> Create(const CreateInfo& pipelineCreateInfo);

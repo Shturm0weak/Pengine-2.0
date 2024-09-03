@@ -510,6 +510,43 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 			pipelineCreateInfo.depthWrite = depthWriteData.as<bool>();
 		}
 
+		if (const auto& depthCompareData = pipelineData["DepthCompare"])
+		{
+			const std::string depthCompare = depthCompareData.as<std::string>();
+			if (depthCompare == "Never")
+			{
+				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::NEVER;
+			}
+			else if (depthCompare == "Less")
+			{
+				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::LESS;
+			}
+			else if (depthCompare == "Equal")
+			{
+				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::EQUAL;
+			}
+			else if (depthCompare == "LessOrEqual")
+			{
+				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::LESS_OR_EQUAL;
+			}
+			else if (depthCompare == "Greater")
+			{
+				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::GREATER;
+			}
+			else if (depthCompare == "NotEqual")
+			{
+				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::NOT_EQUAL;
+			}
+			else if (depthCompare == "GreaterOrEqual")
+			{
+				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::GREATER_OR_EQUAL;
+			}
+			else if (depthCompare == "Always")
+			{
+				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::ALWAYS;
+			}
+		}
+
 		if (const auto& cullModeData = pipelineData["CullMode"])
 		{
 			if (const std::string& cullMode = cullModeData.as<std::string>(); cullMode == "Front")

@@ -1,8 +1,9 @@
 Basemat:
   Pipelines:
     - RenderPass: GBuffer
-      DepthTest: false
+      DepthTest: true
       DepthWrite: false
+      DepthCompare: Equal
       CullMode: Front
       PolygonMode: Fill
       Vertex: Shaders/SkyBox.vert
