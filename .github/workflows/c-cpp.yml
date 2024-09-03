@@ -10,8 +10,6 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-      - name: Clear
-        run: del "Pengine-2.0"
       - name: Clone
         run: git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
       - name: Build
