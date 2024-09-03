@@ -17,5 +17,5 @@ jobs:
         shell: cmd
         run: '"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe" ${{github.workspace}}\Build\Pengine.sln /Build Release'
       - name: Test
-        shell: pwsh
+        shell: PowerShell
         run: ${{github.workspace}}\Build\Test\Build\Release\Test.exe
