@@ -11,8 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build
-        run: mkdir ${{github.workspace}}/Build | cd ${{github.workspace}}/Build | cmake ../${{github.workspace}}/Build
+        run: mkdir ${{github.workspace}}/Build
+      - run: cmake -B ${{github.workspace}}/Build ${{github.workspace}}
       - name: Compile
-        run: \"C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/devenv.exe" Pengine.sln /Build Release
+        run: ""C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/devenv.exe" ${{github.workspace}}/Build/Pengine.sln /Build Release"
       - name: Test
-        run: cd Test/Build/Release | Test.exe
+        shell: bash
+        run: Test/Build/Release/Test.exe
