@@ -5,19 +5,13 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
 jobs:
-  build:
+  build-and-test:
     runs-on: self-hosted
     steps:
-      - env:
-          RELEVANT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-      - name: Create Folder
-        run: mkdir RELEVANT_SHA | cd RELEVANT_SHA
-      - name: Clone
-        run: git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
-      - name: Build
-        run: cd Pengine-2.0 | mkdir Build | cd Build | cmake ..
-      - name: Compile
-        run: \"C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/devenv.exe" Pengine.sln /Build Release
-      - name: Test
-        run: cd Test/Build/Release | Test.exe
+      - uses: actions/checkout@v3
+      - run: echo ${{github.workspace}}
