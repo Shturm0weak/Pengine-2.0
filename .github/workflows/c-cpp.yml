@@ -9,8 +9,18 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
+      - name: Setup Environment (PR)  
+        if: ${{ github.event_name == 'pull_request' }}  
+        shell: bash  
+        run: |  
+          echo "LAST_COMMIT_SHA=${{ github.event.pull_request.head.sha }}" >> ${GITHUB_ENV}  
+      - name: Setup Environment (Push)  
+        if: ${{ github.event_name == 'push' }}  
+        shell: bash  
+        run: |
+          echo "LAST_COMMIT_SHA=${GITHUB_SHA}" >> ${GITHUB_ENV}
       - name: Create Folder
-        run: mkdir $GITHUB_SHA | cd $GITHUB_SHA
+        run: mkdir LAST_COMMIT_SHA | cd LAST_COMMIT_SHA
       - name: Clone
         run: git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
       - name: Build
