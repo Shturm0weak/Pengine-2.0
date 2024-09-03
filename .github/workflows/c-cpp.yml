@@ -10,6 +10,7 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Display the path
-        shell: cmd
+      - name: Clone
+        run: git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
+      - name: Build
         run: cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
