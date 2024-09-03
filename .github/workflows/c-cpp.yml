@@ -10,10 +10,9 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-      - run: echo ${{github.workspace}}
       - name: Build
-        run: mkdir Build & cd Build & cmake ..
+        run: mkdir Build | cd Build | cmake ..
       - name: Compile
         run: \"C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/devenv.exe" Pengine.sln /Build Release
       - name: Test
-        run: cd Test/Build/Release & Test.exe
+        run: cd Test/Build/Release | Test.exe
