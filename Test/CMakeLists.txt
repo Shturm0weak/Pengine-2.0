@@ -21,6 +21,8 @@ enable_testing()
 
 set(CORE_SOURCES
 	Scene.cpp
+	Entity.cpp
+	Transform.cpp
 )
 source_group("Core" FILES ${CORE_SOURCES})
 
