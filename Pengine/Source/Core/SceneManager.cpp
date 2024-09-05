@@ -89,11 +89,5 @@ void SceneManager::ShutDown()
 	}
 
 	m_ScenesByName.clear();
-
-	for (const auto& [tag, scene] : m_ScenesByTag)
-	{
-		scene->Clear();
-	}
-
 	m_ScenesByTag.clear();
 }

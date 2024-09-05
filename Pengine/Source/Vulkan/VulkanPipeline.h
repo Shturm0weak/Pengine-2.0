@@ -44,6 +44,10 @@ namespace Pengine::Vk
 
 		static CullMode ConvertCullMode(VkCullModeFlagBits cullMode);
 
+		static VkPrimitiveTopology ConvertTopologyMode(TopologyMode topologyMode);
+
+		static TopologyMode ConvertTopologyMode(VkPrimitiveTopology topologyMode);
+
 		static VkPolygonMode ConvertPolygonMode(PolygonMode polygonMode);
 
 		static PolygonMode ConvertPolygonMode(VkPolygonMode polygonMode);

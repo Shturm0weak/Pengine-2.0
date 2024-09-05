@@ -4,6 +4,7 @@
 .vscode/
 .idea/
 SandBox/Meshes/LargeFiles/BistroOptimized/
+SandBox/Log.txt
 
 # Shader Cache
 *.spv

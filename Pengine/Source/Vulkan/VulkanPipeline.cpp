@@ -72,6 +72,7 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 	pipelineConfigInfo.depthStencilInfo.depthTestEnable = static_cast<VkBool32>(pipelineCreateInfo.depthTest);
 	pipelineConfigInfo.depthStencilInfo.depthCompareOp = static_cast<VkCompareOp>(pipelineCreateInfo.depthCompare);
 	pipelineConfigInfo.rasterizationInfo.cullMode = ConvertCullMode(pipelineCreateInfo.cullMode);
+	pipelineConfigInfo.inputAssemblyInfo.topology = ConvertTopologyMode(pipelineCreateInfo.topologyMode);
 	pipelineConfigInfo.rasterizationInfo.polygonMode = ConvertPolygonMode(pipelineCreateInfo.polygonMode);
 	pipelineConfigInfo.colorBlendAttachments.clear();
 	for (const auto& blendStateAttachment : pipelineCreateInfo.colorBlendStateAttachments)
@@ -175,6 +176,38 @@ Pipeline::CullMode VulkanPipeline::ConvertCullMode(const VkCullModeFlagBits cull
 
 	FATAL_ERROR("Failed to convert cull mode!");
 	return CullMode::NONE;
+}
+
+VkPrimitiveTopology VulkanPipeline::ConvertTopologyMode(TopologyMode topologyMode)
+{
+	switch (topologyMode)
+	{
+	case Pengine::Pipeline::TopologyMode::POINT_LIST:
+		return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+	case Pengine::Pipeline::TopologyMode::LINE_LIST:
+		return VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+	case Pengine::Pipeline::TopologyMode::TRIANGLE_LIST:
+		return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+	}
+
+	FATAL_ERROR("Failed to convert polygon mode!");
+	return {};
+}
+
+Pipeline::TopologyMode VulkanPipeline::ConvertTopologyMode(VkPrimitiveTopology topologyMode)
+{
+	switch (topologyMode)
+	{
+	case VK_PRIMITIVE_TOPOLOGY_POINT_LIST:
+		return Pengine::Pipeline::TopologyMode::POINT_LIST;
+	case VK_PRIMITIVE_TOPOLOGY_LINE_LIST:
+		return Pengine::Pipeline::TopologyMode::LINE_LIST;
+	case VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST:
+		return Pengine::Pipeline::TopologyMode::TRIANGLE_LIST;
+	}
+
+	FATAL_ERROR("Failed to convert polygon mode!");
+	return {};
 }
 
 VkPolygonMode VulkanPipeline::ConvertPolygonMode(const PolygonMode polygonMode)

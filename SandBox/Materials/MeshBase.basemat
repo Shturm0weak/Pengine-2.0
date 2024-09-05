@@ -5,6 +5,7 @@ Basemat:
       DepthWrite: true
       CullMode: Back
       PolygonMode: Fill
+      TopologyMode: TriangleList
       Vertex: Shaders/Opaque.vert
       Fragment: Shaders/Opaque.frag
       DescriptorSets:

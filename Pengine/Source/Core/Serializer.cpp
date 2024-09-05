@@ -567,6 +567,22 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 			}
 		}
 
+		if (const auto& topologyModeData = pipelineData["TopologyMode"])
+		{
+			if (const std::string& topologyMode = topologyModeData.as<std::string>(); topologyMode == "LineList")
+			{
+				pipelineCreateInfo.topologyMode = Pipeline::TopologyMode::LINE_LIST;
+			}
+			else if (topologyMode == "PointList")
+			{
+				pipelineCreateInfo.topologyMode = Pipeline::TopologyMode::POINT_LIST;
+			}
+			else if (topologyMode == "TriangleList")
+			{
+				pipelineCreateInfo.topologyMode = Pipeline::TopologyMode::TRIANGLE_LIST;
+			}
+		}
+
 		if (const auto& polygonModeData = pipelineData["PolygonMode"])
 		{
 			if (const std::string& polygonMode = polygonModeData.as<std::string>(); polygonMode == "Fill")

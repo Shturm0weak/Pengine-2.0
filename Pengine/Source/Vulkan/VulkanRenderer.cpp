@@ -18,7 +18,9 @@ VulkanRenderer::VulkanRenderer(const glm::ivec2& size)
 }
 
 void VulkanRenderer::Render(
-	const std::shared_ptr<Mesh>& mesh,
+	const std::shared_ptr<Buffer>& vertices,
+	const std::shared_ptr<Buffer>& indices,
+	const int indexCount,
 	const std::shared_ptr<Pipeline>& pipeline,
 	const std::shared_ptr<Buffer>& instanceBuffer,
 	const size_t instanceBufferOffset,
@@ -60,9 +62,9 @@ void VulkanRenderer::Render(
 			nullptr);
 	}
 
-	vertexCount += (mesh->GetIndexCount() / 3) * count;
-	BindBuffers(frame->CommandBuffer, mesh->GetVertices(), instanceBuffer, mesh->GetIndices(), instanceBufferOffset);
-	DrawIndexed(frame->CommandBuffer, mesh->GetIndexCount(), count);
+	vertexCount += (indexCount / 3) * count;
+	BindBuffers(frame->CommandBuffer, vertices, instanceBuffer, indices, instanceBufferOffset);
+	DrawIndexed(frame->CommandBuffer, indexCount, count);
 }
 
 void VulkanRenderer::BeginRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo)

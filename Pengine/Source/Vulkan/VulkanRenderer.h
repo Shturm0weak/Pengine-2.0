@@ -24,7 +24,9 @@ namespace Pengine::Vk
 		virtual void EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) override;
 
 		virtual void Render(
-			const std::shared_ptr<Mesh>& mesh,
+			const std::shared_ptr<Buffer>& vertices,
+			const std::shared_ptr<Buffer>& indices,
+			const int indexCount,
 			const std::shared_ptr<Pipeline>& pipeline,
 			const std::shared_ptr<Buffer>& instanceBuffer,
 			size_t instanceBufferOffset, size_t count,

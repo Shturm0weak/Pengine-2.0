@@ -3,6 +3,7 @@
 #include "Core.h"
 #include "Asset.h"
 #include "Entity.h"
+#include "Visualizer.h"
 
 namespace Pengine
 {
@@ -37,12 +38,12 @@ namespace Pengine
 
 		entt::registry& GetRegistry() { return m_Registry; }
 
-		std::vector<class PointLight*> m_PointLights;
+		Visualizer& GetVisualizer() { return m_Visualizer; }
 	private:
 		std::unordered_map<std::string, std::shared_ptr<Entity>> m_EntitiesByUUID;
 		std::vector<std::shared_ptr<Entity>> m_Entities;
-		
 		entt::registry m_Registry;
+		Visualizer m_Visualizer;
 
 		std::string m_Tag = none;
 
