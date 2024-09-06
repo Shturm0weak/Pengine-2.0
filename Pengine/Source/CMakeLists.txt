@@ -196,3 +196,15 @@ elseif (UNIX)
 		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
 endif ()
+
+if (WIN32)
+	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>
+		${CMAKE_BINARY_DIR}/${APP_NAME}/Build/$<CONFIG>)
+elseif (UNIX)
+	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build
+		${CMAKE_BINARY_DIR}/${APP_NAME}/Build)
+endif ()

@@ -25,15 +25,3 @@ target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor)
 if (MSVC)
 	set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}")
 endif ()
-
-if (WIN32)
-	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
-		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_BINARY_DIR}/Pengine/Build/$<CONFIG>
-		${CMAKE_BINARY_DIR}/${APP_NAME}/Build/$<CONFIG>)
-elseif (UNIX)
-	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
-		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_BINARY_DIR}/Pengine/Build
-		${CMAKE_BINARY_DIR}/${APP_NAME}/Build)
-endif ()
