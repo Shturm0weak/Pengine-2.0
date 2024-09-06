@@ -11,6 +11,11 @@ namespace Pengine
 	class PENGINE_API Scene : public Asset, public std::enable_shared_from_this<Scene>
 	{
 	public:
+		struct Settings
+		{
+			bool m_DrawBoundingBoxes = false;
+		};
+
 		Scene(const std::string& name, const std::filesystem::path& filepath);
 		Scene(const Scene& scene);
 		~Scene();
@@ -39,11 +44,15 @@ namespace Pengine
 		entt::registry& GetRegistry() { return m_Registry; }
 
 		Visualizer& GetVisualizer() { return m_Visualizer; }
+
+		Settings& GetSettings() { return m_Settings; }
+
 	private:
 		std::unordered_map<std::string, std::shared_ptr<Entity>> m_EntitiesByUUID;
 		std::vector<std::shared_ptr<Entity>> m_Entities;
 		entt::registry m_Registry;
 		Visualizer m_Visualizer;
+		Settings m_Settings;
 
 		std::string m_Tag = none;
 

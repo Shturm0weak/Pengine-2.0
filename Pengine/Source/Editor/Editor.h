@@ -43,6 +43,8 @@ namespace Pengine
 
 		void Hierarchy(const std::shared_ptr<Scene>& scene);
 
+		void SceneInfo(const std::shared_ptr<Scene>& scene);
+
 		void DrawScene(const std::shared_ptr<Scene>& scene);
 
 		void DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags flags);

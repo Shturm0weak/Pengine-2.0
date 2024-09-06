@@ -40,6 +40,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 
 	MainMenuBar();
 	Hierarchy(scene);
+	SceneInfo(scene);
 	Properties(scene);
 	AssetBrowser(scene);
 
@@ -609,6 +610,28 @@ void Editor::Hierarchy(const std::shared_ptr<Scene>& scene)
 			}
 
 			GameObjectPopUpMenu(scene);
+		}
+
+		ImGui::End();
+	}
+}
+
+void Editor::SceneInfo(const std::shared_ptr<Scene>& scene)
+{
+	if (ImGui::Begin("Scene"))
+	{
+		if (scene)
+		{
+			ImGui::Text("Name: %s", scene->GetName().c_str());
+			ImGui::Text("Filepath: %s", scene->GetFilepath().string().c_str());
+			ImGui::Text("Tag: %s", scene->GetTag().c_str());
+			ImGui::Text("Entities Count: %u", scene->GetEntities().size());
+
+			bool drawBoundingBoxes = scene->GetSettings().m_DrawBoundingBoxes;
+			if (ImGui::Checkbox("Draw Bounding Boxes", &drawBoundingBoxes))
+			{
+				scene->GetSettings().m_DrawBoundingBoxes = drawBoundingBoxes;
+			}
 		}
 
 		ImGui::End();

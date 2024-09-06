@@ -1895,6 +1895,7 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 
 	out << YAML::BeginMap;
 
+	// Viewports.
 	out << YAML::Key << "Viewports";
 	out << YAML::Value << YAML::BeginSeq;
 
@@ -1910,7 +1911,18 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 	}
 
 	out << YAML::EndSeq;
+	//
 
+	// Settings.
+	out << YAML::Key << "Settings";
+	out << YAML::Value << YAML::BeginMap;
+
+	out << YAML::Key << "DrawBoundingBoxes" << YAML::Value << scene->GetSettings().m_DrawBoundingBoxes;
+
+	out << YAML::EndMap;
+	//
+
+	// Entities.
 	out << YAML::Key << "Scene";
 	out << YAML::Value << YAML::BeginSeq;
 
@@ -1920,6 +1932,7 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 	}
 
 	out << YAML::EndSeq;
+	//
 
 	out << YAML::EndMap;
 
@@ -1999,6 +2012,14 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path&
 			{
 				viewport->SetCamera(camera);
 			}
+		}
+	}
+
+	if (const auto& settingsData = data["Settings"])
+	{
+		if (const auto& drawBoundingBoxesData = settingsData["DrawBoundingBoxes"])
+		{
+			scene->GetSettings().m_DrawBoundingBoxes = drawBoundingBoxesData.as<bool>();
 		}
 	}
 

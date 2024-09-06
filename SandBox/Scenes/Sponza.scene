@@ -1,6 +1,8 @@
 Viewports:
   - Viewport: Main
     Camera: 946d6a93-427b-4f9f-9cf8-fb8756d275ce
+Settings:
+  DrawBoundingBoxes: false
 Scene:
   - UUID: 946d6a93-427b-4f9f-9cf8-fb8756d275ce
     Name: Camera

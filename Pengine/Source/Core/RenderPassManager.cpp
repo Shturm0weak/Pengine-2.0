@@ -160,10 +160,14 @@ void RenderPassManager::CreateGBuffer()
 				continue;
 			}
 
-			const glm::mat4 transformMat4 = transform.GetTransform();
-			const glm::mat4 positionMat4 = transform.GetPositionMat4(Transform::System::LOCAL);
-			const glm::mat4 rotationMat4 = transform.GetRotationMat4(Transform::System::LOCAL);
-			const glm::mat4 scaleMat4 = transform.GetScaleMat4(Transform::System::LOCAL);
+			if (scene->GetSettings().m_DrawBoundingBoxes)
+			{
+				const glm::mat4& transformMat4 = transform.GetTransform();
+				const BoundingBox& box = r3d.mesh->GetBoundingBox();
+				const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
+
+				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
+			}
 
 			materialMeshGameObjects[r3d.material->GetBaseMaterial()][r3d.material][r3d.mesh].emplace_back(entity);
 
