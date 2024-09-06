@@ -80,7 +80,7 @@ void EntryPoint::Run() const
 					{
 						continue;
 					}
-					viewport->Update(renderer->GetRenderPassFrameBuffer(Deferred)->GetAttachment(0));
+					viewport->Update(renderer->GetRenderPassFrameBuffer(Final)->GetAttachment(0));
 				}
 				else
 				{

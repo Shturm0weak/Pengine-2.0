@@ -13,6 +13,7 @@ namespace Pengine
 	const std::string DefaultReflection = "DefaultReflection";
 	const std::string Atmosphere = "Atmosphere";
 	const std::string Transparent = "Transparent";
+	const std::string Final = "Final";
 	
 	class FrameBuffer;
 	class Window;

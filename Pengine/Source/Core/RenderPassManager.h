@@ -14,7 +14,8 @@ namespace Pengine
 		Atmosphere,
 		GBuffer,
 		Deferred,
-		Transparent
+		Transparent,
+		Final
 	};
 
 	class PENGINE_API RenderPassManager
@@ -59,6 +60,8 @@ namespace Pengine
 		void CreateAtmosphere();
 
 		void CreateTransparent();
+
+		void CreateFinal();
 
 		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
 

@@ -1,0 +1,27 @@
+Basemat:
+  Pipelines:
+    - RenderPass: Final
+      DepthTest: false
+      DepthWrite: false
+      CullMode: None
+      PolygonMode: Fill
+      TopologyMode: TriangleList
+      Vertex: Shaders/Final.vert
+      Fragment: Shaders/Final.frag
+      DescriptorSets:
+        - Type: BaseMaterial
+          Set: 0
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Names:
+            - positionA
+            - uvA
+            - normalA
+            - tangentA
+            - bitangentA
+      ColorBlendStates:
+        - BlendEnabled: false
+      Uniforms:
+        - Name: deferredTexture
+          RenderTarget: "Deferred[0]"

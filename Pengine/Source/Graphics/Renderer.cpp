@@ -149,4 +149,10 @@ void Renderer::Resize(const glm::ivec2& size) const
 	{
 		frameBuffer->Resize(size);
 	}
+
+	if (const std::shared_ptr<FrameBuffer> frameBuffer =
+		GetRenderPassFrameBuffer(Final))
+	{
+		frameBuffer->Resize(size);
+	}
 }

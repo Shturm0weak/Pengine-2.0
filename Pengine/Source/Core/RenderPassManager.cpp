@@ -86,6 +86,7 @@ RenderPassManager::RenderPassManager()
 	CreateDeferred();
 	CreateAtmosphere();
 	CreateTransparent();
+	CreateFinal();
 }
 
 void RenderPassManager::CreateGBuffer()
@@ -758,6 +759,78 @@ void RenderPassManager::CreateTransparent()
 		{
 			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(InstanceData));
 		}
+	};
+
+	Create(createInfo);
+}
+
+void RenderPassManager::CreateFinal()
+{
+	RenderPass::ClearDepth clearDepth{};
+	clearDepth.clearDepth = 1.0f;
+	clearDepth.clearStencil = 0;
+
+	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	RenderPass::AttachmentDescription color{};
+	color.format = Format::R8G8B8A8_SRGB;
+	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+
+	RenderPass::CreateInfo createInfo{};
+	createInfo.type = Final;
+	createInfo.clearColors = { clearColor };
+	createInfo.clearDepths = { clearDepth };
+	createInfo.attachmentDescriptions = { color };
+
+	const std::shared_ptr<Mesh> planeMesh = nullptr;
+
+	createInfo.renderCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
+	{
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
+		if (!plane)
+		{
+			return;
+		}
+
+		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
+
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Final.basemat");
+		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+		if (!pipeline)
+		{
+			return;
+		}
+
+		std::shared_ptr<UniformWriter> uniformWriter = baseMaterial->GetUniformWriter(renderPassName);
+
+		for (const auto& [name, renderTargetInfo] : pipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
+		{
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
+			uniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
+		}
+
+		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
+
+		for (const auto& uniformWriter : uniformWriters)
+		{
+			uniformWriter->Flush();
+
+			for (const auto& [location, buffer] : uniformWriter->GetBuffersByLocation())
+			{
+				buffer->Flush();
+			}
+		}
+
+		renderInfo.renderer->Render(
+			plane->GetVertexBuffer(),
+			plane->GetIndexBuffer(),
+			plane->GetIndexCount(),
+			pipeline,
+			nullptr,
+			0,
+			1,
+			uniformWriters,
+			renderInfo.submitInfo);
 	};
 
 	Create(createInfo);
