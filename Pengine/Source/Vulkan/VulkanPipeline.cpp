@@ -444,6 +444,7 @@ std::string VulkanPipeline::CompileShaderModule(const std::string& filepath, con
 		shaderc::Compiler compiler{};
 		shaderc::CompileOptions options{};
 		options.SetOptimizationLevel(shaderc_optimization_level_zero);
+		options.SetGenerateDebugInfo();
 		options.SetIncluder(std::make_unique<ShaderIncluder>());
 
 		shaderc::SpvCompilationResult module =

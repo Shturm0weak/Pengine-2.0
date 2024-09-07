@@ -8,6 +8,7 @@ layout(set = 1, binding = 0) uniform sampler2D albedoTexture;
 layout(set = 1, binding = 1) uniform sampler2D normalTexture;
 layout(set = 1, binding = 2) uniform sampler2D positionTexture;
 layout(set = 1, binding = 3) uniform sampler2D shadingTexture;
+layout(set = 1, binding = 4) uniform sampler2D ssaoTexture;
 
 #include "Shaders/Includes/PointLight.h"
 #include "Shaders/Includes/DirectionalLight.h"
@@ -18,7 +19,7 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 	Camera camera;
 };
 
-layout(set = 1, binding = 4) uniform Lights
+layout(set = 1, binding = 5) uniform Lights
 {
 	PointLight pointLights[32];
 	int pointLightsCount;
@@ -33,6 +34,7 @@ void main()
 	vec4 normal = texture(normalTexture, uv);
 	vec3 position = texture(positionTexture, uv).xyz;
 	vec3 shading = texture(shadingTexture, uv).xyz;
+	vec3 ssao = texture(ssaoTexture, uv).xyz;
 
 	vec3 basicReflectivity = mix(vec3(0.05), albedoColor, shading.x);
 	vec3 viewDirection = normalize(camera.position - position);
@@ -61,6 +63,8 @@ void main()
 		{
 			result += CalculatePointLight(pointLights[i], position, normal.xyz) * albedoColor;
 		}
+
+		result *= ssao;
 	}
 
 	outColor = vec4(result, 1.0f);

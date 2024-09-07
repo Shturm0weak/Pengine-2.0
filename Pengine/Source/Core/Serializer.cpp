@@ -1922,6 +1922,14 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 	out << YAML::EndMap;
 	//
 
+	// Graphics Settings.
+	const std::string& graphicsSettingsUuid = Utils::FindUuid(scene->GetGraphicsSettings().GetFilepath());
+	if (!graphicsSettingsUuid.empty())
+	{
+		out << YAML::Key << "GraphicsSettings" << YAML::Value << graphicsSettingsUuid;
+	}
+	//
+
 	// Entities.
 	out << YAML::Key << "Scene";
 	out << YAML::Value << YAML::BeginSeq;
@@ -2023,9 +2031,100 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path&
 		}
 	}
 
+	if (const auto& graphicsSettingsUUIDData = data["GraphicsSettings"])
+	{
+		const std::filesystem::path& graphicsSettingsFilepath = Utils::Find(graphicsSettingsUUIDData.as<std::string>(), filepathByUuid);
+		if (!graphicsSettingsFilepath.empty())
+		{
+			scene->SetGraphicsSettings(DeserializeGraphicsSettings(graphicsSettingsFilepath));
+		}
+	}
+
 	Logger::Log("Scene:" + filepath.string() + " has been deserialized!", GREEN);
 
 	return scene;
+}
+
+void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSettings)
+{
+	YAML::Emitter out;
+
+	out << YAML::BeginMap;
+
+	// SSAO.
+	out << YAML::Key << "SSAO";
+	out << YAML::Value << YAML::BeginMap;
+
+	out << YAML::Key << "AoScale" << YAML::Value << graphicsSettings.ssao.aoScale;
+	out << YAML::Key << "Bias" << YAML::Value << graphicsSettings.ssao.bias;
+	out << YAML::Key << "KernelSize" << YAML::Value << graphicsSettings.ssao.kernelSize;
+	out << YAML::Key << "NoiseSize" << YAML::Value << graphicsSettings.ssao.noiseSize;
+	out << YAML::Key << "Radius" << YAML::Value << graphicsSettings.ssao.radius;
+
+	out << YAML::EndMap;
+	//
+
+	out << YAML::EndMap;
+
+	std::ofstream fout(graphicsSettings.GetFilepath());
+	fout << out.c_str();
+	fout.close();
+
+	Logger::Log("Scene:" + graphicsSettings.GetFilepath().string() + " has been serialized!", GREEN);
+}
+
+GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::path& filepath)
+{
+	GraphicsSettings graphicsSettings(Utils::GetFilename(filepath), filepath);
+
+	if (filepath.empty() || filepath == none || Utils::GetFileFormat(filepath) != FileFormats::GraphicsSettings())
+	{
+		Logger::Error(filepath.string() + ":Failed to load scene! Filepath is incorrect!");
+		return graphicsSettings;
+	}
+
+	std::ifstream stream(filepath);
+	std::stringstream stringStream;
+
+	stringStream << stream.rdbuf();
+
+	stream.close();
+
+	YAML::Node data = YAML::LoadMesh(stringStream.str());
+	if (!data)
+	{
+		FATAL_ERROR(filepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
+	}
+
+	if (const auto& ssaoData = data["SSAO"])
+	{
+		if (const auto& aoScaleData = ssaoData["AoScale"])
+		{
+			graphicsSettings.ssao.aoScale = aoScaleData.as<float>();
+		}
+
+		if (const auto& biasData = ssaoData["Bias"])
+		{
+			graphicsSettings.ssao.bias = biasData.as<float>();
+		}
+
+		if (const auto& kernelSizeData = ssaoData["KernelSize"])
+		{
+			graphicsSettings.ssao.kernelSize = kernelSizeData.as<int>();
+		}
+
+		if (const auto& noiseSizeData = ssaoData["NoiseSize"])
+		{
+			graphicsSettings.ssao.noiseSize = noiseSizeData.as<int>();
+		}
+
+		if (const auto& radiusData = ssaoData["Radius"])
+		{
+			graphicsSettings.ssao.radius = radiusData.as<float>();
+		}
+	}
+
+	return graphicsSettings;
 }
 
 void Serializer::ParseUniformValues(

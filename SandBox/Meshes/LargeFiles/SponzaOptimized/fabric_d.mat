@@ -37,9 +37,6 @@ Mat:
             - Name: material.useNormalMap
               Value: 0
               Type: int
-            - Name: material.isTransparent
-              Value: 0
-              Type: int
     - RenderPass: Transparent
       Uniforms:
         []

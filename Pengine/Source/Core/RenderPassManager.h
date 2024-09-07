@@ -2,6 +2,7 @@
 
 #include "Core.h"
 #include "LineRenderer.h"
+#include "SSAORenderer.h"
 
 #include "../Graphics/RenderPass.h"
 
@@ -13,6 +14,8 @@ namespace Pengine
 	{
 		Atmosphere,
 		GBuffer,
+		SSAO,
+		SSAOBlur,
 		Deferred,
 		Transparent,
 		Final
@@ -63,9 +66,14 @@ namespace Pengine
 
 		void CreateFinal();
 
+		void CreateSSAO();
+
+		void CreateSSAOBlur();
+
 		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
 
 		LineRenderer m_LineRenderer;
+		SSAORenderer m_SSAORenderer;
 	};
 
 }

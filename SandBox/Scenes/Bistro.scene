@@ -1,0 +1,34 @@
+Viewports:
+  - Viewport: Main
+    Camera: c4c2d917-05b8-47e5-8fa2-d55c5b704a9b
+Settings:
+  DrawBoundingBoxes: false
+Scene:
+  - UUID: c4c2d917-05b8-47e5-8fa2-d55c5b704a9b
+    Name: Camera
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [-3.84679008, 1.50972712, -1.71031415]
+      Rotation: [-0.353947401, -2.21362376, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Camera:
+      Fov: 1.57079637
+      Type: 1
+      ZNear: 0.100000001
+      ZFar: 1000
+  - UUID: 336532bc-f4c4-439e-a794-218b42bf11dd
+    Name: Sun
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0.820304751, 0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    DirectionalLight:
+      Color: [1, 1, 1]
+      Intensity: 10

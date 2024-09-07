@@ -74,6 +74,11 @@ std::shared_ptr<Texture> TextureManager::GetWhite() const
 	return GetTexture("White");
 }
 
+void TextureManager::Delete(const std::filesystem::path& filepath)
+{
+	m_TexturesByFilepath.erase(filepath);
+}
+
 void TextureManager::ShutDown()
 {
 	m_TexturesByFilepath.clear();

@@ -26,6 +26,7 @@ set(CORE_SOURCES
 	Core/Entity.cpp Core/Entity.h
 	Core/EntryPoint.cpp Core/EntryPoint.h
 	Core/FileFormatNames.h
+	Core/GraphicsSettings.h
 	Core/Input.cpp Core/Input.h
 	Core/KeyCode.h
 	Core/LineRenderer.cpp Core/LineRenderer.h
@@ -37,6 +38,7 @@ set(CORE_SOURCES
 	Core/Scene.cpp Core/Scene.h
 	Core/SceneManager.cpp Core/SceneManager.h
 	Core/Serializer.cpp Core/Serializer.h
+	Core/SSAORenderer.cpp Core/SSAORenderer.h
 	Core/TextureManager.cpp Core/TextureManager.h
 	Core/Time.cpp Core/Time.h
 	Core/Timer.cpp Core/Timer.h

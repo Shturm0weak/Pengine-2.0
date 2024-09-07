@@ -1,0 +1,33 @@
+Basemat:
+  Pipelines:
+    - RenderPass: SSAO
+      DepthTest: false
+      DepthWrite: false
+      CullMode: None
+      PolygonMode: Fill
+      TopologyMode: TriangleList
+      Vertex: Shaders/SSAO.vert
+      Fragment: Shaders/SSAO.frag
+      DescriptorSets:
+        - Type: Renderer
+          RenderPass: DefaultReflection
+          Set: 0
+        - Type: Renderer
+          RenderPass: SSAO
+          Set: 1
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Names:
+            - positionA
+            - uvA
+            - normalA
+            - tangentA
+            - bitangentA
+      ColorBlendStates:
+        - BlendEnabled: false
+      Uniforms:
+        - Name: normalTexture
+          RenderTarget: "GBuffer[1]"
+        - Name: positionTexture
+          RenderTarget: "GBuffer[2]"

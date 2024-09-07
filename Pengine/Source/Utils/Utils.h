@@ -106,6 +106,16 @@ namespace Pengine::Utils
 	 	return string;
 	}
 
+	inline std::wstring Erase(std::wstring string, const std::wstring& what)
+	{
+		if (const size_t index = string.find(what); index != std::wstring::npos)
+		{
+			return string.erase(index, index + what.size());
+		}
+
+		return string;
+	}
+
 	inline size_t StringTypeToSize(const std::string& type)
 	{
 		if (type == "int")

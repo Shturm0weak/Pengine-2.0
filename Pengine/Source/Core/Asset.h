@@ -20,6 +20,27 @@ namespace Pengine
 			, m_Filepath(asset.GetFilepath())
 		{}
 
+		Asset(Asset&& asset) noexcept
+			: m_Name(std::move(asset.m_Name))
+			, m_Filepath(std::move(asset.m_Filepath))
+		{}
+
+		Asset& operator=(const Asset& asset)
+		{
+			m_Name = asset.GetName();
+			m_Filepath = asset.GetFilepath();
+
+			return *this;
+		}
+
+		Asset& operator=(Asset&& asset) noexcept
+		{
+			m_Name = std::move(asset.m_Name);
+			m_Filepath = std::move(asset.m_Filepath);
+
+			return *this;
+		}
+
 		[[nodiscard]] const std::string& GetName() const { return m_Name; }
 
 		[[nodiscard]] const std::filesystem::path& GetFilepath() const { return m_Filepath; }

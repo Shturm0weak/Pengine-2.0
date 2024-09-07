@@ -37,6 +37,3 @@ Mat:
             - Name: material.useNormalMap
               Type: int
               Value: 0
-            - Name: material.isTransparent
-              Type: int
-              Value: 0

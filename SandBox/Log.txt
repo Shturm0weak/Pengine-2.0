@@ -1,123 +1,393 @@
-[Fri Sep  6 03:53:25 2024] Engine config has been loaded!
-[Fri Sep  6 03:53:25 2024] Graphics API:2
-[Fri Sep  6 03:53:25 2024] ERROR:Validation layer: loader_add_layer_properties: 'layers' tag not supported until file version 1.0.1, but C:\WINDOWS\System32\DriverStore\FileRepository\nv_dispi.inf_amd64_5714f0dca6485379\nv-vk64.json is reporting version 1
-[Fri Sep  6 03:53:25 2024] Available extensions:
-[Fri Sep  6 03:53:25 2024] 	VK_KHR_device_group_creation
-[Fri Sep  6 03:53:25 2024] 	VK_KHR_external_fence_capabilities
-[Fri Sep  6 03:53:25 2024] 	VK_KHR_external_memory_capabilities
-[Fri Sep  6 03:53:25 2024] 	VK_KHR_external_semaphore_capabilities
-[Fri Sep  6 03:53:25 2024] 	VK_KHR_get_physical_device_properties2
-[Fri Sep  6 03:53:25 2024] 	VK_KHR_get_surface_capabilities2
-[Fri Sep  6 03:53:25 2024] 	VK_KHR_surface
-[Fri Sep  6 03:53:25 2024] 	VK_KHR_surface_protected_capabilities
-[Fri Sep  6 03:53:25 2024] 	VK_KHR_win32_surface
-[Fri Sep  6 03:53:25 2024] 	VK_EXT_debug_report
-[Fri Sep  6 03:53:25 2024] 	VK_EXT_debug_utils
-[Fri Sep  6 03:53:25 2024] 	VK_EXT_surface_maintenance1
-[Fri Sep  6 03:53:25 2024] 	VK_EXT_swapchain_colorspace
-[Fri Sep  6 03:53:25 2024] 	VK_NV_external_memory_capabilities
-[Fri Sep  6 03:53:25 2024] 	VK_KHR_portability_enumeration
-[Fri Sep  6 03:53:25 2024] 	VK_LUNARG_direct_driver_loading
-[Fri Sep  6 03:53:25 2024] Required extensions:
-[Fri Sep  6 03:53:25 2024] 	VK_KHR_surface
-[Fri Sep  6 03:53:25 2024] 	VK_KHR_win32_surface
-[Fri Sep  6 03:53:25 2024] 	VK_EXT_debug_utils
-[Fri Sep  6 03:53:25 2024] Device count: 1
-[Fri Sep  6 03:53:25 2024] Physical device: NVIDIA GeForce RTX 3060 Ti
-[Fri Sep  6 03:53:25 2024] Texture:Editor/Images\FileIcon.png has been loaded!
-[Fri Sep  6 03:53:25 2024] Texture:Editor/Images\FolderIcon.png has been loaded!
-[Fri Sep  6 03:53:25 2024] Texture:Editor/Images\MaterialIcon.png has been loaded!
-[Fri Sep  6 03:53:25 2024] Texture:Editor/Images\MeshIcon.png has been loaded!
-[Fri Sep  6 03:53:25 2024] Texture:Editor/Images\MetaIcon.png has been loaded!
-[Fri Sep  6 03:53:25 2024] Texture:Editor/Images\PlayButton.png has been loaded!
-[Fri Sep  6 03:53:25 2024] Texture:Editor/Images\StopButton.png has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_378_sponza_378_Material__25.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] BaseMaterial:Materials/MeshBase.basemat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\Material__25.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\lion.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_378_sponza_378_Material__298.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\Material__298.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\background.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_257_sponza_257_Material__47.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\Material__47.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_369_sponza_369_Material__57.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\Material__57.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\vase_plant.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_39_sponza_39_arch.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\arch.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_arch_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_382_sponza_382_bricks.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\bricks.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\spnza_bricks_a_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_38_sponza_38_ceiling.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\ceiling.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_ceiling_a_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_339_sponza_339_chain.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\chain.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\chain_texture.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_10_sponza_10_column_a.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\column_a.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_column_a_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_141_sponza_141_column_b.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\column_b.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_column_b_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_83_sponza_83_column_c.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\column_c.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_column_c_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_72_sponza_72_details.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\details.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_details_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_288_sponza_288_fabric_a.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\fabric_a.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_fabric_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_325_sponza_325_fabric_c.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\fabric_c.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_curtain_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_289_sponza_289_fabric_d.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\fabric_d.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_fabric_blue_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_285_sponza_285_fabric_e.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\fabric_e.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_fabric_green_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_327_sponza_327_fabric_f.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\fabric_f.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_curtain_green_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_326_sponza_326_fabric_g.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\fabric_g.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_curtain_blue_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_271_sponza_271_flagpole.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\flagpole.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_flagpole_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_18_sponza_18_floor.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\floor.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_floor_a_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_275_sponza_275_leaf.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\leaf.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_thorn_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_381_sponza_381_roof.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\roof.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_roof_diff.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_373_sponza_373_vase.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\vase.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\vase_dif.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_344_sponza_344_vase_hanging.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\vase_hanging.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\vase_hanging.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_369_sponza_369_vase_round.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\vase_round.mat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\vase_round.tga has been loaded!
-[Fri Sep  6 03:53:27 2024] Scene:D:\Pengine\SandBox\Scenes\Sponza.scene has been deserialized!
-[Fri Sep  6 03:53:27 2024] BaseMaterial:Materials/DefaultReflection.basemat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Mesh:Meshes/Plane.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] BaseMaterial:Materials/Atmosphere.basemat has been deserialized!
-[Fri Sep  6 03:53:27 2024] BaseMaterial:Materials/Line.basemat has been deserialized!
-[Fri Sep  6 03:53:27 2024] Mesh:Meshes/Cube.mesh has been deserialized!
-[Fri Sep  6 03:53:27 2024] BaseMaterial:Materials/SkyBox.basemat has been deserialized!
-[Fri Sep  6 03:53:27 2024] BaseMaterial:Materials/Deferred.basemat has been deserialized!
-[Fri Sep  6 03:53:27 2024] BaseMaterial:Materials/Final.basemat has been deserialized!
-[Fri Sep  6 03:53:30 2024] Scene:D:\Pengine\SandBox\Scenes\Sponza.scene has been serialized!
-[Fri Sep  6 03:53:31 2024] Scene:D:\Pengine\SandBox\Scenes\Sponza.scene has been deserialized!
-[Fri Sep  6 03:53:33 2024] Scene:D:\Pengine\SandBox\Scenes\Sponza.scene has been serialized!
-[Fri Sep  6 03:53:34 2024] Scene:D:\Pengine\SandBox\Scenes\Sponza.scene has been deserialized!
-[Fri Sep  6 03:53:37 2024] Scene:D:\Pengine\SandBox\Scenes\Sponza.scene has been serialized!
-[Fri Sep  6 03:53:37 2024] Scene:D:\Pengine\SandBox\Scenes\Sponza.scene has been deserialized!
+[Sun Sep  8 00:51:08 2024] Engine config has been loaded!
+[Sun Sep  8 00:51:08 2024] Graphics API:2
+[Sun Sep  8 00:51:08 2024] ERROR:Validation layer: loader_add_layer_properties: 'layers' tag not supported until file version 1.0.1, but C:\WINDOWS\System32\DriverStore\FileRepository\nv_dispi.inf_amd64_5714f0dca6485379\nv-vk64.json is reporting version 1
+[Sun Sep  8 00:51:08 2024] Available extensions:
+[Sun Sep  8 00:51:08 2024] 	VK_KHR_device_group_creation
+[Sun Sep  8 00:51:08 2024] 	VK_KHR_external_fence_capabilities
+[Sun Sep  8 00:51:08 2024] 	VK_KHR_external_memory_capabilities
+[Sun Sep  8 00:51:08 2024] 	VK_KHR_external_semaphore_capabilities
+[Sun Sep  8 00:51:08 2024] 	VK_KHR_get_physical_device_properties2
+[Sun Sep  8 00:51:08 2024] 	VK_KHR_get_surface_capabilities2
+[Sun Sep  8 00:51:08 2024] 	VK_KHR_surface
+[Sun Sep  8 00:51:08 2024] 	VK_KHR_surface_protected_capabilities
+[Sun Sep  8 00:51:08 2024] 	VK_KHR_win32_surface
+[Sun Sep  8 00:51:08 2024] 	VK_EXT_debug_report
+[Sun Sep  8 00:51:08 2024] 	VK_EXT_debug_utils
+[Sun Sep  8 00:51:08 2024] 	VK_EXT_surface_maintenance1
+[Sun Sep  8 00:51:08 2024] 	VK_EXT_swapchain_colorspace
+[Sun Sep  8 00:51:08 2024] 	VK_NV_external_memory_capabilities
+[Sun Sep  8 00:51:08 2024] 	VK_KHR_portability_enumeration
+[Sun Sep  8 00:51:08 2024] 	VK_LUNARG_direct_driver_loading
+[Sun Sep  8 00:51:08 2024] Required extensions:
+[Sun Sep  8 00:51:08 2024] 	VK_KHR_surface
+[Sun Sep  8 00:51:08 2024] 	VK_KHR_win32_surface
+[Sun Sep  8 00:51:08 2024] 	VK_EXT_debug_utils
+[Sun Sep  8 00:51:08 2024] Device count: 1
+[Sun Sep  8 00:51:08 2024] Physical device: NVIDIA GeForce RTX 3060 Ti
+[Sun Sep  8 00:51:08 2024] Texture:Editor/Images\FileIcon.png has been loaded!
+[Sun Sep  8 00:51:08 2024] Texture:Editor/Images\FolderIcon.png has been loaded!
+[Sun Sep  8 00:51:08 2024] Texture:Editor/Images\MaterialIcon.png has been loaded!
+[Sun Sep  8 00:51:08 2024] Texture:Editor/Images\MeshIcon.png has been loaded!
+[Sun Sep  8 00:51:08 2024] Texture:Editor/Images\MetaIcon.png has been loaded!
+[Sun Sep  8 00:51:08 2024] Texture:Editor/Images\PlayButton.png has been loaded!
+[Sun Sep  8 00:51:08 2024] Texture:Editor/Images\StopButton.png has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_378_sponza_378_Material__25.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] BaseMaterial:Materials/MeshBase.basemat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\Material__25.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\lion.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_378_sponza_378_Material__298.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\Material__298.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\background.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_257_sponza_257_Material__47.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\Material__47.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_369_sponza_369_Material__57.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\Material__57.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\vase_plant.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_39_sponza_39_arch.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\arch.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_arch_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_382_sponza_382_bricks.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\bricks.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\spnza_bricks_a_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_38_sponza_38_ceiling.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\ceiling.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_ceiling_a_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_339_sponza_339_chain.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\chain.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\chain_texture.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_10_sponza_10_column_a.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\column_a.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_column_a_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_141_sponza_141_column_b.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\column_b.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_column_b_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_83_sponza_83_column_c.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\column_c.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_column_c_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_72_sponza_72_details.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\details.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_details_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_288_sponza_288_fabric_a.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\fabric_a.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_fabric_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_325_sponza_325_fabric_c.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\fabric_c.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_curtain_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_289_sponza_289_fabric_d.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\fabric_d.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_fabric_blue_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_285_sponza_285_fabric_e.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\fabric_e.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_fabric_green_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_327_sponza_327_fabric_f.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\fabric_f.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_curtain_green_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_326_sponza_326_fabric_g.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\fabric_g.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_curtain_blue_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_271_sponza_271_flagpole.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\flagpole.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_flagpole_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_18_sponza_18_floor.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\floor.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_floor_a_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_275_sponza_275_leaf.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\leaf.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_thorn_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_381_sponza_381_roof.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\roof.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\sponza_roof_diff.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_373_sponza_373_vase.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\vase.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\vase_dif.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_344_sponza_344_vase_hanging.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\vase_hanging.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\vase_hanging.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Mesh:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\sponza_369_sponza_369_vase_round.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] Material:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\vase_round.mat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Texture:D:\Pengine\SandBox\Meshes\LargeFiles\SponzaOptimized\textures\vase_round.tga has been loaded!
+[Sun Sep  8 00:51:10 2024] Scene:D:\Pengine\SandBox\Scenes\Sponza.scene has been deserialized!
+[Sun Sep  8 00:51:10 2024] BaseMaterial:Materials/DefaultReflection.basemat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Mesh:Meshes/Plane.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] BaseMaterial:Materials/Atmosphere.basemat has been deserialized!
+[Sun Sep  8 00:51:10 2024] BaseMaterial:Materials/Line.basemat has been deserialized!
+[Sun Sep  8 00:51:10 2024] Mesh:Meshes/Cube.mesh has been deserialized!
+[Sun Sep  8 00:51:10 2024] BaseMaterial:Materials/SkyBox.basemat has been deserialized!
+[Sun Sep  8 00:51:10 2024] BaseMaterial:Materials/SSAO.basemat has been deserialized!
+[Sun Sep  8 00:51:10 2024] BaseMaterial:Materials/SSAOBlur.basemat has been deserialized!
+[Sun Sep  8 00:51:10 2024] BaseMaterial:Materials/Deferred.basemat has been deserialized!
+[Sun Sep  8 00:51:10 2024] BaseMaterial:Materials/Final.basemat has been deserialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:14 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!
+[Sun Sep  8 00:51:15 2024] Scene:D:\Pengine\SandBox\Configs\GraphicsSettings.gs has been serialized!

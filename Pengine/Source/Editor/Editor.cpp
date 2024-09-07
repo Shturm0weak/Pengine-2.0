@@ -43,6 +43,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	SceneInfo(scene);
 	Properties(scene);
 	AssetBrowser(scene);
+	//GraphicsSettings();
 
 	m_MaterialMenu.Update(*this);
 	m_CreateFileMenu.Update();
@@ -632,6 +633,8 @@ void Editor::SceneInfo(const std::shared_ptr<Scene>& scene)
 			{
 				scene->GetSettings().m_DrawBoundingBoxes = drawBoundingBoxes;
 			}
+
+			GraphicsSettingsInfo(scene->GetGraphicsSettings());
 		}
 
 		ImGui::End();
@@ -821,6 +824,42 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene)
 			ImGui::NewLine();
 		}
 		ImGui::End();
+	}
+}
+
+void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
+{
+	if (ImGui::CollapsingHeader("Graphics settings"))
+	{
+		Indent indent;
+
+		ImGui::Text("Filepath: %s", graphicsSettings.GetFilepath().string().c_str());
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+			{
+				std::wstring filepath((const wchar_t*)payload->Data);
+				filepath.resize(payload->DataSize / sizeof(wchar_t));
+				graphicsSettings = Serializer::DeserializeGraphicsSettings(filepath);
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		bool isChanged = 0;
+		if (ImGui::CollapsingHeader("SSAO"))
+		{
+			isChanged += ImGui::SliderFloat("Bias", &graphicsSettings.ssao.bias, 0.0f, 10.0f);
+			isChanged += ImGui::SliderFloat("Radius", &graphicsSettings.ssao.radius, 0.0f, 1.0f);
+			isChanged += ImGui::SliderInt("Kernel Size", &graphicsSettings.ssao.kernelSize, 2, 64);
+			isChanged += ImGui::SliderInt("Noise Size", &graphicsSettings.ssao.noiseSize, 1, 64);
+			isChanged += ImGui::SliderFloat("AO Scale", &graphicsSettings.ssao.aoScale, 0.0f, 10.0f);
+		}
+
+		if (std::filesystem::exists(graphicsSettings.GetFilepath()) && isChanged)
+		{
+			Serializer::SerializeGraphicsSettings(graphicsSettings);
+		}
 	}
 }
 
@@ -1132,10 +1171,10 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 
 			if (ImGui::BeginDragDropSource())
 			{
-				std::string dragDropSource = path.string();
-				const char* assetPath = dragDropSource.data();
-				const size_t size = strlen(assetPath);
-				ImGui::SetDragDropPayload("ASSETS_BROWSER_ITEM", assetPath, size);
+				std::wstring dragDropSource = path.wstring();
+				const wchar_t* assetPath = dragDropSource.data();
+				const size_t size = wcslen(assetPath);
+				ImGui::SetDragDropPayload("ASSETS_BROWSER_ITEM", assetPath, size * sizeof(wchar_t));
 				ImGui::EndDragDropSource();
 			}
 
@@ -1469,12 +1508,12 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
 			{
-				std::string path((const char*)payload->Data);
-				path.resize(payload->DataSize);
+				std::wstring filepath((const wchar_t*)payload->Data);
+				filepath.resize(payload->DataSize / sizeof(wchar_t));
 
-				if (FileFormats::Mesh() == Utils::GetFileFormat(path))
+				if (FileFormats::Mesh() == Utils::GetFileFormat(filepath))
 				{
-					r3d.mesh = MeshManager::GetInstance().LoadMesh(Utils::GetShortFilepath(path));
+					r3d.mesh = MeshManager::GetInstance().LoadMesh(Utils::GetShortFilepath(filepath));
 				}
 			}
 
@@ -1500,14 +1539,14 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
 			{
-				std::string path((const char*)payload->Data);
-				path.resize(payload->DataSize);
+				std::wstring filepath((const wchar_t*)payload->Data);
+				filepath.resize(payload->DataSize / sizeof(wchar_t));
 
-				if (Utils::GetFileFormat(path) == FileFormats::Mat())
+				if (Utils::GetFileFormat(filepath) == FileFormats::Mat())
 				{
-					path = Utils::Erase(path, m_RootDirectory.string() + "/");
+					filepath = Utils::Erase(filepath, m_RootDirectory.wstring() + L"/");
 
-					r3d.material = MaterialManager::GetInstance().LoadMaterial(path);
+					r3d.material = MaterialManager::GetInstance().LoadMaterial(filepath);
 				}
 			}
 
@@ -1631,12 +1670,12 @@ void Editor::MaterialMenu::Update(const Editor& editor)
 								{
 									if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
 									{
-										std::string path((const char*)payload->Data);
-										path.resize(payload->DataSize);
+										std::wstring filepath((const wchar_t*)payload->Data);
+										filepath.resize(payload->DataSize / sizeof(wchar_t));
 
-										if (FileFormats::IsTexture(Utils::GetFileFormat(path)))
+										if (FileFormats::IsTexture(Utils::GetFileFormat(filepath)))
 										{
-											material->GetUniformWriter(renderPassName)->WriteTexture(binding.name, TextureManager::GetInstance().Load(path));
+											material->GetUniformWriter(renderPassName)->WriteTexture(binding.name, TextureManager::GetInstance().Load(filepath));
 										}
 									}
 

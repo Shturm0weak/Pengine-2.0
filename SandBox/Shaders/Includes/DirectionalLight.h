@@ -20,7 +20,7 @@ vec3 CalculateDirectionalLight(
 	vec3 H = normalize(viewDirection + light.direction);
 
 	vec3 radiance = light.color * light.intensity;
-	vec3 ambient = 0.01 * radiance * ao;
+	vec3 ambient = 0.1 * radiance * ao;
 
 	float NdotV = max(dot(normal, viewDirection), 0.0000001);
 	float NdotL = max(dot(normal, light.direction), 0.0000001);

@@ -35,3 +35,5 @@ Basemat:
           RenderTarget: "GBuffer[2]"
         - Name: shadingTexture
           RenderTarget: "GBuffer[3]"
+        - Name: ssaoTexture
+          RenderTarget: "SSAOBlur[0]"
