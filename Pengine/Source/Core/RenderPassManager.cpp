@@ -12,6 +12,8 @@
 #include "../Components/Renderer3D.h"
 #include "../Components/Transform.h"
 #include "../Graphics/Renderer.h"
+#include "../EventSystem/EventSystem.h"
+#include "../EventSystem/NextFrameEvent.h"
 
 using namespace Pengine;
 
@@ -100,7 +102,6 @@ void RenderPassManager::CreateGBuffer()
 
 	glm::vec4 clearColor = { 0.4f, 0.4f, 0.4f, 1.0f };
 	glm::vec4 clearNormal = { 0.0f, 0.0f, 0.0f, 0.0f };
-	glm::vec4 clearPosition = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glm::vec4 clearShading = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	RenderPass::AttachmentDescription color{};
@@ -110,10 +111,6 @@ void RenderPassManager::CreateGBuffer()
 	RenderPass::AttachmentDescription normal{};
 	normal.format = Format::R32G32B32A32_SFLOAT;
 	normal.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-
-	RenderPass::AttachmentDescription position{};
-	position.format = Format::R32G32B32A32_SFLOAT;
-	position.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
 	RenderPass::AttachmentDescription shading{};
 	shading.format = Format::R8G8B8A8_SRGB;
@@ -125,9 +122,9 @@ void RenderPassManager::CreateGBuffer()
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = GBuffer;
-	createInfo.clearColors = { clearColor, clearNormal, clearPosition, clearShading };
+	createInfo.clearColors = { clearColor, clearNormal, clearShading };
 	createInfo.clearDepths = { clearDepth };
-	createInfo.attachmentDescriptions = { color, normal, position, shading, depth };
+	createInfo.attachmentDescriptions = { color, normal, shading, depth };
 	createInfo.resizeWithViewport = true;
 	createInfo.resizeViewportScale = { 1.0f, 1.0f };
 
@@ -142,6 +139,39 @@ void RenderPassManager::CreateGBuffer()
 			globalBufferName,
 			"camera.viewportSize",
 			viewportSize);
+
+		const float aspectRation = viewportSize.x / viewportSize.y;
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			renderInfo.renderer->GetBuffer(globalBufferName),
+			globalBufferName,
+			"camera.aspectRatio",
+			aspectRation);
+
+		Camera& camera = renderInfo.camera->GetComponent<Camera>();
+		const float tanHalfFOV = tanf(camera.GetFov() / 2.0f);
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			renderInfo.renderer->GetBuffer(globalBufferName),
+			globalBufferName,
+			"camera.tanHalfFOV",
+			tanHalfFOV);
+
+		const float zFar = camera.GetZFar();
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			renderInfo.renderer->GetBuffer(globalBufferName),
+			globalBufferName,
+			"camera.zFar",
+			zFar);
+
+		const float zNear = camera.GetZNear();
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			renderInfo.renderer->GetBuffer(globalBufferName),
+			globalBufferName,
+			"camera.zNear",
+			zNear);
 
 		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
 
@@ -513,6 +543,14 @@ void RenderPassManager::CreateAtmosphere()
 			"camera.viewProjectionMat4",
 			viewProjectionMat4);
 
+		const glm::mat4 viewMat4 = renderInfo.camera->GetComponent<Camera>().GetViewMat4();
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			globalBuffer,
+			globalBufferName,
+			"camera.viewMat4",
+			viewMat4);
+
 		WriterBufferHelper::WriteToBuffer(
 			reflectionBaseMaterial.get(),
 			globalBuffer,
@@ -644,7 +682,7 @@ void RenderPassManager::CreateTransparent()
 	depth.store = RenderPass::Store::NONE;
 	depth.getFrameBufferCallback = [](Renderer* renderer, uint32_t& index)
 	{
-		index = 4;
+		index = 3;
 		return renderer->GetRenderPassFrameBuffer(GBuffer);
 	};
 
@@ -876,14 +914,15 @@ void RenderPassManager::CreateSSAO()
 
 	const std::shared_ptr<Mesh> planeMesh = nullptr;
 
-	if (m_SSAORenderer.m_NoiseSize != 4)
-	{
-		m_SSAORenderer.GenerateNoiseTexture(4);
-		m_SSAORenderer.m_NoiseSize = 4;
-	}
-
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
+
+		if (!graphicsSettings.ssao.isEnabled)
+		{
+			return;
+		}
+
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
 		if (!plane)
 		{
@@ -899,12 +938,15 @@ void RenderPassManager::CreateSSAO()
 			return;
 		}
 
-		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
-		if (m_SSAORenderer.m_KernelSize != graphicsSettings.ssao.kernelSize)
+		m_SSAORenderer.GenerateSamples(graphicsSettings.ssao.kernelSize);
+
+		auto callback = [this, graphicsSettings]()
 		{
-			m_SSAORenderer.GenerateSamples(graphicsSettings.ssao.kernelSize);
-			m_SSAORenderer.m_KernelSize = graphicsSettings.ssao.kernelSize;
-		}
+			m_SSAORenderer.GenerateNoiseTexture(graphicsSettings.ssao.noiseSize);
+		};
+
+		NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+		EventSystem::GetInstance().SendEvent(event);
 
 		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderer->GetUniformWriter(renderPassName);
 		if (!renderUniformWriter)
@@ -939,7 +981,11 @@ void RenderPassManager::CreateSSAO()
 			renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
 		}
 
-		renderUniformWriter->WriteTexture("noiseTexture", m_SSAORenderer.GetNoiseTexture());
+		const std::shared_ptr<Texture> noiseTexture = m_SSAORenderer.GetNoiseTexture();
+		if (noiseTexture)
+		{
+			renderUniformWriter->WriteTexture("noiseTexture", noiseTexture);
+		}
 
 		const std::shared_ptr<Buffer> ssaoBuffer = renderInfo.renderer->GetBuffer("SSAOBuffer");
 		WriterBufferHelper::WriteToBuffer(baseMaterial.get(), ssaoBuffer, "SSAOBuffer", "viewportScale", GetRenderPass(renderPassName)->GetResizeViewportScale());
@@ -996,6 +1042,13 @@ void RenderPassManager::CreateSSAOBlur()
 
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
+
+		if (!graphicsSettings.ssao.isEnabled)
+		{
+			return;
+		}
+
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
 		if (!plane)
 		{

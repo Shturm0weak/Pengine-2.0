@@ -849,10 +849,11 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 		bool isChanged = 0;
 		if (ImGui::CollapsingHeader("SSAO"))
 		{
+			isChanged += ImGui::Checkbox("Is Enabled", &graphicsSettings.ssao.isEnabled);
 			isChanged += ImGui::SliderFloat("Bias", &graphicsSettings.ssao.bias, 0.0f, 10.0f);
 			isChanged += ImGui::SliderFloat("Radius", &graphicsSettings.ssao.radius, 0.0f, 1.0f);
 			isChanged += ImGui::SliderInt("Kernel Size", &graphicsSettings.ssao.kernelSize, 2, 64);
-			isChanged += ImGui::SliderInt("Noise Size", &graphicsSettings.ssao.noiseSize, 1, 64);
+			isChanged += ImGui::SliderInt("Noise Size", &graphicsSettings.ssao.noiseSize, 4, 32);
 			isChanged += ImGui::SliderFloat("AO Scale", &graphicsSettings.ssao.aoScale, 0.0f, 10.0f);
 		}
 

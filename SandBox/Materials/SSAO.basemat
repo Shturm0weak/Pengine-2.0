@@ -29,5 +29,5 @@ Basemat:
       Uniforms:
         - Name: normalTexture
           RenderTarget: "GBuffer[1]"
-        - Name: positionTexture
-          RenderTarget: "GBuffer[2]"
+        - Name: depthTexture
+          RenderTarget: "GBuffer[3]"

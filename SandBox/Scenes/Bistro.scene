@@ -10,8 +10,8 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [-3.84679008, 1.50972712, -1.71031415]
-      Rotation: [-0.353947401, -2.21362376, 0]
+      Position: [-4.07326174, 1.50972712, -0.779115498]
+      Rotation: [-0.190946057, -1.71978951, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -32,3 +32,1860 @@ Scene:
     DirectionalLight:
       Color: [1, 1, 1]
       Intensity: 10
+  - UUID: ddcbe288-f333-4b51-8e8d-fc70d4c3b681
+    Name: BistroExterior
+    IsEnabled: true
+    Childs:
+      - f1aa073f-4f5c-4af0-b877-70f2dc5dfb90
+      - 13436fac-55c1-4487-a176-41d9423500b3
+      - e092cd69-7d6c-49a7-a92e-a8bb63e79bc0
+      - abedb59b-34bf-4ddf-bab5-df2898c26409
+      - 8485ef61-03c2-4fd3-ab15-f75ee8cde391
+      - f5cf3bb1-ee2e-4c71-a6bd-ae4eb13664b1
+      - b00c35f6-aeb4-48ed-b2ac-5378efbf2a21
+      - 05541192-70f4-4c7c-a7a7-350872d2069a
+      - e23c1a09-82e3-4ec7-9d24-1c79be66746e
+      - 281a32a2-e971-49b3-b4e5-f5bc407abdbb
+      - 2ff6b0a2-9adf-4269-b8a9-fb6b53a37078
+      - d919f481-e462-49a2-be61-69461d7816b0
+      - 684ab31e-e4da-446d-aac0-d8fa2f206a5c
+      - 34353ee2-82a6-457b-95d3-9b5afa6f1709
+      - e8d77836-8f44-43b3-8c26-575e06ce0bb6
+      - 394c18b4-73ab-4cf1-ab96-562147e865ee
+      - 131d880b-5515-44d4-bdf7-a055b1ad6a3f
+      - 7558dd0e-824d-4b84-a5e8-62e088426ee9
+      - b1ae44b6-4d8d-4efb-a001-018748261233
+      - f1e42556-980b-483b-a0fc-c3f53b3c46da
+      - 806c3ece-5cfa-423d-bfe9-9c22e68c35a0
+      - c12c7f53-8a49-475c-be10-48c37a1d0eba
+      - 030a5da4-495e-43f9-a17a-9990aa7b96e6
+      - aa81c734-4a45-402e-b91c-83bfff3e5ab0
+      - d298eeb7-21c6-4a51-a08a-e4f439d1f185
+      - 4d7d55ab-17cd-445a-9a22-58098f9608a8
+      - 1ddc2d39-20e0-4233-9b16-5454b62ecc82
+      - a38efdf0-55ac-4e5d-bdf6-139b14b30d2c
+      - b18e0af2-b2e8-4ec1-8512-bccc407b0bdc
+      - 0b3039e2-5ebb-4042-a47f-637635137e3f
+      - 72d3ecbd-3954-4233-b724-3c52c00c8333
+      - a7600339-76cd-44dc-bffe-8ea03fbc0bf3
+      - b45534cd-6228-4b85-996e-b2ee10d17e53
+      - 1f1e051f-fcda-4f77-8ece-c384f8cd4801
+      - 0d90dc3b-17b6-4c6f-bac7-ae5088be3236
+      - 968872fe-5fe5-45cd-aeac-d36a4aa0e756
+      - 5a234e7d-67e2-4fce-b3f5-ac0ba22263c2
+      - 28c6253a-c9e7-49ec-a9cc-e8ec3ca5843e
+      - bea76ae1-9743-4a64-9611-7e92b3a0145b
+      - be20b36e-accb-4579-8de6-d8efa1fe198f
+      - 6ecb4425-bacd-49d7-b066-c20df9b02f94
+      - 0d585d4b-ab24-4989-a1f9-df2159111211
+      - 30be3105-38cb-4d45-9b15-176f2728c1b0
+      - 9871d604-bfda-4be7-a01c-48d7b1d4772d
+      - 53cd7aae-3fec-4bb3-8a00-b9ca078d9a4d
+      - 1d1eb82e-84e3-465a-af6b-316f3cf6f825
+      - 1c321d9a-5912-411b-a05f-94a3c40d7aef
+      - 62fb985c-b59a-4b0f-92ce-d4887cc50712
+      - b5264812-d171-4494-a5ab-d2b2b3ae3988
+      - 60f43745-42a9-4c87-84e5-ca00563caa51
+      - afbbea8f-d8a8-4e32-a882-0ae24fe5ae1f
+      - 2b6e2ab3-697c-4a9b-bfd9-d81b3e2db52a
+      - b67ebd78-051f-44e6-a0ae-141ca3830007
+      - 929ae05b-e49c-40b8-aa14-4037d8dccd5c
+      - 22b6cda4-74ea-49e0-ae47-4d450c8df73a
+      - d5070443-5d90-41c3-90cd-b52fd01d9899
+      - be0bdeeb-9d74-4fcd-8756-3bff6a6c68fd
+      - aefebdf2-8663-4b9a-b6b8-8eb1656ea42c
+      - 9388399b-d34f-4176-a742-c27a5f648fef
+      - 5952b025-6fbc-4be7-9854-688336868eb7
+      - db54a228-c974-4ada-bb02-a1d7e70f890f
+      - 5d19ff80-4892-46bc-bba6-9f55cbfa49da
+      - dbe04412-8304-4e54-af5d-e30b45fbf7a1
+      - 10d084d3-62df-4342-934c-cc05c4eb9c15
+      - 7bf0185c-5f9f-4988-936a-ff819ebde649
+      - 4b59cb8f-ea97-4ea1-a5f4-a353247805a5
+      - 4db99533-2987-4301-bb0a-82a228b98e21
+      - 5b36b2f3-5e75-428a-a10f-bf49b3f33320
+      - 9ac1ba95-5a00-4416-a767-b19151443f5b
+      - 4f561d53-1242-4425-af65-ba0aac815d10
+      - f0117b2b-a67a-4c6e-8612-299a2aaf0be9
+      - fbcd95d1-4cf4-435f-a897-4e113ba34a2f
+      - 8e1b35e2-3196-44bb-9bd6-b5f910017c15
+      - b4add997-2d0e-4829-b4c2-28fdae6fc553
+      - cc228301-79e2-4f4e-9c01-c1a90745bb69
+      - 12eae021-b825-4ef2-ae87-655e4cc20a1b
+      - f85bb1b9-b049-4750-956d-2b02918d7144
+      - 279a49d5-302a-4eaf-b0c2-46a6674b734c
+      - 485e263d-4f3f-449c-a40d-c6c7491b7ad5
+      - caf28008-15f9-4203-bd4f-0c68f0698d0f
+      - 9119c0b7-47c1-4917-9f81-115ea53f5a9a
+      - 4bf64da2-93b3-4c73-aacd-b4ec9ca1c29d
+      - d441c3cd-bc33-4b83-915c-6eb7328e8629
+      - 17c407ce-de52-44e3-983f-5d569586cedd
+      - 6140e6a7-beec-4876-8a8c-bc2f34c998c3
+      - 8b43965f-fc1f-48da-9368-e94fa6638f83
+      - fcd60c1a-ab71-4203-a4e9-0c57eaef8bc6
+      - 0b2ec8ef-d79c-403b-a416-1afc37c1762e
+      - 02f8e97f-af26-45cc-8781-fdac673b3247
+      - f0a3490e-7ff9-4cd8-9d41-c33a72066511
+      - c2a4d00e-820c-480d-b79a-6205210c8b3f
+      - 23e07179-0f33-43cf-8d07-24f67cbbf49b
+      - eb40258f-f2d8-464b-aa68-e7045abd7f62
+      - 0ca22e99-f8a5-4bf3-8b27-6422e4a34b45
+      - 6aae2031-8412-49f4-95c3-b1ddcb2f40ea
+      - ab720b63-2d0e-411c-aa68-ed42620ac5a6
+      - e7fd5413-5817-42b9-b7bd-0546cabc2183
+      - a3adb84b-a659-417a-8904-bd9ac86accbf
+      - 79424f28-4388-4689-a0e7-ef25905197d3
+      - ad75f3b5-5b8f-445b-97aa-65f33ead3df3
+      - c3b96bc1-0097-4621-9002-4d0d9040e910
+      - 081e142e-2ac2-456d-b3c9-4e907ebcb190
+      - d1dda354-08cc-4d0c-827a-702354327218
+      - f1d9d922-0564-4eba-861e-b160660c374e
+      - 3db2a3fc-8c8f-4ae9-bc37-226938d74361
+      - fb24f5e4-8f01-41b4-a4a5-d44dee7abe07
+      - 56422709-af53-48e8-974b-2394d37c0ec1
+      - 771a602d-ff64-4929-ac12-df71329b46c7
+      - c554311b-96e9-4628-8bbd-736f4bda756a
+      - b1cb0d19-2988-4eea-83ae-230511b5f10d
+      - f02d90b1-5175-440f-ae75-f1e81a5d676e
+      - 668dc39e-60d9-49c8-afc6-ad263cdb4042
+      - 64753134-555a-45ed-b6da-ab355c4de054
+      - c176b902-2e2f-4ced-8d0e-5512a3f22f31
+      - 9deae2e6-edc8-433d-ab66-a95050bb1cc6
+      - 18962c8f-890c-452e-9f1a-a66d16fdbc99
+      - 07fc8c7e-34d5-4150-8f18-809acf64287a
+      - 59c47235-3890-4626-9635-7de8580ac4c0
+      - c81046dd-6320-438f-93dc-b60967fdd5ee
+      - 0680be07-9d84-4a1f-a2a7-aa6032a4c519
+      - 7a049b69-08df-440f-8845-f0d2b2367a89
+      - 4a632874-c734-456b-b209-215971a3d10c
+      - be93ffe0-3c4f-47b9-ad7b-0616d2fa0101
+      - 42797a3a-077e-49a5-afc1-558a3c45649a
+      - 89cf7428-f020-4bae-ab2a-bbfa7e6c8f50
+      - 31100402-e2c0-47e6-9aa4-1e5496b76a51
+      - a681c8fa-6d1b-49b7-8090-88590f9ee77a
+      - b034838c-edcc-4aa5-9022-c1e89b1b621f
+      - 5e519907-4afb-4451-a70c-d2ee83fb7f6d
+      - e19a8b70-b22c-4817-8d15-bf09b71feb34
+      - 6fb64b93-0659-421c-950d-fb83a26b2d26
+      - af673574-0fa5-4c1f-9574-b7c80b675a1f
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+  - UUID: f1aa073f-4f5c-4af0-b877-70f2dc5dfb90
+    Name: Mesh.1291
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 3637bda0-8daa-4b64-adf4-3581f6c5b60c
+      Material: c1d34892-beb2-48f4-a5e6-c897eb07af9f
+  - UUID: 13436fac-55c1-4487-a176-41d9423500b3
+    Name: Mesh.1290-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 16531f97-4780-466b-9054-157fff882632
+      Material: 1808083a-4f56-4b78-87a7-6ebb197bf4a8
+  - UUID: e092cd69-7d6c-49a7-a92e-a8bb63e79bc0
+    Name: Mesh.1290-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 48239452-eb31-4c79-a2bb-84ee6de64b41
+      Material: a600cd1f-bf8b-4279-8531-fef1c89617bf
+  - UUID: abedb59b-34bf-4ddf-bab5-df2898c26409
+    Name: Mesh.1283
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: e85944a3-b094-437e-8d85-4d0cb38c6473
+      Material: 1dcc12ea-d4cf-432d-b7f6-5c4116358b66
+  - UUID: 8485ef61-03c2-4fd3-ab15-f75ee8cde391
+    Name: Mesh.1282-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 57b16f7b-ab4d-455d-b164-a455b77b90da
+      Material: 0dbae932-3684-47f1-9488-59d1d60372e9
+  - UUID: f5cf3bb1-ee2e-4c71-a6bd-ae4eb13664b1
+    Name: Mesh.1282-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: a0278b31-4184-492b-b72e-ead86852318c
+      Material: c139ba28-d1ac-462b-8fe1-106cd5acf277
+  - UUID: b00c35f6-aeb4-48ed-b2ac-5378efbf2a21
+    Name: Mesh.1247
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0927014e-9b14-4198-855f-04291388c60d
+      Material: baf74c20-6ac7-40e7-9a26-c8fdf74d13b4
+  - UUID: 05541192-70f4-4c7c-a7a7-350872d2069a
+    Name: Mesh.1226-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 09a1202b-8b02-4c72-a6b1-f66b0c4e2b35
+      Material: b4c779d1-dae5-4640-8669-7933e5fc7a3d
+  - UUID: e23c1a09-82e3-4ec7-9d24-1c79be66746e
+    Name: Mesh.1226-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 95984482-71d5-449f-8d97-1e56923af490
+      Material: f8955f9d-8db8-4f92-b9f5-4820fd39dc6a
+  - UUID: 281a32a2-e971-49b3-b4e5-f5bc407abdbb
+    Name: Mesh.1225-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 8f3dcfc0-1ce9-4abf-80ac-74df6bb77ebb
+      Material: f05b256f-0062-405f-9b71-f0c9b3e842b6
+  - UUID: 2ff6b0a2-9adf-4269-b8a9-fb6b53a37078
+    Name: Mesh.1225-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1885ddbc-34d2-4788-9e47-cb7048c82217
+      Material: b6f177b5-445a-4837-9afb-d813001fbb1b
+  - UUID: d919f481-e462-49a2-be61-69461d7816b0
+    Name: Mesh.1225-2
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 22fc358b-0d11-4f2f-96fb-ba2db8be226f
+      Material: 27cfefbf-c8d3-4f9f-97f4-ab7bec0fcbc5
+  - UUID: 684ab31e-e4da-446d-aac0-d8fa2f206a5c
+    Name: Mesh.217-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 326b03b3-edf9-4bd0-b18e-563fc2191494
+      Material: d033802d-e578-4c5d-8ed9-e9ccd96d5be4
+  - UUID: 34353ee2-82a6-457b-95d3-9b5afa6f1709
+    Name: Mesh.1222-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d57d1431-b7a2-4538-9414-e07246057b6d
+      Material: 2473af1f-aa2d-47cb-84e0-b7442e944146
+  - UUID: e8d77836-8f44-43b3-8c26-575e06ce0bb6
+    Name: Mesh.1222-2
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 7dd964a3-034d-4e6e-bedd-3fcd64c4a98b
+      Material: 43c05d93-49fd-47df-b71a-a182c876de1c
+  - UUID: 394c18b4-73ab-4cf1-ab96-562147e865ee
+    Name: Mesh.1204
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 214aec0f-70fe-4346-8286-7a4938e978e3
+      Material: 8855cbf0-ccf8-47d4-bd62-4f95cc2c44f9
+  - UUID: 131d880b-5515-44d4-bdf7-a055b1ad6a3f
+    Name: Mesh.1194
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 8e2841c1-7b74-428c-ba67-a31a65b4037d
+      Material: 55723c94-9c50-4e9a-9dc1-44d06e517db2
+  - UUID: 7558dd0e-824d-4b84-a5e8-62e088426ee9
+    Name: Mesh.1198-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 3cc48347-e294-4734-a529-e9c9b092f6c9
+      Material: 5041c2de-0b15-4df2-a810-93a83261de30
+  - UUID: b1ae44b6-4d8d-4efb-a001-018748261233
+    Name: Mesh.1198-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 4ca9a9dd-ce48-45d4-bcf5-228313c565e0
+      Material: c333157c-2222-41f5-bf47-de731ef23f80
+  - UUID: f1e42556-980b-483b-a0fc-c3f53b3c46da
+    Name: Mesh.1185-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 2dda278a-f4e9-48f2-9109-77f70d09f5bf
+      Material: 5a04149e-eaf6-4b7d-a234-ddfd8fe6d629
+  - UUID: 806c3ece-5cfa-423d-bfe9-9c22e68c35a0
+    Name: Mesh.1185-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 3396ae83-69cc-46a4-b87a-726b3a9582e8
+      Material: 4c6c4e8e-51be-46ba-800e-6f22d8a1b88a
+  - UUID: c12c7f53-8a49-475c-be10-48c37a1d0eba
+    Name: Mesh.050-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d613bd44-7d73-4b45-9f54-4772210f382d
+      Material: b0003a69-bd82-49ca-a9df-99d7a4c8e575
+  - UUID: 030a5da4-495e-43f9-a17a-9990aa7b96e6
+    Name: Mesh.1184
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: be82119d-bde5-4da0-a516-5f2fd80e06fc
+      Material: c01f9fbe-3aa5-4e6b-ae99-200136611b90
+  - UUID: aa81c734-4a45-402e-b91c-83bfff3e5ab0
+    Name: Mesh.590-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: b3cd579d-0778-456f-b1f3-a55b562c172f
+      Material: 8e34365c-5e2d-4acd-a3aa-e6e7077a98da
+  - UUID: d298eeb7-21c6-4a51-a08a-e4f439d1f185
+    Name: Mesh.542
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9bec0fbf-c6c5-491c-a092-f3367bcb589a
+      Material: f5db9c26-8d83-433c-8eef-0cade75ed185
+  - UUID: 4d7d55ab-17cd-445a-9a22-58098f9608a8
+    Name: Mesh.543
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5a8f1fa9-5a40-4f9b-b010-0e6c21c1d435
+      Material: 9caa69db-c026-405b-b328-ea10cbcb321f
+  - UUID: 1ddc2d39-20e0-4233-9b16-5454b62ecc82
+    Name: Mesh.544
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: c5f3ef11-a5b1-4e33-9de0-ece327c60972
+      Material: e4be93bc-60b1-45dc-88ee-fda2c03ae702
+  - UUID: a38efdf0-55ac-4e5d-bdf6-139b14b30d2c
+    Name: Mesh.050-3
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: bf96ab11-990b-49fa-8ff8-c42da151e612
+      Material: ffc8a250-d190-4f7e-80b7-a523e62f7cf6
+  - UUID: b18e0af2-b2e8-4ec1-8512-bccc407b0bdc
+    Name: Mesh.045
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: a28aabf0-b005-4412-8f4e-0026e5ee44f9
+      Material: fa450833-3e3f-44ac-9476-3036d85b23ca
+  - UUID: 0b3039e2-5ebb-4042-a47f-637635137e3f
+    Name: Mesh.342
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 67f03296-f5b6-4156-8346-d7d18e55ab60
+      Material: f7b3ffd5-b108-4cff-ad55-b9d12422d9c9
+  - UUID: 72d3ecbd-3954-4233-b724-3c52c00c8333
+    Name: Mesh.904
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1ba21038-7023-4986-8e39-2d3d6ed7ecb7
+      Material: d2cc573e-4037-4562-91d6-a0dba90658e6
+  - UUID: a7600339-76cd-44dc-bffe-8ea03fbc0bf3
+    Name: Mesh.219-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 22e7e811-1718-4815-913e-205200047444
+      Material: b7e77018-45ea-4db4-9901-8b1ec0b5551b
+  - UUID: b45534cd-6228-4b85-996e-b2ee10d17e53
+    Name: Mesh.925
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 7c421ac2-5770-462b-abb2-f22a7e8a5b9e
+      Material: d91e220a-3df8-4ede-9345-01b586a886d7
+  - UUID: 1f1e051f-fcda-4f77-8ece-c384f8cd4801
+    Name: Mesh.1077
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: c84dd50d-0eb9-4f03-8557-c2e8681c10ae
+      Material: b8bf65a3-ce11-4046-a6ec-12847e90f5ad
+  - UUID: 0d90dc3b-17b6-4c6f-bac7-ae5088be3236
+    Name: Mesh.508
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: bc2baf3f-fe7f-49d8-a558-333eacc49f87
+      Material: 4137e2ae-5ecd-42c2-9cb1-378b193f463b
+  - UUID: 968872fe-5fe5-45cd-aeac-d36a4aa0e756
+    Name: Mesh.935
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 8825799a-7258-4552-b487-be24755b53e9
+      Material: 30db956f-2a9f-4e40-a759-1b6dee023c5a
+  - UUID: 5a234e7d-67e2-4fce-b3f5-ac0ba22263c2
+    Name: Mesh.1010
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0af8749e-a632-400f-b5c3-07c588543c98
+      Material: 994381f7-ecbf-449b-80e1-186caa843c3e
+  - UUID: 28c6253a-c9e7-49ec-a9cc-e8ec3ca5843e
+    Name: Mesh.349
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 979b8968-deb4-4c54-ae56-e100bda4301a
+      Material: b6f253fb-6846-487f-927c-3f74adedad9e
+  - UUID: bea76ae1-9743-4a64-9611-7e92b3a0145b
+    Name: Mesh.1164
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 8eee22a5-f642-4ed9-85d5-a436204764ad
+      Material: 0f3ac21a-3574-4720-89d7-b479b0bbe8e9
+  - UUID: be20b36e-accb-4579-8de6-d8efa1fe198f
+    Name: Mesh.526-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0bc38142-7c4c-4704-b534-cead4b640d44
+      Material: 616abb4f-c861-48a4-ad3e-d27d7e3df0c9
+  - UUID: 6ecb4425-bacd-49d7-b066-c20df9b02f94
+    Name: Mesh.850
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: cea424af-3e64-4a80-9571-95317be94d6a
+      Material: 1a1cc5ae-325e-4ace-bc30-527fc5bb4b51
+  - UUID: 0d585d4b-ab24-4989-a1f9-df2159111211
+    Name: Mesh.344
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5ce7d555-b742-4d13-bd79-8231be297b0a
+      Material: 50ec637e-2416-436c-9197-24a87468c5d3
+  - UUID: 30be3105-38cb-4d45-9b15-176f2728c1b0
+    Name: Mesh.247-4
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 3ee91cf0-bca9-4724-8a22-84e14ddab9e3
+      Material: 5c1f51b3-8d40-4173-9f11-56ffa1fcf7fb
+  - UUID: 9871d604-bfda-4be7-a01c-48d7b1d4772d
+    Name: Mesh.507
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: aa112966-08c1-44af-b4d5-fb5045a20e5c
+      Material: d8c1e54a-daee-403b-bd9e-b724e1995cf5
+  - UUID: 53cd7aae-3fec-4bb3-8a00-b9ca078d9a4d
+    Name: Mesh.005
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: ccb3c3f2-1335-4818-a6d7-6d68321b9598
+      Material: e15c2fb9-ce17-4065-a8ed-01465996f160
+  - UUID: 1d1eb82e-84e3-465a-af6b-316f3cf6f825
+    Name: Mesh.975
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: df3a4f76-d2be-4742-b386-ea91a1e076a6
+      Material: 1e5c39c3-8ce1-46b6-9cf2-2ea4f6f876a2
+  - UUID: 1c321d9a-5912-411b-a05f-94a3c40d7aef
+    Name: Mesh.1162
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: b3677b4f-6da5-4eab-80c1-4cfa8800e6aa
+      Material: 7163f08b-21f3-4d61-b98f-3708b52854fe
+  - UUID: 62fb985c-b59a-4b0f-92ce-d4887cc50712
+    Name: Mesh.1295-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0228e856-7297-4903-96a8-8180e3dcc44f
+      Material: 804eb00b-fd69-456c-bf9e-c1db68a755c6
+  - UUID: b5264812-d171-4494-a5ab-d2b2b3ae3988
+    Name: Mesh.835
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: a66e5f98-fffc-4924-8833-69483ca68580
+      Material: 8285604c-f48b-4dff-b40d-d954a5aa66b4
+  - UUID: 60f43745-42a9-4c87-84e5-ca00563caa51
+    Name: Mesh.559
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: f76e6669-5db3-4ebe-920a-802e400d5582
+      Material: d9306672-0779-4a63-9a45-760557bf2d40
+  - UUID: afbbea8f-d8a8-4e32-a882-0ae24fe5ae1f
+    Name: Mesh.505
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 7239bd3b-8152-4f9b-b858-4bae00d8bdc2
+      Material: 49efa7e1-c4e4-4063-95dc-f32117f281e8
+  - UUID: 2b6e2ab3-697c-4a9b-bfd9-d81b3e2db52a
+    Name: Mesh.495
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 67db9457-a8bb-444a-ac13-e05ca114bcff
+      Material: 30e6f5db-2a5e-4baa-97c6-6e8a87827850
+  - UUID: b67ebd78-051f-44e6-a0ae-141ca3830007
+    Name: Mesh.509
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 10dc4779-b15d-47c3-99a3-c33a706c9acf
+      Material: 9daf8a1c-2cd3-43e7-af80-95f2645917bd
+  - UUID: 929ae05b-e49c-40b8-aa14-4037d8dccd5c
+    Name: Mesh.178
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 987ccd29-d4e5-48aa-ba6d-c0215ed946b9
+      Material: 3bc97c29-7f94-41de-ad62-88307374392d
+  - UUID: 22b6cda4-74ea-49e0-ae47-4d450c8df73a
+    Name: Mesh.350
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: b4daf4ed-11f9-4982-a3d4-d56579e2d1a9
+      Material: 0e73b127-0808-4af1-a3a3-d5c28ce6c75a
+  - UUID: d5070443-5d90-41c3-90cd-b52fd01d9899
+    Name: Mesh.346
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d319fb75-1db1-4a86-b957-f8c546286337
+      Material: 5318698f-80ab-4753-93f3-73c547846333
+  - UUID: be0bdeeb-9d74-4fcd-8756-3bff6a6c68fd
+    Name: Mesh.307-3
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: fa7cf0e9-d6f0-47ad-88d2-867224dbdc86
+      Material: 14616109-ef8e-4e5e-bc30-20128c951439
+  - UUID: aefebdf2-8663-4b9a-b6b8-8eb1656ea42c
+    Name: Mesh.782
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: f419ede9-d0c3-44c5-b0f1-f45a2d6e5d61
+      Material: bd273be5-1a9b-40ea-8016-41325cbaad92
+  - UUID: 9388399b-d34f-4176-a742-c27a5f648fef
+    Name: Mesh.549
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 7e85d77d-d129-44f5-8d0a-f875b100a200
+      Material: bd7f545a-32ec-4f3c-966b-581ec11c5167
+  - UUID: 5952b025-6fbc-4be7-9854-688336868eb7
+    Name: Mesh.551
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: ac68ed57-d4c3-441e-9d0c-cd9090d76a8d
+      Material: d1228016-84e0-47f1-8443-4130e9677f05
+  - UUID: db54a228-c974-4ada-bb02-a1d7e70f890f
+    Name: Mesh.769
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0929c06b-4663-4331-8162-81f1f28b7cfb
+      Material: a13508fc-b04b-4820-a1db-cc2e659d5c2e
+  - UUID: 5d19ff80-4892-46bc-bba6-9f55cbfa49da
+    Name: Mesh.533
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: e63828fb-2e0e-4944-a058-5275c5c471e1
+      Material: 23b94b6c-44a0-4c28-9919-5ac8fff05a20
+  - UUID: dbe04412-8304-4e54-af5d-e30b45fbf7a1
+    Name: Mesh.374
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 35efd041-6fb2-40cd-9576-0c6b772e1e3a
+      Material: dfcf9278-a5d9-47cd-ae7f-9abc59f1e0f5
+  - UUID: 10d084d3-62df-4342-934c-cc05c4eb9c15
+    Name: Mesh.532
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: dc3b6654-0e78-4991-a81e-2ce1cf964664
+      Material: 9e2112db-81dd-4121-acaf-879cdb029163
+  - UUID: 7bf0185c-5f9f-4988-936a-ff819ebde649
+    Name: Mesh.530
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: a0a5ed91-9ea9-4968-9abd-9dc1af0036c4
+      Material: 194dc970-206c-4a94-9851-3e4c0cb5925f
+  - UUID: 4b59cb8f-ea97-4ea1-a5f4-a353247805a5
+    Name: Mesh.528
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: dfcfba26-3598-4384-9d4e-159683f11457
+      Material: 74094942-0056-4aa4-a20b-b710080513a3
+  - UUID: 4db99533-2987-4301-bb0a-82a228b98e21
+    Name: Mesh.584
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: e96068a8-0efb-441a-b405-f742532d81c7
+      Material: 2e2b97ee-52f4-4398-a81b-c5cdf3a1b33e
+  - UUID: 5b36b2f3-5e75-428a-a10f-bf49b3f33320
+    Name: Mesh.706-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0c847f81-34bf-494b-9cde-68c64c9e4660
+      Material: 9e68d3c6-b346-4e3c-ba02-bc4843e5d747
+  - UUID: 9ac1ba95-5a00-4416-a767-b19151443f5b
+    Name: Mesh.611
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: ee8a92cf-bcda-472f-9482-5af40ac352dd
+      Material: e7516558-f25b-442f-9d26-58ace12d58e0
+  - UUID: 4f561d53-1242-4425-af65-ba0aac815d10
+    Name: Mesh.529
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9239eff7-f8d4-427e-abef-0c1baba97677
+      Material: a80f0a23-797d-41e6-a81b-499cd6f36d74
+  - UUID: f0117b2b-a67a-4c6e-8612-299a2aaf0be9
+    Name: Mesh.627
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 836e6b68-8f3d-4fbd-8cd0-83dd258359ad
+      Material: 4cb5a84e-2fd9-410c-afd1-eeaa1babc9bc
+  - UUID: fbcd95d1-4cf4-435f-a897-4e113ba34a2f
+    Name: Mesh.603
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 6cb808c5-4971-4cc2-b173-cf8b6a31fca9
+      Material: 85b1e03e-d8bc-4518-a33f-3c574467880e
+  - UUID: 8e1b35e2-3196-44bb-9bd6-b5f910017c15
+    Name: Mesh.612
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d678b30d-c3c1-4e9e-9f18-fa96a8f79480
+      Material: 97f4a6ea-994c-413f-990a-a567fec676ef
+  - UUID: b4add997-2d0e-4829-b4c2-28fdae6fc553
+    Name: Mesh.547
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: bde83d12-97ab-4b20-a32e-9224549af040
+      Material: 4b6bd06f-a125-4f5d-b0b8-851904c0608f
+  - UUID: cc228301-79e2-4f4e-9c01-c1a90745bb69
+    Name: Mesh.546
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d06345a0-3e1a-4aa3-998b-715d606e53e9
+      Material: eb3da70a-fcae-4d3f-a9d2-c31cdc84e5fe
+  - UUID: 12eae021-b825-4ef2-ae87-655e4cc20a1b
+    Name: Mesh.320
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 799255c1-62e5-4829-ae30-312e59efb327
+      Material: beaab2b5-95ca-4ac5-9f24-90c3b6c11a50
+  - UUID: f85bb1b9-b049-4750-956d-2b02918d7144
+    Name: Mesh.307-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 3ec4e559-4c8c-4165-b0f6-2aa9cd9448f9
+      Material: decfdba2-ce7e-4d70-814c-19bbabeccf83
+  - UUID: 279a49d5-302a-4eaf-b0c2-46a6674b734c
+    Name: Mesh.317-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 8dbbb27c-fb7b-4821-8ec4-1bfc5720a8f2
+      Material: 906c6616-e784-430e-a1c0-c8235cac4202
+  - UUID: 485e263d-4f3f-449c-a40d-c6c7491b7ad5
+    Name: Mesh.307-2
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1f2a989e-3f81-4891-8114-f0f8b1fae975
+      Material: 33ec47a1-0085-4897-b0d1-d2c3b2730ca0
+  - UUID: caf28008-15f9-4203-bd4f-0c68f0698d0f
+    Name: Mesh.308-3
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 7708ab38-5996-490f-bdbe-3e07218ecbb3
+      Material: 9adf7a3e-6f46-499f-94a8-0a074386e02b
+  - UUID: 9119c0b7-47c1-4917-9f81-115ea53f5a9a
+    Name: Mesh.307-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 6a86550d-c815-427b-836e-1b7f877103f7
+      Material: 4667332d-4e18-49ca-bcad-7f636aa1ed9a
+  - UUID: 4bf64da2-93b3-4c73-aacd-b4ec9ca1c29d
+    Name: Mesh.299
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 16992bc4-9c6d-466c-b4d2-463032444745
+      Material: bf329361-d005-45a7-b387-10f3c9fb4c66
+  - UUID: d441c3cd-bc33-4b83-915c-6eb7328e8629
+    Name: Mesh.269
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 591cc326-859d-489a-b9d6-ce5a4a6164ed
+      Material: 42cdbb3f-f8c2-4de2-af52-4bac14491aa9
+  - UUID: 17c407ce-de52-44e3-983f-5d569586cedd
+    Name: Mesh.271-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: c87a35bc-3387-4bc5-a2f9-f1b32bc664f0
+      Material: 3d8a284c-a8d1-410e-a51b-14a0eec4b7ed
+  - UUID: 6140e6a7-beec-4876-8a8c-bc2f34c998c3
+    Name: Mesh.248-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 95145e92-f434-41b4-8c5b-2bba38ae6d98
+      Material: 42d82678-6044-47ce-864b-c0cd10a88551
+  - UUID: 8b43965f-fc1f-48da-9368-e94fa6638f83
+    Name: Mesh.248-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: b86bf675-9ef4-4f79-a35c-d7cadbcde974
+      Material: 6831a92c-2446-421a-81e8-3bf42a3e08bb
+  - UUID: fcd60c1a-ab71-4203-a4e9-0c57eaef8bc6
+    Name: Mesh.248-2
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 28c996ce-60a6-4c02-9ad3-d437e22c1d31
+      Material: e78efda5-3031-44ea-8b23-7c94efe4a410
+  - UUID: 0b2ec8ef-d79c-403b-a416-1afc37c1762e
+    Name: Mesh.247-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 29ec9cc5-4a3a-48a8-b33b-666e86ebd644
+      Material: be59c6e6-aa5e-4f71-a1ae-e48a429c5440
+  - UUID: 02f8e97f-af26-45cc-8781-fdac673b3247
+    Name: Mesh.247-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: f6b397d2-d5a3-4ecf-9993-bb7ce49c90e9
+      Material: 0b0be41f-6d92-415b-bea3-8729e3b5d8f3
+  - UUID: f0a3490e-7ff9-4cd8-9d41-c33a72066511
+    Name: Mesh.247-2
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 881ff8a7-09a0-444d-b325-6d18d34a5467
+      Material: ecf06736-43cd-4b99-9e60-4d7a59c521d1
+  - UUID: c2a4d00e-820c-480d-b79a-6205210c8b3f
+    Name: Mesh.247-3
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: babc2e5a-4049-449f-bd93-23bc1b6e4d88
+      Material: 95cd2043-1a20-49ae-ba22-4cf3f88e2b01
+  - UUID: 23e07179-0f33-43cf-8d07-24f67cbbf49b
+    Name: Mesh.246
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5ad17a19-952e-44f6-bcc4-5e6553402fa8
+      Material: a6773a89-cac1-4e84-8e10-40f5e98f9a6f
+  - UUID: eb40258f-f2d8-464b-aa68-e7045abd7f62
+    Name: Mesh.243-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 210c058f-19cd-4ee3-a51f-b164acbf8e75
+      Material: 9007d937-35e6-4780-854d-96935710d1a8
+  - UUID: 0ca22e99-f8a5-4bf3-8b27-6422e4a34b45
+    Name: Mesh.243-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 882d050c-506e-446b-9893-7e6e5a892a4c
+      Material: 7a5feef2-a1ba-4f94-b083-22ea01ef6790
+  - UUID: 6aae2031-8412-49f4-95c3-b1ddcb2f40ea
+    Name: Mesh.232
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9b4c9d0a-56e8-4f8d-b570-a3a5781bb571
+      Material: 007093e4-272f-49ef-ad6b-7eafcd5de39d
+  - UUID: ab720b63-2d0e-411c-aa68-ed42620ac5a6
+    Name: Mesh.231
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 128a7b48-4645-4875-9e66-fb8558bdecbb
+      Material: 62902940-c8d4-461b-8bcd-23ee356a9051
+  - UUID: e7fd5413-5817-42b9-b7bd-0546cabc2183
+    Name: Mesh.218-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 731058a3-f71e-42f7-9f65-7e5364196af8
+      Material: d30ed7e4-5ed5-4adf-be3b-53d6adb9d4d1
+  - UUID: a3adb84b-a659-417a-8904-bd9ac86accbf
+    Name: Mesh.219-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: de9df886-e0ac-4e22-9d4c-aa9fb4642a50
+      Material: 4f605937-5259-43bf-948c-193525a19b6c
+  - UUID: 79424f28-4388-4689-a0e7-ef25905197d3
+    Name: Mesh.216-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5f91684e-82d7-4061-af6b-638e268e4554
+      Material: f12c7776-7543-480a-b231-8d5bb400e07a
+  - UUID: ad75f3b5-5b8f-445b-97aa-65f33ead3df3
+    Name: Mesh.215-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9ebaa26d-cc9e-40d1-a177-157ef26a2d85
+      Material: 4714208d-72b5-4a36-af61-0ff7cc62a0c1
+  - UUID: c3b96bc1-0097-4621-9002-4d0d9040e910
+    Name: Mesh.214
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: f4ca167f-6581-4841-9aa0-bd10bbf06e9a
+      Material: 85ee4c94-9aa0-43ca-b6c1-fabbfac30951
+  - UUID: 081e142e-2ac2-456d-b3c9-4e907ebcb190
+    Name: Mesh.179
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1ba4c154-2152-470c-a26e-58822e66761b
+      Material: 10d729c2-17a1-4097-92be-48a54bf8f620
+  - UUID: d1dda354-08cc-4d0c-827a-702354327218
+    Name: Mesh.206-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: c61c3b9b-8ac4-4030-8fff-5bc3bc54266d
+      Material: fa332e6d-ee52-47ec-912e-a1ca988b96af
+  - UUID: f1d9d922-0564-4eba-861e-b160660c374e
+    Name: Mesh.206-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5a6ee2dc-d5e9-4d23-b8dd-c349be5f4675
+      Material: 4b13ef81-94e3-47b1-bb40-b3e03b751dc7
+  - UUID: 3db2a3fc-8c8f-4ae9-bc37-226938d74361
+    Name: Mesh.206-2
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: af0a8415-ab73-43df-92dd-08f49981df89
+      Material: e9829ad4-5335-4b0c-9b57-b72aa3242cd3
+  - UUID: fb24f5e4-8f01-41b4-a4a5-d44dee7abe07
+    Name: Mesh.206-3
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9c7bdc11-41b2-4553-a183-1174b7e2ab2b
+      Material: cdcc8fa0-e988-418b-985c-1064c830fa34
+  - UUID: 56422709-af53-48e8-974b-2394d37c0ec1
+    Name: Mesh.181-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: bfb8f9eb-ba13-48f9-99fc-b17d48737718
+      Material: ec740150-98bd-43ef-95b4-76f01ceea707
+  - UUID: 771a602d-ff64-4929-ac12-df71329b46c7
+    Name: Mesh.014-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: b4935b01-ea67-4ed0-802a-6e24dd5d8ce2
+      Material: 3d94e0b9-496d-4d38-9e62-95e5640523c4
+  - UUID: c554311b-96e9-4628-8bbd-736f4bda756a
+    Name: Mesh.190-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: ee9662c7-0cdb-4351-ac63-313432771674
+      Material: 93f8b6cf-f77b-4e04-bd24-3e6f7568fc85
+  - UUID: b1cb0d19-2988-4eea-83ae-230511b5f10d
+    Name: Mesh.187-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 8d80a33b-713a-4371-9bd0-2416ec1c97fd
+      Material: 425a4782-4d41-4fcb-a5f9-94b58c65cb93
+  - UUID: f02d90b1-5175-440f-ae75-f1e81a5d676e
+    Name: Mesh.187-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: c083944a-48c7-4d2e-a1b6-e3dc7f123e64
+      Material: 562f809e-fefb-4c47-a9f2-a6a4e451e4d4
+  - UUID: 668dc39e-60d9-49c8-afc6-ad263cdb4042
+    Name: Mesh.177
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 6c15289b-45c2-495c-ac73-c30aa9fd413f
+      Material: fd5493cc-b4be-4185-af21-dae53844e13e
+  - UUID: 64753134-555a-45ed-b6da-ab355c4de054
+    Name: Mesh.149-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: bdec8180-5132-4fc1-9283-2310dc9f3a78
+      Material: 11c2ea66-3a30-4be1-b30b-d7335f230557
+  - UUID: c176b902-2e2f-4ced-8d0e-5512a3f22f31
+    Name: Mesh.165-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 2ecdb5c0-7494-4fdc-b177-9590b73d85c5
+      Material: bfd0f087-7ddb-4ce0-9d80-8d3db5ac56d4
+  - UUID: 9deae2e6-edc8-433d-ab66-a95050bb1cc6
+    Name: Mesh.149-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 46a99267-6398-42e4-94c7-7c61179b335e
+      Material: 693b3597-c840-4a4e-8e5a-9ed9bf62ac51
+  - UUID: 18962c8f-890c-452e-9f1a-a66d16fdbc99
+    Name: Mesh.149-2
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 66bf9e0c-26f7-4ebe-9b37-8c82783e99ab
+      Material: e4244c93-d724-4f3a-9423-694049527cbe
+  - UUID: 07fc8c7e-34d5-4150-8f18-809acf64287a
+    Name: Mesh.071
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5c2b2a05-8525-476f-9f6f-70df9e1704ab
+      Material: eab4acf6-1743-4e87-a5f2-6d7428e9791f
+  - UUID: 59c47235-3890-4626-9635-7de8580ac4c0
+    Name: Mesh.070
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 35651053-976e-4616-84d8-46e859b57045
+      Material: 2b47338f-800f-414e-85d0-b9bac8010c9c
+  - UUID: c81046dd-6320-438f-93dc-b60967fdd5ee
+    Name: Mesh.058
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: e38c128a-bff0-4f48-a911-c0c3763b6f3b
+      Material: b793d5ff-3ada-4792-8aeb-b4081c111669
+  - UUID: 0680be07-9d84-4a1f-a2a7-aa6032a4c519
+    Name: Mesh.057
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: f3409f45-6e6d-4fc4-b0f7-54dbabe1fa9e
+      Material: 8ffa1d55-4325-484b-a015-51ed185a13e9
+  - UUID: 7a049b69-08df-440f-8845-f0d2b2367a89
+    Name: Mesh.049
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 8717e30e-6c71-4068-9691-822fc028dea9
+      Material: 15576e59-dd7d-47b9-a58c-14b4ddc54c91
+  - UUID: 4a632874-c734-456b-b209-215971a3d10c
+    Name: Mesh.050-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: daf91ef1-166b-4995-ae3a-cd49b4de4504
+      Material: 98aa9848-0389-4194-bbb9-a4d7635e63f3
+  - UUID: be93ffe0-3c4f-47b9-ad7b-0616d2fa0101
+    Name: Mesh.050-2
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 471c6efe-f2bd-40b3-84ec-c309f1ce5461
+      Material: d64fa1f3-2605-433b-98da-21dcf3db27e6
+  - UUID: 42797a3a-077e-49a5-afc1-558a3c45649a
+    Name: Mesh.1295-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 6107d559-d541-438a-aca8-200b785fd12d
+      Material: 912d30f7-fcb9-4722-8297-f9c5aa1dd332
+  - UUID: 89cf7428-f020-4bae-ab2a-bbfa7e6c8f50
+    Name: Mesh.014-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 38f726a5-e78f-4291-879f-c7233d968f88
+      Material: f4796841-ae4e-416e-8c02-45faa62f37f2
+  - UUID: 31100402-e2c0-47e6-9aa4-1e5496b76a51
+    Name: Mesh.1294-0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 493dd940-2ffd-485a-8e39-4d8b2d28972d
+      Material: 6ce6a59a-084f-4fc7-a51c-a1473bc5ba65
+  - UUID: a681c8fa-6d1b-49b7-8090-88590f9ee77a
+    Name: Mesh.1294-1
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 8aab8e02-ddeb-4b9a-9d20-797f69ced9f8
+      Material: 6d56d073-2a47-4f1f-8164-1cde920e9884
+  - UUID: b034838c-edcc-4aa5-9022-c1e89b1b621f
+    Name: Mesh.001-4
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d33c3664-54c5-4e20-aa48-c1d274311004
+      Material: 36f3814d-7de9-4aa3-935b-8858a79aae22
+  - UUID: 5e519907-4afb-4451-a70c-d2ee83fb7f6d
+    Name: Mesh.1294-3
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: bcbefcde-f9d2-480c-9fa6-0b54aad5560e
+      Material: 050fe09e-7637-48c6-8302-524f3be44b34
+  - UUID: e19a8b70-b22c-4817-8d15-bf09b71feb34
+    Name: Mesh.1294-4
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 42093fee-e2be-4538-95c3-753f2ac603c4
+      Material: ea20188a-0b9b-494f-a835-66efb2a513cb
+  - UUID: 6fb64b93-0659-421c-950d-fb83a26b2d26
+    Name: Mesh.1294-5
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 04608d0b-53c9-4a78-a984-7a168d0045cd
+      Material: 0b59148e-9324-4184-82e4-02a55a99fe2f
+  - UUID: af673574-0fa5-4c1f-9574-b7c80b675a1f
+    Name: Mesh.1294-2
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: ab86c6ee-bdcd-45a3-b461-c7775a58b59e
+      Material: 062cbc95-fec8-48a6-9764-2be4d7bed3d6

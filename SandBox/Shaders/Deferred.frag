@@ -1,13 +1,14 @@
 #version 450
 
 layout(location = 0) in vec2 uv;
+layout(location = 1) in vec2 viewRay;
 
 layout(location = 0) out vec4 outColor;
 
 layout(set = 1, binding = 0) uniform sampler2D albedoTexture;
 layout(set = 1, binding = 1) uniform sampler2D normalTexture;
-layout(set = 1, binding = 2) uniform sampler2D positionTexture;
-layout(set = 1, binding = 3) uniform sampler2D shadingTexture;
+layout(set = 1, binding = 2) uniform sampler2D shadingTexture;
+layout(set = 1, binding = 3) uniform sampler2D depthTexture;
 layout(set = 1, binding = 4) uniform sampler2D ssaoTexture;
 
 #include "Shaders/Includes/PointLight.h"
@@ -32,9 +33,15 @@ void main()
 {
 	vec3 albedoColor = texture(albedoTexture, uv).xyz;
 	vec4 normal = texture(normalTexture, uv);
-	vec3 position = texture(positionTexture, uv).xyz;
 	vec3 shading = texture(shadingTexture, uv).xyz;
 	vec3 ssao = texture(ssaoTexture, uv).xyz;
+
+    vec3 position = CalculatePositionFromDepth(
+        texture(depthTexture, uv).x,
+        camera.projectionMat4,
+        viewRay);
+
+	position = (inverse(camera.viewMat4) * vec4(position, 1.0f)).xyz;
 
 	vec3 basicReflectivity = mix(vec3(0.05), albedoColor, shading.x);
 	vec3 viewDirection = normalize(camera.position - position);

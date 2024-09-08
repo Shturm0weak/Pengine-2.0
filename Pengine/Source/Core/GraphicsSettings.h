@@ -17,6 +17,7 @@ namespace Pengine
 
 		struct SSAO
 		{
+			bool isEnabled = true;
 			int kernelSize = 16;
 			int noiseSize = 4;
 			float radius = 0.5f;

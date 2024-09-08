@@ -1,14 +1,12 @@
 #version 450
 
 layout(location = 0) in vec3 normal;
-layout(location = 1) in vec3 worldPosition;
-layout(location = 2) in vec2 uv;
-layout(location = 3) in mat3 TBN;
+layout(location = 1) in vec2 uv;
+layout(location = 2) in mat3 TBN;
 
 layout(location = 0) out vec4 outAlbedo;
 layout(location = 1) out vec4 outNormal;
-layout(location = 2) out vec4 outPosition;
-layout(location = 3) out vec4 outShading;
+layout(location = 2) out vec4 outShading;
 
 layout(set = 1, binding = 0) uniform sampler2D albedoTexture;
 layout(set = 1, binding = 1) uniform sampler2D normalTexture;
@@ -21,6 +19,13 @@ layout(set = 1, binding = 4) uniform sampler2D aoTexture;
 layout(set = 1, binding = 5) uniform GBufferMaterial
 {
 	DefaultMaterial material;
+};
+
+#include "Shaders/Includes/Camera.h"
+
+layout(set = 0, binding = 0) uniform GlobalBuffer
+{
+	Camera camera;
 };
 
 void main()
@@ -50,8 +55,6 @@ void main()
 	}
 	else
 	{
-		outNormal = vec4(normal, 1.0f);
+		outNormal = vec4(normalize(normal), 1.0f);
 	}
-
-	outPosition = vec4(worldPosition, 1.0f);
 }

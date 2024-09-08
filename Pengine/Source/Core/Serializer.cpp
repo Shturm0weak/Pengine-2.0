@@ -2055,6 +2055,7 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Key << "SSAO";
 	out << YAML::Value << YAML::BeginMap;
 
+	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.ssao.isEnabled;
 	out << YAML::Key << "AoScale" << YAML::Value << graphicsSettings.ssao.aoScale;
 	out << YAML::Key << "Bias" << YAML::Value << graphicsSettings.ssao.bias;
 	out << YAML::Key << "KernelSize" << YAML::Value << graphicsSettings.ssao.kernelSize;
@@ -2069,8 +2070,6 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	std::ofstream fout(graphicsSettings.GetFilepath());
 	fout << out.c_str();
 	fout.close();
-
-	Logger::Log("Scene:" + graphicsSettings.GetFilepath().string() + " has been serialized!", GREEN);
 }
 
 GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::path& filepath)
@@ -2098,6 +2097,11 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 
 	if (const auto& ssaoData = data["SSAO"])
 	{
+		if (const auto& isEnabledData = ssaoData["IsEnabled"])
+		{
+			graphicsSettings.ssao.isEnabled = isEnabledData.as<bool>();
+		}
+
 		if (const auto& aoScaleData = ssaoData["AoScale"])
 		{
 			graphicsSettings.ssao.aoScale = aoScaleData.as<float>();
