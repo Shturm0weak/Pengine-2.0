@@ -63,7 +63,7 @@ void main()
             camera.projectionMat4,
             viewRay).z;
 
-        float rangeCheck = smoothstep(0.0f, 1.0f, radius / abs(position.z - sampleDepth));
+        float rangeCheck = 1.0f - smoothstep(0.0f, 1.0f, abs(position.z - sampleDepth) / radius);
         occlusion += (sampleDepth >= currentSample.z + bias ? 1.0f : 0.0f) * rangeCheck;
     }
     occlusion = 1.0f - (occlusion / float(kernelSize));
