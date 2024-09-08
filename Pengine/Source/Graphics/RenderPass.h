@@ -49,6 +49,7 @@ namespace Pengine
 
 		struct AttachmentDescription
 		{
+			Texture::SamplerCreateInfo samplerCreateInfo{};
 			Texture::Layout layout;
 			Format format;
 			Load load = Load::CLEAR;

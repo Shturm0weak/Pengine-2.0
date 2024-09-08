@@ -69,6 +69,11 @@ void SSAORenderer::GenerateNoiseTexture(const int noiseSize)
 	noiseCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_DST };
 	noiseCreateInfo.data = noiseData.data();
 	
+	Texture::SamplerCreateInfo samplerCreateInfo{};
+	samplerCreateInfo.filter = Texture::SamplerCreateInfo::Filter::NEAREST;
+
+	noiseCreateInfo.samplerCreateInfo = samplerCreateInfo;
+
 	m_NoiseTexture = TextureManager::GetInstance().Create(noiseCreateInfo);
 }
 

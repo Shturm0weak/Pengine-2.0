@@ -13,8 +13,8 @@
 using namespace Pengine;
 using namespace Vk;
 
-VulkanTexture::VulkanTexture(const CreateInfo& textureCreateInfo)
-	: Texture(textureCreateInfo)
+VulkanTexture::VulkanTexture(const CreateInfo& ñreateInfo)
+	: Texture(ñreateInfo)
 {
 	VkFormat format = ConvertFormat(m_Format);
 	VkImageAspectFlagBits aspectMask = ConvertAspectMask(m_AspectMask);
@@ -32,9 +32,9 @@ VulkanTexture::VulkanTexture(const CreateInfo& textureCreateInfo)
 	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-	imageInfo.flags = textureCreateInfo.isCubeMap ? VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT : 0;
+	imageInfo.flags = ñreateInfo.isCubeMap ? VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT : 0;
 
-	for (Usage usage : textureCreateInfo.usage)
+	for (Usage usage : ñreateInfo.usage)
 	{
 		imageInfo.usage |= ConvertUsage(usage);
 	}
@@ -45,13 +45,13 @@ VulkanTexture::VulkanTexture(const CreateInfo& textureCreateInfo)
 		m_VmaAllocation,
 		m_VmaAllocationInfo);
 
-	if (textureCreateInfo.data)
+	if (ñreateInfo.data)
 	{
 		std::shared_ptr<VulkanBuffer> stagingBuffer = VulkanBuffer::CreateStagingBuffer(
-			textureCreateInfo.channels * textureCreateInfo.instanceSize,
+			ñreateInfo.channels * ñreateInfo.instanceSize,
 			m_Size.x * m_Size.y);
 
-		stagingBuffer->WriteToBuffer(textureCreateInfo.data, stagingBuffer->GetSize());
+		stagingBuffer->WriteToBuffer(ñreateInfo.data, stagingBuffer->GetSize());
 
 		TransitionToWrite();
 
@@ -77,8 +77,8 @@ VulkanTexture::VulkanTexture(const CreateInfo& textureCreateInfo)
 		aspectMask,
 		m_MipLevels,
 		m_LayerCount,
-		textureCreateInfo.isCubeMap ? VK_IMAGE_VIEW_TYPE_CUBE : VK_IMAGE_VIEW_TYPE_2D);
-	m_Sampler = CreateSampler(m_MipLevels);
+		ñreateInfo.isCubeMap ? VK_IMAGE_VIEW_TYPE_CUBE : VK_IMAGE_VIEW_TYPE_2D);
+	m_Sampler = CreateSampler(ñreateInfo.samplerCreateInfo);
 
 	std::unique_ptr<VulkanDescriptorSetLayout> setLayout = VulkanDescriptorSetLayout::Builder()
 		.AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
@@ -139,25 +139,25 @@ VkImageView VulkanTexture::CreateImageView(
 	return imageView;
 }
 
-VkSampler VulkanTexture::CreateSampler(const uint32_t mipLevels)
+VkSampler VulkanTexture::CreateSampler(const Texture::SamplerCreateInfo& samplerCreateInfo)
 {
 	VkSamplerCreateInfo samplerInfo{};
 	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-	samplerInfo.magFilter = VK_FILTER_NEAREST;
-	samplerInfo.minFilter = VK_FILTER_NEAREST;
-	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.magFilter = ConvertFilter(samplerCreateInfo.filter);
+	samplerInfo.minFilter = ConvertFilter(samplerCreateInfo.filter);
+	samplerInfo.addressModeU = ConvertAddressMode(samplerCreateInfo.addressMode);
+	samplerInfo.addressModeV = ConvertAddressMode(samplerCreateInfo.addressMode);
+	samplerInfo.addressModeW = ConvertAddressMode(samplerCreateInfo.addressMode);
 	samplerInfo.anisotropyEnable = VK_TRUE;
-	samplerInfo.maxAnisotropy = 16;
-	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+	samplerInfo.maxAnisotropy = samplerCreateInfo.maxAnisotropy;
+	samplerInfo.borderColor = ConvertBorderColor(samplerCreateInfo.borderColor);
 	samplerInfo.unnormalizedCoordinates = VK_FALSE;
 	samplerInfo.compareEnable = VK_FALSE;
 	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+	samplerInfo.mipmapMode = ConvertMipmapMode(samplerCreateInfo.mipmapMode);
 	samplerInfo.mipLodBias = 0.0f;
 	samplerInfo.minLod = 0.0f;
-	samplerInfo.maxLod = static_cast<float>(mipLevels - 1);
+	samplerInfo.maxLod = VK_LOD_CLAMP_NONE;
 
 	return VulkanSamplerManager::GetInstance().CreateSampler(samplerInfo);
 }
@@ -267,6 +267,162 @@ Texture::Usage VulkanTexture::ConvertUsage(const VkImageUsageFlagBits usage)
 	}
 
 	FATAL_ERROR("Failed to convert usage!");
+	return {};
+}
+
+VkSamplerAddressMode VulkanTexture::ConvertAddressMode(SamplerCreateInfo::AddressMode addressMode)
+{
+	switch (addressMode)
+	{
+	case Pengine::Texture::SamplerCreateInfo::AddressMode::REPEAT:
+		return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	case Pengine::Texture::SamplerCreateInfo::AddressMode::MIRRORED_REPEAT:
+		return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+	case Pengine::Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_EDGE:
+		return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+	case Pengine::Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER:
+		return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+	case Pengine::Texture::SamplerCreateInfo::AddressMode::MIRROR_CLAMP_TO_EDGE:
+		return VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE;
+	default:
+		break;
+	}
+
+	FATAL_ERROR("Failed to convert address mode!");
+	return {};
+}
+
+Texture::SamplerCreateInfo::AddressMode VulkanTexture::ConvertAddressMode(VkSamplerAddressMode addressMode)
+{
+	switch (addressMode)
+	{
+	case VK_SAMPLER_ADDRESS_MODE_REPEAT:
+		return Pengine::Texture::SamplerCreateInfo::AddressMode::REPEAT;
+	case VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT:
+		return Pengine::Texture::SamplerCreateInfo::AddressMode::MIRRORED_REPEAT;
+	case VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE:
+		return Pengine::Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_EDGE;
+	case VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER:
+		return Pengine::Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
+	case VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE:
+		return Pengine::Texture::SamplerCreateInfo::AddressMode::MIRROR_CLAMP_TO_EDGE;
+	default:
+		break;
+	}
+
+	FATAL_ERROR("Failed to convert address mode!");
+	return {};
+}
+
+VkFilter VulkanTexture::ConvertFilter(SamplerCreateInfo::Filter filter)
+{
+	switch (filter)
+	{
+	case Pengine::Texture::SamplerCreateInfo::Filter::NEAREST:
+		return VK_FILTER_NEAREST;
+	case Pengine::Texture::SamplerCreateInfo::Filter::LINEAR:
+		return VK_FILTER_LINEAR;
+	default:
+		break;
+	}
+
+	FATAL_ERROR("Failed to convert filter!");
+	return {};
+}
+
+Texture::SamplerCreateInfo::Filter VulkanTexture::ConvertFilter(VkFilter filter)
+{
+	switch (filter)
+	{
+	case VK_FILTER_NEAREST:
+		return Pengine::Texture::SamplerCreateInfo::Filter::NEAREST;
+	case VK_FILTER_LINEAR:
+		return Pengine::Texture::SamplerCreateInfo::Filter::LINEAR;
+	default:
+		break;
+	}
+
+	FATAL_ERROR("Failed to convert filter!");
+	return {};
+}
+
+VkSamplerMipmapMode VulkanTexture::ConvertMipmapMode(Texture::SamplerCreateInfo::MipmapMode mipmapMode)
+{
+	switch (mipmapMode)
+	{
+	case Pengine::Texture::SamplerCreateInfo::MipmapMode::MODE_NEAREST:
+		return VK_SAMPLER_MIPMAP_MODE_NEAREST;
+	case Pengine::Texture::SamplerCreateInfo::MipmapMode::MODE_LINEAR:
+		return VK_SAMPLER_MIPMAP_MODE_LINEAR;
+	default:
+		break;
+	}
+
+	FATAL_ERROR("Failed to convert mipmap mode!");
+	return {};
+}
+
+Texture::SamplerCreateInfo::MipmapMode VulkanTexture::ConvertMipmapMode(VkSamplerMipmapMode mipmapMode)
+{
+	switch (mipmapMode)
+	{
+	case VK_SAMPLER_MIPMAP_MODE_NEAREST:
+		return Pengine::Texture::SamplerCreateInfo::MipmapMode::MODE_NEAREST;
+	case VK_SAMPLER_MIPMAP_MODE_LINEAR:
+		return Pengine::Texture::SamplerCreateInfo::MipmapMode::MODE_LINEAR;
+	default:
+		break;
+	}
+
+	FATAL_ERROR("Failed to convert mipmap mode!");
+	return {};
+}
+
+VkBorderColor VulkanTexture::ConvertBorderColor(Texture::SamplerCreateInfo::BorderColor borderColor)
+{
+	switch (borderColor)
+	{
+	case Pengine::Texture::SamplerCreateInfo::BorderColor::FLOAT_TRANSPARENT_BLACK:
+		return VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
+	case Pengine::Texture::SamplerCreateInfo::BorderColor::INT_TRANSPARENT_BLACK:
+		return VK_BORDER_COLOR_INT_TRANSPARENT_BLACK;
+	case Pengine::Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK:
+		return VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK;
+	case Pengine::Texture::SamplerCreateInfo::BorderColor::INT_OPAQUE_BLACK:
+		return VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+	case Pengine::Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_WHITE:
+		return VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+	case Pengine::Texture::SamplerCreateInfo::BorderColor::INT_OPAQUE_WHITE:
+		return VK_BORDER_COLOR_INT_OPAQUE_WHITE;
+	default:
+		break;
+	}
+
+	FATAL_ERROR("Failed to convert border color!");
+	return {};
+}
+
+Texture::SamplerCreateInfo::BorderColor VulkanTexture::ConvertBorderColor(VkBorderColor borderColor)
+{
+	switch (borderColor)
+	{
+	case VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK:
+		return Pengine::Texture::SamplerCreateInfo::BorderColor::FLOAT_TRANSPARENT_BLACK;
+	case VK_BORDER_COLOR_INT_TRANSPARENT_BLACK:
+		return Pengine::Texture::SamplerCreateInfo::BorderColor::INT_TRANSPARENT_BLACK;
+	case VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK:
+		return Pengine::Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK;
+	case VK_BORDER_COLOR_INT_OPAQUE_BLACK:
+		return Pengine::Texture::SamplerCreateInfo::BorderColor::INT_OPAQUE_BLACK;
+	case VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE:
+		return Pengine::Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_WHITE;
+	case VK_BORDER_COLOR_INT_OPAQUE_WHITE:
+		return Pengine::Texture::SamplerCreateInfo::BorderColor::INT_OPAQUE_WHITE;
+	default:
+		break;
+	}
+
+	FATAL_ERROR("Failed to convert border color!");
 	return {};
 }
 

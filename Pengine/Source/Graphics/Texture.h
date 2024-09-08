@@ -35,8 +35,49 @@ namespace Pengine
 			COLOR_ATTACHMENT
 		};
 
+		struct SamplerCreateInfo
+		{
+			enum class Filter
+			{
+				NEAREST = 0,
+				LINEAR = 1
+			};
+
+			enum class AddressMode
+			{
+				REPEAT = 0,
+				MIRRORED_REPEAT = 1,
+				CLAMP_TO_EDGE = 2,
+				CLAMP_TO_BORDER = 3,
+				MIRROR_CLAMP_TO_EDGE = 4
+			};
+
+			enum class MipmapMode
+			{
+				MODE_NEAREST = 0,
+				MODE_LINEAR = 1
+			};
+
+			enum class BorderColor
+			{
+				FLOAT_TRANSPARENT_BLACK = 0,
+				INT_TRANSPARENT_BLACK = 1,
+				FLOAT_OPAQUE_BLACK = 2,
+				INT_OPAQUE_BLACK = 3,
+				FLOAT_OPAQUE_WHITE = 4,
+				INT_OPAQUE_WHITE = 5
+			};
+
+			float maxAnisotropy = 16.0f;
+			Filter filter = Filter::LINEAR;
+			AddressMode addressMode = AddressMode::REPEAT;
+			MipmapMode mipmapMode = MipmapMode::MODE_LINEAR;
+			BorderColor borderColor = BorderColor::FLOAT_OPAQUE_BLACK;
+		};
+
 		struct CreateInfo
 		{
+			SamplerCreateInfo samplerCreateInfo{};
 			glm::ivec2 size = { 0, 0 };
 			void* data;
 			uint32_t instanceSize = sizeof(uint8_t);
@@ -50,11 +91,11 @@ namespace Pengine
 			bool isCubeMap = false;
 		};
 
-		static std::shared_ptr<Texture> Create(const CreateInfo& textureCreateInfo);
+		static std::shared_ptr<Texture> Create(const CreateInfo& ñreateInfo);
 
 		static std::shared_ptr<Texture> Load(const std::filesystem::path& filepath);
 		
-		explicit Texture(const CreateInfo& textureCreateInfo);
+		explicit Texture(const CreateInfo& ñreateInfo);
 		virtual ~Texture() = default;
 		Texture(const Texture&) = delete;
 		Texture(Texture&&) = delete;

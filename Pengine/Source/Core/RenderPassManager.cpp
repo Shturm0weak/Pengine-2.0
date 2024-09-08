@@ -119,6 +119,12 @@ void RenderPassManager::CreateGBuffer()
 	RenderPass::AttachmentDescription depth{};
 	depth.format = Format::D32_SFLOAT;
 	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	
+	Texture::SamplerCreateInfo depthSamplerCreateInfo{};
+	depthSamplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
+	depthSamplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_WHITE;
+
+	depth.samplerCreateInfo = depthSamplerCreateInfo;
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = GBuffer;

@@ -32,7 +32,8 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 		attachmentCreateInfo.usage = { Texture::Usage::SAMPLED, 
 			isColor ? Texture::Usage::COLOR_ATTACHMENT : Texture::Usage::DEPTH_STENCIL_ATTACHMENT };
 		attachmentCreateInfo.size = attachment.size ? *attachment.size : (glm::vec2)size * renderPass->GetResizeViewportScale();
-		
+		attachmentCreateInfo.samplerCreateInfo = attachment.samplerCreateInfo;
+
 		attachments.emplace_back(attachmentCreateInfo);
 	}
 

@@ -11,8 +11,8 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [-8.83254814, 3.17971969, 0.248997092]
-      Rotation: [-0.0327793844, -1.53969908, 0]
+      Position: [-11.3883982, 1.82096505, -0.207473069]
+      Rotation: [-0.0477911681, 4.73308563, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:

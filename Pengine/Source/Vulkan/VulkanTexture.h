@@ -11,7 +11,7 @@ namespace Pengine::Vk
 	class PENGINE_API VulkanTexture final : public Texture
 	{
 	public:
-		explicit VulkanTexture(const CreateInfo& textureCreateInfo);
+		explicit VulkanTexture(const CreateInfo& ñreateInfo);
 		virtual ~VulkanTexture() override;
 		VulkanTexture(const VulkanTexture&) = delete;
 		VulkanTexture(VulkanTexture&&) = delete;
@@ -28,7 +28,7 @@ namespace Pengine::Vk
 			uint32_t layerCount,
 			VkImageViewType imageViewType);
 
-		static VkSampler CreateSampler(uint32_t mipLevels);
+		static VkSampler CreateSampler(const Texture::SamplerCreateInfo& samplerCreateInfo);
 
 		static VkImageAspectFlagBits ConvertAspectMask(AspectMask aspectMask);
 
@@ -41,6 +41,22 @@ namespace Pengine::Vk
 		static VkImageUsageFlagBits ConvertUsage(Usage usage);
 
 		static Usage ConvertUsage(VkImageUsageFlagBits usage);
+
+		static VkSamplerAddressMode ConvertAddressMode(SamplerCreateInfo::AddressMode addressMode);
+
+		static SamplerCreateInfo::AddressMode ConvertAddressMode(VkSamplerAddressMode addressMode);
+
+		static VkFilter ConvertFilter(SamplerCreateInfo::Filter filter);
+
+		static SamplerCreateInfo::Filter ConvertFilter(VkFilter filter);
+
+		static VkSamplerMipmapMode ConvertMipmapMode(SamplerCreateInfo::MipmapMode mipmapMode);
+
+		static SamplerCreateInfo::MipmapMode ConvertMipmapMode(VkSamplerMipmapMode mipmapMode);
+
+		static VkBorderColor ConvertBorderColor(SamplerCreateInfo::BorderColor borderColor);
+
+		static SamplerCreateInfo::BorderColor ConvertBorderColor(VkBorderColor borderColor);
 
 		[[nodiscard]] virtual void* GetId() const override { return (void*)m_DescriptorSet; }
 
