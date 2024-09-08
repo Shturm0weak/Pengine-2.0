@@ -1,0 +1,28 @@
+Basemat:
+  Pipelines:
+    - RenderPass: SSAOBlur
+      DepthTest: false
+      DepthWrite: false
+      CullMode: None
+      PolygonMode: Fill
+      TopologyMode: TriangleList
+      Vertex: Shaders/SSAOBlur.vert
+      Fragment: Shaders/SSAOBlur.frag
+      DescriptorSets:
+        - Type: Renderer
+          RenderPass: SSAOBlur
+          Set: 0
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Names:
+            - positionA
+            - uvA
+            - normalA
+            - tangentA
+            - bitangentA
+      ColorBlendStates:
+        - BlendEnabled: false
+      Uniforms:
+        - Name: ssaoTexture
+          RenderTarget: "SSAO[0]"

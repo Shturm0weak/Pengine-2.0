@@ -4,6 +4,7 @@
 #include "Asset.h"
 #include "Entity.h"
 #include "Visualizer.h"
+#include "GraphicsSettings.h"
 
 namespace Pengine
 {
@@ -47,12 +48,17 @@ namespace Pengine
 
 		Settings& GetSettings() { return m_Settings; }
 
+		GraphicsSettings& GetGraphicsSettings() { return m_GraphicsSettings; }
+
+		void SetGraphicsSettings(const GraphicsSettings& graphicsSettings) { m_GraphicsSettings = graphicsSettings; }
+
 	private:
 		std::unordered_map<std::string, std::shared_ptr<Entity>> m_EntitiesByUUID;
 		std::vector<std::shared_ptr<Entity>> m_Entities;
 		entt::registry m_Registry;
 		Visualizer m_Visualizer;
 		Settings m_Settings;
+		GraphicsSettings m_GraphicsSettings;
 
 		std::string m_Tag = none;
 

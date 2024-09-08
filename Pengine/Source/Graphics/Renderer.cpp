@@ -138,21 +138,16 @@ void Renderer::SetFrameBufferToRenderPass(const std::string& type, const std::sh
 
 void Renderer::Resize(const glm::ivec2& size) const
 {
-	if (const std::shared_ptr<FrameBuffer> frameBuffer =
-		GetRenderPassFrameBuffer(GBuffer))
+	for (const std::string& renderPassName : renderPassesOrder)
 	{
-		frameBuffer->Resize(size);
-	}
-
-	if (const std::shared_ptr<FrameBuffer> frameBuffer =
-		GetRenderPassFrameBuffer(Deferred))
-	{
-		frameBuffer->Resize(size);
-	}
-
-	if (const std::shared_ptr<FrameBuffer> frameBuffer =
-		GetRenderPassFrameBuffer(Final))
-	{
-		frameBuffer->Resize(size);
+		if (const std::shared_ptr<FrameBuffer> frameBuffer =
+			GetRenderPassFrameBuffer(renderPassName))
+		{
+			const std::shared_ptr<RenderPass> renderPass = RenderPassManager::GetInstance().GetRenderPass(renderPassName);
+			if (renderPass && renderPass->GetResizeWithViewport())
+			{
+				frameBuffer->Resize(glm::vec2(size) * renderPass->GetResizeViewportScale());
+			}
+		}
 	}
 }

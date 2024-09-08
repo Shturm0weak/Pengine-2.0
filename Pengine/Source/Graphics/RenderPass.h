@@ -14,6 +14,8 @@ namespace Pengine
 	const std::string Atmosphere = "Atmosphere";
 	const std::string Transparent = "Transparent";
 	const std::string Final = "Final";
+	const std::string SSAO = "SSAO";
+	const std::string SSAOBlur = "SSAOBlur";
 	
 	class FrameBuffer;
 	class Window;
@@ -84,6 +86,8 @@ namespace Pengine
 			std::unordered_map<std::string, std::shared_ptr<Buffer>> buffersByName;
 			std::function<void(const RenderCallbackInfo&)> renderCallback;
 			std::function<void(RenderPass&)> createCallback;
+			bool resizeWithViewport = false;
+			glm::vec2 resizeViewportScale = { 1.0f, 1.0f };
 		};
 
 		static std::shared_ptr<RenderPass> Create(const CreateInfo& createInfo);
@@ -113,6 +117,10 @@ namespace Pengine
 
 		[[nodiscard]] const std::vector<AttachmentDescription>& GetAttachmentDescriptions() const { return m_AttachmentDescriptions; }
 
+		[[nodiscard]] const bool GetResizeWithViewport() const { return m_ResizeWithViewport; }
+
+		[[nodiscard]] const glm::vec2& GetResizeViewportScale() const { return m_ResizeViewportScale; }
+
 	private:
 		std::vector<AttachmentDescription> m_AttachmentDescriptions; 
 		std::vector<glm::vec4> m_ClearColors;
@@ -123,6 +131,8 @@ namespace Pengine
 		std::function<void(RenderPass&)> m_CreateCallback;
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
 		bool m_IsInitialized = false;
+		bool m_ResizeWithViewport = false;
+		glm::vec2 m_ResizeViewportScale = { 1.0f, 1.0f };
 
 		friend class Renderer;
 	};

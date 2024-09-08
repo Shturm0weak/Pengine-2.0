@@ -26,6 +26,7 @@ void Scene::Copy(const Scene& scene)
 
 Scene::Scene(const std::string& name, const std::filesystem::path& filepath)
 	: Asset(name, filepath)
+	, m_GraphicsSettings("Default", "Default")
 {
 
 }
@@ -38,6 +39,7 @@ Scene::~Scene()
 Scene::Scene(const Scene& scene)
 	: Asset(scene.GetName(), scene.GetFilepath())
 	, enable_shared_from_this(scene)
+	, m_GraphicsSettings(scene.m_GraphicsSettings.GetName(), scene.m_GraphicsSettings.GetFilepath())
 {
 	Copy(scene);
 }

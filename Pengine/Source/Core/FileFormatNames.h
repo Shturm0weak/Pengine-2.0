@@ -77,6 +77,11 @@ namespace Pengine::FileFormats
 		return ".scene";
 	}
 
+	inline const char* GraphicsSettings()
+	{
+		return ".gs";
+	}
+
 	inline bool IsTexture(const std::string& fileFormat)
 	{
 		return fileFormat == Png()
@@ -99,7 +104,8 @@ namespace Pengine::FileFormats
 			|| fileFormat == BaseMat()
 			|| fileFormat == Mat()
 			|| fileFormat == Mesh()
-			|| fileFormat == Prefab())
+			|| fileFormat == Prefab()
+			|| fileFormat == GraphicsSettings())
 		{
 			return true;
 		}

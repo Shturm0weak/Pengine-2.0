@@ -9,7 +9,8 @@ Basemat:
       Vertex: Shaders/Final.vert
       Fragment: Shaders/Final.frag
       DescriptorSets:
-        - Type: BaseMaterial
+        - Type: Renderer
+          RenderPass: Final
           Set: 0
       VertexInputBindingDescriptions:
         - Binding: 0

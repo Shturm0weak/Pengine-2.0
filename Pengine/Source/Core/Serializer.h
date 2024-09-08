@@ -2,6 +2,7 @@
 
 #include "Core.h"
 #include "Entity.h"
+#include "GraphicsSettings.h"
 
 #include "../Configs/EngineConfig.h"
 #include "../Graphics/Material.h"
@@ -86,6 +87,10 @@ namespace Pengine
 		static void SerializeScene(const std::filesystem::path& filepath, const std::shared_ptr<Scene>& scene);
 
 		static std::shared_ptr<Scene> DeserializeScene(const std::filesystem::path& filepath);
+
+		static void SerializeGraphicsSettings(const GraphicsSettings& graphicsSettings);
+
+		static GraphicsSettings DeserializeGraphicsSettings(const std::filesystem::path& filepath);
 
 	private:
 		static void ParseUniformValues(

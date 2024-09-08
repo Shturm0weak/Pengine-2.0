@@ -5,5 +5,4 @@ struct DefaultMaterial
 	float roughnessFactor;
 	float aoFactor;
 	int useNormalMap;
-	int isTransparent;
 };

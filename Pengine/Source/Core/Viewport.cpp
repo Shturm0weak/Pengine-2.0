@@ -44,8 +44,8 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
 		{
-			std::string dragDropSource(static_cast<const char*>(payload->Data));
-			dragDropSource.resize(payload->DataSize);
+			std::wstring dragDropSource(static_cast<const wchar_t*>(payload->Data));
+			dragDropSource.resize(payload->DataSize / sizeof(wchar_t));
 			std::filesystem::path path = dragDropSource;
 
 			std::shared_ptr<Scene> scene;

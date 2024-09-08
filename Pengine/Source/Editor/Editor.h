@@ -53,6 +53,8 @@ namespace Pengine
 
 		void Properties(const std::shared_ptr<Scene>& scene);
 
+		void GraphicsSettingsInfo(GraphicsSettings& graphicsSettings);
+
 		void CameraComponent(const std::shared_ptr<Entity>& entity);
 
 		void TransformComponent(const std::shared_ptr<Entity>& entity);
