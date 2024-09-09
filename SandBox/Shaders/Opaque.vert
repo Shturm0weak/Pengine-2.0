@@ -19,6 +19,13 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 	Camera camera;
 };
 
+#include "Shaders/Includes/DefaultMaterial.h"
+
+layout(set = 1, binding = 5) uniform GBufferMaterial
+{
+	DefaultMaterial material;
+};
+
 void main()
 {
 	gl_Position = camera.viewProjectionMat4 * transformA * vec4(positionA, 1.0);
@@ -26,5 +33,5 @@ void main()
 	vec3 tangent = normalize(inverseTransformA * tangentA);
 	vec3 bitangent = normalize(inverseTransformA * bitangentA);
 	TBN = mat3(tangent, bitangent, normal);
-	uv = uvA;
+	uv = uvA * material.uvTransform.xy + material.uvTransform.zw;
 }

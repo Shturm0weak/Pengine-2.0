@@ -2,7 +2,7 @@ Mat:
   Basemat: Materials/MeshBase.basemat
   Options:
     - Name: Transparency
-      IsEnabled: false
+      IsEnabled: true
       Active:
         - Transparent
       Inactive:
@@ -11,7 +11,7 @@ Mat:
     - RenderPass: GBuffer
       Uniforms:
         - Name: albedoTexture
-          Value: ed291732-e20e-4d4d-8657-f055118818bb
+          Value: ""
         - Name: normalTexture
           Value: ""
         - Name: metalnessTexture
@@ -23,7 +23,7 @@ Mat:
         - Name: GBufferMaterial
           Values:
             - Name: material.color
-              Value: [0.470400006, 0.470400006, 0.470400006, 1]
+              Value: [1, 0, 0, 0.5]
               Type: vec4
             - Name: material.uvTransform
               Value: [1, 1, 0, 0]
@@ -32,10 +32,10 @@ Mat:
               Value: 0
               Type: float
             - Name: material.roughnessFactor
-              Value: 1
+              Value: 0.25
               Type: float
             - Name: material.aoFactor
-              Value: 1
+              Value: 0.200000003
               Type: float
             - Name: material.useNormalMap
               Value: 0

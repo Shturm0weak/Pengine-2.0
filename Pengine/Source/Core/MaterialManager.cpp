@@ -81,6 +81,27 @@ std::shared_ptr<Material> MaterialManager::Clone(const std::string& name, const 
 	return clonedMaterial;
 }
 
+void MaterialManager::ReloadAll()
+{
+	for (const auto& [filepath, baseMaterial] : m_BaseMaterialsByFilepath)
+	{
+		BaseMaterial::Reload(baseMaterial);
+	}
+	
+	for (const auto& [filepath, material] : m_MaterialsByFilepath)
+	{
+		Material::Reload(material, false);
+	}
+}
+
+void MaterialManager::SaveAll()
+{
+	for (const auto& [filepath, material] : m_MaterialsByFilepath)
+	{
+		Material::Save(material);
+	}
+}
+
 void MaterialManager::ShutDown()
 {
 	m_MaterialsByFilepath.clear();

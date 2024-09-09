@@ -32,6 +32,10 @@ namespace Pengine
 		
 		const std::unordered_map<std::filesystem::path, std::shared_ptr<BaseMaterial>, path_hash>& GetBaseMaterials() const { return m_BaseMaterialsByFilepath; }
 
+		void ReloadAll();
+
+		void SaveAll();
+
 		void ShutDown();
 
 	private:

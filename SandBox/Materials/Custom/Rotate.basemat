@@ -1,12 +1,13 @@
 Basemat:
   Pipelines:
-    - RenderPass: Transparent
+    - RenderPass: GBuffer
       DepthTest: true
-      DepthWrite: false
+      DepthWrite: true
       CullMode: Back
       PolygonMode: Fill
-      Vertex: Shaders/Custom/EnergyShield.vert
-      Fragment: Shaders/Custom/EnergyShield.frag
+      TopologyMode: TriangleList
+      Vertex: Shaders/Opaque.vert
+      Fragment: Shaders/Custom/Rotate.frag
       DescriptorSets:
         - Type: Renderer
           RenderPass: DefaultReflection
@@ -28,5 +29,6 @@ Basemat:
             - transformA
             - inverseTransformA
       ColorBlendStates:
-        - BlendEnabled: true
-        
+        - BlendEnabled: false
+        - BlendEnabled: false
+        - BlendEnabled: false

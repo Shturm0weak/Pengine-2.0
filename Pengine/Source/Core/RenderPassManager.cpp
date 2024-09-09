@@ -694,6 +694,11 @@ void RenderPassManager::CreateTransparent()
 		for (const entt::entity& entity : r3dView)
 		{
 			Renderer3D& r3d = registry.get<Renderer3D>(entity);
+			Transform& transform = registry.get<Transform>(entity);
+			if (!transform.GetEntity()->IsEnabled())
+			{
+				continue;
+			}
 
 			if (!r3d.mesh || !r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
 			{
@@ -706,9 +711,7 @@ void RenderPassManager::CreateTransparent()
 				continue;
 			}
 
-			Transform& transform = registry.get<Transform>(entity);
-
-			RenderData renderData;
+			RenderData renderData{};
 			renderData.r3d = r3d;
 			renderData.position = transform.GetPosition();
 			renderData.transformMat4 = transform.GetTransform();
@@ -890,7 +893,7 @@ void RenderPassManager::CreateSSAO()
 	createInfo.clearColors = { clearColor };
 	createInfo.attachmentDescriptions = { color };
 	createInfo.resizeWithViewport = true;
-	createInfo.resizeViewportScale = { 0.5f, 0.5f };
+	createInfo.resizeViewportScale = { 0.75f, 0.75f };
 
 	const std::shared_ptr<Mesh> planeMesh = nullptr;
 
@@ -1016,7 +1019,7 @@ void RenderPassManager::CreateSSAOBlur()
 	createInfo.clearColors = { clearColor };
 	createInfo.attachmentDescriptions = { color };
 	createInfo.resizeWithViewport = true;
-	createInfo.resizeViewportScale = { 0.5f, 0.5f };
+	createInfo.resizeViewportScale = { 0.75f, 0.75f };
 
 	const std::shared_ptr<Mesh> planeMesh = nullptr;
 

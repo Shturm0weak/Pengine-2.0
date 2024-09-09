@@ -46,8 +46,10 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	AssetBrowser(scene);
 
 	m_MaterialMenu.Update(*this);
+	m_BaseMaterialMenu.Update(*this);
 	m_CreateFileMenu.Update();
 	m_DeleteFileMenu.Update();
+	m_CloneMaterialMenu.Update();
 	m_CreateViewportMenu.Update(*this);
 
 	ImGui::Begin("Settings");
@@ -1196,7 +1198,19 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 			ImGui::PushID(filename.c_str());
-			ImGui::ImageButton(currentIcon, { thumbnailSize, thumbnailSize }, ImVec2(0, 1), ImVec2(1, 0));
+			if (ImGui::ImageButton(currentIcon, { thumbnailSize, thumbnailSize }, ImVec2(0, 1), ImVec2(1, 0)))
+			{
+				if (format == FileFormats::Mat())
+				{
+					m_MaterialMenu.opened = true;
+					m_MaterialMenu.material = MaterialManager::GetInstance().LoadMaterial(path);
+				}
+				else if (format == FileFormats::BaseMat())
+				{
+					m_BaseMaterialMenu.opened = true;
+					m_BaseMaterialMenu.baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(path);
+				}
+			}
 			ImGui::PopID();
 
 			iconHovered = iconHovered ? iconHovered : ImGui::IsItemHovered();
@@ -1239,11 +1253,21 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 						EventSystem::GetInstance().SendEvent(event);
 					}
 				}
-				else if (ImGui::MenuItem("Delete file"))
+				if (format == FileFormats::Mat())
+				{
+					if (ImGui::MenuItem("Clone"))
+					{
+						m_CloneMaterialMenu.opened = true;
+						m_CloneMaterialMenu.material = MaterialManager::GetInstance().LoadMaterial(path);
+						m_CloneMaterialMenu.name[0] = '\0';
+					}
+				}
+				if (ImGui::MenuItem("Delete file"))
 				{
 					m_DeleteFileMenu.opened = true;
 					m_DeleteFileMenu.filepath = path;
 				}
+
 				ImGui::EndPopup();
 			}
 
@@ -1504,6 +1528,18 @@ void Editor::MainMenuBar()
 		}
 		ImGui::EndMenu();
 	}
+	if (ImGui::BeginMenu("Tools"))
+	{
+		if (ImGui::MenuItem("Save Materials"))
+		{
+			MaterialManager::GetInstance().SaveAll();
+		}
+		if (ImGui::MenuItem("Reload Materials"))
+		{
+			MaterialManager::GetInstance().ReloadAll();
+		}
+		ImGui::EndMenu();
+	}
 	ImGui::EndMenuBar();
 
 	ImGui::End();
@@ -1645,22 +1681,35 @@ Editor::Indent::~Indent()
 	ImGui::Unindent();
 }
 
-void Editor::MaterialMenu::Update(const Editor& editor)
+void Editor::MaterialMenu::Update(Editor& editor)
 {
 	if (!material)
 	{
 		return;
 	}
 
-	if (ImGui::Begin("Material", &opened))
+	if (opened && ImGui::Begin("Material", &opened))
 	{
 		if (ImGui::Button("Save"))
 		{
 			Material::Save(material);
 		}
 
+		if (ImGui::Button("Reload"))
+		{
+			Material::Reload(material);
+		}
+
 		ImGui::Text("Name: %s", material->GetName().c_str());
 		ImGui::Text("Filepath: %s", material->GetFilepath().string().c_str());
+		
+		ImGui::Text("BaseMaterial: ");
+		ImGui::SameLine();
+		if (ImGui::Button(material->GetBaseMaterial()->GetFilepath().string().c_str()))
+		{
+			editor.m_BaseMaterialMenu.opened = true;
+			editor.m_BaseMaterialMenu.baseMaterial = material->GetBaseMaterial();
+		}
 
 		if (ImGui::CollapsingHeader("Options"))
 		{
@@ -1903,6 +1952,65 @@ void Editor::CreateViewportMenu::Update(const Editor& editor)
 		}
 
 		editor.DrawIVec2Control("Size", size, 1024, { 0, 2560 });
+
+		ImGui::End();
+	}
+}
+
+void Editor::BaseMaterialMenu::Update(const Editor& editor)
+{
+	if (!baseMaterial)
+	{
+		return;
+	}
+
+	if (opened && ImGui::Begin("BaseMaterial", &opened))
+	{
+		if (ImGui::Button("Reload"))
+		{
+			BaseMaterial::Reload(baseMaterial);
+		}
+
+		ImGui::Text("Name: %s", baseMaterial->GetName().c_str());
+		ImGui::Text("Filepath: %s", baseMaterial->GetFilepath().string().c_str());
+
+		ImGui::End();
+	}
+}
+
+void Editor::CloneMaterialMenu::Update()
+{
+	if (!opened)
+	{
+		return;
+	}
+
+	ImGui::SetNextWindowSize({ 450.0f, 70.0f });
+	ImGui::SetNextWindowPos(ImGui::GetWindowViewport()->GetCenter(), 0, { 0.5f, 0.0f });
+	if (ImGui::Begin("Clone Material", &opened,
+		ImGuiWindowFlags_NoResize
+		| ImGuiWindowFlags_NoDocking
+		| ImGuiWindowFlags_NoCollapse
+		| ImGuiWindowFlags_NoMove
+		| ImGuiWindowFlags_NoSavedSettings))
+	{
+		ImGui::Text(std::string("Cloned Material: " + material->GetFilepath().string()).c_str());
+		ImGui::InputText("Filename", name, 64);
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Clone"))
+		{
+			if (name[0] != '\0')
+			{
+				std::filesystem::path filepath = material->GetFilepath().parent_path() / name;
+				filepath.replace_extension(FileFormats::Mat());
+				std::shared_ptr<Material> clonedMaterial = MaterialManager::GetInstance().Clone(name, filepath, material);
+				Material::Save(clonedMaterial);
+
+				opened = false;
+			}
+		}
 
 		ImGui::End();
 	}

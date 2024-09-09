@@ -2,6 +2,8 @@
 
 #include "../Core/Serializer.h"
 #include "../Core/TextureManager.h"
+#include "../EventSystem/EventSystem.h"
+#include "../EventSystem/NextFrameEvent.h"
 
 using namespace Pengine;
 
@@ -19,6 +21,35 @@ std::shared_ptr<Material> Material::Load(const std::filesystem::path& filepath)
 void Material::Save(const std::shared_ptr<Material>& material)
 {
 	Serializer::SerializeMaterial(material);
+}
+
+void Material::Reload(const std::shared_ptr<Material>& material, bool reloadBaseMaterial)
+{
+	if (reloadBaseMaterial)
+	{
+		BaseMaterial::Reload(material->m_BaseMaterial);
+	}
+
+	auto callback = [material]()
+	{
+		material->m_UniformWriterByRenderPass.clear();
+		material->m_BuffersByName.clear();
+		material->m_OptionsByName.clear();
+		material->m_PipelineStates.clear();
+
+		try
+		{
+			const CreateInfo createInfo = Serializer::LoadMaterial(material->GetFilepath());
+			material->CreateResources(createInfo);
+		}
+		catch (const std::exception&)
+		{
+
+		}
+	};
+
+	NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, material.get());
+	EventSystem::GetInstance().SendEvent(event);
 }
 
 std::shared_ptr<Material> Material::Clone(
@@ -95,87 +126,14 @@ std::shared_ptr<Material> Material::Clone(
 	return Create(name, filepath, createInfo);
 }
 
-Material::Material(const std::string& name, const std::filesystem::path& filepath,
+Material::Material(
+	const std::string& name,
+	const std::filesystem::path& filepath,
 	const CreateInfo& createInfo)
 	: Asset(name, filepath)
 	, m_BaseMaterial(createInfo.baseMaterial)
-	, m_OptionsByName(createInfo.optionsByName)
 {
-	for (const auto& [name, option] : m_OptionsByName)
-	{
-		SetOption(name, option.m_IsEnabled);
-	}
-
-	for (const auto& [renderPassName, pipeline] : m_BaseMaterial->GetPipelinesByRenderPass())
-	{
-		const Pipeline::CreateInfo& pipelineCreateInfo = pipeline->GetCreateInfo();
-		auto baseMaterialIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, renderPassName);
-		if (baseMaterialIndex)
-		{
-			const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*baseMaterialIndex);
-			const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
-			m_UniformWriterByRenderPass[renderPassName] = uniformWriter;
-
-			for (const auto& binding : uniformLayout->GetBindings())
-			{
-				if (binding.buffer)
-				{
-					const std::shared_ptr<Buffer> buffer = Buffer::Create(
-						binding.buffer->size,
-						1,
-						Buffer::Usage::UNIFORM_BUFFER,
-						Buffer::MemoryType::CPU);
-					m_BuffersByName[binding.buffer->name] = buffer;
-					uniformWriter->WriteBuffer(binding.buffer->name, buffer);
-					uniformWriter->Flush();
-				}
-			}
-		}
-	}
-
-	for (const auto& [renderPassName, uniformInfo] : createInfo.uniformInfos)
-	{
-		if (uniformInfo.texturesByName.empty() && uniformInfo.uniformBuffersByName.empty())
-		{
-			continue;
-		}
-
-		const std::shared_ptr<UniformWriter> uniformWriter = GetUniformWriter(renderPassName);
-		for (const auto& [name, filepath] : uniformInfo.texturesByName)
-		{
-			std::shared_ptr<Texture> texture = TextureManager::GetInstance().Load(filepath);
-			uniformWriter->WriteTexture(name, texture);
-		}
-		uniformWriter->Flush();
-		
-		for (const auto& [uniformBufferName, bufferInfo] : uniformInfo.uniformBuffersByName)
-		{
-			for (auto const& [loadedValueName, loadedValue] : bufferInfo.floatValuesByName)
-			{
-				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
-			}
-
-			for (auto const& [loadedValueName, loadedValue] : bufferInfo.intValuesByName)
-			{
-				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
-			}
-
-			for (auto const& [loadedValueName, loadedValue] : bufferInfo.vec4ValuesByName)
-			{
-				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
-			}
-
-			for (auto const& [loadedValueName, loadedValue] : bufferInfo.vec3ValuesByName)
-			{
-				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
-			}
-
-			for (auto const& [loadedValueName, loadedValue] : bufferInfo.vec2ValuesByName)
-			{
-				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
-			}
-		}
-	}
+	CreateResources(createInfo);
 }
 
 std::shared_ptr<UniformWriter> Material::GetUniformWriter(const std::string& renderPassName) const
@@ -217,5 +175,90 @@ void Material::SetOption(const std::string& name, bool isEnabled)
 	for (const std::string& inactive : foundOption->second.m_Inactive)
 	{
 		m_PipelineStates[inactive] = !isEnabled;
+	}
+}
+
+void Material::CreateResources(const CreateInfo& createInfo)
+{
+	m_OptionsByName = createInfo.optionsByName;
+	for (const auto& [name, option] : m_OptionsByName)
+	{
+		SetOption(name, option.m_IsEnabled);
+	}
+
+	for (const auto& [renderPassName, pipeline] : m_BaseMaterial->GetPipelinesByRenderPass())
+	{
+		const Pipeline::CreateInfo& pipelineCreateInfo = pipeline->GetCreateInfo();
+		auto baseMaterialIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, renderPassName);
+		if (baseMaterialIndex)
+		{
+			const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*baseMaterialIndex);
+			const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
+			m_UniformWriterByRenderPass[renderPassName] = uniformWriter;
+
+			for (const auto& binding : uniformLayout->GetBindings())
+			{
+				if (binding.buffer)
+				{
+					const std::shared_ptr<Buffer> buffer = Buffer::Create(
+						binding.buffer->size,
+						1,
+						Buffer::Usage::UNIFORM_BUFFER,
+						Buffer::MemoryType::CPU);
+					m_BuffersByName[binding.buffer->name] = buffer;
+					uniformWriter->WriteBuffer(binding.buffer->name, buffer);
+					uniformWriter->Flush();
+				}
+			}
+		}
+	}
+
+	for (const auto& [renderPassName, uniformInfo] : createInfo.uniformInfos)
+	{
+		if (uniformInfo.texturesByName.empty() && uniformInfo.uniformBuffersByName.empty())
+		{
+			continue;
+		}
+
+		const std::shared_ptr<UniformWriter> uniformWriter = GetUniformWriter(renderPassName);
+		if (!uniformWriter)
+		{
+			continue;
+		}
+
+		for (const auto& [name, filepath] : uniformInfo.texturesByName)
+		{
+			std::shared_ptr<Texture> texture = TextureManager::GetInstance().Load(filepath);
+			uniformWriter->WriteTexture(name, texture);
+		}
+		uniformWriter->Flush();
+
+		for (const auto& [uniformBufferName, bufferInfo] : uniformInfo.uniformBuffersByName)
+		{
+			for (auto const& [loadedValueName, loadedValue] : bufferInfo.floatValuesByName)
+			{
+				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
+			}
+
+			for (auto const& [loadedValueName, loadedValue] : bufferInfo.intValuesByName)
+			{
+				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
+			}
+
+			for (auto const& [loadedValueName, loadedValue] : bufferInfo.vec4ValuesByName)
+			{
+				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
+			}
+
+			for (auto const& [loadedValueName, loadedValue] : bufferInfo.vec3ValuesByName)
+			{
+				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
+			}
+
+			for (auto const& [loadedValueName, loadedValue] : bufferInfo.vec2ValuesByName)
+			{
+				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
+			}
+		}
 	}
 }

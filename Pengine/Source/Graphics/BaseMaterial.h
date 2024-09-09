@@ -28,6 +28,8 @@ namespace Pengine
 
 		static std::shared_ptr<BaseMaterial> Load(const std::filesystem::path& filepath);
 
+		static void Reload(const std::shared_ptr<BaseMaterial>& baseMaterial);
+
 		BaseMaterial(
 			const std::string& name,
 			const std::filesystem::path& filepath,
@@ -68,6 +70,8 @@ namespace Pengine
 			const std::string& valueName);
 
 	private:
+		void CreateResources(const CreateInfo& createInfo);
+
 		std::unordered_map<std::string, std::shared_ptr<Pipeline>> m_PipelinesByRenderPass;
 		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPass;
 		std::unordered_map<std::string, UniformLayout::RenderTargetInfo> m_RenderTargetsByName;

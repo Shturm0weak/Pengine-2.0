@@ -1,29 +1,24 @@
 Mat:
-  Basemat: Materials/MeshBase.basemat
+  Basemat: Materials/Custom/Rotate.basemat
   Options:
-    - Name: Transparency
-      IsEnabled: false
-      Active:
-        - Transparent
-      Inactive:
-        - GBuffer
+    []
   Pipelines:
     - RenderPass: GBuffer
       Uniforms:
         - Name: albedoTexture
-          Value: ed291732-e20e-4d4d-8657-f055118818bb
+          Value: ae6d111b-3f71-407b-b16d-c45b6ed7704e
         - Name: normalTexture
-          Value: ""
+          Value: c2a5b40f-5437-4ea7-a19e-b99b93c378ed
         - Name: metalnessTexture
-          Value: ""
+          Value: 659f8fa5-6d24-43e5-b952-d2e353a40d0c
         - Name: roughnessTexture
-          Value: ""
+          Value: cfe482f2-82b7-44bc-a27c-9b52f13d7143
         - Name: aoTexture
-          Value: ""
+          Value: a1dd3701-8681-452b-9f26-869baa60a5fb
         - Name: GBufferMaterial
           Values:
             - Name: material.color
-              Value: [0.470400006, 0.470400006, 0.470400006, 1]
+              Value: [1, 1, 1, 1]
               Type: vec4
             - Name: material.uvTransform
               Value: [1, 1, 0, 0]
@@ -38,8 +33,5 @@ Mat:
               Value: 1
               Type: float
             - Name: material.useNormalMap
-              Value: 0
+              Value: 1
               Type: int
-    - RenderPass: Transparent
-      Uniforms:
-        []

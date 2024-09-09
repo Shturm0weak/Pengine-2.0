@@ -84,8 +84,27 @@ namespace Pengine
 			std::shared_ptr<class Material> material = nullptr;
 			bool opened = false;
 
-			void Update(const Editor& editor);
+			void Update(Editor& editor);
 		} m_MaterialMenu;
+
+		struct BaseMaterialMenu
+		{
+			std::shared_ptr<class BaseMaterial> baseMaterial = nullptr;
+			bool opened = false;
+
+			void Update(const Editor& editor);
+		} m_BaseMaterialMenu;
+
+		struct CloneMaterialMenu
+		{
+			char name[64];
+
+			bool opened = false;
+
+			std::shared_ptr<class Material> material = nullptr;
+
+			void Update();
+		} m_CloneMaterialMenu;
 
 		struct CreateFileMenu
 		{

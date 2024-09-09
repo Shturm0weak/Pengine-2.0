@@ -25,6 +25,9 @@ Mat:
             - Name: material.color
               Type: vec4
               Value: [1, 1, 1, 1]
+            - Name: material.uvTransform
+              Type: vec4
+              Value: [1, 1, 0, 0]
             - Name: material.metallicFactor
               Type: float
               Value: 0.0

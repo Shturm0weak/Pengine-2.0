@@ -38,6 +38,8 @@ namespace Pengine
 
 		static void Save(const std::shared_ptr<Material>& material);
 
+		static void Reload(const std::shared_ptr<Material>& material, bool reloadBaseMaterial = true);
+
 		static std::shared_ptr<Material> Clone(
 			const std::string& name,
 			const std::filesystem::path& filepath,
@@ -73,6 +75,8 @@ namespace Pengine
 			const std::string& valueName);
 
 	private:
+		void CreateResources(const CreateInfo& createInfo);
+
 		std::shared_ptr<BaseMaterial> m_BaseMaterial;
 		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPass;
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
