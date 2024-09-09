@@ -595,8 +595,7 @@ void RenderPassManager::CreateAtmosphere()
 			baseMaterial->WriteToBuffer("AtmosphereBuffer", "directionalLight.color", dl.color);
 			baseMaterial->WriteToBuffer("AtmosphereBuffer", "directionalLight.intensity", dl.intensity);
 
-			// View Space!
-			const glm::vec3 direction = glm::normalize(glm::mat3(camera.GetViewMat4()) * transform.GetForward());
+			const glm::vec3 direction = transform.GetForward();
 			baseMaterial->WriteToBuffer("AtmosphereBuffer", "directionalLight.direction", direction);
 
 			int hasDirectionalLight = 1;
