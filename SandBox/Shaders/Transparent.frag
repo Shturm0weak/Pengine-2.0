@@ -1,12 +1,18 @@
 #version 450
 
-layout(location = 0) in vec3 inNormal;
+layout(location = 0) in vec3 worldNormal;
 layout(location = 1) in vec3 worldPosition;
 layout(location = 2) in vec2 uv;
-layout(location = 3) flat in vec3 cameraPosition;
-layout(location = 4) in mat3 TBN;
+layout(location = 3) in mat3 TBN;
 
 layout(location = 0) out vec4 outColor;
+
+#include "Shaders/Includes/Camera.h"
+
+layout(set = 0, binding = 0) uniform GlobalBuffer
+{
+	Camera camera;
+};
 
 layout(set = 1, binding = 0) uniform sampler2D albedoTexture;
 layout(set = 1, binding = 1) uniform sampler2D normalTexture;
@@ -24,12 +30,14 @@ layout(set = 1, binding = 5) uniform GBufferMaterial
 #include "Shaders/Includes/PointLight.h"
 #include "Shaders/Includes/DirectionalLight.h"
 
-layout(set = 2, binding = 0) uniform sampler2D dalbedoTexture;
-layout(set = 2, binding = 1) uniform sampler2D dnormalTexture;
-layout(set = 2, binding = 2) uniform sampler2D dpositionTexture;
-layout(set = 2, binding = 3) uniform sampler2D dshadingTexture;
+// Deferred uniform samplers. Only need lights from this descriptor set.
+layout(set = 2, binding = 0) uniform sampler2D deferredAlbedoTexture;
+layout(set = 2, binding = 1) uniform sampler2D deferredNormalTexture;
+layout(set = 2, binding = 2) uniform sampler2D deferredShadingTexture;
+layout(set = 2, binding = 3) uniform sampler2D deferredDepthTexture;
+layout(set = 2, binding = 4) uniform sampler2D deferredSsaoTexture;
 
-layout(set = 2, binding = 4) uniform Lights
+layout(set = 2, binding = 5) uniform Lights
 {
 	PointLight pointLights[32];
 	int pointLightsCount;
@@ -60,11 +68,11 @@ void main()
 	}
 	else
 	{
-		normal = vec4(inNormal, 1.0f);
+		normal = vec4(worldNormal, 1.0f);
 	}
 
 	vec3 basicReflectivity = mix(vec3(0.05), albedoColor.xyz, shading.x);
-	vec3 viewDirection = normalize(cameraPosition - worldPosition);
+	vec3 viewDirection = normalize(camera.position - worldPosition);
 	vec3 result = vec3(0.0f);
 
 	if (normal.a == 0)

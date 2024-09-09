@@ -697,7 +697,7 @@ void RenderPassManager::CreateTransparent()
 	createInfo.clearDepths = { clearDepth };
 	createInfo.clearColors = { clearColor };
 	createInfo.attachmentDescriptions = { color, depth };
-	createInfo.resizeWithViewport = false;
+	createInfo.resizeWithViewport = true;
 
 	createInfo.renderCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
 	{

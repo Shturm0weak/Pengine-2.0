@@ -8,5 +8,5 @@ layout(set = 0, binding = 0) uniform sampler2D deferredTexture;
 
 void main()
 {
-	outColor = texture(deferredTexture, uv);
+	outColor = vec4(texture(deferredTexture, uv).xyz, 1.0f);
 }
