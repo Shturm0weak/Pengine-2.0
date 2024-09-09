@@ -163,22 +163,6 @@ void RenderPassManager::CreateGBuffer()
 			"camera.tanHalfFOV",
 			tanHalfFOV);
 
-		const float zFar = camera.GetZFar();
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
-			renderInfo.renderer->GetBuffer(globalBufferName),
-			globalBufferName,
-			"camera.zFar",
-			zFar);
-
-		const float zNear = camera.GetZNear();
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
-			renderInfo.renderer->GetBuffer(globalBufferName),
-			globalBufferName,
-			"camera.zNear",
-			zNear);
-
 		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
 
 		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
@@ -401,6 +385,8 @@ void RenderPassManager::CreateDeferred()
 			renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
 		}
 
+		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
+
 		const std::shared_ptr<Buffer> lightsBuffer = renderInfo.renderer->GetBuffer("Lights");
 
 		auto pointLightView = renderInfo.scene->GetRegistry().view<PointLight>();
@@ -417,7 +403,8 @@ void RenderPassManager::CreateDeferred()
 
 			const std::string valueNamePrefix = "pointLights[" + std::to_string(lightIndex) + "]";
 
-			glm::vec3 lightPosition = transform.GetPosition();
+			// View Space!
+			glm::vec3 lightPosition = camera.GetViewMat4() * glm::vec4(transform.GetPosition(), 1.0f);
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", valueNamePrefix + ".position", lightPosition);
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", valueNamePrefix + ".color", pl.color);
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", valueNamePrefix + ".linear", pl.linear);
@@ -440,7 +427,8 @@ void RenderPassManager::CreateDeferred()
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "directionalLight.color", dl.color);
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "directionalLight.intensity", dl.intensity);
 
-			const glm::vec3 direction = transform.GetForward();
+			// View Space!
+			const glm::vec3 direction = glm::normalize(glm::mat3(camera.GetViewMat4()) * transform.GetForward());
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "directionalLight.direction", direction);
 
 			int hasDirectionalLight = 1;
@@ -541,7 +529,9 @@ void RenderPassManager::CreateAtmosphere()
 			renderInfo.renderer->SetUniformWriter(DefaultReflection, uniformWriter);
 		}
 
-		const glm::mat4 viewProjectionMat4 = renderInfo.submitInfo.projection * renderInfo.camera->GetComponent<Camera>().GetViewMat4();
+		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
+		const Transform& cameraTransform = renderInfo.camera->GetComponent<Transform>();
+		const glm::mat4 viewProjectionMat4 = renderInfo.submitInfo.projection * camera.GetViewMat4();
 		WriterBufferHelper::WriteToBuffer(
 			reflectionBaseMaterial.get(),
 			globalBuffer,
@@ -549,7 +539,7 @@ void RenderPassManager::CreateAtmosphere()
 			"camera.viewProjectionMat4",
 			viewProjectionMat4);
 
-		const glm::mat4 viewMat4 = renderInfo.camera->GetComponent<Camera>().GetViewMat4();
+		const glm::mat4 viewMat4 = camera.GetViewMat4();
 		WriterBufferHelper::WriteToBuffer(
 			reflectionBaseMaterial.get(),
 			globalBuffer,
@@ -564,29 +554,13 @@ void RenderPassManager::CreateAtmosphere()
 			"camera.projectionMat4",
 			renderInfo.submitInfo.projection);
 
-		const glm::mat4 inverseRotationMat4 = glm::inverse(renderInfo.camera->GetComponent<Transform>().GetRotationMat4());
+		const glm::mat4 inverseRotationMat4 = glm::inverse(cameraTransform.GetRotationMat4());
 		WriterBufferHelper::WriteToBuffer(
 			reflectionBaseMaterial.get(),
 			globalBuffer,
 			globalBufferName,
 			"camera.inverseRotationMat4",
 			inverseRotationMat4);
-
-		const glm::vec3 cameraPosition = renderInfo.camera->GetComponent<Transform>().GetPosition();
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
-			globalBuffer,
-			globalBufferName,
-			"camera.position",
-			cameraPosition);
-
-		const glm::vec3 cameraDirection = glm::normalize(renderInfo.camera->GetComponent<Transform>().GetForward());
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
-			globalBuffer,
-			globalBufferName,
-			"camera.direction",
-			cameraDirection);
 
 		const float time = Time::GetTime();
 		WriterBufferHelper::WriteToBuffer(
@@ -621,7 +595,8 @@ void RenderPassManager::CreateAtmosphere()
 			baseMaterial->WriteToBuffer("AtmosphereBuffer", "directionalLight.color", dl.color);
 			baseMaterial->WriteToBuffer("AtmosphereBuffer", "directionalLight.intensity", dl.intensity);
 
-			const glm::vec3 direction = transform.GetForward();
+			// View Space!
+			const glm::vec3 direction = glm::normalize(glm::mat3(camera.GetViewMat4()) * transform.GetForward());
 			baseMaterial->WriteToBuffer("AtmosphereBuffer", "directionalLight.direction", direction);
 
 			int hasDirectionalLight = 1;

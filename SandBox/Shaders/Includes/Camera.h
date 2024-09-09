@@ -4,14 +4,10 @@ struct Camera
 	mat4 projectionMat4;
 	mat4 viewMat4;
 	mat4 inverseRotationMat4;
-	vec3 position;
-	vec3 direction;
 	vec2 viewportSize;
 	float aspectRatio;
 	float tanHalfFOV;
 	float time;
-	float zNear;
-	float zFar;
 };
 
 vec3 CalculatePositionFromDepth(float depth, mat4 projectionMat4, vec2 viewRay)

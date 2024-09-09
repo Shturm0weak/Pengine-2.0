@@ -1,7 +1,7 @@
 #version 450
 
-layout(location = 0) in vec3 worldNormal;
-layout(location = 1) in vec3 worldPosition;
+layout(location = 0) in vec3 viewSpaceNormal;
+layout(location = 1) in vec3 viewSpacePosition;
 layout(location = 2) in vec2 uv;
 layout(location = 3) in mat3 TBN;
 
@@ -68,11 +68,11 @@ void main()
 	}
 	else
 	{
-		normal = vec4(worldNormal, 1.0f);
+		normal = vec4(viewSpaceNormal, 1.0f);
 	}
 
 	vec3 basicReflectivity = mix(vec3(0.05), albedoColor.xyz, shading.x);
-	vec3 viewDirection = normalize(camera.position - worldPosition);
+	vec3 viewDirection = normalize(-viewSpacePosition);
 	vec3 result = vec3(0.0f);
 
 	if (normal.a == 0)
@@ -96,7 +96,7 @@ void main()
 
 		for (int i = 0; i < pointLightsCount; i++)
 		{
-			result += CalculatePointLight(pointLights[i], worldPosition, normal.xyz) * albedoColor.xyz;
+			result += CalculatePointLight(pointLights[i], viewSpacePosition, normal.xyz) * albedoColor.xyz;
 		}
 	}
 

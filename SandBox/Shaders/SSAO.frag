@@ -36,7 +36,7 @@ void main()
         camera.projectionMat4,
         viewRay);
 
-    vec3 normal = normalize(mat3(camera.viewMat4) * texture(normalTexture, uv).xyz);
+    vec3 normal = texture(normalTexture, uv).xyz;
     vec3 randomVector = normalize(texture(noiseTexture, uv * noiseScale).xyz);
 
     // Create TBN change-of-basis matrix: from tangent space to view space.

@@ -41,10 +41,8 @@ void main()
         camera.projectionMat4,
         viewRay);
 
-	position = (inverse(camera.viewMat4) * vec4(position, 1.0f)).xyz;
-
 	vec3 basicReflectivity = mix(vec3(0.05), albedoColor, shading.x);
-	vec3 viewDirection = normalize(camera.position - position);
+	vec3 viewDirection = normalize(-position);
 	vec3 result = vec3(0.0f);
 
 	if (normal.a == 0)

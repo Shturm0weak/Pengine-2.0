@@ -22,7 +22,7 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 void main()
 {
 	gl_Position = camera.viewProjectionMat4 * transformA * vec4(positionA, 1.0);
-	normal = normalize(inverseTransformA * normalA);
+	normal = normalize(mat3(camera.viewMat4) * inverseTransformA * normalA);
 	vec3 tangent = normalize(inverseTransformA * tangentA);
 	vec3 bitangent = normalize(inverseTransformA * bitangentA);
 	TBN = mat3(tangent, bitangent, normal);
