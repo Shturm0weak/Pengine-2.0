@@ -1116,11 +1116,11 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 
 		const bool leftMouseButtonDoubleClicked = ImGui::IsMouseDoubleClicked(GLFW_MOUSE_BUTTON_1);
 
-		const ImTextureID folderIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor/Images/FolderIcon.png")->GetId();
-		const ImTextureID fileIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor/Images/FileIcon.png")->GetId();
-		const ImTextureID metaIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor/Images/MetaIcon.png")->GetId();
-		const ImTextureID materialIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor/Images/MaterialIcon.png")->GetId();
-		const ImTextureID meshIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor/Images/MeshIcon.png")->GetId();
+		const ImTextureID folderIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\FolderIcon.png")->GetId();
+		const ImTextureID fileIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\FileIcon.png")->GetId();
+		const ImTextureID metaIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\MetaIcon.png")->GetId();
+		const ImTextureID materialIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\MaterialIcon.png")->GetId();
+		const ImTextureID meshIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\MeshIcon.png")->GetId();
 
 		bool iconHovered = false;
 
@@ -1139,7 +1139,7 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 
 		for (auto& directoryIter : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
-			const std::filesystem::path path = directoryIter.path();
+			const std::filesystem::path path = Utils::GetShortFilepath(directoryIter.path());
 			if (Utils::Contains(path.string(), ".cpp") || Utils::Contains(path.string(), ".h"))
 			{
 				continue;

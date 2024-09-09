@@ -137,7 +137,7 @@ void RenderPassManager::CreateGBuffer()
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		const std::string globalBufferName = "GlobalBuffer";
-		const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/DefaultReflection.basemat");
+		const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\DefaultReflection.basemat");
 		const glm::vec2 viewportSize = { renderInfo.submitInfo.width, renderInfo.submitInfo.height };
 		WriterBufferHelper::WriteToBuffer(
 			reflectionBaseMaterial.get(),
@@ -280,8 +280,8 @@ void RenderPassManager::CreateGBuffer()
 
 		// Render SkyBox.
 		{
-			std::shared_ptr<Mesh> cubeMesh = MeshManager::GetInstance().LoadMesh("Meshes/Cube.mesh");
-			std::shared_ptr<BaseMaterial> skyBoxBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/SkyBox.basemat");
+			std::shared_ptr<Mesh> cubeMesh = MeshManager::GetInstance().LoadMesh("Meshes\\Cube.mesh");
+			std::shared_ptr<BaseMaterial> skyBoxBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SkyBox.basemat");
 
 			const std::shared_ptr<Pipeline> pipeline = skyBoxBaseMaterial->GetPipeline(renderPassName);
 			if (pipeline)
@@ -337,7 +337,7 @@ void RenderPassManager::CreateDeferred()
 
 	createInfo.renderCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes\\Plane.mesh");
 		if (!plane)
 		{
 			return;
@@ -345,7 +345,7 @@ void RenderPassManager::CreateDeferred()
 
 		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
 
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Deferred.basemat");
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\Deferred.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 		if (!pipeline)
 		{
@@ -509,7 +509,7 @@ void RenderPassManager::CreateAtmosphere()
 	createInfo.renderCallback = [globalBufferName](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		std::shared_ptr<Buffer> globalBuffer = renderInfo.renderer->GetBuffer(globalBufferName);
-		const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/DefaultReflection.basemat");
+		const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\DefaultReflection.basemat");
 		if (!renderInfo.renderer->GetBuffer(globalBufferName))
 		{
 			const std::shared_ptr<Pipeline> pipeline = reflectionBaseMaterial->GetPipeline(DefaultReflection);
@@ -570,7 +570,7 @@ void RenderPassManager::CreateAtmosphere()
 			"camera.time",
 			time);
 
-		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes\\Plane.mesh");
 		if (!plane)
 		{
 			return;
@@ -578,7 +578,7 @@ void RenderPassManager::CreateAtmosphere()
 
 		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
 
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Atmosphere.basemat");
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\Atmosphere.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 		if (!pipeline)
 		{
@@ -906,7 +906,7 @@ void RenderPassManager::CreateSSAO()
 			return;
 		}
 
-		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes\\Plane.mesh");
 		if (!plane)
 		{
 			return;
@@ -914,7 +914,7 @@ void RenderPassManager::CreateSSAO()
 
 		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
 
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/SSAO.basemat");
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SSAO.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 		if (!pipeline)
 		{
@@ -1032,7 +1032,7 @@ void RenderPassManager::CreateSSAOBlur()
 			return;
 		}
 
-		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes\\Plane.mesh");
 		if (!plane)
 		{
 			return;
@@ -1040,7 +1040,7 @@ void RenderPassManager::CreateSSAOBlur()
 
 		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
 
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/SSAOBlur.basemat");
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SSAOBlur.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 		if (!pipeline)
 		{

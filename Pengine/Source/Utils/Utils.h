@@ -188,6 +188,17 @@ namespace Pengine::Utils
 		return {};
 	}
 
+	inline std::filesystem::path FindFilepath(const std::string& uuid)
+	{
+		auto foundItem = filepathByUuid.find(uuid);
+		if (foundItem != filepathByUuid.end())
+		{
+			return foundItem->second;
+		}
+
+		return {};
+	}
+
 	inline std::string EraseFromBack(std::string string, const char what)
 	{
 		if (const size_t index = string.find_last_of(what); index != std::string::npos)
@@ -210,7 +221,7 @@ namespace Pengine::Utils
 
 	inline std::string GetShortFilepath(std::filesystem::path filepath)
 	{
-		return Erase(filepath.string(), std::filesystem::current_path().string() + "/");
+		return Erase(filepath.string(), std::filesystem::current_path().string() + "\\");
 	}
 
 	inline std::string ReadFile(const std::filesystem::path& filepath)

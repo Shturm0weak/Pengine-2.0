@@ -459,6 +459,12 @@ std::string VulkanPipeline::CompileShaderModule(const std::string& filepath, con
 		spv = std::move(std::string((const char*)module.cbegin(), (const char*)module.cend()));
 
 		Serializer::SerializeShaderCache(filepath, spv);
+
+		Logger::Log("Shader:" + filepath + " has been compiled!", GREEN);
+	}
+	else
+	{
+		Logger::Log("Shader Cache:" + filepath + " has been loaded!", GREEN);
 	}
 
 	return spv;
