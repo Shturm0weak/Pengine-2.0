@@ -11,8 +11,8 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [-11.3883982, 1.82096505, -0.207473069]
-      Rotation: [-0.0477911681, 4.73308563, 0]
+      Position: [-8.47842884, 2.68343544, -0.0442547016]
+      Rotation: [-0.0619210452, -1.47026002, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -20,6 +20,8 @@ Scene:
       Type: 1
       ZNear: 0.100000001
       ZFar: 1000
+      RenderPassName: Final
+      RenderTargetIndex: 0
   - UUID: 573523b7-abe0-42b0-a71a-03ca0abf758f
     Name: Sun
     IsEnabled: true

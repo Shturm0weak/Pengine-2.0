@@ -17,6 +17,7 @@
 #include "../Core/ViewportManager.h"
 #include "../Core/Viewport.h"
 #include "../Core/WindowManager.h"
+#include "../Core/RenderPassManager.h"
 #include "../Editor/ImGuizmo.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
@@ -43,7 +44,6 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	SceneInfo(scene);
 	Properties(scene);
 	AssetBrowser(scene);
-	//GraphicsSettings();
 
 	m_MaterialMenu.Update(*this);
 	m_CreateFileMenu.Update();
@@ -923,6 +923,37 @@ void Editor::CameraComponent(const std::shared_ptr<Entity>& entity)
 				}
 			}
 			
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Render Targets"))
+		{
+			for (const auto& renderPassName : renderPassesOrder)
+			{
+				if (ImGui::MenuItem(renderPassName.c_str()))
+				{
+					camera.SetRenderPassName(renderPassName);
+					camera.SetRenderTargetIndex(0);
+				}
+			}
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Render Target Index"))
+		{
+			if (!camera.GetRenderPassName().empty())
+			{
+				const int indexCount = RenderPassManager::GetInstance().GetRenderPass(camera.GetRenderPassName())->GetAttachmentDescriptions().size();
+				for (size_t i = 0; i < indexCount; i++)
+				{
+					if (ImGui::MenuItem(std::to_string(i).c_str()))
+					{
+						camera.SetRenderTargetIndex(i);
+					}
+				}
+			}
+
 			ImGui::EndMenu();
 		}
 	}

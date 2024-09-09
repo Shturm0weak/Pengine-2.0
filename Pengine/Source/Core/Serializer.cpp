@@ -1846,6 +1846,8 @@ void Serializer::SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entit
 	out << YAML::Key << "Type" << YAML::Value << static_cast<int>(camera.GetType());
 	out << YAML::Key << "ZNear" << YAML::Value << camera.GetZNear();
 	out << YAML::Key << "ZFar" << YAML::Value << camera.GetZFar();
+	out << YAML::Key << "RenderPassName" << YAML::Value << camera.GetRenderPassName();
+	out << YAML::Key << "RenderTargetIndex" << YAML::Value << camera.GetRenderTargetIndex();
 
 	out << YAML::EndMap;
 }
@@ -1879,6 +1881,16 @@ void Serializer::DeserializeCamera(const YAML::Node& in, const std::shared_ptr<E
 		if (const auto& zFarData = cameraData["ZFar"])
 		{
 			camera.SetZFar(zFarData.as<float>());
+		}
+
+		if (const auto& renderPassNameData = cameraData["RenderPassName"])
+		{
+			camera.SetRenderPassName(renderPassNameData.as<std::string>());
+		}
+
+		if (const auto& renderTargetIndexData = cameraData["RenderTargetIndex"])
+		{
+			camera.SetRenderTargetIndex(renderTargetIndexData.as<int>());
 		}
 	}
 }

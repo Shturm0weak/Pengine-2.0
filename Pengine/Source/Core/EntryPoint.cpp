@@ -80,7 +80,15 @@ void EntryPoint::Run() const
 					{
 						continue;
 					}
-					viewport->Update(renderer->GetRenderPassFrameBuffer(Final)->GetAttachment(0));
+
+					if (!cameraComponent.GetRenderPassName().empty())
+					{
+						viewport->Update(renderer->GetRenderPassFrameBuffer(cameraComponent.GetRenderPassName())->GetAttachment(cameraComponent.GetRenderTargetIndex()));
+					}
+					else
+					{
+						viewport->Update(TextureManager::GetInstance().GetWhite());
+					}
 				}
 				else
 				{
