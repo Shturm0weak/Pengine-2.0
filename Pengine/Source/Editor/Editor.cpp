@@ -851,7 +851,10 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 		bool isChanged = 0;
 		if (ImGui::CollapsingHeader("SSAO"))
 		{
+			ImGui::PushID("SSAO Is Enabled");
 			isChanged += ImGui::Checkbox("Is Enabled", &graphicsSettings.ssao.isEnabled);
+			ImGui::PopID();
+
 			isChanged += ImGui::SliderFloat("Bias", &graphicsSettings.ssao.bias, 0.0f, 10.0f);
 			isChanged += ImGui::SliderFloat("Radius", &graphicsSettings.ssao.radius, 0.0f, 1.0f);
 			isChanged += ImGui::SliderInt("Kernel Size", &graphicsSettings.ssao.kernelSize, 2, 64);
@@ -859,7 +862,24 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			isChanged += ImGui::SliderFloat("AO Scale", &graphicsSettings.ssao.aoScale, 0.0f, 10.0f);
 		}
 
-		if (std::filesystem::exists(graphicsSettings.GetFilepath()) && isChanged)
+		if (ImGui::CollapsingHeader("Shadows"))
+		{
+			ImGui::PushID("Shadows Is Enabled");
+			isChanged += ImGui::Checkbox("Is Enabled", &graphicsSettings.shadows.isEnabled);
+			ImGui::PopID();
+
+			isChanged += ImGui::Checkbox("Pcf Enabled", &graphicsSettings.shadows.pcfEnabled);
+			isChanged += ImGui::SliderInt("Pcf Range", &graphicsSettings.shadows.pcfRange, 1, 5);
+			isChanged += ImGui::SliderFloat("Split Factor", &graphicsSettings.shadows.splitFactor, 0.0f, 1.0f);
+			isChanged += ImGui::SliderFloat("Fog Factor", &graphicsSettings.shadows.fogFactor, 0.0f, 1.0f);
+			for (size_t i = 0; i < graphicsSettings.shadows.biases.size(); i++)
+			{
+				const std::string biasName = "Bias " + std::to_string(i);
+				isChanged += ImGui::SliderFloat(biasName.c_str(), &graphicsSettings.shadows.biases[i], 0.0f, 1.0f);
+			}
+		}
+
+		if (isChanged && std::filesystem::exists(graphicsSettings.GetFilepath()))
 		{
 			Serializer::SerializeGraphicsSettings(graphicsSettings);
 		}
@@ -977,6 +997,8 @@ void Editor::TransformComponent(const std::shared_ptr<Entity>& entity)
 	if (ImGui::CollapsingHeader("Transform"))
 	{
 		Indent indent;
+
+		ImGui::Text("Entity: %s", transform.GetEntity()->GetName().c_str());
 
 		bool followOwner = transform.GetFollorOwner();
 		if (ImGui::Checkbox("Follow owner", &followOwner))

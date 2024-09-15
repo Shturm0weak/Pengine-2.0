@@ -2077,6 +2077,21 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::EndMap;
 	//
 
+	// SSAO.
+	out << YAML::Key << "CSM";
+	out << YAML::Value << YAML::BeginMap;
+
+	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.shadows.isEnabled;
+	out << YAML::Key << "CascadeCount" << YAML::Value << graphicsSettings.shadows.cascadeCount;
+	out << YAML::Key << "SplitFactor" << YAML::Value << graphicsSettings.shadows.splitFactor;
+	out << YAML::Key << "FogFactor" << YAML::Value << graphicsSettings.shadows.fogFactor;
+	out << YAML::Key << "PcfEnabled" << YAML::Value << graphicsSettings.shadows.pcfEnabled;
+	out << YAML::Key << "PcfRange" << YAML::Value << graphicsSettings.shadows.pcfRange;
+	out << YAML::Key << "Biases" << YAML::Value << graphicsSettings.shadows.biases;
+
+	out << YAML::EndMap;
+	//
+
 	out << YAML::EndMap;
 
 	std::ofstream fout(graphicsSettings.GetFilepath());
@@ -2137,6 +2152,44 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& radiusData = ssaoData["Radius"])
 		{
 			graphicsSettings.ssao.radius = radiusData.as<float>();
+		}
+	}
+
+	if (const auto& csmData = data["CSM"])
+	{
+		if (const auto& isEnabledData = csmData["IsEnabled"])
+		{
+			graphicsSettings.shadows.isEnabled = isEnabledData.as<bool>();
+		}
+
+		if (const auto& cascadeCountData = csmData["CascadeCount"])
+		{
+			graphicsSettings.shadows.cascadeCount = cascadeCountData.as<int>();
+		}
+
+		if (const auto& splitFactorData = csmData["SplitFactor"])
+		{
+			graphicsSettings.shadows.splitFactor = splitFactorData.as<float>();
+		}
+
+		if (const auto& biasesData = csmData["Biases"])
+		{
+			graphicsSettings.shadows.biases = biasesData.as<std::vector<float>>();
+		}
+
+		if (const auto& fogFactorData = csmData["FogFactor"])
+		{
+			graphicsSettings.shadows.fogFactor = fogFactorData.as<float>();
+		}
+
+		if (const auto& pcfEnabledData = csmData["PcfEnabled"])
+		{
+			graphicsSettings.shadows.pcfEnabled = pcfEnabledData.as<bool>();
+		}
+
+		if (const auto& pcfRangeData = csmData["PcfRange"])
+		{
+			graphicsSettings.shadows.pcfRange = pcfRangeData.as<int>();
 		}
 	}
 

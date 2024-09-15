@@ -9,11 +9,11 @@
 
 using namespace Pengine;
 
-std::shared_ptr<Texture> Texture::Create(const CreateInfo& ñreateInfo)
+std::shared_ptr<Texture> Texture::Create(const CreateInfo& createInfo)
 {
 	if (graphicsAPI == GraphicsAPI::Vk)
 	{
-		return std::make_shared<Vk::VulkanTexture>(ñreateInfo);
+		return std::make_shared<Vk::VulkanTexture>(createInfo);
 	}
 
 	FATAL_ERROR("Failed to create the texture, no graphics API implementation");
@@ -65,14 +65,14 @@ std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath)
 	return nullptr;
 }
 
-Texture::Texture(const CreateInfo& ñreateInfo)
-	: Asset(ñreateInfo.name, ñreateInfo.filepath)
+Texture::Texture(const CreateInfo& createInfo)
+	: Asset(createInfo.name, createInfo.filepath)
 {
-	m_Size = ñreateInfo.size;
-	m_Channels = ñreateInfo.channels;
-	m_Format = ñreateInfo.format;
-	m_AspectMask = ñreateInfo.aspectMask;
-	m_MipLevels = ñreateInfo.mipLevels;
-	m_LayerCount = ñreateInfo.isCubeMap ? 6 : 1;
-	m_InstanceSize = ñreateInfo.instanceSize;
+	m_Size = createInfo.size;
+	m_Channels = createInfo.channels;
+	m_Format = createInfo.format;
+	m_AspectMask = createInfo.aspectMask;
+	m_MipLevels = createInfo.mipLevels;
+	m_LayerCount = createInfo.isCubeMap ? 6 : createInfo.layerCount;
+	m_InstanceSize = createInfo.instanceSize;
 }

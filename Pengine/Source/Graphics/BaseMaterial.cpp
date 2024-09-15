@@ -216,10 +216,10 @@ bool BaseMaterial::GetUniformDetails(
 				if (binding.buffer && binding.name == uniformBufferName)
 				{
 					const bool found = findVariable(binding.buffer->variables, valueName, 0, size, offset);
-					m_UniformsCache[uniformBufferName][valueName] = std::make_pair(size, offset);
 
 					if (found)
 					{
+						m_UniformsCache[uniformBufferName][valueName] = std::make_pair(size, offset);
 						return true;
 					}
 				}

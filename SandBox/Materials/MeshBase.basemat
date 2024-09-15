@@ -65,4 +65,31 @@ Basemat:
             - inverseTransformA
       ColorBlendStates:
         - BlendEnabled: true
-        
+    - RenderPass: CSM
+      DepthTest: true
+      DepthWrite: true
+      CullMode: None
+      PolygonMode: Fill
+      TopologyMode: TriangleList
+      Vertex: Shaders/CSM.vert
+      Geometry: Shaders/CSM.geom
+      Fragment: Shaders/CSM.frag
+      DescriptorSets:
+        - Type: Renderer
+          RenderPass: CSM
+          Set: 0
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Names:
+            - positionA
+            - uvA
+            - normalA
+            - tangentA
+            - bitangentA
+        - Binding: 1
+          InputRate: Instance
+          Names:
+            - transformA
+      ColorBlendStates:
+        []

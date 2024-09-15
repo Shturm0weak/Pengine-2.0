@@ -185,8 +185,8 @@ void Viewport::SetOrthographic(const glm::ivec2& size, const float zFar, const f
 	}
 
 	const float ratio = static_cast<float>(size.x) / static_cast<float>(size.y);
-	m_Projection = glm::ortho(-ratio, ratio, -1.0f,
-		1.0f, zFar, zNear);
+	m_Projection = glm::ortho(-ratio * 10.0f, ratio * 10.0f, -1.0f * 10.0f,
+		1.0f * 10.0f, zFar, zNear);
 }
 
 void Viewport::SetPerspective(const glm::ivec2& size, const float zFar, const float zNear, const float fov)

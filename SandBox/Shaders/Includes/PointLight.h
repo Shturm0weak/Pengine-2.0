@@ -9,7 +9,10 @@ struct PointLight
 	float quadratic;
 };
 
-vec3 CalculatePointLight(PointLight light, vec3 position, vec3 normal)
+vec3 CalculatePointLight(
+	in PointLight light,
+	in vec3 position,
+	in vec3 normal)
 {
 	vec3 direction = normalize(light.position - position);
 	float diff = max(dot(normal, direction), 0.0f);

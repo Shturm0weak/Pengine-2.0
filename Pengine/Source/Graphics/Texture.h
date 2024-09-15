@@ -82,6 +82,7 @@ namespace Pengine
 			void* data;
 			uint32_t instanceSize = sizeof(uint8_t);
 			uint32_t mipLevels = 1;
+			uint32_t layerCount = 1;
 			int channels = 0;
 			std::string name;
 			std::filesystem::path filepath;
@@ -91,11 +92,11 @@ namespace Pengine
 			bool isCubeMap = false;
 		};
 
-		static std::shared_ptr<Texture> Create(const CreateInfo& ñreateInfo);
+		static std::shared_ptr<Texture> Create(const CreateInfo& createInfo);
 
 		static std::shared_ptr<Texture> Load(const std::filesystem::path& filepath);
 		
-		explicit Texture(const CreateInfo& ñreateInfo);
+		explicit Texture(const CreateInfo& createInfo);
 		virtual ~Texture() = default;
 		Texture(const Texture&) = delete;
 		Texture(Texture&&) = delete;

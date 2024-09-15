@@ -28,7 +28,7 @@ layout(set = 1, binding = 5) uniform GBufferMaterial
 
 void main()
 {
-	gl_Position = camera.viewProjectionMat4 * transformA * vec4(positionA, 1.0);
+	gl_Position = camera.viewProjectionMat4 * transformA * vec4(positionA, 1.0f);
 	normal = normalize(mat3(camera.viewMat4) * inverseTransformA * normalA);
 	vec3 tangent = normalize(inverseTransformA * tangentA);
 	vec3 bitangent = normalize(inverseTransformA * bitangentA);

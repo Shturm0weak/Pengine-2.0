@@ -15,6 +15,10 @@
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 
+#include "../Core/ViewportManager.h"
+#include "../Core/Viewport.h"
+
+
 using namespace Pengine;
 
 RenderPassManager& RenderPassManager::GetInstance()
@@ -92,6 +96,7 @@ RenderPassManager::RenderPassManager()
 	CreateFinal();
 	CreateSSAO();
 	CreateSSAOBlur();
+	CreateCSM();
 }
 
 void RenderPassManager::CreateGBuffer()
@@ -230,6 +235,17 @@ void RenderPassManager::CreateGBuffer()
 
 			for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
 			{
+				std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
+				for (const auto& uniformWriter : uniformWriters)
+				{
+					uniformWriter->Flush();
+
+					for (const auto& [location, buffer] : uniformWriter->GetBuffersByLocation())
+					{
+						buffer->Flush();
+					}
+				}
+
 				for (const auto& [mesh, entities] : gameObjectsByMeshes)
 				{
 					const size_t instanceDataOffset = instanceDatas.size();
@@ -241,18 +257,6 @@ void RenderPassManager::CreateGBuffer()
 						data.transform = transform.GetTransform();
 						data.inverseTransform = glm::transpose(transform.GetInverseTransform());
 						instanceDatas.emplace_back(data);
-					}
-
-					std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
-
-					for (const auto& uniformWriter : uniformWriters)
-					{
-						uniformWriter->Flush();
-
-						for (const auto& [location, buffer] : uniformWriter->GetBuffersByLocation())
-						{
-							buffer->Flush();
-						}
 					}
 
 					renderInfo.renderer->Render(
@@ -323,7 +327,7 @@ void RenderPassManager::CreateDeferred()
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Format::R8G8B8A8_SRGB;
+	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
 	RenderPass::CreateInfo createInfo{};
@@ -335,7 +339,7 @@ void RenderPassManager::CreateDeferred()
 
 	const std::shared_ptr<Mesh> planeMesh = nullptr;
 
-	createInfo.renderCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
+	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes\\Plane.mesh");
 		if (!plane)
@@ -431,15 +435,46 @@ void RenderPassManager::CreateDeferred()
 			const glm::vec3 direction = glm::normalize(glm::mat3(camera.GetViewMat4()) * transform.GetForward());
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "directionalLight.direction", direction);
 
-			int hasDirectionalLight = 1;
+			const int hasDirectionalLight = 1;
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "hasDirectionalLight", hasDirectionalLight);
+
+			if (!m_CSMRenderer.GetLightSpaceMatrices().empty())
+			{
+				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.lightSpaceMatrices", *m_CSMRenderer.GetLightSpaceMatrices().data());
+			}
+
+			std::vector<glm::vec4> shadowCascadeLevels;
+			for (const float& distance : m_CSMRenderer.GetDistances())
+			{
+				shadowCascadeLevels.emplace_back(glm::vec4(distance));
+			}
+			shadowCascadeLevels.emplace_back(camera.GetZFar());
+
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.distances", *shadowCascadeLevels.data());
+
+			const int cascadeCount = m_CSMRenderer.GetLightSpaceMatrices().size() * renderInfo.scene->GetGraphicsSettings().shadows.isEnabled;
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.cascadeCount", cascadeCount);
+
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.fogFactor", renderInfo.scene->GetGraphicsSettings().shadows.fogFactor);
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.pcfRange", renderInfo.scene->GetGraphicsSettings().shadows.pcfRange);
+
+			const int pcfEnabled = renderInfo.scene->GetGraphicsSettings().shadows.pcfEnabled;
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.pcfEnabled", pcfEnabled);
+
+			std::vector<glm::vec4> biases;
+			for (const float& bias : renderInfo.scene->GetGraphicsSettings().shadows.biases)
+			{
+				biases.emplace_back(glm::vec4(bias));
+			}
+			shadowCascadeLevels.emplace_back(camera.GetZFar());
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.biases", *biases.data());
 		}
 		else
 		{
-			int hasDirectionalLight = 0;
+			const int hasDirectionalLight = 0;
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "hasDirectionalLight", hasDirectionalLight);
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.cascadeCount", hasDirectionalLight);
 		}
-
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 
@@ -547,6 +582,14 @@ void RenderPassManager::CreateAtmosphere()
 			"camera.viewMat4",
 			viewMat4);
 
+		const glm::mat4 inverseViewMat4 = glm::inverse(camera.GetViewMat4());
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			globalBuffer,
+			globalBufferName,
+			"camera.inverseViewMat4",
+			inverseViewMat4);
+
 		WriterBufferHelper::WriteToBuffer(
 			reflectionBaseMaterial.get(),
 			globalBuffer,
@@ -569,6 +612,22 @@ void RenderPassManager::CreateAtmosphere()
 			globalBufferName,
 			"camera.time",
 			time);
+
+		const float zNear = camera.GetZNear();
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			globalBuffer,
+			globalBufferName,
+			"camera.zNear",
+			zNear);
+
+		const float zFar = camera.GetZFar();
+		WriterBufferHelper::WriteToBuffer(
+			reflectionBaseMaterial.get(),
+			globalBuffer,
+			globalBufferName,
+			"camera.zFar",
+			zFar);
 
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes\\Plane.mesh");
 		if (!plane)
@@ -646,7 +705,7 @@ void RenderPassManager::CreateTransparent()
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Format::R8G8B8A8_SRGB;
+	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	color.load = RenderPass::Load::LOAD;
 	color.getFrameBufferCallback = [](Renderer* renderer, uint32_t& index)
@@ -808,7 +867,7 @@ void RenderPassManager::CreateFinal()
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Format::R8G8B8A8_SRGB;
+	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
 	RenderPass::CreateInfo createInfo{};
@@ -925,6 +984,7 @@ void RenderPassManager::CreateSSAO()
 
 		auto callback = [this, graphicsSettings]()
 		{
+			// TODO: Crash sometimes!
 			m_SSAORenderer.GenerateNoiseTexture(graphicsSettings.ssao.noiseSize);
 		};
 
@@ -1084,6 +1144,226 @@ void RenderPassManager::CreateSSAOBlur()
 			1,
 			uniformWriters,
 			renderInfo.submitInfo);
+	};
+
+	Create(createInfo);
+}
+
+void RenderPassManager::CreateCSM()
+{
+	RenderPass::ClearDepth clearDepth{};
+	clearDepth.clearDepth = 1.0f;
+	clearDepth.clearStencil = 0;
+
+	RenderPass::AttachmentDescription depth{};
+	depth.format = Format::D32_SFLOAT;
+	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	depth.size = { 2048, 2048 };
+	depth.layercount = 3;
+
+	Texture::SamplerCreateInfo samplerCreateInfo{};
+	samplerCreateInfo.filter = Texture::SamplerCreateInfo::Filter::NEAREST;
+	samplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_WHITE;
+	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_EDGE;
+	samplerCreateInfo.maxAnisotropy = 1.0f;
+
+	depth.samplerCreateInfo = samplerCreateInfo;
+
+	RenderPass::CreateInfo createInfo{};
+	createInfo.type = CSM;
+	createInfo.clearDepths = { clearDepth };
+	createInfo.attachmentDescriptions = { depth };
+	createInfo.resizeWithViewport = false;
+
+	const std::shared_ptr<Mesh> planeMesh = nullptr;
+
+	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
+	{
+		if (!renderInfo.scene->GetGraphicsSettings().shadows.isEnabled)
+		{
+			return;
+		}
+
+		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
+
+		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
+		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
+		using MaterialByBaseMaterial = std::unordered_map<std::shared_ptr<BaseMaterial>, MeshesByMaterial>;
+
+		MaterialByBaseMaterial materialMeshGameObjects;
+
+		size_t renderableCount = 0;
+		const std::shared_ptr<Scene> scene = renderInfo.scene;
+		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
+		const entt::registry& registry = scene->GetRegistry();
+		const auto r3dView = registry.view<Renderer3D>();
+
+		glm::vec3 lightDirection{};
+		auto directionalLightView = renderInfo.scene->GetRegistry().view<DirectionalLight>();
+		if (directionalLightView.empty())
+		{
+			return;
+		}
+
+		{
+			const entt::entity& entity = directionalLightView.back();
+			DirectionalLight& dl = renderInfo.scene->GetRegistry().get<DirectionalLight>(entity);
+			const Transform& transform = renderInfo.scene->GetRegistry().get<Transform>(entity);
+			lightDirection = transform.GetForward();
+		}
+
+		for (const entt::entity& entity : r3dView)
+		{
+			const Renderer3D& r3d = registry.get<Renderer3D>(entity);
+			const Transform& transform = registry.get<Transform>(entity);
+			if (!transform.GetEntity()->IsEnabled())
+			{
+				continue;
+			}
+
+			if (!r3d.mesh || !r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
+			{
+				continue;
+			}
+
+			const std::shared_ptr<Pipeline> pipeline = r3d.material->GetBaseMaterial()->GetPipeline(renderPassName);
+			if (!pipeline)
+			{
+				continue;
+			}
+
+			materialMeshGameObjects[r3d.material->GetBaseMaterial()][r3d.material][r3d.mesh].emplace_back(entity);
+
+			renderableCount++;
+		}
+
+		struct InstanceDataCSM
+		{
+			glm::mat4 transform;
+		};
+
+		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderer->GetBuffer("InstanceBufferCSM");
+		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
+		{
+			instanceBuffer = Buffer::Create(
+				sizeof(InstanceDataCSM),
+				renderableCount,
+				Buffer::Usage::VERTEX_BUFFER,
+				Buffer::MemoryType::CPU);
+
+			renderInfo.renderer->SetBuffer("InstanceBufferCSM", instanceBuffer);
+		}
+
+		std::vector<InstanceDataCSM> instanceDatas;
+
+		bool updatedLightSpaceMatrices = false;
+
+		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
+		for (const auto& [baseMaterial, meshesByMaterial] : materialMeshGameObjects)
+		{
+			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+
+			std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderer->GetUniformWriter(renderPassName);
+			if (!renderUniformWriter)
+			{
+				std::shared_ptr<UniformLayout> renderUniformLayout =
+					pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, renderPassName));
+				renderUniformWriter = UniformWriter::Create(renderUniformLayout);
+				renderInfo.renderer->SetUniformWriter(renderPassName, renderUniformWriter);
+
+				for (const auto& binding : renderUniformLayout->GetBindings())
+				{
+					if (binding.buffer && binding.buffer->name == "LightSpaceMatrices")
+					{
+						const std::shared_ptr<Buffer> buffer = Buffer::Create(
+							binding.buffer->size,
+							1,
+							Buffer::Usage::UNIFORM_BUFFER,
+							Buffer::MemoryType::CPU);
+
+						renderInfo.renderer->SetBuffer("LightSpaceMatrices", buffer);
+						renderUniformWriter->WriteBuffer(binding.buffer->name, buffer);
+						renderUniformWriter->Flush();
+
+						break;
+					}
+				}
+			}
+
+			if (!updatedLightSpaceMatrices)
+			{
+				updatedLightSpaceMatrices = true;
+				std::vector<std::pair<glm::vec3, glm::vec3>> frustums;
+				m_CSMRenderer.GenerateLightSpaceMatrices(
+					renderInfo.submitInfo.projection * camera.GetViewMat4(),
+					lightDirection,
+					camera.GetZNear(),
+					camera.GetZFar(),
+					3,
+					scene->GetGraphicsSettings().shadows.splitFactor);
+
+				WriterBufferHelper::WriteToBuffer(
+					baseMaterial.get(),
+					renderInfo.renderer->GetBuffer("LightSpaceMatrices"),
+					"LightSpaceMatrices",
+					"lightSpaceMatrices",
+					*m_CSMRenderer.GetLightSpaceMatrices().data());
+
+				const int cascadeCount = m_CSMRenderer.GetLightSpaceMatrices().size();
+				WriterBufferHelper::WriteToBuffer(
+					baseMaterial.get(),
+					renderInfo.renderer->GetBuffer("LightSpaceMatrices"),
+					"LightSpaceMatrices",
+					"cascadeCount",
+					cascadeCount);
+			}
+			
+			for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
+			{
+				for (const auto& [mesh, entities] : gameObjectsByMeshes)
+				{
+					const size_t instanceDataOffset = instanceDatas.size();
+
+					for (const entt::entity& entity : entities)
+					{
+						InstanceDataCSM data{};
+						const Transform& transform = registry.get<Transform>(entity);
+						data.transform = transform.GetTransform();
+						instanceDatas.emplace_back(data);
+					}
+
+					std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
+
+					for (const auto& uniformWriter : uniformWriters)
+					{
+						uniformWriter->Flush();
+
+						for (const auto& [location, buffer] : uniformWriter->GetBuffersByLocation())
+						{
+							buffer->Flush();
+						}
+					}
+
+					renderInfo.renderer->Render(
+						mesh->GetVertexBuffer(),
+						mesh->GetIndexBuffer(),
+						mesh->GetIndexCount(),
+						pipeline,
+						instanceBuffer,
+						instanceDataOffset * instanceBuffer->GetInstanceSize(),
+						entities.size(),
+						uniformWriters,
+						renderInfo.submitInfo);
+				}
+			}
+		}
+
+		// Because these are all just commands and will be rendered later we can write the instance buffer
+		// just once when all instance data is collected.
+		if (instanceBuffer && !instanceDatas.empty())
+		{
+			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(InstanceDataCSM));
+		}
 	};
 
 	Create(createInfo);

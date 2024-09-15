@@ -18,5 +18,5 @@ vec3 aces(vec3 x)
 
 void main()
 {
-	outColor = vec4(aces(texture(deferredTexture, uv).xyz), 1.0f);
+	outColor = vec4(texture(deferredTexture, uv).xyz, 1.0f);
 }

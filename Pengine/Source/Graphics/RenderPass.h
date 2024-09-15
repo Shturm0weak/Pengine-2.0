@@ -16,6 +16,7 @@ namespace Pengine
 	const std::string Final = "Final";
 	const std::string SSAO = "SSAO";
 	const std::string SSAOBlur = "SSAOBlur";
+	const std::string CSM = "CSM";
 	
 	class FrameBuffer;
 	class Window;
@@ -56,6 +57,7 @@ namespace Pengine
 			Store store = Store::STORE;
 			std::optional<glm::ivec2> size;
 			bool isCubeMap = false;
+			uint32_t layercount = 1;
 			std::function<std::shared_ptr<FrameBuffer>(Renderer*, uint32_t&)> getFrameBufferCallback;
 		};
 
@@ -84,7 +86,6 @@ namespace Pengine
 			std::vector<glm::vec4> clearColors;
 			std::vector<ClearDepth> clearDepths;
 			std::vector<AttachmentDescription> attachmentDescriptions;
-			std::unordered_map<std::string, std::shared_ptr<Buffer>> buffersByName;
 			std::function<void(const RenderCallbackInfo&)> renderCallback;
 			std::function<void(RenderPass&)> createCallback;
 			bool resizeWithViewport = false;
