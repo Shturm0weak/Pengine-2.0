@@ -241,12 +241,15 @@ glm::mat3 Transform::GetInverseTransform(const System system) const
 
 void Transform::Move(Transform&& transform) noexcept
 {
-	m_Rotation = transform.m_Rotation;
-	m_PositionMat4 = transform.m_PositionMat4;
-	m_ScaleMat4 = transform.m_ScaleMat4;
-	m_RotationMat4 = transform.m_RotationMat4;
-	m_TransformMat4 = transform.m_TransformMat4;
-	m_FollowOwner = transform.m_FollowOwner;
+	m_Entity = std::move(transform.m_Entity);
+	m_Rotation = std::move(transform.m_Rotation);
+	m_PositionMat4 = std::move(transform.m_PositionMat4);
+	m_ScaleMat4 = std::move(transform.m_ScaleMat4);
+	m_RotationMat4 = std::move(transform.m_RotationMat4);
+	m_TransformMat4 = std::move(transform.m_TransformMat4);
+	m_FollowOwner = std::move(transform.m_FollowOwner);
+
+	transform.m_Entity = nullptr;
 }
 
 void Transform::UpdateVectors()
