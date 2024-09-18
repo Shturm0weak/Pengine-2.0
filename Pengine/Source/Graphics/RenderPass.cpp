@@ -26,6 +26,7 @@ RenderPass::RenderPass(const CreateInfo& createInfo)
 	, m_CreateCallback(createInfo.createCallback)
 	, m_ResizeViewportScale(createInfo.resizeViewportScale)
 	, m_ResizeWithViewport(createInfo.resizeWithViewport)
+	, m_CreateFrameBuffer(createInfo.createFrameBuffer)
 {
 }
 

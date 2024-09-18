@@ -50,6 +50,10 @@ namespace Pengine
 
 		void Resize(const glm::ivec2& size) const;
 
+		virtual void BeginRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
+
+		virtual void EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
+
 		virtual void Render(
 			const std::shared_ptr<Buffer>& vertices,
 			const std::shared_ptr<Buffer>& indices,
@@ -59,13 +63,9 @@ namespace Pengine
 			size_t instanceBufferOffset,
 			size_t count,
 			const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
-			const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
+			void* frame) = 0;
 
 	protected:
-		virtual void BeginRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
-
-		virtual void EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
-
 		std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> m_FrameBuffersByRenderPassType;
 		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPassType;
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;

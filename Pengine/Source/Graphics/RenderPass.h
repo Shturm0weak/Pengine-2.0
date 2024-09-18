@@ -65,19 +65,18 @@ namespace Pengine
 		{
 			std::shared_ptr<RenderPass> renderPass;
 			std::shared_ptr<FrameBuffer> frameBuffer;
-			glm::mat4 projection;
 			void* frame;
-			uint32_t width;
-			uint32_t height;
 		};
 
 		struct RenderCallbackInfo
 		{
+			std::shared_ptr<RenderPass> renderPass;
 			std::shared_ptr<Window> window;
 			std::shared_ptr<Renderer> renderer;
 			std::shared_ptr<Scene> scene;
 			std::shared_ptr<Entity> camera;
-			SubmitInfo submitInfo;
+			glm::mat4 projection;
+			void* frame;
 		};
 
 		struct CreateInfo
@@ -89,6 +88,7 @@ namespace Pengine
 			std::function<void(const RenderCallbackInfo&)> renderCallback;
 			std::function<void(RenderPass&)> createCallback;
 			bool resizeWithViewport = false;
+			bool createFrameBuffer = true;
 			glm::vec2 resizeViewportScale = { 1.0f, 1.0f };
 		};
 
@@ -134,6 +134,7 @@ namespace Pengine
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
 		bool m_IsInitialized = false;
 		bool m_ResizeWithViewport = false;
+		bool m_CreateFrameBuffer = true;
 		glm::vec2 m_ResizeViewportScale = { 1.0f, 1.0f };
 
 		friend class Renderer;

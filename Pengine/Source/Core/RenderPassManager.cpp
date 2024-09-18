@@ -143,7 +143,10 @@ void RenderPassManager::CreateGBuffer()
 	{
 		const std::string globalBufferName = "GlobalBuffer";
 		const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\DefaultReflection.basemat");
-		const glm::vec2 viewportSize = { renderInfo.submitInfo.width, renderInfo.submitInfo.height };
+
+		const std::string renderPassName = renderInfo.renderPass->GetType();
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		const glm::vec2 viewportSize = frameBuffer->GetSize();
 		WriterBufferHelper::WriteToBuffer(
 			reflectionBaseMaterial.get(),
 			renderInfo.renderer->GetBuffer(globalBufferName),
@@ -167,8 +170,6 @@ void RenderPassManager::CreateGBuffer()
 			globalBufferName,
 			"camera.tanHalfFOV",
 			tanHalfFOV);
-
-		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
 
 		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
@@ -228,6 +229,12 @@ void RenderPassManager::CreateGBuffer()
 
 		std::vector<InstanceData> instanceDatas;
 
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
+
 		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
 		for (const auto& [baseMaterial, meshesByMaterial] : materialMeshGameObjects)
 		{
@@ -268,7 +275,7 @@ void RenderPassManager::CreateGBuffer()
 						instanceDataOffset * instanceBuffer->GetInstanceSize(),
 						entities.size(),
 						uniformWriters,
-						renderInfo.submitInfo);
+						renderInfo.frame);
 				}
 			}
 		}
@@ -314,9 +321,11 @@ void RenderPassManager::CreateGBuffer()
 					0,
 					1,
 					uniformWriters,
-					renderInfo.submitInfo);
+					renderInfo.frame);
 			}
 		}
+
+		renderInfo.renderer->EndRenderPass(submitInfo);
 	};
 
 	Create(createInfo);
@@ -347,7 +356,7 @@ void RenderPassManager::CreateDeferred()
 			return;
 		}
 
-		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
+		const std::string renderPassName = renderInfo.renderPass->GetType();
 
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\Deferred.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
@@ -488,6 +497,13 @@ void RenderPassManager::CreateDeferred()
 			}
 		}
 
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
+
 		renderInfo.renderer->Render(
 			plane->GetVertexBuffer(),
 			plane->GetIndexBuffer(),
@@ -497,7 +513,9 @@ void RenderPassManager::CreateDeferred()
 			0,
 			1,
 			uniformWriters,
-			renderInfo.submitInfo);
+			renderInfo.frame);
+
+		renderInfo.renderer->EndRenderPass(submitInfo);
 	};
 
 	Create(createInfo);
@@ -566,7 +584,7 @@ void RenderPassManager::CreateAtmosphere()
 
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 		const Transform& cameraTransform = renderInfo.camera->GetComponent<Transform>();
-		const glm::mat4 viewProjectionMat4 = renderInfo.submitInfo.projection * camera.GetViewMat4();
+		const glm::mat4 viewProjectionMat4 = renderInfo.projection * camera.GetViewMat4();
 		WriterBufferHelper::WriteToBuffer(
 			reflectionBaseMaterial.get(),
 			globalBuffer,
@@ -595,7 +613,7 @@ void RenderPassManager::CreateAtmosphere()
 			globalBuffer,
 			globalBufferName,
 			"camera.projectionMat4",
-			renderInfo.submitInfo.projection);
+			renderInfo.projection);
 
 		const glm::mat4 inverseRotationMat4 = glm::inverse(cameraTransform.GetRotationMat4());
 		WriterBufferHelper::WriteToBuffer(
@@ -635,7 +653,7 @@ void RenderPassManager::CreateAtmosphere()
 			return;
 		}
 
-		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
+		const std::string renderPassName = renderInfo.renderPass->GetType();
 
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\Atmosphere.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
@@ -681,6 +699,13 @@ void RenderPassManager::CreateAtmosphere()
 			}
 		}
 
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
+
 		renderInfo.renderer->Render(
 			plane->GetVertexBuffer(),
 			plane->GetIndexBuffer(),
@@ -690,7 +715,9 @@ void RenderPassManager::CreateAtmosphere()
 			0,
 			1,
 			uniformWriters,
-			renderInfo.submitInfo);
+			renderInfo.frame);
+
+		renderInfo.renderer->EndRenderPass(submitInfo);
 	};
 
 	Create(createInfo);
@@ -734,7 +761,7 @@ void RenderPassManager::CreateTransparent()
 
 	createInfo.renderCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
+		const std::string renderPassName = renderInfo.renderPass->GetType();
 
 		struct RenderData
 		{
@@ -806,6 +833,13 @@ void RenderPassManager::CreateTransparent()
 
 		std::vector<InstanceData> instanceDatas;
 
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
+
 		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
 		for (const auto& renderData : renderDatas)
 		{
@@ -844,7 +878,7 @@ void RenderPassManager::CreateTransparent()
 				instanceDataOffset * instanceBuffer->GetInstanceSize(),
 				1,
 				uniformWriters,
-				renderInfo.submitInfo);
+				renderInfo.frame);
 		}
 
 		// Because these are all just commands and will be rendered later we can write the instance buffer
@@ -853,6 +887,8 @@ void RenderPassManager::CreateTransparent()
 		{
 			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(InstanceData));
 		}
+
+		renderInfo.renderer->EndRenderPass(submitInfo);
 	};
 
 	Create(createInfo);
@@ -888,7 +924,7 @@ void RenderPassManager::CreateFinal()
 			return;
 		}
 
-		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
+		const std::string renderPassName = renderInfo.renderPass->GetType();
 
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Final.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
@@ -924,6 +960,13 @@ void RenderPassManager::CreateFinal()
 			}
 		}
 
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
+
 		renderInfo.renderer->Render(
 			plane->GetVertexBuffer(),
 			plane->GetIndexBuffer(),
@@ -933,7 +976,9 @@ void RenderPassManager::CreateFinal()
 			0,
 			1,
 			uniformWriters,
-			renderInfo.submitInfo);
+			renderInfo.frame);
+
+		renderInfo.renderer->EndRenderPass(submitInfo);
 	};
 
 	Create(createInfo);
@@ -958,25 +1003,35 @@ void RenderPassManager::CreateSSAO()
 
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		const std::string renderPassName = renderInfo.renderPass->GetType();
+
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
+
 		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
 
 		if (!graphicsSettings.ssao.isEnabled)
 		{
+			renderInfo.renderer->EndRenderPass(submitInfo);
 			return;
 		}
 
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes\\Plane.mesh");
 		if (!plane)
 		{
+			renderInfo.renderer->EndRenderPass(submitInfo);
 			return;
 		}
-
-		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
 
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SSAO.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 		if (!pipeline)
 		{
+			renderInfo.renderer->EndRenderPass(submitInfo);
 			return;
 		}
 
@@ -984,7 +1039,6 @@ void RenderPassManager::CreateSSAO()
 
 		auto callback = [this, graphicsSettings]()
 		{
-			// TODO: Crash sometimes!
 			m_SSAORenderer.GenerateNoiseTexture(graphicsSettings.ssao.noiseSize);
 		};
 
@@ -1060,7 +1114,9 @@ void RenderPassManager::CreateSSAO()
 			0,
 			1,
 			uniformWriters,
-			renderInfo.submitInfo);
+			renderInfo.frame);
+
+		renderInfo.renderer->EndRenderPass(submitInfo);
 	};
 
 	Create(createInfo);
@@ -1085,25 +1141,35 @@ void RenderPassManager::CreateSSAOBlur()
 
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		const std::string renderPassName = renderInfo.renderPass->GetType();
+
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
+
 		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
 
 		if (!graphicsSettings.ssao.isEnabled)
 		{
+			renderInfo.renderer->EndRenderPass(submitInfo);
 			return;
 		}
 
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes\\Plane.mesh");
 		if (!plane)
 		{
+			renderInfo.renderer->EndRenderPass(submitInfo);
 			return;
 		}
-
-		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
 
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SSAOBlur.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 		if (!pipeline)
 		{
+			renderInfo.renderer->EndRenderPass(submitInfo);
 			return;
 		}
 
@@ -1143,7 +1209,9 @@ void RenderPassManager::CreateSSAOBlur()
 			0,
 			1,
 			uniformWriters,
-			renderInfo.submitInfo);
+			renderInfo.frame);
+
+		renderInfo.renderer->EndRenderPass(submitInfo);
 	};
 
 	Create(createInfo);
@@ -1184,7 +1252,7 @@ void RenderPassManager::CreateCSM()
 			return;
 		}
 
-		const std::string renderPassName = renderInfo.submitInfo.renderPass->GetType();
+		const std::string renderPassName = renderInfo.renderPass->GetType();
 
 		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
@@ -1258,6 +1326,13 @@ void RenderPassManager::CreateCSM()
 
 		bool updatedLightSpaceMatrices = false;
 
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
+
 		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
 		for (const auto& [baseMaterial, meshesByMaterial] : materialMeshGameObjects)
 		{
@@ -1295,7 +1370,7 @@ void RenderPassManager::CreateCSM()
 				updatedLightSpaceMatrices = true;
 				std::vector<std::pair<glm::vec3, glm::vec3>> frustums;
 				m_CSMRenderer.GenerateLightSpaceMatrices(
-					renderInfo.submitInfo.projection * camera.GetViewMat4(),
+					renderInfo.projection * camera.GetViewMat4(),
 					lightDirection,
 					camera.GetZNear(),
 					camera.GetZFar(),
@@ -1353,7 +1428,7 @@ void RenderPassManager::CreateCSM()
 						instanceDataOffset * instanceBuffer->GetInstanceSize(),
 						entities.size(),
 						uniformWriters,
-						renderInfo.submitInfo);
+						renderInfo.frame);
 				}
 			}
 		}
@@ -1364,6 +1439,8 @@ void RenderPassManager::CreateCSM()
 		{
 			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(InstanceDataCSM));
 		}
+
+		renderInfo.renderer->EndRenderPass(submitInfo);
 	};
 
 	Create(createInfo);

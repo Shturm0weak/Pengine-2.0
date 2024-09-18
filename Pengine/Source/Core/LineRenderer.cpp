@@ -16,7 +16,7 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 {
 	if (std::shared_ptr<BaseMaterial> lineBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Line.basemat"))
 	{
-		std::shared_ptr<Pipeline> pipeline = lineBaseMaterial->GetPipeline(renderInfo.submitInfo.renderPass->GetType());
+		std::shared_ptr<Pipeline> pipeline = lineBaseMaterial->GetPipeline(renderInfo.renderPass->GetType());
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = RenderPassManager::GetUniformWriters(pipeline, lineBaseMaterial, nullptr, renderInfo);
 
 		for (const auto& uniformWriter : uniformWriters)
@@ -67,7 +67,7 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 				0,
 				1,
 				uniformWriters,
-				renderInfo.submitInfo);
+				renderInfo.frame);
 
 			batchIndex++;
 			index = 0;
@@ -75,6 +75,11 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 			lineIndices.clear();
 		};
 
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderInfo.renderPass->GetType());
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
 		std::queue<Line>& lines = renderInfo.scene->GetVisualizer().GetLines();
 		if (!lines.empty())
 		{
