@@ -43,7 +43,7 @@ namespace Pengine::Vk
 		}
 	}
 
-	std::optional<VkSampler> VulkanSamplerManager::Find(const VkSamplerCreateInfo& createInfo)
+	std::optional<VkSampler> VulkanSamplerManager::Find(const VkSamplerCreateInfo& createInfo) const
 	{
 		// Note: very debatable, need to find a better way to cache samplers.
 		for (const auto& samplerInfo : m_SamplerInfos)

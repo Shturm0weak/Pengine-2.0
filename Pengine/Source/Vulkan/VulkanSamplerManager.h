@@ -23,7 +23,7 @@ namespace Pengine::Vk
 		VulkanSamplerManager() = default;
 		~VulkanSamplerManager() = default;
 
-		std::optional<VkSampler> Find(const VkSamplerCreateInfo& createInfo);
+		std::optional<VkSampler> Find(const VkSamplerCreateInfo& createInfo) const;
 
 		struct SamplerInfo
 		{

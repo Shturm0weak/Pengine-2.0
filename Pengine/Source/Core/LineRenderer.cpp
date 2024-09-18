@@ -6,7 +6,7 @@
 
 #include "../Graphics/Renderer.h"
 
-#define MAX_BATCH_LINE_COUNT 10000
+#define MAX_BATCH_LINE_COUNT 100
 #define LINE_VERTEX_COUNT 2
 #define MAX_BATCH_LINE_VERTEX_COUNT MAX_BATCH_LINE_COUNT * LINE_VERTEX_COUNT
 
@@ -16,7 +16,7 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 {
 	if (std::shared_ptr<BaseMaterial> lineBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Line.basemat"))
 	{
-		std::shared_ptr<Pipeline> pipeline = lineBaseMaterial->GetPipeline(renderInfo.submitInfo.renderPass->GetType());
+		std::shared_ptr<Pipeline> pipeline = lineBaseMaterial->GetPipeline(renderInfo.renderPass->GetType());
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = RenderPassManager::GetUniformWriters(pipeline, lineBaseMaterial, nullptr, renderInfo);
 
 		for (const auto& uniformWriter : uniformWriters)
@@ -40,13 +40,13 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 				Batch batch;
 				batch.m_VertexBuffer = Buffer::Create(
 					sizeof(glm::vec3) * 2,
-					lineVertices.size(),
+					MAX_BATCH_LINE_COUNT * 2,
 					Buffer::Usage::VERTEX_BUFFER,
 					Buffer::MemoryType::CPU);
 
 				batch.m_IndexBuffer = Buffer::Create(
 					sizeof(uint32_t),
-					lineIndices.size(),
+					MAX_BATCH_LINE_COUNT * 2,
 					Buffer::Usage::INDEX_BUFFER,
 					Buffer::MemoryType::CPU);
 
@@ -67,7 +67,7 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 				0,
 				1,
 				uniformWriters,
-				renderInfo.submitInfo);
+				renderInfo.frame);
 
 			batchIndex++;
 			index = 0;
@@ -75,6 +75,11 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 			lineIndices.clear();
 		};
 
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderInfo.renderPass->GetType());
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
 		std::queue<Line>& lines = renderInfo.scene->GetVisualizer().GetLines();
 		if (!lines.empty())
 		{

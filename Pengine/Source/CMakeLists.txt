@@ -23,6 +23,7 @@ set(CORE_SOURCES
 	Core/BoundingBox.h
 	Core/ColoredOutput.h
 	Core/Core.h
+	Core/CSMRenderer.cpp Core/CSMRenderer.h
 	Core/Entity.cpp Core/Entity.h
 	Core/EntryPoint.cpp Core/EntryPoint.h
 	Core/FileFormatNames.h

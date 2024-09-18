@@ -848,18 +848,47 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			ImGui::EndDragDropTarget();
 		}
 
-		bool isChanged = 0;
+		bool isChangedToSerialize = false;
 		if (ImGui::CollapsingHeader("SSAO"))
 		{
-			isChanged += ImGui::Checkbox("Is Enabled", &graphicsSettings.ssao.isEnabled);
-			isChanged += ImGui::SliderFloat("Bias", &graphicsSettings.ssao.bias, 0.0f, 10.0f);
-			isChanged += ImGui::SliderFloat("Radius", &graphicsSettings.ssao.radius, 0.0f, 1.0f);
-			isChanged += ImGui::SliderInt("Kernel Size", &graphicsSettings.ssao.kernelSize, 2, 64);
-			isChanged += ImGui::SliderInt("Noise Size", &graphicsSettings.ssao.noiseSize, 4, 32);
-			isChanged += ImGui::SliderFloat("AO Scale", &graphicsSettings.ssao.aoScale, 0.0f, 10.0f);
+			ImGui::PushID("SSAO Is Enabled");
+			isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.ssao.isEnabled);
+			ImGui::PopID();
+
+			isChangedToSerialize += ImGui::SliderFloat("Bias", &graphicsSettings.ssao.bias, 0.0f, 10.0f);
+			isChangedToSerialize += ImGui::SliderFloat("Radius", &graphicsSettings.ssao.radius, 0.0f, 1.0f);
+			isChangedToSerialize += ImGui::SliderInt("Kernel Size", &graphicsSettings.ssao.kernelSize, 2, 64);
+			isChangedToSerialize += ImGui::SliderInt("Noise Size", &graphicsSettings.ssao.noiseSize, 4, 32);
+			isChangedToSerialize += ImGui::SliderFloat("AO Scale", &graphicsSettings.ssao.aoScale, 0.0f, 10.0f);
 		}
 
-		if (std::filesystem::exists(graphicsSettings.GetFilepath()) && isChanged)
+		if (ImGui::CollapsingHeader("Shadows"))
+		{
+			ImGui::PushID("Shadows Is Enabled");
+			isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.shadows.isEnabled);
+			ImGui::PopID();
+
+			if (ImGui::SliderInt("Cascade Count", &graphicsSettings.shadows.cascadeCount, 2, 10))
+			{
+				isChangedToSerialize += true;
+
+				graphicsSettings.shadows.biases.resize(graphicsSettings.shadows.cascadeCount, 0.01f);
+			}
+
+			isChangedToSerialize += ImGui::Checkbox("Pcf Enabled", &graphicsSettings.shadows.pcfEnabled);
+			ImGui::Checkbox("Visualize", &graphicsSettings.shadows.visualize);
+			isChangedToSerialize += ImGui::SliderInt("Pcf Range", &graphicsSettings.shadows.pcfRange, 1, 5);
+			isChangedToSerialize += ImGui::SliderFloat("Split Factor", &graphicsSettings.shadows.splitFactor, 0.0f, 1.0f);
+			isChangedToSerialize += ImGui::SliderFloat("Max Distance", &graphicsSettings.shadows.maxDistance, 0.0f, 1000.0f);
+			isChangedToSerialize += ImGui::SliderFloat("Fog Factor", &graphicsSettings.shadows.fogFactor, 0.0f, 1.0f);
+			for (size_t i = 0; i < graphicsSettings.shadows.biases.size(); i++)
+			{
+				const std::string biasName = "Bias " + std::to_string(i);
+				isChangedToSerialize += ImGui::SliderFloat(biasName.c_str(), &graphicsSettings.shadows.biases[i], 0.0f, 1.0f);
+			}
+		}
+
+		if (isChangedToSerialize && std::filesystem::exists(graphicsSettings.GetFilepath()))
 		{
 			Serializer::SerializeGraphicsSettings(graphicsSettings);
 		}
@@ -977,6 +1006,8 @@ void Editor::TransformComponent(const std::shared_ptr<Entity>& entity)
 	if (ImGui::CollapsingHeader("Transform"))
 	{
 		Indent indent;
+
+		ImGui::Text("Entity: %s", transform.GetEntity()->GetName().c_str());
 
 		bool followOwner = transform.GetFollorOwner();
 		if (ImGui::Checkbox("Follow owner", &followOwner))

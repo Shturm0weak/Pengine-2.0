@@ -42,4 +42,6 @@ Mat:
               Type: int
     - RenderPass: Transparent
       Uniforms:
-        []
+        - RenderPass: CSM
+          Uniforms:
+            []

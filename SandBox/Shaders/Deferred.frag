@@ -10,9 +10,11 @@ layout(set = 1, binding = 1) uniform sampler2D normalTexture;
 layout(set = 1, binding = 2) uniform sampler2D shadingTexture;
 layout(set = 1, binding = 3) uniform sampler2D depthTexture;
 layout(set = 1, binding = 4) uniform sampler2D ssaoTexture;
+layout(set = 1, binding = 5) uniform sampler2DArray CSMTexture;
 
 #include "Shaders/Includes/PointLight.h"
 #include "Shaders/Includes/DirectionalLight.h"
+#include "Shaders/Includes/CSM.h"
 #include "Shaders/Includes/Camera.h"
 
 layout(set = 0, binding = 0) uniform GlobalBuffer
@@ -20,13 +22,15 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 	Camera camera;
 };
 
-layout(set = 1, binding = 5) uniform Lights
+layout(set = 1, binding = 6) uniform Lights
 {
 	PointLight pointLights[32];
 	int pointLightsCount;
 
 	DirectionalLight directionalLight;
 	int hasDirectionalLight;
+
+	CSM csm;
 };
 
 void main()
@@ -53,6 +57,16 @@ void main()
 	{
 		if (hasDirectionalLight == 1)
 		{
+			vec3 worldSpacePosition = (camera.inverseViewMat4 * vec4(position, 1.0f)).xyz;
+
+			vec3 shadow = CalculateCSM(
+				CSMTexture,
+				csm,
+				abs(position.z),
+				worldSpacePosition,
+				normal.xyz,
+				directionalLight.direction);
+
 			result += CalculateDirectionalLight(
 				directionalLight,
 				viewDirection,
@@ -61,7 +75,8 @@ void main()
 				albedoColor,
 				shading.x,
 				shading.y,
-				shading.z);
+				shading.z,
+				shadow);
 		}
 
 		for (int i = 0; i < pointLightsCount; i++)

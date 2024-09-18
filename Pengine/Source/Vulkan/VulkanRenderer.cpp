@@ -26,9 +26,9 @@ void VulkanRenderer::Render(
 	const size_t instanceBufferOffset,
 	const size_t count,
 	const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
-	const RenderPass::SubmitInfo& renderPassSubmitInfo)
+	void* frame)
 {
-	const ImGui_ImplVulkanH_Frame* frame = static_cast<ImGui_ImplVulkanH_Frame*>(renderPassSubmitInfo.frame);
+	const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
 
 	std::shared_ptr<VulkanPipeline> vkPipeline;
 	if (pipeline)
@@ -40,7 +40,7 @@ void VulkanRenderer::Render(
 		return;
 	}
 	
-	vkPipeline->Bind(frame->CommandBuffer);
+	vkPipeline->Bind(vkFrame->CommandBuffer);
 
 	std::vector<VkDescriptorSet> descriptorSets;
 	for (const auto& uniformWriter : uniformWriters)
@@ -52,7 +52,7 @@ void VulkanRenderer::Render(
 	if (!descriptorSets.empty())
 	{
 		vkCmdBindDescriptorSets(
-			frame->CommandBuffer,
+			vkFrame->CommandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			vkPipeline->GetPipelineLayout(),
 			0,
@@ -63,8 +63,8 @@ void VulkanRenderer::Render(
 	}
 
 	vertexCount += (indexCount / 3) * count;
-	BindBuffers(frame->CommandBuffer, vertices, instanceBuffer, indices, instanceBufferOffset);
-	DrawIndexed(frame->CommandBuffer, indexCount, count);
+	BindBuffers(vkFrame->CommandBuffer, vertices, instanceBuffer, indices, instanceBufferOffset);
+	DrawIndexed(vkFrame->CommandBuffer, indexCount, count);
 }
 
 void VulkanRenderer::BeginRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo)
@@ -93,24 +93,26 @@ void VulkanRenderer::BeginRenderPass(const RenderPass::SubmitInfo& renderPassSub
 		vkClearValues.emplace_back(clearValue);
 	}
 
+	const glm::ivec2 size = renderPassSubmitInfo.frameBuffer->GetSize();
+
 	VkRenderPassBeginInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	info.renderPass = std::static_pointer_cast<VulkanRenderPass>(renderPassSubmitInfo.renderPass)->GetRenderPass();
 	info.framebuffer = std::static_pointer_cast<VulkanFrameBuffer>(renderPassSubmitInfo.frameBuffer)->GetFrameBuffer();
-	info.renderArea.extent.width = renderPassSubmitInfo.width;
-	info.renderArea.extent.height = renderPassSubmitInfo.height;
+	info.renderArea.extent.width = size.x;
+	info.renderArea.extent.height = size.y;
 	info.clearValueCount = vkClearValues.size();
 	info.pClearValues = vkClearValues.data();
 	vkCmdBeginRenderPass(frame->CommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 
 	VkViewport viewport{};
 	viewport.x = 0;
-	viewport.y = static_cast<float>(renderPassSubmitInfo.height);
-	viewport.width = static_cast<float>(renderPassSubmitInfo.width);
-	viewport.height = -static_cast<float>(renderPassSubmitInfo.height);
+	viewport.y = static_cast<float>(size.y);
+	viewport.width = static_cast<float>(size.x);
+	viewport.height = -static_cast<float>(size.y);
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
-	const VkRect2D scissor{ { 0, 0}, { renderPassSubmitInfo.width, renderPassSubmitInfo.height } };
+	const VkRect2D scissor{ { 0, 0}, { size.x, size.y } };
 	vkCmdSetViewport(frame->CommandBuffer, 0, 1, &viewport);
 	vkCmdSetScissor(frame->CommandBuffer, 0, 1, &scissor);
 }

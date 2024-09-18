@@ -29,6 +29,11 @@ Renderer::Renderer(const glm::ivec2& size)
 		if (std::shared_ptr<RenderPass> renderPass =
 			RenderPassManager::GetInstance().GetRenderPass(type))
 		{
+			if (!renderPass->m_CreateFrameBuffer)
+			{
+				continue;
+			}
+
 			const std::shared_ptr<FrameBuffer> frameBuffer = FrameBuffer::Create(renderPass, this, size);
 
 			SetFrameBufferToRenderPass(type, frameBuffer);
@@ -46,7 +51,8 @@ void Renderer::Update(
 	const std::shared_ptr<Window>& window,
 	const std::shared_ptr<Scene>& scene,
 	const std::shared_ptr<Entity>& camera,
-	const glm::mat4& projection)
+	const glm::mat4& projection,
+	const glm::ivec2& viewportSize)
 {
 	if (!scene)
 	{
@@ -70,28 +76,17 @@ void Renderer::Update(
 			}
 		}
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = GetRenderPassFrameBuffer(renderPass->GetType());
-
-		RenderPass::SubmitInfo renderPassSubmitInfo;
-		renderPassSubmitInfo.width = frameBuffer->GetSize().x;
-		renderPassSubmitInfo.height = frameBuffer->GetSize().y;
-		renderPassSubmitInfo.frame = frame;
-		renderPassSubmitInfo.frameBuffer = frameBuffer;
-		renderPassSubmitInfo.renderPass = renderPass;
-		renderPassSubmitInfo.projection = projection;
-
-		BeginRenderPass(renderPassSubmitInfo);
-
 		RenderPass::RenderCallbackInfo renderInfo{};
 		renderInfo.renderer = shared_from_this();
 		renderInfo.camera = camera;
 		renderInfo.window = window;
 		renderInfo.scene = scene;
-		renderInfo.submitInfo = renderPassSubmitInfo;
+		renderInfo.renderPass = renderPass;
+		renderInfo.projection = projection;
+		renderInfo.frame = frame;
+		renderInfo.viewportSize = viewportSize;
 
 		renderPass->Render(renderInfo);
-
-		EndRenderPass(renderPassSubmitInfo);
 	}
 }
 

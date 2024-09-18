@@ -24,6 +24,23 @@ namespace Pengine
 			float bias = 0.025f;
 			float aoScale = 2.0f;
 		} ssao;
+
+		struct Shadows
+		{
+			bool isEnabled = true;
+			std::vector<float> biases = { 0.2f, 0.5f, 0.2f };
+			float splitFactor = 0.75f;
+			float maxDistance = 200.0f;
+			float fogFactor = 0.2f;
+			bool pcfEnabled = true;
+			bool visualize = false;
+			int pcfRange = 1;
+
+			/**
+			 * Has to be more than 1.
+			 */
+			int cascadeCount = 3;
+		} shadows;
 	};
 
 }

@@ -11,8 +11,8 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [-0.657852113, 2.81966543, -1.64304626]
-      Rotation: [-0.444326818, 3.31829, 0]
+      Position: [-4.2290597, 7.68311548, -0.191679239]
+      Rotation: [-0.685250401, -1.38104177, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -28,9 +28,9 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
-      Rotation: [0.785398185, 0, 0]
-      Scale: [1, 1, 1]
+      Position: [-0.331472993, 3.18549967, 0.502656162]
+      Rotation: [1.57079637, -0.69813168, 6.06503008e-08]
+      Scale: [0.99999994, 0.99999994, 0.999999881]
       FollowOwner: true
     DirectionalLight:
       Color: [1, 1, 1]
@@ -41,12 +41,12 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [1.57113886, 2, 0]
+      Position: [0, 0.874051511, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.5, 0.5, 0.5]
+      Scale: [1, 1, 1]
       FollowOwner: true
     Renderer3D:
-      Mesh: bd5c62c4-89a8-44da-b507-18123fb5c2c8
+      Mesh: 182a9d36-68b5-4f57-bb18-1fc19613f8fb
       Material: f923f03e-6dca-40b3-96ec-9c6d935a3520
   - UUID: ce301cdc-b9d6-4523-907e-c75bf4ac3e0e
     Name: SphereWoodPBR
@@ -101,7 +101,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -114,7 +114,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -127,7 +127,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -140,7 +140,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -153,7 +153,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -166,7 +166,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -179,7 +179,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -192,7 +192,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -205,7 +205,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -218,7 +218,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -231,7 +231,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -244,7 +244,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -257,7 +257,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -270,7 +270,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -283,7 +283,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -296,7 +296,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -309,7 +309,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -322,7 +322,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -335,7 +335,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -348,7 +348,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -361,7 +361,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -374,7 +374,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -387,7 +387,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -400,7 +400,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -413,7 +413,7 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [0, 0, 0]
+      Position: [0, 3.05175774e-07, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true

@@ -18,7 +18,6 @@ namespace Pengine::Vk
 		VulkanRenderer(const VulkanRenderer&) = delete;
 		VulkanRenderer& operator=(const VulkanRenderer&) = delete;
 
-	protected:
 		virtual void BeginRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) override;
 
 		virtual void EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) override;
@@ -31,7 +30,7 @@ namespace Pengine::Vk
 			const std::shared_ptr<Buffer>& instanceBuffer,
 			size_t instanceBufferOffset, size_t count,
 			const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
-			const RenderPass::SubmitInfo& renderPassSubmitInfo) override;
+			void* frame) override;
 
 	private:
 		static void BindBuffers(

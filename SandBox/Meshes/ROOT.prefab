@@ -1,0 +1,37 @@
+- UUID: b5cd06b1-baab-43ed-a609-46fdf9947190
+  Name: ROOT
+  IsEnabled: true
+  Childs:
+    - 47f1b92d-555b-45fa-a609-661cd7919539
+    - 2c6f4f57-fc36-47e3-88a6-141718ba5dab
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, -0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+- UUID: 47f1b92d-555b-45fa-a609-661cd7919539
+  Name: tree.003
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, -0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 08dafeb1-dcdc-4ca2-8cad-2e33d16ea4c7
+    Material: ab0c18d2-9ed5-47d7-bada-7b62390ef9bd
+- UUID: 2c6f4f57-fc36-47e3-88a6-141718ba5dab
+  Name: tree.002
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [0, -0, 0]
+    Scale: [1, 1, 1]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 9f699d65-314e-4eed-acaa-01c0c47e69e4
+    Material: 837417fd-d3d0-48cf-9eca-90bd5aaa6bf3

@@ -16,6 +16,7 @@ namespace Pengine
 	const std::string Final = "Final";
 	const std::string SSAO = "SSAO";
 	const std::string SSAOBlur = "SSAOBlur";
+	const std::string CSM = "CSM";
 	
 	class FrameBuffer;
 	class Window;
@@ -56,6 +57,7 @@ namespace Pengine
 			Store store = Store::STORE;
 			std::optional<glm::ivec2> size;
 			bool isCubeMap = false;
+			uint32_t layercount = 1;
 			std::function<std::shared_ptr<FrameBuffer>(Renderer*, uint32_t&)> getFrameBufferCallback;
 		};
 
@@ -63,19 +65,19 @@ namespace Pengine
 		{
 			std::shared_ptr<RenderPass> renderPass;
 			std::shared_ptr<FrameBuffer> frameBuffer;
-			glm::mat4 projection;
 			void* frame;
-			uint32_t width;
-			uint32_t height;
 		};
 
 		struct RenderCallbackInfo
 		{
+			std::shared_ptr<RenderPass> renderPass;
 			std::shared_ptr<Window> window;
 			std::shared_ptr<Renderer> renderer;
 			std::shared_ptr<Scene> scene;
 			std::shared_ptr<Entity> camera;
-			SubmitInfo submitInfo;
+			glm::mat4 projection;
+			glm::ivec2 viewportSize;
+			void* frame;
 		};
 
 		struct CreateInfo
@@ -84,10 +86,10 @@ namespace Pengine
 			std::vector<glm::vec4> clearColors;
 			std::vector<ClearDepth> clearDepths;
 			std::vector<AttachmentDescription> attachmentDescriptions;
-			std::unordered_map<std::string, std::shared_ptr<Buffer>> buffersByName;
 			std::function<void(const RenderCallbackInfo&)> renderCallback;
 			std::function<void(RenderPass&)> createCallback;
 			bool resizeWithViewport = false;
+			bool createFrameBuffer = true;
 			glm::vec2 resizeViewportScale = { 1.0f, 1.0f };
 		};
 
@@ -116,7 +118,7 @@ namespace Pengine
 
 		void Render(const RenderCallbackInfo& renderInfo) const;
 
-		[[nodiscard]] const std::vector<AttachmentDescription>& GetAttachmentDescriptions() const { return m_AttachmentDescriptions; }
+		[[nodiscard]] const std::vector<AttachmentDescription>& GetAttachmentDescriptions() { return m_AttachmentDescriptions; }
 
 		[[nodiscard]] const bool GetResizeWithViewport() const { return m_ResizeWithViewport; }
 
@@ -133,6 +135,7 @@ namespace Pengine
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
 		bool m_IsInitialized = false;
 		bool m_ResizeWithViewport = false;
+		bool m_CreateFrameBuffer = true;
 		glm::vec2 m_ResizeViewportScale = { 1.0f, 1.0f };
 
 		friend class Renderer;

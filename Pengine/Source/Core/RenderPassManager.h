@@ -3,6 +3,7 @@
 #include "Core.h"
 #include "LineRenderer.h"
 #include "SSAORenderer.h"
+#include "CSMRenderer.h"
 
 #include "../Graphics/RenderPass.h"
 
@@ -14,11 +15,12 @@ namespace Pengine
 	{
 		Atmosphere,
 		GBuffer,
+		CSM,
 		SSAO,
 		SSAOBlur,
 		Deferred,
 		Transparent,
-		Final
+		Final,
 	};
 
 	class PENGINE_API RenderPassManager
@@ -70,10 +72,13 @@ namespace Pengine
 
 		void CreateSSAOBlur();
 
+		void CreateCSM();
+
 		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
 
 		LineRenderer m_LineRenderer;
 		SSAORenderer m_SSAORenderer;
+		CSMRenderer m_CSMRenderer;
 	};
 
 }

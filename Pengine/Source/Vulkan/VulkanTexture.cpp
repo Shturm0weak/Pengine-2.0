@@ -13,8 +13,8 @@
 using namespace Pengine;
 using namespace Vk;
 
-VulkanTexture::VulkanTexture(const CreateInfo& ñreateInfo)
-	: Texture(ñreateInfo)
+VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
+	: Texture(createInfo)
 {
 	VkFormat format = ConvertFormat(m_Format);
 	VkImageAspectFlagBits aspectMask = ConvertAspectMask(m_AspectMask);
@@ -32,9 +32,9 @@ VulkanTexture::VulkanTexture(const CreateInfo& ñreateInfo)
 	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-	imageInfo.flags = ñreateInfo.isCubeMap ? VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT : 0;
+	imageInfo.flags = createInfo.isCubeMap ? VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT : 0;
 
-	for (Usage usage : ñreateInfo.usage)
+	for (Usage usage : createInfo.usage)
 	{
 		imageInfo.usage |= ConvertUsage(usage);
 	}
@@ -45,13 +45,13 @@ VulkanTexture::VulkanTexture(const CreateInfo& ñreateInfo)
 		m_VmaAllocation,
 		m_VmaAllocationInfo);
 
-	if (ñreateInfo.data)
+	if (createInfo.data)
 	{
 		std::shared_ptr<VulkanBuffer> stagingBuffer = VulkanBuffer::CreateStagingBuffer(
-			ñreateInfo.channels * ñreateInfo.instanceSize,
+			createInfo.channels * createInfo.instanceSize,
 			m_Size.x * m_Size.y);
 
-		stagingBuffer->WriteToBuffer(ñreateInfo.data, stagingBuffer->GetSize());
+		stagingBuffer->WriteToBuffer(createInfo.data, stagingBuffer->GetSize());
 
 		TransitionToWrite();
 
@@ -71,14 +71,24 @@ VulkanTexture::VulkanTexture(const CreateInfo& ñreateInfo)
 		}
 	}
 
+	VkImageViewType imageViewType = VK_IMAGE_VIEW_TYPE_2D;
+	if (createInfo.isCubeMap)
+	{
+		imageViewType = VK_IMAGE_VIEW_TYPE_CUBE;
+	}
+	else if (createInfo.layerCount > 1)
+	{
+		imageViewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+	}
+
 	m_View = CreateImageView(
 		m_Image,
 		format,
 		aspectMask,
 		m_MipLevels,
 		m_LayerCount,
-		ñreateInfo.isCubeMap ? VK_IMAGE_VIEW_TYPE_CUBE : VK_IMAGE_VIEW_TYPE_2D);
-	m_Sampler = CreateSampler(ñreateInfo.samplerCreateInfo);
+		imageViewType);
+	m_Sampler = CreateSampler(createInfo.samplerCreateInfo);
 
 	std::unique_ptr<VulkanDescriptorSetLayout> setLayout = VulkanDescriptorSetLayout::Builder()
 		.AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)

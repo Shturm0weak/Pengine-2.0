@@ -37,3 +37,5 @@ Basemat:
           RenderTarget: "GBuffer[3]"
         - Name: ssaoTexture
           RenderTarget: "SSAOBlur[0]"
+        - Name: CSMTexture
+          RenderTarget: "CSM[0]"

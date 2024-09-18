@@ -14,6 +14,6 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 
 void main()
 {
-	gl_Position = camera.viewProjectionMat4 * vec4(positionA, 1.0);
+	gl_Position = camera.viewProjectionMat4 * vec4(positionA, 1.0f);
 	color = colorA;
 }

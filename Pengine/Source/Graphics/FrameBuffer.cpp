@@ -26,6 +26,7 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 		attachmentCreateInfo.filepath = none;
 		attachmentCreateInfo.format = attachment.format;
 		attachmentCreateInfo.channels = 4;
+		attachmentCreateInfo.layerCount = attachment.layercount;
 		attachmentCreateInfo.isCubeMap = attachment.isCubeMap;
 		attachmentCreateInfo.aspectMask = isColor ? Texture::AspectMask::COLOR :
 			Texture::AspectMask::DEPTH;
