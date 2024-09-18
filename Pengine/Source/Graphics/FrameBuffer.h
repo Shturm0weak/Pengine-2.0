@@ -32,6 +32,8 @@ namespace Pengine
 
 		[[nodiscard]] virtual std::vector<std::shared_ptr<Texture>> GetAttachments() const = 0;
 
+		[[nodiscard]] std::vector<Texture::CreateInfo>& GetAttachmentCreateInfos() { return m_AttachmentCreateInfos; }
+
 		virtual void Resize(const glm::ivec2& size) = 0;
 
 		virtual void Clear() = 0;

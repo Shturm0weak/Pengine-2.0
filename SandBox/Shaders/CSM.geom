@@ -1,11 +1,13 @@
 #version 450 core
 
+#include "Shaders/Includes/CSM.h"
+
 layout(triangles) in;
-layout(triangle_strip, max_vertices = 30) out;
+layout(triangle_strip, max_vertices = 3 * MAX_CASCADE_COUNT) out;
 
 layout(set = 0, binding = 0) uniform LightSpaceMatrices
 {
-    mat4 lightSpaceMatrices[3];
+    mat4 lightSpaceMatrices[MAX_CASCADE_COUNT];
     int cascadeCount;
 };
 

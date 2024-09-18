@@ -32,7 +32,12 @@ namespace Pengine
 			float splitFactor = 0.75f;
 			float fogFactor = 0.2f;
 			bool pcfEnabled = true;
+			bool visualize = false;
 			int pcfRange = 1;
+
+			/**
+			 * Has to be more than 1.
+			 */
 			int cascadeCount = 3;
 		} shadows;
 	};

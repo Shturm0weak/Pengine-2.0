@@ -89,7 +89,7 @@ void main()
 		{
 		    vec3 worldSpacePosition = (camera.inverseViewMat4 * vec4(viewSpacePosition, 1.0f)).xyz;
 
-			float shadow = CalculateCSM(
+			vec3 shadow = CalculateCSM(
 				deferredCSMTexture,
 				csm,
 				abs(viewSpacePosition.z),

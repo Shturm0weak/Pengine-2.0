@@ -2,7 +2,7 @@
 
 using namespace Pengine;
 
-void CSMRenderer::GenerateLightSpaceMatrices(
+bool CSMRenderer::GenerateLightSpaceMatrices(
 	const glm::mat4& viewProjectionMat4,
 	const glm::vec3 lightDirection,
 	const float zNear,
@@ -92,4 +92,8 @@ void CSMRenderer::GenerateLightSpaceMatrices(
 
 		lastSplitDist = splitDistances[i];
 	}
+	
+	const bool equalCascadeCounts = m_CascadeCount == cascadeCount;
+	m_CascadeCount = cascadeCount;
+	return !equalCascadeCounts;
 }

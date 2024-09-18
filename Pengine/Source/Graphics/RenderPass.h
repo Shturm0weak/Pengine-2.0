@@ -117,7 +117,7 @@ namespace Pengine
 
 		void Render(const RenderCallbackInfo& renderInfo) const;
 
-		[[nodiscard]] const std::vector<AttachmentDescription>& GetAttachmentDescriptions() const { return m_AttachmentDescriptions; }
+		[[nodiscard]] const std::vector<AttachmentDescription>& GetAttachmentDescriptions() { return m_AttachmentDescriptions; }
 
 		[[nodiscard]] const bool GetResizeWithViewport() const { return m_ResizeWithViewport; }
 

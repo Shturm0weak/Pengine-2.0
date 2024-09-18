@@ -6,12 +6,13 @@ struct CSM
     float fogFactor;
     int pcfEnabled;
     int pcfRange;
+    int visualize;
 	mat4 lightSpaceMatrices[MAX_CASCADE_COUNT];
 	float distances[MAX_CASCADE_COUNT];
     float biases[MAX_CASCADE_COUNT];
 };
 
-float CalculateCSM(
+vec3 CalculateCSM(
 	sampler2DArray CSMTexture,
 	in CSM csm,
 	in float depth,
@@ -23,7 +24,7 @@ float CalculateCSM(
 {
     if (csm.cascadeCount == 0)
     {
-        return 0.0f;
+        return vec3(0.0f);
     }
 
     int layer = -1;
@@ -52,7 +53,7 @@ float CalculateCSM(
 
     if (currentDepth < -1.0f || currentDepth > 1.0f)
     {
-        return 0.0f;
+        return vec3(0.0f);
     }
 
     float bias = max(csm.biases[layer] * (1.0f - dot(normalViewSpace, lightDirectionViewSpace)), 0.001f);
@@ -92,5 +93,12 @@ float CalculateCSM(
         shadow *= (1.0f - fogFactor);
     }
 
-    return shadow;
+    if (csm.visualize == 1)
+    {
+        vec3 visualized = vec3(0.0f);
+        visualized[layer % 3] = shadow;
+        return visualized;
+    }
+
+    return vec3(shadow);
 }

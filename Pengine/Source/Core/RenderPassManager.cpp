@@ -18,7 +18,6 @@
 #include "../Core/ViewportManager.h"
 #include "../Core/Viewport.h"
 
-
 using namespace Pengine;
 
 RenderPassManager& RenderPassManager::GetInstance()
@@ -469,6 +468,9 @@ void RenderPassManager::CreateDeferred()
 
 			const int pcfEnabled = renderInfo.scene->GetGraphicsSettings().shadows.pcfEnabled;
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.pcfEnabled", pcfEnabled);
+
+			const int visualize = renderInfo.scene->GetGraphicsSettings().shadows.visualize;
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.visualize", visualize);
 
 			std::vector<glm::vec4> biases;
 			for (const float& bias : renderInfo.scene->GetGraphicsSettings().shadows.biases)
@@ -1368,13 +1370,12 @@ void RenderPassManager::CreateCSM()
 			if (!updatedLightSpaceMatrices)
 			{
 				updatedLightSpaceMatrices = true;
-				std::vector<std::pair<glm::vec3, glm::vec3>> frustums;
-				m_CSMRenderer.GenerateLightSpaceMatrices(
+				const bool recreateFrameBuffer = m_CSMRenderer.GenerateLightSpaceMatrices(
 					renderInfo.projection * camera.GetViewMat4(),
 					lightDirection,
 					camera.GetZNear(),
 					camera.GetZFar(),
-					3,
+					scene->GetGraphicsSettings().shadows.cascadeCount,
 					scene->GetGraphicsSettings().shadows.splitFactor);
 
 				WriterBufferHelper::WriteToBuffer(
@@ -1391,6 +1392,18 @@ void RenderPassManager::CreateCSM()
 					"LightSpaceMatrices",
 					"cascadeCount",
 					cascadeCount);
+
+				if (recreateFrameBuffer)
+				{
+					auto callback = [this, submitInfo, renderInfo, cascadeCount]()
+					{
+						submitInfo.frameBuffer->GetAttachmentCreateInfos().back().layerCount = cascadeCount;
+						submitInfo.frameBuffer->Resize(submitInfo.frameBuffer->GetSize());
+					};
+
+					NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+					EventSystem::GetInstance().SendEvent(event);
+				}
 			}
 			
 			for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)

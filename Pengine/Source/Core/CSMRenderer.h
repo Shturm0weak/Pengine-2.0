@@ -9,7 +9,10 @@ namespace Pengine
 	{
 	public:
 
-		void GenerateLightSpaceMatrices(
+		/**
+		 * @return whether the frame buffer has to be recreated due to changed cascade count.
+		 */
+		bool GenerateLightSpaceMatrices(
 			const glm::mat4& viewProjectionMat4,
 			const glm::vec3 lightDirection,
 			const float zNear,
@@ -24,6 +27,8 @@ namespace Pengine
 	private:
 		std::vector<glm::mat4> m_LightSpaceMatrices;
 		std::vector<float> m_Distances;
+
+		int m_CascadeCount = 0;
 	};
 
 }
