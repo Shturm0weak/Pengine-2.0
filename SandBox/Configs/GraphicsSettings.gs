@@ -8,13 +8,13 @@ SSAO:
 CSM:
   IsEnabled: true
   CascadeCount: 4
-  SplitFactor: 0.899999976
+  SplitFactor: 0.975000024
   MaxDistance: 200
   FogFactor: 0.200000003
   PcfEnabled: true
   PcfRange: 1
   Biases:
-    - 0.00999999978
-    - 0.0299999993
-    - 0.0399999991
-    - 0.5
+    - 0
+    - 0
+    - 0
+    - 0
