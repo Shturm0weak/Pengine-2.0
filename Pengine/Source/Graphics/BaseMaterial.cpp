@@ -46,7 +46,7 @@ void BaseMaterial::Reload(const std::shared_ptr<BaseMaterial>& baseMaterial)
 		}
 	};
 
-	NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, baseMaterial.get());
+	std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, baseMaterial.get());
 	EventSystem::GetInstance().SendEvent(event);
 }
 

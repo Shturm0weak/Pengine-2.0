@@ -4,11 +4,11 @@
 
 using namespace Pengine;
 
-void EventSystem::DispatchEvent(Event* event)
+void EventSystem::DispatchEvent(std::shared_ptr<Event> event)
 {
 	if (event->GetType() == Event::Type::OnNextFrame)
 	{
-		dynamic_cast<NextFrameEvent*>(event)->Run();
+		std::dynamic_pointer_cast<NextFrameEvent>(event)->Run();
 		return;
 	}
 
@@ -31,10 +31,10 @@ EventSystem& EventSystem::GetInstance()
 	return eventSystem;
 }
 
-bool EventSystem::AlreadySended(const Event* event)
+bool EventSystem::AlreadySended(const std::shared_ptr<Event> event)
 {
 	const auto foundEvent = std::find_if(m_CurrentEvents.begin(), m_CurrentEvents.end(),
-		[=](const Event* currentEvent)
+		[=](const std::shared_ptr<Event> currentEvent)
 	{
 		return event->GetType() == currentEvent->GetType();
 	});
@@ -109,7 +109,7 @@ void EventSystem::UnregisterAll(const void* client)
 	}
 }
 
-void EventSystem::SendEvent(Event* event)
+void EventSystem::SendEvent(std::shared_ptr<Event> event)
 {
 	if (m_IsProcessingEvents == false)
 	{
@@ -120,7 +120,6 @@ void EventSystem::SendEvent(Event* event)
 	{
 		if (AlreadySended(event))
 		{
-			delete event;
 			return;
 		}
 	}
@@ -139,10 +138,9 @@ void EventSystem::ProcessEvents()
 
 	while (!m_CurrentEvents.empty())
 	{
-		Event* currentEvent = m_CurrentEvents.front();
+		std::shared_ptr<Event> currentEvent = m_CurrentEvents.front();
 		m_CurrentEvents.pop_front();
 		DispatchEvent(currentEvent);
-		delete currentEvent;
 	}
 
 	m_IsDispatchingEvents = false;

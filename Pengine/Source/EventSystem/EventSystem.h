@@ -13,14 +13,14 @@ namespace Pengine
 		struct ClientCreateInfo
 		{
 			void* client;
-			std::function<void(Event* event)> callback;
+			std::function<void(std::shared_ptr<Event> event)> callback;
 		};
 
 		static EventSystem& GetInstance();
 
 		EventSystem(const EventSystem&) = delete;
 
-		bool AlreadySended(const Event* event);
+		bool AlreadySended(const std::shared_ptr<Event> event);
 		
 		bool AlreadyRegistered(Event::Type type, const void* client);
 		
@@ -32,7 +32,7 @@ namespace Pengine
 		
 		void UnregisterAll(const void* client);
 		
-		void SendEvent(Event* event);
+		void SendEvent(std::shared_ptr<Event> event);
 
 		void ProcessEvents();
 		
@@ -43,10 +43,10 @@ namespace Pengine
 		EventSystem& operator=(const EventSystem&) { return *this; }
 		~EventSystem();
 
-		void DispatchEvent(Event* event);
+		void DispatchEvent(std::shared_ptr<Event> event);
 
 		std::multimap<Event::Type, ClientCreateInfo> m_Database;
-		std::deque<Event*> m_CurrentEvents;
+		std::deque<std::shared_ptr<Event>> m_CurrentEvents;
 
 		bool m_IsProcessingEvents = true;
 		bool m_IsDispatchingEvents = false;

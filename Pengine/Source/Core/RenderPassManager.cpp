@@ -1043,7 +1043,7 @@ void RenderPassManager::CreateSSAO()
 			m_SSAORenderer.GenerateNoiseTexture(graphicsSettings.ssao.noiseSize);
 		};
 
-		NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+		std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 		EventSystem::GetInstance().SendEvent(event);
 
 		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderer->GetUniformWriter(renderPassName);
@@ -1408,7 +1408,7 @@ void RenderPassManager::CreateCSM()
 						submitInfo.frameBuffer->Resize(submitInfo.frameBuffer->GetSize());
 					};
 
-					NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+					std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 					EventSystem::GetInstance().SendEvent(event);
 				}
 			}

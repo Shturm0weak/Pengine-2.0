@@ -669,7 +669,7 @@ void Editor::DrawScene(const std::shared_ptr<Scene>& scene)
 					}
 				};
 
-				NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+				std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 				EventSystem::GetInstance().SendEvent(event);
 			}
 			ImGui::EndDragDropTarget();
@@ -750,7 +750,7 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 				}
 			};
 
-			NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+			std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 			EventSystem::GetInstance().SendEvent(event);
 		}
 		ImGui::EndDragDropTarget();
@@ -949,7 +949,7 @@ void Editor::CameraComponent(const std::shared_ptr<Entity>& entity)
 						viewport.second->SetCamera(entity);
 					};
 
-					NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+					std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 					EventSystem::GetInstance().SendEvent(event);
 				}
 			}
@@ -1093,7 +1093,7 @@ void Editor::GameObjectPopUpMenu(const std::shared_ptr<Scene>& scene)
 						}
 					};
 
-					NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+					std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 					EventSystem::GetInstance().SendEvent(event);
 				}
 				m_SelectedEntities.clear();
@@ -1280,7 +1280,7 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 							Serializer::DeserializeScene(path);
 						};
 
-						NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+						std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 						EventSystem::GetInstance().SendEvent(event);
 					}
 				}
@@ -1977,7 +1977,7 @@ void Editor::CreateViewportMenu::Update(const Editor& editor)
 					name[0] = '\0';
 				};
 
-				NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+				std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 				EventSystem::GetInstance().SendEvent(event);
 			}
 		}

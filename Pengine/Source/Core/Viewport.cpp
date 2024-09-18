@@ -64,7 +64,7 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 					}
 				};
 
-				NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+				std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 				EventSystem::GetInstance().SendEvent(event);
 			}
 			else if (FileFormats::Scene() == Utils::GetFileFormat(path))
@@ -79,7 +79,7 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 					Serializer::DeserializeScene(path);
 				};
 
-				NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+				std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 				EventSystem::GetInstance().SendEvent(event);
 			}
 		}
@@ -143,7 +143,7 @@ void Viewport::Resize(const glm::ivec2& size)
 		camera->GetComponent<Camera>().ResizeRenderTarget(m_Name, m_Size);
 	}
 	
-	ResizeEvent* event = new ResizeEvent(size, m_Name, Event::Type::OnResize, this);
+	std::shared_ptr<ResizeEvent> event = std::make_shared<ResizeEvent>(size, m_Name, Event::Type::OnResize, this);
 	EventSystem::GetInstance().SendEvent(event);
 }
 

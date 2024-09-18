@@ -20,7 +20,7 @@ bool Window::Resize(const glm::ivec2& size)
 		return false;
 	}
 
-	ResizeEvent* event = new ResizeEvent(size, m_Name, Event::Type::OnResize, this);
+	std::shared_ptr<ResizeEvent> event = std::make_shared<ResizeEvent>(size, m_Name, Event::Type::OnResize, this);
 	EventSystem::GetInstance().SendEvent(event);
 
 	return true;

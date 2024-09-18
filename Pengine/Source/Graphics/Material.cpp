@@ -48,7 +48,7 @@ void Material::Reload(const std::shared_ptr<Material>& material, bool reloadBase
 		}
 	};
 
-	NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, material.get());
+	std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, material.get());
 	EventSystem::GetInstance().SendEvent(event);
 }
 

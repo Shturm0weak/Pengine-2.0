@@ -103,7 +103,7 @@ void Camera::CreateRenderTarget(const std::string& name, const glm::ivec2& size)
 		m_RenderersByName[name] = Renderer::Create(size);
 	};
 
-	NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+	std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 	EventSystem::GetInstance().SendEvent(event);
 }
 
@@ -119,7 +119,7 @@ void Camera::ResizeRenderTarget(const std::string& name, const glm::ivec2& size)
 			}
 		};
 
-		NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+		std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 		EventSystem::GetInstance().SendEvent(event);
 	}
 }
@@ -137,7 +137,7 @@ void Camera::DeleteRenderTarget(const std::string& name)
 			}
 		};
 
-		NextFrameEvent* event = new NextFrameEvent(callback, Event::Type::OnNextFrame, this);
+		std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 		EventSystem::GetInstance().SendEvent(event);
 	}
 }
