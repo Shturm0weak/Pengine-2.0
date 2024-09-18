@@ -42,6 +42,7 @@ set(CORE_SOURCES
 	Core/Serializer.cpp Core/Serializer.h
 	Core/SSAORenderer.cpp Core/SSAORenderer.h
 	Core/TextureManager.cpp Core/TextureManager.h
+	Core/ThreadPool.cpp Core/ThreadPool.h
 	Core/Time.cpp Core/Time.h
 	Core/Timer.cpp Core/Timer.h
 	Core/UUID.cpp Core/UUID.h

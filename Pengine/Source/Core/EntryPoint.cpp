@@ -11,6 +11,7 @@
 #include "ViewportManager.h"
 #include "Viewport.h"
 #include "WindowManager.h"
+#include "ThreadPool.h"
 
 #include "../Components/Camera.h"
 #include "../Editor/Editor.h"
@@ -43,6 +44,8 @@ void EntryPoint::Run() const
 	Serializer::GenerateFilesUUID(std::filesystem::current_path());
 
 	TextureManager::GetInstance().LoadFromFolder("Editor/Images");
+
+	ThreadPool::GetInstance().Initialize();
 
 	m_Application->OnStart();
 
@@ -142,6 +145,7 @@ void EntryPoint::Run() const
 
 	m_Application->OnClose();
 
+	ThreadPool::GetInstance().Shutdown();
 	SceneManager::GetInstance().ShutDown();
 	MaterialManager::GetInstance().ShutDown();
 	MeshManager::GetInstance().ShutDown();

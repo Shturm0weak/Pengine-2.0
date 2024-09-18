@@ -4,6 +4,8 @@
 
 #include "../Graphics/Material.h"
 
+#include <mutex>
+
 namespace Pengine
 {
 
