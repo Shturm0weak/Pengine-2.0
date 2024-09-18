@@ -68,7 +68,7 @@ Basemat:
     - RenderPass: CSM
       DepthTest: true
       DepthWrite: true
-      CullMode: None
+      CullMode: Front
       PolygonMode: Fill
       TopologyMode: TriangleList
       Vertex: Shaders/CSM.vert

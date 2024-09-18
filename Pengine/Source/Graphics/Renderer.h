@@ -33,7 +33,8 @@ namespace Pengine
 			const std::shared_ptr<Window>& window,
 			const std::shared_ptr<Scene>& scene,
 			const std::shared_ptr<Entity>& camera,
-			const glm::mat4& projection);
+			const glm::mat4& projection,
+			const glm::ivec2& viewportSize);
 
 		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& renderPassName) const;
 

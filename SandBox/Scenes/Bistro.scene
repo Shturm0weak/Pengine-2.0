@@ -3,6 +3,7 @@ Viewports:
     Camera: c4c2d917-05b8-47e5-8fa2-d55c5b704a9b
 Settings:
   DrawBoundingBoxes: false
+GraphicsSettings: d9afc1d9-1ca8-4529-805a-055fb67d6fe0
 Scene:
   - UUID: c4c2d917-05b8-47e5-8fa2-d55c5b704a9b
     Name: Camera
@@ -10,14 +11,14 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [-4.07326174, 1.50972712, -0.779115498]
-      Rotation: [-0.190946057, -1.71978951, 0]
+      Position: [-3.22452593, 1.91673326, -0.739340782]
+      Rotation: [-0.345817029, -1.86475074, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
       Fov: 1.57079637
       Type: 1
-      ZNear: 0.100000001
+      ZNear: 0.00100000005
       ZFar: 1000
       RenderPassName: Final
       RenderTargetIndex: 0

@@ -120,7 +120,8 @@ void EntryPoint::Run() const
 								window,
 								camera->GetScene(),
 								camera,
-								viewport->GetProjectionMat4());
+								viewport->GetProjectionMat4(),
+								viewport->GetSize());
 						}
 						else
 						{

@@ -65,9 +65,7 @@ void main()
 				abs(position.z),
 				worldSpacePosition,
 				normal.xyz,
-				directionalLight.direction,
-				camera.viewMat4,
-				camera.zFar);
+				directionalLight.direction);
 
 			result += CalculateDirectionalLight(
 				directionalLight,

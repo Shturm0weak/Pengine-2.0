@@ -76,6 +76,7 @@ namespace Pengine
 			std::shared_ptr<Scene> scene;
 			std::shared_ptr<Entity> camera;
 			glm::mat4 projection;
+			glm::ivec2 viewportSize;
 			void* frame;
 		};
 

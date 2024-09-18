@@ -3,6 +3,7 @@ Viewports:
     Camera: a85f08e6-856d-4a82-951b-539835dfac68
 Settings:
   DrawBoundingBoxes: false
+GraphicsSettings: d9afc1d9-1ca8-4529-805a-055fb67d6fe0
 Scene:
   - UUID: a85f08e6-856d-4a82-951b-539835dfac68
     Name: Camera
@@ -10,14 +11,14 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [-7.10935879, 8.78676128, -5.50891972]
-      Rotation: [-0.751129627, -2.34395504, 0]
+      Position: [-14.4475927, 16.0579834, 9.35839081]
+      Rotation: [-0.669687748, -1.20781517, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
       Fov: 1.57079637
       Type: 1
-      ZNear: 0.100000001
+      ZNear: 0.00100000005
       ZFar: 1000
       RenderPassName: Final
       RenderTargetIndex: 0
@@ -47,3 +48,114 @@ Scene:
     Renderer3D:
       Mesh: 35b89d54-6f9a-4951-a0fb-8a9ce024ced0
       Material: 1ca330ab-eb3e-48b7-a338-c274669afbd3
+  - UUID: b5cd06b1-baab-43ed-a609-46fdf9947190
+    Name: ROOT
+    IsEnabled: true
+    Childs:
+      - 47f1b92d-555b-45fa-a609-661cd7919539
+      - 2c6f4f57-fc36-47e3-88a6-141718ba5dab
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+  - UUID: 47f1b92d-555b-45fa-a609-661cd7919539
+    Name: tree.003
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 08dafeb1-dcdc-4ca2-8cad-2e33d16ea4c7
+      Material: ab0c18d2-9ed5-47d7-bada-7b62390ef9bd
+  - UUID: 2c6f4f57-fc36-47e3-88a6-141718ba5dab
+    Name: tree.002
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9f699d65-314e-4eed-acaa-01c0c47e69e4
+      Material: 837417fd-d3d0-48cf-9eca-90bd5aaa6bf3
+  - UUID: 833cd755-4a19-454c-9d9f-289ec8ae1296
+    Name: ROOTClone
+    IsEnabled: true
+    Childs:
+      - 88002099-1cb3-4e39-b425-8eb2d5bc3e9c
+      - 6991eb91-5fc3-4e1a-a991-07b6976a2935
+    Transform:
+      Position: [-2.17055774, 0, 1.35592246]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+  - UUID: 88002099-1cb3-4e39-b425-8eb2d5bc3e9c
+    Name: tree.003Clone
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [-2.17055774, 0, 1.35592246]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 08dafeb1-dcdc-4ca2-8cad-2e33d16ea4c7
+      Material: ab0c18d2-9ed5-47d7-bada-7b62390ef9bd
+  - UUID: 6991eb91-5fc3-4e1a-a991-07b6976a2935
+    Name: tree.002Clone
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [-2.17055774, 0, 1.35592246]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9f699d65-314e-4eed-acaa-01c0c47e69e4
+      Material: 837417fd-d3d0-48cf-9eca-90bd5aaa6bf3
+  - UUID: 731d9877-b280-4b71-a032-aea5fe677afe
+    Name: ROOTCloneClone
+    IsEnabled: true
+    Childs:
+      - e0fd3b04-c2c7-45c6-819a-aa560e967f92
+      - 29e43619-71f5-4bef-b3f0-4b96a21e91f9
+    Transform:
+      Position: [-1.69252849, 0, -1.07592905]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+  - UUID: e0fd3b04-c2c7-45c6-819a-aa560e967f92
+    Name: tree.003CloneClone
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [-1.69252849, 0, -1.07592905]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 08dafeb1-dcdc-4ca2-8cad-2e33d16ea4c7
+      Material: ab0c18d2-9ed5-47d7-bada-7b62390ef9bd
+  - UUID: 29e43619-71f5-4bef-b3f0-4b96a21e91f9
+    Name: tree.002CloneClone
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [-1.69252849, 0, -1.07592905]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9f699d65-314e-4eed-acaa-01c0c47e69e4
+      Material: 837417fd-d3d0-48cf-9eca-90bd5aaa6bf3

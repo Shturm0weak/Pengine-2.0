@@ -2084,6 +2084,7 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.shadows.isEnabled;
 	out << YAML::Key << "CascadeCount" << YAML::Value << graphicsSettings.shadows.cascadeCount;
 	out << YAML::Key << "SplitFactor" << YAML::Value << graphicsSettings.shadows.splitFactor;
+	out << YAML::Key << "MaxDistance" << YAML::Value << graphicsSettings.shadows.maxDistance;
 	out << YAML::Key << "FogFactor" << YAML::Value << graphicsSettings.shadows.fogFactor;
 	out << YAML::Key << "PcfEnabled" << YAML::Value << graphicsSettings.shadows.pcfEnabled;
 	out << YAML::Key << "PcfRange" << YAML::Value << graphicsSettings.shadows.pcfRange;
@@ -2170,6 +2171,11 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& splitFactorData = csmData["SplitFactor"])
 		{
 			graphicsSettings.shadows.splitFactor = splitFactorData.as<float>();
+		}
+
+		if (const auto& maxDistanceData = csmData["MaxDistance"])
+		{
+			graphicsSettings.shadows.maxDistance = maxDistanceData.as<float>();
 		}
 
 		if (const auto& biasesData = csmData["Biases"])

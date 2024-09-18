@@ -51,7 +51,8 @@ void Renderer::Update(
 	const std::shared_ptr<Window>& window,
 	const std::shared_ptr<Scene>& scene,
 	const std::shared_ptr<Entity>& camera,
-	const glm::mat4& projection)
+	const glm::mat4& projection,
+	const glm::ivec2& viewportSize)
 {
 	if (!scene)
 	{
@@ -82,7 +83,8 @@ void Renderer::Update(
 		renderInfo.scene = scene;
 		renderInfo.renderPass = renderPass;
 		renderInfo.projection = projection;
-		renderInfo.frame = frame;;
+		renderInfo.frame = frame;
+		renderInfo.viewportSize = viewportSize;
 
 		renderPass->Render(renderInfo);
 	}

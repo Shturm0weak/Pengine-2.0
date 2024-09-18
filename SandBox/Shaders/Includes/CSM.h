@@ -4,6 +4,7 @@ struct CSM
 {
 	int cascadeCount;
     float fogFactor;
+    float maxDistance;
     int pcfEnabled;
     int pcfRange;
     int visualize;
@@ -18,9 +19,7 @@ vec3 CalculateCSM(
 	in float depth,
 	in vec3 positionWorldSpace,
 	in vec3 normalViewSpace,
-	in vec3 lightDirectionViewSpace,
-	in mat4 viewMat4,
-	in float zFar)
+	in vec3 lightDirectionViewSpace)
 {
     if (csm.cascadeCount == 0)
     {
@@ -59,7 +58,7 @@ vec3 CalculateCSM(
     float bias = max(csm.biases[layer] * (1.0f - dot(normalViewSpace, lightDirectionViewSpace)), 0.001f);
     if (layer == csm.cascadeCount)
     {
-        bias *= 1 / (zFar * 0.5f);
+        bias *= 1 / (csm.maxDistance * 0.5f);
     }
     else
     {
@@ -86,10 +85,10 @@ vec3 CalculateCSM(
         shadow += (currentDepth - bias) > shadowDepth ? 1.0f : 0.0f;
     }
 
-    float fadeDistance = zFar * (1.0f - csm.fogFactor);
+    float fadeDistance = csm.maxDistance * (1.0f - csm.fogFactor);
     if (depth > fadeDistance)
     {
-        float fogFactor = clamp((depth - fadeDistance) / (zFar * csm.fogFactor), 0.0f, 1.0f);
+        float fogFactor = clamp((depth - fadeDistance) / (csm.maxDistance * csm.fogFactor), 0.0f, 1.0f);
         shadow *= (1.0f - fogFactor);
     }
 

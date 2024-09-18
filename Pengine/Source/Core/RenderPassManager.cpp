@@ -456,7 +456,6 @@ void RenderPassManager::CreateDeferred()
 			{
 				shadowCascadeLevels.emplace_back(glm::vec4(distance));
 			}
-			shadowCascadeLevels.emplace_back(camera.GetZFar());
 
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.distances", *shadowCascadeLevels.data());
 
@@ -464,6 +463,7 @@ void RenderPassManager::CreateDeferred()
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.cascadeCount", cascadeCount);
 
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.fogFactor", renderInfo.scene->GetGraphicsSettings().shadows.fogFactor);
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.maxDistance", renderInfo.scene->GetGraphicsSettings().shadows.maxDistance);
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.pcfRange", renderInfo.scene->GetGraphicsSettings().shadows.pcfRange);
 
 			const int pcfEnabled = renderInfo.scene->GetGraphicsSettings().shadows.pcfEnabled;
@@ -477,7 +477,6 @@ void RenderPassManager::CreateDeferred()
 			{
 				biases.emplace_back(glm::vec4(bias));
 			}
-			shadowCascadeLevels.emplace_back(camera.GetZFar());
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.biases", *biases.data());
 		}
 		else
@@ -1249,7 +1248,8 @@ void RenderPassManager::CreateCSM()
 
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		if (!renderInfo.scene->GetGraphicsSettings().shadows.isEnabled)
+			const GraphicsSettings::Shadows& shadowsSettings = renderInfo.scene->GetGraphicsSettings().shadows;
+		if (!shadowsSettings.isEnabled)
 		{
 			return;
 		}
@@ -1370,13 +1370,20 @@ void RenderPassManager::CreateCSM()
 			if (!updatedLightSpaceMatrices)
 			{
 				updatedLightSpaceMatrices = true;
+				// TODO: Camera can be ortho, so need to make for ortho as well.
+				const glm::mat4 projection = glm::perspective(
+					camera.GetFov(),
+					(float)renderInfo.viewportSize.x / (float)renderInfo.viewportSize.y,
+					camera.GetZNear(),
+					shadowsSettings.maxDistance);
+
 				const bool recreateFrameBuffer = m_CSMRenderer.GenerateLightSpaceMatrices(
-					renderInfo.projection * camera.GetViewMat4(),
+					projection * camera.GetViewMat4(),
 					lightDirection,
 					camera.GetZNear(),
-					camera.GetZFar(),
-					scene->GetGraphicsSettings().shadows.cascadeCount,
-					scene->GetGraphicsSettings().shadows.splitFactor);
+					shadowsSettings.maxDistance,
+					shadowsSettings.cascadeCount,
+					shadowsSettings.splitFactor);
 
 				WriterBufferHelper::WriteToBuffer(
 					baseMaterial.get(),

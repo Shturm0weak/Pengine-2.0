@@ -11,15 +11,15 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [-5.99818897, 9.72147751, 0.133784026]
-      Rotation: [-0.0187698472, -1.46206903, 0]
+      Position: [-4.2290597, 7.68311548, -0.191679239]
+      Rotation: [-0.685250401, -1.38104177, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
       Fov: 1.57079637
       Type: 1
-      ZNear: 0.00999999978
-      ZFar: 40
+      ZNear: 0.00100000005
+      ZFar: 1000
       RenderPassName: Final
       RenderTargetIndex: 0
   - UUID: 573523b7-abe0-42b0-a71a-03ca0abf758f
@@ -29,7 +29,7 @@ Scene:
       []
     Transform:
       Position: [-0.331472993, 3.18549967, 0.502656162]
-      Rotation: [1.93731546, -0.69813168, 6.06503008e-08]
+      Rotation: [1.57079637, -0.69813168, 6.06503008e-08]
       Scale: [0.99999994, 0.99999994, 0.999999881]
       FollowOwner: true
     DirectionalLight:
