@@ -62,7 +62,7 @@ void SSAORenderer::GenerateNoiseTexture(const int noiseSize)
 	noiseCreateInfo.filepath = "NoiseTexture";
 	noiseCreateInfo.name = "NoiseTexture";
 	noiseCreateInfo.format = Format::R32G32B32A32_SFLOAT;
-	noiseCreateInfo.instanceSize = sizeof(glm::vec4);
+	noiseCreateInfo.instanceSize = sizeof(float);
 	noiseCreateInfo.isCubeMap = false;
 	noiseCreateInfo.mipLevels = 1;
 	noiseCreateInfo.size = { m_NoiseSize, m_NoiseSize };
