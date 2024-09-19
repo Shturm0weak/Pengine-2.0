@@ -1584,6 +1584,12 @@ void Editor::MainMenuBar()
 		{
 			MaterialManager::GetInstance().ReloadAll();
 		}
+		if (ImGui::MenuItem("Reload UUIDs"))
+		{
+			filepathByUuid.clear();
+			uuidByFilepath.clear();
+			Serializer::GenerateFilesUUID(std::filesystem::current_path());
+		}
 		ImGui::EndMenu();
 	}
 	ImGui::EndMenuBar();
