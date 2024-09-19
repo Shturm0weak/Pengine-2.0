@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core.h"
+#include "Visualizer.h"
 
 #include "../Graphics/Buffer.h"
 #include "../Graphics/RenderPass.h"

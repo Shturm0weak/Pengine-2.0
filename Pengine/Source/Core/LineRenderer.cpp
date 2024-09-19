@@ -3,10 +3,11 @@
 #include "RenderPassManager.h"
 #include "MaterialManager.h"
 #include "Scene.h"
+#include "Time.h"
 
 #include "../Graphics/Renderer.h"
 
-#define MAX_BATCH_LINE_COUNT 100
+#define MAX_BATCH_LINE_COUNT 10000
 #define LINE_VERTEX_COUNT 2
 #define MAX_BATCH_LINE_VERTEX_COUNT MAX_BATCH_LINE_COUNT * LINE_VERTEX_COUNT
 
@@ -75,14 +76,11 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 			lineIndices.clear();
 		};
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderInfo.renderPass->GetType());
-		RenderPass::SubmitInfo submitInfo{};
-		submitInfo.frame = renderInfo.frame;
-		submitInfo.renderPass = renderInfo.renderPass;
-		submitInfo.frameBuffer = frameBuffer;
 		std::queue<Line>& lines = renderInfo.scene->GetVisualizer().GetLines();
 		if (!lines.empty())
 		{
+			std::queue<Line> linesForTheNextFrame;
+
 			std::vector<glm::vec3> lineVertices;
 			std::vector<uint32_t> lineIndices;
 			lineVertices.reserve(MAX_BATCH_LINE_VERTEX_COUNT * 2);
@@ -106,7 +104,15 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 				index++;
 				lineIndices.emplace_back(index);
 				index++;
+
+				line.duration -= (float)Time::GetDeltaTime();
+				if (line.duration > 0.0f)
+				{
+					linesForTheNextFrame.emplace(line);
+				}
 			}
+
+			lines = std::move(linesForTheNextFrame);
 
 			render(index, batchIndex, lineVertices, lineIndices);
 		}
