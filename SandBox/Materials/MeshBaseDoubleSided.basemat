@@ -1,0 +1,95 @@
+Basemat:
+  Pipelines:
+    - RenderPass: GBuffer
+      DepthTest: true
+      DepthWrite: true
+      CullMode: None
+      PolygonMode: Fill
+      TopologyMode: TriangleList
+      Vertex: Shaders/Opaque.vert
+      Fragment: Shaders/Opaque.frag
+      DescriptorSets:
+        - Type: Renderer
+          RenderPass: DefaultReflection
+          Set: 0
+        - Type: Material
+          Set: 1
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Names:
+            - positionA
+            - uvA
+            - normalA
+            - tangentA
+            - bitangentA
+        - Binding: 1
+          InputRate: Instance
+          Names:
+            - transformA
+            - inverseTransformA
+      ColorBlendStates:
+        - BlendEnabled: false
+        - BlendEnabled: false
+        - BlendEnabled: false
+    - RenderPass: Transparent
+      DepthTest: true
+      DepthWrite: false
+      CullMode: None
+      PolygonMode: Fill
+      Vertex: Shaders/Transparent.vert
+      Fragment: Shaders/Transparent.frag
+      DescriptorSets:
+        - Type: Renderer
+          RenderPass: DefaultReflection
+          Set: 0
+        - Type: Material
+          RenderPass: GBuffer
+          Set: 1
+        - Type: Renderer
+          RenderPass: Deferred
+          Set: 2
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Names:
+            - positionA
+            - uvA
+            - normalA
+            - tangentA
+            - bitangentA
+        - Binding: 1
+          InputRate: Instance
+          Names:
+            - transformA
+            - inverseTransformA
+      ColorBlendStates:
+        - BlendEnabled: true
+    - RenderPass: CSM
+      DepthTest: true
+      DepthWrite: true
+      CullMode: None
+      PolygonMode: Fill
+      TopologyMode: TriangleList
+      Vertex: Shaders/CSM.vert
+      Geometry: Shaders/CSM.geom
+      Fragment: Shaders/CSM.frag
+      DescriptorSets:
+        - Type: Renderer
+          RenderPass: CSM
+          Set: 0
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Names:
+            - positionA
+            - uvA
+            - normalA
+            - tangentA
+            - bitangentA
+        - Binding: 1
+          InputRate: Instance
+          Names:
+            - transformA
+      ColorBlendStates:
+        []
