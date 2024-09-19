@@ -446,12 +446,11 @@ void RenderPassManager::CreateDeferred()
 			const int hasDirectionalLight = 1;
 			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "hasDirectionalLight", hasDirectionalLight);
 
-			if (!m_CSMRenderer.GetLightSpaceMatrices().empty())
-			{
-				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.lightSpaceMatrices", *m_CSMRenderer.GetLightSpaceMatrices().data());
-			}
-
 			const GraphicsSettings::Shadows& shadowSettings = renderInfo.scene->GetGraphicsSettings().shadows;
+
+			const int isEnabled = shadowSettings.isEnabled;
+			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.isEnabled", isEnabled);
+
 			if (shadowSettings.isEnabled)
 			{
 				std::vector<glm::vec4> shadowCascadeLevels;
@@ -460,9 +459,11 @@ void RenderPassManager::CreateDeferred()
 					shadowCascadeLevels.emplace_back(glm::vec4(distance));
 				}
 
+				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.lightSpaceMatrices", *m_CSMRenderer.GetLightSpaceMatrices().data());
+
 				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.distances", *shadowCascadeLevels.data());
 
-				const int cascadeCount = m_CSMRenderer.GetLightSpaceMatrices().size() * shadowSettings.isEnabled;
+				const int cascadeCount = m_CSMRenderer.GetLightSpaceMatrices().size();
 				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.cascadeCount", cascadeCount);
 
 				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.fogFactor", shadowSettings.fogFactor);
@@ -1252,7 +1253,7 @@ void RenderPassManager::CreateCSM()
 
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-			const GraphicsSettings::Shadows& shadowsSettings = renderInfo.scene->GetGraphicsSettings().shadows;
+		const GraphicsSettings::Shadows& shadowsSettings = renderInfo.scene->GetGraphicsSettings().shadows;
 		if (!shadowsSettings.isEnabled)
 		{
 			return;

@@ -87,15 +87,19 @@ void main()
 	{
 		if (hasDirectionalLight == 1)
 		{
-		    vec3 worldSpacePosition = (camera.inverseViewMat4 * vec4(viewSpacePosition, 1.0f)).xyz;
+		    vec3 shadow = vec3(0.0f);
+			if (csm.isEnabled == 1)
+			{
+				vec3 worldSpacePosition = (camera.inverseViewMat4 * vec4(viewSpacePosition, 1.0f)).xyz;
 
-			vec3 shadow = CalculateCSM(
-				deferredCSMTexture,
-				csm,
-				abs(viewSpacePosition.z),
-				worldSpacePosition,
-				normal.xyz,
-				directionalLight.direction);
+				shadow = CalculateCSM(
+					deferredCSMTexture,
+					csm,
+					abs(viewSpacePosition.z),
+					worldSpacePosition,
+					normal.xyz,
+					directionalLight.direction);
+			}
 
 			result += CalculateDirectionalLight(
 				directionalLight,

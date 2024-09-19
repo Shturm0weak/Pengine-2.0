@@ -5,6 +5,7 @@ struct CSM
 	int cascadeCount;
     float fogFactor;
     float maxDistance;
+    int isEnabled;
     int pcfEnabled;
     int pcfRange;
     int visualize;

@@ -1664,8 +1664,6 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 
 				if (Utils::GetFileFormat(filepath) == FileFormats::Mat())
 				{
-					filepath = Utils::Erase(filepath, m_RootDirectory.wstring() + L"/");
-
 					r3d.material = MaterialManager::GetInstance().LoadMaterial(filepath);
 				}
 			}
