@@ -36,6 +36,8 @@ namespace Pengine
 
 		[[nodiscard]] bool IsFocused() const { return m_IsFocused; }
 
+		[[nodiscard]] uint32_t& GetGizmoOperation() { return m_GizmoOperation; }
+
 		void SetDrawGizmosCallback(const std::function<void(const glm::vec2&, glm::ivec2, std::shared_ptr<Entity>, bool&)>& drawGizmosCallback);
 
 	private:
@@ -58,6 +60,8 @@ namespace Pengine
 		std::string m_Name;
 
 		std::weak_ptr<Entity> m_Camera;
+
+		uint32_t m_GizmoOperation = 0;
 
 		bool m_IsHovered = false;
 		bool m_IsFocused = false;

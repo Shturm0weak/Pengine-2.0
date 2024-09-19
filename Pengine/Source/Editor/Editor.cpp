@@ -1359,31 +1359,7 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene)
 		return;
 	}
 
-	if (!Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
-	{
-		if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_W))
-		{
-			m_GizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-		}
-		else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_R))
-		{
-			m_GizmoOperation = ImGuizmo::OPERATION::ROTATE;
-		}
-		else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_S))
-		{
-			m_GizmoOperation = ImGuizmo::OPERATION::SCALE;
-		}
-		else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_U))
-		{
-			m_GizmoOperation = ImGuizmo::OPERATION::UNIVERSAL;
-		}
-		else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_Q))
-		{
-			m_GizmoOperation = -1;
-		}
-	}
-
-	if (scene->GetSelectedEntities().empty() || m_GizmoOperation == -1)
+	if (scene->GetSelectedEntities().empty())
 	{
 		return;
 	}
@@ -1402,6 +1378,35 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene)
 			bool& active)
 		{
 			if (!viewport || !camera)
+			{
+				return;
+			}
+
+			if (viewport->IsHovered() && !Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
+			{
+				if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_W))
+				{
+					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::TRANSLATE;
+				}
+				else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_R))
+				{
+					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::ROTATE;
+				}
+				else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_S))
+				{
+					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::SCALE;
+				}
+				else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_U))
+				{
+					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::UNIVERSAL;
+				}
+				else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_Q))
+				{
+					viewport->GetGizmoOperation() = -1;
+				}
+			}
+
+			if (viewport->GetGizmoOperation() == -1)
 			{
 				return;
 			}
@@ -1435,7 +1440,7 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene)
 
 			glm::mat4 transformMat4 = transform.GetTransform();
 			ImGuizmo::Manipulate(glm::value_ptr(viewMat4), glm::value_ptr(projectionMat4),
-				(ImGuizmo::OPERATION)m_GizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(transformMat4));
+				(ImGuizmo::OPERATION)viewport->GetGizmoOperation(), ImGuizmo::LOCAL, glm::value_ptr(transformMat4));
 
 			active = ImGuizmo::IsUsing();
 			if (active)

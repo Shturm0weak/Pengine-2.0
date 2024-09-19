@@ -146,8 +146,6 @@ namespace Pengine
 
 		float m_ThumbnailScale = 0.8f;
 
-		uint32_t m_GizmoOperation = 0;
-
 		int m_TransformSystem = 0;
 
 		bool m_DrawVecLabel = true;
