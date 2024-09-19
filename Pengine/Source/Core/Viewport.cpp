@@ -9,6 +9,7 @@
 #include "KeyCode.h"
 #include "Raycast.h"
 #include "MaterialManager.h"
+#include "MeshManager.h"
 
 #include "../Components/Camera.h"
 #include "../Components/Transform.h"
@@ -110,6 +111,40 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 										entity->GetComponent<Renderer3D>().material = material;
 									}
 								}
+							}
+						}
+					}
+				};
+
+				std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+				EventSystem::GetInstance().SendEvent(event);
+			}
+			else if (FileFormats::Mesh() == Utils::GetFileFormat(path))
+			{
+				auto callback = [this, path]()
+				{
+					if (std::shared_ptr<Entity> camera = m_Camera.lock())
+					{
+						if (camera)
+						{
+							const glm::vec3 ray = GetMouseRay(m_MousePosition);
+
+							const glm::vec3 start = camera->GetComponent<Transform>().GetPosition();
+							const auto hits = Raycast::RaycastScene(camera->GetScene(), start, ray, camera->GetComponent<Camera>().GetZFar());
+							glm::vec3 position{};
+							if (!hits.empty())
+							{
+								position = start + ray * hits.begin()->first;
+							}
+
+							std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().LoadMesh(path);
+							if (mesh)
+							{
+								const std::shared_ptr<Entity> entity = camera->GetScene()->CreateEntity(mesh->GetName());
+								entity->AddComponent<Transform>(entity).Translate(position);
+								Renderer3D& r3d = entity->AddComponent<Renderer3D>();
+								r3d.material = MaterialManager::GetInstance().LoadMaterial("Materials\\MeshBase.mat");
+								r3d.mesh = mesh;
 							}
 						}
 					}
