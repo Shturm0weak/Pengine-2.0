@@ -8,9 +8,11 @@
 #include "Input.h"
 #include "KeyCode.h"
 #include "Raycast.h"
+#include "MaterialManager.h"
 
 #include "../Components/Camera.h"
 #include "../Components/Transform.h"
+#include "../Components/Renderer3D.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 #include "../EventSystem/ResizeEvent.h"
@@ -81,6 +83,36 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 					}
 
 					Serializer::DeserializeScene(path);
+				};
+
+				std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+				EventSystem::GetInstance().SendEvent(event);
+			}
+			else if (FileFormats::Mat() == Utils::GetFileFormat(path))
+			{
+				auto callback = [this, path]()
+				{
+					if (std::shared_ptr<Entity> camera = m_Camera.lock())
+					{
+						if (camera)
+						{
+							const glm::vec3 ray = GetMouseRay(m_MousePosition);
+
+							const auto hits = Raycast::RaycastScene(camera->GetScene(), camera->GetComponent<Transform>().GetPosition(), ray, camera->GetComponent<Camera>().GetZFar());
+							if (!hits.empty())
+							{
+								std::shared_ptr<Entity> entity = hits.begin()->second;
+								if (entity->HasComponent<Renderer3D>())
+								{
+									std::shared_ptr<Material> material = MaterialManager::GetInstance().LoadMaterial(path);
+									if (material)
+									{
+										entity->GetComponent<Renderer3D>().material = material;
+									}
+								}
+							}
+						}
+					}
 				};
 
 				std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
