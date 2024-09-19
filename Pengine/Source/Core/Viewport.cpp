@@ -5,8 +5,12 @@
 #include "SceneManager.h"
 #include "Serializer.h"
 #include "ViewportManager.h"
+#include "Input.h"
+#include "KeyCode.h"
+#include "Raycast.h"
 
 #include "../Components/Camera.h"
+#include "../Components/Transform.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 #include "../EventSystem/ResizeEvent.h"
@@ -96,14 +100,38 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 	}
 
 	m_Position = glm::vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
+	glm::vec2 mousePosition = glm::vec2(ImGui::GetMousePos().x, ImGui::GetMousePos().y);
+	m_MousePosition = mousePosition - m_Position;
 
+	const std::shared_ptr<Entity> camera = m_Camera.lock();
 	if (m_DrawGizmosCallback)
 	{
-		const std::shared_ptr<Entity> camera = m_Camera.lock();
+		if (camera)
 		{
-			m_DrawGizmosCallback(m_Position, m_Size, camera);
+			m_DrawGizmosCallback(m_Position, m_Size, camera, m_ActiveGuizmo);
 		}
 		m_DrawGizmosCallback = {};
+	}
+
+	if (!m_ActiveGuizmo && m_IsHovered && Input::Mouse::IsMousePressed(Keycode::MOUSE_BUTTON_1))
+	{
+		if (camera)
+		{
+			const glm::vec3 ray = GetMouseRay(m_MousePosition);
+
+			const auto hits = Raycast::RaycastScene(camera->GetScene(), camera->GetComponent<Transform>().GetPosition(), ray, camera->GetComponent<Camera>().GetZFar());
+			if (!hits.empty())
+			{
+				std::shared_ptr<Entity> entity = hits.begin()->second;
+				if (entity->GetParent() && !camera->GetScene()->GetSelectedEntities().count(entity->GetParent()))
+				{
+					entity = entity->GetParent();
+				}
+
+				camera->GetScene()->GetSelectedEntities().clear();
+				camera->GetScene()->GetSelectedEntities().emplace(entity);
+			}
+		}
 	}
 
 	ImGui::End();
@@ -129,7 +157,26 @@ void Viewport::SetCamera(const std::shared_ptr<Entity>& camera)
 	cameraComponent.CreateRenderTarget(m_Name, m_Size);
 }
 
-void Viewport::SetDrawGizmosCallback(const std::function<void(const glm::vec2& position, glm::ivec2 size, std::shared_ptr<Entity> camera)>& drawGizmosCallback)
+glm::vec3 Viewport::GetMouseRay(const glm::vec2& mousePosition) const
+{
+	const std::shared_ptr<Entity> camera = m_Camera.lock();
+	if (!camera)
+	{
+		return {};
+	}
+
+	glm::vec2 ndc = mousePosition / (glm::vec2)m_Size;
+	ndc *= 2.0f;
+	ndc -= 1.0f;
+	ndc = glm::clamp(ndc, glm::vec2(-1.0, -1.0), glm::vec2(1.0, 1.0));
+	const glm::vec4 rayClip = { ndc.x, -ndc.y, 0.0f, 1.0f };
+	glm::vec4 rayEye = glm::inverse(m_Projection) * rayClip;
+	rayEye.z = -1.0f; rayEye.w = 0.0f;
+	glm::vec3 ray = (glm::vec3)(glm::inverse(camera->GetComponent<Camera>().GetViewMat4()) * rayEye);
+	return glm::normalize(ray);
+}
+
+void Viewport::SetDrawGizmosCallback(const std::function<void(const glm::vec2&, glm::ivec2, std::shared_ptr<Entity>, bool&)>& drawGizmosCallback)
 {
 	m_DrawGizmosCallback = drawGizmosCallback;
 }

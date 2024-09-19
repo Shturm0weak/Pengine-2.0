@@ -37,7 +37,7 @@ Editor::Editor()
 
 void Editor::Update(const std::shared_ptr<Scene>& scene)
 {
-	Manipulate();
+	Manipulate(scene);
 
 	MainMenuBar();
 	Hierarchy(scene);
@@ -686,7 +686,7 @@ void Editor::DrawScene(const std::shared_ptr<Scene>& scene)
 			}
 
 			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-			flags |= m_SelectedEntities.count(entity->GetUUID()) ? 
+			flags |= scene->GetSelectedEntities().count(entity) ?
 				ImGuiTreeNodeFlags_Selected : 0;
 			
 			DrawNode(entity, flags);
@@ -760,10 +760,10 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 	{
 		if (!Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL))
 		{
-			m_SelectedEntities.clear();
+			entity->GetScene()->GetSelectedEntities().clear();
 		}
 		
-		m_SelectedEntities.emplace(entity->GetUUID());
+		entity->GetScene()->GetSelectedEntities().emplace(entity);
 	}
 
 	if (opened)
@@ -778,7 +778,7 @@ void Editor::DrawChilds(const std::shared_ptr<Entity>& entity)
 	for (const std::shared_ptr<Entity>& child : entity->GetChilds())
 	{
 		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-		flags |= m_SelectedEntities.count(child->GetUUID()) ?
+		flags |= entity->GetScene()->GetSelectedEntities().count(child) ?
 			ImGuiTreeNodeFlags_Selected : 0;
 
 		DrawNode(child, flags);
@@ -789,14 +789,14 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene)
 {
 	if (ImGui::Begin("Properties", nullptr))
 	{
-		for (const std::string& entityUUID : m_SelectedEntities)
+		if (!scene)
 		{
-			std::shared_ptr<Entity> entity = scene->FindEntityByUUID(entityUUID);
-			if (!entity)
-			{
-				continue;
-			}
+			ImGui::End();
+			return;
+		}
 
+		for (const std::shared_ptr<Entity> entity : scene->GetSelectedEntities())
+		{
 			if (entity->HasParent())
 			{
 				ImGui::Text("Owner: %s", entity->GetParent()->GetName().c_str());
@@ -1067,36 +1067,36 @@ void Editor::GameObjectPopUpMenu(const std::shared_ptr<Scene>& scene)
 
 		if (ImGui::MenuItem("Clone Gameobject"))
 		{
-			if (!m_SelectedEntities.empty())
+			if (!scene->GetSelectedEntities().empty())
 			{
-				if (std::shared_ptr<Entity> entity = scene->FindEntityByUUID(*m_SelectedEntities.rbegin()))
+				if (std::shared_ptr<Entity> entity = *scene->GetSelectedEntities().rbegin())
 				{
 					scene->CloneEntity(entity);
 				}
 			}
 		}
 
-		if (!m_SelectedEntities.empty())
+		if (!scene->GetSelectedEntities().empty())
 		{
 			if (ImGui::MenuItem("Delete Selected"))
 			{
-				for (const std::string& uuid : m_SelectedEntities)
+				auto callback = [weakScene = std::weak_ptr<Scene>(scene)]()
 				{
-					auto callback = [weakScene = std::weak_ptr<Scene>(scene), uuid]()
+					if (const std::shared_ptr<Scene>& currentScene = weakScene.lock())
 					{
-						if (const std::shared_ptr<Scene>& currentScene = weakScene.lock())
+						for (std::shared_ptr<Entity> entity : currentScene->GetSelectedEntities())
 						{
-							if (std::shared_ptr<Entity> entity = currentScene->FindEntityByUUID(uuid))
+							if (entity)
 							{
 								currentScene->DeleteEntity(entity);
 							}
 						}
-					};
+						currentScene->GetSelectedEntities().clear();
+					}
+				};
 
-					std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
-					EventSystem::GetInstance().SendEvent(event);
-				}
-				m_SelectedEntities.clear();
+				std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+				EventSystem::GetInstance().SendEvent(event);
 			}
 		}
 
@@ -1352,8 +1352,13 @@ void Editor::SetDarkThemeColors()
 	colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 }
 
-void Editor::Manipulate()
+void Editor::Manipulate(const std::shared_ptr<Scene>& scene)
 {
+	if (!scene)
+	{
+		return;
+	}
+
 	if (!Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
 	{
 		if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_W))
@@ -1378,7 +1383,7 @@ void Editor::Manipulate()
 		}
 	}
 
-	if (m_SelectedEntities.empty() || m_GizmoOperation == -1)
+	if (scene->GetSelectedEntities().empty() || m_GizmoOperation == -1)
 	{
 		return;
 	}
@@ -1390,19 +1395,23 @@ void Editor::Manipulate()
 			continue;
 		}
 
-		auto callback = [this, viewport](const glm::vec2& position, const glm::ivec2 size, const std::shared_ptr<Entity>& camera)
+		auto callback = [this, viewport](
+			const glm::vec2& position,
+			const glm::ivec2 size,
+			const std::shared_ptr<Entity>& camera,
+			bool& active)
 		{
 			if (!viewport || !camera)
 			{
 				return;
 			}
 
-			if (m_SelectedEntities.empty())
+			if (camera->GetScene()->GetSelectedEntities().empty())
 			{
 				return;
 			}
 
-			const std::shared_ptr<Entity> entity = camera->GetScene()->FindEntityByUUID(*m_SelectedEntities.begin());
+			const std::shared_ptr<Entity> entity = *camera->GetScene()->GetSelectedEntities().begin();
 			if (!entity)
 			{
 				return;
@@ -1428,7 +1437,8 @@ void Editor::Manipulate()
 			ImGuizmo::Manipulate(glm::value_ptr(viewMat4), glm::value_ptr(projectionMat4),
 				(ImGuizmo::OPERATION)m_GizmoOperation, ImGuizmo::LOCAL, glm::value_ptr(transformMat4));
 
-			if (ImGuizmo::IsUsing())
+			active = ImGuizmo::IsUsing();
+			if (active)
 			{
 				glm::vec3 position, rotation, scale;
 

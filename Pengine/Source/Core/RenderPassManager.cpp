@@ -451,33 +451,37 @@ void RenderPassManager::CreateDeferred()
 				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.lightSpaceMatrices", *m_CSMRenderer.GetLightSpaceMatrices().data());
 			}
 
-			std::vector<glm::vec4> shadowCascadeLevels;
-			for (const float& distance : m_CSMRenderer.GetDistances())
+			const GraphicsSettings::Shadows& shadowSettings = renderInfo.scene->GetGraphicsSettings().shadows;
+			if (shadowSettings.isEnabled)
 			{
-				shadowCascadeLevels.emplace_back(glm::vec4(distance));
+				std::vector<glm::vec4> shadowCascadeLevels;
+				for (const float& distance : m_CSMRenderer.GetDistances())
+				{
+					shadowCascadeLevels.emplace_back(glm::vec4(distance));
+				}
+
+				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.distances", *shadowCascadeLevels.data());
+
+				const int cascadeCount = m_CSMRenderer.GetLightSpaceMatrices().size() * shadowSettings.isEnabled;
+				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.cascadeCount", cascadeCount);
+
+				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.fogFactor", shadowSettings.fogFactor);
+				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.maxDistance", shadowSettings.maxDistance);
+				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.pcfRange", shadowSettings.pcfRange);
+
+				const int pcfEnabled = shadowSettings.pcfEnabled;
+				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.pcfEnabled", pcfEnabled);
+
+				const int visualize = shadowSettings.visualize;
+				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.visualize", visualize);
+
+				std::vector<glm::vec4> biases;
+				for (const float& bias : shadowSettings.biases)
+				{
+					biases.emplace_back(glm::vec4(bias));
+				}
+				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.biases", *biases.data());
 			}
-
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.distances", *shadowCascadeLevels.data());
-
-			const int cascadeCount = m_CSMRenderer.GetLightSpaceMatrices().size() * renderInfo.scene->GetGraphicsSettings().shadows.isEnabled;
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.cascadeCount", cascadeCount);
-
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.fogFactor", renderInfo.scene->GetGraphicsSettings().shadows.fogFactor);
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.maxDistance", renderInfo.scene->GetGraphicsSettings().shadows.maxDistance);
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.pcfRange", renderInfo.scene->GetGraphicsSettings().shadows.pcfRange);
-
-			const int pcfEnabled = renderInfo.scene->GetGraphicsSettings().shadows.pcfEnabled;
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.pcfEnabled", pcfEnabled);
-
-			const int visualize = renderInfo.scene->GetGraphicsSettings().shadows.visualize;
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.visualize", visualize);
-
-			std::vector<glm::vec4> biases;
-			for (const float& bias : renderInfo.scene->GetGraphicsSettings().shadows.biases)
-			{
-				biases.emplace_back(glm::vec4(bias));
-			}
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.biases", *biases.data());
 		}
 		else
 		{

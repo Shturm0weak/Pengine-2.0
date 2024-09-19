@@ -26,13 +26,17 @@ namespace Pengine
 
 		[[nodiscard]] glm::vec2 GetPosition() const { return m_Position; }
 
+		[[nodiscard]] glm::vec2 GetMousePosition() const { return m_MousePosition; }
+
+		[[nodiscard]] glm::vec3 GetMouseRay(const glm::vec2& mousePosition) const;
+
 		[[nodiscard]] const glm::mat4& GetProjectionMat4() const { return m_Projection; }
 
 		[[nodiscard]] bool IsHovered() const { return m_IsHovered; }
 
 		[[nodiscard]] bool IsFocused() const { return m_IsFocused; }
 
-		void SetDrawGizmosCallback(const std::function<void(const glm::vec2& position, glm::ivec2 size, std::shared_ptr<Entity> camera)>& drawGizmosCallback);
+		void SetDrawGizmosCallback(const std::function<void(const glm::vec2&, glm::ivec2, std::shared_ptr<Entity>, bool&)>& drawGizmosCallback);
 
 	private:
 		void Resize(const glm::ivec2& size);
@@ -45,8 +49,9 @@ namespace Pengine
 
 		glm::mat4 m_Projection{};
 
-		std::function<void(const glm::vec2& position, glm::ivec2 size, std::shared_ptr<Entity> camera)> m_DrawGizmosCallback;
+		std::function<void(const glm::vec2&, glm::ivec2, std::shared_ptr<Entity>, bool&)> m_DrawGizmosCallback;
 
+		glm::vec2 m_MousePosition;
 		glm::vec2 m_Position{};
 		glm::ivec2 m_Size{};
 		
@@ -57,6 +62,7 @@ namespace Pengine
 		bool m_IsHovered = false;
 		bool m_IsFocused = false;
 		bool m_IsOpened = true;
+		bool m_ActiveGuizmo = false;
 	};
 
 }

@@ -75,7 +75,7 @@ namespace Pengine
 
 		void SetDarkThemeColors();
 
-		void Manipulate();
+		void Manipulate(const std::shared_ptr<Scene>& scene);
 
 		void MoveCamera(const std::shared_ptr<Entity>& camera);
 
@@ -138,8 +138,6 @@ namespace Pengine
 
 			void Update(const Editor& editor);
 		} m_CreateViewportMenu;
-
-		std::set<std::string> m_SelectedEntities;
 
 		std::filesystem::path m_RootDirectory = std::filesystem::current_path();
 		std::filesystem::path m_CurrentDirectory = m_RootDirectory;

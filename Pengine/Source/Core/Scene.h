@@ -52,8 +52,9 @@ namespace Pengine
 
 		void SetGraphicsSettings(const GraphicsSettings& graphicsSettings) { m_GraphicsSettings = graphicsSettings; }
 
+		std::set<std::shared_ptr<Entity>>& GetSelectedEntities() { return m_SelectedEntities; }
+
 	private:
-		std::unordered_map<std::string, std::shared_ptr<Entity>> m_EntitiesByUUID;
 		std::vector<std::shared_ptr<Entity>> m_Entities;
 		entt::registry m_Registry;
 		Visualizer m_Visualizer;
@@ -61,6 +62,8 @@ namespace Pengine
 		GraphicsSettings m_GraphicsSettings;
 
 		std::string m_Tag = none;
+
+		std::set<std::shared_ptr<Entity>> m_SelectedEntities;
 
 		void Copy(const Scene& scene);
 	};
