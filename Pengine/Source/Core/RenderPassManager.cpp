@@ -453,17 +453,18 @@ void RenderPassManager::CreateDeferred()
 
 			if (shadowSettings.isEnabled)
 			{
+				CSMRenderer& csmRenderer = m_CSMRenderersByCSMSetting[renderInfo.scene->GetGraphicsSettings().GetFilepath().wstring()];
 				std::vector<glm::vec4> shadowCascadeLevels;
-				for (const float& distance : m_CSMRenderer.GetDistances())
+				for (const float& distance : csmRenderer.GetDistances())
 				{
 					shadowCascadeLevels.emplace_back(glm::vec4(distance));
 				}
 
-				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.lightSpaceMatrices", *m_CSMRenderer.GetLightSpaceMatrices().data());
+				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.lightSpaceMatrices", *csmRenderer.GetLightSpaceMatrices().data());
 
 				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.distances", *shadowCascadeLevels.data());
 
-				const int cascadeCount = m_CSMRenderer.GetLightSpaceMatrices().size();
+				const int cascadeCount = csmRenderer.GetLightSpaceMatrices().size();
 				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.cascadeCount", cascadeCount);
 
 				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.fogFactor", shadowSettings.fogFactor);
@@ -1232,8 +1233,6 @@ void RenderPassManager::CreateCSM()
 	RenderPass::AttachmentDescription depth{};
 	depth.format = Format::D32_SFLOAT;
 	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	depth.size = { 2048, 2048 };
-	depth.layercount = 3;
 
 	Texture::SamplerCreateInfo samplerCreateInfo{};
 	samplerCreateInfo.filter = Texture::SamplerCreateInfo::Filter::NEAREST;
@@ -1248,18 +1247,30 @@ void RenderPassManager::CreateCSM()
 	createInfo.clearDepths = { clearDepth };
 	createInfo.attachmentDescriptions = { depth };
 	createInfo.resizeWithViewport = false;
+	createInfo.createFrameBuffer = false;
 
 	const std::shared_ptr<Mesh> planeMesh = nullptr;
 
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		const std::string renderPassName = renderInfo.renderPass->GetType();
 		const GraphicsSettings::Shadows& shadowsSettings = renderInfo.scene->GetGraphicsSettings().shadows;
+
+		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		if (!frameBuffer)
+		{
+			// NOTE: Maybe should be send as the next frame event, because creating a frame buffer here may cause some problems.
+			const std::string renderPassName = renderInfo.renderPass->GetType();
+			renderInfo.renderPass->GetAttachmentDescriptions().back().layercount = renderInfo.scene->GetGraphicsSettings().shadows.cascadeCount;
+			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderer.get(), { 2048, 2048 });
+
+			renderInfo.renderer->SetFrameBufferToRenderPass(renderPassName, frameBuffer);
+		}
+
 		if (!shadowsSettings.isEnabled)
 		{
 			return;
 		}
-
-		const std::string renderPassName = renderInfo.renderPass->GetType();
 
 		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
@@ -1333,7 +1344,6 @@ void RenderPassManager::CreateCSM()
 
 		bool updatedLightSpaceMatrices = false;
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
@@ -1382,7 +1392,8 @@ void RenderPassManager::CreateCSM()
 					camera.GetZNear(),
 					shadowsSettings.maxDistance);
 
-				const bool recreateFrameBuffer = m_CSMRenderer.GenerateLightSpaceMatrices(
+				CSMRenderer& csmRenderer = m_CSMRenderersByCSMSetting[renderInfo.scene->GetGraphicsSettings().GetFilepath().wstring()];
+				const bool recreateFrameBuffer = csmRenderer.GenerateLightSpaceMatrices(
 					projection * camera.GetViewMat4(),
 					lightDirection,
 					camera.GetZNear(),
@@ -1395,9 +1406,9 @@ void RenderPassManager::CreateCSM()
 					renderInfo.renderer->GetBuffer("LightSpaceMatrices"),
 					"LightSpaceMatrices",
 					"lightSpaceMatrices",
-					*m_CSMRenderer.GetLightSpaceMatrices().data());
+					*csmRenderer.GetLightSpaceMatrices().data());
 
-				const int cascadeCount = m_CSMRenderer.GetLightSpaceMatrices().size();
+				const int cascadeCount = csmRenderer.GetLightSpaceMatrices().size();
 				WriterBufferHelper::WriteToBuffer(
 					baseMaterial.get(),
 					renderInfo.renderer->GetBuffer("LightSpaceMatrices"),

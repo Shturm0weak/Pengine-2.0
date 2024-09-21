@@ -78,7 +78,7 @@ namespace Pengine
 
 		LineRenderer m_LineRenderer;
 		SSAORenderer m_SSAORenderer;
-		CSMRenderer m_CSMRenderer;
+		std::map<std::wstring, CSMRenderer> m_CSMRenderersByCSMSetting;
 	};
 
 }
