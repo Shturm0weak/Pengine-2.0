@@ -6,7 +6,6 @@
 #include "Pipeline.h"
 #include "UniformWriter.h"
 #include "UniformLayout.h"
-#include "WriterBufferHelper.h"
 
 #include "../Utils/Utils.h"
 
@@ -62,12 +61,68 @@ namespace Pengine
 		void WriteToBuffer(
 			const std::string& uniformBufferName,
 			const std::string& valueName,
-			T& value);
+			T& value)
+		{
+			uint32_t size{}, offset{};
+
+			const bool found = GetUniformDetails(uniformBufferName, valueName, size, offset);
+
+			const std::shared_ptr<Buffer> buffer = GetBuffer(uniformBufferName);
+			if (buffer && found)
+			{
+				buffer->WriteToBuffer((void*)&value, size, offset);
+			}
+			else
+			{
+				Logger::Warning("Failed to write to buffer: " + uniformBufferName + " | " + valueName + "!");
+			}
+		}
+
+		template<typename T>
+		void WriteToBuffer(
+			std::shared_ptr<Buffer> buffer,
+			const std::string& uniformBufferName,
+			const std::string& valueName,
+			T& value)
+		{
+			uint32_t size{}, offset{};
+
+			const bool found = GetUniformDetails(uniformBufferName, valueName, size, offset);
+
+			if (buffer && found)
+			{
+				buffer->WriteToBuffer((void*)&value, size, offset);
+			}
+			else
+			{
+				Logger::Warning("Failed to write to buffer: " + uniformBufferName + " | " + valueName + "!");
+			}
+		}
 
 		template<typename T>
 		T GetBufferValue(
+			std::shared_ptr<Buffer> buffer,
 			const std::string& uniformBufferName,
-			const std::string& valueName);
+			const std::string& valueName)
+		{
+			uint32_t size{}, offset{};
+
+			const bool found = GetUniformDetails(uniformBufferName, valueName, size, offset);
+
+			if (buffer && found)
+			{
+				if (sizeof(T) != size)
+				{
+					Logger::Warning("Failed to get buffer value: " + uniformBufferName + " | " + valueName + ", size is different!");
+				}
+
+				return *(T*)(((uint8_t*)buffer->GetData()) + offset);
+			}
+			else
+			{
+				Logger::Warning("Failed to get buffer value: " + uniformBufferName + " | " + valueName + "!");
+			}
+		}
 
 	private:
 		void CreateResources(const CreateInfo& createInfo);
@@ -80,20 +135,5 @@ namespace Pengine
 		// map<BufferName, map<ValueName, <Size, Offset>>>
 		mutable std::unordered_map<std::string, std::unordered_map<std::string, std::pair<uint32_t, uint32_t>>> m_UniformsCache;
 	};
-
-	template<typename T>
-	inline void BaseMaterial::WriteToBuffer(
-		const std::string& uniformBufferName,
-		const std::string& valueName,
-		T& value)
-	{
-		WriterBufferHelper::WriteToBuffer(this, GetBuffer(uniformBufferName), uniformBufferName, valueName, value);
-	}
-
-	template<typename T>
-	inline T BaseMaterial::GetBufferValue(const std::string& uniformBufferName, const std::string& valueName)
-	{
-		WriterBufferHelper::GetBufferValue<T>(this, GetBuffer(uniformBufferName), uniformBufferName, valueName);
-	}
 
 }

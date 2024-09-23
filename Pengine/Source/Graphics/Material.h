@@ -5,7 +5,6 @@
 #include "../Core/Logger.h"
 
 #include "BaseMaterial.h"
-#include "WriterBufferHelper.h"
 
 #include "../Utils/Utils.h"
 
@@ -90,13 +89,13 @@ namespace Pengine
 		const std::string& valueName, 
 		T& value)
 	{
-		WriterBufferHelper::WriteToBuffer(m_BaseMaterial.get(), GetBuffer(uniformBufferName), uniformBufferName, valueName, value);
+		m_BaseMaterial->WriteToBuffer(GetBuffer(uniformBufferName), uniformBufferName, valueName, value);
 	}
 
 	template<typename T>
 	inline T Material::GetBufferValue(const std::string& uniformBufferName, const std::string& valueName)
 	{
-		return WriterBufferHelper::GetBufferValue<T>(m_BaseMaterial.get(), GetBuffer(uniformBufferName), uniformBufferName, valueName);
+		return m_BaseMaterial->GetBufferValue<T>(GetBuffer(uniformBufferName), uniformBufferName, valueName);
 	}
 
 }

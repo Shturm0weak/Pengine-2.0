@@ -146,16 +146,14 @@ void RenderPassManager::CreateGBuffer()
 		const std::string renderPassName = renderInfo.renderPass->GetType();
 		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
 		const glm::vec2 viewportSize = frameBuffer->GetSize();
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
+		reflectionBaseMaterial->WriteToBuffer(
 			renderInfo.renderer->GetBuffer(globalBufferName),
 			globalBufferName,
 			"camera.viewportSize",
 			viewportSize);
 
 		const float aspectRation = viewportSize.x / viewportSize.y;
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
+		reflectionBaseMaterial->WriteToBuffer(
 			renderInfo.renderer->GetBuffer(globalBufferName),
 			globalBufferName,
 			"camera.aspectRatio",
@@ -163,8 +161,7 @@ void RenderPassManager::CreateGBuffer()
 
 		Camera& camera = renderInfo.camera->GetComponent<Camera>();
 		const float tanHalfFOV = tanf(camera.GetFov() / 2.0f);
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
+		reflectionBaseMaterial->WriteToBuffer(
 			renderInfo.renderer->GetBuffer(globalBufferName),
 			globalBufferName,
 			"camera.tanHalfFOV",
@@ -417,17 +414,17 @@ void RenderPassManager::CreateDeferred()
 
 			// View Space!
 			glm::vec3 lightPosition = camera.GetViewMat4() * glm::vec4(transform.GetPosition(), 1.0f);
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", valueNamePrefix + ".position", lightPosition);
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", valueNamePrefix + ".color", pl.color);
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", valueNamePrefix + ".linear", pl.linear);
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", valueNamePrefix + ".quadratic", pl.quadratic);
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", valueNamePrefix + ".constant", pl.constant);
+			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", valueNamePrefix + ".position", lightPosition);
+			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", valueNamePrefix + ".color", pl.color);
+			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", valueNamePrefix + ".linear", pl.linear);
+			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", valueNamePrefix + ".quadratic", pl.quadratic);
+			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", valueNamePrefix + ".constant", pl.constant);
 
 			lightIndex++;
 		}
 
 		int pointLightsCount = pointLightView.size();
-		WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "pointLightsCount", pointLightsCount);
+		baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "pointLightsCount", pointLightsCount);
 
 		auto directionalLightView = renderInfo.scene->GetRegistry().view<DirectionalLight>();
 		if (!directionalLightView.empty())
@@ -436,20 +433,20 @@ void RenderPassManager::CreateDeferred()
 			DirectionalLight& dl = renderInfo.scene->GetRegistry().get<DirectionalLight>(entity);
 			const Transform& transform = renderInfo.scene->GetRegistry().get<Transform>(entity);
 
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "directionalLight.color", dl.color);
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "directionalLight.intensity", dl.intensity);
+			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "directionalLight.color", dl.color);
+			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "directionalLight.intensity", dl.intensity);
 
 			// View Space!
 			const glm::vec3 direction = glm::normalize(glm::mat3(camera.GetViewMat4()) * transform.GetForward());
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "directionalLight.direction", direction);
+			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "directionalLight.direction", direction);
 
 			const int hasDirectionalLight = 1;
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "hasDirectionalLight", hasDirectionalLight);
+			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "hasDirectionalLight", hasDirectionalLight);
 
 			const GraphicsSettings::Shadows& shadowSettings = renderInfo.scene->GetGraphicsSettings().shadows;
 
 			const int isEnabled = shadowSettings.isEnabled;
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.isEnabled", isEnabled);
+			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.isEnabled", isEnabled);
 
 			if (shadowSettings.isEnabled)
 			{
@@ -460,36 +457,36 @@ void RenderPassManager::CreateDeferred()
 					shadowCascadeLevels.emplace_back(glm::vec4(distance));
 				}
 
-				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.lightSpaceMatrices", *csmRenderer.GetLightSpaceMatrices().data());
+				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.lightSpaceMatrices", *csmRenderer.GetLightSpaceMatrices().data());
 
-				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.distances", *shadowCascadeLevels.data());
+				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.distances", *shadowCascadeLevels.data());
 
 				const int cascadeCount = csmRenderer.GetLightSpaceMatrices().size();
-				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.cascadeCount", cascadeCount);
+				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.cascadeCount", cascadeCount);
 
-				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.fogFactor", shadowSettings.fogFactor);
-				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.maxDistance", shadowSettings.maxDistance);
-				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.pcfRange", shadowSettings.pcfRange);
+				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.fogFactor", shadowSettings.fogFactor);
+				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.maxDistance", shadowSettings.maxDistance);
+				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.pcfRange", shadowSettings.pcfRange);
 
 				const int pcfEnabled = shadowSettings.pcfEnabled;
-				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.pcfEnabled", pcfEnabled);
+				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.pcfEnabled", pcfEnabled);
 
 				const int visualize = shadowSettings.visualize;
-				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.visualize", visualize);
+				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.visualize", visualize);
 
 				std::vector<glm::vec4> biases;
 				for (const float& bias : shadowSettings.biases)
 				{
 					biases.emplace_back(glm::vec4(bias));
 				}
-				WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.biases", *biases.data());
+				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.biases", *biases.data());
 			}
 		}
 		else
 		{
 			const int hasDirectionalLight = 0;
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "hasDirectionalLight", hasDirectionalLight);
-			WriterBufferHelper::WriteToBuffer(baseMaterial.get(), lightsBuffer, "Lights", "csm.cascadeCount", hasDirectionalLight);
+			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "hasDirectionalLight", hasDirectionalLight);
+			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.cascadeCount", hasDirectionalLight);
 		}
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
@@ -592,63 +589,55 @@ void RenderPassManager::CreateAtmosphere()
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 		const Transform& cameraTransform = renderInfo.camera->GetComponent<Transform>();
 		const glm::mat4 viewProjectionMat4 = renderInfo.projection * camera.GetViewMat4();
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
+		reflectionBaseMaterial->WriteToBuffer(
 			globalBuffer,
 			globalBufferName,
 			"camera.viewProjectionMat4",
 			viewProjectionMat4);
 
 		const glm::mat4 viewMat4 = camera.GetViewMat4();
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
+		reflectionBaseMaterial->WriteToBuffer(
 			globalBuffer,
 			globalBufferName,
 			"camera.viewMat4",
 			viewMat4);
 
 		const glm::mat4 inverseViewMat4 = glm::inverse(camera.GetViewMat4());
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
+		reflectionBaseMaterial->WriteToBuffer(
 			globalBuffer,
 			globalBufferName,
 			"camera.inverseViewMat4",
 			inverseViewMat4);
 
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
+		reflectionBaseMaterial->WriteToBuffer(
 			globalBuffer,
 			globalBufferName,
 			"camera.projectionMat4",
 			renderInfo.projection);
 
 		const glm::mat4 inverseRotationMat4 = glm::inverse(cameraTransform.GetRotationMat4());
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
+		reflectionBaseMaterial->WriteToBuffer(
 			globalBuffer,
 			globalBufferName,
 			"camera.inverseRotationMat4",
 			inverseRotationMat4);
 
 		const float time = Time::GetTime();
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
+		reflectionBaseMaterial->WriteToBuffer(
 			globalBuffer,
 			globalBufferName,
 			"camera.time",
 			time);
 
 		const float zNear = camera.GetZNear();
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
+		reflectionBaseMaterial->WriteToBuffer(
 			globalBuffer,
 			globalBufferName,
 			"camera.zNear",
 			zNear);
 
 		const float zFar = camera.GetZFar();
-		WriterBufferHelper::WriteToBuffer(
-			reflectionBaseMaterial.get(),
+		reflectionBaseMaterial->WriteToBuffer(
 			globalBuffer,
 			globalBufferName,
 			"camera.zFar",
@@ -1092,13 +1081,13 @@ void RenderPassManager::CreateSSAO()
 		}
 
 		const std::shared_ptr<Buffer> ssaoBuffer = renderInfo.renderer->GetBuffer("SSAOBuffer");
-		WriterBufferHelper::WriteToBuffer(baseMaterial.get(), ssaoBuffer, "SSAOBuffer", "viewportScale", GetRenderPass(renderPassName)->GetResizeViewportScale());
-		WriterBufferHelper::WriteToBuffer(baseMaterial.get(), ssaoBuffer, "SSAOBuffer", "kernelSize", graphicsSettings.ssao.kernelSize);
-		WriterBufferHelper::WriteToBuffer(baseMaterial.get(), ssaoBuffer, "SSAOBuffer", "noiseSize", graphicsSettings.ssao.noiseSize);
-		WriterBufferHelper::WriteToBuffer(baseMaterial.get(), ssaoBuffer, "SSAOBuffer", "aoScale", graphicsSettings.ssao.aoScale);
-		WriterBufferHelper::WriteToBuffer(baseMaterial.get(), ssaoBuffer, "SSAOBuffer", "samples", m_SSAORenderer.GetSamples());
-		WriterBufferHelper::WriteToBuffer(baseMaterial.get(), ssaoBuffer, "SSAOBuffer", "radius", graphicsSettings.ssao.radius);
-		WriterBufferHelper::WriteToBuffer(baseMaterial.get(), ssaoBuffer, "SSAOBuffer", "bias", graphicsSettings.ssao.bias);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "viewportScale", GetRenderPass(renderPassName)->GetResizeViewportScale());
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "kernelSize", graphicsSettings.ssao.kernelSize);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "noiseSize", graphicsSettings.ssao.noiseSize);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "aoScale", graphicsSettings.ssao.aoScale);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "samples", m_SSAORenderer.GetSamples());
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "radius", graphicsSettings.ssao.radius);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "bias", graphicsSettings.ssao.bias);
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 
@@ -1401,16 +1390,14 @@ void RenderPassManager::CreateCSM()
 					shadowsSettings.cascadeCount,
 					shadowsSettings.splitFactor);
 
-				WriterBufferHelper::WriteToBuffer(
-					baseMaterial.get(),
+				baseMaterial->WriteToBuffer(
 					renderInfo.renderer->GetBuffer("LightSpaceMatrices"),
 					"LightSpaceMatrices",
 					"lightSpaceMatrices",
 					*csmRenderer.GetLightSpaceMatrices().data());
 
 				const int cascadeCount = csmRenderer.GetLightSpaceMatrices().size();
-				WriterBufferHelper::WriteToBuffer(
-					baseMaterial.get(),
+				baseMaterial->WriteToBuffer(
 					renderInfo.renderer->GetBuffer("LightSpaceMatrices"),
 					"LightSpaceMatrices",
 					"cascadeCount",

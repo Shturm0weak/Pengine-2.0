@@ -4,6 +4,7 @@
 #include "../Core/Logger.h"
 
 #include "../Graphics/Buffer.h"
+#include "../Graphics/BaseMaterial.h"
 
 namespace Pengine
 {
@@ -13,7 +14,7 @@ namespace Pengine
 	public:
 		template<typename T>
 		static void WriteToBuffer(
-			class BaseMaterial* baseMaterial,
+			BaseMaterial* baseMaterial,
 			std::shared_ptr<Buffer> buffer,
 			const std::string& uniformBufferName,
 			const std::string& valueName,
@@ -35,7 +36,7 @@ namespace Pengine
 
 		template<typename T>
 		static T GetBufferValue(
-			class BaseMaterial* baseMaterial,
+			BaseMaterial* baseMaterial,
 			std::shared_ptr<Buffer> buffer,
 			const std::string& uniformBufferName,
 			const std::string& valueName)

@@ -11,9 +11,6 @@ namespace Pengine::Vk
 
 	struct PipelineConfigInfo
 	{
-		PipelineConfigInfo(PipelineConfigInfo const&) = delete;
-		PipelineConfigInfo& operator=(PipelineConfigInfo const&) = delete;
-
 		VkPipelineViewportStateCreateInfo viewportInfo;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
 		VkPipelineRasterizationStateCreateInfo rasterizationInfo;

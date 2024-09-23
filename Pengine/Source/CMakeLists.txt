@@ -4,7 +4,7 @@ project(Pengine VERSION 1.0)
 
 message("Building Pengine")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP")
 
