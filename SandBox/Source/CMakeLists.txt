@@ -4,7 +4,7 @@ project(${APP_NAME} VERSION 1.0)
 
 message("Building SandBox")
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP")
 
 set(CORE_SOURCES
