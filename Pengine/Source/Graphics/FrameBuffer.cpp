@@ -23,7 +23,7 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 
 		Texture::CreateInfo attachmentCreateInfo{};
 		attachmentCreateInfo.name = renderPass->GetType() + "FrameBuffer";
-		attachmentCreateInfo.filepath = none;
+		attachmentCreateInfo.filepath = renderPass->GetType() + "FrameBuffer";
 		attachmentCreateInfo.format = attachment.format;
 		attachmentCreateInfo.channels = 4;
 		attachmentCreateInfo.layerCount = attachment.layercount;

@@ -24,6 +24,7 @@ std::shared_ptr<Material> MaterialManager::LoadMaterial(const std::filesystem::p
 			FATAL_ERROR(filepath.string() + ":There is no such material!");
 		}
 
+		std::lock_guard lock(m_MutexMaterial);
 		m_MaterialsByFilepath.emplace(filepath, material);
 
 		return material;
@@ -44,6 +45,7 @@ std::shared_ptr<BaseMaterial> MaterialManager::LoadBaseMaterial(const std::files
 			FATAL_ERROR(filepath.string() + ":There is no such base material!");
 		}
 
+		std::lock_guard lock(m_MutexBaseMaterial);
 		m_BaseMaterialsByFilepath.emplace(filepath, baseMaterial);
 
 		return baseMaterial;
@@ -76,6 +78,8 @@ std::shared_ptr<Material> MaterialManager::Clone(const std::string& name, const 
 	const std::shared_ptr<Material>& material)
 {
 	std::shared_ptr<Material> clonedMaterial = Material::Clone(name, filepath, material);
+
+	std::lock_guard lock(m_MutexMaterial);
 	m_MaterialsByFilepath[filepath] = clonedMaterial;
 
 	return clonedMaterial;

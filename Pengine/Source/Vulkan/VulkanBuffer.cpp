@@ -161,7 +161,7 @@ VulkanBuffer::VulkanBuffer(
 
 VulkanBuffer::~VulkanBuffer()
 {
-	vkDeviceWaitIdle(device->GetDevice());
+	device->WaitIdle();
 
 	for (BufferData& bufferData : m_BufferDatas)
 	{

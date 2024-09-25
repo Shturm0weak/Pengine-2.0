@@ -63,6 +63,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	ImGui::Text("BaseMaterials: %d", static_cast<int>(MaterialManager::GetInstance().GetBaseMaterials().size()));
 	ImGui::Text("Materials: %d", static_cast<int>(MaterialManager::GetInstance().GetMaterials().size()));
 	ImGui::Text("Textures: %d", static_cast<int>(TextureManager::GetInstance().GetTextures().size()));
+
 	ImGui::End();
 
 	if (Input::Mouse::IsMouseReleased(Keycode::MOUSE_BUTTON_2))

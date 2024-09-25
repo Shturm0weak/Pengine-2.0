@@ -81,6 +81,6 @@ VulkanRenderPass::VulkanRenderPass(const CreateInfo& createInfo)
 
 VulkanRenderPass::~VulkanRenderPass()
 {
-	vkDeviceWaitIdle(device->GetDevice());
+	device->WaitIdle();
 	vkDestroyRenderPass(device->GetDevice(), m_RenderPass, nullptr);
 }

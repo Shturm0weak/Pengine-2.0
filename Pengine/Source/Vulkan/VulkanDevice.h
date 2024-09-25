@@ -8,6 +8,7 @@
 #include <vma/vk_mem_alloc.h>
 
 #include <vector>
+#include <mutex>
 
 namespace Pengine::Vk
 {
@@ -131,6 +132,8 @@ namespace Pengine::Vk
 
 		void CommandEndLabel(VkCommandBuffer commandBuffer) const;
 
+		void WaitIdle() const;
+
 	private:
 		void CreateInstance(const std::string& applicationName);
 
@@ -185,6 +188,23 @@ namespace Pengine::Vk
 
 		const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
 		const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
+		mutable std::mutex m_Mutex;
+
+		public:
+			class Lock
+			{
+			public:
+				Lock()
+				{
+					device->m_Mutex.lock();
+				}
+
+				~Lock()
+				{
+					device->m_Mutex.unlock();
+				}
+			};
 	};
 
 }

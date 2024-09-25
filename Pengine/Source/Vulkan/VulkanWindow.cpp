@@ -315,6 +315,8 @@ void VulkanWindow::EndFrame(void* frame)
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = &m_VulkanWindow.FrameSemaphores[m_VulkanWindow.SemaphoreIndex].RenderCompleteSemaphore;
 
+	VulkanDevice::Lock lock;
+
 	if (vkQueueSubmit(device->GetGraphicsQueue(), 1, &submitInfo,
 		imGuiFrame->Fence) != VK_SUCCESS)
 	{
@@ -537,12 +539,14 @@ void VulkanWindow::InitializeImGui()
 		{
 			FATAL_ERROR("Failed to end command pool!");
 		}
+
 		if (vkQueueSubmit(device->GetGraphicsQueue(), 1, &endInfo, VK_NULL_HANDLE) != VK_SUCCESS)
 		{
 			FATAL_ERROR("Failed to submit queue!");
 		}
 
-		vkDeviceWaitIdle(device->GetDevice());
+		device->WaitIdle();
+
 		ImGui_ImplVulkan_DestroyFontsTexture();
 	}
 }

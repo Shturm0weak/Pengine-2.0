@@ -4,6 +4,8 @@
 
 #include "../Graphics/Material.h"
 
+#include <mutex>
+
 namespace Pengine
 {
 
@@ -44,6 +46,9 @@ namespace Pengine
 
 		std::unordered_map<std::filesystem::path, std::shared_ptr<Material>, path_hash> m_MaterialsByFilepath;
 		std::unordered_map<std::filesystem::path, std::shared_ptr<BaseMaterial>, path_hash> m_BaseMaterialsByFilepath;
+
+		std::mutex m_MutexMaterial;
+		std::mutex m_MutexBaseMaterial;
 	};
 
 }

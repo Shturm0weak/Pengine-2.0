@@ -88,6 +88,7 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 		m_MipLevels,
 		m_LayerCount,
 		imageViewType);
+
 	m_Sampler = CreateSampler(createInfo.samplerCreateInfo);
 
 	std::unique_ptr<VulkanDescriptorSetLayout> setLayout = VulkanDescriptorSetLayout::Builder()
@@ -102,7 +103,7 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 
 VulkanTexture::~VulkanTexture()
 {
-	vkDeviceWaitIdle(device->GetDevice());
+	device->WaitIdle();
 
 	vkDestroyImageView(device->GetDevice(), m_View, nullptr);
 	vmaDestroyImage(device->GetVmaAllocator(), m_Image, m_VmaAllocation);

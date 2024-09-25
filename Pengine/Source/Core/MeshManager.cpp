@@ -26,6 +26,7 @@ std::shared_ptr<Mesh> MeshManager::CreateMesh(
 	else
 	{
 		mesh = std::make_shared<Mesh>(name, filepath, vertices, indices);
+		std::lock_guard lock(m_MutexMesh);
 		m_MeshesByFilepath[filepath] = mesh;
 
 		return mesh;
@@ -46,6 +47,7 @@ std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::filesystem::path& filepat
 			FATAL_ERROR(filepath.string() + ":There is no such mesh!");
 		}
 
+		std::lock_guard lock(m_MutexMesh);
 		m_MeshesByFilepath.emplace(filepath, mesh);
 
 		return mesh;

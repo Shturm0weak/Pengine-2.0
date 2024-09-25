@@ -1,5 +1,6 @@
 #include "Serializer.h"
 
+#include "AsyncAssetLoader.h"
 #include "FileFormatNames.h"
 #include "Logger.h"
 #include "MaterialManager.h"
@@ -731,7 +732,7 @@ Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filep
 
 	if (const auto& baseMaterialData = materialData["Basemat"])
 	{
-		createInfo.baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(baseMaterialData.as<std::string>());
+		createInfo.baseMaterial = AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(baseMaterialData.as<std::string>());
 
 		if (!createInfo.baseMaterial)
 		{
@@ -1718,17 +1719,32 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 		if (const auto& meshData = renderer3DData["Mesh"])
 		{
 			const std::string uuid = meshData.as<std::string>();
-			const std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().LoadMesh(
-				Utils::Find(uuid, filepathByUuid));
-			r3d.mesh = mesh;
+			AsyncAssetLoader::GetInstance().AsyncLoadMesh(Utils::Find(uuid, filepathByUuid), [wEntity = std::weak_ptr(entity)](std::shared_ptr<Mesh> mesh)
+			{
+				if (std::shared_ptr<Entity> entity = wEntity.lock())
+				{
+					if (entity->HasComponent<Renderer3D>())
+					{
+						entity->GetComponent<Renderer3D>().mesh = mesh;
+					}
+				}
+			});
 		}
 
 		if (const auto& materialData = renderer3DData["Material"])
 		{
 			const std::string uuid = materialData.as<std::string>();
-			const std::shared_ptr<Material> material = MaterialManager::GetInstance().LoadMaterial(
-				Utils::Find(uuid, filepathByUuid));
-			r3d.material = material;
+
+			AsyncAssetLoader::GetInstance().AsyncLoadMaterial(Utils::Find(uuid, filepathByUuid), [wEntity = std::weak_ptr(entity)](std::shared_ptr<Material> material)
+			{
+				if (std::shared_ptr<Entity> entity = wEntity.lock())
+				{
+					if (entity->HasComponent<Renderer3D>())
+					{
+						entity->GetComponent<Renderer3D>().material = material;
+					}
+				}
+			});
 		}
 	}
 }

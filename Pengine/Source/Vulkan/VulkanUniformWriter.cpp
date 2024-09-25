@@ -32,7 +32,8 @@ VulkanUniformWriter::VulkanUniformWriter(std::shared_ptr<UniformLayout> uniformL
 
 VulkanUniformWriter::~VulkanUniformWriter()
 {
-	vkDeviceWaitIdle(device->GetDevice());
+	device->WaitIdle();
+
 	descriptorPool->FreeDescriptors(m_DescriptorSets);
 }
 

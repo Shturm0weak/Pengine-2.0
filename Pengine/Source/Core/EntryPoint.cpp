@@ -1,5 +1,6 @@
 #include "EntryPoint.h"
 
+#include "AsyncAssetLoader.h"
 #include "Input.h"
 #include "MaterialManager.h"
 #include "MeshManager.h"
@@ -11,6 +12,7 @@
 #include "ViewportManager.h"
 #include "Viewport.h"
 #include "WindowManager.h"
+#include "ThreadPool.h"
 
 #include "../Components/Camera.h"
 #include "../Editor/Editor.h"
@@ -22,7 +24,7 @@ using namespace Pengine;
 EntryPoint::EntryPoint(Application* application)
 	: m_Application(application)
 {
-	const auto [configGraphicsAPI] = Serializer::DeserializeEngineConfig("Configs/Engine.yaml");
+	const auto [configGraphicsAPI] = Serializer::DeserializeEngineConfig("Configs\\Engine.yaml");
 	graphicsAPI = configGraphicsAPI;
 }
 
@@ -42,13 +44,16 @@ void EntryPoint::Run() const
 
 	Serializer::GenerateFilesUUID(std::filesystem::current_path());
 
-	TextureManager::GetInstance().LoadFromFolder("Editor/Images");
+	TextureManager::GetInstance().LoadFromFolder("Editor\\Images");
+
+	ThreadPool::GetInstance().Initialize();
 
 	m_Application->OnStart();
 
 	while (mainWindow->IsRunning())
 	{
 		Time::GetInstance().Update();
+		AsyncAssetLoader::GetInstance().Update();
 
 		for (const auto& window : WindowManager::GetInstance().GetWindows())
 		{
@@ -142,6 +147,7 @@ void EntryPoint::Run() const
 
 	m_Application->OnClose();
 
+	ThreadPool::GetInstance().Shutdown();
 	SceneManager::GetInstance().ShutDown();
 	MaterialManager::GetInstance().ShutDown();
 	MeshManager::GetInstance().ShutDown();
