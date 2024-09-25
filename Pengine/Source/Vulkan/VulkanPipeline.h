@@ -88,7 +88,6 @@ namespace Pengine::Vk
 
 		VkPipeline m_GraphicsPipeline{};
 		VkPipelineLayout m_PipelineLayout{};
-		std::map<ShaderType, VkShaderModule> m_ShaderModulesByType;
 	};
 
 }

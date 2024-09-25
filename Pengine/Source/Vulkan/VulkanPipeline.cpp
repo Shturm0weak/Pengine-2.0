@@ -20,7 +20,7 @@ using namespace Vk;
 VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 	: Pipeline(pipelineCreateInfo)
 {
-
+	std::map<ShaderType, VkShaderModule> shaderModulesByType;
 	std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
 	shaderStages.reserve(pipelineCreateInfo.shaderFilepathsByType.size());
 	for (const auto& [type, filepath] : pipelineCreateInfo.shaderFilepathsByType)
@@ -29,7 +29,7 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 		m_ReflectShaderModulesByType[type] = Reflect(vertexSpv);
 		VkShaderModule shaderModule{};
 		CreateShaderModule(vertexSpv, &shaderModule);
-		m_ShaderModulesByType[type] = shaderModule;
+		shaderModulesByType[type] = shaderModule;
 		CreateDescriptorSetLayouts(m_ReflectShaderModulesByType[type]);
 
 		VkPipelineShaderStageCreateInfo& shaderStage = shaderStages.emplace_back();
@@ -128,16 +128,16 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 	{
 		FATAL_ERROR("Failed to create graphics pipeline!");
 	}
+
+	for (auto& [type, shaderModule] : shaderModulesByType)
+	{
+		vkDestroyShaderModule(device->GetDevice(), shaderModule, nullptr);
+	}
 }
 
 VulkanPipeline::~VulkanPipeline()
 {
 	device->WaitIdle();
-
-	for (auto& [type, shaderModule] : m_ShaderModulesByType)
-	{
-		vkDestroyShaderModule(device->GetDevice(), shaderModule, nullptr);
-	}
 
 	vkDestroyPipelineLayout(device->GetDevice(), m_PipelineLayout, nullptr);
 	vkDestroyPipeline(device->GetDevice(), m_GraphicsPipeline, nullptr);
@@ -446,6 +446,7 @@ std::string VulkanPipeline::CompileShaderModule(const std::string& filepath, con
 		shaderc::CompileOptions options{};
 		options.SetOptimizationLevel(shaderc_optimization_level_zero);
 		options.SetGenerateDebugInfo();
+		options.SetPreserveBindings(true);
 		options.SetIncluder(std::make_unique<ShaderIncluder>());
 
 		shaderc::SpvCompilationResult module =
