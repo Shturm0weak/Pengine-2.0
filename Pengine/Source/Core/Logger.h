@@ -4,6 +4,7 @@
 #include "ColoredOutput.h"
 
 #include <fstream>
+#include <mutex>
 
 namespace Pengine
 {
@@ -29,6 +30,7 @@ namespace Pengine
 		static Logger& GetInstance();
 
 		std::ofstream m_OutFile;
+		std::mutex m_Mutex;
 	};
 
 #define FATAL_ERROR(message) Logger::FatalError(std::string(message) + " At: " + __FILE__ + " " + std::to_string(__LINE__)); throw std::runtime_error(message)

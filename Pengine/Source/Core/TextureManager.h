@@ -1,7 +1,10 @@
 #pragma once
 
 #include "Core.h"
+
 #include "../Graphics/Texture.h"
+
+#include <mutex>
 
 namespace Pengine
 {
@@ -35,6 +38,8 @@ namespace Pengine
 		~TextureManager() = default;
 
 		std::unordered_map<std::filesystem::path, std::shared_ptr<Texture>, path_hash> m_TexturesByFilepath;
+
+		std::mutex m_Mutex;
 	};
 
 }

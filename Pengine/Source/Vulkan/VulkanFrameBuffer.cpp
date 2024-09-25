@@ -30,11 +30,6 @@ VulkanFrameBuffer::~VulkanFrameBuffer()
 
 void VulkanFrameBuffer::Resize(const glm::ivec2& size)
 {
-	if (vkDeviceWaitIdle(device->GetDevice()) != VK_SUCCESS)
-	{
-		Logger::Warning("Can't wait device idle to recreate frame buffer!");
-	}
-
 	Clear();
 
 	m_Size = size;
@@ -99,13 +94,13 @@ void VulkanFrameBuffer::Resize(const glm::ivec2& size)
 
 void VulkanFrameBuffer::Clear()
 {
-	vkDeviceWaitIdle(device->GetDevice());
+	device->WaitIdle();
 
 	for (const VkFramebuffer frameBuffer : m_FrameBuffers)
 	{
 		vkDestroyFramebuffer(device->GetDevice(), frameBuffer, nullptr);
 	}
-
+	
 	m_FrameBuffers.clear();
 	m_Attachments.clear();
 }

@@ -50,7 +50,8 @@ VulkanUniformLayout::VulkanUniformLayout(const std::vector<ShaderReflection::Ref
 
 VulkanUniformLayout::~VulkanUniformLayout()
 {
-	vkDeviceWaitIdle(device->GetDevice());
+	device->WaitIdle();
+	
 	vkDestroyDescriptorSetLayout(device->GetDevice(), m_DescriptorSetLayout, nullptr);
 }
 

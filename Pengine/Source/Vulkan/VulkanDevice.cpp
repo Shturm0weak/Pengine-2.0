@@ -511,6 +511,8 @@ VulkanDevice::VulkanDevice(GLFWwindow* window, const std::string& applicationNam
 
 VulkanDevice::~VulkanDevice()
 {
+	WaitIdle();
+
 	if (enableValidationLayers)
 	{
 		DestroyDebugUtilsMessengerEXT(m_Instance, m_DebugMessenger, nullptr);
@@ -576,6 +578,7 @@ void VulkanDevice::CreateBuffer(
 
 VkCommandBuffer VulkanDevice::BeginSingleTimeCommands() const
 {
+	m_Mutex.lock();
 	VkCommandBufferAllocateInfo allocInfo{};
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -607,6 +610,7 @@ void VulkanDevice::EndSingleTimeCommands(const VkCommandBuffer commandBuffer) co
 	vkQueueWaitIdle(m_GraphicsQueue);
 
 	vkFreeCommandBuffers(m_Device, m_CommandPool, 1, &commandBuffer);
+	m_Mutex.unlock();
 }
 
 void VulkanDevice::CopyBuffer(
@@ -901,4 +905,10 @@ void VulkanDevice::CommandEndLabel(const VkCommandBuffer commandBuffer) const
 	{
 		m_VkCmdEndDebugUtilsLabelEXT(commandBuffer);
 	}
+}
+
+void VulkanDevice::WaitIdle() const
+{
+	std::lock_guard lock(m_Mutex);
+	vkDeviceWaitIdle(m_Device);
 }

@@ -448,9 +448,9 @@ void RenderPassManager::CreateDeferred()
 			const int isEnabled = shadowSettings.isEnabled;
 			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.isEnabled", isEnabled);
 
-			if (shadowSettings.isEnabled)
+			CSMRenderer& csmRenderer = m_CSMRenderersByCSMSetting[renderInfo.scene->GetGraphicsSettings().GetFilepath().wstring()];
+			if (shadowSettings.isEnabled && !csmRenderer.GetLightSpaceMatrices().empty())
 			{
-				CSMRenderer& csmRenderer = m_CSMRenderersByCSMSetting[renderInfo.scene->GetGraphicsSettings().GetFilepath().wstring()];
 				std::vector<glm::vec4> shadowCascadeLevels;
 				for (const float& distance : csmRenderer.GetDistances())
 				{

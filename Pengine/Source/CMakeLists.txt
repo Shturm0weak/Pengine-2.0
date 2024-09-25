@@ -18,8 +18,9 @@ set(COMPONENTS_SOURCES
 source_group("Components" FILES ${COMPONENTS_SOURCES})
 
 set(CORE_SOURCES
-	Core/Asset.h
 	Core/Application.h
+	Core/Asset.h
+	Core/AsyncAssetLoader.cpp Core/AsyncAssetLoader.h
 	Core/BoundingBox.h
 	Core/ColoredOutput.h
 	Core/Core.h

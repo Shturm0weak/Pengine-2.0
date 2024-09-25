@@ -1,8 +1,10 @@
 #pragma once
 
 #include "Core.h"
+#include "Logger.h"
 
 #include <condition_variable>
+#include <future>
 #include <queue>
 #include <mutex>
 #include <map>
@@ -15,7 +17,7 @@ namespace Pengine
 
 	class PENGINE_API ThreadPool
 	{
-		using Task = std::function<void()>;
+		using Task = std::move_only_function<void()>;
 	public:
 
 		static ThreadPool& GetInstance();
@@ -25,13 +27,44 @@ namespace Pengine
 
 		void Initialize();
 
-		inline uint32_t GetThreadsAmount() { return m_Threads.size(); }
+		inline size_t GetThreadsAmount() { return m_Threads.size(); }
 
 		void Shutdown();
 
-		void Enqueue(Task task);
+		template<typename F, typename ...Args>
+		auto EnqueueSync(F&& function, Args&& ...args)
+		{
+			return std::async(std::launch::async, std::forward<F>(function), std::forward<Args>(args)...);
+		}
+
+		template<typename F, typename ...Args>
+		void EnqueueAsync(F&& function, Args&& ...args)
+		{
+			auto task = [
+				function = std::move(function),
+				...args = std::move(args)]()
+			{
+				try
+				{
+					function(args...);
+				}
+				catch (...)
+				{
+					std::rethrow_exception(std::current_exception());
+				}
+			};
+
+			{
+				std::unique_lock<std::mutex> lock(m_Mutex);
+				m_Tasks.emplace(std::move(task));
+			}
+
+			m_RunCondVar.notify_one();
+		}
 
 		bool IsMainThread() const { return m_MainId == std::this_thread::get_id(); }
+
+		void WaitIdle();
 
 	private:
 		ThreadPool() = default;
@@ -41,9 +74,10 @@ namespace Pengine
 		std::map<std::thread::id, bool> m_IsThreadBusy;
 		std::mutex m_Mutex;
 		std::thread::id m_MainId = std::this_thread::get_id();
-		std::condition_variable m_CondVar;
+		std::condition_variable m_RunCondVar;
+		std::condition_variable m_WaitCondVar;
 		std::queue<Task> m_Tasks;
-		int m_ThreadsAmount = 0;
+		size_t m_ThreadsAmount = 0;
 		bool m_IsStoped = false;
 	};
 

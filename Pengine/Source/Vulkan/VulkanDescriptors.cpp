@@ -55,7 +55,7 @@ VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(
 
 VulkanDescriptorSetLayout::~VulkanDescriptorSetLayout()
 {
-	vkDeviceWaitIdle(device->GetDevice());
+	device->WaitIdle();
 
 	vkDestroyDescriptorSetLayout(device->GetDevice(), m_DescriptorSetLayout, nullptr);
 }
@@ -108,7 +108,7 @@ VulkanDescriptorPool::VulkanDescriptorPool(
 
 VulkanDescriptorPool::~VulkanDescriptorPool()
 {
-	vkDeviceWaitIdle(device->GetDevice());
+	device->WaitIdle();
 
 	vkDestroyDescriptorPool(device->GetDevice(), m_DescriptorPool, nullptr);
 }
@@ -123,12 +123,15 @@ bool VulkanDescriptorPool::AllocateDescriptorSet(
 	allocInfo.pSetLayouts = &descriptorSetLayout;
 	allocInfo.descriptorSetCount = 1;
 
+	VulkanDevice::Lock lock;
+
 	// Might want to create a "DescriptorPoolManager" class that handles this case, and builds
 	// a new pool whenever an old pool fills up. But this is beyond our current scope
 	if (vkAllocateDescriptorSets(device->GetDevice(), &allocInfo, &descriptor) != VK_SUCCESS)
 	{
 		return false;
 	}
+
 	return true;
 }
 
@@ -148,12 +151,15 @@ bool VulkanDescriptorPool::AllocateDescriptorSets(
 	allocInfo.pSetLayouts = descriptorSetLayouts.data();
 	allocInfo.descriptorSetCount = descriptors.size();
 
+	VulkanDevice::Lock lock;
+
 	// Might want to create a "DescriptorPoolManager" class that handles this case, and builds
 	// a new pool whenever an old pool fills up. But this is beyond our current scope
 	if (vkAllocateDescriptorSets(device->GetDevice(), &allocInfo, descriptors.data()) != VK_SUCCESS)
 	{
 		return false;
 	}
+
 	return true;
 }
 

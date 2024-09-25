@@ -132,7 +132,7 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 
 VulkanPipeline::~VulkanPipeline()
 {
-	vkDeviceWaitIdle(device->GetDevice());
+	device->WaitIdle();
 
 	for (auto& [type, shaderModule] : m_ShaderModulesByType)
 	{

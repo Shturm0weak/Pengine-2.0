@@ -37,6 +37,8 @@ namespace Pengine::Vk
 
 	void VulkanSamplerManager::ShutDown()
 	{
+		device->WaitIdle();
+
 		for (auto& samplerInfo : m_SamplerInfos)
 		{
 			vkDestroySampler(device->GetDevice(), samplerInfo.sampler, nullptr);

@@ -17,7 +17,10 @@ TextureManager& TextureManager::GetInstance()
 std::shared_ptr<Texture> TextureManager::Create(const Texture::CreateInfo& createInfo)
 {
 	std::shared_ptr<Texture> texture = Texture::Create(createInfo);
+
+	std::lock_guard lock(m_Mutex);
 	m_TexturesByFilepath[createInfo.filepath] = texture;
+
 	return texture;
 }
 
@@ -32,7 +35,9 @@ std::shared_ptr<Texture> TextureManager::Load(const std::filesystem::path& filep
 		texture = Texture::Load(filepath);
 		if (texture)
 		{
+			std::lock_guard lock(m_Mutex);
 			m_TexturesByFilepath[filepath] = texture;
+
 			return texture;
 		}
 
@@ -76,6 +81,7 @@ std::shared_ptr<Texture> TextureManager::GetWhite() const
 
 void TextureManager::Delete(const std::filesystem::path& filepath)
 {
+	std::lock_guard lock(m_Mutex);
 	m_TexturesByFilepath.erase(filepath);
 }
 

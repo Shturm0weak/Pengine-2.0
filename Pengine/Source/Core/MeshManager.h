@@ -4,6 +4,8 @@
 
 #include "../Graphics/Mesh.h"
 
+#include <mutex>
+
 namespace Pengine
 {
 
@@ -34,6 +36,8 @@ namespace Pengine
 		~MeshManager() = default;
 
 		std::unordered_map<std::filesystem::path, std::shared_ptr<Mesh>, path_hash> m_MeshesByFilepath;
+
+		std::mutex m_MutexMesh;
 	};
 
 }

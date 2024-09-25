@@ -1,5 +1,6 @@
 #include "EntryPoint.h"
 
+#include "AsyncAssetLoader.h"
 #include "Input.h"
 #include "MaterialManager.h"
 #include "MeshManager.h"
@@ -23,7 +24,7 @@ using namespace Pengine;
 EntryPoint::EntryPoint(Application* application)
 	: m_Application(application)
 {
-	const auto [configGraphicsAPI] = Serializer::DeserializeEngineConfig("Configs/Engine.yaml");
+	const auto [configGraphicsAPI] = Serializer::DeserializeEngineConfig("Configs\\Engine.yaml");
 	graphicsAPI = configGraphicsAPI;
 }
 
@@ -43,7 +44,7 @@ void EntryPoint::Run() const
 
 	Serializer::GenerateFilesUUID(std::filesystem::current_path());
 
-	TextureManager::GetInstance().LoadFromFolder("Editor/Images");
+	TextureManager::GetInstance().LoadFromFolder("Editor\\Images");
 
 	ThreadPool::GetInstance().Initialize();
 
@@ -52,6 +53,7 @@ void EntryPoint::Run() const
 	while (mainWindow->IsRunning())
 	{
 		Time::GetInstance().Update();
+		AsyncAssetLoader::GetInstance().Update();
 
 		for (const auto& window : WindowManager::GetInstance().GetWindows())
 		{
