@@ -60,7 +60,7 @@ namespace Pengine::Vk
 
 		GLFWwindow* m_Window = nullptr;
 		ImGui_ImplVulkanH_Window m_VulkanWindow{};
-		VkDescriptorPool g_DescriptorPool = VK_NULL_HANDLE;
+		VkDescriptorPool m_ImGuiDescriptorPool = VK_NULL_HANDLE;
 	};
 
 }

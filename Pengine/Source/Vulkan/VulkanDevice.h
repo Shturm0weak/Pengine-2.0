@@ -7,8 +7,9 @@
 
 #include <vma/vk_mem_alloc.h>
 
-#include <vector>
+#include <deque>
 #include <mutex>
+#include <vector>
 
 namespace Pengine::Vk
 {
@@ -134,6 +135,10 @@ namespace Pengine::Vk
 
 		void WaitIdle() const;
 
+		void DeleteResource(std::function<void()>&& callback);
+
+		void FlushDeletionQueue(bool immediate = false);
+
 	private:
 		void CreateInstance(const std::string& applicationName);
 
@@ -191,20 +196,22 @@ namespace Pengine::Vk
 
 		mutable std::mutex m_Mutex;
 
-		public:
-			class Lock
-			{
-			public:
-				Lock()
-				{
-					device->m_Mutex.lock();
-				}
+		std::unordered_map<size_t, std::deque<std::function<void()>>> m_DeletionQueue;
 
-				~Lock()
-				{
-					device->m_Mutex.unlock();
-				}
-			};
+	public:
+		class Lock
+		{
+		public:
+			Lock()
+			{
+				device->m_Mutex.lock();
+			}
+
+			~Lock()
+			{
+				device->m_Mutex.unlock();
+			}
+		};
 	};
 
 }

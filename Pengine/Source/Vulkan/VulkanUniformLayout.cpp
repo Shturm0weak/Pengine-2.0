@@ -50,9 +50,10 @@ VulkanUniformLayout::VulkanUniformLayout(const std::vector<ShaderReflection::Ref
 
 VulkanUniformLayout::~VulkanUniformLayout()
 {
-	device->WaitIdle();
-	
-	vkDestroyDescriptorSetLayout(device->GetDevice(), m_DescriptorSetLayout, nullptr);
+	device->DeleteResource([descriptorSetLayout = m_DescriptorSetLayout]()
+	{
+		vkDestroyDescriptorSetLayout(device->GetDevice(), descriptorSetLayout, nullptr);
+	});
 }
 
 VkDescriptorType VulkanUniformLayout::ConvertDescriptorType(const ShaderReflection::Type type)

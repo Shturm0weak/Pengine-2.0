@@ -94,11 +94,12 @@ void VulkanFrameBuffer::Resize(const glm::ivec2& size)
 
 void VulkanFrameBuffer::Clear()
 {
-	device->WaitIdle();
-
 	for (const VkFramebuffer frameBuffer : m_FrameBuffers)
 	{
-		vkDestroyFramebuffer(device->GetDevice(), frameBuffer, nullptr);
+		device->DeleteResource([frameBuffer]()
+		{
+			vkDestroyFramebuffer(device->GetDevice(), frameBuffer, nullptr);
+		});
 	}
 	
 	m_FrameBuffers.clear();

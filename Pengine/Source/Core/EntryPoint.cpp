@@ -33,6 +33,7 @@ void EntryPoint::Run() const
 	EventSystem& eventSystem = EventSystem::GetInstance();
 	const std::shared_ptr<Window> mainWindow = WindowManager::GetInstance().Create("Pengine",
 		{ 800, 800 });
+
 	WindowManager::GetInstance().SetCurrentWindow(mainWindow);
 
 #ifndef NO_EDITOR
@@ -106,6 +107,9 @@ void EntryPoint::Run() const
 #endif
 			window->ImGuiEnd();
 
+			drawCallsCount = 0;
+			vertexCount = 0;
+
 			if (void* frame = window->BeginFrame())
 			{
 				for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
@@ -141,6 +145,8 @@ void EntryPoint::Run() const
 
 			eventSystem.ProcessEvents();
 		}
+
+		++currentFrame;
 	}
 
 	mainWindow->ShutDownPrepare();

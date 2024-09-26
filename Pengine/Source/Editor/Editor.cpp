@@ -57,8 +57,6 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	ImGui::Text("FPS: %.0f", 1.0f / static_cast<float>(Time::GetDeltaTime()));
 	ImGui::Text("DrawCalls: %d", drawCallsCount);
 	ImGui::Text("Triangles: %d", static_cast<int>(vertexCount));
-	drawCallsCount = 0;
-	vertexCount = 0;
 	ImGui::Text("Meshes: %d", static_cast<int>(MeshManager::GetInstance().GetMeshes().size()));
 	ImGui::Text("BaseMaterials: %d", static_cast<int>(MaterialManager::GetInstance().GetBaseMaterials().size()));
 	ImGui::Text("Materials: %d", static_cast<int>(MaterialManager::GetInstance().GetMaterials().size()));

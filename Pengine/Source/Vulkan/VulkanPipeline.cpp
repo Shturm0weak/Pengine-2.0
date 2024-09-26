@@ -137,10 +137,11 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 
 VulkanPipeline::~VulkanPipeline()
 {
-	device->WaitIdle();
-
-	vkDestroyPipelineLayout(device->GetDevice(), m_PipelineLayout, nullptr);
-	vkDestroyPipeline(device->GetDevice(), m_GraphicsPipeline, nullptr);
+	device->DeleteResource([pipelineLayout = m_PipelineLayout, graphicsPipeline = m_GraphicsPipeline]()
+	{
+		vkDestroyPipelineLayout(device->GetDevice(), pipelineLayout, nullptr);
+		vkDestroyPipeline(device->GetDevice(), graphicsPipeline, nullptr);
+	});
 }
 
 VkCullModeFlagBits VulkanPipeline::ConvertCullMode(const CullMode cullMode)

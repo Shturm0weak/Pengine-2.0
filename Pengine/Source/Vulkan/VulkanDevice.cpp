@@ -3,6 +3,8 @@
 #include "../Core/Window.h"
 #include "../Core/Logger.h"
 
+#include "VulkanDescriptors.h"
+
 #define VMA_IMPLEMENTATION
 #include <vma/vk_mem_alloc.h>
 
@@ -671,7 +673,7 @@ void VulkanDevice::CreateImage(
 {
 	VmaAllocationCreateInfo allocationCreateInfo{};
 	allocationCreateInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
-
+	
 	if (vmaCreateImage(
 		m_VmaAllocator,
 		&imageInfo,
@@ -911,4 +913,36 @@ void VulkanDevice::WaitIdle() const
 {
 	std::lock_guard lock(m_Mutex);
 	vkDeviceWaitIdle(m_Device);
+}
+
+void VulkanDevice::DeleteResource(std::function<void()>&& callback)
+{
+	Lock lock;
+	m_DeletionQueue[currentFrame].emplace_back(std::move(callback));
+}
+
+void VulkanDevice::FlushDeletionQueue(bool immediate)
+{
+	std::vector<size_t> queuesToDelete;
+	for (auto& [frame, queue] : m_DeletionQueue)
+	{
+		if (!immediate && currentFrame <= frame + swapChainImageCount * 2)
+		{
+			continue;
+		}
+
+		while (!queue.empty())
+		{
+			auto callback = std::move(queue.front());
+			queue.pop_front();
+			callback();
+		}
+
+		queuesToDelete.emplace_back(frame);
+	}
+
+	for (const auto& frame : queuesToDelete)
+	{
+		m_DeletionQueue.erase(frame);
+	}
 }

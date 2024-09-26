@@ -103,13 +103,18 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 
 VulkanTexture::~VulkanTexture()
 {
-	device->WaitIdle();
+	device->DeleteResource([
+		image = m_Image,
+		view = m_View,
+		descriptorSet = m_DescriptorSet,
+		vmaAllocation = m_VmaAllocation]()
+	{
+			vkDestroyImageView(device->GetDevice(), view, nullptr);
+			vmaDestroyImage(device->GetVmaAllocator(), image, vmaAllocation);
 
-	vkDestroyImageView(device->GetDevice(), m_View, nullptr);
-	vmaDestroyImage(device->GetVmaAllocator(), m_Image, m_VmaAllocation);
-
-	std::vector<VkDescriptorSet> descriptorSets = { m_DescriptorSet };
-	descriptorPool->FreeDescriptors(descriptorSets);
+			std::vector<VkDescriptorSet> descriptorSets = { descriptorSet };
+			descriptorPool->FreeDescriptors(descriptorSets);
+	});
 }
 
 VkDescriptorImageInfo VulkanTexture::GetDescriptorInfo()

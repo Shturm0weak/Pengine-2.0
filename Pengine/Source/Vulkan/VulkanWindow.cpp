@@ -51,13 +51,20 @@ VulkanWindow::VulkanWindow(const std::string& name, const glm::ivec2& size)
 		}
 	});
 
-	device = std::make_unique<VulkanDevice>(m_Window, name);
-	descriptorPool = VulkanDescriptorPool::Builder()
-		.SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT)
-		.SetMaxSets(1000 * 2)
-		.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000)
-		.AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000)
-		.Build();
+	if (!device)
+	{
+		device = std::make_unique<VulkanDevice>(m_Window, name);
+	}
+
+	if (!descriptorPool)
+	{
+		descriptorPool = VulkanDescriptorPool::Builder()
+			.SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT)
+			.SetMaxSets(1000 * 2)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000)
+			.Build();
+	}
 
 	InitializeImGui();
 
@@ -107,9 +114,12 @@ VulkanWindow::~VulkanWindow()
 	
 	VulkanSamplerManager::GetInstance().ShutDown();
 
-	vkDestroyDescriptorPool(device->GetDevice(), g_DescriptorPool, nullptr);
+	vkDestroyDescriptorPool(device->GetDevice(), m_ImGuiDescriptorPool, nullptr);
+
+	device->FlushDeletionQueue(true);
 	descriptorPool.reset();
 	device.reset();
+	
 	glfwDestroyWindow(m_Window);
 	glfwTerminate();
 }
@@ -342,6 +352,8 @@ void VulkanWindow::EndFrame(void* frame)
 	}
 
 	m_VulkanWindow.SemaphoreIndex = (m_VulkanWindow.SemaphoreIndex + 1) % m_VulkanWindow.SemaphoreCount;
+
+	device->FlushDeletionQueue();
 }
 
 void VulkanWindow::ImGuiRenderPass(void* frame)
@@ -434,7 +446,7 @@ void VulkanWindow::InitializeImGui()
 		poolInfo.maxSets = 1000 * poolSizes.size();
 		poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 		poolInfo.pPoolSizes = poolSizes.data();
-		if (vkCreateDescriptorPool(device->GetDevice(), &poolInfo, nullptr, &g_DescriptorPool) !=
+		if (vkCreateDescriptorPool(device->GetDevice(), &poolInfo, nullptr, &m_ImGuiDescriptorPool) !=
 			VK_SUCCESS)
 		{
 			FATAL_ERROR("Failed to create descriptor pool for ImGui!");
@@ -500,7 +512,7 @@ void VulkanWindow::InitializeImGui()
 	initializeInfo.Device = device->GetDevice();
 	initializeInfo.QueueFamily = device->GetGraphicsFamilyIndex();
 	initializeInfo.Queue = device->GetGraphicsQueue();
-	initializeInfo.DescriptorPool = g_DescriptorPool;
+	initializeInfo.DescriptorPool = m_ImGuiDescriptorPool;
 	initializeInfo.MinImageCount = imageCount;
 	initializeInfo.ImageCount = m_VulkanWindow.ImageCount;
 	initializeInfo.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
@@ -512,6 +524,8 @@ void VulkanWindow::InitializeImGui()
 
 	// Upload Fonts
 	{
+		VulkanDevice::Lock lock;
+
 		// Use any command queue
 		const VkCommandPool commandPool = m_VulkanWindow.Frames[m_VulkanWindow.FrameIndex].CommandPool;
 		const VkCommandBuffer commandBuffer = m_VulkanWindow.Frames[m_VulkanWindow.FrameIndex].CommandBuffer;
@@ -544,8 +558,6 @@ void VulkanWindow::InitializeImGui()
 		{
 			FATAL_ERROR("Failed to submit queue!");
 		}
-
-		device->WaitIdle();
 
 		ImGui_ImplVulkan_DestroyFontsTexture();
 	}

@@ -161,11 +161,12 @@ VulkanBuffer::VulkanBuffer(
 
 VulkanBuffer::~VulkanBuffer()
 {
-	device->WaitIdle();
-
-	for (BufferData& bufferData : m_BufferDatas)
+	for (BufferData bufferData : m_BufferDatas)
 	{
-		vmaDestroyBuffer(device->GetVmaAllocator(), bufferData.m_Buffer, bufferData.m_VmaAllocation);
+		device->DeleteResource([bufferData]()
+		{
+			vmaDestroyBuffer(device->GetVmaAllocator(), bufferData.m_Buffer, bufferData.m_VmaAllocation);
+		});
 	}
 
 	if (m_Data)

@@ -32,9 +32,10 @@ VulkanUniformWriter::VulkanUniformWriter(std::shared_ptr<UniformLayout> uniformL
 
 VulkanUniformWriter::~VulkanUniformWriter()
 {
-	device->WaitIdle();
-
-	descriptorPool->FreeDescriptors(m_DescriptorSets);
+	device->DeleteResource([descriptorSets = m_DescriptorSets]()
+	{
+		descriptorPool->FreeDescriptors(descriptorSets);
+	});
 }
 
 void VulkanUniformWriter::WriteBuffer(

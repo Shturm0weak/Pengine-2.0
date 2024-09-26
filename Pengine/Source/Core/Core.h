@@ -92,6 +92,7 @@ namespace Pengine
 	// TODO: Maybe move this somewhere!
 	inline int drawCallsCount;
 	inline size_t vertexCount;
+	inline size_t currentFrame = 0;
 
 	namespace Vk
 	{

@@ -55,9 +55,10 @@ VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(
 
 VulkanDescriptorSetLayout::~VulkanDescriptorSetLayout()
 {
-	device->WaitIdle();
-
-	vkDestroyDescriptorSetLayout(device->GetDevice(), m_DescriptorSetLayout, nullptr);
+	device->DeleteResource([descriptorSetLayout = m_DescriptorSetLayout]()
+	{
+		vkDestroyDescriptorSetLayout(device->GetDevice(), descriptorSetLayout, nullptr);
+	});
 }
 
 VulkanDescriptorPool::Builder & VulkanDescriptorPool::Builder::AddPoolSize(
@@ -108,8 +109,6 @@ VulkanDescriptorPool::VulkanDescriptorPool(
 
 VulkanDescriptorPool::~VulkanDescriptorPool()
 {
-	device->WaitIdle();
-
 	vkDestroyDescriptorPool(device->GetDevice(), m_DescriptorPool, nullptr);
 }
 
