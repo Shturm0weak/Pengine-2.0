@@ -171,3 +171,108 @@ std::map<float, std::shared_ptr<Entity>> Raycast::RaycastScene(
 
 	return hits;
 }
+
+Raycast::OutCode Raycast::ComputeOutCode(
+	const glm::vec2& point,
+	const glm::vec2& min,
+	const glm::vec2& max)
+{
+	constexpr int INSIDE = 0b0000;
+	constexpr int LEFT = 0b0001;
+	constexpr int RIGHT = 0b0010;
+	constexpr int BOTTOM = 0b0100;
+	constexpr int TOP = 0b1000;
+
+	OutCode code = INSIDE;
+
+	if (point.x < min.x)
+		code |= LEFT;
+	else if (point.x > max.x)
+		code |= RIGHT;
+	if (point.y < min.y)
+		code |= BOTTOM;
+	else if (point.y > max.y)
+		code |= TOP;
+
+	return code;
+}
+
+bool Raycast::CohenSutherlandLineClip(
+	glm::vec2 start,
+	glm::vec2 end,
+	const glm::vec2& min,
+	const glm::vec2& max)
+{
+	constexpr int INSIDE = 0b0000;
+	constexpr int LEFT = 0b0001;
+	constexpr int RIGHT = 0b0010;
+	constexpr int BOTTOM = 0b0100;
+	constexpr int TOP = 0b1000;
+
+	// Compute outcodes for start, end, and whatever point lies outside the clip rectangle.
+	OutCode outcode0 = ComputeOutCode(start, min, max);
+	OutCode outcode1 = ComputeOutCode(end, min, max);
+	bool accept = false;
+
+	while (true) {
+		if (!(outcode0 | outcode1)) {
+			// Bitwise OR is 0: both points inside window, trivially accept and exit loop.
+			accept = true;
+			break;
+		}
+		else if (outcode0 & outcode1) {
+			// Bitwise AND is not 0: both points share an outside zone (LEFT, RIGHT, TOP,
+			// or BOTTOM), so both must be outside window, exit loop (accept is false).
+			break;
+		}
+		else {
+			// Failed both tests, so calculate the line segment to clip
+			// from an outside point to an intersection with clip edge.
+			double x, y;
+
+			// At least one endpoint is outside the clip rectangle, pick it.
+			OutCode outcodeOut = outcode1 > outcode0 ? outcode1 : outcode0;
+
+			// Now find the intersection point.
+			// Use formulas:
+			//   slope = (y1 - y0) / (x1 - x0)
+			//   x = x0 + (1 / slope) * (ym - y0), where ym is ymin or ymax
+			//   y = y0 + slope * (xm - x0), where xm is xmin or xmax
+			// No need to worry about divide-by-zero because, in each case, the
+			// outcode bit being tested guarantees the denominator is non-zero.
+			if (outcodeOut & TOP)
+			{
+				x = start.x + (end.x - start.x) * (max.y - start.y) / (end.y - start.y);
+				y = max.y;
+			}
+			else if (outcodeOut & BOTTOM)
+			{
+				x = start.x + (end.x - start.x) * (min.y - start.y) / (end.y - start.y);
+				y = min.y;
+			}
+			else if (outcodeOut & RIGHT)
+			{
+				y = start.y + (end.y - start.y) * (max.x - start.x) / (end.x - start.x);
+				x = max.x;
+			}
+			else if (outcodeOut & LEFT)
+			{
+				y = start.y + (end.y - start.y) * (min.x - start.x) / (end.x - start.x);
+				x = min.x;
+			}
+
+			// Now we move outside point to intersection point to clip and get ready for next pass.
+			if (outcodeOut == outcode0) {
+				start.x = x;
+				start.y = y;
+				outcode0 = ComputeOutCode(start, min, max);
+			}
+			else {
+				end.x = x;
+				end.y = y;
+				outcode1 = ComputeOutCode(end, min, max);
+			}
+		}
+	}
+	return accept;
+}

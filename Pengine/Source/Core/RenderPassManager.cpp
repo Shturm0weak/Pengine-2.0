@@ -5,6 +5,7 @@
 #include "MeshManager.h"
 #include "SceneManager.h"
 #include "Time.h"
+#include "FrustumCulling.h"
 
 #include "../Components/Camera.h"
 #include "../Components/DirectionalLight.h"
@@ -197,10 +198,17 @@ void RenderPassManager::CreateGBuffer()
 				continue;
 			}
 
+			const glm::mat4& transformMat4 = transform.GetTransform();
+			const BoundingBox& box = r3d.mesh->GetBoundingBox();
+			bool isInFrustum = FrustumCulling::CullBoundingBox(renderInfo.projection * camera.GetViewMat4(), transformMat4, box.min, box.max, camera.GetZNear());
+
+			if (!isInFrustum)
+			{
+				continue;
+			}
+
 			if (scene->GetSettings().m_DrawBoundingBoxes)
 			{
-				const glm::mat4& transformMat4 = transform.GetTransform();
-				const BoundingBox& box = r3d.mesh->GetBoundingBox();
 				const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
 
 				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
@@ -793,6 +801,23 @@ void RenderPassManager::CreateTransparent()
 				continue;
 			}
 
+			const Camera& camera = renderInfo.camera->GetComponent<Camera>();
+			const glm::mat4& transformMat4 = transform.GetTransform();
+			const BoundingBox& box = r3d.mesh->GetBoundingBox();
+			bool isInFrustum = FrustumCulling::CullBoundingBox(renderInfo.projection * camera.GetViewMat4(), transformMat4, box.min, box.max, camera.GetZNear());
+
+			if (!isInFrustum)
+			{
+				continue;
+			}
+
+			if (scene->GetSettings().m_DrawBoundingBoxes)
+			{
+				const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
+
+				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
+			}
+
 			RenderData renderData{};
 			renderData.r3d = r3d;
 			renderData.position = transform.GetPosition();
@@ -847,7 +872,6 @@ void RenderPassManager::CreateTransparent()
 			data.transform = renderData.transformMat4;
 			data.inverseTransform = glm::transpose(renderData.inversetransformMat3);
 			instanceDatas.emplace_back(data);
-
 
 			std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(
 				pipeline,

@@ -28,6 +28,7 @@ set(CORE_SOURCES
 	Core/Entity.cpp Core/Entity.h
 	Core/EntryPoint.cpp Core/EntryPoint.h
 	Core/FileFormatNames.h
+	Core/FrustumCulling.cpp Core/FrustumCulling.h
 	Core/GraphicsSettings.h
 	Core/Input.cpp Core/Input.h
 	Core/KeyCode.h
