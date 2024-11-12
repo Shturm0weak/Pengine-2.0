@@ -13,6 +13,4 @@ void main()
     vec4 color = texture(SkyBox, uv);
     color.rgb = pow(color.rgb, vec3(2.2 / 1.0));
     outAlbedo = color;
-
-    gl_FragDepth = 1.0f;
 }
