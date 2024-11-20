@@ -1,5 +1,5 @@
 # **Pengine**
-A simple 3D game engine.
+A simple 3D game engine written in C++ and Vulkan.
 
 ## **Platforms:**
 * Windows
@@ -44,8 +44,30 @@ cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 * Open Pengine and set up `SandBox` as a startup project.
 * Try to build and run.
 
+## **Graphics Features**
+* Deferred Instanced Rendering
+* Basic PBR
+* Directional Lights
+* Point Lights
+* Normal Maps
+* Cascade Shadow Maps
+* SSAO
+* Forward Order Dependent Transparency Rendering
+* Multiple Viewport Rendering
+* Assync Resource Loader
+* Scriptable Materials
+
+## **Used Libraries**
+* GLFW
+* GLM
+* Vulkan
+* Entt
+* Assimp
+* ImGui
+* Yaml-cpp
+
 ## **Screenshots**
-![image](https://github.com/user-attachments/assets/a5c01499-cf92-4e7b-8a19-e8e2a73d1be0)
-![image](https://github.com/user-attachments/assets/2380599f-25ae-437c-baef-b907dfb2b8fe)
-![image](https://github.com/user-attachments/assets/5e81cd83-4c3c-4351-af08-d02be4917f32)
+![image](https://github.com/user-attachments/assets/f1cff851-3218-4c87-ab61-abc023539da0)
+![image](https://github.com/user-attachments/assets/9f742be0-1fba-4466-9e50-87294011cba3)
+![image](https://github.com/user-attachments/assets/37c40e01-0122-4a9b-b115-827b19bddbfc)
 
