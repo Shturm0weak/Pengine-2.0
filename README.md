@@ -52,6 +52,7 @@ cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 * Normal Maps
 * Cascade Shadow Maps
 * SSAO
+* Atmospheric Scattering
 * Forward Order Dependent Transparency Rendering
 * Multiple Viewport Rendering
 * Assync Resource Loader
