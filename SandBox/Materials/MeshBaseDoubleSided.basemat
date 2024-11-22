@@ -87,9 +87,6 @@ Basemat:
           Names:
             - positionA
             - uvA
-            - normalA
-            - tangentA
-            - bitangentA
         - Binding: 1
           InputRate: Instance
           Names:

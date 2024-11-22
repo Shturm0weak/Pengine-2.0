@@ -17,9 +17,5 @@ Basemat:
           InputRate: Vertex
           Names:
             - positionA
-            - uvA
-            - normalA
-            - tangentA
-            - bitangentA
       ColorBlendStates:
         - BlendEnabled: false

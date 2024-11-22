@@ -1089,7 +1089,7 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 
 	Logger::Log("Mesh:" + filepath.string() + " has been deserialized!", GREEN);
 
-	return std::make_shared<Mesh>(meshName, filepath, vertices, indices);
+	return std::make_shared<Mesh>(meshName, filepath, sizeof(Vertex), vertices, indices);
 }
 
 void Serializer::SerializeShaderCache(const std::filesystem::path& filepath, const std::string& code)
@@ -1657,7 +1657,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 		}
 	}
 
-	std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(meshName, meshFilepath, vertices, indices);
+	std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(meshName, meshFilepath, sizeof(Vertex), vertices, indices);
 	SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
 
 	return mesh;
