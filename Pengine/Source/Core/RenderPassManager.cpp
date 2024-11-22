@@ -295,7 +295,7 @@ void RenderPassManager::CreateGBuffer()
 
 		// Render SkyBox.
 		{
-			std::shared_ptr<Mesh> cubeMesh = MeshManager::GetInstance().LoadMesh("Meshes\\Cube.mesh");
+			std::shared_ptr<Mesh> cubeMesh = MeshManager::GetInstance().LoadMesh("SkyBoxCube");
 			std::shared_ptr<BaseMaterial> skyBoxBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SkyBox.basemat");
 
 			const std::shared_ptr<Pipeline> pipeline = skyBoxBaseMaterial->GetPipeline(renderPassName);
@@ -354,7 +354,7 @@ void RenderPassManager::CreateDeferred()
 
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes\\Plane.mesh");
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 		if (!plane)
 		{
 			return;
@@ -651,7 +651,7 @@ void RenderPassManager::CreateAtmosphere()
 			"camera.zFar",
 			zFar);
 
-		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes\\Plane.mesh");
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().GetMesh("FullScreenQuad");
 		if (!plane)
 		{
 			return;
@@ -938,7 +938,7 @@ void RenderPassManager::CreateFinal()
 
 	createInfo.renderCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes/Plane.mesh");
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 		if (!plane)
 		{
 			return;
@@ -1040,7 +1040,7 @@ void RenderPassManager::CreateSSAO()
 			return;
 		}
 
-		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes\\Plane.mesh");
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 		if (!plane)
 		{
 			renderInfo.renderer->EndRenderPass(submitInfo);
@@ -1178,7 +1178,7 @@ void RenderPassManager::CreateSSAOBlur()
 			return;
 		}
 
-		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("Meshes\\Plane.mesh");
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 		if (!plane)
 		{
 			renderInfo.renderer->EndRenderPass(submitInfo);
@@ -1320,7 +1320,7 @@ void RenderPassManager::CreateCSM()
 				continue;
 			}
 
-			if (!r3d.mesh || !r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
+			if (!r3d.mesh || !r3d.mesh->GetVertexBufferForShadows() || !r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
 			{
 				continue;
 			}
@@ -1467,7 +1467,7 @@ void RenderPassManager::CreateCSM()
 					}
 
 					renderInfo.renderer->Render(
-						mesh->GetVertexBuffer(),
+						mesh->GetVertexBufferForShadows(),
 						mesh->GetIndexBuffer(),
 						mesh->GetIndexCount(),
 						pipeline,

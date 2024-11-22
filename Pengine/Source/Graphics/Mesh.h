@@ -15,12 +15,15 @@ namespace Pengine
 		Mesh(
 			const std::string& name,
 			const std::filesystem::path& filepath,
+			const size_t vertexSize,
 			std::vector<float>& vertices,
 			std::vector<uint32_t>& indices);
 		Mesh(const Mesh&) = delete;
 		Mesh(Mesh&&) = delete;
 		Mesh& operator=(const Mesh&) = delete;
 		Mesh& operator=(Mesh&&) = delete;
+
+		[[nodiscard]] std::shared_ptr<Buffer> GetVertexBufferForShadows() const { return m_VerticesForShadows; }
 
 		[[nodiscard]] std::shared_ptr<Buffer> GetVertices() const { return m_Vertices; }
 
@@ -41,6 +44,10 @@ namespace Pengine
 		[[nodiscard]] const BoundingBox& GetBoundingBox() const { return m_BoundingBox; }
 
 	protected:
+
+		// Note: Temporary solution.
+		std::shared_ptr<Buffer> m_VerticesForShadows;
+
 		std::shared_ptr<Buffer> m_Vertices;
 		std::shared_ptr<Buffer> m_Indices;
 		std::vector<float> m_RawVertices;

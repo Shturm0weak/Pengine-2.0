@@ -14,4 +14,10 @@ namespace Pengine
 		glm::vec3 bitangent;
 	};
 
+	struct PENGINE_API VertexForShadows
+	{
+		glm::vec3 position;
+		glm::vec2 uv;
+	};
+
 }

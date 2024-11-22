@@ -20,6 +20,7 @@ namespace Pengine
 		std::shared_ptr<Mesh> CreateMesh(
 			const std::string& name,
 			const std::filesystem::path& filepath,
+			const size_t vertexSize,
 			std::vector<float>& vertices,
 			std::vector<uint32_t>& indices);
 
