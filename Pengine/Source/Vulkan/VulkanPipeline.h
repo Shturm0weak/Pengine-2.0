@@ -6,6 +6,8 @@
 #include <vulkan/vulkan.h>
 #include <SPIRV-Reflect/spirv_reflect.h>
 
+#include <shaderc/shaderc.hpp>
+
 namespace Pengine::Vk
 {
 
@@ -72,9 +74,14 @@ namespace Pengine::Vk
 
 		static void CreateShaderModule(const std::string& code, VkShaderModule* shaderModule);
 
-		std::string CompileShaderModule(const std::string& filepath, ShaderType type);
+		static std::string CompileShaderModule(
+			const std::string& filepath,
+			shaderc::CompileOptions options,
+			ShaderType type,
+			bool useCache = true,
+			bool useLog = true);
 
-		static ShaderReflection::ReflectShaderModule Reflect(const std::string& spv);
+		static ShaderReflection::ReflectShaderModule Reflect(const std::string& filepath, ShaderType type);
 
 		static void ReflectDescriptorSets(
 			SpvReflectShaderModule& reflectModule,

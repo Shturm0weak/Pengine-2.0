@@ -8,6 +8,7 @@ SandBox/Log.txt
 
 # Shader Cache
 *.spv
+*.refl
 
 # User settings
 .clang-tidy

@@ -67,6 +67,11 @@ namespace Pengine::FileFormats
 		return ".spv";
 	}
 
+	inline const char* Refl()
+	{
+		return ".refl";
+	}
+
 	inline const char* Prefab()
 	{
 		return ".prefab";
