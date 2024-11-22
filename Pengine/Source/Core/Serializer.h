@@ -45,6 +45,10 @@ namespace Pengine
 
 		static std::string DeserializeShaderCache(const std::filesystem::path& filepath);
 
+		static void SerializeShaderModuleReflection(const std::filesystem::path& filepath, const ShaderReflection::ReflectShaderModule& reflectShaderModule);
+
+		static std::optional<ShaderReflection::ReflectShaderModule> DeserializeShaderModuleReflection(const std::filesystem::path& filepath);
+
 		static std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> LoadIntermediate(const std::filesystem::path& filepath);
 
 		static std::shared_ptr<Mesh> GenerateMesh(aiMesh* aiMesh, const std::filesystem::path& directory);

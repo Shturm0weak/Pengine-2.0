@@ -12,8 +12,6 @@
 #include "../Core/Serializer.h"
 #include "../Utils/Utils.h"
 
-#include <shaderc/shaderc.hpp>
-
 using namespace Pengine;
 using namespace Vk;
 
@@ -23,10 +21,15 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 	std::map<ShaderType, VkShaderModule> shaderModulesByType;
 	std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
 	shaderStages.reserve(pipelineCreateInfo.shaderFilepathsByType.size());
+
+	shaderc::CompileOptions options{};
+	options.SetOptimizationLevel(shaderc_optimization_level_performance);
+	options.SetIncluder(std::make_unique<ShaderIncluder>());
+
 	for (const auto& [type, filepath] : pipelineCreateInfo.shaderFilepathsByType)
 	{
-		const std::string vertexSpv = CompileShaderModule(filepath, type);
-		m_ReflectShaderModulesByType[type] = Reflect(vertexSpv);
+		const std::string vertexSpv = CompileShaderModule(filepath, options, type);
+		m_ReflectShaderModulesByType[type] = Reflect(filepath, type);
 		VkShaderModule shaderModule{};
 		CreateShaderModule(vertexSpv, &shaderModule);
 		shaderModulesByType[type] = shaderModule;
@@ -419,7 +422,12 @@ void VulkanPipeline::CreateShaderModule(
 	}
 }
 
-std::string VulkanPipeline::CompileShaderModule(const std::string& filepath, const ShaderType type)
+std::string VulkanPipeline::CompileShaderModule(
+	const std::string& filepath,
+	shaderc::CompileOptions options,
+	const ShaderType type,
+	bool useCache,
+	bool useLog)
 {
 	shaderc_shader_kind kind;
 	switch (type)
@@ -440,15 +448,16 @@ std::string VulkanPipeline::CompileShaderModule(const std::string& filepath, con
 		return {};
 	}
 
-	std::string spv = Serializer::DeserializeShaderCache(filepath);
+	std::string spv;
+	
+	if (useCache)
+	{
+		spv = Serializer::DeserializeShaderCache(filepath);
+	}
+
 	if (spv.empty())
 	{
 		shaderc::Compiler compiler{};
-		shaderc::CompileOptions options{};
-		options.SetOptimizationLevel(shaderc_optimization_level_zero);
-		options.SetGenerateDebugInfo();
-		options.SetPreserveBindings(true);
-		options.SetIncluder(std::make_unique<ShaderIncluder>());
 
 		shaderc::SpvCompilationResult module =
 			compiler.CompileGlslToSpv(Utils::ReadFile(filepath), kind, filepath.c_str(), options);
@@ -461,21 +470,44 @@ std::string VulkanPipeline::CompileShaderModule(const std::string& filepath, con
 
 		spv = std::move(std::string((const char*)module.cbegin(), (const char*)module.cend()));
 
-		Serializer::SerializeShaderCache(filepath, spv);
+		if (useCache)
+		{
+			Serializer::SerializeShaderCache(filepath, spv);
+		}
 
-		Logger::Log("Shader:" + filepath + " has been compiled!", GREEN);
+		if (useLog)
+		{
+			Logger::Log("Shader:" + filepath + " has been compiled!", GREEN);
+		}
 	}
 	else
 	{
-		Logger::Log("Shader Cache:" + filepath + " has been loaded!", GREEN);
+		if (useLog)
+		{
+			Logger::Log("Shader Cache:" + filepath + " has been loaded!", GREEN);
+		}
 	}
 
 	return spv;
 }
 
-ShaderReflection::ReflectShaderModule VulkanPipeline::Reflect(const std::string& spv)
+ShaderReflection::ReflectShaderModule VulkanPipeline::Reflect(const std::string& filepath, ShaderType type)
 {
-	SpvReflectShaderModule reflectModule = {};
+	std::optional<ShaderReflection::ReflectShaderModule> loadedReflectShaderModule = Serializer::DeserializeShaderModuleReflection(filepath);
+	if (loadedReflectShaderModule)
+	{
+		return *loadedReflectShaderModule;
+	}
+
+	shaderc::CompileOptions options{};
+	options.SetOptimizationLevel(shaderc_optimization_level_zero);
+	options.SetGenerateDebugInfo();
+	options.SetPreserveBindings(true);
+	options.SetIncluder(std::make_unique<ShaderIncluder>());
+
+	std::string spv = CompileShaderModule(filepath, options, type, false, false);
+
+	SpvReflectShaderModule reflectModule{};
 	SpvReflectResult result = spvReflectCreateShaderModule(spv.size(), spv.data(), &reflectModule);
 	if (result != SPV_REFLECT_RESULT_SUCCESS)
 	{
@@ -488,6 +520,8 @@ ShaderReflection::ReflectShaderModule VulkanPipeline::Reflect(const std::string&
 	ReflectInputVariables(reflectModule, reflectShaderModule);
 
 	spvReflectDestroyShaderModule(&reflectModule);
+
+	Serializer::SerializeShaderModuleReflection(filepath, reflectShaderModule);
 
 	return reflectShaderModule;
 }

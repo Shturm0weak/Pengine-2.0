@@ -1094,7 +1094,7 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 
 void Serializer::SerializeShaderCache(const std::filesystem::path& filepath, const std::string& code)
 {
-	const std::filesystem::path directory = "Shaders/Cache/";
+	const std::filesystem::path directory = "Shaders\\Cache\\";
 
 	if (!std::filesystem::exists(directory))
 	{
@@ -1119,7 +1119,7 @@ std::string Serializer::DeserializeShaderCache(const std::filesystem::path& file
 		return {};
 	}
 
-	const std::filesystem::path directory = "Shaders/Cache/";
+	const std::filesystem::path directory = "Shaders\\Cache\\";
 	std::filesystem::path cacheFilepath = directory / filepath.filename();
 	cacheFilepath.concat(FileFormats::Spv());
 	if (std::filesystem::exists(cacheFilepath))
@@ -1150,6 +1150,327 @@ std::string Serializer::DeserializeShaderCache(const std::filesystem::path& file
 	}
 
 	return {};
+}
+
+void Serializer::SerializeShaderModuleReflection(
+	const std::filesystem::path& filepath,
+	const ShaderReflection::ReflectShaderModule& reflectShaderModule)
+{
+	std::function<void(YAML::Emitter&, const std::vector<ShaderReflection::ReflectVariable>&)> serializeVariables;
+
+	serializeVariables = [&serializeVariables](YAML::Emitter& out, const std::vector<ShaderReflection::ReflectVariable>& variables)
+	{
+		out << YAML::Key << "Variables";
+
+		out << YAML::BeginSeq;
+
+		for (const auto& variable : variables)
+		{
+			out << YAML::BeginMap;
+		
+			out << YAML::Key << "Name" << YAML::Value << variable.name;
+			out << YAML::Key << "Count" << YAML::Value << variable.count;
+			out << YAML::Key << "Offset" << YAML::Value << variable.offset;
+			out << YAML::Key << "Size" << YAML::Value << variable.size;
+			out << YAML::Key << "Type" << YAML::Value << ShaderReflection::ConvertTypeToString(variable.type);
+
+			serializeVariables(out, variable.variables);
+
+			out << YAML::EndMap;
+		}
+
+		out << YAML::EndSeq;
+	};
+
+	const std::filesystem::path directory = "Shaders\\Cache\\";
+
+	if (!std::filesystem::exists(directory))
+	{
+		std::filesystem::create_directories(directory);
+	}
+
+	std::filesystem::path reflectShaderModuleFilepath = directory / filepath.filename();
+	reflectShaderModuleFilepath.concat(FileFormats::Refl());
+
+	const size_t lastWriteTime = std::filesystem::last_write_time(filepath).time_since_epoch().count();
+
+	YAML::Emitter out;
+
+	out << YAML::BeginMap;
+	
+	out << YAML::Key << "LastWriteTime" << YAML::Value << lastWriteTime;
+
+	out << YAML::Key << "ReflectShaderModule";
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "SetLayouts";
+
+	out << YAML::BeginSeq;
+
+	for (const auto& setLayout : reflectShaderModule.setLayouts)
+	{
+		out << YAML::BeginMap;
+
+		out << YAML::Key << "Set" << YAML::Value << setLayout.set;
+
+		out << YAML::Key << "Bindings";
+
+		out << YAML::BeginSeq;
+
+		for (const auto& binding : setLayout.bindings)
+		{
+			out << YAML::BeginMap;
+
+			out << YAML::Key << "Name" << YAML::Value << binding.name;
+			out << YAML::Key << "Binding" << YAML::Value << binding.binding;
+			out << YAML::Key << "Count" << YAML::Value << binding.count;
+			out << YAML::Key << "Type" << YAML::Value << (int)binding.type;
+
+			if (binding.buffer)
+			{
+				out << YAML::Key << "Buffer";
+
+				out << YAML::BeginMap;
+
+				out << YAML::Key << "Name" << YAML::Value << binding.buffer->name;
+				out << YAML::Key << "Count" << YAML::Value << binding.buffer->count;
+				out << YAML::Key << "Offset" << YAML::Value << binding.buffer->offset;
+				out << YAML::Key << "Size" << YAML::Value << binding.buffer->size;
+				out << YAML::Key << "Type" << YAML::Value << ShaderReflection::ConvertTypeToString(binding.buffer->type);
+
+				serializeVariables(out, binding.buffer->variables);
+
+				out << YAML::EndMap;
+			}
+
+			out << YAML::EndMap;
+		}
+
+		out << YAML::EndSeq;
+
+		out << YAML::EndMap;
+	}
+
+	out << YAML::EndSeq;
+
+	out << YAML::Key << "AttributeDescriptions";
+
+	out << YAML::BeginSeq;
+
+	for (const auto& attributeDescription : reflectShaderModule.attributeDescriptions)
+	{
+		out << YAML::BeginMap;
+
+		out << YAML::Key << "Count" << YAML::Value << attributeDescription.count;
+		out << YAML::Key << "Format" << YAML::Value << (int)attributeDescription.format;
+		out << YAML::Key << "Location" << YAML::Value << attributeDescription.location;
+		out << YAML::Key << "Name" << YAML::Value << attributeDescription.name;
+		out << YAML::Key << "Size" << YAML::Value << attributeDescription.size;
+
+		out << YAML::EndMap;
+	}
+
+	out << YAML::EndSeq;
+
+	out << YAML::EndMap;
+
+	out << YAML::EndMap;
+
+	std::ofstream fout(reflectShaderModuleFilepath);
+	fout << out.c_str();
+	fout.close();
+}
+
+std::optional<ShaderReflection::ReflectShaderModule> Serializer::DeserializeShaderModuleReflection(const std::filesystem::path& filepath)
+{
+	if (filepath.empty())
+	{
+		return std::nullopt;
+	}
+
+	const std::filesystem::path directory = "Shaders\\Cache\\";
+	std::filesystem::path reflectShaderModuleFilepath = directory / filepath.filename();
+	reflectShaderModuleFilepath.concat(FileFormats::Refl());
+
+	std::ifstream stream(reflectShaderModuleFilepath);
+	std::stringstream stringStream;
+
+	stringStream << stream.rdbuf();
+
+	stream.close();
+
+	YAML::Node data = YAML::LoadMesh(stringStream.str());
+	if (!data)
+	{
+		FATAL_ERROR(reflectShaderModuleFilepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
+	}
+
+	size_t lastWriteTime = 0;
+	if (const auto& lastWriteTimeData = data["LastWriteTime"])
+	{
+		lastWriteTime = lastWriteTimeData.as<size_t>();
+	}
+
+	if (std::filesystem::exists(reflectShaderModuleFilepath))
+	{
+		if (lastWriteTime != std::filesystem::last_write_time(filepath).time_since_epoch().count())
+		{
+			return std::nullopt;
+		}
+	}
+	else
+	{
+		return std::nullopt;
+	}
+
+	std::function<void(const YAML::Node&, std::vector<ShaderReflection::ReflectVariable>&)> deserializeVariables;
+
+	deserializeVariables = [&deserializeVariables](const YAML::Node& node, std::vector<ShaderReflection::ReflectVariable>& variables)
+	{
+		for (const auto& variableData : node)
+		{
+			ShaderReflection::ReflectVariable& reflectVariable = variables.emplace_back();
+
+			if (const auto& nameData = variableData["Name"])
+			{
+				reflectVariable.name = nameData.as<std::string>();
+			}
+
+			if (const auto& countData = variableData["Count"])
+			{
+				reflectVariable.count = countData.as<uint32_t>();
+			}
+
+			if (const auto& offsetData = variableData["Offset"])
+			{
+				reflectVariable.offset = offsetData.as<uint32_t>();
+			}
+
+			if (const auto& sizeData = variableData["Size"])
+			{
+				reflectVariable.size = sizeData.as<uint32_t>();
+			}
+
+			if (const auto& typeData = variableData["Type"])
+			{
+				reflectVariable.type = ShaderReflection::ConvertStringToType(typeData.as<std::string>());
+			}
+
+			if (const auto& variablesData = variableData["Variables"])
+			{
+				deserializeVariables(variablesData, reflectVariable.variables);
+			}
+		}
+	};
+
+	ShaderReflection::ReflectShaderModule reflectShaderModule{};
+	if (const auto& reflectShaderModuleData = data["ReflectShaderModule"])
+	{
+		for (const auto& setLayoutData : reflectShaderModuleData["SetLayouts"])
+		{
+			ShaderReflection::ReflectDescriptorSetLayout& setLayout = reflectShaderModule.setLayouts.emplace_back();
+			
+			if (const auto& setData = setLayoutData["Set"])
+			{
+				setLayout.set = setData.as<uint32_t>();
+			}
+
+			for (const auto& bindingData : setLayoutData["Bindings"])
+			{
+				ShaderReflection::ReflectDescriptorSetBinding& binding = setLayout.bindings.emplace_back();
+
+				if (const auto& nameData = bindingData["Name"])
+				{
+					binding.name = nameData.as<std::string>();
+				}
+
+				if (const auto& locationData = bindingData["Binding"])
+				{
+					binding.binding = locationData.as<uint32_t>();
+				}
+
+				if (const auto& countData = bindingData["Count"])
+				{
+					binding.count = countData.as<uint32_t>();
+				}
+
+				if (const auto& typeData = bindingData["Type"])
+				{
+					binding.type = (ShaderReflection::Type)typeData.as<int>();
+				}
+
+				if (const auto& bufferData = bindingData["Buffer"])
+				{
+					ShaderReflection::ReflectVariable reflectVariable{};
+
+					if (const auto& nameData = bufferData["Name"])
+					{
+						reflectVariable.name = nameData.as<std::string>();
+					}
+
+					if (const auto& countData = bufferData["Count"])
+					{
+						reflectVariable.count = countData.as<uint32_t>();
+					}
+
+					if (const auto& offsetData = bufferData["Offset"])
+					{
+						reflectVariable.offset = offsetData.as<uint32_t>();
+					}
+
+					if (const auto& sizeData = bufferData["Size"])
+					{
+						reflectVariable.size = sizeData.as<uint32_t>();
+					}
+
+					if (const auto& typeData = bufferData["Type"])
+					{
+						reflectVariable.type = ShaderReflection::ConvertStringToType(typeData.as<std::string>());
+					}
+
+					if (const auto& variablesData = bufferData["Variables"])
+					{
+						deserializeVariables(variablesData, reflectVariable.variables);
+					}
+
+					binding.buffer = reflectVariable;
+				}
+			}
+		}
+
+		for (const auto& attributeDescriptionData : reflectShaderModuleData["AttributeDescriptions"])
+		{
+			ShaderReflection::AttributeDescription& attributeDescription = reflectShaderModule.attributeDescriptions.emplace_back();
+
+			if (const auto& countData = attributeDescriptionData["Count"])
+			{
+				attributeDescription.count = countData.as<uint32_t>();
+			}
+
+			if (const auto& formatData = attributeDescriptionData["Format"])
+			{
+				attributeDescription.format = (Format)formatData.as<int>();
+			}
+
+			if (const auto& locationData = attributeDescriptionData["Location"])
+			{
+				attributeDescription.location = locationData.as<uint32_t>();
+			}
+
+			if (const auto& nameData = attributeDescriptionData["Name"])
+			{
+				attributeDescription.name = nameData.as<std::string>();
+			}
+
+			if (const auto& sizeData = attributeDescriptionData["Size"])
+			{
+				attributeDescription.size = sizeData.as<uint32_t>();
+			}
+		}
+	}
+
+	return reflectShaderModule;
 }
 
 std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>>
