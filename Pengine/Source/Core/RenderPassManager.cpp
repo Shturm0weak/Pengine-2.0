@@ -1110,10 +1110,13 @@ void RenderPassManager::CreateSSAO()
 		}
 
 		const std::shared_ptr<Texture> noiseTexture = m_SSAORenderer.GetNoiseTexture();
-		if (noiseTexture)
+		if (!noiseTexture)
 		{
-			renderUniformWriter->WriteTexture("noiseTexture", noiseTexture);
+			renderInfo.renderer->EndRenderPass(submitInfo);
+			return;
 		}
+		
+		renderUniformWriter->WriteTexture("noiseTexture", noiseTexture);
 
 		const std::shared_ptr<Buffer> ssaoBuffer = renderInfo.renderTarget->GetBuffer("SSAOBuffer");
 		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "viewportScale", GetRenderPass(renderPassName)->GetResizeViewportScale());
