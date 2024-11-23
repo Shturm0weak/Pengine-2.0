@@ -18,6 +18,7 @@
 #include "../Editor/Editor.h"
 #include "../EventSystem/EventSystem.h"
 #include "../Graphics/Renderer.h"
+#include "../Graphics/RenderTarget.h"
 
 using namespace Pengine;
 
@@ -48,6 +49,8 @@ void EntryPoint::Run() const
 	TextureManager::GetInstance().LoadFromFolder("Editor\\Images");
 
 	ThreadPool::GetInstance().Initialize();
+
+	const std::shared_ptr<Renderer> renderer = Renderer::Create();
 
 	m_Application->OnStart();
 
@@ -81,15 +84,15 @@ void EntryPoint::Run() const
 					camera && camera->HasComponent<Camera>())
 				{
 					Camera& cameraComponent = camera->GetComponent<Camera>();
-					const std::shared_ptr<Renderer> renderer = cameraComponent.GetRendererTarget(name);
-					if (!renderer)
+					const std::shared_ptr<RenderTarget> renderTarget = cameraComponent.GetRendererTarget(name);
+					if (!renderTarget)
 					{
 						continue;
 					}
 
 					if (!cameraComponent.GetRenderPassName().empty())
 					{
-						viewport->Update(renderer->GetRenderPassFrameBuffer(cameraComponent.GetRenderPassName())->GetAttachment(cameraComponent.GetRenderTargetIndex()));
+						viewport->Update(renderTarget->GetRenderPassFrameBuffer(cameraComponent.GetRenderPassName())->GetAttachment(cameraComponent.GetRenderTargetIndex()));
 					}
 					else
 					{
@@ -112,32 +115,30 @@ void EntryPoint::Run() const
 
 			if (void* frame = window->BeginFrame())
 			{
+				std::map<std::shared_ptr<Scene>, std::vector<Renderer::RenderViewportInfo>> viewportsByScene;
+
 				for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
 				{
 					if (const std::shared_ptr<Entity> camera = viewport->GetCamera().lock())
 					{
 						if (camera->HasComponent<Camera>())
 						{
-							Camera& cameraComponent = camera->GetComponent<Camera>();
-							const std::shared_ptr<Renderer> renderer = cameraComponent.GetRendererTarget(name);
-							if (!renderer)
-							{
-								continue;
-							}
-							renderer->Update(
-								frame,
-								window,
-								camera->GetScene(),
-								camera,
-								viewport->GetProjectionMat4(),
-								viewport->GetSize());
-						}
-						else
-						{
-							viewport->SetCamera({});
+							Renderer::RenderViewportInfo renderViewportInfo{};
+							renderViewportInfo.camera = camera;
+							renderViewportInfo.renderTarget = camera->GetComponent<Camera>().GetRendererTarget(name);
+							renderViewportInfo.projection = viewport->GetProjectionMat4();
+							renderViewportInfo.size = viewport->GetSize();
+
+							viewportsByScene[camera->GetScene()].emplace_back(renderViewportInfo);
 						}
 					}
 				}
+
+				Renderer::Update(
+					frame,
+					window,
+					renderer,
+					viewportsByScene);
 
 				window->ImGuiRenderPass(frame);
 				window->EndFrame(frame);

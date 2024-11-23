@@ -12,8 +12,8 @@ using namespace Vk;
 VulkanFrameBuffer::VulkanFrameBuffer(
 	const std::vector<Texture::CreateInfo>& attachments,
 	std::shared_ptr<RenderPass> renderPass,
-	Renderer* renderer)
-	: FrameBuffer(attachments, renderPass, renderer)
+	RenderTarget* renderTarget)
+	: FrameBuffer(attachments, renderPass, renderTarget)
 {
 	if (m_AttachmentCreateInfos.empty())
 	{
@@ -47,10 +47,10 @@ void VulkanFrameBuffer::Resize(const glm::ivec2& size)
 		for (Texture::CreateInfo& textureCreateInfo : m_AttachmentCreateInfos)
 		{
 			std::shared_ptr<Texture> texture;
-			if (renderPassAttachments[textureIndex].getFrameBufferCallback && m_Renderer)
+			if (renderPassAttachments[textureIndex].getFrameBufferCallback && m_RenderTarget)
 			{
 				uint32_t attachmentIndex;
-				const std::shared_ptr<FrameBuffer> frameBuffer = renderPassAttachments[textureIndex].getFrameBufferCallback(m_Renderer, attachmentIndex);
+				const std::shared_ptr<FrameBuffer> frameBuffer = renderPassAttachments[textureIndex].getFrameBufferCallback(m_RenderTarget, attachmentIndex);
 				texture = frameBuffer->GetAttachment(attachmentIndex, frameIndex);
 				const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(texture);
 				imageViews.emplace_back(vkTexture->GetImageView());

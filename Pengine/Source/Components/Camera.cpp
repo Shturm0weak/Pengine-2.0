@@ -4,7 +4,7 @@
 
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
-#include "../Graphics/Renderer.h"
+#include "../Graphics/RenderTarget.h"
 #include "../Utils/Utils.h"
 
 using namespace Pengine;
@@ -100,7 +100,7 @@ void Camera::CreateRenderTarget(const std::string& name, const glm::ivec2& size)
 {
 	auto callback = [this, name, size]()
 	{
-		m_RenderersByName[name] = Renderer::Create(size);
+			m_RenderTargetsByName[name] = RenderTarget::Create(size);
 	};
 
 	std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
@@ -109,13 +109,13 @@ void Camera::CreateRenderTarget(const std::string& name, const glm::ivec2& size)
 
 void Camera::ResizeRenderTarget(const std::string& name, const glm::ivec2& size)
 {
-	if (std::shared_ptr<Renderer> renderer = GetRendererTarget(name))
+	if (std::shared_ptr<RenderTarget> renderTarget = GetRendererTarget(name))
 	{
-		auto callback = [weakRenderer = std::weak_ptr<Renderer>(renderer), size]()
+		auto callback = [weakRenderTarget = std::weak_ptr<RenderTarget>(renderTarget), size]()
 		{
-			if (std::shared_ptr<Renderer> renderer = weakRenderer.lock())
+			if (std::shared_ptr<RenderTarget> renderTarget = weakRenderTarget.lock())
 			{
-				renderer->Resize(size);
+				renderTarget->Resize(size);
 			}
 		};
 
@@ -126,14 +126,14 @@ void Camera::ResizeRenderTarget(const std::string& name, const glm::ivec2& size)
 
 void Camera::DeleteRenderTarget(const std::string& name)
 {
-	if (std::shared_ptr<Renderer> renderer = GetRendererTarget(name))
+	if (std::shared_ptr<RenderTarget> renderTarget = GetRendererTarget(name))
 	{
-		auto callback = [weakRenderer = std::weak_ptr<Renderer>(renderer), name, this]()
+		auto callback = [weakrenderTarget = std::weak_ptr<RenderTarget>(renderTarget), name, this]()
 		{
-			if (std::shared_ptr<Renderer> renderer = weakRenderer.lock())
+			if (std::shared_ptr<RenderTarget> renderTarget = weakrenderTarget.lock())
 			{
-				renderer = nullptr;
-				m_RenderersByName[name] = nullptr;
+				renderTarget = nullptr;
+				m_RenderTargetsByName[name] = nullptr;
 			}
 		};
 
@@ -163,7 +163,7 @@ void Camera::SetZFar(const float zFar)
 	UpdateViewMat4();
 }
 
-std::shared_ptr<Renderer> Camera::GetRendererTarget(const std::string& name) const
+std::shared_ptr<RenderTarget> Camera::GetRendererTarget(const std::string& name) const
 {
-	return Utils::Find(name, m_RenderersByName);
+	return Utils::Find(name, m_RenderTargetsByName);
 }

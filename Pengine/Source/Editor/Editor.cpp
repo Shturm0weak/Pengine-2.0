@@ -959,7 +959,7 @@ void Editor::CameraComponent(const std::shared_ptr<Entity>& entity)
 
 		if (ImGui::BeginMenu("Render Targets"))
 		{
-			for (const auto& renderPassName : renderPassesOrder)
+			for (const auto& renderPassName : renderPassPerViewportOrder)
 			{
 				if (ImGui::MenuItem(renderPassName.c_str()))
 				{

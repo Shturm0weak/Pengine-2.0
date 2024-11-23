@@ -16,40 +16,31 @@ namespace Pengine
 	class Pipeline;
 	class Entity;
 
-	class PENGINE_API Renderer : public std::enable_shared_from_this<Renderer>
+	class PENGINE_API Renderer
 	{
 	public:
-		static std::shared_ptr<Renderer> Create(const glm::ivec2& size);
+		struct RenderViewportInfo
+		{
+			std::shared_ptr<Entity> camera;
+			std::shared_ptr<RenderTarget> renderTarget;
+			glm::mat4 projection;
+			glm::ivec2 size;
+		};
 
-		explicit Renderer(const glm::ivec2& size);
-		virtual ~Renderer();
+		static std::shared_ptr<Renderer> Create();
+
+		Renderer() = default;
+		virtual ~Renderer() = default;
 		Renderer(const Renderer&) = delete;
 		Renderer(Renderer&&) = delete;
 		Renderer& operator=(const Renderer&) = delete;
 		Renderer& operator=(Renderer&&) = delete;
 
-		void Update(
+		static void Update(
 			void* frame,
 			const std::shared_ptr<Window>& window,
-			const std::shared_ptr<Scene>& scene,
-			const std::shared_ptr<Entity>& camera,
-			const glm::mat4& projection,
-			const glm::ivec2& viewportSize);
-
-		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& renderPassName) const;
-
-		void SetUniformWriter(const std::string& renderPassName, std::shared_ptr<UniformWriter> uniformWriter);
-
-		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
-
-		void SetBuffer(const std::string& name, std::shared_ptr<Buffer> buffer);
-
-		std::shared_ptr<FrameBuffer> GetRenderPassFrameBuffer(const std::string& type) const;
-
-		void SetFrameBufferToRenderPass(const std::string& type,
-			const std::shared_ptr<FrameBuffer>& frameBuffer);
-
-		void Resize(const glm::ivec2& size) const;
+			const std::shared_ptr<Renderer>& renderer,
+			const std::map<std::shared_ptr<Scene>, std::vector<RenderViewportInfo>>& viewportsByScene);
 
 		virtual void BeginRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
 
@@ -65,11 +56,6 @@ namespace Pengine
 			size_t count,
 			const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
 			void* frame) = 0;
-
-	protected:
-		std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> m_FrameBuffersByRenderPassType;
-		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPassType;
-		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
 	};
 
 }

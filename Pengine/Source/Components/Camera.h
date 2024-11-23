@@ -50,7 +50,7 @@ namespace Pengine
 
 		void SetZFar(float zFar);
 
-		[[nodiscard]] std::shared_ptr<Renderer> GetRendererTarget(const std::string& name) const;
+		[[nodiscard]] std::shared_ptr<RenderTarget> GetRendererTarget(const std::string& name) const;
 
 		[[nodiscard]] std::shared_ptr<Entity> GetEntity() const { return m_Entity; }
 
@@ -65,7 +65,7 @@ namespace Pengine
 	private:
 		glm::mat4 m_ViewMat4{};
 
-		std::unordered_map<std::string, std::shared_ptr<Renderer>> m_RenderersByName;
+		std::unordered_map<std::string, std::shared_ptr<RenderTarget>> m_RenderTargetsByName;
 
 		std::shared_ptr<Entity> m_Entity;
 

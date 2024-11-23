@@ -22,6 +22,7 @@ namespace Pengine
 	class Window;
 	class Camera;
 	class Renderer;
+	class RenderTarget;
 	class Scene;
 	class Entity;
 
@@ -58,7 +59,7 @@ namespace Pengine
 			std::optional<glm::ivec2> size;
 			bool isCubeMap = false;
 			uint32_t layercount = 1;
-			std::function<std::shared_ptr<FrameBuffer>(Renderer*, uint32_t&)> getFrameBufferCallback;
+			std::function<std::shared_ptr<FrameBuffer>(RenderTarget*, uint32_t&)> getFrameBufferCallback;
 		};
 
 		struct SubmitInfo
@@ -72,6 +73,7 @@ namespace Pengine
 		{
 			std::shared_ptr<RenderPass> renderPass;
 			std::shared_ptr<Window> window;
+			std::shared_ptr<RenderTarget> renderTarget;
 			std::shared_ptr<Renderer> renderer;
 			std::shared_ptr<Scene> scene;
 			std::shared_ptr<Entity> camera;
@@ -138,6 +140,7 @@ namespace Pengine
 		bool m_CreateFrameBuffer = true;
 		glm::vec2 m_ResizeViewportScale = { 1.0f, 1.0f };
 
+		friend class RenderTarget;
 		friend class Renderer;
 	};
 

@@ -13,7 +13,7 @@ namespace Pengine::Vk
 	class PENGINE_API VulkanRenderer final : public Renderer
 	{
 	public:
-		explicit VulkanRenderer(const glm::ivec2& size);
+		VulkanRenderer();
 		virtual ~VulkanRenderer() override = default;
 		VulkanRenderer(const VulkanRenderer&) = delete;
 		VulkanRenderer& operator=(const VulkanRenderer&) = delete;
