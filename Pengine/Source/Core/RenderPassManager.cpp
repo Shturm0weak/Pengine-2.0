@@ -385,20 +385,7 @@ void RenderPassManager::CreateGBuffer()
 			const std::shared_ptr<Pipeline> pipeline = skyBoxBaseMaterial->GetPipeline(renderPassName);
 			if (pipeline)
 			{
-				std::shared_ptr<UniformWriter> uniformWriter = skyBoxBaseMaterial->GetUniformWriter(renderPassName);
-				uniformWriter->WriteTexture("SkyBox", m_AtmosphereFrameBuffer->GetAttachment(0));
-
 				std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, skyBoxBaseMaterial, nullptr, renderInfo);
-
-				for (const auto& uniformWriter : uniformWriters)
-				{
-					uniformWriter->Flush();
-
-					for (const auto& [location, buffer] : uniformWriter->GetBuffersByLocation())
-					{
-						buffer->Flush();
-					}
-				}
 
 				renderInfo.renderer->Render(
 					cubeMesh->GetVertexBuffer(),
@@ -728,6 +715,19 @@ void RenderPassManager::CreateAtmosphere()
 			renderInfo.frame);
 
 		renderInfo.renderer->EndRenderPass(submitInfo);
+
+		// Update SkyBox.
+		{
+			std::shared_ptr<BaseMaterial> skyBoxBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SkyBox.basemat");
+
+			const std::shared_ptr<Pipeline> pipeline = skyBoxBaseMaterial->GetPipeline(GBuffer);
+			if (pipeline)
+			{
+				std::shared_ptr<UniformWriter> uniformWriter = skyBoxBaseMaterial->GetUniformWriter(GBuffer);
+				uniformWriter->WriteTexture("SkyBox", frameBuffer->GetAttachment(0));
+				uniformWriter->Flush();
+			}
+		}
 	};
 
 	const std::shared_ptr<RenderPass> renderPass = Create(createInfo);

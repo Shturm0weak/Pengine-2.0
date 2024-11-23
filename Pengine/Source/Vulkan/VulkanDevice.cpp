@@ -170,13 +170,6 @@ void VulkanDevice::CreateLogicalDevice()
 	vulkan12Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
 
 	vulkan12Features.scalarBlockLayout = VK_TRUE;
-	vulkan12Features.descriptorBindingVariableDescriptorCount = VK_TRUE;
-	vulkan12Features.runtimeDescriptorArray = VK_TRUE;
-	vulkan12Features.descriptorIndexing = VK_TRUE;
-	vulkan12Features.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE;
-	vulkan12Features.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE;
-	vulkan12Features.descriptorBindingStorageImageUpdateAfterBind = VK_TRUE;
-	vulkan12Features.descriptorBindingUniformBufferUpdateAfterBind = VK_TRUE;
 
 	VkDeviceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
