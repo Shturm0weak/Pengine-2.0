@@ -72,6 +72,7 @@ set(GRAPHICS_SOURCES
 	Graphics/Pipeline.cpp Graphics/Pipeline.h
 	Graphics/Renderer.cpp Graphics/Renderer.h
 	Graphics/RenderPass.cpp Graphics/RenderPass.h
+	Graphics/RenderTarget.cpp Graphics/RenderTarget.h
 	Graphics/ShaderReflection.h
 	Graphics/stb_image.h
 	Graphics/Texture.cpp Graphics/Texture.h

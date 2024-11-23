@@ -13,6 +13,7 @@
 #include "../Components/Renderer3D.h"
 #include "../Components/Transform.h"
 #include "../Graphics/Renderer.h"
+#include "../Graphics/RenderTarget.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 
@@ -53,6 +54,7 @@ void RenderPassManager::ShutDown()
 	m_RenderPassesByType.clear();
 	m_LineRenderer.ShutDown();
 	m_SSAORenderer.ShutDown();
+	m_AtmosphereFrameBuffer = nullptr;
 }
 
 std::vector<std::shared_ptr<UniformWriter>> RenderPassManager::GetUniformWriters(
@@ -67,7 +69,7 @@ std::vector<std::shared_ptr<UniformWriter>> RenderPassManager::GetUniformWriters
 		switch (location.first)
 		{
 		case Pipeline::DescriptorSetIndexType::RENDERER:
-			uniformWriters.emplace_back(renderInfo.renderer->GetUniformWriter(location.second));
+			uniformWriters.emplace_back(renderInfo.renderTarget->GetUniformWriter(location.second));
 			break;
 		case Pipeline::DescriptorSetIndexType::RENDERPASS:
 			uniformWriters.emplace_back(RenderPassManager::GetInstance().GetRenderPass(location.second)->GetUniformWriter());
@@ -84,6 +86,110 @@ std::vector<std::shared_ptr<UniformWriter>> RenderPassManager::GetUniformWriters
 	}
 
 	return uniformWriters;
+}
+
+void RenderPassManager::PrepareUniformsPerViewportBeforeDraw(const RenderPass::RenderCallbackInfo& renderInfo)
+{
+	const std::string globalBufferName = "GlobalBuffer";
+
+	std::shared_ptr<Buffer> globalBuffer = renderInfo.renderTarget->GetBuffer(globalBufferName);
+	const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\DefaultReflection.basemat");
+	if (!renderInfo.renderTarget->GetBuffer(globalBufferName))
+	{
+		const std::shared_ptr<Pipeline> pipeline = reflectionBaseMaterial->GetPipeline(DefaultReflection);
+
+		std::optional<uint32_t> descriptorSet = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, DefaultReflection);
+		const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*descriptorSet);
+		const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
+
+		globalBuffer = Buffer::Create(
+			uniformLayout->GetBindingByName(globalBufferName)->buffer->size,
+			1,
+			Buffer::Usage::UNIFORM_BUFFER,
+			Buffer::MemoryType::CPU);
+
+		uniformWriter->WriteBuffer(globalBufferName, globalBuffer);
+		renderInfo.renderTarget->SetBuffer(globalBufferName, globalBuffer);
+		renderInfo.renderTarget->SetUniformWriter(DefaultReflection, uniformWriter);
+	}
+
+	const Camera& camera = renderInfo.camera->GetComponent<Camera>();
+	const Transform& cameraTransform = renderInfo.camera->GetComponent<Transform>();
+	const glm::mat4 viewProjectionMat4 = renderInfo.projection * camera.GetViewMat4();
+	reflectionBaseMaterial->WriteToBuffer(
+		globalBuffer,
+		globalBufferName,
+		"camera.viewProjectionMat4",
+		viewProjectionMat4);
+
+	const glm::mat4 viewMat4 = camera.GetViewMat4();
+	reflectionBaseMaterial->WriteToBuffer(
+		globalBuffer,
+		globalBufferName,
+		"camera.viewMat4",
+		viewMat4);
+
+	const glm::mat4 inverseViewMat4 = glm::inverse(camera.GetViewMat4());
+	reflectionBaseMaterial->WriteToBuffer(
+		globalBuffer,
+		globalBufferName,
+		"camera.inverseViewMat4",
+		inverseViewMat4);
+
+	reflectionBaseMaterial->WriteToBuffer(
+		globalBuffer,
+		globalBufferName,
+		"camera.projectionMat4",
+		renderInfo.projection);
+
+	const glm::mat4 inverseRotationMat4 = glm::inverse(cameraTransform.GetRotationMat4());
+	reflectionBaseMaterial->WriteToBuffer(
+		globalBuffer,
+		globalBufferName,
+		"camera.inverseRotationMat4",
+		inverseRotationMat4);
+
+	const float time = Time::GetTime();
+	reflectionBaseMaterial->WriteToBuffer(
+		globalBuffer,
+		globalBufferName,
+		"camera.time",
+		time);
+
+	const float zNear = camera.GetZNear();
+	reflectionBaseMaterial->WriteToBuffer(
+		globalBuffer,
+		globalBufferName,
+		"camera.zNear",
+		zNear);
+
+	const float zFar = camera.GetZFar();
+	reflectionBaseMaterial->WriteToBuffer(
+		globalBuffer,
+		globalBufferName,
+		"camera.zFar",
+		zFar);
+
+	const glm::vec2 viewportSize = renderInfo.viewportSize;
+	reflectionBaseMaterial->WriteToBuffer(
+		renderInfo.renderTarget->GetBuffer(globalBufferName),
+		globalBufferName,
+		"camera.viewportSize",
+		viewportSize);
+
+	const float aspectRation = viewportSize.x / viewportSize.y;
+	reflectionBaseMaterial->WriteToBuffer(
+		renderInfo.renderTarget->GetBuffer(globalBufferName),
+		globalBufferName,
+		"camera.aspectRatio",
+		aspectRation);
+
+	const float tanHalfFOV = tanf(camera.GetFov() / 2.0f);
+	reflectionBaseMaterial->WriteToBuffer(
+		renderInfo.renderTarget->GetBuffer(globalBufferName),
+		globalBufferName,
+		"camera.tanHalfFOV",
+		tanHalfFOV);
 }
 
 RenderPassManager::RenderPassManager()
@@ -141,33 +247,8 @@ void RenderPassManager::CreateGBuffer()
 
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		const std::string globalBufferName = "GlobalBuffer";
-		const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\DefaultReflection.basemat");
-
 		const std::string renderPassName = renderInfo.renderPass->GetType();
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
-		const glm::vec2 viewportSize = frameBuffer->GetSize();
-		reflectionBaseMaterial->WriteToBuffer(
-			renderInfo.renderer->GetBuffer(globalBufferName),
-			globalBufferName,
-			"camera.viewportSize",
-			viewportSize);
-
-		const float aspectRation = viewportSize.x / viewportSize.y;
-		reflectionBaseMaterial->WriteToBuffer(
-			renderInfo.renderer->GetBuffer(globalBufferName),
-			globalBufferName,
-			"camera.aspectRatio",
-			aspectRation);
-
-		Camera& camera = renderInfo.camera->GetComponent<Camera>();
-		const float tanHalfFOV = tanf(camera.GetFov() / 2.0f);
-		reflectionBaseMaterial->WriteToBuffer(
-			renderInfo.renderer->GetBuffer(globalBufferName),
-			globalBufferName,
-			"camera.tanHalfFOV",
-			tanHalfFOV);
-
+		
 		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
 		using MaterialByBaseMaterial = std::unordered_map<std::shared_ptr<BaseMaterial>, MeshesByMaterial>;
@@ -198,6 +279,7 @@ void RenderPassManager::CreateGBuffer()
 				continue;
 			}
 
+			const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 			const glm::mat4& transformMat4 = transform.GetTransform();
 			const BoundingBox& box = r3d.mesh->GetBoundingBox();
 			bool isInFrustum = FrustumCulling::CullBoundingBox(renderInfo.projection * camera.GetViewMat4(), transformMat4, box.min, box.max, camera.GetZNear());
@@ -219,7 +301,7 @@ void RenderPassManager::CreateGBuffer()
 			renderableCount++;
 		}
 
-		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderer->GetBuffer("InstanceBuffer");
+		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderTarget->GetBuffer("InstanceBuffer");
 		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
 		{
 			instanceBuffer = Buffer::Create(
@@ -228,10 +310,12 @@ void RenderPassManager::CreateGBuffer()
 				Buffer::Usage::VERTEX_BUFFER,
 				Buffer::MemoryType::CPU);
 
-			renderInfo.renderer->SetBuffer("InstanceBuffer", instanceBuffer);
+			renderInfo.renderTarget->SetBuffer("InstanceBuffer", instanceBuffer);
 		}
 
 		std::vector<InstanceData> instanceDatas;
+
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
 
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
@@ -302,7 +386,7 @@ void RenderPassManager::CreateGBuffer()
 			if (pipeline)
 			{
 				std::shared_ptr<UniformWriter> uniformWriter = skyBoxBaseMaterial->GetUniformWriter(renderPassName);
-				uniformWriter->WriteTexture("SkyBox", renderInfo.renderer->GetRenderPassFrameBuffer(Atmosphere)->GetAttachment(0));
+				uniformWriter->WriteTexture("SkyBox", m_AtmosphereFrameBuffer->GetAttachment(0));
 
 				std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, skyBoxBaseMaterial, nullptr, renderInfo);
 
@@ -369,13 +453,13 @@ void RenderPassManager::CreateDeferred()
 			return;
 		}
 
-		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderer->GetUniformWriter(renderPassName);
+		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderTarget->GetUniformWriter(renderPassName);
 		if (!renderUniformWriter)
 		{
 			std::shared_ptr<UniformLayout> renderUniformLayout =
 				pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, renderPassName));
 			renderUniformWriter = UniformWriter::Create(renderUniformLayout);
-			renderInfo.renderer->SetUniformWriter(renderPassName, renderUniformWriter);
+			renderInfo.renderTarget->SetUniformWriter(renderPassName, renderUniformWriter);
 
 			for (const auto& binding : renderUniformLayout->GetBindings())
 			{
@@ -387,7 +471,7 @@ void RenderPassManager::CreateDeferred()
 						Buffer::Usage::UNIFORM_BUFFER,
 						Buffer::MemoryType::CPU);
 
-					renderInfo.renderer->SetBuffer("Lights", buffer);
+					renderInfo.renderTarget->SetBuffer("Lights", buffer);
 					renderUniformWriter->WriteBuffer(binding.buffer->name, buffer);
 					renderUniformWriter->Flush();
 
@@ -398,13 +482,13 @@ void RenderPassManager::CreateDeferred()
 
 		for (const auto& [name, renderTargetInfo] : pipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
 		{
-			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
 			renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
 		}
 
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 
-		const std::shared_ptr<Buffer> lightsBuffer = renderInfo.renderer->GetBuffer("Lights");
+		const std::shared_ptr<Buffer> lightsBuffer = renderInfo.renderTarget->GetBuffer("Lights");
 
 		auto pointLightView = renderInfo.scene->GetRegistry().view<PointLight>();
 		uint32_t lightIndex = 0;
@@ -509,7 +593,7 @@ void RenderPassManager::CreateDeferred()
 			}
 		}
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
@@ -569,88 +653,10 @@ void RenderPassManager::CreateAtmosphere()
 	createInfo.clearColors = { clearColor };
 	createInfo.attachmentDescriptions = { color };
 	createInfo.resizeWithViewport = false;
+	createInfo.createFrameBuffer = false;
 
-	const std::string globalBufferName = "GlobalBuffer";
-	createInfo.renderCallback = [globalBufferName](const RenderPass::RenderCallbackInfo& renderInfo)
+	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		std::shared_ptr<Buffer> globalBuffer = renderInfo.renderer->GetBuffer(globalBufferName);
-		const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\DefaultReflection.basemat");
-		if (!renderInfo.renderer->GetBuffer(globalBufferName))
-		{
-			const std::shared_ptr<Pipeline> pipeline = reflectionBaseMaterial->GetPipeline(DefaultReflection);
-
-			std::optional<uint32_t> descriptorSet = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, DefaultReflection);
-			const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*descriptorSet);
-			const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
-
-			globalBuffer = Buffer::Create(
-				uniformLayout->GetBindingByName(globalBufferName)->buffer->size,
-				1,
-				Buffer::Usage::UNIFORM_BUFFER,
-				Buffer::MemoryType::CPU);
-
-			uniformWriter->WriteBuffer(globalBufferName, globalBuffer);
-			renderInfo.renderer->SetBuffer(globalBufferName, globalBuffer);
-			renderInfo.renderer->SetUniformWriter(DefaultReflection, uniformWriter);
-		}
-
-		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
-		const Transform& cameraTransform = renderInfo.camera->GetComponent<Transform>();
-		const glm::mat4 viewProjectionMat4 = renderInfo.projection * camera.GetViewMat4();
-		reflectionBaseMaterial->WriteToBuffer(
-			globalBuffer,
-			globalBufferName,
-			"camera.viewProjectionMat4",
-			viewProjectionMat4);
-
-		const glm::mat4 viewMat4 = camera.GetViewMat4();
-		reflectionBaseMaterial->WriteToBuffer(
-			globalBuffer,
-			globalBufferName,
-			"camera.viewMat4",
-			viewMat4);
-
-		const glm::mat4 inverseViewMat4 = glm::inverse(camera.GetViewMat4());
-		reflectionBaseMaterial->WriteToBuffer(
-			globalBuffer,
-			globalBufferName,
-			"camera.inverseViewMat4",
-			inverseViewMat4);
-
-		reflectionBaseMaterial->WriteToBuffer(
-			globalBuffer,
-			globalBufferName,
-			"camera.projectionMat4",
-			renderInfo.projection);
-
-		const glm::mat4 inverseRotationMat4 = glm::inverse(cameraTransform.GetRotationMat4());
-		reflectionBaseMaterial->WriteToBuffer(
-			globalBuffer,
-			globalBufferName,
-			"camera.inverseRotationMat4",
-			inverseRotationMat4);
-
-		const float time = Time::GetTime();
-		reflectionBaseMaterial->WriteToBuffer(
-			globalBuffer,
-			globalBufferName,
-			"camera.time",
-			time);
-
-		const float zNear = camera.GetZNear();
-		reflectionBaseMaterial->WriteToBuffer(
-			globalBuffer,
-			globalBufferName,
-			"camera.zNear",
-			zNear);
-
-		const float zFar = camera.GetZFar();
-		reflectionBaseMaterial->WriteToBuffer(
-			globalBuffer,
-			globalBufferName,
-			"camera.zFar",
-			zFar);
-
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().GetMesh("FullScreenQuad");
 		if (!plane)
 		{
@@ -688,7 +694,8 @@ void RenderPassManager::CreateAtmosphere()
 			baseMaterial->WriteToBuffer("AtmosphereBuffer", "hasDirectionalLight", hasDirectionalLight);
 		}
 
-		const glm::vec2 faceSize = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName)->GetSize();
+		const std::shared_ptr<FrameBuffer> frameBuffer = m_AtmosphereFrameBuffer;
+		const glm::vec2 faceSize = frameBuffer->GetSize();
 		baseMaterial->WriteToBuffer("AtmosphereBuffer", "faceSize", faceSize);
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
@@ -702,8 +709,7 @@ void RenderPassManager::CreateAtmosphere()
 				buffer->Flush();
 			}
 		}
-
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
@@ -724,7 +730,12 @@ void RenderPassManager::CreateAtmosphere()
 		renderInfo.renderer->EndRenderPass(submitInfo);
 	};
 
-	Create(createInfo);
+	const std::shared_ptr<RenderPass> renderPass = Create(createInfo);
+
+	if (!m_AtmosphereFrameBuffer)
+	{
+		m_AtmosphereFrameBuffer = FrameBuffer::Create(renderPass, nullptr, renderPass->GetAttachmentDescriptions().back().size.value());
+	}
 }
 
 void RenderPassManager::CreateTransparent()
@@ -739,10 +750,10 @@ void RenderPassManager::CreateTransparent()
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	color.load = RenderPass::Load::LOAD;
-	color.getFrameBufferCallback = [](Renderer* renderer, uint32_t& index)
+	color.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
 		index = 0;
-		return renderer->GetRenderPassFrameBuffer(Deferred);
+		return renderTarget->GetRenderPassFrameBuffer(Deferred);
 	};
 
 	RenderPass::AttachmentDescription depth{};
@@ -750,10 +761,10 @@ void RenderPassManager::CreateTransparent()
 	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 	depth.load = RenderPass::Load::LOAD;
 	depth.store = RenderPass::Store::NONE;
-	depth.getFrameBufferCallback = [](Renderer* renderer, uint32_t& index)
+	depth.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
 		index = 3;
-		return renderer->GetRenderPassFrameBuffer(GBuffer);
+		return renderTarget->GetRenderPassFrameBuffer(GBuffer);
 	};
 
 	RenderPass::CreateInfo createInfo{};
@@ -840,7 +851,7 @@ void RenderPassManager::CreateTransparent()
 
 		std::sort(renderDatas.begin(), renderDatas.end(), isFurther);
 
-		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderer->GetBuffer("InstanceBufferTransparent");
+		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderTarget->GetBuffer("InstanceBufferTransparent");
 		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
 		{
 			instanceBuffer = Buffer::Create(
@@ -849,12 +860,12 @@ void RenderPassManager::CreateTransparent()
 				Buffer::Usage::VERTEX_BUFFER,
 				Buffer::MemoryType::CPU);
 
-			renderInfo.renderer->SetBuffer("InstanceBufferTransparent", instanceBuffer);
+			renderInfo.renderTarget->SetBuffer("InstanceBufferTransparent", instanceBuffer);
 		}
 
 		std::vector<InstanceData> instanceDatas;
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
@@ -953,18 +964,18 @@ void RenderPassManager::CreateFinal()
 			return;
 		}
 
-		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderer->GetUniformWriter(renderPassName);
+		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderTarget->GetUniformWriter(renderPassName);
 		if (!renderUniformWriter)
 		{
 			std::shared_ptr<UniformLayout> renderUniformLayout =
 				pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, renderPassName));
 			renderUniformWriter = UniformWriter::Create(renderUniformLayout);
-			renderInfo.renderer->SetUniformWriter(renderPassName, renderUniformWriter);
+			renderInfo.renderTarget->SetUniformWriter(renderPassName, renderUniformWriter);
 		}
 
 		for (const auto& [name, renderTargetInfo] : pipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
 		{
-			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
 			renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
 		}
 
@@ -980,7 +991,7 @@ void RenderPassManager::CreateFinal()
 			}
 		}
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
@@ -1025,7 +1036,7 @@ void RenderPassManager::CreateSSAO()
 	{
 		const std::string renderPassName = renderInfo.renderPass->GetType();
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
@@ -1065,13 +1076,13 @@ void RenderPassManager::CreateSSAO()
 		std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 		EventSystem::GetInstance().SendEvent(event);
 
-		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderer->GetUniformWriter(renderPassName);
+		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderTarget->GetUniformWriter(renderPassName);
 		if (!renderUniformWriter)
 		{
 			std::shared_ptr<UniformLayout> renderUniformLayout =
 				pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, renderPassName));
 			renderUniformWriter = UniformWriter::Create(renderUniformLayout);
-			renderInfo.renderer->SetUniformWriter(renderPassName, renderUniformWriter);
+			renderInfo.renderTarget->SetUniformWriter(renderPassName, renderUniformWriter);
 
 			for (const auto& binding : renderUniformLayout->GetBindings())
 			{
@@ -1083,7 +1094,7 @@ void RenderPassManager::CreateSSAO()
 						Buffer::Usage::UNIFORM_BUFFER,
 						Buffer::MemoryType::CPU);
 
-					renderInfo.renderer->SetBuffer("SSAOBuffer", buffer);
+					renderInfo.renderTarget->SetBuffer("SSAOBuffer", buffer);
 					renderUniformWriter->WriteBuffer(binding.buffer->name, buffer);
 					renderUniformWriter->Flush();
 
@@ -1094,7 +1105,7 @@ void RenderPassManager::CreateSSAO()
 
 		for (const auto& [name, renderTargetInfo] : pipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
 		{
-			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
 			renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
 		}
 
@@ -1104,7 +1115,7 @@ void RenderPassManager::CreateSSAO()
 			renderUniformWriter->WriteTexture("noiseTexture", noiseTexture);
 		}
 
-		const std::shared_ptr<Buffer> ssaoBuffer = renderInfo.renderer->GetBuffer("SSAOBuffer");
+		const std::shared_ptr<Buffer> ssaoBuffer = renderInfo.renderTarget->GetBuffer("SSAOBuffer");
 		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "viewportScale", GetRenderPass(renderPassName)->GetResizeViewportScale());
 		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "kernelSize", graphicsSettings.ssao.kernelSize);
 		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "noiseSize", graphicsSettings.ssao.noiseSize);
@@ -1163,7 +1174,7 @@ void RenderPassManager::CreateSSAOBlur()
 	{
 		const std::string renderPassName = renderInfo.renderPass->GetType();
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
@@ -1193,18 +1204,18 @@ void RenderPassManager::CreateSSAOBlur()
 			return;
 		}
 
-		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderer->GetUniformWriter(renderPassName);
+		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderTarget->GetUniformWriter(renderPassName);
 		if (!renderUniformWriter)
 		{
 			std::shared_ptr<UniformLayout> renderUniformLayout =
 				pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, renderPassName));
 			renderUniformWriter = UniformWriter::Create(renderUniformLayout);
-			renderInfo.renderer->SetUniformWriter(renderPassName, renderUniformWriter);
+			renderInfo.renderTarget->SetUniformWriter(renderPassName, renderUniformWriter);
 		}
 
 		for (const auto& [name, renderTargetInfo] : pipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
 		{
-			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
 			renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
 		}
 
@@ -1269,15 +1280,15 @@ void RenderPassManager::CreateCSM()
 		const std::string renderPassName = renderInfo.renderPass->GetType();
 		const GraphicsSettings::Shadows& shadowsSettings = renderInfo.scene->GetGraphicsSettings().shadows;
 
-		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderer->GetRenderPassFrameBuffer(renderPassName);
+		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
 		if (!frameBuffer)
 		{
 			// NOTE: Maybe should be send as the next frame event, because creating a frame buffer here may cause some problems.
 			const std::string renderPassName = renderInfo.renderPass->GetType();
 			renderInfo.renderPass->GetAttachmentDescriptions().back().layercount = renderInfo.scene->GetGraphicsSettings().shadows.cascadeCount;
-			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderer.get(), { 2048, 2048 });
+			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), { 2048, 2048 });
 
-			renderInfo.renderer->SetFrameBufferToRenderPass(renderPassName, frameBuffer);
+			renderInfo.renderTarget->SetFrameBufferToRenderPass(renderPassName, frameBuffer);
 		}
 
 		if (!shadowsSettings.isEnabled)
@@ -1341,7 +1352,7 @@ void RenderPassManager::CreateCSM()
 			glm::mat4 transform;
 		};
 
-		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderer->GetBuffer("InstanceBufferCSM");
+		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderTarget->GetBuffer("InstanceBufferCSM");
 		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
 		{
 			instanceBuffer = Buffer::Create(
@@ -1350,7 +1361,7 @@ void RenderPassManager::CreateCSM()
 				Buffer::Usage::VERTEX_BUFFER,
 				Buffer::MemoryType::CPU);
 
-			renderInfo.renderer->SetBuffer("InstanceBufferCSM", instanceBuffer);
+			renderInfo.renderTarget->SetBuffer("InstanceBufferCSM", instanceBuffer);
 		}
 
 		std::vector<InstanceDataCSM> instanceDatas;
@@ -1368,13 +1379,13 @@ void RenderPassManager::CreateCSM()
 		{
 			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 
-			std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderer->GetUniformWriter(renderPassName);
+			std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderTarget->GetUniformWriter(renderPassName);
 			if (!renderUniformWriter)
 			{
 				std::shared_ptr<UniformLayout> renderUniformLayout =
 					pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, renderPassName));
 				renderUniformWriter = UniformWriter::Create(renderUniformLayout);
-				renderInfo.renderer->SetUniformWriter(renderPassName, renderUniformWriter);
+				renderInfo.renderTarget->SetUniformWriter(renderPassName, renderUniformWriter);
 
 				for (const auto& binding : renderUniformLayout->GetBindings())
 				{
@@ -1386,7 +1397,7 @@ void RenderPassManager::CreateCSM()
 							Buffer::Usage::UNIFORM_BUFFER,
 							Buffer::MemoryType::CPU);
 
-						renderInfo.renderer->SetBuffer("LightSpaceMatrices", buffer);
+						renderInfo.renderTarget->SetBuffer("LightSpaceMatrices", buffer);
 						renderUniformWriter->WriteBuffer(binding.buffer->name, buffer);
 						renderUniformWriter->Flush();
 
@@ -1415,14 +1426,14 @@ void RenderPassManager::CreateCSM()
 					shadowsSettings.splitFactor);
 
 				baseMaterial->WriteToBuffer(
-					renderInfo.renderer->GetBuffer("LightSpaceMatrices"),
+					renderInfo.renderTarget->GetBuffer("LightSpaceMatrices"),
 					"LightSpaceMatrices",
 					"lightSpaceMatrices",
 					*csmRenderer.GetLightSpaceMatrices().data());
 
 				const int cascadeCount = csmRenderer.GetLightSpaceMatrices().size();
 				baseMaterial->WriteToBuffer(
-					renderInfo.renderer->GetBuffer("LightSpaceMatrices"),
+					renderInfo.renderTarget->GetBuffer("LightSpaceMatrices"),
 					"LightSpaceMatrices",
 					"cascadeCount",
 					cascadeCount);
