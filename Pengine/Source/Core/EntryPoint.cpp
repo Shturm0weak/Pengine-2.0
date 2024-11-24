@@ -135,13 +135,17 @@ void EntryPoint::Run() const
 	ThreadPool::GetInstance().Initialize();
 
 	const std::shared_ptr<Renderer> renderer = Renderer::Create();
-
+	
 	m_Application->OnStart();
 
 	while (mainWindow->IsRunning())
 	{
 		Time::GetInstance().Update();
 		AsyncAssetLoader::GetInstance().Update();
+
+		eventSystem.ProcessEvents();
+
+		m_Application->OnUpdate();
 
 		for (const auto& window : WindowManager::GetInstance().GetWindows())
 		{
@@ -158,8 +162,6 @@ void EntryPoint::Run() const
 			{
 				continue;
 			}
-
-			m_Application->OnUpdate();
 
 			window->ImGuiBegin();
 			for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
@@ -227,8 +229,6 @@ void EntryPoint::Run() const
 				window->ImGuiRenderPass(frame);
 				window->EndFrame(frame);
 			}
-
-			eventSystem.ProcessEvents();
 		}
 
 		++currentFrame;
