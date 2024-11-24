@@ -6,6 +6,8 @@
 #include "Visualizer.h"
 #include "GraphicsSettings.h"
 
+#include "../Graphics/RenderTarget.h"
+
 namespace Pengine
 {
 
@@ -54,6 +56,10 @@ namespace Pengine
 
 		std::set<std::shared_ptr<Entity>>& GetSelectedEntities() { return m_SelectedEntities; }
 
+		std::shared_ptr<RenderTarget> GetRenderTarget() const { return m_RenderTarget; }
+
+		void SetRenderTarget(std::shared_ptr<RenderTarget> renderTarget) { m_RenderTarget = renderTarget; }
+
 	private:
 		std::vector<std::shared_ptr<Entity>> m_Entities;
 		entt::registry m_Registry;
@@ -64,6 +70,8 @@ namespace Pengine
 		std::string m_Tag = none;
 
 		std::set<std::shared_ptr<Entity>> m_SelectedEntities;
+
+		std::shared_ptr<RenderTarget> m_RenderTarget;
 
 		void Copy(const Scene& scene);
 	};

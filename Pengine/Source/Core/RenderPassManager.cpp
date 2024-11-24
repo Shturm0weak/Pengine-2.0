@@ -54,7 +54,6 @@ void RenderPassManager::ShutDown()
 	m_RenderPassesByType.clear();
 	m_LineRenderer.ShutDown();
 	m_SSAORenderer.ShutDown();
-	m_AtmosphereFrameBuffer = nullptr;
 }
 
 std::vector<std::shared_ptr<UniformWriter>> RenderPassManager::GetUniformWriters(
@@ -640,7 +639,6 @@ void RenderPassManager::CreateAtmosphere()
 	createInfo.clearColors = { clearColor };
 	createInfo.attachmentDescriptions = { color };
 	createInfo.resizeWithViewport = false;
-	createInfo.createFrameBuffer = false;
 
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
@@ -681,7 +679,7 @@ void RenderPassManager::CreateAtmosphere()
 			baseMaterial->WriteToBuffer("AtmosphereBuffer", "hasDirectionalLight", hasDirectionalLight);
 		}
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = m_AtmosphereFrameBuffer;
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.scene->GetRenderTarget()->GetRenderPassFrameBuffer(Atmosphere);
 		const glm::vec2 faceSize = frameBuffer->GetSize();
 		baseMaterial->WriteToBuffer("AtmosphereBuffer", "faceSize", faceSize);
 
@@ -731,11 +729,6 @@ void RenderPassManager::CreateAtmosphere()
 	};
 
 	const std::shared_ptr<RenderPass> renderPass = Create(createInfo);
-
-	if (!m_AtmosphereFrameBuffer)
-	{
-		m_AtmosphereFrameBuffer = FrameBuffer::Create(renderPass, nullptr, renderPass->GetAttachmentDescriptions().back().size.value());
-	}
 }
 
 void RenderPassManager::CreateTransparent()

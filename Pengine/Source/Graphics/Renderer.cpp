@@ -2,6 +2,7 @@
 
 #include "../Core/Logger.h"
 #include "../Core/RenderPassManager.h"
+#include "../Core/RenderPassOrder.h"
 #include "../Core/Scene.h"
 #include "../Core/Serializer.h"
 #include "../Vulkan/VulkanRenderer.h"
@@ -33,6 +34,11 @@ void Renderer::Update(
 		if (!scene)
 		{
 			return;
+		}
+
+		if (!scene->GetRenderTarget())
+		{
+			scene->SetRenderTarget(RenderTarget::Create(renderPassPerSceneOrder, { 0, 0 }));
 		}
 
 		RenderPass::RenderCallbackInfo renderInfo{};

@@ -10,9 +10,13 @@ namespace Pengine
 	class PENGINE_API RenderTarget
 	{
 	public:
-		static std::shared_ptr<RenderTarget> Create(const glm::ivec2& size);
+		static std::shared_ptr<RenderTarget> Create(
+			const std::vector<std::string>& renderPassOrder,
+			const glm::ivec2& size);
 
-		explicit RenderTarget(const glm::ivec2& size);
+		explicit RenderTarget(
+			const std::vector<std::string>& renderPassOrder,
+			const glm::ivec2& size);
 		virtual ~RenderTarget();
 		RenderTarget(const RenderTarget&) = delete;
 		RenderTarget(RenderTarget&&) = delete;
@@ -38,6 +42,8 @@ namespace Pengine
 		std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> m_FrameBuffersByRenderPassType;
 		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPassType;
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
+
+		std::vector<std::string> m_RenderPassOrder;
 	};
 
 }

@@ -9,14 +9,19 @@
 
 using namespace Pengine;
 
-std::shared_ptr<RenderTarget> RenderTarget::Create(const glm::ivec2& size)
+std::shared_ptr<RenderTarget> RenderTarget::Create(
+	const std::vector<std::string>& renderPassOrder,
+	const glm::ivec2& size)
 {
-	return std::make_shared<RenderTarget>(size);
+	return std::make_shared<RenderTarget>(renderPassOrder, size);
 }
 
-RenderTarget::RenderTarget(const glm::ivec2& size)
+RenderTarget::RenderTarget(
+	const std::vector<std::string>& renderPassOrder,
+	const glm::ivec2& size)
+	: m_RenderPassOrder(renderPassOrder)
 {
-	for (const auto& type : renderPassPerViewportOrder)
+	for (const auto& type : m_RenderPassOrder)
 	{
 		if (std::shared_ptr<RenderPass> renderPass =
 			RenderPassManager::GetInstance().GetRenderPass(type))
@@ -81,7 +86,7 @@ void RenderTarget::SetFrameBufferToRenderPass(const std::string& type, const std
 
 void RenderTarget::Resize(const glm::ivec2& size) const
 {
-	for (const std::string& renderPassName : renderPassPerViewportOrder)
+	for (const std::string& renderPassName : m_RenderPassOrder)
 	{
 		if (const std::shared_ptr<FrameBuffer> frameBuffer =
 			GetRenderPassFrameBuffer(renderPassName))

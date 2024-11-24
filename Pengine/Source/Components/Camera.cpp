@@ -2,6 +2,7 @@
 
 #include "Transform.h"
 
+#include "../Core/RenderPassOrder.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 #include "../Graphics/RenderTarget.h"
@@ -100,7 +101,7 @@ void Camera::CreateRenderTarget(const std::string& name, const glm::ivec2& size)
 {
 	auto callback = [this, name, size]()
 	{
-		m_RenderTargetsByName[name] = RenderTarget::Create(size);
+		m_RenderTargetsByName[name] = RenderTarget::Create(renderPassPerViewportOrder, size);
 	};
 
 	std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
