@@ -10,23 +10,6 @@
 namespace Pengine
 {
 
-	// TODO: move somewhere.
-	const std::vector<std::string> renderPassPerSceneOrder =
-	{
-		Atmosphere
-	};
-
-	const std::vector<std::string> renderPassPerViewportOrder =
-	{
-		GBuffer,
-		CSM,
-		SSAO,
-		SSAOBlur,
-		Deferred,
-		Transparent,
-		Final,
-	};
-
 	class PENGINE_API RenderPassManager
 	{
 	public:
@@ -85,8 +68,6 @@ namespace Pengine
 		LineRenderer m_LineRenderer;
 		SSAORenderer m_SSAORenderer;
 		std::map<std::wstring, CSMRenderer> m_CSMRenderersByCSMSetting;
-
-		std::shared_ptr<class FrameBuffer> m_AtmosphereFrameBuffer;
 	};
 
 }

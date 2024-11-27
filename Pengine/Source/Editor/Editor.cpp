@@ -18,6 +18,7 @@
 #include "../Core/Viewport.h"
 #include "../Core/WindowManager.h"
 #include "../Core/RenderPassManager.h"
+#include "../Core/RenderPassOrder.h"
 #include "../Editor/ImGuizmo.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
