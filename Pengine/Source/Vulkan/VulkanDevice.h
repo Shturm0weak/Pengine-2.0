@@ -124,8 +124,6 @@ namespace Pengine::Vk
 			uint32_t mipLevels,
 			uint32_t layerCount) const;
 
-		VkPhysicalDeviceProperties properties;
-
 		void CommandBeginLabel(
 			const std::string& name,
 			VkCommandBuffer commandBuffer,
@@ -175,6 +173,7 @@ namespace Pengine::Vk
 		VkInstance m_Instance;
 		VkDebugUtilsMessengerEXT m_DebugMessenger;
 		VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
+		VkPhysicalDeviceProperties m_PhysicalDeviceProperties;
 		VkCommandPool m_CommandPool;
 
 		VkDevice m_Device;
