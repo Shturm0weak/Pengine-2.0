@@ -108,35 +108,77 @@ void VulkanDevice::CreateInstance(const std::string& applicationName)
 
 void VulkanDevice::PickPhysicalDevice()
 {
-	uint32_t deviceCount = 0;
-	vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr);
+	uint32_t physicaldeviceCount = 0;
+	vkEnumeratePhysicalDevices(m_Instance, &physicaldeviceCount, nullptr);
 
-	if (deviceCount == 0)
+	if (physicaldeviceCount == 0)
 	{
 		FATAL_ERROR("Failed to find GPUs with Vulkan support!");
 	}
 
-	Logger::Log("Device count: " + std::to_string(deviceCount));
+	Logger::Log("Physical device count: " + std::to_string(physicaldeviceCount));
 
-	std::vector<VkPhysicalDevice> devices(deviceCount);
-	vkEnumeratePhysicalDevices(m_Instance, &deviceCount, devices.data());
+	std::vector<VkPhysicalDevice> devices(physicaldeviceCount);
+	vkEnumeratePhysicalDevices(m_Instance, &physicaldeviceCount, devices.data());
+
+	struct PhysicalDeviceInfo
+	{
+		VkPhysicalDevice device;
+		VkPhysicalDeviceProperties properties;
+	};
+
+	std::map<VkPhysicalDeviceType, PhysicalDeviceInfo> deviceInfoByType;
+
+	Logger::Log("Physical devices:");
 
 	for (const auto &device : devices)
 	{
+		VkPhysicalDeviceProperties properties{};
+		vkGetPhysicalDeviceProperties(device, &properties);
+
 		if (IsDeviceSuitable(device))
 		{
-			m_PhysicalDevice = device;
-			break;
+			Logger::Log(std::string(" * ") + properties.deviceName + " - Suitable");
+
+			PhysicalDeviceInfo physicalDeviceInfo{};
+			physicalDeviceInfo.device = device;
+			physicalDeviceInfo.properties = properties;
+
+			deviceInfoByType[properties.deviceType] = physicalDeviceInfo;
+		}
+		else
+		{
+			Logger::Log(std::string(" * ") + properties.deviceName + " - Not suitable");
 		}
 	}
 
-	if (m_PhysicalDevice == VK_NULL_HANDLE)
+	// Try to pick descrete gpu.
 	{
-		FATAL_ERROR("Failed to find a suitable GPU!");
+		auto deviceInfo = deviceInfoByType.find(VkPhysicalDeviceType::VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU);
+		if (deviceInfo != deviceInfoByType.end())
+		{
+			m_PhysicalDevice = deviceInfo->second.device;
+			m_PhysicalDeviceProperties = deviceInfo->second.properties;
+		}
 	}
 
-	vkGetPhysicalDeviceProperties(m_PhysicalDevice, &properties);
-	Logger::Log(std::string("Physical device: ") + properties.deviceName);
+	// Try to pick integrated gpu.
+	if (m_PhysicalDevice == VK_NULL_HANDLE)
+	{
+		auto deviceInfo = deviceInfoByType.find(VkPhysicalDeviceType::VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU);
+		if (deviceInfo != deviceInfoByType.end())
+		{
+			m_PhysicalDevice = deviceInfo->second.device;
+			m_PhysicalDeviceProperties = deviceInfo->second.properties;
+		}
+	}
+	
+	if (m_PhysicalDevice == VK_NULL_HANDLE)
+	{
+		FATAL_ERROR("Failed to find a suitable physical device!");
+	}
+
+	Logger::Log(std::string("Choosen physical device: ") + m_PhysicalDeviceProperties.deviceName, BOLDGREEN);
 }
 
 void VulkanDevice::CreateLogicalDevice()

@@ -52,7 +52,7 @@ std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath)
 		return nullptr;
 	}
 
-	Logger::Log("Texture:" + textureCreateInfo.filepath.string() + " has been loaded!", GREEN);
+	Logger::Log("Texture:" + textureCreateInfo.filepath.string() + " has been loaded!", BOLDGREEN);
 
 	if (graphicsAPI == GraphicsAPI::Vk)
 	{

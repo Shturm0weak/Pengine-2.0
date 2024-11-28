@@ -477,14 +477,14 @@ std::string VulkanPipeline::CompileShaderModule(
 
 		if (useLog)
 		{
-			Logger::Log("Shader:" + filepath + " has been compiled!", GREEN);
+			Logger::Log("Shader:" + filepath + " has been compiled!", BOLDGREEN);
 		}
 	}
 	else
 	{
 		if (useLog)
 		{
-			Logger::Log("Shader Cache:" + filepath + " has been loaded!", GREEN);
+			Logger::Log("Shader Cache:" + filepath + " has been loaded!", BOLDGREEN);
 		}
 	}
 
