@@ -697,7 +697,7 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 		pipelineCreateInfos.emplace_back(pipelineCreateInfo);
 	}
 
-	Logger::Log("BaseMaterial:" + filepath.string() + " has been deserialized!", GREEN);
+	Logger::Log("BaseMaterial:" + filepath.string() + " has been deserialized!", BOLDGREEN);
 
 	return createInfo;
 }
@@ -792,7 +792,7 @@ Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filep
 		createInfo.uniformInfos.emplace(renderPass, uniformInfo);
 	}
 
-	Logger::Log("Material:" + filepath.string() + " has been deserialized!", GREEN);
+	Logger::Log("Material:" + filepath.string() + " has been deserialized!", BOLDGREEN);
 
 	return createInfo;
 }
@@ -960,7 +960,7 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material)
 		GenerateFileUUID(material->GetFilepath());
 	}
 
-	Logger::Log("Material:" + material->GetFilepath().string() + " has been serialized!", GREEN);
+	Logger::Log("Material:" + material->GetFilepath().string() + " has been serialized!", BOLDGREEN);
 }
 
 void Serializer::SerializeMesh(const std::filesystem::path& directory,  const std::shared_ptr<Mesh>& mesh)
@@ -1021,7 +1021,7 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 		GenerateFileUUID(mesh->GetFilepath());
 	}
 
-	Logger::Log("Mesh:" + outMeshFilepath.string() + " has been serialized!", GREEN);
+	Logger::Log("Mesh:" + outMeshFilepath.string() + " has been serialized!", BOLDGREEN);
 }
 
 std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& filepath)
@@ -1087,7 +1087,7 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 
 	delete[] data;
 
-	Logger::Log("Mesh:" + filepath.string() + " has been deserialized!", GREEN);
+	Logger::Log("Mesh:" + filepath.string() + " has been deserialized!", BOLDGREEN);
 
 	return std::make_shared<Mesh>(meshName, filepath, sizeof(Vertex), vertices, indices);
 }
@@ -1945,7 +1945,7 @@ void Serializer::DeserializePrefab(const std::filesystem::path& filepath, const 
 		}
 	}
 
-	Logger::Log("Prefab:" + filepath.string() + " has been deserialized!", GREEN);
+	Logger::Log("Prefab:" + filepath.string() + " has been deserialized!", BOLDGREEN);
 }
 
 void Serializer::SerializeTransform(YAML::Emitter& out, const std::shared_ptr<Entity>& entity)
@@ -2297,7 +2297,7 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 	fout << out.c_str();
 	fout.close();
 
-	Logger::Log("Scene:" + filepath.string() + " has been serialized!", GREEN);
+	Logger::Log("Scene:" + filepath.string() + " has been serialized!", BOLDGREEN);
 }
 
 std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path& filepath)
@@ -2389,7 +2389,7 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path&
 		}
 	}
 
-	Logger::Log("Scene:" + filepath.string() + " has been deserialized!", GREEN);
+	Logger::Log("Scene:" + filepath.string() + " has been deserialized!", BOLDGREEN);
 
 	return scene;
 }
