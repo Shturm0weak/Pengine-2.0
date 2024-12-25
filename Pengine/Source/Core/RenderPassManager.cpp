@@ -1003,6 +1003,24 @@ void RenderPassManager::CreateFinal()
 				pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, renderPassName));
 			renderUniformWriter = UniformWriter::Create(renderUniformLayout);
 			renderInfo.renderTarget->SetUniformWriter(renderPassName, renderUniformWriter);
+
+			for (const auto& binding : renderUniformLayout->GetBindings())
+			{
+				if (binding.buffer && binding.buffer->name == "PostProcessBuffer")
+				{
+					const std::shared_ptr<Buffer> buffer = Buffer::Create(
+						binding.buffer->size,
+						1,
+						Buffer::Usage::UNIFORM_BUFFER,
+						Buffer::MemoryType::CPU);
+
+					renderInfo.renderTarget->SetBuffer("PostProcessBuffer", buffer);
+					renderUniformWriter->WriteBuffer(binding.buffer->name, buffer);
+					renderUniformWriter->Flush();
+
+					break;
+				}
+			}
 		}
 
 		// Deferred texture.
@@ -1021,6 +1039,13 @@ void RenderPassManager::CreateFinal()
 		{
 			renderUniformWriter->WriteTexture("bloomTexture", TextureManager::GetInstance().GetBlack());
 		}
+
+		const int toneMapperIndex = 0;
+		const float gamma = 2.2f;
+		const std::shared_ptr<Buffer> postProcessBuffer = renderInfo.renderTarget->GetBuffer("PostProcessBuffer");
+		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "toneMapperIndex", graphicsSettings.postProcess.toneMapper);
+		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "gamma", graphicsSettings.postProcess.gamma);
+		postProcessBuffer->Flush();
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 

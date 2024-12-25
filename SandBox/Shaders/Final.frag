@@ -7,6 +7,12 @@ layout(location = 0) out vec4 outColor;
 layout(set = 0, binding = 0) uniform sampler2D deferredTexture;
 layout(set = 0, binding = 1) uniform sampler2D bloomTexture;
 
+layout(set = 0, binding = 2) uniform PostProcessBuffer
+{
+	int toneMapperIndex;
+	float gamma;
+};
+
 vec3 aces(vec3 x)
 {
   const float a = 2.51;
@@ -22,5 +28,12 @@ void main()
 	vec3 bloom = texture(bloomTexture, uv).xyz;
 	vec3 deferred = texture(deferredTexture, uv).xyz;
 
-	outColor = vec4(pow(aces(deferred + bloom), vec3(1.0f / 2.2f)), 1.0f);
+	if (toneMapperIndex == 0)
+	{
+		outColor = vec4(pow(deferred + bloom, vec3(1.0f / gamma)), 1.0f);
+	}
+	else if (toneMapperIndex == 1)
+	{
+		outColor = vec4(pow(aces(deferred + bloom), vec3(1.0f / gamma)), 1.0f);
+	}
 }

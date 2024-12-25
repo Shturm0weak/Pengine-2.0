@@ -899,6 +899,15 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			isChangedToSerialize += ImGui::SliderFloat("Brightness Threshold", &graphicsSettings.bloom.brightnessThreshold, 0.0f, 2.0f);
 		}
 
+		if (ImGui::CollapsingHeader("Post Process"))
+		{
+			isChangedToSerialize += ImGui::SliderFloat("Gamma", &graphicsSettings.postProcess.gamma, 0.0f, 3.0f);
+
+			const char* const toneMappers[] = {"NONE", "ACES" };
+			int* toneMapperIndex = (int*)(&graphicsSettings.postProcess.toneMapper);
+			isChangedToSerialize += ImGui::Combo("Tone Mapper", toneMapperIndex, toneMappers, (int)GraphicsSettings::PostProcess::ToneMapper::COUNT);
+		}
+
 		if (isChangedToSerialize && std::filesystem::exists(graphicsSettings.GetFilepath()))
 		{
 			Serializer::SerializeGraphicsSettings(graphicsSettings);

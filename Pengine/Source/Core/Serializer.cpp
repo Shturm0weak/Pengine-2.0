@@ -2568,6 +2568,16 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::EndMap;
 	//
 
+	// Post Process.
+	out << YAML::Key << "PostProcess";
+	out << YAML::Value << YAML::BeginMap;
+
+	out << YAML::Key << "Gamma" << YAML::Value << graphicsSettings.postProcess.gamma;
+	out << YAML::Key << "ToneMapper" << YAML::Value << (int)graphicsSettings.postProcess.toneMapper;
+
+	out << YAML::EndMap;
+	//
+
 	out << YAML::EndMap;
 
 	std::ofstream fout(graphicsSettings.GetFilepath());
@@ -2684,6 +2694,19 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& mipCountData = ssaoData["MipCount"])
 		{
 			graphicsSettings.bloom.mipCount = mipCountData.as<int>();
+		}
+	}
+
+	if (const auto& ssaoData = data["PostProcess"])
+	{
+		if (const auto& gammaData = ssaoData["Gamma"])
+		{
+			graphicsSettings.postProcess.gamma = gammaData.as<float>();
+		}
+
+		if (const auto& toneMapperData = ssaoData["ToneMapper"])
+		{
+			graphicsSettings.postProcess.toneMapper = (GraphicsSettings::PostProcess::ToneMapper)toneMapperData.as<int>();
 		}
 	}
 

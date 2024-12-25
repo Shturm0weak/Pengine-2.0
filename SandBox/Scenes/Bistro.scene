@@ -11,8 +11,8 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [-3.81435966, 1.61508048, -0.848831832]
-      Rotation: [-0.236276641, -1.76529396, 0]
+      Position: [-16.4051247, 4.55947924, -1.97372687]
+      Rotation: [-0.142784417, 4.6271348, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -29,7 +29,7 @@ Scene:
       []
     Transform:
       Position: [0, 0, 0]
-      Rotation: [0.820304751, 0, 0]
+      Rotation: [1.37881005, 0, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     DirectionalLight:
@@ -175,7 +175,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
   - UUID: 4f1e0a50-b8b0-4488-ade6-f4946da83890
     Name: Mesh.1291
@@ -185,7 +185,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 686f6cd0-e416-4ebd-85e1-bc1185f3a4f8
@@ -198,7 +198,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 8504c52e-cbfb-431c-8040-435742cc9318
@@ -211,7 +211,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: e1278499-ee17-405f-b62a-2fd2e943f62c
@@ -224,7 +224,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 7db31970-5b36-4057-b67d-73a555f462aa
@@ -237,7 +237,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 215f429e-8c92-4595-82f1-98fa9f619bfb
@@ -250,7 +250,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: b652f17e-e8e7-4253-b8f2-a3204a8e9954
@@ -263,7 +263,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: de0eb173-9854-4ceb-8bd1-9c700794afc4
@@ -276,7 +276,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 1f7daf94-e5ce-41d2-b9c0-04b4cd9cc560
@@ -289,7 +289,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 7f698cb0-a724-47b6-8191-e4e34b5f7f71
@@ -302,7 +302,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 8fbc6677-50ec-47ee-b229-2226d69eb18b
@@ -315,7 +315,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 6b5e840c-5a4a-4983-8066-d2755e2fb16c
@@ -328,7 +328,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 213e01a1-86a6-482f-84a1-67d361bc4cb0
@@ -341,7 +341,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 0f185558-e8d9-4bc4-b1d7-229d40d160b2
@@ -354,7 +354,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 3c89833e-3e03-4a28-9ce1-0aca8e3ed091
@@ -367,7 +367,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: ec19b9c9-0265-40f0-b563-af2a40538ab8
@@ -380,7 +380,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 9bc563e6-3ce3-4159-a887-eaa69c1136ef
@@ -393,7 +393,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 6b0c4c46-9f8a-46a7-82fa-4b4da9dade31
@@ -406,7 +406,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 9d8da1a1-0503-4d88-a7e3-ab023c0415ac
@@ -419,7 +419,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: b9a7a4e6-f442-4675-a359-c6236edcac97
@@ -432,7 +432,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 104137ce-dad6-4f8d-8c68-8778bce4c5f4
@@ -445,7 +445,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: f4b8bb70-a45d-41ab-a86c-2ff1c3978b23
@@ -458,7 +458,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 7b410bbd-a5e5-4b16-b5d6-5f26dfceb939
@@ -471,7 +471,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 8f8ddbd8-7f69-4d2d-9d9a-06825322f47f
@@ -484,7 +484,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 124c1b11-bd0f-44c3-afda-4ff09aae1f43
@@ -497,7 +497,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: e62a66f2-bf08-4ddf-bc69-400c72a82167
@@ -510,7 +510,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 039beab0-f4cf-4434-b6b4-dfb333e51b0c
@@ -523,7 +523,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 29981073-ab53-417d-a581-3376f33f9364
@@ -536,7 +536,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: df902895-22c1-47aa-ab11-2a6e39077aca
@@ -549,7 +549,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: f8f2ac6d-88b4-47c8-83c7-532859e54bb4
@@ -562,7 +562,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 68143272-2462-4c80-8a8d-80d67a1f95f6
@@ -575,7 +575,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: e8a705b9-8917-477e-8486-01b131b26069
@@ -588,7 +588,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 6566a1fa-74bc-4a2f-87b6-74441fa2c6fb
@@ -601,7 +601,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 77506bff-5e4c-4dbb-beb7-e404acfb3159
@@ -614,7 +614,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 456b5845-c0b8-4aed-8995-4bfcf2edcc6d
@@ -627,7 +627,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 4ee81500-23b8-42be-8e4f-7288745d322b
@@ -640,7 +640,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 68c56369-91c6-4a76-b2b5-689818cbd61b
@@ -653,7 +653,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: d9bb09c2-4482-43e5-aca7-e39d8ba1c189
@@ -666,7 +666,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 6b002cb2-834b-4cfe-84cc-5f6b4b13aa4b
@@ -679,7 +679,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: ab658800-b3dd-4acc-8d93-ff26f22018a0
@@ -692,7 +692,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: c8a33e2f-b427-4d38-9361-4a73dea22fa4
@@ -705,7 +705,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 92fa29cb-49aa-4a11-8ad3-0a57eb89dcb3
@@ -718,7 +718,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: c155f98c-fe2a-4147-a598-647433f6c035
@@ -731,7 +731,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: b86f5259-9900-4399-904e-240347c2fa07
@@ -744,7 +744,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 2bf5995e-4934-4b7f-a4e9-5334799922bf
@@ -757,7 +757,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 008e6c30-0d8d-4016-ab20-c7c8c1bba6d1
@@ -770,7 +770,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: cf3eac2f-d79b-4d7d-b641-bc89869e5416
@@ -783,7 +783,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: ee6c06e6-f0dc-44d5-aabc-f5c0ceb2c7f7
@@ -796,7 +796,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 077a113a-a0c6-4ba5-8e02-721fc725dc80
@@ -809,7 +809,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 0690f292-954f-4698-bb37-cad2a88cb082
@@ -822,7 +822,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 182e1250-7020-4d5b-a71f-3d0f392642c2
@@ -835,7 +835,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: e08d2994-df8d-4c2d-86a0-e1babb723ad0
@@ -848,7 +848,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: e160ef10-dacc-4d0e-9f64-7986411d58be
@@ -861,7 +861,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 58fc34c2-8bd5-4d58-8f65-5bf30e56a314
@@ -874,7 +874,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 714b4211-39c2-467b-81cc-06673b23e3d0
@@ -887,7 +887,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: d5fd5116-25a4-498b-8bc0-209466a13194
@@ -900,7 +900,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 99f0228b-dc7b-4d16-ab90-80f537c52a19
@@ -913,7 +913,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 1dcd6de3-31de-4b5d-b8e3-93b460b8e332
@@ -926,7 +926,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: be3f3914-54f6-4da4-9cab-1c10c3698a03
@@ -939,7 +939,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 437ca836-3906-4161-a4a5-a8bf04bb28ed
@@ -952,7 +952,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 7907bf29-1c53-4ed3-b349-12ab5343c841
@@ -965,7 +965,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 1af42636-5091-41ac-99cd-72ff635a2405
@@ -978,7 +978,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 53562a4d-4a5c-45f0-93d2-7120f638db78
@@ -991,7 +991,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 1b189780-5334-4f41-8bf4-4bbe2fa8d320
@@ -1004,7 +1004,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: b92472d5-e39d-493d-ad48-d941e93b8c71
@@ -1017,7 +1017,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 991ba3f2-2dd5-401c-a714-6f47878ec145
@@ -1030,7 +1030,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: c6d28365-d561-40f0-893a-0217689a8130
@@ -1043,7 +1043,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 7e0be3df-61b0-46ef-896f-c065f8ae8bde
@@ -1056,7 +1056,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: d62b2ced-6be7-4eb1-a5a4-8e57d59eab26
@@ -1069,7 +1069,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 7d6ce90c-a6c6-4bcf-be5b-6098dc134b56
@@ -1082,7 +1082,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 4fbc69a2-2220-49ab-8004-256d7b6840b3
@@ -1095,7 +1095,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: da93fb10-cc64-49eb-b483-a80a3c235040
@@ -1108,7 +1108,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 644a81cb-fa70-4dd7-a33c-91db01e30a90
@@ -1121,7 +1121,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: a5999f8d-1842-417d-8ac5-2e09a34fd583
@@ -1134,7 +1134,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: ad21bb5c-fbff-4b1e-ada9-0d5eb6831f45
@@ -1147,7 +1147,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 3b94315c-e202-4b3d-8a1c-e906acf1643a
@@ -1160,7 +1160,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 2ec97303-bf82-44da-a57a-526cca282482
@@ -1173,7 +1173,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 7e69952e-7d25-4330-a41c-b2b91c6cd18f
@@ -1186,7 +1186,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 29e14e26-4536-4540-b77b-a29ba2b3ac3f
@@ -1199,7 +1199,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 96004700-99ed-4bba-a103-d015e8b05ef6
@@ -1212,7 +1212,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 3963e7aa-4110-45fa-9fb1-8fa14d9e48e7
@@ -1225,7 +1225,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: a8ffa549-04ec-4ab6-8a29-b3d02f906e4c
@@ -1238,7 +1238,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 1f5b1451-bbd5-4311-b8e9-035c649b42ad
@@ -1251,7 +1251,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: caf86918-a1f6-4619-8897-7a8da820a569
@@ -1264,7 +1264,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 9cd3091e-afe5-4736-b001-5826d43de58a
@@ -1277,7 +1277,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 5adc394a-e197-4140-bb97-e621cf228cb5
@@ -1290,7 +1290,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 64b7efb7-1e7c-4702-970b-79eeade89792
@@ -1303,7 +1303,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 76cc04c9-344e-4c96-905f-45c8934663f8
@@ -1316,7 +1316,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 99b789de-6227-409d-88db-67c67faa89fe
@@ -1329,7 +1329,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: c6e0f08a-fdb1-4b3c-8170-ba24617e56b8
@@ -1342,7 +1342,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 08756978-1525-4121-bfd3-6950aaa8097b
@@ -1355,7 +1355,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 5d0971d1-7844-4664-8236-764d66ed3643
@@ -1368,7 +1368,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 4543bd96-4d88-4b95-9e56-02958f781444
@@ -1381,7 +1381,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 00a0d682-7fdc-4ba6-ba61-6f1cddcbed27
@@ -1394,7 +1394,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 76c99d13-98b0-401c-8cea-0e6132951ca0
@@ -1407,7 +1407,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: c0991ad8-3493-42aa-bf31-bbb28265fb5a
@@ -1420,7 +1420,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: e615be02-4936-499d-8634-95c2ef0bfe15
@@ -1433,7 +1433,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 45473c90-31b2-4a47-acec-c864dab17133
@@ -1446,7 +1446,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 53119945-de37-4132-8cb9-85e0f2dd4588
@@ -1459,7 +1459,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 75a1467a-b8d1-4e17-82d0-35490d102ae9
@@ -1472,7 +1472,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 0dde7552-8145-4ef6-abf1-be96df3fe79a
@@ -1485,7 +1485,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: da2403e7-858c-4b46-af36-d3638c913795
@@ -1498,7 +1498,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: deb7dd6d-19c2-4dd3-9e27-b242b35b38b0
@@ -1511,7 +1511,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 2fc4ea2c-30db-4958-a705-44d03c1859e5
@@ -1524,7 +1524,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 4e092fee-6064-4f5d-8364-c68c65f2728f
@@ -1537,7 +1537,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: f1b85127-8ec8-4e79-ac69-78d33e74876f
@@ -1550,7 +1550,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 74a24398-b4ca-4c7e-b953-9bb290204407
@@ -1563,7 +1563,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: d8038ea2-a124-419d-9634-8b4f2ab9ed6d
@@ -1576,7 +1576,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 59cbe9cd-1201-4587-84c9-eb1b64417e57
@@ -1589,7 +1589,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 27a749d7-9e9e-4f1f-ac43-aabcf02814eb
@@ -1602,7 +1602,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 4c729c5b-89bf-4f6b-be82-7c4634962a00
@@ -1615,7 +1615,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: cad8e80a-5605-4849-ab4e-bbef7432b491
@@ -1628,7 +1628,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 4285d921-842a-4cac-a84e-7abcdf872bab
@@ -1641,7 +1641,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 7dd4fc9d-0515-4e10-8882-db7b41e9cfe6
@@ -1654,7 +1654,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: d728042b-fc2d-444c-806a-9617ecf3e673
@@ -1667,7 +1667,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 32c29a80-7d18-41bc-861d-df86bd71d2e7
@@ -1680,7 +1680,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 616383f6-1af2-46b2-bf24-fdeaa224b0f7
@@ -1693,7 +1693,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 2ed66011-b92e-4654-88fd-eba0f0b25fc4
@@ -1706,7 +1706,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: ef1ff886-3d08-4669-b5b8-d6670fbe1017
@@ -1719,7 +1719,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 434c31ce-c52c-4cba-9b6a-7ec2595de513
@@ -1732,7 +1732,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 1426b8d4-80e6-45ba-b1b1-8fd4d82dec25
@@ -1745,7 +1745,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: b6a42b81-7e4e-4a87-8615-02b12411ce4e
@@ -1758,7 +1758,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: c8f9cf6a-d4b9-4131-9d6f-f8f6dbbd31c5
@@ -1771,7 +1771,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: c320a536-cf9a-4e5e-ad0f-4138464686a4
@@ -1784,7 +1784,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: d51ac8fd-51bf-46d2-ae29-c8f3ea94155b
@@ -1797,7 +1797,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 46c02b3b-7af3-49c4-86f4-834fa0aeb2f8
@@ -1810,7 +1810,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: bbcbdc4e-f501-4bdf-8498-5e23aa7ca3ab
@@ -1823,7 +1823,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: e388407a-d51b-4897-b11d-5c6069044a15
@@ -1836,7 +1836,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: d6332d13-9544-4bf9-aa71-396ed8475c76
@@ -1849,7 +1849,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: d79eb9e1-351d-43f1-9d93-d4c04c9fc17a
@@ -1862,7 +1862,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: b5c97765-5153-49bf-982a-410c1c78a250
@@ -1875,7 +1875,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 6523209f-8b54-4a2b-ad11-1559d77a8cd6
@@ -1888,7 +1888,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
+      Scale: [4, 4, 4]
       FollowOwner: true
     Renderer3D:
       Mesh: 5b1668a3-5e52-4df9-9c5b-409dd2137a15
