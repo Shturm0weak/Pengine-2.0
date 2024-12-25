@@ -6,6 +6,7 @@ layout(location = 2) in vec2 uv;
 layout(location = 3) in mat3 TBN;
 
 layout(location = 0) out vec4 outColor;
+layout(location = 1) out vec4 outEmissive;
 
 #include "Shaders/Includes/Camera.h"
 
@@ -27,6 +28,7 @@ layout(set = 1, binding = 5) uniform GBufferMaterial
 	DefaultMaterial material;
 };
 
+#include "Shaders/Includes/IsBrightPixel.h"
 #include "Shaders/Includes/PointLight.h"
 #include "Shaders/Includes/DirectionalLight.h"
 #include "Shaders/Includes/CSM.h"
@@ -46,6 +48,8 @@ layout(set = 2, binding = 6) uniform Lights
 
 	DirectionalLight directionalLight;
 	int hasDirectionalLight;
+
+	float brightnessThreshold;
 
 	CSM csm;
 };
@@ -118,6 +122,8 @@ void main()
 			result += CalculatePointLight(pointLights[i], viewSpacePosition, normal.xyz) * albedoColor.xyz;
 		}
 	}
+    
+    outEmissive = vec4(IsBrightPixel(result, brightnessThreshold), 1.0f);
 
 	outColor = vec4(result, albedoColor.w);
 }

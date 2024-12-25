@@ -63,6 +63,8 @@ namespace Pengine
 
 		void CreateCSM();
 
+		void CreateBloom();
+
 		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
 
 		LineRenderer m_LineRenderer;

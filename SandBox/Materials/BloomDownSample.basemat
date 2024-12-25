@@ -1,16 +1,16 @@
 Basemat:
   Pipelines:
-    - RenderPass: Final
+    - RenderPass: Bloom
       DepthTest: false
       DepthWrite: false
       CullMode: None
       PolygonMode: Fill
       TopologyMode: TriangleList
-      Vertex: Shaders/Final.vert
-      Fragment: Shaders/Final.frag
+      Vertex: Shaders/BloomDownSample.vert
+      Fragment: Shaders/BloomDownSample.frag
       DescriptorSets:
         - Type: Renderer
-          RenderPass: Final
+          RenderPass: Bloom
           Set: 0
       VertexInputBindingDescriptions:
         - Binding: 0

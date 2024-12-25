@@ -11,8 +11,8 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [-3.22452593, 1.91673326, -0.739340782]
-      Rotation: [-0.345817029, -1.86475074, 0]
+      Position: [-3.81435966, 1.61508048, -0.848831832]
+      Rotation: [-0.236276641, -1.76529396, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -34,7 +34,8 @@ Scene:
       FollowOwner: true
     DirectionalLight:
       Color: [1, 1, 1]
-      Intensity: 10
+      Intensity: 6
+      Ambient: 0.0500000007
   - UUID: b83b2ce0-19d4-4de0-9a29-4749e7b308ef
     Name: BistroExterior
     IsEnabled: true

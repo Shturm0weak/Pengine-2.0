@@ -1,6 +1,6 @@
 SSAO:
   IsEnabled: true
-  AoScale: 2
+  AoScale: 1
   Bias: 0.0250000004
   KernelSize: 16
   NoiseSize: 4
@@ -18,3 +18,7 @@ CSM:
     - 0
     - 0
     - 0
+Bloom:
+  IsEnabled: true
+  MipCount: 10
+  BrightnessThreshold: 1

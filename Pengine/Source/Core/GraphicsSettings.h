@@ -41,6 +41,13 @@ namespace Pengine
 			 */
 			int cascadeCount = 3;
 		} shadows;
+
+		struct Bloom
+		{
+			bool isEnabled = true;
+			int mipCount = 8;
+			float brightnessThreshold = 1.0f;
+		} bloom;
 	};
 
 }

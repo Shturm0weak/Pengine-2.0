@@ -685,11 +685,132 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 
 		for (const auto& colorBlendStateData : pipelineData["ColorBlendStates"])
 		{
+			Pipeline::BlendStateAttachment blendStateAttachment{};
+			
 			if (const auto& blendEnabledData = colorBlendStateData["BlendEnabled"])
 			{
-				pipelineCreateInfo.colorBlendStateAttachments.emplace_back(
-					Pipeline::BlendStateAttachment{ blendEnabledData.as<bool>() });
+				blendStateAttachment.blendEnabled = blendEnabledData.as<bool>();
 			}
+			
+			auto blendOpParse = [](const std::string& blendOpType)
+			{
+				if (blendOpType == "add")
+				{
+					return Pipeline::BlendStateAttachment::BlendOp::ADD;
+				}
+				else if (blendOpType == "subtract")
+				{
+					return Pipeline::BlendStateAttachment::BlendOp::SUBTRACT;
+				}
+				else if (blendOpType == "reverse subtract")
+				{
+					return Pipeline::BlendStateAttachment::BlendOp::REVERSE_SUBTRACT;
+				}
+				else if (blendOpType == "max")
+				{
+					return Pipeline::BlendStateAttachment::BlendOp::MAX;
+				}
+				else if (blendOpType == "min")
+				{
+					return Pipeline::BlendStateAttachment::BlendOp::MIN;
+				}
+			};
+
+			auto blendFactorParse = [](const std::string& blendFactorType)
+			{
+				if (blendFactorType == "constant alpha")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::CONSTANT_ALPHA;
+				}
+				else if (blendFactorType == "constant color")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::CONSTANT_COLOR;
+				}
+				else if (blendFactorType == "dst alpha")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::DST_ALPHA;
+				}
+				else if (blendFactorType == "dst color")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::DST_COLOR;
+				}
+				else if (blendFactorType == "one")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::ONE;
+				}
+				else if (blendFactorType == "one minus constant alpha")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_ALPHA;
+				}
+				else if (blendFactorType == "one minus constant color")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_COLOR;
+				}
+				else if (blendFactorType == "one minus dst alpha")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_ALPHA;
+				}
+				else if (blendFactorType == "one minus dst color")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_COLOR;
+				}
+				else if (blendFactorType == "one minus src alpha")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_ALPHA;
+				}
+				else if (blendFactorType == "one minus src color")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_COLOR;
+				}
+				else if (blendFactorType == "src alpha")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA;
+				}
+				else if (blendFactorType == "src alpha saturate")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA_SATURATE;
+				}
+				else if (blendFactorType == "src color")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::SRC_COLOR;
+				}
+				else if (blendFactorType == "zero")
+				{
+					return Pipeline::BlendStateAttachment::BlendFactor::ZERO;
+				}
+			};
+
+			if (const auto& blendOpData = colorBlendStateData["ColorBlendOp"])
+			{
+				blendStateAttachment.colorBlendOp = blendOpParse(blendOpData.as<std::string>());
+			}
+
+			if (const auto& blendOpData = colorBlendStateData["AlphaBlendOp"])
+			{
+				blendStateAttachment.alphaBlendOp = blendOpParse(blendOpData.as<std::string>());
+			}
+
+			if (const auto& srcBlendFactorData = colorBlendStateData["SrcColorBlendFactor"])
+			{
+				blendStateAttachment.srcColorBlendFactor = blendFactorParse(srcBlendFactorData.as<std::string>());
+			}
+
+			if (const auto& dstBlendFactorData = colorBlendStateData["DstColorBlendFactor"])
+			{
+				blendStateAttachment.dstColorBlendFactor = blendFactorParse(dstBlendFactorData.as<std::string>());
+			}
+
+			if (const auto& srcBlendFactorData = colorBlendStateData["SrcAlphaBlendFactor"])
+			{
+				blendStateAttachment.srcAlphaBlendFactor = blendFactorParse(srcBlendFactorData.as<std::string>());
+			}
+
+			if (const auto& dstBlendFactorData = colorBlendStateData["DstAlphaBlendFactor"])
+			{
+				blendStateAttachment.dstAlphaBlendFactor = blendFactorParse(dstBlendFactorData.as<std::string>());
+			}
+
+			pipelineCreateInfo.colorBlendStateAttachments.emplace_back(blendStateAttachment);
 		}
 
 		ParseUniformValues(pipelineData, pipelineCreateInfo.uniformInfo);
@@ -2139,6 +2260,7 @@ void Serializer::SerializeDirectionalLight(YAML::Emitter& out, const std::shared
 
 	out << YAML::Key << "Color" << YAML::Value << directionalLight.color;
 	out << YAML::Key << "Intensity" << YAML::Value << directionalLight.intensity;
+	out << YAML::Key << "Ambient" << YAML::Value << directionalLight.ambient;
 
 	out << YAML::EndMap;
 }
@@ -2162,6 +2284,11 @@ void Serializer::DeserializeDirectionalLight(const YAML::Node& in, const std::sh
 		if (const auto& intensityData = directionalLightData["Intensity"])
 		{
 			directionalLight.intensity = intensityData.as<float>();
+		}
+
+		if (const auto& ambientData = directionalLightData["Ambient"])
+		{
+			directionalLight.ambient = ambientData.as<float>();
 		}
 	}
 }
@@ -2414,7 +2541,7 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::EndMap;
 	//
 
-	// SSAO.
+	// CSM.
 	out << YAML::Key << "CSM";
 	out << YAML::Value << YAML::BeginMap;
 
@@ -2426,6 +2553,17 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Key << "PcfEnabled" << YAML::Value << graphicsSettings.shadows.pcfEnabled;
 	out << YAML::Key << "PcfRange" << YAML::Value << graphicsSettings.shadows.pcfRange;
 	out << YAML::Key << "Biases" << YAML::Value << graphicsSettings.shadows.biases;
+
+	out << YAML::EndMap;
+	//
+
+	// Bloom.
+	out << YAML::Key << "Bloom";
+	out << YAML::Value << YAML::BeginMap;
+
+	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.bloom.isEnabled;
+	out << YAML::Key << "MipCount" << YAML::Value << graphicsSettings.bloom.mipCount;
+	out << YAML::Key << "BrightnessThreshold" << YAML::Value << graphicsSettings.bloom.brightnessThreshold;
 
 	out << YAML::EndMap;
 	//
@@ -2533,6 +2671,19 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& pcfRangeData = csmData["PcfRange"])
 		{
 			graphicsSettings.shadows.pcfRange = pcfRangeData.as<int>();
+		}
+	}
+
+	if (const auto& ssaoData = data["Bloom"])
+	{
+		if (const auto& isEnabledData = ssaoData["IsEnabled"])
+		{
+			graphicsSettings.bloom.isEnabled = isEnabledData.as<bool>();
+		}
+
+		if (const auto& mipCountData = ssaoData["MipCount"])
+		{
+			graphicsSettings.bloom.mipCount = mipCountData.as<int>();
 		}
 	}
 

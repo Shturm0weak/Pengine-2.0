@@ -127,7 +127,7 @@ namespace Pengine::Vk
 		void CommandBeginLabel(
 			const std::string& name,
 			VkCommandBuffer commandBuffer,
-			const glm::vec4& color) const;
+			const glm::vec3& color) const;
 
 		void CommandEndLabel(VkCommandBuffer commandBuffer) const;
 

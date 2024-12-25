@@ -5,6 +5,7 @@ layout(location = 0) in vec2 uv;
 layout(location = 0) out vec4 outColor;
 
 layout(set = 0, binding = 0) uniform sampler2D deferredTexture;
+layout(set = 0, binding = 1) uniform sampler2D bloomTexture;
 
 vec3 aces(vec3 x)
 {
@@ -18,5 +19,8 @@ vec3 aces(vec3 x)
 
 void main()
 {
-	outColor = vec4(texture(deferredTexture, uv).xyz, 1.0f);
+	vec3 bloom = texture(bloomTexture, uv).xyz;
+	vec3 deferred = texture(deferredTexture, uv).xyz;
+
+	outColor = vec4(pow(aces(deferred + bloom), vec3(1.0f / 2.2f)), 1.0f);
 }

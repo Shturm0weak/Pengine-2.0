@@ -360,7 +360,7 @@ void VulkanWindow::ImGuiRenderPass(void* frame)
 {
 	const ImGui_ImplVulkanH_Frame* imGuiFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
 
-	Vk::device->CommandBeginLabel("ImGui", imGuiFrame->CommandBuffer, { 0.5f, 1.0f, 0.5f, 1.0f });
+	Vk::device->CommandBeginLabel("ImGui", imGuiFrame->CommandBuffer, topLevelRenderPassDebugColor);
 
 	VkRenderPassBeginInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;

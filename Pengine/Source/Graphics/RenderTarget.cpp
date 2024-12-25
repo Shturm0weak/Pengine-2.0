@@ -21,10 +21,10 @@ RenderTarget::RenderTarget(
 	const glm::ivec2& size)
 	: m_RenderPassOrder(renderPassOrder)
 {
-	for (const auto& type : m_RenderPassOrder)
+	for (const auto& name : m_RenderPassOrder)
 	{
 		if (std::shared_ptr<RenderPass> renderPass =
-			RenderPassManager::GetInstance().GetRenderPass(type))
+			RenderPassManager::GetInstance().GetRenderPass(name))
 		{
 			if (!renderPass->m_CreateFrameBuffer)
 			{
@@ -33,24 +33,32 @@ RenderTarget::RenderTarget(
 
 			const std::shared_ptr<FrameBuffer> frameBuffer = FrameBuffer::Create(renderPass, this, size);
 
-			SetFrameBufferToRenderPass(type, frameBuffer);
+			SetFrameBuffer(name, frameBuffer);
 		}
 	}
 }
 
 RenderTarget::~RenderTarget()
 {
-	m_FrameBuffersByRenderPassType.clear();
+	m_FrameBuffersByName.clear();
+	m_UniformWriterByName.clear();
+	m_BuffersByName.clear();
+
+	for (auto& [name, data] : m_CustomDataByName)
+	{
+		delete data;
+	}
+	m_CustomDataByName.clear();
 }
 
 std::shared_ptr<UniformWriter> RenderTarget::GetUniformWriter(const std::string& renderPassName) const
 {
-	return Utils::Find(renderPassName, m_UniformWriterByRenderPassType);
+	return Utils::Find(renderPassName, m_UniformWriterByName);
 }
 
 void RenderTarget::SetUniformWriter(const std::string& renderPassName, std::shared_ptr<UniformWriter> uniformWriter)
 {
-	m_UniformWriterByRenderPassType[renderPassName] = uniformWriter;
+	m_UniformWriterByName[renderPassName] = uniformWriter;
 }
 
 std::shared_ptr<Buffer> RenderTarget::GetBuffer(const std::string& name) const
@@ -63,25 +71,46 @@ void RenderTarget::SetBuffer(const std::string& name, std::shared_ptr<Buffer> bu
 	m_BuffersByName[name] = buffer;
 }
 
-std::shared_ptr<FrameBuffer> RenderTarget::GetRenderPassFrameBuffer(const std::string& type) const
+std::shared_ptr<FrameBuffer> RenderTarget::GetFrameBuffer(const std::string& name) const
 {
-	if (const auto frameBufferByRenderPassType = m_FrameBuffersByRenderPassType.find(type);
-		frameBufferByRenderPassType != m_FrameBuffersByRenderPassType.end())
+	if (const auto frameBuffersByName = m_FrameBuffersByName.find(name);
+		frameBuffersByName != m_FrameBuffersByName.end())
 	{
-		return frameBufferByRenderPassType->second;
+		return frameBuffersByName->second;
 	}
 
 	return nullptr;
 }
 
-void RenderTarget::SetFrameBufferToRenderPass(const std::string& type, const std::shared_ptr<FrameBuffer>& frameBuffer)
+void RenderTarget::SetFrameBuffer(const std::string& name, const std::shared_ptr<FrameBuffer>& frameBuffer)
 {
 	if (!frameBuffer)
 	{
 		FATAL_ERROR("Frame buffer is nullptr!");
 	}
 
-	m_FrameBuffersByRenderPassType[type] = frameBuffer;
+	m_FrameBuffersByName[name] = frameBuffer;
+}
+
+void* RenderTarget::GetCustomData(const std::string& name)
+{
+	if (const auto customDataByName = m_CustomDataByName.find(name);
+		customDataByName != m_CustomDataByName.end())
+	{
+		return customDataByName->second;
+	}
+
+	return nullptr;
+}
+
+void RenderTarget::SetCustomData(const std::string& name, void* data)
+{
+	if (!data)
+	{
+		FATAL_ERROR("Custom data is nullptr!");
+	}
+
+	m_CustomDataByName[name] = data;
 }
 
 void RenderTarget::Resize(const glm::ivec2& size) const
@@ -89,7 +118,7 @@ void RenderTarget::Resize(const glm::ivec2& size) const
 	for (const std::string& renderPassName : m_RenderPassOrder)
 	{
 		if (const std::shared_ptr<FrameBuffer> frameBuffer =
-			GetRenderPassFrameBuffer(renderPassName))
+			GetFrameBuffer(renderPassName))
 		{
 			const std::shared_ptr<RenderPass> renderPass = RenderPassManager::GetInstance().GetRenderPass(renderPassName);
 			if (renderPass && renderPass->GetResizeWithViewport())

@@ -920,7 +920,7 @@ void VulkanDevice::GenerateMipMaps(
 void VulkanDevice::CommandBeginLabel(
 	const std::string& name,
 	const VkCommandBuffer commandBuffer,
-	const glm::vec4& color) const
+	const glm::vec3& color) const
 {
 	if (!m_VkCmdBeginDebugUtilsLabelEXT)
 	{
@@ -932,7 +932,7 @@ void VulkanDevice::CommandBeginLabel(
 	label.color[0] = color[0];
 	label.color[1] = color[1];
 	label.color[2] = color[2];
-	label.color[3] = color[3];
+	label.color[3] = 1.0f;
 	m_VkCmdBeginDebugUtilsLabelEXT(commandBuffer, &label);
 }
 

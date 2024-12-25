@@ -35,3 +35,6 @@ Mat:
             - Name: material.useNormalMap
               Value: 1
               Type: int
+    - RenderPass: CSM
+      Uniforms:
+        []

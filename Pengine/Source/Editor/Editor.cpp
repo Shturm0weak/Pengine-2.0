@@ -876,8 +876,8 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 				graphicsSettings.shadows.biases.resize(graphicsSettings.shadows.cascadeCount, 0.01f);
 			}
 
-			isChangedToSerialize += ImGui::Checkbox("Pcf Enabled", &graphicsSettings.shadows.pcfEnabled);
 			ImGui::Checkbox("Visualize", &graphicsSettings.shadows.visualize);
+			isChangedToSerialize += ImGui::Checkbox("Pcf Enabled", &graphicsSettings.shadows.pcfEnabled);
 			isChangedToSerialize += ImGui::SliderInt("Pcf Range", &graphicsSettings.shadows.pcfRange, 1, 5);
 			isChangedToSerialize += ImGui::SliderFloat("Split Factor", &graphicsSettings.shadows.splitFactor, 0.0f, 1.0f);
 			isChangedToSerialize += ImGui::SliderFloat("Max Distance", &graphicsSettings.shadows.maxDistance, 0.0f, 1000.0f);
@@ -887,6 +887,16 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 				const std::string biasName = "Bias " + std::to_string(i);
 				isChangedToSerialize += ImGui::SliderFloat(biasName.c_str(), &graphicsSettings.shadows.biases[i], 0.0f, 1.0f);
 			}
+		}
+
+		if (ImGui::CollapsingHeader("Bloom"))
+		{
+			ImGui::PushID("Bloom Is Enabled");
+			isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.bloom.isEnabled);
+			ImGui::PopID();
+
+			isChangedToSerialize += ImGui::SliderInt("Mip Count", &graphicsSettings.bloom.mipCount, 1, 10);
+			isChangedToSerialize += ImGui::SliderFloat("Brightness Threshold", &graphicsSettings.bloom.brightnessThreshold, 0.0f, 2.0f);
 		}
 
 		if (isChangedToSerialize && std::filesystem::exists(graphicsSettings.GetFilepath()))
@@ -1719,6 +1729,7 @@ void Editor::DirectionalLightComponent(const std::shared_ptr<Entity>& entity)
 
 		ImGui::ColorEdit3("Color", &directionalLight.color[0]);
 		ImGui::SliderFloat("Intensity", &directionalLight.intensity, 0.0f, 10.0f);
+		ImGui::SliderFloat("Ambient", &directionalLight.ambient, 0.0f, 0.3f);
 	}
 }
 

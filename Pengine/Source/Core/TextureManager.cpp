@@ -79,6 +79,11 @@ std::shared_ptr<Texture> TextureManager::GetWhite() const
 	return GetTexture("White");
 }
 
+std::shared_ptr<Texture> Pengine::TextureManager::GetBlack() const
+{
+	return GetTexture("Black");
+}
+
 void TextureManager::Delete(const std::filesystem::path& filepath)
 {
 	std::lock_guard lock(m_Mutex);

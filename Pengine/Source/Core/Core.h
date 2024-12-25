@@ -52,6 +52,8 @@
 inline constexpr char const* none = "None";
 inline constexpr char const* plane = "Plane";
 
+inline constexpr glm::vec3 topLevelRenderPassDebugColor = { 0.5f, 1.0f, 0.5f };
+
 struct path_hash
 {
 	std::size_t operator()(const std::filesystem::path& path) const
