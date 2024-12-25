@@ -54,6 +54,7 @@ std::shared_ptr<BaseMaterial> MaterialManager::LoadBaseMaterial(const std::files
 
 std::shared_ptr<Material> MaterialManager::GetMaterial(const std::filesystem::path& filepath)
 {
+	std::lock_guard lock(m_MutexMaterial);
 	if (const auto materialByFilepath = m_MaterialsByFilepath.find(filepath);
 		materialByFilepath != m_MaterialsByFilepath.end())
 	{
@@ -65,6 +66,7 @@ std::shared_ptr<Material> MaterialManager::GetMaterial(const std::filesystem::pa
 
 std::shared_ptr<BaseMaterial> MaterialManager::GetBaseMaterial(const std::filesystem::path& filepath)
 {
+	std::lock_guard lock(m_MutexBaseMaterial);
 	if (const auto baseMaterialByFilepath = m_BaseMaterialsByFilepath.find(filepath);
 		baseMaterialByFilepath != m_BaseMaterialsByFilepath.end())
 	{

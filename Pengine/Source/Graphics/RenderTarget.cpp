@@ -40,15 +40,15 @@ RenderTarget::RenderTarget(
 
 RenderTarget::~RenderTarget()
 {
-	m_FrameBuffersByName.clear();
-	m_UniformWriterByName.clear();
-	m_BuffersByName.clear();
-
 	for (auto& [name, data] : m_CustomDataByName)
 	{
 		delete data;
 	}
 	m_CustomDataByName.clear();
+	
+	m_FrameBuffersByName.clear();
+	m_UniformWriterByName.clear();
+	m_BuffersByName.clear();
 }
 
 std::shared_ptr<UniformWriter> RenderTarget::GetUniformWriter(const std::string& renderPassName) const
