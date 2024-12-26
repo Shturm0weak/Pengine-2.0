@@ -1088,50 +1088,65 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 {
 	const std::string meshName = mesh->GetName();
 
-	size_t dataSize = mesh->GetVertexCount() * sizeof(Vertex) +
+	size_t dataSize = mesh->GetVertexCount() * mesh->GetVertexSize() +
+		mesh->GetVertexLayouts().size() * sizeof(VertexLayout) +
 		mesh->GetIndexCount() * sizeof(uint32_t) +
 		mesh->GetName().size() +
 		mesh->GetFilepath().string().size() +
-		4 * 4; // Plus 4 numbers for these 4 fields sizes.
+		6 * 4; // Vertex Count, Vertex Size, Index Count, Mesh Size, Filepath Size, Vertex Layout Count.
 
-	int offset = 0;
+	uint32_t offset = 0;
 
-	char* data = new char[dataSize];
+	uint8_t* data = new uint8_t[dataSize];
 
 	// Name.
 	{
-		Utils::GetValue<int>(data, offset) = static_cast<int>(meshName.size());
-		offset += sizeof(int);
+		Utils::GetValue<uint32_t>(data, offset) = static_cast<uint32_t>(meshName.size());
+		offset += sizeof(uint32_t);
 
-		memcpy(&Utils::GetValue<char>(data, offset), meshName.data(), meshName.size());
-		offset += static_cast<int>(meshName.size());
+		memcpy(&Utils::GetValue<uint8_t>(data, offset), meshName.data(), meshName.size());
+		offset += static_cast<uint32_t>(meshName.size());
 	}
 
 	// Vertices.
 	{
-		Utils::GetValue<int>(data, offset) = mesh->GetVertexCount();
-		offset += sizeof(int);
+		Utils::GetValue<uint32_t>(data, offset) = mesh->GetVertexCount();
+		offset += sizeof(uint32_t);
+		Utils::GetValue<uint32_t>(data, offset) = mesh->GetVertexSize();
+		offset += sizeof(uint32_t);
 
-		std::vector<float> vertices = mesh->GetRawVertices();
-		memcpy(&Utils::GetValue<char>(data, offset), vertices.data(), mesh->GetVertexCount() * sizeof(Vertex));
-		offset += mesh->GetVertexCount() * static_cast<int>(sizeof(Vertex));
+		const void* vertices = mesh->GetRawVertices();
+		memcpy(&Utils::GetValue<uint8_t>(data, offset), vertices, mesh->GetVertexCount() * mesh->GetVertexSize());
+		offset += mesh->GetVertexCount() * mesh->GetVertexSize();
+	}
+
+	// Vertex Layouts.
+	{
+		Utils::GetValue<uint32_t>(data, offset) = mesh->GetVertexLayouts().size();
+		offset += sizeof(uint32_t);
+
+		for (const VertexLayout& vertexLayout : mesh->GetVertexLayouts())
+		{
+			memcpy(&Utils::GetValue<uint8_t>(data, offset), &vertexLayout.size, sizeof(uint32_t));
+			offset += sizeof(uint32_t);
+		}
 	}
 
 	// Indices.
 	{
-		Utils::GetValue<int>(data, offset) = mesh->GetIndexCount();
-		offset += sizeof(int);
+		Utils::GetValue<uint32_t>(data, offset) = mesh->GetIndexCount();
+		offset += sizeof(uint32_t);
 
 		// Potential optimization of using 2 bit instead of 4 bit.
 		std::vector<uint32_t> indices = mesh->GetRawIndices();
-		memcpy(&Utils::GetValue<char>(data, offset), indices.data(), mesh->GetIndexCount() * sizeof(uint32_t));
-		offset += mesh->GetIndexCount() * static_cast<int>(sizeof(uint32_t));
+		memcpy(&Utils::GetValue<uint8_t>(data, offset), indices.data(), mesh->GetIndexCount() * sizeof(uint32_t));
+		offset += mesh->GetIndexCount() * sizeof(uint32_t);
 	}
 
 	std::filesystem::path outMeshFilepath = directory / (meshName + FileFormats::Mesh());
 	std::ofstream out(outMeshFilepath, std::ostream::binary);
 
-	out.write(data, static_cast<std::streamsize>(dataSize));
+	out.write((char*)data, static_cast<std::streamsize>(dataSize));
 
 	delete[] data;
 
@@ -1165,9 +1180,9 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 	const int size = in.tellg();
 	in.seekg(0, std::ifstream::beg);
 
-	char* data = new char[size];
+	uint8_t* data = new uint8_t[size];
 
-	in.read(data, size);
+	in.read((char*)data, size);
 
 	in.close();
 
@@ -1176,33 +1191,48 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 	std::string meshName;
 	// Name.
 	{
-		const int meshNameSize = Utils::GetValue<int>(data, offset);
-		offset += sizeof(int);
+		const uint32_t meshNameSize = Utils::GetValue<uint32_t>(data, offset);
+		offset += sizeof(uint32_t);
 
 		meshName.resize(meshNameSize);
-		memcpy(meshName.data(), &Utils::GetValue<char>(data, offset), meshNameSize);
+		memcpy(meshName.data(), &Utils::GetValue<uint8_t>(data, offset), meshNameSize);
 		offset += meshNameSize;
 	}
 
-	std::vector<float> vertices;
 	// Vertices.
+	uint8_t* vertices;
+	const uint32_t vertexCount = Utils::GetValue<uint32_t>(data, offset);
+	offset += sizeof(uint32_t);
+	const uint32_t vertexSize = Utils::GetValue<uint32_t>(data, offset);
+	offset += sizeof(uint32_t);
 	{
-		const int verticesSize = Utils::GetValue<int>(data, offset);
-		offset += sizeof(int);
+		vertices = new uint8_t[vertexCount * vertexSize];
+		memcpy(vertices, &Utils::GetValue<uint8_t>(data, offset), vertexCount * vertexSize);
+		offset += vertexCount * vertexSize;
+	}
 
-		vertices.resize(verticesSize * (sizeof(Vertex) / sizeof(float)));
-		memcpy(vertices.data(), &Utils::GetValue<char>(data, offset), verticesSize * sizeof(Vertex));
-		offset += verticesSize * static_cast<int>(sizeof(Vertex));
+	// Vertex Layouts.
+	{
+		const uint32_t vertexLayoutCount = Utils::GetValue<uint32_t>(data, offset);
+		offset += sizeof(uint32_t);
+
+		std::vector<VertexLayout> vertexLayouts;
+		for (size_t i = 0; i < vertexLayoutCount; i++)
+		{
+			VertexLayout vertexLayout = vertexLayouts.emplace_back();
+			memcpy(&vertexLayout, &Utils::GetValue<uint32_t>(data, offset), sizeof(uint32_t));
+			offset += sizeof(uint32_t);
+		}
 	}
 
 	std::vector<uint32_t> indices;
 	// Indices.
 	{
-		const int indicesSize = Utils::GetValue<int>(data, offset);
-		offset += sizeof(int);
+		const uint32_t indicesSize = Utils::GetValue<uint32_t>(data, offset);
+		offset += sizeof(uint32_t);
 
 		indices.resize(indicesSize);
-		memcpy(indices.data(), &Utils::GetValue<char>(data, offset), indicesSize * sizeof(uint32_t));
+		memcpy(indices.data(), &Utils::GetValue<uint8_t>(data, offset), indicesSize * sizeof(uint32_t));
 		offset += indicesSize * sizeof(uint32_t);
 	}
 
@@ -1210,7 +1240,20 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 
 	Logger::Log("Mesh:" + filepath.string() + " has been deserialized!", BOLDGREEN);
 
-	return std::make_shared<Mesh>(meshName, filepath, sizeof(Vertex), vertices, indices);
+	Mesh::CreateInfo createInfo{};
+	createInfo.filepath = filepath;
+	createInfo.name = meshName;
+	createInfo.indices = indices;
+	createInfo.vertices = vertices;
+	createInfo.vertexCount = vertexCount;
+	createInfo.vertexSize = vertexSize;
+	createInfo.vertexLayouts =
+	{
+		VertexLayout(sizeof(VertexPosition)),
+		VertexLayout(sizeof(VertexNormal))
+	};
+
+	return std::make_shared<Mesh>(createInfo);
 }
 
 void Serializer::SerializeShaderCache(const std::filesystem::path& filepath, const std::string& code)
@@ -1645,7 +1688,7 @@ Serializer::LoadIntermediate(const std::filesystem::path& filepath)
 
 std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesystem::path& directory)
 {
-	std::vector<float> vertices;
+	VertexDefault* vertices = new VertexDefault[aiMesh->mNumVertices];
 	std::vector<uint32_t> indices;
 
 	std::string defaultMeshName = aiMesh->mName.C_Str();
@@ -1660,61 +1703,59 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 		containIndex++;
 	}
 
-	for (size_t vertexIndex = 0; vertexIndex < aiMesh->mNumVertices; vertexIndex++)
+	VertexDefault* vertex = vertices;
+	for (size_t vertexIndex = 0; vertexIndex < aiMesh->mNumVertices; vertexIndex++, vertex++)
 	{
-		aiVector3D vertex = aiMesh->mVertices[vertexIndex];
-		vertices.emplace_back(vertex.x);
-		vertices.emplace_back(vertex.y);
-		vertices.emplace_back(vertex.z);
+		aiVector3D position = aiMesh->mVertices[vertexIndex];
+		vertex->position.x = position.x;
+		vertex->position.y = position.y;
+		vertex->position.z = position.z;
 
 		if (aiMesh->HasTextureCoords(0))
 		{
 			aiVector3D uv = aiMesh->mTextureCoords[0][vertexIndex];
-			vertices.emplace_back(uv.x);
-			vertices.emplace_back(uv.y);
+			vertex->uv.x = uv.x;
+			vertex->uv.y = uv.y;
 		}
 		else
 		{
-			vertices.emplace_back(0.0f);
-			vertices.emplace_back(0.0f);
+			vertex->uv.x = 0.0f;
+			vertex->uv.y = 0.0f;
 		}
 
 		aiVector3D normal = aiMesh->mNormals[vertexIndex];
-		vertices.emplace_back(normal.x);
-		vertices.emplace_back(normal.y);
-		vertices.emplace_back(normal.z);
+		vertex->normal.x = normal.x;
+		vertex->normal.y = normal.y;
+		vertex->normal.z = normal.z;
 
 		if (aiMesh->HasTangentsAndBitangents())
 		{
 			// Tangent.
 			aiVector3D tangent = aiMesh->mTangents[vertexIndex];
-			vertices.emplace_back(tangent.x);
-			vertices.emplace_back(tangent.y);
-			vertices.emplace_back(tangent.z);
+			vertex->tangent.x = tangent.x;
+			vertex->tangent.y = tangent.y;
+			vertex->tangent.z = tangent.z;
 
 			// Bitngent.
 			aiVector3D bitangent = aiMesh->mBitangents[vertexIndex];
-			vertices.emplace_back(bitangent.x);
-			vertices.emplace_back(bitangent.y);
-			vertices.emplace_back(bitangent.z);
+			vertex->bitangent.x = bitangent.x;
+			vertex->bitangent.y = bitangent.y;
+			vertex->bitangent.z = bitangent.z;
 		}
 		else
 		{
 			// Tangent.
-			vertices.emplace_back(0.0f);
-			vertices.emplace_back(0.0f);
-			vertices.emplace_back(0.0f);
+			vertex->tangent.x = 0.0f;
+			vertex->tangent.y = 0.0f;
+			vertex->tangent.z = 0.0f;
 
-			// Bitangent.
-			vertices.emplace_back(0.0f);
-			vertices.emplace_back(0.0f);
-			vertices.emplace_back(0.0f);
+			// Bitngent.
+			vertex->bitangent.x = 0.0f;
+			vertex->bitangent.y = 0.0f;
+			vertex->bitangent.z = 0.0f;
 		}
 	}
 
-	constexpr size_t vertexOffset = sizeof(Vertex) / sizeof(float);
-	constexpr size_t tangentOffset = offsetof(Vertex, tangent) / sizeof(float);
-	constexpr size_t bitangentOffset = offsetof(Vertex, bitangent) / sizeof(float);
 	for (size_t faceIndex = 0; faceIndex < aiMesh->mNumFaces; faceIndex++)
 	{
 		for (size_t i = 0; i < aiMesh->mFaces[faceIndex].mNumIndices; i++)
@@ -1755,30 +1796,43 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 			bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
 			bitangent = glm::normalize(bitangent);
 
-			vertices[i0 * vertexOffset + tangentOffset + 0] = tangent.x;
-			vertices[i0 * vertexOffset + tangentOffset + 1] = tangent.y;
-			vertices[i0 * vertexOffset + tangentOffset + 2] = tangent.z;
-			vertices[i0 * vertexOffset + bitangentOffset + 0] = bitangent.x;
-			vertices[i0 * vertexOffset + bitangentOffset + 1] = bitangent.y;
-			vertices[i0 * vertexOffset + bitangentOffset + 2] = bitangent.z;
+			vertices[i0].tangent.x = tangent.x;
+			vertices[i0].tangent.y = tangent.y;
+			vertices[i0].tangent.z = tangent.z;
+			vertices[i0].bitangent.x = bitangent.x;
+			vertices[i0].bitangent.y = bitangent.y;
+			vertices[i0].bitangent.z = bitangent.z;
 
-			vertices[i1 * vertexOffset + tangentOffset + 0] = tangent.x;
-			vertices[i1 * vertexOffset + tangentOffset + 1] = tangent.y;
-			vertices[i1 * vertexOffset + tangentOffset + 2] = tangent.z;
-			vertices[i1 * vertexOffset + bitangentOffset + 0] = bitangent.x;
-			vertices[i1 * vertexOffset + bitangentOffset + 1] = bitangent.y;
-			vertices[i1 * vertexOffset + bitangentOffset + 2] = bitangent.z;
+			vertices[i1].tangent.x = tangent.x;
+			vertices[i1].tangent.y = tangent.y;
+			vertices[i1].tangent.z = tangent.z;
+			vertices[i1].bitangent.x = bitangent.x;
+			vertices[i1].bitangent.y = bitangent.y;
+			vertices[i1].bitangent.z = bitangent.z;
 
-			vertices[i2 * vertexOffset + tangentOffset + 0] = tangent.x;
-			vertices[i2 * vertexOffset + tangentOffset + 1] = tangent.y;
-			vertices[i2 * vertexOffset + tangentOffset + 2] = tangent.z;
-			vertices[i2 * vertexOffset + bitangentOffset + 0] = bitangent.x;
-			vertices[i2 * vertexOffset + bitangentOffset + 1] = bitangent.y;
-			vertices[i2 * vertexOffset + bitangentOffset + 2] = bitangent.z;
+			vertices[i2].tangent.x = tangent.x;
+			vertices[i2].tangent.y = tangent.y;
+			vertices[i2].tangent.z = tangent.z;
+			vertices[i2].bitangent.x = bitangent.x;
+			vertices[i2].bitangent.y = bitangent.y;
+			vertices[i2].bitangent.z = bitangent.z;
 		}
 	}
 
-	std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(meshName, meshFilepath, sizeof(Vertex), vertices, indices);
+	Mesh::CreateInfo createInfo{};
+	createInfo.filepath = std::move(meshFilepath);
+	createInfo.name = std::move(meshName);
+	createInfo.indices = std::move(indices);
+	createInfo.vertices = vertices;
+	createInfo.vertexCount = aiMesh->mNumVertices;
+	createInfo.vertexSize = sizeof(VertexDefault);
+	createInfo.vertexLayouts =
+	{
+		VertexLayout(sizeof(VertexPosition)),
+		VertexLayout(sizeof(VertexNormal))
+	};
+
+	std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(createInfo);
 	SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
 
 	return mesh;

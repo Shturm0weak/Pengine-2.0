@@ -45,6 +45,10 @@ namespace Pengine
 		RenderPassManager();
 		~RenderPassManager() = default;
 
+		static std::vector<std::shared_ptr<class Buffer>> GetVertexBuffers(
+			std::shared_ptr<class Pipeline> pipeline,
+			std::shared_ptr<class Mesh> mesh);
+
 		void CreateGBuffer();
 
 		void CreateDeferred();

@@ -131,7 +131,6 @@ Material::Material(
 	const std::filesystem::path& filepath,
 	const CreateInfo& createInfo)
 	: Asset(name, filepath)
-	, m_BaseMaterial(createInfo.baseMaterial)
 {
 	CreateResources(createInfo);
 }
@@ -180,6 +179,7 @@ void Material::SetOption(const std::string& name, bool isEnabled)
 
 void Material::CreateResources(const CreateInfo& createInfo)
 {
+	m_BaseMaterial = createInfo.baseMaterial;
 	m_OptionsByName = createInfo.optionsByName;
 	for (const auto& [name, option] : m_OptionsByName)
 	{

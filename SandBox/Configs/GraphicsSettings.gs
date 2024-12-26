@@ -16,8 +16,8 @@ CSM:
   Biases:
     - 0
     - 0
-    - 0
-    - 0
+    - 0.00999999978
+    - 0.00999999978
 Bloom:
   IsEnabled: true
   MipCount: 10

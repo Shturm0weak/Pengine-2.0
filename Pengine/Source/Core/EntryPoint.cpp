@@ -66,20 +66,30 @@ void PrepareResources()
 	TextureManager::GetInstance().Create(blackTextureCreateInfo);
 
 	{
-		std::vector<float> vertices =
-		{
-			-1.0f, -1.0f,
-			 1.0f, -1.0f,
-			 1.0f,  1.0f,
-			-1.0f,  1.0f
-		};
+		glm::vec2* vertices = new glm::vec2[4];
+		vertices[0] = { -1.0f, -1.0f };
+		vertices[1] = {  1.0f, -1.0f };
+		vertices[2] = {  1.0f,  1.0f };
+		vertices[3] = { -1.0f,  1.0f };
 
 		std::vector<uint32_t> indices =
 		{
 			0, 1, 2, 2, 3, 0
 		};
 
-		MeshManager::GetInstance().CreateMesh("FullScreenQuad", "FullScreenQuad", sizeof(glm::vec2), vertices, indices);
+		Mesh::CreateInfo createInfo{};
+		createInfo.filepath = "FullScreenQuad";
+		createInfo.name = "FullScreenQuad";
+		createInfo.indices = std::move(indices);
+		createInfo.vertices = vertices;
+		createInfo.vertexSize = sizeof(glm::vec2);
+		createInfo.vertexCount = 4;
+		createInfo.vertexLayouts =
+		{
+			VertexLayout(createInfo.vertexSize)
+		};
+
+		MeshManager::GetInstance().CreateMesh(createInfo);
 	}
 
 	{
@@ -110,20 +120,29 @@ void PrepareResources()
 			4, 5, 7
 		};
 
+		glm::vec3* vertices = new glm::vec3[8];
+		vertices[0] = { -1.0f, -1.0f,  1.0f };
+		vertices[1] = {  1.0f, -1.0f,  1.0f };
+		vertices[2] = { -1.0f,  1.0f,  1.0f };
+		vertices[3] = {  1.0f,  1.0f,  1.0f };
+		vertices[4] = { -1.0f, -1.0f, -1.0f };
+		vertices[5] = {  1.0f, -1.0f, -1.0f };
+		vertices[6] = { -1.0f,  1.0f, -1.0f };
+		vertices[7] = {  1.0f,  1.0f, -1.0f };
 
-		std::vector<float> vertices =
+		Mesh::CreateInfo createInfo{};
+		createInfo.filepath = "SkyBoxCube";
+		createInfo.name = "SkyBoxCube";
+		createInfo.indices = std::move(indices);
+		createInfo.vertices = vertices;
+		createInfo.vertexSize = sizeof(glm::vec3);
+		createInfo.vertexCount = 8;
+		createInfo.vertexLayouts =
 		{
-			-1.0f, -1.0f,  1.0f, //0
-			 1.0f, -1.0f,  1.0f, //1
-			-1.0f,  1.0f,  1.0f, //2
-			 1.0f,  1.0f,  1.0f, //3
-			-1.0f, -1.0f, -1.0f, //4
-			 1.0f, -1.0f, -1.0f, //5
-			-1.0f,  1.0f, -1.0f, //6
-			 1.0f,  1.0f, -1.0f  //7
+			VertexLayout(createInfo.vertexSize)
 		};
 
-		MeshManager::GetInstance().CreateMesh("SkyBoxCube", "SkyBoxCube", sizeof(glm::vec3), vertices, indices);
+		MeshManager::GetInstance().CreateMesh(createInfo);
 	}
 }
 

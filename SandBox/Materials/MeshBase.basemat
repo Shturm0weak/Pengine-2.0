@@ -20,10 +20,13 @@ Basemat:
           Names:
             - positionA
             - uvA
+        - Binding: 1
+          InputRate: Vertex
+          Names:
             - normalA
             - tangentA
             - bitangentA
-        - Binding: 1
+        - Binding: 2
           InputRate: Instance
           Names:
             - transformA
@@ -55,10 +58,13 @@ Basemat:
           Names:
             - positionA
             - uvA
+        - Binding: 1
+          InputRate: Vertex
+          Names:
             - normalA
             - tangentA
             - bitangentA
-        - Binding: 1
+        - Binding: 2
           InputRate: Instance
           Names:
             - transformA

@@ -206,6 +206,25 @@ RenderPassManager::RenderPassManager()
 	CreateBloom();
 }
 
+std::vector<std::shared_ptr<Buffer>> RenderPassManager::GetVertexBuffers(
+	std::shared_ptr<Pipeline> pipeline,
+	std::shared_ptr<Mesh> mesh)
+{
+	const auto& bindingDescriptions = pipeline->GetCreateInfo().bindingDescriptions;
+	
+	std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+	for (size_t i = 0; i < bindingDescriptions.size(); i++)
+	{
+		// NOTE: Consider that InputRate::Instance is always the last one.
+		if (bindingDescriptions[i].inputRate == Pipeline::InputRate::VERTEX)
+		{
+			vertexBuffers.emplace_back(mesh->GetVertexBuffer(i));
+		}
+	}
+
+	return vertexBuffers;
+}
+
 void RenderPassManager::CreateGBuffer()
 {
 	RenderPass::ClearDepth clearDepth{};
@@ -356,7 +375,7 @@ void RenderPassManager::CreateGBuffer()
 					}
 
 					renderInfo.renderer->Render(
-						mesh->GetVertexBuffer(),
+						GetVertexBuffers(pipeline, mesh),
 						mesh->GetIndexBuffer(),
 						mesh->GetIndexCount(),
 						pipeline,
@@ -389,7 +408,7 @@ void RenderPassManager::CreateGBuffer()
 				std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, skyBoxBaseMaterial, nullptr, renderInfo);
 
 				renderInfo.renderer->Render(
-					cubeMesh->GetVertexBuffer(),
+					GetVertexBuffers(pipeline, cubeMesh),
 					cubeMesh->GetIndexBuffer(),
 					cubeMesh->GetIndexCount(),
 					pipeline,
@@ -605,7 +624,7 @@ void RenderPassManager::CreateDeferred()
 		renderInfo.renderer->BeginRenderPass(submitInfo);
 
 		renderInfo.renderer->Render(
-			plane->GetVertexBuffer(),
+			GetVertexBuffers(pipeline, plane),
 			plane->GetIndexBuffer(),
 			plane->GetIndexCount(),
 			pipeline,
@@ -720,7 +739,7 @@ void RenderPassManager::CreateAtmosphere()
 		renderInfo.renderer->BeginRenderPass(submitInfo);
 
 		renderInfo.renderer->Render(
-			plane->GetVertexBuffer(),
+			GetVertexBuffers(pipeline, plane),
 			plane->GetIndexBuffer(),
 			plane->GetIndexCount(),
 			pipeline,
@@ -931,7 +950,7 @@ void RenderPassManager::CreateTransparent()
 			}
 
 			renderInfo.renderer->Render(
-				renderData.r3d.mesh->GetVertexBuffer(),
+				GetVertexBuffers(pipeline, renderData.r3d.mesh),
 				renderData.r3d.mesh->GetIndexBuffer(),
 				renderData.r3d.mesh->GetIndexCount(),
 				pipeline,
@@ -1067,7 +1086,7 @@ void RenderPassManager::CreateFinal()
 		renderInfo.renderer->BeginRenderPass(submitInfo);
 
 		renderInfo.renderer->Render(
-			plane->GetVertexBuffer(),
+			GetVertexBuffers(pipeline, plane),
 			plane->GetIndexBuffer(),
 			plane->GetIndexCount(),
 			pipeline,
@@ -1208,7 +1227,7 @@ void RenderPassManager::CreateSSAO()
 		}
 
 		renderInfo.renderer->Render(
-			plane->GetVertexBuffer(),
+			GetVertexBuffers(pipeline, plane),
 			plane->GetIndexBuffer(),
 			plane->GetIndexCount(),
 			pipeline,
@@ -1303,7 +1322,7 @@ void RenderPassManager::CreateSSAOBlur()
 		}
 
 		renderInfo.renderer->Render(
-			plane->GetVertexBuffer(),
+			GetVertexBuffers(pipeline, plane),
 			plane->GetIndexBuffer(),
 			plane->GetIndexCount(),
 			pipeline,
@@ -1402,7 +1421,7 @@ void RenderPassManager::CreateCSM()
 				continue;
 			}
 
-			if (!r3d.mesh || !r3d.mesh->GetVertexBufferForShadows() || !r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
+			if (!r3d.mesh || !r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
 			{
 				continue;
 			}
@@ -1549,7 +1568,7 @@ void RenderPassManager::CreateCSM()
 					}
 
 					renderInfo.renderer->Render(
-						mesh->GetVertexBufferForShadows(),
+						GetVertexBuffers(pipeline, mesh),
 						mesh->GetIndexBuffer(),
 						mesh->GetIndexCount(),
 						pipeline,
@@ -1668,6 +1687,9 @@ void RenderPassManager::CreateBloom()
 					size.x = glm::max(size.x / 2, 1);
 					size.y = glm::max(size.y / 2, 1);
 				}
+
+				// For viewport visualization and easy access by render pass name.
+				renderInfo.renderTarget->SetFrameBuffer(renderPassName, renderInfo.renderTarget->GetFrameBuffer("BloomFrameBuffers(0)"));
 			}
 
 			// Create UniformWriters, Buffers for down sample pass.
@@ -1734,7 +1756,7 @@ void RenderPassManager::CreateBloom()
 				downUniformWriter->Flush();
 
 				renderInfo.renderer->Render(
-					plane->GetVertexBuffer(),
+					GetVertexBuffers(pipeline, plane),
 					plane->GetIndexBuffer(),
 					plane->GetIndexCount(),
 					pipeline,
@@ -1791,7 +1813,7 @@ void RenderPassManager::CreateBloom()
 				downUniformWriter->Flush();
 
 				renderInfo.renderer->Render(
-					plane->GetVertexBuffer(),
+					GetVertexBuffers(pipeline, plane),
 					plane->GetIndexBuffer(),
 					plane->GetIndexCount(),
 					pipeline,

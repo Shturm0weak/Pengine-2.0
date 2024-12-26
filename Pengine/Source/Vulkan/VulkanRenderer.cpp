@@ -18,8 +18,8 @@ VulkanRenderer::VulkanRenderer()
 }
 
 void VulkanRenderer::Render(
-	const std::shared_ptr<Buffer>& vertices,
-	const std::shared_ptr<Buffer>& indices,
+	const std::vector<std::shared_ptr<Buffer>>& vertexBuffers,
+	const std::shared_ptr<Buffer>& indexBuffer,
 	const int indexCount,
 	const std::shared_ptr<Pipeline>& pipeline,
 	const std::shared_ptr<Buffer>& instanceBuffer,
@@ -63,7 +63,7 @@ void VulkanRenderer::Render(
 	}
 
 	vertexCount += (indexCount / 3) * count;
-	BindBuffers(vkFrame->CommandBuffer, vertices, instanceBuffer, indices, instanceBufferOffset);
+	BindBuffers(vkFrame->CommandBuffer, vertexBuffers, instanceBuffer, indexBuffer, instanceBufferOffset);
 	DrawIndexed(vkFrame->CommandBuffer, indexCount, count);
 }
 
@@ -172,24 +172,26 @@ void VulkanRenderer::EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmi
 
 void VulkanRenderer::BindBuffers(
 	const VkCommandBuffer commandBuffer,
-	const std::shared_ptr<Buffer>& vertexBuffer,
+	const std::vector<std::shared_ptr<Buffer>>& vertexBuffers,
 	const std::shared_ptr<Buffer>& instanceBuffer,
 	const std::shared_ptr<Buffer>& indexBuffer,
 	const size_t instanceBufferOffset)
 {
-	constexpr VkDeviceSize vertexOffsets[] = { 0 };
-
-	const VkBuffer vertexBuffers[] = { std::static_pointer_cast<VulkanBuffer>(vertexBuffer)->GetBuffer() };
-	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, vertexOffsets);
+	std::vector<VkBuffer> vkVertexBuffers;
+	std::vector<VkDeviceSize> vkVertexOffsets;
+	for (const std::shared_ptr<Buffer> vertexBuffer : vertexBuffers)
+	{
+		vkVertexBuffers.emplace_back(std::static_pointer_cast<VulkanBuffer>(vertexBuffer)->GetBuffer());
+		vkVertexOffsets.emplace_back(0);
+	}
 
 	if (instanceBuffer)
 	{
-		const VkDeviceSize offsetsInstance[] = { instanceBufferOffset };
-
-		const VkBuffer instanceBuffers[] = { std::static_pointer_cast<VulkanBuffer>(instanceBuffer)->GetBuffer() };
-		vkCmdBindVertexBuffers(commandBuffer, 1, 1, instanceBuffers, offsetsInstance);
+		vkVertexBuffers.emplace_back(std::static_pointer_cast<VulkanBuffer>(instanceBuffer)->GetBuffer());
+		vkVertexOffsets.emplace_back(instanceBufferOffset);
 	}
 
+	vkCmdBindVertexBuffers(commandBuffer, 0, vkVertexBuffers.size(), vkVertexBuffers.data(), vkVertexOffsets.data());
 	vkCmdBindIndexBuffer(commandBuffer, std::static_pointer_cast<VulkanBuffer>(indexBuffer)->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
 }
 

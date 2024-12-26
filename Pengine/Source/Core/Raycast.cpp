@@ -129,7 +129,7 @@ std::map<float, std::shared_ptr<Entity>> Raycast::RaycastScene(
 			continue;
 		}
 
-		Hit hit{};
+		Hit hitOBB{};
 		if (IntersectBoxOBB(
 			start,
 			direction,
@@ -139,32 +139,13 @@ std::map<float, std::shared_ptr<Entity>> Raycast::RaycastScene(
 			transform.GetScale(),
 			transform.GetRotationMat4(),
 			length,
-			hit))
+			hitOBB))
 		{
-			const std::vector<float>& vertices = r3d.mesh->GetRawVertices();
-			const std::vector<uint32_t>& indices = r3d.mesh->GetRawIndices();
-			const Vertex* vertex = reinterpret_cast<const Vertex*>(vertices.data());
-			for (size_t i = 0; i < r3d.mesh->GetIndexCount(); i+=3)
+			Hit hitMesh{};
+
+			if (r3d.mesh->Raycast(start, direction, length, transform.GetTransform(), hitMesh.distance, scene->GetVisualizer()))
 			{
-				const glm::vec3& vertex0 = vertex[indices[i + 0]].position;
-				const glm::vec3& vertex1 = vertex[indices[i + 1]].position;
-				const glm::vec3& vertex2 = vertex[indices[i + 2]].position;
-
-				const glm::vec3 a = transform.GetTransform() * glm::vec4(vertex0, 1.0f);
-				const glm::vec3 b = transform.GetTransform() * glm::vec4(vertex1, 1.0f);
-				const glm::vec3 c = transform.GetTransform() * glm::vec4(vertex2, 1.0f);
-
-				const glm::vec3 normal = glm::normalize(glm::cross((b - a), (c - a)));
-
-				if (IntersectTriangle(start, direction, a, b, c, normal, length, hit))
-				{
-					//scene->GetVisualizer().DrawLine(a, b, { 1.0f, 0.0f, 1.0f }, 5.0f);
-					//scene->GetVisualizer().DrawLine(a, c, { 1.0f, 0.0f, 1.0f }, 5.0f);
-					//scene->GetVisualizer().DrawLine(c, b, { 1.0f, 0.0f, 1.0f }, 5.0f);
-					
-					hits.emplace(hit.distance, transform.GetEntity());
-					break;
-				}
+				hits.emplace(hitMesh.distance, transform.GetEntity());
 			}
 		}
 	}
