@@ -5,7 +5,7 @@
 namespace Pengine
 {
 
-	struct PENGINE_API Vertex
+	struct PENGINE_API VertexDefault
 	{
 		glm::vec3 position;
 		glm::vec2 uv;
@@ -14,10 +14,22 @@ namespace Pengine
 		glm::vec3 bitangent;
 	};
 
-	struct PENGINE_API VertexForShadows
+	struct PENGINE_API VertexPosition
 	{
 		glm::vec3 position;
 		glm::vec2 uv;
+	};
+
+	struct PENGINE_API VertexNormal
+	{
+		glm::vec3 normal;
+		glm::vec3 tangent;
+		glm::vec3 bitangent;
+	};
+
+	struct PENGINE_API VertexLayout
+	{
+		uint32_t size;
 	};
 
 }

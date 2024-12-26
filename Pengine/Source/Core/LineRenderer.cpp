@@ -60,7 +60,7 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 			batch.m_IndexBuffer->WriteToBuffer(lineIndices.data(), lineIndices.size() * sizeof(uint32_t));
 
 			renderInfo.renderer->Render(
-				batch.m_VertexBuffer,
+				{ batch.m_VertexBuffer },
 				batch.m_IndexBuffer,
 				index,
 				pipeline,

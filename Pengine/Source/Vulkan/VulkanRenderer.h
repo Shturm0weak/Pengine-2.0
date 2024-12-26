@@ -26,8 +26,8 @@ namespace Pengine::Vk
 		virtual void EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) override;
 
 		virtual void Render(
-			const std::shared_ptr<Buffer>& vertices,
-			const std::shared_ptr<Buffer>& indices,
+			const std::vector<std::shared_ptr<Buffer>>& vertexBuffers,
+			const std::shared_ptr<Buffer>& indexBuffer,
 			const int indexCount,
 			const std::shared_ptr<Pipeline>& pipeline,
 			const std::shared_ptr<Buffer>& instanceBuffer,
@@ -47,7 +47,7 @@ namespace Pengine::Vk
 	private:
 		static void BindBuffers(
 			VkCommandBuffer commandBuffer,
-			const std::shared_ptr<Buffer>& vertexBuffer,
+			const std::vector<std::shared_ptr<Buffer>>& vertexBuffers,
 			const std::shared_ptr<Buffer>& instanceBuffer,
 			const std::shared_ptr<Buffer>& indexBuffer,
 			size_t instanceBufferOffset);

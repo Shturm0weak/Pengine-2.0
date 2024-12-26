@@ -50,8 +50,8 @@ namespace Pengine
 		virtual void EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
 
 		virtual void Render(
-			const std::shared_ptr<Buffer>& vertices,
-			const std::shared_ptr<Buffer>& indices,
+			const std::vector<std::shared_ptr<Buffer>>& vertexBuffers,
+			const std::shared_ptr<Buffer>& indexBuffer,
 			const int indexCount,
 			const std::shared_ptr<Pipeline>& pipeline,
 			const std::shared_ptr<Buffer>& instanceBuffer,

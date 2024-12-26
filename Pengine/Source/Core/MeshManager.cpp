@@ -13,22 +13,17 @@ MeshManager& MeshManager::GetInstance()
 	return meshManager;
 }
 
-std::shared_ptr<Mesh> MeshManager::CreateMesh(
-	const std::string& name,
-	const std::filesystem::path& filepath,
-	const size_t vertexSize,
-	std::vector<float>& vertices,
-	std::vector<uint32_t>& indices)
+std::shared_ptr<Mesh> MeshManager::CreateMesh(Mesh::CreateInfo& createInfo)
 {
-	if (std::shared_ptr<Mesh> mesh = GetMesh(filepath))
+	if (std::shared_ptr<Mesh> mesh = GetMesh(createInfo.filepath))
 	{
 		return mesh;
 	}
 	else
 	{
-		mesh = std::make_shared<Mesh>(name, filepath, vertexSize, vertices, indices);
+		mesh = std::make_shared<Mesh>(createInfo);
 		std::lock_guard lock(m_MutexMesh);
-		m_MeshesByFilepath[filepath] = mesh;
+		m_MeshesByFilepath[createInfo.filepath] = mesh;
 
 		return mesh;
 	}
