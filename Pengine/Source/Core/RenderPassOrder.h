@@ -13,6 +13,7 @@ namespace Pengine
 
 	const std::vector<std::string> renderPassPerViewportOrder =
 	{
+		ZPrePass,
 		GBuffer,
 		CSM,
 		SSAO,

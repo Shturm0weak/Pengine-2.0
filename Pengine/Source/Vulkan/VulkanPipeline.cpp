@@ -23,7 +23,7 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 	shaderStages.reserve(pipelineCreateInfo.shaderFilepathsByType.size());
 
 	shaderc::CompileOptions options{};
-	options.SetOptimizationLevel(shaderc_optimization_level_performance);
+	options.SetOptimizationLevel(shaderc_optimization_level_zero);
 	options.SetIncluder(std::make_unique<ShaderIncluder>());
 
 	for (const auto& [type, filepath] : pipelineCreateInfo.shaderFilepathsByType)

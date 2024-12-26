@@ -195,6 +195,7 @@ void RenderPassManager::PrepareUniformsPerViewportBeforeDraw(const RenderPass::R
 RenderPassManager::RenderPassManager()
 {
 	CreateDefaultReflection();
+	CreateZPrePass();
 	CreateGBuffer();
 	CreateDeferred();
 	CreateAtmosphere();
@@ -211,7 +212,7 @@ std::vector<std::shared_ptr<Buffer>> RenderPassManager::GetVertexBuffers(
 	std::shared_ptr<Mesh> mesh)
 {
 	const auto& bindingDescriptions = pipeline->GetCreateInfo().bindingDescriptions;
-	
+
 	std::vector<std::shared_ptr<Buffer>> vertexBuffers;
 	for (size_t i = 0; i < bindingDescriptions.size(); i++)
 	{
@@ -223,6 +224,177 @@ std::vector<std::shared_ptr<Buffer>> RenderPassManager::GetVertexBuffers(
 	}
 
 	return vertexBuffers;
+}
+
+void RenderPassManager::CreateZPrePass()
+{
+	RenderPass::ClearDepth clearDepth{};
+	clearDepth.clearDepth = 1.0f;
+	clearDepth.clearStencil = 0;
+
+	RenderPass::AttachmentDescription depth{};
+	depth.format = Format::D32_SFLOAT;
+	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+	Texture::SamplerCreateInfo depthSamplerCreateInfo{};
+	depthSamplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
+	depthSamplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_WHITE;
+
+	depth.samplerCreateInfo = depthSamplerCreateInfo;
+
+	RenderPass::CreateInfo createInfo{};
+	createInfo.type = ZPrePass;
+	createInfo.clearColors = { };
+	createInfo.clearDepths = { clearDepth };
+	createInfo.attachmentDescriptions = { depth };
+	createInfo.resizeWithViewport = true;
+	createInfo.resizeViewportScale = { 1.0f, 1.0f };
+
+	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
+	{
+		const std::string renderPassName = renderInfo.renderPass->GetType();
+
+		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
+		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
+		using RenderableEntities = std::unordered_map<std::shared_ptr<BaseMaterial>, MeshesByMaterial>;
+
+		RenderableEntities renderableEntities;
+
+		size_t renderableCount = 0;
+		const std::shared_ptr<Scene> scene = renderInfo.scene;
+		const entt::registry& registry = scene->GetRegistry();
+		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
+		const glm::mat4 viewProjectionMat4 = renderInfo.projection * camera.GetViewMat4();
+		const auto r3dView = registry.view<Renderer3D>();
+		for (const entt::entity& entity : r3dView)
+		{
+			const Renderer3D& r3d = registry.get<Renderer3D>(entity);
+			const Transform& transform = registry.get<Transform>(entity);
+			if (!transform.GetEntity()->IsEnabled())
+			{
+				continue;
+			}
+
+			if (!r3d.mesh || !r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
+			{
+				continue;
+			}
+
+			const std::shared_ptr<Pipeline> pipeline = r3d.material->GetBaseMaterial()->GetPipeline(renderPassName);
+			if (!pipeline)
+			{
+				continue;
+			}
+
+			const glm::mat4& transformMat4 = transform.GetTransform();
+			const BoundingBox& box = r3d.mesh->GetBoundingBox();
+			bool isInFrustum = FrustumCulling::CullBoundingBox(viewProjectionMat4, transformMat4, box.min, box.max, camera.GetZNear());
+			if (!isInFrustum)
+			{
+				continue;
+			}
+
+			if (scene->GetSettings().m_DrawBoundingBoxes)
+			{
+				const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
+
+				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
+			}
+
+			renderableEntities[r3d.material->GetBaseMaterial()][r3d.material][r3d.mesh].emplace_back(entity);
+
+			renderableCount++;
+		}
+
+		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderTarget->GetBuffer("InstanceBufferZPrePass");
+		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
+		{
+			instanceBuffer = Buffer::Create(
+				sizeof(glm::mat4),
+				renderableCount,
+				Buffer::Usage::VERTEX_BUFFER,
+				Buffer::MemoryType::CPU);
+
+			renderInfo.renderTarget->SetBuffer("InstanceBufferZPrePass", instanceBuffer);
+		}
+
+		std::vector<glm::mat4> instanceDatas;
+
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
+
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
+
+		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
+		for (const auto& [baseMaterial, meshesByMaterial] : renderableEntities)
+		{
+			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+
+			for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
+			{
+				std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
+				for (const auto& uniformWriter : uniformWriters)
+				{
+					uniformWriter->Flush();
+
+					for (const auto& [location, buffer] : uniformWriter->GetBuffersByLocation())
+					{
+						buffer->Flush();
+					}
+				}
+
+				for (const auto& [mesh, entities] : gameObjectsByMeshes)
+				{
+					const size_t instanceDataOffset = instanceDatas.size();
+
+					for (const entt::entity& entity : entities)
+					{
+						const Transform& transform = registry.get<Transform>(entity);
+						instanceDatas.emplace_back(transform.GetTransform());
+					}
+
+					renderInfo.renderer->Render(
+						GetVertexBuffers(pipeline, mesh),
+						mesh->GetIndexBuffer(),
+						mesh->GetIndexCount(),
+						pipeline,
+						instanceBuffer,
+						instanceDataOffset * instanceBuffer->GetInstanceSize(),
+						entities.size(),
+						uniformWriters,
+						renderInfo.frame);
+				}
+			}
+		}
+
+		struct RenderableData
+		{
+			RenderableEntities renderableEntities;
+			size_t renderableCount = 0;
+		};
+		RenderableData* renderableData = (RenderableData*)renderInfo.renderTarget->GetCustomData("RenderableData");
+		if (!renderableData)
+		{
+			renderableData = new RenderableData();
+			renderInfo.renderTarget->SetCustomData("RenderableData", renderableData);
+		}
+		renderableData->renderableEntities = std::move(renderableEntities);
+		renderableData->renderableCount = renderableCount;
+
+		// Because these are all just commands and will be rendered later we can write the instance buffer
+		// just once when all instance data is collected.
+		if (instanceBuffer && !instanceDatas.empty())
+		{
+			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(glm::mat4));
+		}
+
+		renderInfo.renderer->EndRenderPass(submitInfo);
+	};
+
+	Create(createInfo);
 }
 
 void RenderPassManager::CreateGBuffer()
@@ -250,7 +422,14 @@ void RenderPassManager::CreateGBuffer()
 	RenderPass::AttachmentDescription depth{};
 	depth.format = Format::D32_SFLOAT;
 	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	
+	depth.load = RenderPass::Load::LOAD;
+	depth.store = RenderPass::Store::NONE;
+	depth.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
+	{
+		index = 0;
+		return renderTarget->GetFrameBuffer(ZPrePass);
+	};
+
 	Texture::SamplerCreateInfo depthSamplerCreateInfo{};
 	depthSamplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
 	depthSamplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_WHITE;
@@ -271,55 +450,18 @@ void RenderPassManager::CreateGBuffer()
 		
 		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
-		using MaterialByBaseMaterial = std::unordered_map<std::shared_ptr<BaseMaterial>, MeshesByMaterial>;
+		using RenderableEntities = std::unordered_map<std::shared_ptr<BaseMaterial>, MeshesByMaterial>;
 
-		MaterialByBaseMaterial materialMeshGameObjects;
+		struct RenderableData
+		{
+			RenderableEntities renderableEntities;
+			size_t renderableCount = 0;
+		};
+		RenderableData* renderableData = (RenderableData*)renderInfo.renderTarget->GetCustomData("RenderableData");
 
-		size_t renderableCount = 0;
+		const size_t renderableCount = renderableData->renderableCount;
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
 		const entt::registry& registry = scene->GetRegistry();
-		const auto r3dView = registry.view<Renderer3D>();
-		for (const entt::entity& entity : r3dView)
-		{
-			const Renderer3D& r3d = registry.get<Renderer3D>(entity);
-			const Transform& transform = registry.get<Transform>(entity);
-			if (!transform.GetEntity()->IsEnabled())
-			{
-				continue;
-			}
-
-			if (!r3d.mesh || !r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
-			{
-				continue;
-			}
-
-			const std::shared_ptr<Pipeline> pipeline = r3d.material->GetBaseMaterial()->GetPipeline(renderPassName);
-			if (!pipeline)
-			{
-				continue;
-			}
-
-			const Camera& camera = renderInfo.camera->GetComponent<Camera>();
-			const glm::mat4& transformMat4 = transform.GetTransform();
-			const BoundingBox& box = r3d.mesh->GetBoundingBox();
-			bool isInFrustum = FrustumCulling::CullBoundingBox(renderInfo.projection * camera.GetViewMat4(), transformMat4, box.min, box.max, camera.GetZNear());
-
-			if (!isInFrustum)
-			{
-				continue;
-			}
-
-			if (scene->GetSettings().m_DrawBoundingBoxes)
-			{
-				const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
-
-				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
-			}
-
-			materialMeshGameObjects[r3d.material->GetBaseMaterial()][r3d.material][r3d.mesh].emplace_back(entity);
-
-			renderableCount++;
-		}
 
 		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderTarget->GetBuffer("InstanceBuffer");
 		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
@@ -344,14 +486,15 @@ void RenderPassManager::CreateGBuffer()
 		renderInfo.renderer->BeginRenderPass(submitInfo);
 
 		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
-		for (const auto& [baseMaterial, meshesByMaterial] : materialMeshGameObjects)
+		for (const auto& [baseMaterial, meshesByMaterial] : renderableData->renderableEntities)
 		{
 			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 
 			for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
 			{
 				std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
-				for (const auto& uniformWriter : uniformWriters)
+				// Already updated in ZPrePass.
+				/*for (const auto& uniformWriter : uniformWriters)
 				{
 					uniformWriter->Flush();
 
@@ -359,7 +502,7 @@ void RenderPassManager::CreateGBuffer()
 					{
 						buffer->Flush();
 					}
-				}
+				}*/
 
 				for (const auto& [mesh, entities] : gameObjectsByMeshes)
 				{
@@ -387,6 +530,10 @@ void RenderPassManager::CreateGBuffer()
 				}
 			}
 		}
+
+		// NOTE: Clear after the draw when not it is needed. If not clear, the crash will appear when closing the application.
+		renderableData->renderableCount = 0;
+		renderableData->renderableEntities.clear();
 
 		// Because these are all just commands and will be rendered later we can write the instance buffer
 		// just once when all instance data is collected.
@@ -812,8 +959,8 @@ void RenderPassManager::CreateTransparent()
 	depth.store = RenderPass::Store::NONE;
 	depth.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
-		index = 3;
-		return renderTarget->GetFrameBuffer(GBuffer);
+		index = 0;
+		return renderTarget->GetFrameBuffer(ZPrePass);
 	};
 
 	RenderPass::CreateInfo createInfo{};
@@ -865,7 +1012,6 @@ void RenderPassManager::CreateTransparent()
 			const glm::mat4& transformMat4 = transform.GetTransform();
 			const BoundingBox& box = r3d.mesh->GetBoundingBox();
 			bool isInFrustum = FrustumCulling::CullBoundingBox(renderInfo.projection * camera.GetViewMat4(), transformMat4, box.min, box.max, camera.GetZNear());
-
 			if (!isInFrustum)
 			{
 				continue;

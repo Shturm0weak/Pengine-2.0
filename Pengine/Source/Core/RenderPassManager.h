@@ -49,6 +49,8 @@ namespace Pengine
 			std::shared_ptr<class Pipeline> pipeline,
 			std::shared_ptr<class Mesh> mesh);
 
+		void CreateZPrePass();
+
 		void CreateGBuffer();
 
 		void CreateDeferred();
