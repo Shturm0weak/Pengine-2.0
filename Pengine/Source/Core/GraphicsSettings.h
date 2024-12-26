@@ -60,6 +60,7 @@ namespace Pengine
 
 			ToneMapper toneMapper = ToneMapper::ACES;
 			float gamma = 2.2f;
+			bool fxaa = true;
 		} postProcess;
 	};
 

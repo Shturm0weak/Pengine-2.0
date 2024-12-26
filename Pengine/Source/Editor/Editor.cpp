@@ -901,6 +901,7 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 
 		if (ImGui::CollapsingHeader("Post Process"))
 		{
+			isChangedToSerialize += ImGui::Checkbox("FXAA", &graphicsSettings.postProcess.fxaa);
 			isChangedToSerialize += ImGui::SliderFloat("Gamma", &graphicsSettings.postProcess.gamma, 0.0f, 3.0f);
 
 			const char* const toneMappers[] = {"NONE", "ACES" };

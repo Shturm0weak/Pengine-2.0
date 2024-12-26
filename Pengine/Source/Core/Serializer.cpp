@@ -2628,6 +2628,7 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 
 	out << YAML::Key << "Gamma" << YAML::Value << graphicsSettings.postProcess.gamma;
 	out << YAML::Key << "ToneMapper" << YAML::Value << (int)graphicsSettings.postProcess.toneMapper;
+	out << YAML::Key << "FXAA" << YAML::Value << graphicsSettings.postProcess.fxaa;
 
 	out << YAML::EndMap;
 	//
@@ -2761,6 +2762,11 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& toneMapperData = ssaoData["ToneMapper"])
 		{
 			graphicsSettings.postProcess.toneMapper = (GraphicsSettings::PostProcess::ToneMapper)toneMapperData.as<int>();
+		}
+
+		if (const auto& fxaaData = ssaoData["FXAA"])
+		{
+			graphicsSettings.postProcess.fxaa = fxaaData.as<bool>();
 		}
 	}
 
