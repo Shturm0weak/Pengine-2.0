@@ -55,6 +55,18 @@ namespace Pengine::Vk
 
 		static ShaderType ConvertShaderStage(VkShaderStageFlagBits stage);
 
+		static VkPipelineColorBlendAttachmentState ConvertBlendAttachmentState(const BlendStateAttachment& blendStateAttachment);
+
+		static BlendStateAttachment ConvertBlendAttachmentState(const VkPipelineColorBlendAttachmentState& blendStateAttachment);
+
+		static VkBlendFactor ConvertBlendFactor(BlendStateAttachment::BlendFactor blendFactor);
+
+		static BlendStateAttachment::BlendFactor ConvertBlendFactor(VkBlendFactor blendFactor);
+
+		static VkBlendOp ConvertBlendOp(BlendStateAttachment::BlendOp blendOp);
+
+		static BlendStateAttachment::BlendOp ConvertBlendOp(VkBlendOp blendOp);
+
 		VkPipeline GetPipeline() const { return m_GraphicsPipeline; }
 
 		VkPipelineLayout GetPipelineLayout() const { return m_PipelineLayout; }

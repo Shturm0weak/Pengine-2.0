@@ -4,6 +4,7 @@ layout(location = 0) in vec2 uv;
 layout(location = 1) in vec2 viewRay;
 
 layout(location = 0) out vec4 outColor;
+layout(location = 1) out vec4 outEmissive;
 
 layout(set = 1, binding = 0) uniform sampler2D albedoTexture;
 layout(set = 1, binding = 1) uniform sampler2D normalTexture;
@@ -12,6 +13,7 @@ layout(set = 1, binding = 3) uniform sampler2D depthTexture;
 layout(set = 1, binding = 4) uniform sampler2D ssaoTexture;
 layout(set = 1, binding = 5) uniform sampler2DArray CSMTexture;
 
+#include "Shaders/Includes/IsBrightPixel.h"
 #include "Shaders/Includes/PointLight.h"
 #include "Shaders/Includes/DirectionalLight.h"
 #include "Shaders/Includes/CSM.h"
@@ -29,6 +31,8 @@ layout(set = 1, binding = 6) uniform Lights
 
 	DirectionalLight directionalLight;
 	int hasDirectionalLight;
+
+	float brightnessThreshold;
 
 	CSM csm;
 };
@@ -87,9 +91,9 @@ void main()
 		{
 			result += CalculatePointLight(pointLights[i], position, normal.xyz) * albedoColor;
 		}
-
-		result *= ssao;
 	}
 
-	outColor = vec4(result, 1.0f);
+    outEmissive = vec4(IsBrightPixel(result, brightnessThreshold), 1.0f);
+
+	outColor = vec4(result * ssao, 1.0f);
 }

@@ -42,7 +42,10 @@ namespace Pengine
 			const std::shared_ptr<Renderer>& renderer,
 			const std::map<std::shared_ptr<Scene>, std::vector<RenderViewportInfo>>& viewportsByScene);
 
-		virtual void BeginRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
+		virtual void BeginRenderPass(
+			const RenderPass::SubmitInfo& renderPassSubmitInfo,
+			const std::string& debugName = {},
+			const glm::vec3& debugColor = topLevelRenderPassDebugColor) = 0;
 
 		virtual void EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
 
@@ -56,6 +59,15 @@ namespace Pengine
 			size_t count,
 			const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
 			void* frame) = 0;
+
+		virtual void MemoryBarrierFragmentReadWrite(void* frame) = 0;
+
+		virtual void BeginCommandLabel(
+			const std::string& name,
+			const glm::vec3& color,
+			void* frame) = 0;
+
+		virtual void EndCommandLabel(void* frame) = 0;
 	};
 
 }

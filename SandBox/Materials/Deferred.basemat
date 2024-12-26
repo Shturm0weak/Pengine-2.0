@@ -22,6 +22,7 @@ Basemat:
             - positionA
       ColorBlendStates:
         - BlendEnabled: false
+        - BlendEnabled: false
       Uniforms:
         - Name: albedoTexture
           RenderTarget: "GBuffer[0]"

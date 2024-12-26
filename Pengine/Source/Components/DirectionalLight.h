@@ -10,6 +10,7 @@ namespace Pengine
 	public:
 		glm::vec3 color = { 1.0f, 1.0f, 1.0f };
 		float intensity = 1.0f;
+		float ambient = 0.1f;
 	};
 
 }

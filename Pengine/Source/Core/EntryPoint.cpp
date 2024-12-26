@@ -39,14 +39,31 @@ void PrepareResources()
 	whiteTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
 	whiteTextureCreateInfo.size = { 1, 1 };
 	whiteTextureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_DST };
-	std::vector<uint8_t> pixels = {
+	std::vector<uint8_t> whitePixels = {
 		255,
 		255,
 		255,
 		255
 	};
-	whiteTextureCreateInfo.data = pixels.data();
+	whiteTextureCreateInfo.data = whitePixels.data();
 	TextureManager::GetInstance().Create(whiteTextureCreateInfo);
+
+	Texture::CreateInfo blackTextureCreateInfo;
+	blackTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	blackTextureCreateInfo.channels = 4;
+	blackTextureCreateInfo.filepath = "Black";
+	blackTextureCreateInfo.name = "Black";
+	blackTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
+	blackTextureCreateInfo.size = { 1, 1 };
+	blackTextureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_DST };
+	std::vector<uint8_t> blackPixels = {
+		0,
+		0,
+		0,
+		0
+	};
+	blackTextureCreateInfo.data = blackPixels.data();
+	TextureManager::GetInstance().Create(blackTextureCreateInfo);
 
 	{
 		std::vector<float> vertices =
@@ -178,7 +195,7 @@ void EntryPoint::Run() const
 
 					if (!cameraComponent.GetRenderPassName().empty())
 					{
-						viewport->Update(renderTarget->GetRenderPassFrameBuffer(cameraComponent.GetRenderPassName())->GetAttachment(cameraComponent.GetRenderTargetIndex()));
+						viewport->Update(renderTarget->GetFrameBuffer(cameraComponent.GetRenderPassName())->GetAttachment(cameraComponent.GetRenderTargetIndex()));
 					}
 					else
 					{

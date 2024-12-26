@@ -29,6 +29,8 @@ namespace Pengine
 
 		std::shared_ptr<Texture> GetWhite() const;
 
+		std::shared_ptr<Texture> GetBlack() const;
+
 		void Delete(const std::filesystem::path& filepath);
 
 		void ShutDown();

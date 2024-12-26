@@ -41,6 +41,26 @@ namespace Pengine
 			 */
 			int cascadeCount = 3;
 		} shadows;
+
+		struct Bloom
+		{
+			bool isEnabled = true;
+			int mipCount = 8;
+			float brightnessThreshold = 1.0f;
+		} bloom;
+
+		struct PostProcess
+		{
+			enum class ToneMapper : int
+			{
+				NONE,
+				ACES,
+				COUNT
+			};
+
+			ToneMapper toneMapper = ToneMapper::ACES;
+			float gamma = 2.2f;
+		} postProcess;
 	};
 
 }

@@ -4,6 +4,7 @@
 #include "MaterialManager.h"
 #include "MeshManager.h"
 #include "SceneManager.h"
+#include "TextureManager.h"
 #include "Time.h"
 #include "FrustumCulling.h"
 
@@ -44,7 +45,7 @@ std::shared_ptr<RenderPass> RenderPassManager::GetRenderPass(const std::string& 
 		return renderPassByName->second;
 	}
 
-	FATAL_ERROR(type + " id of render pass doesn't exist!");
+	FATAL_ERROR(type + " id of render pass doesn't exist, please create render pass!");
 
 	return nullptr;
 }
@@ -202,6 +203,7 @@ RenderPassManager::RenderPassManager()
 	CreateSSAO();
 	CreateSSAOBlur();
 	CreateCSM();
+	CreateBloom();
 }
 
 void RenderPassManager::CreateGBuffer()
@@ -215,7 +217,7 @@ void RenderPassManager::CreateGBuffer()
 	glm::vec4 clearShading = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Format::R8G8B8A8_SRGB;
+	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
 	RenderPass::AttachmentDescription normal{};
@@ -314,7 +316,7 @@ void RenderPassManager::CreateGBuffer()
 
 		std::vector<InstanceData> instanceDatas;
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
 
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
@@ -408,15 +410,27 @@ void RenderPassManager::CreateGBuffer()
 void RenderPassManager::CreateDeferred()
 {
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
+	RenderPass::AttachmentDescription emissive{};
+	emissive.format = Format::B10G11R11_UFLOAT_PACK32;
+	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+
+	Texture::SamplerCreateInfo samplerCreateInfo{};
+	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
+	samplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK;
+	samplerCreateInfo.maxAnisotropy = 1.0f;
+
+	emissive.samplerCreateInfo = samplerCreateInfo;
+
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = Deferred;
-	createInfo.clearColors = { clearColor };
-	createInfo.attachmentDescriptions = { color };
+	createInfo.clearColors = { clearColor, clearEmissive };
+	createInfo.attachmentDescriptions = { color, emissive };
 	createInfo.resizeWithViewport = true;
 	createInfo.resizeViewportScale = { 1.0f, 1.0f };
 
@@ -468,7 +482,7 @@ void RenderPassManager::CreateDeferred()
 
 		for (const auto& [name, renderTargetInfo] : pipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
 		{
-			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderTargetInfo.renderPassName);
 			renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
 		}
 
@@ -504,6 +518,9 @@ void RenderPassManager::CreateDeferred()
 		int pointLightsCount = pointLightView.size();
 		baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "pointLightsCount", pointLightsCount);
 
+		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
+		baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "brightnessThreshold", graphicsSettings.bloom.brightnessThreshold);
+
 		auto directionalLightView = renderInfo.scene->GetRegistry().view<DirectionalLight>();
 		if (!directionalLightView.empty())
 		{
@@ -513,6 +530,7 @@ void RenderPassManager::CreateDeferred()
 
 			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "directionalLight.color", dl.color);
 			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "directionalLight.intensity", dl.intensity);
+			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "directionalLight.ambient", dl.ambient);
 
 			// View Space!
 			const glm::vec3 direction = glm::normalize(glm::mat3(camera.GetViewMat4()) * transform.GetForward());
@@ -579,7 +597,7 @@ void RenderPassManager::CreateDeferred()
 			}
 		}
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
@@ -679,7 +697,7 @@ void RenderPassManager::CreateAtmosphere()
 			baseMaterial->WriteToBuffer("AtmosphereBuffer", "hasDirectionalLight", hasDirectionalLight);
 		}
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.scene->GetRenderTarget()->GetRenderPassFrameBuffer(Atmosphere);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.scene->GetRenderTarget()->GetFrameBuffer(Atmosphere);
 		const glm::vec2 faceSize = frameBuffer->GetSize();
 		baseMaterial->WriteToBuffer("AtmosphereBuffer", "faceSize", faceSize);
 
@@ -739,6 +757,8 @@ void RenderPassManager::CreateTransparent()
 
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
+	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 1.0f };
+
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
@@ -746,8 +766,25 @@ void RenderPassManager::CreateTransparent()
 	color.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
 		index = 0;
-		return renderTarget->GetRenderPassFrameBuffer(Deferred);
+		return renderTarget->GetFrameBuffer(Deferred);
 	};
+
+	RenderPass::AttachmentDescription emissive{};
+	emissive.format = Format::B10G11R11_UFLOAT_PACK32;
+	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	emissive.load = RenderPass::Load::LOAD;
+	emissive.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
+	{
+		index = 1;
+		return renderTarget->GetFrameBuffer(Deferred);
+	};
+
+	Texture::SamplerCreateInfo samplerCreateInfo{};
+	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
+	samplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK;
+	samplerCreateInfo.maxAnisotropy = 1.0f;
+
+	emissive.samplerCreateInfo = samplerCreateInfo;
 
 	RenderPass::AttachmentDescription depth{};
 	depth.format = Format::D32_SFLOAT;
@@ -757,14 +794,14 @@ void RenderPassManager::CreateTransparent()
 	depth.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
 		index = 3;
-		return renderTarget->GetRenderPassFrameBuffer(GBuffer);
+		return renderTarget->GetFrameBuffer(GBuffer);
 	};
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = Transparent;
 	createInfo.clearDepths = { clearDepth };
-	createInfo.clearColors = { clearColor };
-	createInfo.attachmentDescriptions = { color, depth };
+	createInfo.clearColors = { clearColor, clearEmissive };
+	createInfo.attachmentDescriptions = { color, emissive, depth };
 	createInfo.resizeWithViewport = true;
 
 	createInfo.renderCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
@@ -858,7 +895,7 @@ void RenderPassManager::CreateTransparent()
 
 		std::vector<InstanceData> instanceDatas;
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
@@ -957,6 +994,8 @@ void RenderPassManager::CreateFinal()
 			return;
 		}
 
+		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
+
 		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderTarget->GetUniformWriter(renderPassName);
 		if (!renderUniformWriter)
 		{
@@ -964,13 +1003,49 @@ void RenderPassManager::CreateFinal()
 				pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, renderPassName));
 			renderUniformWriter = UniformWriter::Create(renderUniformLayout);
 			renderInfo.renderTarget->SetUniformWriter(renderPassName, renderUniformWriter);
+
+			for (const auto& binding : renderUniformLayout->GetBindings())
+			{
+				if (binding.buffer && binding.buffer->name == "PostProcessBuffer")
+				{
+					const std::shared_ptr<Buffer> buffer = Buffer::Create(
+						binding.buffer->size,
+						1,
+						Buffer::Usage::UNIFORM_BUFFER,
+						Buffer::MemoryType::CPU);
+
+					renderInfo.renderTarget->SetBuffer("PostProcessBuffer", buffer);
+					renderUniformWriter->WriteBuffer(binding.buffer->name, buffer);
+					renderUniformWriter->Flush();
+
+					break;
+				}
+			}
 		}
 
-		for (const auto& [name, renderTargetInfo] : pipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
+		// Deferred texture.
 		{
-			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
-			renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer("Deferred");
+			renderUniformWriter->WriteTexture("deferredTexture", frameBuffer->GetAttachment(0));
 		}
+
+		// Bloom texture.
+		if (graphicsSettings.bloom.isEnabled)
+		{
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer("BloomFrameBuffers(0)");
+			renderUniformWriter->WriteTexture("bloomTexture", frameBuffer->GetAttachment(0));
+		}
+		else
+		{
+			renderUniformWriter->WriteTexture("bloomTexture", TextureManager::GetInstance().GetBlack());
+		}
+
+		const int toneMapperIndex = 0;
+		const float gamma = 2.2f;
+		const std::shared_ptr<Buffer> postProcessBuffer = renderInfo.renderTarget->GetBuffer("PostProcessBuffer");
+		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "toneMapperIndex", graphicsSettings.postProcess.toneMapper);
+		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "gamma", graphicsSettings.postProcess.gamma);
+		postProcessBuffer->Flush();
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 
@@ -984,7 +1059,7 @@ void RenderPassManager::CreateFinal()
 			}
 		}
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
@@ -1029,7 +1104,7 @@ void RenderPassManager::CreateSSAO()
 	{
 		const std::string renderPassName = renderInfo.renderPass->GetType();
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
@@ -1098,7 +1173,7 @@ void RenderPassManager::CreateSSAO()
 
 		for (const auto& [name, renderTargetInfo] : pipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
 		{
-			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderTargetInfo.renderPassName);
 			renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
 		}
 
@@ -1170,7 +1245,7 @@ void RenderPassManager::CreateSSAOBlur()
 	{
 		const std::string renderPassName = renderInfo.renderPass->GetType();
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
@@ -1211,7 +1286,7 @@ void RenderPassManager::CreateSSAOBlur()
 
 		for (const auto& [name, renderTargetInfo] : pipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
 		{
-			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderTargetInfo.renderPassName);
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderTargetInfo.renderPassName);
 			renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
 		}
 
@@ -1276,7 +1351,7 @@ void RenderPassManager::CreateCSM()
 		const std::string renderPassName = renderInfo.renderPass->GetType();
 		const GraphicsSettings::Shadows& shadowsSettings = renderInfo.scene->GetGraphicsSettings().shadows;
 
-		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetRenderPassFrameBuffer(renderPassName);
+		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
 		if (!frameBuffer)
 		{
 			// NOTE: Maybe should be send as the next frame event, because creating a frame buffer here may cause some problems.
@@ -1284,7 +1359,7 @@ void RenderPassManager::CreateCSM()
 			renderInfo.renderPass->GetAttachmentDescriptions().back().layercount = renderInfo.scene->GetGraphicsSettings().shadows.cascadeCount;
 			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), { 2048, 2048 });
 
-			renderInfo.renderTarget->SetFrameBufferToRenderPass(renderPassName, frameBuffer);
+			renderInfo.renderTarget->SetFrameBuffer(renderPassName, frameBuffer);
 		}
 
 		if (!shadowsSettings.isEnabled)
@@ -1495,6 +1570,243 @@ void RenderPassManager::CreateCSM()
 		}
 
 		renderInfo.renderer->EndRenderPass(submitInfo);
+	};
+
+	Create(createInfo);
+}
+
+void RenderPassManager::CreateBloom()
+{
+	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	RenderPass::AttachmentDescription color{};
+	color.format = Format::B10G11R11_UFLOAT_PACK32;
+	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::LOAD;
+
+	Texture::SamplerCreateInfo samplerCreateInfo{};
+	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
+	samplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK;
+	samplerCreateInfo.maxAnisotropy = 1.0f;
+
+	color.samplerCreateInfo = samplerCreateInfo;
+
+	RenderPass::CreateInfo createInfo{};
+	createInfo.type = Bloom;
+	createInfo.clearColors = { clearColor };
+	createInfo.attachmentDescriptions = { color };
+	createInfo.resizeWithViewport = false;
+	createInfo.createFrameBuffer = false;
+	
+	const std::shared_ptr<Mesh> planeMesh = nullptr;
+
+	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
+	{
+		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
+		const int mipCount = graphicsSettings.bloom.mipCount;
+
+		if (!graphicsSettings.bloom.isEnabled)
+		{
+			return;
+		}
+
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
+		if (!plane)
+		{
+			return;
+		}
+
+		const std::string renderPassName = renderInfo.renderPass->GetType();
+
+		// Used to store unique view (camera) bloom information to compare with current graphics settings
+		// and in case if not equal then recreate resources.
+		struct BloomData
+		{
+			int mipCount = 0;
+			glm::ivec2 sourceSize = { 0, 0 };
+		};
+
+		bool recreateResources = false;
+		
+		BloomData* bloomData = (BloomData*)renderInfo.renderTarget->GetCustomData("BloomData");
+		if (!bloomData)
+		{
+			bloomData = new BloomData();
+			bloomData->mipCount = mipCount;
+			bloomData->sourceSize = renderInfo.viewportSize;
+			renderInfo.renderTarget->SetCustomData("BloomData", bloomData);
+		
+			recreateResources = true;
+		}
+		else
+		{
+			recreateResources = bloomData->mipCount != mipCount;
+			bloomData->mipCount = mipCount;
+		}
+
+		renderInfo.renderer->BeginCommandLabel("Bloom", topLevelRenderPassDebugColor, renderInfo.frame);
+		// Down Sample.
+		{
+			const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\BloomDownSample.basemat");
+			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+			if (!pipeline)
+			{
+				return;
+			}
+
+			// Create FrameBuffers.
+			if (recreateResources)
+			{
+				glm::ivec2 size = renderInfo.viewportSize;
+				for (int mipLevel = 0; mipLevel < mipCount; mipLevel++)
+				{
+					const std::string mipLevelString = std::to_string(mipLevel);
+
+					// NOTE: There are parentheses in the name because square brackets are used in the base material file to find the attachment index.
+					renderInfo.renderTarget->SetFrameBuffer("BloomFrameBuffers(" + mipLevelString + ")", FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), size));
+
+					size.x = glm::max(size.x / 2, 1);
+					size.y = glm::max(size.y / 2, 1);
+				}
+			}
+
+			// Create UniformWriters, Buffers for down sample pass.
+			if (recreateResources)
+			{
+				for (int mipLevel = 0; mipLevel < mipCount; mipLevel++)
+				{
+					const std::string mipLevelString = std::to_string(mipLevel);
+
+					const std::shared_ptr<UniformLayout> renderUniformLayout =
+						pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, renderPassName));
+					const std::shared_ptr<UniformWriter> renderUniformWriter = UniformWriter::Create(renderUniformLayout);
+					renderInfo.renderTarget->SetUniformWriter("BloomDownUniformWriters[" + mipLevelString + "]", renderUniformWriter);
+
+					const std::shared_ptr<Buffer> buffer = Buffer::Create(
+						renderUniformLayout->GetBindingByName("MipBuffer")->buffer->size,
+						1,
+						Buffer::Usage::UNIFORM_BUFFER,
+						Buffer::MemoryType::CPU);
+					renderInfo.renderTarget->SetBuffer("BloomBuffers[" + mipLevelString + "]", buffer);
+
+					renderUniformWriter->WriteBuffer("MipBuffer", buffer);
+				}
+			}
+			
+			// Resize.
+			if (bloomData->sourceSize.x != renderInfo.viewportSize.x ||
+				bloomData->sourceSize.y != renderInfo.viewportSize.y)
+			{
+				glm::ivec2 size = renderInfo.viewportSize;
+				bloomData->sourceSize = size;
+				for (size_t mipLevel = 0; mipLevel < mipCount; mipLevel++)
+				{
+					const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer("BloomFrameBuffers(" + std::to_string(mipLevel) + ")");
+					frameBuffer->Resize(size);
+
+					size.x = glm::max(size.x / 2, 1);
+					size.y = glm::max(size.y / 2, 1);
+				}
+			}
+
+			std::shared_ptr<Texture> sourceTexture = renderInfo.renderTarget->GetFrameBuffer(Deferred)->GetAttachment(1);
+			for (int mipLevel = 0; mipLevel < mipCount; mipLevel++)
+			{
+				const std::string mipLevelString = std::to_string(mipLevel);
+
+				renderInfo.renderer->MemoryBarrierFragmentReadWrite(renderInfo.frame);
+
+				const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer("BloomFrameBuffers(" + mipLevelString + ")");
+
+				RenderPass::SubmitInfo submitInfo{};
+				submitInfo.frame = renderInfo.frame;
+				submitInfo.renderPass = renderInfo.renderPass;
+				submitInfo.frameBuffer = frameBuffer;
+				renderInfo.renderer->BeginRenderPass(submitInfo, "Bloom Down Sample [" + mipLevelString + "]", { 1.0f, 1.0f, 0.0f });
+
+				glm::vec2 sourceSize = submitInfo.frameBuffer->GetSize();
+				const std::shared_ptr<Buffer> mipBuffer = renderInfo.renderTarget->GetBuffer("BloomBuffers[" + mipLevelString + "]");
+				baseMaterial->WriteToBuffer(mipBuffer, "MipBuffer", "sourceSize", sourceSize);
+				mipBuffer->Flush();
+
+				const std::shared_ptr<UniformWriter> downUniformWriter = renderInfo.renderTarget->GetUniformWriter("BloomDownUniformWriters[" + mipLevelString + "]");
+				downUniformWriter->WriteTexture("sourceTexture", sourceTexture);
+				downUniformWriter->Flush();
+
+				renderInfo.renderer->Render(
+					plane->GetVertexBuffer(),
+					plane->GetIndexBuffer(),
+					plane->GetIndexCount(),
+					pipeline,
+					nullptr,
+					0,
+					1,
+					{
+						downUniformWriter
+					},
+					renderInfo.frame);
+
+				renderInfo.renderer->EndRenderPass(submitInfo);
+
+				sourceTexture = frameBuffer->GetAttachment(0);
+			}
+		}
+
+		// Up Sample.
+		{
+			const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\BloomUpSample.basemat");
+			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+			if (!pipeline)
+			{
+				return;
+			}
+
+			// Create UniformWriters for up sample pass.
+			if (recreateResources)
+			{
+				for (int mipLevel = 0; mipLevel < mipCount - 1; mipLevel++)
+				{
+					const std::string mipLevelString = std::to_string(mipLevel);
+
+					const std::shared_ptr<UniformLayout> renderUniformLayout =
+						pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, renderPassName));
+					renderInfo.renderTarget->SetUniformWriter("BloomUpUniformWriters[" + mipLevelString + "]", UniformWriter::Create(renderUniformLayout));
+				}
+			}
+
+			for (int mipLevel = mipCount - 1; mipLevel > 0; mipLevel--)
+			{
+				const std::string mipLevelString = std::to_string(mipLevel - 1);
+
+				renderInfo.renderer->MemoryBarrierFragmentReadWrite(renderInfo.frame);
+
+				RenderPass::SubmitInfo submitInfo{};
+				submitInfo.frame = renderInfo.frame;
+				submitInfo.renderPass = renderInfo.renderPass;
+				submitInfo.frameBuffer = renderInfo.renderTarget->GetFrameBuffer("BloomFrameBuffers(" + mipLevelString + ")");
+				renderInfo.renderer->BeginRenderPass(submitInfo, "Bloom Up Sample [" + std::to_string(mipLevel) + "]", { 1.0f, 1.0f, 0.0f });
+
+				const std::shared_ptr<UniformWriter> downUniformWriter = renderInfo.renderTarget->GetUniformWriter("BloomUpUniformWriters[" + mipLevelString + "]");
+				downUniformWriter->WriteTexture("sourceTexture", renderInfo.renderTarget->GetFrameBuffer("BloomFrameBuffers(" + std::to_string(mipLevel) + ")")->GetAttachment(0));
+				downUniformWriter->Flush();
+
+				renderInfo.renderer->Render(
+					plane->GetVertexBuffer(),
+					plane->GetIndexBuffer(),
+					plane->GetIndexCount(),
+					pipeline,
+					nullptr,
+					0,
+					1,
+					{
+						downUniformWriter
+					},
+					renderInfo.frame);
+
+				renderInfo.renderer->EndRenderPass(submitInfo);
+			}
+		}
+		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 	};
 
 	Create(createInfo);

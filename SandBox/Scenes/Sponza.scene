@@ -11,8 +11,8 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [-4.2290597, 7.68311548, -0.191679239]
-      Rotation: [-0.685250401, -1.38104177, 0]
+      Position: [-7.20671225, 4.94927073, -0.316962987]
+      Rotation: [-0.405475885, -1.64333034, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -35,6 +35,7 @@ Scene:
     DirectionalLight:
       Color: [1, 1, 1]
       Intensity: 10
+      Ambient: 0.00999999978
   - UUID: dc2d8c53-d717-487d-b2fa-aacc485775b9
     Name: SphereBlue
     IsEnabled: true
@@ -433,3 +434,16 @@ Scene:
     Renderer3D:
       Mesh: bd5c62c4-89a8-44da-b507-18123fb5c2c8
       Material: 968f1e73-3cd6-434a-8d7b-fa554e6cc8a4
+  - UUID: 5b97ea9f-38fa-4887-a466-65cbee1045b6
+    Name: Cube
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [-2.77950716, 16.1148834, -0.192547679]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: a48e1214-26f5-4dca-ac01-708735b21a3a
+      Material: fd4da90d-9009-4e8a-b0ea-014fa1d8a7a2

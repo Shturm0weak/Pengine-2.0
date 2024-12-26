@@ -67,11 +67,57 @@ void VulkanRenderer::Render(
 	DrawIndexed(vkFrame->CommandBuffer, indexCount, count);
 }
 
-void VulkanRenderer::BeginRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo)
+void VulkanRenderer::MemoryBarrierFragmentReadWrite(void* frame)
+{
+	const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+
+	VkMemoryBarrier memoryBarrier{};
+	memoryBarrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+	memoryBarrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
+	memoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
+	vkCmdPipelineBarrier(
+		vkFrame->CommandBuffer,
+		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		0,
+		1,
+		&memoryBarrier,
+		0,
+		nullptr,
+		0,
+		nullptr);
+}
+
+void VulkanRenderer::BeginCommandLabel(
+	const std::string& name,
+	const glm::vec3& color,
+	void* frame)
+{
+	const ImGui_ImplVulkanH_Frame* imGuiFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+	Vk::device->CommandBeginLabel(name, imGuiFrame->CommandBuffer, color);
+}
+
+void VulkanRenderer::EndCommandLabel(void* frame)
+{
+	const ImGui_ImplVulkanH_Frame* imGuiFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+	Vk::device->CommandEndLabel(imGuiFrame->CommandBuffer);
+}
+
+void VulkanRenderer::BeginRenderPass(
+	const RenderPass::SubmitInfo& renderPassSubmitInfo,
+	const std::string& debugName,
+	const glm::vec3& debugColor)
 {
 	const ImGui_ImplVulkanH_Frame* frame = static_cast<ImGui_ImplVulkanH_Frame*>(renderPassSubmitInfo.frame);
  
-	Vk::device->CommandBeginLabel(renderPassSubmitInfo.renderPass->GetType(), frame->CommandBuffer, { 0.5f, 1.0f, 0.5f, 1.0f });
+	if (!debugName.empty())
+	{
+		BeginCommandLabel(debugName, debugColor, renderPassSubmitInfo.frame);
+	}
+	else
+	{
+		BeginCommandLabel(renderPassSubmitInfo.renderPass->GetType(), debugColor, renderPassSubmitInfo.frame);
+	}
 
 	std::vector<VkClearValue> vkClearValues;
 	for (const glm::vec4& clearColor : renderPassSubmitInfo.renderPass->GetClearColors())
@@ -121,7 +167,7 @@ void VulkanRenderer::EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmi
 {
 	const ImGui_ImplVulkanH_Frame* frame = static_cast<ImGui_ImplVulkanH_Frame*>(renderPassSubmitInfo.frame);
 	vkCmdEndRenderPass(frame->CommandBuffer);
-	Vk::device->CommandEndLabel(frame->CommandBuffer);
+	EndCommandLabel(renderPassSubmitInfo.frame);
 }
 
 void VulkanRenderer::BindBuffers(

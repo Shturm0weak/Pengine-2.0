@@ -23,25 +23,29 @@ namespace Pengine
 		RenderTarget& operator=(const RenderTarget&) = delete;
 		RenderTarget& operator=(RenderTarget&&) = delete;
 
-		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& renderPassName) const;
+		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& name) const;
 
-		void SetUniformWriter(const std::string& renderPassName, std::shared_ptr<UniformWriter> uniformWriter);
+		void SetUniformWriter(const std::string& name, std::shared_ptr<UniformWriter> uniformWriter);
 
 		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
 
 		void SetBuffer(const std::string& name, std::shared_ptr<Buffer> buffer);
 
-		std::shared_ptr<FrameBuffer> GetRenderPassFrameBuffer(const std::string& type) const;
+		std::shared_ptr<FrameBuffer> GetFrameBuffer(const std::string& type) const;
 
-		void SetFrameBufferToRenderPass(const std::string& type,
-			const std::shared_ptr<FrameBuffer>& frameBuffer);
+		void SetFrameBuffer(const std::string& name, const std::shared_ptr<FrameBuffer>& frameBuffer);
+
+		void* GetCustomData(const std::string& name);
+
+		void SetCustomData(const std::string& name, void* data);
 
 		void Resize(const glm::ivec2& size) const;
 
 	protected:
-		std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> m_FrameBuffersByRenderPassType;
-		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPassType;
+		std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> m_FrameBuffersByName;
+		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByName;
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
+		std::unordered_map<std::string, void*> m_CustomDataByName;
 
 		std::vector<std::string> m_RenderPassOrder;
 	};

@@ -65,6 +65,7 @@ Basemat:
             - inverseTransformA
       ColorBlendStates:
         - BlendEnabled: true
+        - BlendEnabled: true
     - RenderPass: CSM
       DepthTest: true
       DepthWrite: true

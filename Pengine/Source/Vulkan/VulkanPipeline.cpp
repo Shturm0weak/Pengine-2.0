@@ -81,17 +81,10 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 	pipelineConfigInfo.colorBlendAttachments.clear();
 	for (const auto& blendStateAttachment : pipelineCreateInfo.colorBlendStateAttachments)
 	{
-		VkPipelineColorBlendAttachmentState colorBlendState{};
+		VkPipelineColorBlendAttachmentState colorBlendState = ConvertBlendAttachmentState(blendStateAttachment);
 		colorBlendState.colorWriteMask =
 			VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT |
 			VK_COLOR_COMPONENT_A_BIT;
-		colorBlendState.blendEnable = blendStateAttachment.blendEnabled;
-		colorBlendState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-		colorBlendState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-		colorBlendState.colorBlendOp = VK_BLEND_OP_ADD;
-		colorBlendState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		colorBlendState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		colorBlendState.alphaBlendOp = VK_BLEND_OP_ADD;
 		pipelineConfigInfo.colorBlendAttachments.emplace_back(colorBlendState);
 	}
 	pipelineConfigInfo.colorBlendInfo.attachmentCount = pipelineConfigInfo.colorBlendAttachments.size();
@@ -273,6 +266,158 @@ Pipeline::ShaderType VulkanPipeline::ConvertShaderStage(VkShaderStageFlagBits st
 		return Pengine::Pipeline::ShaderType::GEOMETRY;
 	case VK_SHADER_STAGE_COMPUTE_BIT:
 		return Pengine::Pipeline::ShaderType::COMPUTE;
+	}
+
+	FATAL_ERROR("Failed to convert shader type!");
+	return {};
+}
+
+VkPipelineColorBlendAttachmentState VulkanPipeline::ConvertBlendAttachmentState(const BlendStateAttachment& blendStateAttachment)
+{
+	VkPipelineColorBlendAttachmentState vkPipelineColorBlendAttachmentState{};
+	vkPipelineColorBlendAttachmentState.blendEnable = (VkBool32)blendStateAttachment.blendEnabled;
+
+	vkPipelineColorBlendAttachmentState.colorBlendOp = ConvertBlendOp(blendStateAttachment.colorBlendOp);
+	vkPipelineColorBlendAttachmentState.srcColorBlendFactor = ConvertBlendFactor(blendStateAttachment.srcColorBlendFactor);
+	vkPipelineColorBlendAttachmentState.dstColorBlendFactor = ConvertBlendFactor(blendStateAttachment.dstColorBlendFactor);
+
+	vkPipelineColorBlendAttachmentState.alphaBlendOp = ConvertBlendOp(blendStateAttachment.alphaBlendOp);
+	vkPipelineColorBlendAttachmentState.srcAlphaBlendFactor = ConvertBlendFactor(blendStateAttachment.srcAlphaBlendFactor);
+	vkPipelineColorBlendAttachmentState.dstAlphaBlendFactor = ConvertBlendFactor(blendStateAttachment.dstAlphaBlendFactor);
+
+	return vkPipelineColorBlendAttachmentState;
+}
+
+Pipeline::BlendStateAttachment VulkanPipeline::ConvertBlendAttachmentState(const VkPipelineColorBlendAttachmentState& blendStateAttachment)
+{
+	BlendStateAttachment pipelineColorBlendAttachmentState{};
+	pipelineColorBlendAttachmentState.blendEnabled = blendStateAttachment.blendEnable;
+
+	pipelineColorBlendAttachmentState.colorBlendOp = ConvertBlendOp(blendStateAttachment.colorBlendOp);
+	pipelineColorBlendAttachmentState.srcColorBlendFactor = ConvertBlendFactor(blendStateAttachment.srcColorBlendFactor);
+	pipelineColorBlendAttachmentState.dstColorBlendFactor = ConvertBlendFactor(blendStateAttachment.dstColorBlendFactor);
+
+	pipelineColorBlendAttachmentState.alphaBlendOp = ConvertBlendOp(blendStateAttachment.alphaBlendOp);
+	pipelineColorBlendAttachmentState.srcAlphaBlendFactor = ConvertBlendFactor(blendStateAttachment.srcAlphaBlendFactor);
+	pipelineColorBlendAttachmentState.dstAlphaBlendFactor = ConvertBlendFactor(blendStateAttachment.dstAlphaBlendFactor);
+
+	return pipelineColorBlendAttachmentState;
+}
+
+VkBlendFactor VulkanPipeline::ConvertBlendFactor(BlendStateAttachment::BlendFactor blendFactor)
+{
+	switch (blendFactor)
+	{
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ZERO:
+		return VkBlendFactor::VK_BLEND_FACTOR_ZERO;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE:
+		return VkBlendFactor::VK_BLEND_FACTOR_ONE;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::SRC_COLOR:
+		return VkBlendFactor::VK_BLEND_FACTOR_SRC_COLOR;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_COLOR:
+		return VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::DST_COLOR:
+		return VkBlendFactor::VK_BLEND_FACTOR_DST_COLOR;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_COLOR:
+		return VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA:
+		return VkBlendFactor::VK_BLEND_FACTOR_SRC_ALPHA;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_ALPHA:
+		return VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::DST_ALPHA:
+		return VkBlendFactor::VK_BLEND_FACTOR_DST_ALPHA;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_ALPHA:
+		return VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::CONSTANT_COLOR:
+		return VkBlendFactor::VK_BLEND_FACTOR_CONSTANT_COLOR;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_COLOR:
+		return VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::CONSTANT_ALPHA:
+		return VkBlendFactor::VK_BLEND_FACTOR_CONSTANT_ALPHA;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_ALPHA:
+		return VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA;
+	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA_SATURATE:
+		return VkBlendFactor::VK_BLEND_FACTOR_SRC_ALPHA_SATURATE;
+	}
+
+	FATAL_ERROR("Failed to convert shader type!");
+	return {};
+}
+
+Pipeline::BlendStateAttachment::BlendFactor VulkanPipeline::ConvertBlendFactor(VkBlendFactor blendFactor)
+{
+	switch (blendFactor)
+	{
+	case VkBlendFactor::VK_BLEND_FACTOR_ZERO:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ZERO;
+	case VkBlendFactor::VK_BLEND_FACTOR_ONE:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE;
+	case VkBlendFactor::VK_BLEND_FACTOR_SRC_COLOR:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::SRC_COLOR;
+	case VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_COLOR;
+	case VkBlendFactor::VK_BLEND_FACTOR_DST_COLOR:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::DST_COLOR;
+	case VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_COLOR;
+	case VkBlendFactor::VK_BLEND_FACTOR_SRC_ALPHA:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA;
+	case VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_ALPHA;
+	case VkBlendFactor::VK_BLEND_FACTOR_DST_ALPHA:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::DST_ALPHA;
+	case VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_ALPHA;
+	case VkBlendFactor::VK_BLEND_FACTOR_CONSTANT_COLOR:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::CONSTANT_COLOR;
+	case VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_COLOR;
+	case VkBlendFactor::VK_BLEND_FACTOR_CONSTANT_ALPHA:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::CONSTANT_ALPHA;
+	case VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_ALPHA;
+	case VkBlendFactor::VK_BLEND_FACTOR_SRC_ALPHA_SATURATE:
+		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA_SATURATE;
+	}
+
+	FATAL_ERROR("Failed to convert shader type!");
+	return {};
+}
+
+VkBlendOp VulkanPipeline::ConvertBlendOp(BlendStateAttachment::BlendOp blendOp)
+{
+	switch (blendOp)
+	{
+	case Pengine::Pipeline::BlendStateAttachment::BlendOp::ADD:
+		return VkBlendOp::VK_BLEND_OP_ADD;
+	case Pengine::Pipeline::BlendStateAttachment::BlendOp::SUBTRACT:
+		return VkBlendOp::VK_BLEND_OP_SUBTRACT;
+	case Pengine::Pipeline::BlendStateAttachment::BlendOp::REVERSE_SUBTRACT:
+		return VkBlendOp::VK_BLEND_OP_REVERSE_SUBTRACT;
+	case Pengine::Pipeline::BlendStateAttachment::BlendOp::MIN:
+		return VkBlendOp::VK_BLEND_OP_MIN;
+	case Pengine::Pipeline::BlendStateAttachment::BlendOp::MAX:
+		return VkBlendOp::VK_BLEND_OP_MAX;
+	}
+
+	FATAL_ERROR("Failed to convert shader type!");
+	return {};
+}
+
+Pipeline::BlendStateAttachment::BlendOp VulkanPipeline::ConvertBlendOp(VkBlendOp blendOp)
+{
+	switch (blendOp)
+	{
+	case VkBlendOp::VK_BLEND_OP_ADD:
+		return Pengine::Pipeline::BlendStateAttachment::BlendOp::ADD;
+	case VkBlendOp::VK_BLEND_OP_SUBTRACT:
+		return Pengine::Pipeline::BlendStateAttachment::BlendOp::SUBTRACT;
+	case VkBlendOp::VK_BLEND_OP_REVERSE_SUBTRACT:
+		return Pengine::Pipeline::BlendStateAttachment::BlendOp::REVERSE_SUBTRACT;
+	case VkBlendOp::VK_BLEND_OP_MIN:
+		return Pengine::Pipeline::BlendStateAttachment::BlendOp::MIN;
+	case VkBlendOp::VK_BLEND_OP_MAX:
+		return Pengine::Pipeline::BlendStateAttachment::BlendOp::MAX;
 	}
 
 	FATAL_ERROR("Failed to convert shader type!");

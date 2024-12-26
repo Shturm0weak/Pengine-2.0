@@ -17,6 +17,7 @@ namespace Pengine
 	const std::string SSAO = "SSAO";
 	const std::string SSAOBlur = "SSAOBlur";
 	const std::string CSM = "CSM";
+	const std::string Bloom = "Bloom";
 	
 	class FrameBuffer;
 	class Window;

@@ -5,6 +5,7 @@ struct DirectionalLight
 	vec3 color;
 	float intensity;
 	vec3 direction;
+	float ambient;
 };
 
 vec3 CalculateDirectionalLight(
@@ -21,7 +22,7 @@ vec3 CalculateDirectionalLight(
 	vec3 H = normalize(viewDirection + light.direction);
 
 	vec3 radiance = light.color * light.intensity;
-	vec3 ambient = 0.1f * radiance * ao;
+	vec3 ambient = light.ambient * radiance * ao;
 
 	float NdotV = max(dot(normal, viewDirection), 0.0000001f);
 	float NdotL = max(dot(normal, light.direction), 0.0000001f);
