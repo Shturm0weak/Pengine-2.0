@@ -1059,11 +1059,13 @@ void RenderPassManager::CreateFinal()
 			renderUniformWriter->WriteTexture("bloomTexture", TextureManager::GetInstance().GetBlack());
 		}
 
-		const int toneMapperIndex = 0;
-		const float gamma = 2.2f;
+		const glm::vec2 viewportSize = renderInfo.viewportSize;
+		const int fxaa = graphicsSettings.postProcess.fxaa;
 		const std::shared_ptr<Buffer> postProcessBuffer = renderInfo.renderTarget->GetBuffer("PostProcessBuffer");
 		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "toneMapperIndex", graphicsSettings.postProcess.toneMapper);
 		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "gamma", graphicsSettings.postProcess.gamma);
+		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "viewportSize", viewportSize);
+		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "fxaa", fxaa);
 		postProcessBuffer->Flush();
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);

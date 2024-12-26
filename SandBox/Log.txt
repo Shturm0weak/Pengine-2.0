@@ -1,67 +1,609 @@
-[Thu Dec 26 14:02:15 2024] Engine config has been loaded!
-[Thu Dec 26 14:02:15 2024] Graphics API:2
-[Thu Dec 26 14:02:15 2024] Available extensions:
-[Thu Dec 26 14:02:15 2024] 	VK_KHR_device_group_creation
-[Thu Dec 26 14:02:15 2024] 	VK_KHR_external_fence_capabilities
-[Thu Dec 26 14:02:15 2024] 	VK_KHR_external_memory_capabilities
-[Thu Dec 26 14:02:15 2024] 	VK_KHR_external_semaphore_capabilities
-[Thu Dec 26 14:02:15 2024] 	VK_KHR_get_physical_device_properties2
-[Thu Dec 26 14:02:15 2024] 	VK_KHR_get_surface_capabilities2
-[Thu Dec 26 14:02:15 2024] 	VK_KHR_surface
-[Thu Dec 26 14:02:15 2024] 	VK_KHR_surface_protected_capabilities
-[Thu Dec 26 14:02:15 2024] 	VK_KHR_win32_surface
-[Thu Dec 26 14:02:15 2024] 	VK_EXT_debug_report
-[Thu Dec 26 14:02:15 2024] 	VK_EXT_debug_utils
-[Thu Dec 26 14:02:15 2024] 	VK_EXT_surface_maintenance1
-[Thu Dec 26 14:02:15 2024] 	VK_EXT_swapchain_colorspace
-[Thu Dec 26 14:02:15 2024] 	VK_NV_external_memory_capabilities
-[Thu Dec 26 14:02:15 2024] 	VK_KHR_portability_enumeration
-[Thu Dec 26 14:02:15 2024] 	VK_LUNARG_direct_driver_loading
-[Thu Dec 26 14:02:15 2024] Required extensions:
-[Thu Dec 26 14:02:15 2024] 	VK_KHR_surface
-[Thu Dec 26 14:02:15 2024] 	VK_KHR_win32_surface
-[Thu Dec 26 14:02:15 2024] 	VK_EXT_debug_utils
-[Thu Dec 26 14:02:15 2024] Physical device count: 1
-[Thu Dec 26 14:02:15 2024] Physical devices:
-[Thu Dec 26 14:02:15 2024]  * NVIDIA GeForce RTX 3060 Ti - Suitable
-[Thu Dec 26 14:02:15 2024] Choosen physical device: NVIDIA GeForce RTX 3060 Ti
-[Thu Dec 26 14:02:15 2024] Texture:Editor\Images\FileIcon.png has been loaded!
-[Thu Dec 26 14:02:15 2024] Texture:Editor\Images\FolderIcon.png has been loaded!
-[Thu Dec 26 14:02:15 2024] Texture:Editor\Images\MaterialIcon.png has been loaded!
-[Thu Dec 26 14:02:15 2024] Texture:Editor\Images\MeshIcon.png has been loaded!
-[Thu Dec 26 14:02:15 2024] Texture:Editor\Images\MetaIcon.png has been loaded!
-[Thu Dec 26 14:02:15 2024] Texture:Editor\Images\PlayButton.png has been loaded!
-[Thu Dec 26 14:02:15 2024] Texture:Editor\Images\StopButton.png has been loaded!
-[Thu Dec 26 14:02:17 2024] Scene:Scenes\Test.scene has been deserialized!
-[Thu Dec 26 14:02:17 2024] BaseMaterial:Materials\Atmosphere.basemat has been deserialized!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/Atmosphere.vert has been loaded!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/Atmosphere.geom has been loaded!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/Atmosphere.frag has been loaded!
-[Thu Dec 26 14:02:17 2024] BaseMaterial:Materials\SkyBox.basemat has been deserialized!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/SkyBox.vert has been loaded!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/SkyBox.frag has been loaded!
-[Thu Dec 26 14:02:17 2024] BaseMaterial:Materials\DefaultReflection.basemat has been deserialized!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/DefaultReflection.vert has been loaded!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/DefaultReflection.frag has been loaded!
-[Thu Dec 26 14:02:17 2024] BaseMaterial:Materials/Line.basemat has been deserialized!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/Line.vert has been loaded!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/Line.frag has been loaded!
-[Thu Dec 26 14:02:17 2024] BaseMaterial:Materials\SSAO.basemat has been deserialized!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/SSAO.vert has been loaded!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/SSAO.frag has been loaded!
-[Thu Dec 26 14:02:17 2024] BaseMaterial:Materials\SSAOBlur.basemat has been deserialized!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/SSAOBlur.vert has been loaded!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/SSAOBlur.frag has been loaded!
-[Thu Dec 26 14:02:17 2024] BaseMaterial:Materials\Deferred.basemat has been deserialized!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/Deferred.vert has been loaded!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/Deferred.frag has been loaded!
-[Thu Dec 26 14:02:17 2024] BaseMaterial:Materials\BloomDownSample.basemat has been deserialized!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/BloomDownSample.vert has been loaded!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/BloomDownSample.frag has been loaded!
-[Thu Dec 26 14:02:17 2024] BaseMaterial:Materials\BloomUpSample.basemat has been deserialized!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/BloomUpSample.vert has been loaded!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/BloomUpSample.frag has been loaded!
-[Thu Dec 26 14:02:17 2024] BaseMaterial:Materials/Final.basemat has been deserialized!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/Final.vert has been loaded!
-[Thu Dec 26 14:02:17 2024] Shader Cache:Shaders/Final.frag has been loaded!
-[Thu Dec 26 14:02:20 2024] Scene:Scenes\Test.scene has been serialized!
+[Thu Dec 26 14:40:30 2024] Engine config has been loaded!
+[Thu Dec 26 14:40:30 2024] Graphics API:2
+[Thu Dec 26 14:40:30 2024] Available extensions:
+[Thu Dec 26 14:40:30 2024] 	VK_KHR_device_group_creation
+[Thu Dec 26 14:40:30 2024] 	VK_KHR_external_fence_capabilities
+[Thu Dec 26 14:40:30 2024] 	VK_KHR_external_memory_capabilities
+[Thu Dec 26 14:40:30 2024] 	VK_KHR_external_semaphore_capabilities
+[Thu Dec 26 14:40:30 2024] 	VK_KHR_get_physical_device_properties2
+[Thu Dec 26 14:40:30 2024] 	VK_KHR_get_surface_capabilities2
+[Thu Dec 26 14:40:30 2024] 	VK_KHR_surface
+[Thu Dec 26 14:40:30 2024] 	VK_KHR_surface_protected_capabilities
+[Thu Dec 26 14:40:30 2024] 	VK_KHR_win32_surface
+[Thu Dec 26 14:40:30 2024] 	VK_EXT_debug_report
+[Thu Dec 26 14:40:30 2024] 	VK_EXT_debug_utils
+[Thu Dec 26 14:40:30 2024] 	VK_EXT_surface_maintenance1
+[Thu Dec 26 14:40:30 2024] 	VK_EXT_swapchain_colorspace
+[Thu Dec 26 14:40:30 2024] 	VK_NV_external_memory_capabilities
+[Thu Dec 26 14:40:30 2024] 	VK_KHR_portability_enumeration
+[Thu Dec 26 14:40:30 2024] 	VK_LUNARG_direct_driver_loading
+[Thu Dec 26 14:40:30 2024] Required extensions:
+[Thu Dec 26 14:40:30 2024] 	VK_KHR_surface
+[Thu Dec 26 14:40:30 2024] 	VK_KHR_win32_surface
+[Thu Dec 26 14:40:30 2024] Physical device count: 1
+[Thu Dec 26 14:40:30 2024] Physical devices:
+[Thu Dec 26 14:40:30 2024]  * NVIDIA GeForce RTX 3060 Ti - Suitable
+[Thu Dec 26 14:40:30 2024] Choosen physical device: NVIDIA GeForce RTX 3060 Ti
+[Thu Dec 26 14:40:30 2024] Texture:Editor\Images\FileIcon.png has been loaded!
+[Thu Dec 26 14:40:30 2024] Texture:Editor\Images\FolderIcon.png has been loaded!
+[Thu Dec 26 14:40:30 2024] Texture:Editor\Images\MaterialIcon.png has been loaded!
+[Thu Dec 26 14:40:30 2024] Texture:Editor\Images\MeshIcon.png has been loaded!
+[Thu Dec 26 14:40:30 2024] Texture:Editor\Images\MetaIcon.png has been loaded!
+[Thu Dec 26 14:40:30 2024] Texture:Editor\Images\PlayButton.png has been loaded!
+[Thu Dec 26 14:40:30 2024] Texture:Editor\Images\StopButton.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1291.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1282-1.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1283.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] BaseMaterial:Materials/MeshBase.basemat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Opaque.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1226-1.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1282-0.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1290-1.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Scene:Scenes\Bistro.scene has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1247.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1225-0.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1226-0.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Transparent.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1225-1.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] BaseMaterial:Materials/MeshBaseDoubleSided.basemat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/CSM.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1225-2.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1290-0.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Opaque.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/CSM.geom has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/CSM.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.217-0.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Vespa.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Foliage_Linde_Tree_Large_Trunk.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Vespa_Odometer.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Foliage_Leaves.DoubleSided.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Foliage_Bux_Hedges46.DoubleSided.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Foliage_Trunk.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Foliage_Ivy_leaf_a.DoubleSided.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Vespa_Headlight.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Vespa_Odometer_Glass.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Foliage_Ivy_branches.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Transparent.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Antenna_Metal.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Vespa_Headlight_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1222-0.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Vespa_Odometer_Glass_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/CSM.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/CSM.geom has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/CSM.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Foliage_Linde_Tree_Large_Orange_Leaves.DoubleSided.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Foliage_Linde_Tree_Large_Green_Leaves.DoubleSided.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Vespa_Odometer_Glass_Normal.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Antenna_Plastic_Blue.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Antenna_Plastic_Blue_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1222-2.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Antenna_Plastic.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Antenna_Plastic_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1204.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Ashtray.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] BaseMaterial:Materials\Atmosphere.basemat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Ashtray_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Atmosphere.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Atmosphere.geom has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Atmosphere.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] BaseMaterial:Materials\SkyBox.basemat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/SkyBox.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/SkyBox.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] BaseMaterial:Materials\DefaultReflection.basemat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/DefaultReflection.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/DefaultReflection.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] BaseMaterial:Materials/Line.basemat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Line.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Line.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Antenna_Plastic_Blue_Normal.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Antenna_Plastic_Normal.png has been loaded!
+[Thu Dec 26 14:40:33 2024] BaseMaterial:Materials\SSAO.basemat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/SSAO.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/SSAO.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Vespa_Odometer_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] BaseMaterial:Materials\SSAOBlur.basemat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Awnings_Hotel_Fabric.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/SSAOBlur.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/SSAOBlur.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] BaseMaterial:Materials\Deferred.basemat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Deferred.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Deferred.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1194.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Ivy_leaf_a_BaseColor-Foliage_Ivy_leaf_a_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Antenna_Metal_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Vespa_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] BaseMaterial:Materials\BloomDownSample.basemat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Linde_Tree_Large_Orange_Leaves_BaseColor-Foliage_Linde_Tree_Large_Orange_Leaves_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/BloomDownSample.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/BloomDownSample.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Leaves_BaseColor-Foliage_Leaves_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Linde_Tree_Large_Green_Leaves_BaseColor-Foliage_Linde_Tree_Large_Green_Leaves_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Trunk_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Bux_Hedges46_BaseColor-Foliage_Bux_Hedges46_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Ivy_branches_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Vespa_Odometer_Normal.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Vespa_Headlight_Normal.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Linde_Tree_Large_Trunk_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Ashtray_Normal.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Awnings_Hotel_Fabric_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1198-0.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Linde_Tree_Large_Orange_Leaves_Normal.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Linde_Tree_Large_Green_Leaves_Normal.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Awnings_Fabric.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Trunk_Normal.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1185-0.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Awnings_Beams.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1185-1.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Bistro_Sign_Main.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1198-1.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Bistro_Sign_Letters.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Banner_Metal.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.050-0.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Bistro_Sign_Letters_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1184.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Bistro_Sign_Letters_Normal.png has been loaded!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\Bollards.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Wood_Painted3.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] BaseMaterial:Materials\BloomUpSample.basemat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.590-0.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/BloomUpSample.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/BloomUpSample.frag has been loaded!
+[Thu Dec 26 14:40:33 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.542.mesh has been deserialized!
+[Thu Dec 26 14:40:33 2024] BaseMaterial:Materials/Final.basemat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Concrete_Grooved.mat has been deserialized!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Final.vert has been loaded!
+[Thu Dec 26 14:40:33 2024] Shader Cache:Shaders/Final.frag has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Banner_Metal_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Awnings_Beams_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Awnings_Fabric_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Leaves_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Antenna_Metal_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Wood_Painted3_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Bistro_Sign_Main_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Bollards_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Ivy_leaf_a_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_Grooved_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Vespa_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Awnings_Hotel_Fabric_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Concrete_Smooth.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Ivy_branches_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Bux_Hedges46_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.544.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.543.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Linde_Tree_Large_Trunk_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Awnings_Fabric_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Concrete_Plaster1_BLENDSHADER.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.050-3.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Grain_Metal.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\Spotlight_Glass_Emissive.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Focus.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.045.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.904.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Grain_Metal_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Glass_Exterior.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Awnings_Beams_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Metal.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.219-0.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.342.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Metal_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Bistro_Sign_Main_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Wood_Painted3_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.925.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Light_Bulb.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1077.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Metal_Pipe.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.508.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Metal_Pipe_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Forge_Metal.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.935.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Focus_Ornament.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Bollards_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1010.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Wood_Polished.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.349.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Banner_Metal_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Roofing_Shingle_Grey.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1164.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Roofing_Shingle_Green.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Spotlight_Glass_Emissive_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_Grooved_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_Smooth_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Focus_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Glass_Exterior_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Light_Bulb_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Metal_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Forge_Metal_BaseColor-MASTER_Forge_Metal_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Light_Bulb_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_Plaster1_BLENDSHADER_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.526-1.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.850.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Plastic.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Grain_Metal_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Concrete1.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Wood_Polished_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.344.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Focus_Ornament_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Metal_Pipe_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Glass_Exterior_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Roofing_Shingle_Grey_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Plastic_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Focus_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Forge_Metal_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Curtains.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.247-4.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Roofing_Shingle_Green_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Glass_Dirty_MASKED.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Concrete.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.005.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Bistro_Main_Door.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.975.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.507.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete1_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Concrete_Yellow.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Spotlight_Glass_Emissive_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1162.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Trim_Cornice.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_Plaster1_BLENDSHADER_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1295-1.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.835.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\Emissive_StreetLight.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Wood_Polished_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_Smooth_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Curtains_BaseColor-MASTER_Curtains_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Trim_Cornice_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_Yellow_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Emissive_StreetLight_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.559.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Glass_Dirty.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Side_Letters.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Glass_Dirty_MASKED_BaseColor-MASTER_Glass_Dirty_MASKED_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Emissive_StreetLight_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Doors.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete1_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Bistro_Main_Door_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.505.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Plastic_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Roofing_Shingle_Green_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Focus_Ornament_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Trim_Cornice_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Glass_Dirty_MASKED_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Roofing_Shingle_Grey_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Curtains_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.495.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Brick_Large_Beige_BLENDSHADER.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.509.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Doors_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.178.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Wood_Brown.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Brick_Small_Red_BLENDSHADER.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Wood_Painted_Green.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Side_Letters_BaseColor-MASTER_Side_Letters_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Concrete_Plaster.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Black_Metal.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.346.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.307-3.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Black_Metal_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Glass_Dirty_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.782.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.350.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_Yellow_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Brick_Large_White.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Building_Details.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.551.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.549.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Wood_Painted_Cyan.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.769.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Brick_Small_Red.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Glass_Dirty_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Wood_Painted_Green_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Wood_Brown_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.533.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Side_Letters_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Doors_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Roofing_Metal_01.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Brick_Large_Beige_BLENDSHADER_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Wood_Painted_Cyan_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Brick_Large_White_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Bistro_Main_Door_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Brick_Small_Red_BLENDSHADER_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_Plaster_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Black_Metal_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Building_Details_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Wood_Brown_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Brick_Small_Red_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Wood_Painted_Green_Normal.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.374.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Room_Interior.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Roofing_Metal_01_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.532.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Awning_Beams.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.528.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Boulangerie.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.530.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Frosted_Glass.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.584.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.706-1.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Frosted_Glass_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Awning_Fabric_Cyan.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Concrete_White.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.611.mesh has been deserialized!
+[Thu Dec 26 14:40:34 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Bronze_BLENDSHADER.mat has been deserialized!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Bronze_BLENDSHADER_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:34 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Room_Interior_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_White_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Room_Interior_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Awning_Beams_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Boulangerie_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Wood_Painted_Cyan_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.529.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Awning_Fabric_Cyan_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Roofing_Metal_01_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Building_Details_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Brick_Large_Beige_BLENDSHADER_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Brick_Large_White_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Awning_Fabric_Red.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Book_Covers.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.627.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Boulangerie_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Concrete_Smooth_BLENDSHADER.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Brick_Small_Red_BLENDSHADER_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Brick_Small_Red_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Wood_Painted_Green_BLENDSHADER.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.547.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Rollup_Door.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_Plaster_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Rollup_Door_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\MASTER_Details_Dark.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.612.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.546.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.603.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Frosted_Glass_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Bronze_BLENDSHADER_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_Chair_01.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Awning_Fabric_Cyan_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.307-0.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Concrete.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.320.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Awning_Beams_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.317-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Plaster.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Awning_Fabric_Red_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.307-2.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.308-3.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Concrete2.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.307-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.299.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Concrete_Striped.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Wood_Painted_Green_BLENDSHADER_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Chimneys_Metal.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\ElectricBox.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_White_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Chimneys_Metal_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Book_Covers_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_Smooth_BLENDSHADER_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Foliage_Paris_Flowers.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Book_Covers_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.271-0.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Foliage_Flowers.DoubleSided.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Awning_Fabric_Red_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_Chair_01_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.269.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Rollup_Door_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Plaster_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Concrete_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Details_Dark_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\ElectricBox_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.248-0.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_LiquorBottle_01_Glass_Wine.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Concrete_Striped_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Wood_Painted_Green_BLENDSHADER_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Concrete2_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Paris_Flowers_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_LiquorBottle_01_Glass_Wine_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Flowers_BaseColor-Foliage_Flowers_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.248-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Concrete_Smooth_BLENDSHADER_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Chimneys_Metal_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_LiquorBottle_01_Caps.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_LiquorBottle_01_Glass_Wine_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.248-2.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_LiquorBottle_01_Labels.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.247-0.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Balcony_Concrete.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_LiquorBottle_01_Labels_BaseColor-Paris_LiquorBottle_01_Labels_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.247-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Balcony_Trims.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.247-2.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Balcony_Ornaments.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.247-3.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_Chair_01_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Balcony_Green_Wood.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_LiquorBottle_01_Labels_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.246.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Plaster_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MASTER_Details_Dark_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_LiquorBottle_01_Caps_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Concrete_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.243-0.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\MenuSign_01.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Flowers_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\ElectricBox_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\MenuSign_02_Mesh.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.243-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\MenuSign_02_Glass.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\NapkinHolder.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.232.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Plantpots.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Balcony_Trims_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.231.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.218-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Shopsign_Bakery.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.219-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Foliage_Paris_Flowers_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Shopsign_Ties_Shop.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Balcony_Concrete_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Concrete2_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Concrete_Striped_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Balcony_Ornaments_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Balcony_Green_Wood_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.216-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.215-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Shopsign_Book_Store_Emissive.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Shopsign_Pharmacy_Emissive.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.214.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_LiquorBottle_01_Caps_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Balcony_Green_Wood_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MenuSign_02_Mesh_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Shopsign_Ties_Shop_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\NapkinHolder_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MenuSign_02_Glass_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MenuSign_01_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Shopsign_Bakery_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Balcony_Trims_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Sidewalkbarrier.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Plantpots_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Pavement_Curbstones.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.179.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Shopsign_Pharmacy_Emissive_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\NapkinHolder_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.206-0.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.206-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Pavement_Cobblestone_Small_BLENDSHADER.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Pavement_Cobblestone_Big_BLENDSHADER.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.206-2.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Shopsign_Book_Store_Emissive_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MenuSign_02_Glass_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Balcony_Concrete_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Shopsign_Pharmacy_Emissive_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Shopsign_Bakery_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Pavement_Brick_BLENDSHADER.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Balcony_Ornaments_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.206-3.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Shopsign_Ties_Shop_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.181-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.014-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Pavement_Ground_Wet.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Pavement_Cobblestone_02.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Pavement_Cobblestone_Wet_BLENDSHADER.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.190-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.187-0.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Pavement_Cobblestone_Wet_Leaves_BLENDSHADER.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Pavement_Cobble_Leaves_BLENDSHADER.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Sidewalkbarrier_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.187-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobblestone_Big_BLENDSHADER_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MenuSign_01_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobblestone_Small_BLENDSHADER_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\MenuSign_02_Mesh_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Curbstones_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Pavement_Cobblestone_01_BLENDSHADER.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.177.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Concrete3.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Shopsign_Book_Store_Emissive_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Streetlight_Metal.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Plantpots_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.149-0.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.165-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Ground_Wet_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobblestone_02_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Brick_BLENDSHADER_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Streetlight_Chains.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.149-1.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobble_Leaves_BLENDSHADER_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobblestone_Wet_BLENDSHADER_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Sidewalkbarrier_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobblestone_Wet_Leaves_BLENDSHADER_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobblestone_01_BLENDSHADER_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Streetlight_Metal_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Concrete3_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Curbstones_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Streetlight_Chains_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobblestone_Small_BLENDSHADER_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobblestone_Big_BLENDSHADER_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_StringLights_01_White_Color.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.149-2.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Streetlight_Support_Bulb.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_White_Color_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Streetlight_Support_Bulb_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.070.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_StreetPivot.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_White_Color_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.071.mesh has been deserialized!
+[Thu Dec 26 14:40:35 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Ground_Wet_Normal.png has been loaded!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_StreetSign_01.mat has been deserialized!
+[Thu Dec 26 14:40:35 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_Table_Terrace.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.057.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.058.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_TrafficSign_A.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.049.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Streetlight_Support_Bulb_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Streetlight_Chains_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Concrete3_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StreetPivot_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StreetSign_01_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_TrafficSign_A_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Brick_BLENDSHADER_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_Table_Terrace_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobblestone_02_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Material:Meshes\LargeFiles\BistroOptimized\Trashcan.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobblestone_01_BLENDSHADER_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobblestone_Wet_Leaves_BLENDSHADER_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.050-1.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Streetlight_Metal_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobblestone_Wet_BLENDSHADER_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Cobble_Leaves_BLENDSHADER_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Material:Meshes\LargeFiles\BistroOptimized\Spotlight_Main.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.050-2.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1295-0.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Material:Meshes\LargeFiles\BistroOptimized\Spotlight_Emissive.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.014-0.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Material:Meshes\LargeFiles\BistroOptimized\Pavement_Manhole_Cover.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Material:Meshes\LargeFiles\BistroOptimized\LanternEmissive.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1294-1.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_StringLights_01_Red_Color_Emissive.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_StringLights_01_Orange_Color_Emissive.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.001-4.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Material:Meshes\LargeFiles\BistroOptimized\Stringlights.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1294-0.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_Red_Color_Emissive_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_Orange_Color_Emissive_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1294-3.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_StringLights_01_White_Color_Emissive.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_Red_Color_Emissive_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1294-4.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_White_Color_Emissive_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StreetPivot_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StreetSign_01_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1294-5.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_StringLights_01_Pink_Color_Emissive.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_StringLights_01_Blue_Color_Emissive.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_White_Color_Emissive_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_Blue_Color_Emissive_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_Pink_Color_Emissive_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_Orange_Color_Emissive_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Mesh:Meshes\LargeFiles\BistroOptimized\Mesh.1294-2.mesh has been deserialized!
+[Thu Dec 26 14:40:36 2024] Material:Meshes\LargeFiles\BistroOptimized\Paris_StringLights_01_Green_Color_Emissive.mat has been deserialized!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_Blue_Color_Emissive_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_Green_Color_Emissive_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_Pink_Color_Emissive_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_StringLights_01_Green_Color_Emissive_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Stringlights_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Trashcan_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_TrafficSign_A_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Spotlight_Emissive_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Spotlight_Main_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Spotlight_Emissive_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\LanternEmissive_BaseColor-LanternEmissive_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Manhole_Cover_BaseColor.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Paris_Table_Terrace_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Stringlights_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Spotlight_Main_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Trashcan_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\LanternEmissive_Normal.png has been loaded!
+[Thu Dec 26 14:40:36 2024] Texture:Meshes\LargeFiles\BistroOptimized\textures\Pavement_Manhole_Cover_Normal.png has been loaded!
