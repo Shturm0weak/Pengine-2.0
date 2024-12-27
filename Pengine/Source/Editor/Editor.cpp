@@ -859,7 +859,7 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			isChangedToSerialize += ImGui::SliderFloat("Bias", &graphicsSettings.ssao.bias, 0.0f, 10.0f);
 			isChangedToSerialize += ImGui::SliderFloat("Radius", &graphicsSettings.ssao.radius, 0.0f, 1.0f);
 			isChangedToSerialize += ImGui::SliderInt("Kernel Size", &graphicsSettings.ssao.kernelSize, 2, 64);
-			isChangedToSerialize += ImGui::SliderInt("Noise Size", &graphicsSettings.ssao.noiseSize, 4, 32);
+			isChangedToSerialize += ImGui::SliderInt("Noise Size", &graphicsSettings.ssao.noiseSize, 4, 64);
 			isChangedToSerialize += ImGui::SliderFloat("AO Scale", &graphicsSettings.ssao.aoScale, 0.0f, 10.0f);
 		}
 
@@ -876,7 +876,7 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			{
 				isChangedToSerialize += true;
 
-				graphicsSettings.shadows.biases.resize(graphicsSettings.shadows.cascadeCount, 0.01f);
+				graphicsSettings.shadows.biases.resize(graphicsSettings.shadows.cascadeCount, 0.0f);
 			}
 
 			ImGui::Checkbox("Visualize", &graphicsSettings.shadows.visualize);
