@@ -2600,6 +2600,7 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Value << YAML::BeginMap;
 
 	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.shadows.isEnabled;
+	out << YAML::Key << "Quality" << YAML::Value << graphicsSettings.shadows.quality;
 	out << YAML::Key << "CascadeCount" << YAML::Value << graphicsSettings.shadows.cascadeCount;
 	out << YAML::Key << "SplitFactor" << YAML::Value << graphicsSettings.shadows.splitFactor;
 	out << YAML::Key << "MaxDistance" << YAML::Value << graphicsSettings.shadows.maxDistance;
@@ -2701,6 +2702,12 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& isEnabledData = csmData["IsEnabled"])
 		{
 			graphicsSettings.shadows.isEnabled = isEnabledData.as<bool>();
+		}
+
+		if (const auto& qualityData = csmData["Quality"])
+		{
+			constexpr int maxQualityIndex = 2;
+			graphicsSettings.shadows.quality = std::min(qualityData.as<int>(), maxQualityIndex);
 		}
 
 		if (const auto& cascadeCountData = csmData["CascadeCount"])

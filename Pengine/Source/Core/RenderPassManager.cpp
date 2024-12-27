@@ -1518,15 +1518,29 @@ void RenderPassManager::CreateCSM()
 		const std::string renderPassName = renderInfo.renderPass->GetType();
 		const GraphicsSettings::Shadows& shadowsSettings = renderInfo.scene->GetGraphicsSettings().shadows;
 
+		glm::ivec2 resolutions[3] = { { 1024, 1024 }, { 2048, 2048 }, { 4096, 4096 } };
+
 		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
 		if (!frameBuffer)
 		{
 			// NOTE: Maybe should be send as the next frame event, because creating a frame buffer here may cause some problems.
 			const std::string renderPassName = renderInfo.renderPass->GetType();
 			renderInfo.renderPass->GetAttachmentDescriptions().back().layercount = renderInfo.scene->GetGraphicsSettings().shadows.cascadeCount;
-			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), { 2048, 2048 });
+			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), resolutions[shadowsSettings.quality]);
 
 			renderInfo.renderTarget->SetFrameBuffer(renderPassName, frameBuffer);
+		}
+
+		// Recreate if quality has been changed.
+		if (frameBuffer->GetSize() != resolutions[shadowsSettings.quality])
+		{
+			auto callback = [frameBuffer, resolution = resolutions[shadowsSettings.quality]]()
+			{
+				frameBuffer->Resize(resolution);
+			};
+
+			std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+			EventSystem::GetInstance().SendEvent(event);
 		}
 
 		if (!shadowsSettings.isEnabled)
@@ -1676,6 +1690,7 @@ void RenderPassManager::CreateCSM()
 					"cascadeCount",
 					cascadeCount);
 
+				// Recreate if layer count has been changed.
 				if (recreateFrameBuffer)
 				{
 					auto callback = [this, submitInfo, renderInfo, cascadeCount]()

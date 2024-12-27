@@ -869,6 +869,9 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.shadows.isEnabled);
 			ImGui::PopID();
 
+			const char* const qualities[] = { "1024", "2048", "4096" };
+			isChangedToSerialize += ImGui::Combo("Quality", &graphicsSettings.shadows.quality, qualities, 3);
+
 			if (ImGui::SliderInt("Cascade Count", &graphicsSettings.shadows.cascadeCount, 2, 10))
 			{
 				isChangedToSerialize += true;

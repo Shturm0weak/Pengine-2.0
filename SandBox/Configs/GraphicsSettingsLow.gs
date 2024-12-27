@@ -7,17 +7,16 @@ SSAO:
   Radius: 0.5
 CSM:
   IsEnabled: false
-  CascadeCount: 4
+  Quality: 0
+  CascadeCount: 2
   SplitFactor: 0.899999976
-  MaxDistance: 200
+  MaxDistance: 100
   FogFactor: 0.200000003
-  PcfEnabled: true
-  PcfRange: 2
+  PcfEnabled: false
+  PcfRange: 1
   Biases:
     - 0
     - 0
-    - 0.00999999978
-    - 0.00999999978
 Bloom:
   IsEnabled: false
   MipCount: 10

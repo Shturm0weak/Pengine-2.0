@@ -7,6 +7,7 @@ SSAO:
   Radius: 0.5
 CSM:
   IsEnabled: true
+  Quality: 1
   CascadeCount: 4
   SplitFactor: 0.899999976
   MaxDistance: 200

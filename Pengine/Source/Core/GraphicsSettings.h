@@ -37,6 +37,12 @@ namespace Pengine
 			int pcfRange = 1;
 
 			/**
+			 * Resolution: 1024 / 2048 / 4096
+			 * 1024 by default.
+			 */
+			int quality = 1;
+			
+			/**
 			 * Has to be more than 1.
 			 */
 			int cascadeCount = 3;
