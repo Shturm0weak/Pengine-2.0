@@ -410,14 +410,20 @@ void RenderPassManager::CreateGBuffer()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription normal{};
 	normal.format = Format::R32G32B32A32_SFLOAT;
 	normal.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	normal.load = RenderPass::Load::DONT_CARE;
+	normal.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription shading{};
 	shading.format = Format::R8G8B8A8_SRGB;
 	shading.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	shading.load = RenderPass::Load::DONT_CARE;
+	shading.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription depth{};
 	depth.format = Format::D32_SFLOAT;
@@ -581,10 +587,14 @@ void RenderPassManager::CreateDeferred()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription emissive{};
 	emissive.format = Format::B10G11R11_UFLOAT_PACK32;
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	emissive.load = RenderPass::Load::DONT_CARE;
+	emissive.store = RenderPass::Store::STORE;
 
 	Texture::SamplerCreateInfo samplerCreateInfo{};
 	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
@@ -815,6 +825,8 @@ void RenderPassManager::CreateAtmosphere()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::R16G16B16A16_SFLOAT;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 	color.size = { 256, 256 };
 	color.isCubeMap = true;
 	
@@ -928,7 +940,8 @@ void RenderPassManager::CreateTransparent()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::LOAD;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 	color.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
 		index = 0;
@@ -938,7 +951,8 @@ void RenderPassManager::CreateTransparent()
 	RenderPass::AttachmentDescription emissive{};
 	emissive.format = Format::B10G11R11_UFLOAT_PACK32;
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	emissive.load = RenderPass::Load::LOAD;
+	emissive.load = RenderPass::Load::DONT_CARE;
+	emissive.store = RenderPass::Store::STORE;
 	emissive.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
 		index = 1;
@@ -1131,6 +1145,8 @@ void RenderPassManager::CreateFinal()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = Final;
@@ -1257,6 +1273,8 @@ void RenderPassManager::CreateSSAO()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::R8G8B8A8_SRGB;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = SSAO;
@@ -1412,6 +1430,8 @@ void RenderPassManager::CreateSSAOBlur()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::R8G8B8A8_SRGB;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = SSAOBlur;
@@ -1779,6 +1799,7 @@ void RenderPassManager::CreateBloom()
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	color.load = RenderPass::Load::LOAD;
+	color.store = RenderPass::Store::STORE;
 
 	Texture::SamplerCreateInfo samplerCreateInfo{};
 	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;

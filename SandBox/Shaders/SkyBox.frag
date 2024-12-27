@@ -11,6 +11,12 @@ layout(location = 2) out vec4 outShading;
 void main()
 {
     vec4 color = texture(SkyBox, uv);
+
+    // Apply reverse gamma correction, otherwise the skybox will be too bright,
+    // you can play around with it.
     color.rgb = pow(color.rgb, vec3(2.2 / 1.0));
+
     outAlbedo = color;
+    outNormal = vec4(0.0f);
+    outShading = vec4(0.0f);
 }
