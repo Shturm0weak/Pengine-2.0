@@ -5,6 +5,7 @@ SSAO:
   KernelSize: 32
   NoiseSize: 64
   Radius: 0.5
+  ResolutionScale: 3
 CSM:
   IsEnabled: true
   Quality: 2

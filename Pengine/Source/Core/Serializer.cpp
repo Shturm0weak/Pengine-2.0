@@ -2591,6 +2591,7 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Key << "KernelSize" << YAML::Value << graphicsSettings.ssao.kernelSize;
 	out << YAML::Key << "NoiseSize" << YAML::Value << graphicsSettings.ssao.noiseSize;
 	out << YAML::Key << "Radius" << YAML::Value << graphicsSettings.ssao.radius;
+	out << YAML::Key << "ResolutionScale" << YAML::Value << graphicsSettings.ssao.resolutionScale;
 
 	out << YAML::EndMap;
 	//
@@ -2694,6 +2695,11 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& radiusData = ssaoData["Radius"])
 		{
 			graphicsSettings.ssao.radius = radiusData.as<float>();
+		}
+
+		if (const auto& resolutionScaleData = ssaoData["ResolutionScale"])
+		{
+			graphicsSettings.ssao.resolutionScale = glm::min(resolutionScaleData.as<int>(), 3);
 		}
 	}
 

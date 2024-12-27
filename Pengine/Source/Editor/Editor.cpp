@@ -856,6 +856,9 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.ssao.isEnabled);
 			ImGui::PopID();
 
+			const char* const resolutionScales[] = { "0.25", "0.5", "0.75", "1.0"};
+			isChangedToSerialize += ImGui::Combo("Quality", &graphicsSettings.ssao.resolutionScale, resolutionScales, 4);
+
 			isChangedToSerialize += ImGui::SliderFloat("Bias", &graphicsSettings.ssao.bias, 0.0f, 10.0f);
 			isChangedToSerialize += ImGui::SliderFloat("Radius", &graphicsSettings.ssao.radius, 0.0f, 1.0f);
 			isChangedToSerialize += ImGui::SliderInt("Kernel Size", &graphicsSettings.ssao.kernelSize, 2, 64);

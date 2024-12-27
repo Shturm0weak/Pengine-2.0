@@ -1278,9 +1278,9 @@ void RenderPassManager::CreateSSAO()
 		submitInfo.frameBuffer = frameBuffer;
 		renderInfo.renderer->BeginRenderPass(submitInfo);
 
-		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
+		const GraphicsSettings::SSAO& ssaoSettings = renderInfo.scene->GetGraphicsSettings().ssao;
 
-		if (!graphicsSettings.ssao.isEnabled)
+		if (!ssaoSettings.isEnabled)
 		{
 			renderInfo.renderer->EndRenderPass(submitInfo);
 			return;
@@ -1301,15 +1301,29 @@ void RenderPassManager::CreateSSAO()
 			return;
 		}
 
-		m_SSAORenderer.GenerateSamples(graphicsSettings.ssao.kernelSize);
+		m_SSAORenderer.GenerateSamples(ssaoSettings.kernelSize);
 
-		auto callback = [this, graphicsSettings]()
+		auto callback = [this, ssaoSettings]()
 		{
-			m_SSAORenderer.GenerateNoiseTexture(graphicsSettings.ssao.noiseSize);
+			m_SSAORenderer.GenerateNoiseTexture(ssaoSettings.noiseSize);
 		};
 
-		std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
-		EventSystem::GetInstance().SendEvent(event);
+		std::shared_ptr<NextFrameEvent> generateNoiseTextureEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+		EventSystem::GetInstance().SendEvent(generateNoiseTextureEvent);
+
+		constexpr float resolutionScales[] = { 0.25f, 0.5f, 0.75f, 1.0f };
+
+		if (renderInfo.renderPass->GetResizeViewportScale() != glm::vec2(resolutionScales[ssaoSettings.resolutionScale]))
+		{
+			auto callback = [resolutionScales, frameBuffer, ssaoSettings, renderInfo]()
+			{
+				renderInfo.renderPass->SetResizeViewportScale(glm::vec2(resolutionScales[ssaoSettings.resolutionScale]));
+				frameBuffer->Resize(renderInfo.viewportSize);
+			};
+
+			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+			EventSystem::GetInstance().SendEvent(resizeEvent);
+		}
 
 		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderTarget->GetUniformWriter(renderPassName);
 		if (!renderUniformWriter)
@@ -1355,12 +1369,12 @@ void RenderPassManager::CreateSSAO()
 
 		const std::shared_ptr<Buffer> ssaoBuffer = renderInfo.renderTarget->GetBuffer("SSAOBuffer");
 		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "viewportScale", GetRenderPass(renderPassName)->GetResizeViewportScale());
-		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "kernelSize", graphicsSettings.ssao.kernelSize);
-		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "noiseSize", graphicsSettings.ssao.noiseSize);
-		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "aoScale", graphicsSettings.ssao.aoScale);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "kernelSize", ssaoSettings.kernelSize);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "noiseSize", ssaoSettings.noiseSize);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "aoScale", ssaoSettings.aoScale);
 		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "samples", m_SSAORenderer.GetSamples());
-		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "radius", graphicsSettings.ssao.radius);
-		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "bias", graphicsSettings.ssao.bias);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "radius", ssaoSettings.radius);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "bias", ssaoSettings.bias);
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 

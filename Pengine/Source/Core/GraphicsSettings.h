@@ -23,6 +23,12 @@ namespace Pengine
 			float radius = 0.5f;
 			float bias = 0.025f;
 			float aoScale = 2.0f;
+
+			/**
+			 * Resolution scale: 0.25 / 0.5 / 0.75 / 1.0
+			 * 0.75 by default.
+			 */
+			int resolutionScale = 2;
 		} ssao;
 
 		struct Shadows
