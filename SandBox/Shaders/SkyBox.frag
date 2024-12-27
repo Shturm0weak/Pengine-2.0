@@ -18,5 +18,4 @@ void main()
 
     outAlbedo = color;
     outNormal = vec4(0.0f);
-    outShading = vec4(0.0f);
 }

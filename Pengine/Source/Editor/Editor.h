@@ -150,6 +150,8 @@ namespace Pengine
 
 		bool m_DrawVecLabel = true;
 
+		bool m_FullScreen = false;
+
 		std::shared_ptr<Entity> m_MovingCamera;
 	};
 
