@@ -2887,7 +2887,7 @@ void Serializer::ParseUniformValues(
 					renderTargetInfo.renderPassName = renderTargetName.substr(0, openBracketIndex);
 					renderTargetInfo.attachmentIndex = std::stoul(attachmentIndexString);
 
-					uniformsInfo.renderTargetsByName.emplace(uniformName, renderTargetInfo);
+					uniformsInfo.renderTargetsByName[uniformName] = renderTargetInfo;
 				}
 				else
 				{
@@ -2898,6 +2898,11 @@ void Serializer::ParseUniformValues(
 			{
 				Logger::Warning(uniformName + ": no attachment index for render target!");
 			}
+		}
+
+		if (const auto& nameData = uniformData["RenderTargetDefault"])
+		{
+			uniformsInfo.renderTargetsByName[uniformName].renderTargetDefault = nameData.as<std::string>();
 		}
 	}
 }

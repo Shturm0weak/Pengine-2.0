@@ -13,6 +13,7 @@ namespace Pengine
 		struct RenderTargetInfo
 		{
 			std::string renderPassName;
+			std::string renderTargetDefault;
 			uint32_t attachmentIndex;
 		};
 

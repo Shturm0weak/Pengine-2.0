@@ -35,6 +35,8 @@ namespace Pengine
 
 		void SetFrameBuffer(const std::string& name, const std::shared_ptr<FrameBuffer>& frameBuffer);
 
+		void DeleteFrameBuffer(const std::string& name);
+
 		void* GetCustomData(const std::string& name);
 
 		void SetCustomData(const std::string& name, void* data);

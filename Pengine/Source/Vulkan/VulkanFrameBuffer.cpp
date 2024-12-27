@@ -63,7 +63,6 @@ void VulkanFrameBuffer::Resize(const glm::ivec2& size)
 
 				const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(texture);
 				imageViews.emplace_back(vkTexture->GetImageView());
-				vkTexture->TransitionToRead();
 			}
 			
 			m_Attachments[frameIndex].emplace_back(texture);

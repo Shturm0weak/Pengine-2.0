@@ -70,6 +70,10 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 			TransitionToRead();
 		}
 	}
+	else
+	{
+		TransitionToRead();
+	}
 
 	VkImageViewType imageViewType = VK_IMAGE_VIEW_TYPE_2D;
 	if (createInfo.isCubeMap)

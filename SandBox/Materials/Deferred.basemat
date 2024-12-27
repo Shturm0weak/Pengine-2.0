@@ -36,3 +36,4 @@ Basemat:
           RenderTarget: "SSAOBlur[0]"
         - Name: CSMTexture
           RenderTarget: "CSM[0]"
+          RenderTargetDefault: "WhiteLayered"
