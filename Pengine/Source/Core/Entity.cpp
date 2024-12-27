@@ -7,11 +7,12 @@
 
 using namespace Pengine;
 
-Entity::Entity(std::shared_ptr<Scene> scene,
+Entity::Entity(
+	std::shared_ptr<Scene> scene,
 	std::string name,
 	UUID uuid)
 	: m_Scene(std::move(scene))
-	, m_Registry(&m_Scene->GetRegistry())
+	, m_Registry(&m_Scene.lock()->GetRegistry())
 	, m_Name(std::move(name))
 	, m_UUID(std::move(uuid))
 {
@@ -29,18 +30,23 @@ Entity::Entity(Entity&& entity) noexcept
 	Move(std::move(entity));
 }
 
+Entity::~Entity()
+{
+
+}
+
 entt::registry& Entity::GetRegistry() const
 {
-	assert(m_Scene);
+	assert(m_Scene.lock());
 
 	return *m_Registry;
 }
 
 std::shared_ptr<Scene> Entity::GetScene() const
 {
-	assert(m_Scene);
+	assert(m_Scene.lock());
 
-	return m_Scene;
+	return m_Scene.lock();
 }
 
 Entity& Entity::operator=(const Entity& entity)
@@ -74,6 +80,7 @@ void Entity::AddChild(const std::shared_ptr<Entity>& child, const bool saveTrans
 			scale);
 
 		m_Childs.emplace_back(child);
+		m_ChildEntities.emplace_back(child->GetHandle());
 		child->SetParent(shared_from_this());
 
 		if (saveTransform)
@@ -86,6 +93,7 @@ void Entity::AddChild(const std::shared_ptr<Entity>& child, const bool saveTrans
 	else
 	{
 		m_Childs.emplace_back(child);
+		m_ChildEntities.emplace_back(child->GetHandle());
 		child->SetParent(shared_from_this());
 	}
 }
@@ -99,11 +107,14 @@ void Entity::RemoveChild(const std::shared_ptr<Entity>& child)
 		glm::vec3 position, rotation, scale;
 		Utils::DecomposeTransform(childTransform.GetTransform(), position, rotation, scale);
 
-		if (const auto childToErase = std::find(m_Childs.begin(), m_Childs.end(), child);
-			childToErase != m_Childs.end())
+		if (auto childEntity = std::find(m_ChildEntities.begin(), m_ChildEntities.end(), child->GetHandle());
+			childEntity != m_ChildEntities.end())
 		{
-			m_Childs.erase(childToErase);
+			const size_t index = std::distance(m_ChildEntities.begin(), childEntity);
+			m_Childs.erase(m_Childs.begin() + index);
+			m_ChildEntities.erase(childEntity);
 		}
+
 		child->SetParent(nullptr);
 
 		childTransform.Translate(position);
@@ -112,10 +123,12 @@ void Entity::RemoveChild(const std::shared_ptr<Entity>& child)
 	}
 	else
 	{
-		if (const auto childToErase = std::find(m_Childs.begin(), m_Childs.end(), child);
-			childToErase != m_Childs.end())
+		if (auto childEntity = std::find(m_ChildEntities.begin(), m_ChildEntities.end(), child->GetHandle());
+			childEntity != m_ChildEntities.end())
 		{
-			m_Childs.erase(childToErase);
+			const size_t index = std::distance(m_ChildEntities.begin(), childEntity);
+			m_Childs.erase(m_Childs.begin() + index);
+			m_ChildEntities.erase(childEntity);
 		}
 		child->SetParent(nullptr);
 	}
@@ -123,17 +136,18 @@ void Entity::RemoveChild(const std::shared_ptr<Entity>& child)
 
 bool Entity::HasAsChild(const std::shared_ptr<Entity>& child, const bool recursevely)
 {
-	if (const auto childToHave = std::find(m_Childs.begin(), m_Childs.end(), child);
-		childToHave != m_Childs.end())
+	if (auto childEntity = std::find(m_ChildEntities.begin(), m_ChildEntities.end(), child->GetHandle());
+		childEntity != m_ChildEntities.end())
 	{
 		return true;
 	}
 
 	if (recursevely)
 	{
-		for (const std::shared_ptr<Entity>& currentChild : m_Childs)
+		for (const std::weak_ptr<Entity> weakCurrentChild : m_Childs)
 		{
-			if (currentChild->HasAsChild(child, recursevely))
+			const std::shared_ptr<Entity> currentChild = weakCurrentChild.lock();
+			if (currentChild && currentChild->HasAsChild(child, recursevely))
 			{
 				return true;
 			}
@@ -150,14 +164,14 @@ bool Entity::HasAsParent(const std::shared_ptr<Entity>& parent, const bool recur
 		return false;
 	}
 
-	if (m_Parent == parent)
+	if (GetParent() == parent)
 	{
 		return true;
 	}
 
 	if (recursevely)
 	{
-		if (m_Parent->HasAsParent(parent))
+		if (GetParent()->HasAsParent(parent))
 		{
 			return true;
 		}
@@ -203,7 +217,7 @@ void Entity::Move(Entity&& entity) noexcept
 	m_IsEnabled = entity.m_IsEnabled;
 
 	entity.m_Handle = entt::tombstone;
-	entity.m_Scene = nullptr;
-	entity.m_Parent = nullptr;
+	entity.m_Scene.reset();
+	entity.m_Parent.reset();
 	entity.m_Childs.clear();
 }

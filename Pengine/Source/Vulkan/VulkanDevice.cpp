@@ -961,7 +961,7 @@ void VulkanDevice::FlushDeletionQueue(bool immediate)
 	std::vector<size_t> queuesToDelete;
 	for (auto& [frame, queue] : m_DeletionQueue)
 	{
-		if (!immediate && currentFrame <= frame + swapChainImageCount * 2)
+		if (!immediate && currentFrame <= frame + swapChainImageCount)
 		{
 			continue;
 		}

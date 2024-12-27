@@ -44,9 +44,11 @@ namespace Pengine
 			const std::filesystem::path& filepath,
 			const std::shared_ptr<Material>& material);
 
-		Material(const std::string& name, const std::filesystem::path& filepath,
+		Material(
+			const std::string& name,
+			const std::filesystem::path& filepath,
 			const CreateInfo& createInfo);
-		~Material() = default;
+		~Material();
 		Material(const Material&) = delete;
 		Material& operator=(const Material&) = delete;
 

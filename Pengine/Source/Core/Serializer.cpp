@@ -1997,9 +1997,12 @@ void Serializer::SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entit
 	out << YAML::Key << "IsEnabled" << YAML::Value << entity->IsEnabled();
 
 	std::vector<std::string> childUUIDs;
-	for (const std::shared_ptr<Entity>& child : entity->GetChilds())
+	for (const std::weak_ptr<Entity> weakChild : entity->GetChilds())
 	{
-		childUUIDs.emplace_back(child->GetUUID());
+		if (const std::shared_ptr<Entity> child = weakChild.lock())
+		{
+			childUUIDs.emplace_back(child->GetUUID());
+		}
 	}
 
 	out << YAML::Key << "Childs" << YAML::Value << childUUIDs;
@@ -2017,9 +2020,12 @@ void Serializer::SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entit
 		return;
 	}
 
-	for (const std::shared_ptr<Entity>& child : entity->GetChilds())
+	for (const std::weak_ptr<Entity> weakChild : entity->GetChilds())
 	{
-		SerializeEntity(out, child);
+		if (const std::shared_ptr<Entity> child = weakChild.lock())
+		{
+			SerializeEntity(out, child);
+		}
 	}
 }
 

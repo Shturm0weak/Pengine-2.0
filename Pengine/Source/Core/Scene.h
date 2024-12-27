@@ -61,6 +61,17 @@ namespace Pengine
 		void SetRenderTarget(std::shared_ptr<RenderTarget> renderTarget) { m_RenderTarget = renderTarget; }
 
 	private:
+		struct Resources
+		{
+			std::set<std::shared_ptr<class Mesh>> meshes;
+			std::set<std::shared_ptr<class BaseMaterial>> baseMaterials;
+			std::set<std::shared_ptr<class Material>> materials;
+		};
+
+		Resources CollectResources(std::vector<std::shared_ptr<Entity>> entities);
+
+		void DeleteResources(const Resources& resources);
+
 		std::vector<std::shared_ptr<Entity>> m_Entities;
 		entt::registry m_Registry;
 		Visualizer m_Visualizer;

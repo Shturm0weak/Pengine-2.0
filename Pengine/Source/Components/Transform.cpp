@@ -354,9 +354,12 @@ void Transform::Translate(const glm::vec3& position)
 			return;
 		}
 
-		for (const std::shared_ptr<Entity>& child : transform.m_Entity->GetChilds())
+		for (const std::weak_ptr<Entity> weakChild : transform.m_Entity->GetChilds())
 		{
-			translationCallbacks(child->GetComponent<Transform>());
+			if (const std::shared_ptr<Entity> child = weakChild.lock())
+			{
+				translationCallbacks(child->GetComponent<Transform>());
+			}
 		}
 	};
 
@@ -387,9 +390,12 @@ void Transform::Rotate(const glm::vec3& rotation)
 			return;
 		}
 
-		for (const std::shared_ptr<Entity>& child : transform.m_Entity->GetChilds())
+		for (const std::weak_ptr<Entity> weakChild : transform.m_Entity->GetChilds())
 		{
-			rotationCallbacks(child->GetComponent<Transform>());
+			if (const std::shared_ptr<Entity> child = weakChild.lock())
+			{
+				rotationCallbacks(child->GetComponent<Transform>());
+			}
 		}
 	};
 
@@ -418,9 +424,12 @@ void Transform::Scale(const glm::vec3& scale)
 			return;
 		}
 
-		for (const std::shared_ptr<Entity>& child : transform.m_Entity->GetChilds())
+		for (const std::weak_ptr<Entity> weakChild : transform.m_Entity->GetChilds())
 		{
-			scaleCallbacks(child->GetComponent<Transform>());
+			if (const std::shared_ptr<Entity> child = weakChild.lock())
+			{
+				scaleCallbacks(child->GetComponent<Transform>());
+			}
 		}
 	};
 
