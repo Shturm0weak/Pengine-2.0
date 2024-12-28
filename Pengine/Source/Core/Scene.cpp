@@ -4,9 +4,61 @@
 #include "Viewport.h"
 
 #include "../Components/Transform.h"
+#include "../Components/Renderer3D.h"
 #include "../Components/Camera.h"
 
+#include "../Core/MaterialManager.h"
+#include "../Core/MeshManager.h"
+
 using namespace Pengine;
+
+Scene::Resources Scene::CollectResources(std::vector<std::shared_ptr<Entity>> entities)
+{
+	Resources resources{};
+
+	for (auto entity : m_Entities)
+	{
+		if (entity->HasComponent<Renderer3D>())
+		{
+			const Renderer3D& r3d = entity->GetComponent<Renderer3D>();
+
+			if (r3d.mesh && std::filesystem::exists(r3d.mesh->GetFilepath()))
+			{
+				resources.meshes.emplace(r3d.mesh);
+			}
+
+			if (r3d.material)
+			{
+				resources.materials.emplace(r3d.material);
+			}
+
+			if (r3d.material && r3d.material->GetBaseMaterial())
+			{
+				resources.baseMaterials.emplace(r3d.material->GetBaseMaterial());
+			}
+		}
+	}
+
+	return resources;
+}
+
+void Scene::DeleteResources(const Resources& resources)
+{
+	for (auto material : resources.materials)
+	{
+		MaterialManager::GetInstance().DeleteMaterial(material);
+	}
+
+	for (auto baseMaterial : resources.baseMaterials)
+	{
+		MaterialManager::GetInstance().DeleteBaseMaterial(baseMaterial);
+	}
+
+	for (auto mesh : resources.meshes)
+	{
+		MeshManager::GetInstance().DeleteMesh(mesh);
+	}
+}
 
 void Scene::Copy(const Scene& scene)
 {
@@ -49,8 +101,11 @@ void Scene::Clear()
 	m_Name = none;
 	m_Filepath = none;
 
+	DeleteResources(CollectResources(m_Entities));
+
 	m_Entities.clear();
 	m_Registry.clear();
+	m_SelectedEntities.clear();
 
 	m_RenderTarget = nullptr;
 }
@@ -98,9 +153,12 @@ std::shared_ptr<Entity> Scene::CloneEntity(std::shared_ptr<Entity> entity)
 			newEntity->GetComponent<Camera>().SetEntity(newEntity);
 		}
 
-		for (std::shared_ptr<Entity> child : entity->GetChilds())
+		for (const std::weak_ptr<Entity> weakChild : entity->GetChilds())
 		{
-			newEntity->AddChild(cloneEntity(child), false);
+			if (const std::shared_ptr<Entity> child = weakChild.lock())
+			{
+				newEntity->AddChild(cloneEntity(child), false);
+			}
 		}
 
 		return newEntity;
@@ -118,10 +176,14 @@ std::shared_ptr<Entity> Scene::CloneEntity(std::shared_ptr<Entity> entity)
 
 void Scene::DeleteEntity(std::shared_ptr<Entity>& entity)
 {
+	DeleteResources(CollectResources({ entity }));
+
 	while (!entity->GetChilds().empty())
 	{
-		std::shared_ptr<Entity> child = entity->GetChilds().back();
-		DeleteEntity(child);
+		if (std::shared_ptr<Entity> child = entity->GetChilds().back().lock())
+		{
+			DeleteEntity(child);
+		}
 	}
 
 	if (const std::shared_ptr<Entity> parent = entity->GetParent())
@@ -156,7 +218,7 @@ std::shared_ptr<Entity> Scene::FindEntityByUUID(const std::string& uuid)
 	return nullptr;
 }
 
-std::shared_ptr<Entity> Pengine::Scene::FindEntityByName(const std::string& name)
+std::shared_ptr<Entity> Scene::FindEntityByName(const std::string& name)
 {
 	for (std::shared_ptr<Entity> entity : m_Entities)
 	{

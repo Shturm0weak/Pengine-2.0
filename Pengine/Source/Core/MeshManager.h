@@ -23,6 +23,8 @@ namespace Pengine
 
 		std::shared_ptr<Mesh> GetMesh(const std::filesystem::path& filepath);
 
+		void DeleteMesh(std::shared_ptr<Mesh> mesh);
+
 		const std::unordered_map<std::filesystem::path, std::shared_ptr<Mesh>, path_hash>& GetMeshes() const { return m_MeshesByFilepath; }
 
 		void ShutDown();

@@ -61,6 +61,12 @@ std::shared_ptr<Mesh> MeshManager::GetMesh(const std::filesystem::path& filepath
 	return nullptr;
 }
 
+void MeshManager::DeleteMesh(std::shared_ptr<Mesh> mesh)
+{
+	std::lock_guard lock(m_MutexMesh);
+	m_MeshesByFilepath.erase(mesh->GetFilepath());
+}
+
 void MeshManager::ShutDown()
 {
 	m_MeshesByFilepath.clear();

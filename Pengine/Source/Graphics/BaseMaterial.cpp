@@ -69,6 +69,17 @@ BaseMaterial::BaseMaterial(
 BaseMaterial::~BaseMaterial()
 {
 	m_PipelinesByRenderPass.clear();
+
+	for (const auto& [renderPass, uniformWriter] : m_UniformWriterByRenderPass)
+	{
+		for (const auto& [name, texture] : uniformWriter->GetTextures())
+		{
+			if (std::filesystem::exists(texture->GetFilepath()))
+			{
+				TextureManager::GetInstance().Delete(texture->GetFilepath());
+			}
+		}
+	}
 }
 
 std::shared_ptr<Pipeline> BaseMaterial::GetPipeline(const std::string& renderPassName) const

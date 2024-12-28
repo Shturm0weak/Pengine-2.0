@@ -776,13 +776,16 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 
 void Editor::DrawChilds(const std::shared_ptr<Entity>& entity)
 {
-	for (const std::shared_ptr<Entity>& child : entity->GetChilds())
+	for (const std::weak_ptr<Entity> weakChild : entity->GetChilds())
 	{
-		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-		flags |= entity->GetScene()->GetSelectedEntities().count(child) ?
-			ImGuiTreeNodeFlags_Selected : 0;
+		if (const std::shared_ptr<Entity> child = weakChild.lock())
+		{
+			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+			flags |= entity->GetScene()->GetSelectedEntities().count(child) ?
+				ImGuiTreeNodeFlags_Selected : 0;
 
-		DrawNode(child, flags);
+			DrawNode(child, flags);
+		}
 	}
 }
 

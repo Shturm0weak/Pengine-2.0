@@ -54,15 +54,21 @@ std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath)
 
 	Logger::Log("Texture:" + textureCreateInfo.filepath.string() + " has been loaded!", BOLDGREEN);
 
+	std::shared_ptr<Texture> texture;
 	if (graphicsAPI == GraphicsAPI::Vk)
 	{
-		return std::make_shared<Vk::VulkanTexture>(textureCreateInfo);
+		texture = std::make_shared<Vk::VulkanTexture>(textureCreateInfo);
 	}
 
 	stbi_image_free(data);
 
-	FATAL_ERROR("Failed to create the renderer, no graphics API implementation");
-	return nullptr;
+	if (!texture)
+	{
+		FATAL_ERROR("Failed to create the renderer, no graphics API implementation");
+		return nullptr;
+	}
+
+	return texture;
 }
 
 Texture::Texture(const CreateInfo& createInfo)

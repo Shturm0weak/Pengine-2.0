@@ -16,7 +16,7 @@ namespace Pengine
 			UUID uuid = UUID());
 		Entity(const Entity& entity);
 		Entity(Entity&& entity) noexcept;
-		~Entity() = default;
+		~Entity();
 
 		entt::registry& GetRegistry() const;
 
@@ -56,11 +56,11 @@ namespace Pengine
 			m_Registry->remove<T>(m_Handle);
 		}
 
-		bool HasParent() const { return m_Parent != nullptr && m_Handle != entt::tombstone; }
+		bool HasParent() const { return GetParent() != nullptr && m_Handle != entt::tombstone; }
 
 		void SetParent(const std::shared_ptr<Entity>& parent) { m_Parent = parent; }
 
-		std::shared_ptr<Entity> GetParent() const { return m_Parent; }
+		std::shared_ptr<Entity> GetParent() const { return m_Parent.lock(); }
 
 		void AddChild(const std::shared_ptr<Entity>& child, const bool saveTransform = true);
 
@@ -70,7 +70,7 @@ namespace Pengine
 
 		bool HasAsParent(const std::shared_ptr<Entity>& parent, bool recursevely = false);
 
-		const std::vector<std::shared_ptr<Entity>>& GetChilds() const { return m_Childs; }
+		const std::vector<std::weak_ptr<Entity>>& GetChilds() const { return m_Childs; }
 
 		const std::string& GetName() const { return m_Name; }
 
@@ -88,9 +88,10 @@ namespace Pengine
 		void Move(Entity&& entity) noexcept;
 
 		entt::entity m_Handle{entt::tombstone};
-		std::shared_ptr<Entity> m_Parent;
-		std::vector<std::shared_ptr<Entity>> m_Childs;
-		std::shared_ptr<Scene> m_Scene;
+		std::weak_ptr<Entity> m_Parent;
+		std::vector<std::weak_ptr<Entity>> m_Childs;
+		std::vector<entt::entity> m_ChildEntities;
+		std::weak_ptr<Scene> m_Scene;
 		entt::registry* m_Registry = nullptr;
 		std::string m_Name;
 		UUID m_UUID;

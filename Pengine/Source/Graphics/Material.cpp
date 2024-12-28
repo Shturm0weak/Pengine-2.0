@@ -135,6 +135,20 @@ Material::Material(
 	CreateResources(createInfo);
 }
 
+Material::~Material()
+{
+	for (const auto& [renderPass, uniformWriter] : m_UniformWriterByRenderPass)
+	{
+		for (const auto& [name, texture] : uniformWriter->GetTextures())
+		{
+			if (std::filesystem::exists(texture->GetFilepath()))
+			{
+				TextureManager::GetInstance().Delete(texture->GetFilepath());
+			}
+		}
+	}
+}
+
 std::shared_ptr<UniformWriter> Material::GetUniformWriter(const std::string& renderPassName) const
 {
 	return Utils::Find(renderPassName, m_UniformWriterByRenderPass);

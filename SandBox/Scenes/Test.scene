@@ -11,8 +11,8 @@ Scene:
     Childs:
       []
     Transform:
-      Position: [-3.54198623, 0.48061353, -1.41974819]
-      Rotation: [-0.0650542825, 0.0458503589, 0]
+      Position: [8.70486641, 5.06527376, -3.86064458]
+      Rotation: [-0.436951041, -4.24222946, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -29,10 +29,23 @@ Scene:
       []
     Transform:
       Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
+      Rotation: [0.244346097, 0, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     DirectionalLight:
       Color: [1, 1, 1]
-      Intensity: 1
+      Intensity: 3
       Ambient: 0.100000001
+  - UUID: b3bffdfc-7490-4b57-9272-af4c76210d8d
+    Name: Unnamed
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: ee35a08f-be30-40cb-ba3f-6524f44b5f29
+      Material: 024b1522-041e-47e3-b763-ebd9141e135b

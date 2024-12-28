@@ -14,8 +14,8 @@ std::shared_ptr<Scene> SceneManager::Create(const std::string& name, const std::
 {
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>(name, none);
 	scene->SetTag(tag);
-	m_ScenesByName.emplace(name, scene);
-	m_ScenesByTag.emplace(tag, scene);
+	m_ScenesByName[name] = scene;
+	m_ScenesByTag[tag] = scene;
 	
 	return scene;
 }
@@ -53,7 +53,6 @@ void SceneManager::Delete(const std::string& name)
 			m_ScenesByTag.erase(sceneByTag);
 		}
 
-		sceneByName->second->Clear();
 		m_ScenesByName.erase(sceneByName);
 	}
 }
@@ -83,11 +82,6 @@ void SceneManager::Delete(std::shared_ptr<Scene>& scene)
 
 void SceneManager::ShutDown()
 {
-	for (const auto& [name, scene] : m_ScenesByName)
-	{
-		scene->Clear();
-	}
-
 	m_ScenesByName.clear();
 	m_ScenesByTag.clear();
 }

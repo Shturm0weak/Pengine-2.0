@@ -148,7 +148,11 @@ Mesh::Mesh(
 
 Mesh::~Mesh()
 {
-	delete m_RawVertices;
+	if (m_RawVertices)
+	{
+		delete[] m_RawVertices;
+		m_RawVertices = nullptr;
+	}
 }
 
 std::shared_ptr<Buffer> Mesh::GetVertexBuffer(const size_t index) const
