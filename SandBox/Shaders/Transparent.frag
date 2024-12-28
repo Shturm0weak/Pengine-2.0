@@ -20,10 +20,11 @@ layout(set = 1, binding = 1) uniform sampler2D normalTexture;
 layout(set = 1, binding = 2) uniform sampler2D metalnessTexture;
 layout(set = 1, binding = 3) uniform sampler2D roughnessTexture;
 layout(set = 1, binding = 4) uniform sampler2D aoTexture;
+layout(set = 1, binding = 5) uniform sampler2D emissiveTexture;
 
 #include "Shaders/Includes/DefaultMaterial.h"
 
-layout(set = 1, binding = 5) uniform GBufferMaterial
+layout(set = 1, binding = 6) uniform GBufferMaterial
 {
 	DefaultMaterial material;
 };
@@ -56,7 +57,14 @@ layout(set = 2, binding = 6) uniform Lights
 
 void main()
 {
-	vec4 albedoColor = texture(albedoTexture, uv) * material.color;
+	vec4 albedoColor = texture(albedoTexture, uv) * material.albedoColor;
+	if (material.emissiveFactor > 0.0f)
+	{
+		outEmissive = texture(emissiveTexture, uv) * material.emissiveColor * material.emissiveFactor;
+		outColor = albedoColor;
+		return;
+	}
+
 	float metallic = texture(metalnessTexture, uv).r;
 	float roughness = texture(roughnessTexture, uv).r;
 	float ao = texture(aoTexture, uv).r;

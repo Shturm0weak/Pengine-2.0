@@ -22,7 +22,10 @@ Basemat:
             - positionA
       ColorBlendStates:
         - BlendEnabled: false
-        - BlendEnabled: false
+        - BlendEnabled: true
+          ColorBlendOp: max
+          SrcColorBlendFactor: src color
+          DstColorBlendFactor: dst color
       Uniforms:
         - Name: albedoTexture
           RenderTarget: "GBuffer[0]"
@@ -31,7 +34,7 @@ Basemat:
         - Name: shadingTexture
           RenderTarget: "GBuffer[2]"
         - Name: depthTexture
-          RenderTarget: "GBuffer[3]"
+          RenderTarget: "GBuffer[4]"
         - Name: ssaoTexture
           RenderTarget: "SSAOBlur[0]"
         - Name: CSMTexture

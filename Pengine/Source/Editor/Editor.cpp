@@ -1781,11 +1781,6 @@ void Editor::MaterialMenu::Update(Editor& editor)
 
 	if (opened && ImGui::Begin("Material", &opened))
 	{
-		if (ImGui::Button("Save"))
-		{
-			Material::Save(material);
-		}
-
 		if (ImGui::Button("Reload"))
 		{
 			Material::Reload(material);
@@ -1802,6 +1797,8 @@ void Editor::MaterialMenu::Update(Editor& editor)
 			editor.m_BaseMaterialMenu.baseMaterial = material->GetBaseMaterial();
 		}
 
+		bool isChangedToSerialize = false;
+
 		if (ImGui::CollapsingHeader("Options"))
 		{
 			for (auto& [name, option] : material->GetOptionsByName())
@@ -1809,6 +1806,8 @@ void Editor::MaterialMenu::Update(Editor& editor)
 				if (ImGui::Checkbox(name.c_str(), &option.m_IsEnabled))
 				{
 					material->SetOption(name, option.m_IsEnabled);
+
+					isChangedToSerialize = true;
 				}
 			}
 		}
@@ -1848,6 +1847,8 @@ void Editor::MaterialMenu::Update(Editor& editor)
 										if (FileFormats::IsTexture(Utils::GetFileFormat(filepath)))
 										{
 											material->GetUniformWriter(renderPassName)->WriteTexture(binding.name, TextureManager::GetInstance().Load(filepath));
+											
+											isChangedToSerialize = true;
 										}
 									}
 
@@ -1910,11 +1911,18 @@ void Editor::MaterialMenu::Update(Editor& editor)
 							{
 								// Need to mark for flush that the buffer was changed.
 								buffer->WriteToBuffer(data, 0, 0);
+
+								isChangedToSerialize = true;
 							}
 						}
 					}
 				}
 			}
+		}
+
+		if (isChangedToSerialize)
+		{
+			Material::Save(material, false);
 		}
 
 		ImGui::End();

@@ -1,0 +1,140 @@
+Viewports:
+  - Viewport: Main
+    Camera: 56c5fee1-666e-448d-86fc-9f813cb56ae9
+Settings:
+  DrawBoundingBoxes: false
+GraphicsSettings: d9afc1d9-1ca8-4529-805a-055fb67d6fe0
+Scene:
+  - UUID: 56c5fee1-666e-448d-86fc-9f813cb56ae9
+    Name: Camera
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [-12.077424, 16.802866, 12.9964275]
+      Rotation: [-1.08691549, -1.18744028, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Camera:
+      Fov: 1.57079637
+      Type: 1
+      ZNear: 0.100000001
+      ZFar: 1000
+      RenderPassName: Final
+      RenderTargetIndex: 0
+  - UUID: 90c1e519-8ea4-44f8-ae18-d8e2db397b53
+    Name: Sun
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [1.57079637, 0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    DirectionalLight:
+      Color: [1, 1, 1]
+      Intensity: 1
+      Ambient: 0.100000001
+  - UUID: 5b51fbdb-1514-4383-9999-50250a7c4172
+    Name: SphereGreen
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [10, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0f7c32b7-0918-49f1-9bce-98834ac8c1bd
+      Material: 1007aecf-2a1f-42c0-95f1-b81cabf4b5b2
+  - UUID: ac37b266-96f1-4f37-98e2-da4bbc48f0f4
+    Name: SphereBlue
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0f7c32b7-0918-49f1-9bce-98834ac8c1bd
+      Material: fc774ca6-ad80-411c-aa4e-64977543b683
+  - UUID: 9a749e89-3283-4c14-9e4b-7e06fe30ebe1
+    Name: SphereRed
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [-10, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0f7c32b7-0918-49f1-9bce-98834ac8c1bd
+      Material: c20766fe-d1a2-4dc2-a1e8-39620295545f
+  - UUID: 679d1891-7e42-4bdd-ab20-f6c577ba3d6d
+    Name: Spheres
+    IsEnabled: true
+    Childs:
+      - 9a749e89-3283-4c14-9e4b-7e06fe30ebe1
+      - ac37b266-96f1-4f37-98e2-da4bbc48f0f4
+      - 5b51fbdb-1514-4383-9999-50250a7c4172
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+  - UUID: 3c6a2c03-207e-4e66-8ccf-0dff4ceb3dcd
+    Name: Toruses
+    IsEnabled: true
+    Childs:
+      - 6202141e-1a75-477e-be99-516dd8c5098a
+      - dff64733-cf46-4149-9558-50dae89dfb2d
+      - fb70a143-43d7-41c0-bcaf-289211277c3b
+    Transform:
+      Position: [0, 0, 20]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+  - UUID: 6202141e-1a75-477e-be99-516dd8c5098a
+    Name: TorusRed
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [-10, 0, 20]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 3fc7a9f9-f0d9-4f99-8f61-3ad426ad0fce
+      Material: c20766fe-d1a2-4dc2-a1e8-39620295545f
+  - UUID: dff64733-cf46-4149-9558-50dae89dfb2d
+    Name: TorusBlue
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 20]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 3fc7a9f9-f0d9-4f99-8f61-3ad426ad0fce
+      Material: fc774ca6-ad80-411c-aa4e-64977543b683
+  - UUID: fb70a143-43d7-41c0-bcaf-289211277c3b
+    Name: TorusRedGreen
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [10, 0, 20]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 3fc7a9f9-f0d9-4f99-8f61-3ad426ad0fce
+      Material: 1007aecf-2a1f-42c0-95f1-b81cabf4b5b2

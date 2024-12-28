@@ -22,7 +22,7 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 
 #include "Shaders/Includes/DefaultMaterial.h"
 
-layout(set = 1, binding = 5) uniform GBufferMaterial
+layout(set = 1, binding = 6) uniform GBufferMaterial
 {
 	DefaultMaterial material;
 };

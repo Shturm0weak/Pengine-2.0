@@ -69,7 +69,7 @@ namespace Pengine
 
 		std::shared_ptr<Entity> m_Entity;
 
-		float m_Znear = 0.001f;
+		float m_Znear = 0.1f;
 		float m_Zfar = 1000.0f;
 		float m_Fov = glm::radians(90.0f);
 

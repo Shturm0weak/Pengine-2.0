@@ -1,5 +1,5 @@
 Mat:
-  Basemat: Materials/MeshBase.basemat
+  Basemat: Materials/MeshBaseDoubleSided.basemat
   Options:
     - Name: Transparency
       IsEnabled: false
@@ -20,23 +20,38 @@ Mat:
           Value: ""
         - Name: aoTexture
           Value: ""
+        - Name: emissiveTexture
+          Value: ""
         - Name: GBufferMaterial
           Values:
-            - Name: material.color
-              Type: vec4
+            - Name: material.albedoColor
               Value: [1, 1, 1, 1]
-            - Name: material.uvTransform
               Type: vec4
+            - Name: material.emissiveColor
+              Value: [1, 1, 1, 1]
+              Type: vec4
+            - Name: material.uvTransform
               Value: [1, 1, 0, 0]
+              Type: vec4
             - Name: material.metallicFactor
-              Type: float
-              Value: 0.0
-            - Name: material.roughnessFactor
-              Type: float
-              Value: 1.0
-            - Name: material.aoFactor
-              Type: float
-              Value: 1.0
-            - Name: material.useNormalMap
-              Type: int
               Value: 0
+              Type: float
+            - Name: material.roughnessFactor
+              Value: 1
+              Type: float
+            - Name: material.aoFactor
+              Value: 1
+              Type: float
+            - Name: material.emissiveFactor
+              Value: 0
+              Type: float
+            - Name: material.useNormalMap
+              Value: 0
+              Type: int
+    - RenderPass: Transparent
+      Uniforms:
+        - RenderPass: CSM
+          Uniforms:
+            - RenderPass: ZPrePass
+              Uniforms:
+                []

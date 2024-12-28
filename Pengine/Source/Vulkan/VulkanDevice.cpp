@@ -207,6 +207,7 @@ void VulkanDevice::CreateLogicalDevice()
 	deviceFeatures.fillModeNonSolid = VK_TRUE;
 	deviceFeatures.geometryShader = VK_TRUE;
 	deviceFeatures.depthClamp = VK_TRUE;
+	deviceFeatures.independentBlend = VK_TRUE;
 
 	VkPhysicalDeviceVulkan12Features vulkan12Features{};
 	vulkan12Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;

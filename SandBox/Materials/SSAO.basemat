@@ -26,4 +26,4 @@ Basemat:
         - Name: normalTexture
           RenderTarget: "GBuffer[1]"
         - Name: depthTexture
-          RenderTarget: "GBuffer[3]"
+          RenderTarget: "GBuffer[4]"

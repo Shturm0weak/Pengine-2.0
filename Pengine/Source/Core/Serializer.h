@@ -35,7 +35,7 @@ namespace Pengine
 
 		static Material::CreateInfo LoadMaterial(const std::filesystem::path& filepath);
 
-		static void SerializeMaterial(const std::shared_ptr<Material>& material);
+		static void SerializeMaterial(const std::shared_ptr<Material>& material, bool useLog = true);
 
 		static void SerializeMesh(const std::filesystem::path& directory, const std::shared_ptr<Mesh>& mesh);
 

@@ -853,7 +853,16 @@ Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filep
 
 	if (const auto& baseMaterialData = materialData["Basemat"])
 	{
-		createInfo.baseMaterial = AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(baseMaterialData.as<std::string>());
+		const std::string filepathOrUUID = baseMaterialData.as<std::string>();
+		if (std::filesystem::exists(filepathOrUUID))
+		{
+			createInfo.baseMaterial = AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(filepathOrUUID);
+		}
+		else
+		{
+			const std::filesystem::path baseMaterialFilepath = Utils::FindFilepath(filepathOrUUID);
+			createInfo.baseMaterial = AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(baseMaterialFilepath);
+		}
 
 		if (!createInfo.baseMaterial)
 		{
@@ -918,7 +927,7 @@ Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filep
 	return createInfo;
 }
 
-void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material)
+void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material, bool useLog)
 {
 	YAML::Emitter out;
 
@@ -1081,7 +1090,10 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material)
 		GenerateFileUUID(material->GetFilepath());
 	}
 
-	Logger::Log("Material:" + material->GetFilepath().string() + " has been serialized!", BOLDGREEN);
+	if (useLog)
+	{
+		Logger::Log("Material:" + material->GetFilepath().string() + " has been serialized!", BOLDGREEN);
+	}
 }
 
 void Serializer::SerializeMesh(const std::filesystem::path& directory,  const std::shared_ptr<Mesh>& mesh)
@@ -1654,12 +1666,14 @@ Serializer::LoadIntermediate(const std::filesystem::path& filepath)
 		FATAL_ERROR(std::string("ASSIMP::" + std::string(import.GetErrorString())).c_str());
 	}
 
+	// TODO: Use vector.
 	std::unordered_map<size_t, std::shared_ptr<Material>> materialsByIndex;
 	for (size_t materialIndex = 0; materialIndex < scene->mNumMaterials; materialIndex++)
 	{
 		materialsByIndex[materialIndex] = GenerateMaterial(scene->mMaterials[materialIndex], directory);
 	}
 
+	// TODO: Use vector.
 	std::unordered_map<size_t, std::shared_ptr<Mesh>> meshesByIndex;
 	std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>> materialsByMeshes;
 	for (size_t meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++)
@@ -1853,28 +1867,58 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	materialFilepath.concat(FileFormats::Mat());
 
 	const std::shared_ptr<Material> meshBaseMaterial = MaterialManager::GetInstance().LoadMaterial("Materials/MeshBase.mat");
-	const std::shared_ptr<Material> material = MaterialManager::GetInstance().Clone(materialName, materialFilepath, meshBaseMaterial);
+	const std::shared_ptr<Material> meshBaseDoubleSidedMaterial = MaterialManager::GetInstance().LoadMaterial("Materials/MeshBaseDoubleSided.mat");
+
+	// Maybe use later.
+	bool doubleSided = false;
+	aiMaterial->Get(AI_MATKEY_TWOSIDED, doubleSided);
+
+	const std::shared_ptr<Material> material = MaterialManager::GetInstance().Clone(
+		materialName,
+		materialFilepath,
+		meshBaseMaterial);
+
 	const std::shared_ptr<UniformWriter> uniformWriter = material->GetUniformWriter(GBuffer);
 	
-	aiColor3D aiColor(0.0f, 0.0f, 0.0f);
-	if (aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, aiColor) == aiReturn_SUCCESS)
+	aiColor3D aiBaseColor(1.0f, 1.0f, 1.0f);
+	if (aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, aiBaseColor) == aiReturn_SUCCESS)
 	{
-		glm::vec4 color = { aiColor.r, aiColor.g, aiColor.b, 1.0f };
-		material->WriteToBuffer("GBufferMaterial", "material.color", color);
-	}
-
-	// Note: Not sure how to do it correctly.
-	/*float metallic = 0.0f;
-	if (aiMaterial->Get(AI_MATKEY_METALLIC_FACTOR, metallic) == aiReturn_SUCCESS)
-	{
-		material->WriteToBuffer("material", "metallic", metallic);
+		glm::vec4 color = { aiBaseColor.r, aiBaseColor.g, aiBaseColor.b, 1.0f };
+		material->WriteToBuffer("GBufferMaterial", "material.albedoColor", color);
 	}
 	
-	float roughness = 0.0f;
+	aiColor3D aiEmissiveColor(1.0f, 1.0f, 1.0f);
+	if (aiMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, aiEmissiveColor) == aiReturn_SUCCESS)
+	{
+		glm::vec4 color = { aiEmissiveColor.r, aiEmissiveColor.g, aiEmissiveColor.b, 1.0f };
+		material->WriteToBuffer("GBufferMaterial", "material.emissiveColor", color);
+	}
+
+	float metallic = 0.0f;
+	if (aiMaterial->Get(AI_MATKEY_METALLIC_FACTOR, metallic) == aiReturn_SUCCESS)
+	{
+		material->WriteToBuffer("GBufferMaterial", "material.metallicFactor", metallic);
+	}
+	
+	float roughness = 1.0f;
 	if (aiMaterial->Get(AI_MATKEY_ROUGHNESS_FACTOR, roughness) == aiReturn_SUCCESS)
 	{
-		material->WriteToBuffer("material", "roughness", metallic);
-	}*/
+		material->WriteToBuffer("GBufferMaterial", "material.roughnessFactor", roughness);
+	}
+
+	float ao = 1.0f;
+	material->WriteToBuffer("GBufferMaterial", "material.aoFactor", ao);
+
+	// If has no emissive intensity, just use r channel from emissive color.
+	float emissiveFactor = 1.0f;
+	if (aiMaterial->Get(AI_MATKEY_EMISSIVE_INTENSITY, emissiveFactor) == aiReturn_SUCCESS)
+	{
+		material->WriteToBuffer("GBufferMaterial", "material.emissiveFactor", emissiveFactor);
+	}
+	else
+	{
+		material->WriteToBuffer("GBufferMaterial", "material.emissiveFactor", aiEmissiveColor.r);
+	}
 
 	uint32_t numTextures = aiMaterial->GetTextureCount(aiTextureType_DIFFUSE);
 	aiString aiTextureName;
@@ -1923,6 +1967,15 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
 
 		uniformWriter->WriteTexture("aoTexture", TextureManager::GetInstance().Load(textureFilepath));
+	}
+
+	numTextures = aiMaterial->GetTextureCount(aiTextureType_EMISSIVE);
+	if (numTextures > 0)
+	{
+		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_EMISSIVE, 0), aiTextureName);
+		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
+
+		uniformWriter->WriteTexture("emissiveTexture", TextureManager::GetInstance().Load(textureFilepath));
 	}
 
 	material->GetBuffer("GBufferMaterial")->Flush();

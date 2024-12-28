@@ -131,3 +131,20 @@ void MaterialManager::ShutDown()
 	m_MaterialsByFilepath.clear();
 	m_BaseMaterialsByFilepath.clear();
 }
+
+#include "FileFormatNames.h"
+
+void MaterialManager::ManipulateOnAllMaterialsDebug()
+{
+	for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::current_path()))
+	{
+		if (!entry.is_directory())
+		{
+			if (FileFormats::Mat() == Utils::GetFileFormat(entry.path()))
+			{
+				auto material = LoadMaterial(entry.path());
+				// User code ...
+			}
+		}
+	}
+}
