@@ -410,19 +410,19 @@ void RenderPassManager::CreateGBuffer()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::DONT_CARE;
+	color.load = RenderPass::Load::LOAD;
 	color.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription normal{};
 	normal.format = Format::R32G32B32A32_SFLOAT;
 	normal.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	normal.load = RenderPass::Load::DONT_CARE;
+	normal.load = RenderPass::Load::LOAD;
 	normal.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription shading{};
 	shading.format = Format::R8G8B8A8_SRGB;
 	shading.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	shading.load = RenderPass::Load::DONT_CARE;
+	shading.load = RenderPass::Load::LOAD;
 	shading.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription depth{};
@@ -587,13 +587,13 @@ void RenderPassManager::CreateDeferred()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::DONT_CARE;
+	color.load = RenderPass::Load::LOAD;
 	color.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription emissive{};
 	emissive.format = Format::B10G11R11_UFLOAT_PACK32;
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	emissive.load = RenderPass::Load::DONT_CARE;
+	emissive.load = RenderPass::Load::LOAD;
 	emissive.store = RenderPass::Store::STORE;
 
 	Texture::SamplerCreateInfo samplerCreateInfo{};
@@ -659,7 +659,18 @@ void RenderPassManager::CreateDeferred()
 		for (const auto& [name, renderTargetInfo] : pipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
 		{
 			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderTargetInfo.renderPassName);
-			renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
+			if (frameBuffer)
+			{
+				renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
+			}
+			else if (!renderTargetInfo.renderTargetDefault.empty())
+			{
+				renderUniformWriter->WriteTexture(name, TextureManager::GetInstance().GetTexture(renderTargetInfo.renderTargetDefault));
+			}
+			else
+			{
+				renderUniformWriter->WriteTexture(name, TextureManager::GetInstance().GetWhite());
+			}
 		}
 
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
@@ -825,7 +836,7 @@ void RenderPassManager::CreateAtmosphere()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::R16G16B16A16_SFLOAT;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::DONT_CARE;
+	color.load = RenderPass::Load::LOAD;
 	color.store = RenderPass::Store::STORE;
 	color.size = { 256, 256 };
 	color.isCubeMap = true;
@@ -940,7 +951,7 @@ void RenderPassManager::CreateTransparent()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::DONT_CARE;
+	color.load = RenderPass::Load::LOAD;
 	color.store = RenderPass::Store::STORE;
 	color.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
@@ -951,7 +962,7 @@ void RenderPassManager::CreateTransparent()
 	RenderPass::AttachmentDescription emissive{};
 	emissive.format = Format::B10G11R11_UFLOAT_PACK32;
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	emissive.load = RenderPass::Load::DONT_CARE;
+	emissive.load = RenderPass::Load::LOAD;
 	emissive.store = RenderPass::Store::STORE;
 	emissive.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
@@ -1145,7 +1156,7 @@ void RenderPassManager::CreateFinal()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::DONT_CARE;
+	color.load = RenderPass::Load::LOAD;
 	color.store = RenderPass::Store::STORE;
 
 	RenderPass::CreateInfo createInfo{};
@@ -1273,7 +1284,7 @@ void RenderPassManager::CreateSSAO()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::R8G8B8A8_SRGB;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::DONT_CARE;
+	color.load = RenderPass::Load::LOAD;
 	color.store = RenderPass::Store::STORE;
 
 	RenderPass::CreateInfo createInfo{};
@@ -1288,21 +1299,29 @@ void RenderPassManager::CreateSSAO()
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		const std::string renderPassName = renderInfo.renderPass->GetType();
+		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
+		const GraphicsSettings::SSAO& ssaoSettings = renderInfo.scene->GetGraphicsSettings().ssao;
+		if (!ssaoSettings.isEnabled)
+		{
+			renderInfo.renderTarget->DeleteFrameBuffer(renderPassName);
+
+			return;
+		}
+		else
+		{
+			if (!frameBuffer)
+			{
+				frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), renderInfo.viewportSize);
+				renderInfo.renderTarget->SetFrameBuffer(renderPassName, frameBuffer);
+			}
+		}
+
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
 		submitInfo.frameBuffer = frameBuffer;
 		renderInfo.renderer->BeginRenderPass(submitInfo);
-
-		const GraphicsSettings::SSAO& ssaoSettings = renderInfo.scene->GetGraphicsSettings().ssao;
-
-		if (!ssaoSettings.isEnabled)
-		{
-			renderInfo.renderer->EndRenderPass(submitInfo);
-			return;
-		}
 
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 		if (!plane)
@@ -1430,7 +1449,7 @@ void RenderPassManager::CreateSSAOBlur()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::R8G8B8A8_SRGB;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::CLEAR;
+	color.load = RenderPass::Load::LOAD;
 	color.store = RenderPass::Store::STORE;
 
 	RenderPass::CreateInfo createInfo{};
@@ -1445,20 +1464,29 @@ void RenderPassManager::CreateSSAOBlur()
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		const std::string renderPassName = renderInfo.renderPass->GetType();
+		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
+		const GraphicsSettings::SSAO& ssaoSettings = renderInfo.scene->GetGraphicsSettings().ssao;
+		if (!ssaoSettings.isEnabled)
+		{
+			renderInfo.renderTarget->DeleteFrameBuffer(renderPassName);
+
+			return;
+		}
+		else
+		{
+			if (!frameBuffer)
+			{
+				frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), renderInfo.viewportSize);
+				renderInfo.renderTarget->SetFrameBuffer(renderPassName, frameBuffer);
+			}
+		}
+
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
 		submitInfo.frameBuffer = frameBuffer;
 		renderInfo.renderer->BeginRenderPass(submitInfo);
-
-		const GraphicsSettings::SSAO& ssaoSettings = renderInfo.scene->GetGraphicsSettings().ssao;
-		if (!ssaoSettings.isEnabled)
-		{
-			renderInfo.renderer->EndRenderPass(submitInfo);
-			return;
-		}
 
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 		if (!plane)
@@ -1549,7 +1577,14 @@ void RenderPassManager::CreateCSM()
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		const std::string renderPassName = renderInfo.renderPass->GetType();
+
 		const GraphicsSettings::Shadows& shadowsSettings = renderInfo.scene->GetGraphicsSettings().shadows;
+		if (!shadowsSettings.isEnabled)
+		{
+			renderInfo.renderTarget->DeleteFrameBuffer(renderPassName);
+
+			return;
+		}
 
 		glm::ivec2 resolutions[3] = { { 1024, 1024 }, { 2048, 2048 }, { 4096, 4096 } };
 
@@ -1818,11 +1853,18 @@ void RenderPassManager::CreateBloom()
 
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
-		const int mipCount = graphicsSettings.bloom.mipCount;
+		const std::string renderPassName = renderInfo.renderPass->GetType();
+		const GraphicsSettings::Bloom& bloomSettings = renderInfo.scene->GetGraphicsSettings().bloom;
+		const int mipCount = bloomSettings.mipCount;
 
-		if (!graphicsSettings.bloom.isEnabled)
+		if (!bloomSettings.isEnabled)
 		{
+			renderInfo.renderTarget->DeleteFrameBuffer(renderPassName);
+			for (int mipLevel = 0; mipLevel < mipCount; mipLevel++)
+			{
+				renderInfo.renderTarget->DeleteFrameBuffer("BloomFrameBuffers(" + std::to_string(mipLevel) + ")");
+			}
+
 			return;
 		}
 
@@ -1831,8 +1873,6 @@ void RenderPassManager::CreateBloom()
 		{
 			return;
 		}
-
-		const std::string renderPassName = renderInfo.renderPass->GetType();
 
 		// Used to store unique view (camera) bloom information to compare with current graphics settings
 		// and in case if not equal then recreate resources.
@@ -1871,7 +1911,7 @@ void RenderPassManager::CreateBloom()
 			}
 
 			// Create FrameBuffers.
-			if (recreateResources)
+			if (recreateResources || !renderInfo.renderTarget->GetFrameBuffer(renderPassName))
 			{
 				glm::ivec2 size = renderInfo.viewportSize;
 				for (int mipLevel = 0; mipLevel < mipCount; mipLevel++)

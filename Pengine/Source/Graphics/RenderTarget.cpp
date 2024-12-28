@@ -92,6 +92,15 @@ void RenderTarget::SetFrameBuffer(const std::string& name, const std::shared_ptr
 	m_FrameBuffersByName[name] = frameBuffer;
 }
 
+void RenderTarget::DeleteFrameBuffer(const std::string& name)
+{
+	if (const auto frameBuffersByName = m_FrameBuffersByName.find(name);
+		frameBuffersByName != m_FrameBuffersByName.end())
+	{
+		frameBuffersByName->second = nullptr;
+	}
+}
+
 void* RenderTarget::GetCustomData(const std::string& name)
 {
 	if (const auto customDataByName = m_CustomDataByName.find(name);

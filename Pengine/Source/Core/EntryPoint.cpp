@@ -65,6 +65,18 @@ void PrepareResources()
 	blackTextureCreateInfo.data = blackPixels.data();
 	TextureManager::GetInstance().Create(blackTextureCreateInfo);
 
+	Texture::CreateInfo whiteLayeredTextureCreateInfo;
+	whiteLayeredTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	whiteLayeredTextureCreateInfo.channels = 4;
+	whiteLayeredTextureCreateInfo.filepath = "WhiteLayered";
+	whiteLayeredTextureCreateInfo.name = "WhiteLayered";
+	whiteLayeredTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
+	whiteLayeredTextureCreateInfo.size = { 1, 1 };
+	whiteLayeredTextureCreateInfo.layerCount = 2;;
+	whiteLayeredTextureCreateInfo.data = nullptr;
+	whiteLayeredTextureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::COLOR_ATTACHMENT, Texture::Usage::TRANSFER_DST };
+	TextureManager::GetInstance().Create(whiteLayeredTextureCreateInfo);
+
 	{
 		glm::vec2* vertices = new glm::vec2[4];
 		vertices[0] = { -1.0f, -1.0f };
