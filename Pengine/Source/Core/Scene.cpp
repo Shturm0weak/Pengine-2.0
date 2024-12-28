@@ -176,8 +176,6 @@ std::shared_ptr<Entity> Scene::CloneEntity(std::shared_ptr<Entity> entity)
 
 void Scene::DeleteEntity(std::shared_ptr<Entity>& entity)
 {
-	DeleteResources(CollectResources({ entity }));
-
 	while (!entity->GetChilds().empty())
 	{
 		if (std::shared_ptr<Entity> child = entity->GetChilds().back().lock())

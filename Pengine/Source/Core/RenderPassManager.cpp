@@ -1430,7 +1430,7 @@ void RenderPassManager::CreateSSAOBlur()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::R8G8B8A8_SRGB;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::DONT_CARE;
+	color.load = RenderPass::Load::CLEAR;
 	color.store = RenderPass::Store::STORE;
 
 	RenderPass::CreateInfo createInfo{};
@@ -1453,9 +1453,8 @@ void RenderPassManager::CreateSSAOBlur()
 		submitInfo.frameBuffer = frameBuffer;
 		renderInfo.renderer->BeginRenderPass(submitInfo);
 
-		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
-
-		if (!graphicsSettings.ssao.isEnabled)
+		const GraphicsSettings::SSAO& ssaoSettings = renderInfo.scene->GetGraphicsSettings().ssao;
+		if (!ssaoSettings.isEnabled)
 		{
 			renderInfo.renderer->EndRenderPass(submitInfo);
 			return;

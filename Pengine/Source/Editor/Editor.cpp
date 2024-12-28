@@ -39,6 +39,40 @@ Editor::Editor()
 
 void Editor::Update(const std::shared_ptr<Scene>& scene)
 {
+	if (Input::Mouse::IsMouseReleased(Keycode::MOUSE_BUTTON_2))
+	{
+		m_MovingCamera = nullptr;
+	}
+
+	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
+	{
+		if (viewport->IsHovered() && Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
+		{
+			m_MovingCamera = viewport->GetCamera().lock();
+		}
+
+		if (m_MovingCamera)
+		{
+			WindowManager::GetInstance().GetCurrentWindow()->DisableCursor();
+			MoveCamera(m_MovingCamera);
+			break;
+		}
+		else
+		{
+			WindowManager::GetInstance().GetCurrentWindow()->ShowCursor();
+		}
+	}
+
+	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL) && Input::KeyBoard::IsKeyPressed(Keycode::KEY_F))
+	{
+		m_FullScreen = !m_FullScreen;
+	}
+
+	if (m_FullScreen)
+	{
+		return;
+	}
+
 	Manipulate(scene);
 
 	MainMenuBar();
@@ -64,30 +98,6 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	ImGui::Text("Textures: %d", static_cast<int>(TextureManager::GetInstance().GetTextures().size()));
 
 	ImGui::End();
-
-	if (Input::Mouse::IsMouseReleased(Keycode::MOUSE_BUTTON_2))
-	{
-		m_MovingCamera = nullptr;
-	}
-
-	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
-	{
-		if (viewport->IsHovered() && Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
-		{
-			m_MovingCamera = viewport->GetCamera().lock();
-		}
-
-		if (m_MovingCamera)
-		{
-			WindowManager::GetInstance().GetCurrentWindow()->DisableCursor();
-			MoveCamera(m_MovingCamera);
-			break;
-		}
-		else
-		{
-			WindowManager::GetInstance().GetCurrentWindow()->ShowCursor();
-		}
-	}
 }
 
 bool Editor::DrawVec2Control(
