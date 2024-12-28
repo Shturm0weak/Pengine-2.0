@@ -128,6 +128,8 @@ namespace Pengine
 
 		[[nodiscard]] const glm::vec2& GetResizeViewportScale() const { return m_ResizeViewportScale; }
 
+		void SetResizeViewportScale(const glm::vec2& resizeViewportScale) { m_ResizeViewportScale = resizeViewportScale; }
+
 	private:
 		std::vector<AttachmentDescription> m_AttachmentDescriptions; 
 		std::vector<glm::vec4> m_ClearColors;

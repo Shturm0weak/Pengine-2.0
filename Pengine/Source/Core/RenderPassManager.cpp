@@ -410,14 +410,20 @@ void RenderPassManager::CreateGBuffer()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription normal{};
 	normal.format = Format::R32G32B32A32_SFLOAT;
 	normal.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	normal.load = RenderPass::Load::DONT_CARE;
+	normal.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription shading{};
 	shading.format = Format::R8G8B8A8_SRGB;
 	shading.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	shading.load = RenderPass::Load::DONT_CARE;
+	shading.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription depth{};
 	depth.format = Format::D32_SFLOAT;
@@ -581,10 +587,14 @@ void RenderPassManager::CreateDeferred()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription emissive{};
 	emissive.format = Format::B10G11R11_UFLOAT_PACK32;
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	emissive.load = RenderPass::Load::DONT_CARE;
+	emissive.store = RenderPass::Store::STORE;
 
 	Texture::SamplerCreateInfo samplerCreateInfo{};
 	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
@@ -815,6 +825,8 @@ void RenderPassManager::CreateAtmosphere()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::R16G16B16A16_SFLOAT;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 	color.size = { 256, 256 };
 	color.isCubeMap = true;
 	
@@ -928,7 +940,8 @@ void RenderPassManager::CreateTransparent()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::LOAD;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 	color.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
 		index = 0;
@@ -938,7 +951,8 @@ void RenderPassManager::CreateTransparent()
 	RenderPass::AttachmentDescription emissive{};
 	emissive.format = Format::B10G11R11_UFLOAT_PACK32;
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	emissive.load = RenderPass::Load::LOAD;
+	emissive.load = RenderPass::Load::DONT_CARE;
+	emissive.store = RenderPass::Store::STORE;
 	emissive.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
 		index = 1;
@@ -1131,6 +1145,8 @@ void RenderPassManager::CreateFinal()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = Final;
@@ -1257,6 +1273,8 @@ void RenderPassManager::CreateSSAO()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::R8G8B8A8_SRGB;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = SSAO;
@@ -1278,9 +1296,9 @@ void RenderPassManager::CreateSSAO()
 		submitInfo.frameBuffer = frameBuffer;
 		renderInfo.renderer->BeginRenderPass(submitInfo);
 
-		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
+		const GraphicsSettings::SSAO& ssaoSettings = renderInfo.scene->GetGraphicsSettings().ssao;
 
-		if (!graphicsSettings.ssao.isEnabled)
+		if (!ssaoSettings.isEnabled)
 		{
 			renderInfo.renderer->EndRenderPass(submitInfo);
 			return;
@@ -1301,15 +1319,29 @@ void RenderPassManager::CreateSSAO()
 			return;
 		}
 
-		m_SSAORenderer.GenerateSamples(graphicsSettings.ssao.kernelSize);
+		m_SSAORenderer.GenerateSamples(ssaoSettings.kernelSize);
 
-		auto callback = [this, graphicsSettings]()
+		auto callback = [this, ssaoSettings]()
 		{
-			m_SSAORenderer.GenerateNoiseTexture(graphicsSettings.ssao.noiseSize);
+			m_SSAORenderer.GenerateNoiseTexture(ssaoSettings.noiseSize);
 		};
 
-		std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
-		EventSystem::GetInstance().SendEvent(event);
+		std::shared_ptr<NextFrameEvent> generateNoiseTextureEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+		EventSystem::GetInstance().SendEvent(generateNoiseTextureEvent);
+
+		constexpr float resolutionScales[] = { 0.25f, 0.5f, 0.75f, 1.0f };
+
+		if (renderInfo.renderPass->GetResizeViewportScale() != glm::vec2(resolutionScales[ssaoSettings.resolutionScale]))
+		{
+			auto callback = [resolutionScales, frameBuffer, ssaoSettings, renderInfo]()
+			{
+				renderInfo.renderPass->SetResizeViewportScale(glm::vec2(resolutionScales[ssaoSettings.resolutionScale]));
+				frameBuffer->Resize(renderInfo.viewportSize);
+			};
+
+			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+			EventSystem::GetInstance().SendEvent(resizeEvent);
+		}
 
 		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderTarget->GetUniformWriter(renderPassName);
 		if (!renderUniformWriter)
@@ -1355,12 +1387,12 @@ void RenderPassManager::CreateSSAO()
 
 		const std::shared_ptr<Buffer> ssaoBuffer = renderInfo.renderTarget->GetBuffer("SSAOBuffer");
 		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "viewportScale", GetRenderPass(renderPassName)->GetResizeViewportScale());
-		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "kernelSize", graphicsSettings.ssao.kernelSize);
-		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "noiseSize", graphicsSettings.ssao.noiseSize);
-		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "aoScale", graphicsSettings.ssao.aoScale);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "kernelSize", ssaoSettings.kernelSize);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "noiseSize", ssaoSettings.noiseSize);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "aoScale", ssaoSettings.aoScale);
 		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "samples", m_SSAORenderer.GetSamples());
-		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "radius", graphicsSettings.ssao.radius);
-		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "bias", graphicsSettings.ssao.bias);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "radius", ssaoSettings.radius);
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "bias", ssaoSettings.bias);
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 
@@ -1398,6 +1430,8 @@ void RenderPassManager::CreateSSAOBlur()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::R8G8B8A8_SRGB;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = SSAOBlur;
@@ -1518,15 +1552,29 @@ void RenderPassManager::CreateCSM()
 		const std::string renderPassName = renderInfo.renderPass->GetType();
 		const GraphicsSettings::Shadows& shadowsSettings = renderInfo.scene->GetGraphicsSettings().shadows;
 
+		glm::ivec2 resolutions[3] = { { 1024, 1024 }, { 2048, 2048 }, { 4096, 4096 } };
+
 		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
 		if (!frameBuffer)
 		{
 			// NOTE: Maybe should be send as the next frame event, because creating a frame buffer here may cause some problems.
 			const std::string renderPassName = renderInfo.renderPass->GetType();
 			renderInfo.renderPass->GetAttachmentDescriptions().back().layercount = renderInfo.scene->GetGraphicsSettings().shadows.cascadeCount;
-			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), { 2048, 2048 });
+			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), resolutions[shadowsSettings.quality]);
 
 			renderInfo.renderTarget->SetFrameBuffer(renderPassName, frameBuffer);
+		}
+
+		// Recreate if quality has been changed.
+		if (frameBuffer->GetSize() != resolutions[shadowsSettings.quality])
+		{
+			auto callback = [frameBuffer, resolution = resolutions[shadowsSettings.quality]]()
+			{
+				frameBuffer->Resize(resolution);
+			};
+
+			std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+			EventSystem::GetInstance().SendEvent(event);
 		}
 
 		if (!shadowsSettings.isEnabled)
@@ -1676,6 +1724,7 @@ void RenderPassManager::CreateCSM()
 					"cascadeCount",
 					cascadeCount);
 
+				// Recreate if layer count has been changed.
 				if (recreateFrameBuffer)
 				{
 					auto callback = [this, submitInfo, renderInfo, cascadeCount]()
@@ -1750,6 +1799,7 @@ void RenderPassManager::CreateBloom()
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	color.load = RenderPass::Load::LOAD;
+	color.store = RenderPass::Store::STORE;
 
 	Texture::SamplerCreateInfo samplerCreateInfo{};
 	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;

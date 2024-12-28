@@ -2591,6 +2591,7 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Key << "KernelSize" << YAML::Value << graphicsSettings.ssao.kernelSize;
 	out << YAML::Key << "NoiseSize" << YAML::Value << graphicsSettings.ssao.noiseSize;
 	out << YAML::Key << "Radius" << YAML::Value << graphicsSettings.ssao.radius;
+	out << YAML::Key << "ResolutionScale" << YAML::Value << graphicsSettings.ssao.resolutionScale;
 
 	out << YAML::EndMap;
 	//
@@ -2600,6 +2601,7 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Value << YAML::BeginMap;
 
 	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.shadows.isEnabled;
+	out << YAML::Key << "Quality" << YAML::Value << graphicsSettings.shadows.quality;
 	out << YAML::Key << "CascadeCount" << YAML::Value << graphicsSettings.shadows.cascadeCount;
 	out << YAML::Key << "SplitFactor" << YAML::Value << graphicsSettings.shadows.splitFactor;
 	out << YAML::Key << "MaxDistance" << YAML::Value << graphicsSettings.shadows.maxDistance;
@@ -2694,6 +2696,11 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		{
 			graphicsSettings.ssao.radius = radiusData.as<float>();
 		}
+
+		if (const auto& resolutionScaleData = ssaoData["ResolutionScale"])
+		{
+			graphicsSettings.ssao.resolutionScale = glm::min(resolutionScaleData.as<int>(), 3);
+		}
 	}
 
 	if (const auto& csmData = data["CSM"])
@@ -2701,6 +2708,12 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& isEnabledData = csmData["IsEnabled"])
 		{
 			graphicsSettings.shadows.isEnabled = isEnabledData.as<bool>();
+		}
+
+		if (const auto& qualityData = csmData["Quality"])
+		{
+			constexpr int maxQualityIndex = 2;
+			graphicsSettings.shadows.quality = std::min(qualityData.as<int>(), maxQualityIndex);
 		}
 
 		if (const auto& cascadeCountData = csmData["CascadeCount"])

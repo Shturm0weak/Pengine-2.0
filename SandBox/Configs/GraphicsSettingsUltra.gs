@@ -2,20 +2,21 @@ SSAO:
   IsEnabled: true
   AoScale: 1
   Bias: 0.0250000004
-  KernelSize: 16
+  KernelSize: 32
   NoiseSize: 64
   Radius: 0.5
-  ResolutionScale: 2
+  ResolutionScale: 3
 CSM:
   IsEnabled: true
-  Quality: 1
-  CascadeCount: 4
-  SplitFactor: 0.899999976
-  MaxDistance: 200
+  Quality: 2
+  CascadeCount: 5
+  SplitFactor: 0.800000012
+  MaxDistance: 300
   FogFactor: 0.200000003
   PcfEnabled: true
-  PcfRange: 2
+  PcfRange: 3
   Biases:
+    - 0
     - 0
     - 0
     - 0

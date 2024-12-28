@@ -23,12 +23,18 @@ namespace Pengine
 			float radius = 0.5f;
 			float bias = 0.025f;
 			float aoScale = 2.0f;
+
+			/**
+			 * Resolution scale: 0.25 / 0.5 / 0.75 / 1.0
+			 * 0.75 by default.
+			 */
+			int resolutionScale = 2;
 		} ssao;
 
 		struct Shadows
 		{
 			bool isEnabled = true;
-			std::vector<float> biases = { 0.2f, 0.5f, 0.2f };
+			std::vector<float> biases = { 0.0f, 0.0f, 0.0f };
 			float splitFactor = 0.75f;
 			float maxDistance = 200.0f;
 			float fogFactor = 0.2f;
@@ -36,6 +42,12 @@ namespace Pengine
 			bool visualize = false;
 			int pcfRange = 1;
 
+			/**
+			 * Resolution: 1024 / 2048 / 4096
+			 * 1024 by default.
+			 */
+			int quality = 1;
+			
 			/**
 			 * Has to be more than 1.
 			 */
