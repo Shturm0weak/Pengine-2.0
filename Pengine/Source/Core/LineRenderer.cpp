@@ -13,6 +13,11 @@
 
 using namespace Pengine;
 
+LineRenderer::~LineRenderer()
+{
+	m_Batches.clear();
+}
+
 void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 {
 	if (std::shared_ptr<BaseMaterial> lineBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Line.basemat"))
@@ -117,9 +122,4 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 			render(index, batchIndex, lineVertices, lineIndices);
 		}
 	}
-}
-
-void LineRenderer::ShutDown()
-{
-	m_Batches.clear();
 }

@@ -12,9 +12,10 @@ namespace Pengine
 	class PENGINE_API LineRenderer
 	{
 	public:
+		~LineRenderer();
+		
 		void Render(const RenderPass::RenderCallbackInfo& renderInfo);
 
-		void ShutDown();
 	private:
 		struct Batch
 		{

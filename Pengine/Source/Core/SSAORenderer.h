@@ -10,6 +10,8 @@ namespace Pengine
 	class PENGINE_API SSAORenderer
 	{
 	public:
+		~SSAORenderer();
+
 		void GenerateSamples(const int kernelSize);
 
 		void GenerateNoiseTexture(const int noiseSize);

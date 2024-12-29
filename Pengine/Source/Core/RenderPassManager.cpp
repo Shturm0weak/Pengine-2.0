@@ -53,14 +53,12 @@ std::shared_ptr<RenderPass> RenderPassManager::GetRenderPass(const std::string& 
 void RenderPassManager::ShutDown()
 {
 	m_RenderPassesByType.clear();
-	m_LineRenderer.ShutDown();
-	m_SSAORenderer.ShutDown();
 }
 
 std::vector<std::shared_ptr<UniformWriter>> RenderPassManager::GetUniformWriters(
 	std::shared_ptr<Pipeline> pipeline,
-	std::shared_ptr<class BaseMaterial> baseMaterial,
-	std::shared_ptr<class Material> material,
+	std::shared_ptr<BaseMaterial> baseMaterial,
+	std::shared_ptr<Material> material,
 	const RenderPass::RenderCallbackInfo& renderInfo)
 {
 	std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
@@ -480,6 +478,14 @@ void RenderPassManager::CreateGBuffer()
 		};
 		RenderableData* renderableData = (RenderableData*)renderInfo.renderTarget->GetCustomData("RenderableData");
 
+		LineRenderer* lineRenderer = (LineRenderer*)renderInfo.scene->GetRenderTarget()->GetCustomData("LineRenderer");
+		if (!lineRenderer)
+		{
+			lineRenderer = new LineRenderer();
+
+			renderInfo.scene->GetRenderTarget()->SetCustomData("LineRenderer", lineRenderer);
+		}
+
 		const size_t renderableCount = renderableData->renderableCount;
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
 		const entt::registry& registry = scene->GetRegistry();
@@ -563,7 +569,7 @@ void RenderPassManager::CreateGBuffer()
 			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(InstanceData));
 		}
 
-		m_LineRenderer.Render(renderInfo);
+		lineRenderer->Render(renderInfo);
 
 		// Render SkyBox.
 		if (!registry.view<DirectionalLight>().empty())
@@ -752,20 +758,20 @@ void RenderPassManager::CreateDeferred()
 			const int isEnabled = shadowSettings.isEnabled;
 			baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.isEnabled", isEnabled);
 
-			CSMRenderer& csmRenderer = m_CSMRenderersByCSMSetting[renderInfo.scene->GetGraphicsSettings().GetFilepath().wstring()];
-			if (shadowSettings.isEnabled && !csmRenderer.GetLightSpaceMatrices().empty())
+			CSMRenderer* csmRenderer = (CSMRenderer*)renderInfo.renderTarget->GetCustomData("CSMRenderer");
+			if (shadowSettings.isEnabled && !csmRenderer->GetLightSpaceMatrices().empty())
 			{
 				std::vector<glm::vec4> shadowCascadeLevels;
-				for (const float& distance : csmRenderer.GetDistances())
+				for (const float& distance : csmRenderer->GetDistances())
 				{
 					shadowCascadeLevels.emplace_back(glm::vec4(distance));
 				}
 
-				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.lightSpaceMatrices", *csmRenderer.GetLightSpaceMatrices().data());
+				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.lightSpaceMatrices", *csmRenderer->GetLightSpaceMatrices().data());
 
 				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.distances", *shadowCascadeLevels.data());
 
-				const int cascadeCount = csmRenderer.GetLightSpaceMatrices().size();
+				const int cascadeCount = csmRenderer->GetLightSpaceMatrices().size();
 				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.cascadeCount", cascadeCount);
 
 				baseMaterial->WriteToBuffer(lightsBuffer, "Lights", "csm.fogFactor", shadowSettings.fogFactor);
@@ -1374,11 +1380,18 @@ void RenderPassManager::CreateSSAO()
 			return;
 		}
 
-		m_SSAORenderer.GenerateSamples(ssaoSettings.kernelSize);
-
-		auto callback = [this, ssaoSettings]()
+		SSAORenderer* ssaoRenderer = (SSAORenderer*)renderInfo.renderTarget->GetCustomData("SSAORenderer");
+		if (!ssaoRenderer)
 		{
-			m_SSAORenderer.GenerateNoiseTexture(ssaoSettings.noiseSize);
+			ssaoRenderer = new SSAORenderer();
+
+			renderInfo.renderTarget->SetCustomData("SSAORenderer", ssaoRenderer);
+		}
+		ssaoRenderer->GenerateSamples(ssaoSettings.kernelSize);
+
+		auto callback = [ssaoRenderer, ssaoSettings]()
+		{
+			ssaoRenderer->GenerateNoiseTexture(ssaoSettings.noiseSize);
 		};
 
 		std::shared_ptr<NextFrameEvent> generateNoiseTextureEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
@@ -1431,7 +1444,7 @@ void RenderPassManager::CreateSSAO()
 			renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
 		}
 
-		const std::shared_ptr<Texture> noiseTexture = m_SSAORenderer.GetNoiseTexture();
+		const std::shared_ptr<Texture> noiseTexture = ssaoRenderer->GetNoiseTexture();
 		if (!noiseTexture)
 		{
 			renderInfo.renderer->EndRenderPass(submitInfo);
@@ -1445,7 +1458,7 @@ void RenderPassManager::CreateSSAO()
 		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "kernelSize", ssaoSettings.kernelSize);
 		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "noiseSize", ssaoSettings.noiseSize);
 		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "aoScale", ssaoSettings.aoScale);
-		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "samples", m_SSAORenderer.GetSamples());
+		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "samples", ssaoRenderer->GetSamples());
 		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "radius", ssaoSettings.radius);
 		baseMaterial->WriteToBuffer(ssaoBuffer, "SSAOBuffer", "bias", ssaoSettings.bias);
 
@@ -1622,6 +1635,14 @@ void RenderPassManager::CreateCSM()
 			return;
 		}
 
+		CSMRenderer* csmRenderer = (CSMRenderer*)renderInfo.renderTarget->GetCustomData("CSMRenderer");
+		if (!csmRenderer)
+		{
+			csmRenderer = new CSMRenderer();
+
+			renderInfo.renderTarget->SetCustomData("CSMRenderer", csmRenderer);
+		}
+
 		glm::ivec2 resolutions[3] = { { 1024, 1024 }, { 2048, 2048 }, { 4096, 4096 } };
 
 		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
@@ -1772,8 +1793,7 @@ void RenderPassManager::CreateCSM()
 					camera.GetZNear(),
 					shadowsSettings.maxDistance);
 
-				CSMRenderer& csmRenderer = m_CSMRenderersByCSMSetting[renderInfo.scene->GetGraphicsSettings().GetFilepath().wstring()];
-				const bool recreateFrameBuffer = csmRenderer.GenerateLightSpaceMatrices(
+				const bool recreateFrameBuffer = csmRenderer->GenerateLightSpaceMatrices(
 					projection * camera.GetViewMat4(),
 					lightDirection,
 					camera.GetZNear(),
@@ -1785,9 +1805,9 @@ void RenderPassManager::CreateCSM()
 					renderInfo.renderTarget->GetBuffer("LightSpaceMatrices"),
 					"LightSpaceMatrices",
 					"lightSpaceMatrices",
-					*csmRenderer.GetLightSpaceMatrices().data());
+					*csmRenderer->GetLightSpaceMatrices().data());
 
-				const int cascadeCount = csmRenderer.GetLightSpaceMatrices().size();
+				const int cascadeCount = csmRenderer->GetLightSpaceMatrices().size();
 				baseMaterial->WriteToBuffer(
 					renderInfo.renderTarget->GetBuffer("LightSpaceMatrices"),
 					"LightSpaceMatrices",
