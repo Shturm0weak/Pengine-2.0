@@ -1101,19 +1101,23 @@ void Editor::GameObjectPopUpMenu(const std::shared_ptr<Scene>& scene)
 	{
 		if (ImGui::MenuItem("Create Gameobject"))
 		{
-			std::shared_ptr<Entity> entity = scene->CreateEntity();
+			const std::shared_ptr<Entity> entity = scene->CreateEntity();
 			entity->AddComponent<Transform>(entity);
+
+			scene->GetSelectedEntities().clear();
+			scene->GetSelectedEntities().emplace(entity);
 		}
 
 		if (ImGui::MenuItem("Clone Gameobject"))
 		{
-			if (!scene->GetSelectedEntities().empty())
+			std::set<std::shared_ptr<Entity>> clonedEntities;
+			for (std::shared_ptr<Entity> entity : scene->GetSelectedEntities())
 			{
-				if (std::shared_ptr<Entity> entity = *scene->GetSelectedEntities().rbegin())
-				{
-					scene->CloneEntity(entity);
-				}
+				clonedEntities.emplace(scene->CloneEntity(entity));
 			}
+
+			scene->GetSelectedEntities().clear();
+			scene->GetSelectedEntities() = std::move(clonedEntities);
 		}
 
 		if (!scene->GetSelectedEntities().empty())
