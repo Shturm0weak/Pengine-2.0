@@ -72,10 +72,6 @@ namespace Pengine
 		void CreateBloom();
 
 		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
-
-		LineRenderer m_LineRenderer;
-		SSAORenderer m_SSAORenderer;
-		std::map<std::wstring, CSMRenderer> m_CSMRenderersByCSMSetting;
 	};
 
 }

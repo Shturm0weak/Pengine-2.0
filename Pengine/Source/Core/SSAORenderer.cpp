@@ -6,6 +6,11 @@
 
 using namespace Pengine;
 
+SSAORenderer::~SSAORenderer()
+{
+	ShutDown();
+}
+
 void SSAORenderer::GenerateSamples(const int kernelSize)
 {
 	if (kernelSize == m_KernelSize)
@@ -74,14 +79,10 @@ void SSAORenderer::GenerateNoiseTexture(const int noiseSize)
 
 	noiseCreateInfo.samplerCreateInfo = samplerCreateInfo;
 
-	m_NoiseTexture = TextureManager::GetInstance().Create(noiseCreateInfo);
+	m_NoiseTexture = Texture::Create(noiseCreateInfo);
 }
 
 void SSAORenderer::ShutDown()
 {
-	if (m_NoiseTexture)
-	{
-		TextureManager::GetInstance().Delete(m_NoiseTexture->GetFilepath());
-		m_NoiseTexture = nullptr;
-	}
+	m_NoiseTexture = nullptr;
 }
