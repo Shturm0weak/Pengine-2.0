@@ -63,7 +63,8 @@ Basemat:
           Names:
             - transformA
       ColorBlendStates:
-        []
+        - BlendEnabled: true
+        - BlendEnabled: true
     - RenderPass: ZPrePass
       DepthTest: true
       DepthWrite: true
