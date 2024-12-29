@@ -428,7 +428,7 @@ void RenderPassManager::CreateGBuffer()
 	shading.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription emissive{};
-	emissive.format = Format::B10G11R11_UFLOAT_PACK32;
+	emissive.format = Format::R16G16B16A16_SFLOAT;
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	emissive.load = RenderPass::Load::LOAD;
 	emissive.store = RenderPass::Store::STORE;
@@ -606,7 +606,7 @@ void RenderPassManager::CreateDeferred()
 	color.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription emissive{};
-	emissive.format = Format::B10G11R11_UFLOAT_PACK32;
+	emissive.format = Format::R16G16B16A16_SFLOAT;
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	emissive.load = RenderPass::Load::LOAD;
 	emissive.store = RenderPass::Store::STORE;
@@ -979,7 +979,7 @@ void RenderPassManager::CreateTransparent()
 	};
 
 	RenderPass::AttachmentDescription emissive{};
-	emissive.format = Format::B10G11R11_UFLOAT_PACK32;
+	emissive.format = Format::R16G16B16A16_SFLOAT;
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	emissive.load = RenderPass::Load::LOAD;
 	emissive.store = RenderPass::Store::STORE;

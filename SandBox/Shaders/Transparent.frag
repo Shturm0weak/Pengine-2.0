@@ -58,12 +58,6 @@ layout(set = 2, binding = 6) uniform Lights
 void main()
 {
 	vec4 albedoColor = texture(albedoTexture, uv) * material.albedoColor;
-	if (material.emissiveFactor > 0.0f)
-	{
-		outEmissive = texture(emissiveTexture, uv) * material.emissiveColor * material.emissiveFactor;
-		outColor = albedoColor;
-		return;
-	}
 
 	float metallic = texture(metalnessTexture, uv).r;
 	float roughness = texture(roughnessTexture, uv).r;
@@ -130,8 +124,8 @@ void main()
 			result += CalculatePointLight(pointLights[i], viewSpacePosition, normal.xyz) * albedoColor.xyz;
 		}
 	}
-    
-    outEmissive = vec4(IsBrightPixel(result, brightnessThreshold), 1.0f);
 
+	vec3 emissiveColor = texture(emissiveTexture, uv).xyz;
+    outEmissive = max(vec4(emissiveColor * material.emissiveColor.xyz * material.emissiveFactor, albedoColor.a), vec4(IsBrightPixel(result, brightnessThreshold), albedoColor.a));
 	outColor = vec4(result, albedoColor.w);
 }
