@@ -142,7 +142,7 @@ void MaterialManager::ManipulateOnAllMaterialsDebug()
 		{
 			if (FileFormats::Mat() == Utils::GetFileFormat(entry.path()))
 			{
-				auto material = LoadMaterial(entry.path());
+				auto material = LoadMaterial(Utils::GetShortFilepath(entry.path()));
 				// User code ...
 			}
 		}

@@ -13,6 +13,7 @@
 #include "../Core/MeshManager.h"
 #include "../Core/Serializer.h"
 #include "../Core/TextureManager.h"
+#include "../Core/ThreadPool.h"
 #include "../Core/Time.h"
 #include "../Core/ViewportManager.h"
 #include "../Core/Viewport.h"
@@ -87,6 +88,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	m_DeleteFileMenu.Update();
 	m_CloneMaterialMenu.Update();
 	m_CreateViewportMenu.Update(*this);
+	m_LoadIntermediateMenu.Update(*this);
 
 	ImGui::Begin("Settings");
 	ImGui::Text("FPS: %.0f", 1.0f / static_cast<float>(Time::GetDeltaTime()));
@@ -1307,7 +1309,17 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 				{
 					if (ImGui::MenuItem("Generate meshes"))
 					{
-						Serializer::LoadIntermediate(Utils::Erase(path.string(), m_RootDirectory.string() + "/"));
+						m_LoadIntermediateMenu.opened = true;
+
+						ThreadPool::GetInstance().EnqueueAsync([path, this]()
+						{
+							Serializer::LoadIntermediate(
+								Utils::Erase(path.string(), m_RootDirectory.string() + "/"),
+								m_LoadIntermediateMenu.workName,
+								m_LoadIntermediateMenu.workStatus);
+
+							m_LoadIntermediateMenu.opened = false;
+						});
 					}
 				}
 				if (format == FileFormats::Scene())
@@ -2115,6 +2127,28 @@ void Editor::CloneMaterialMenu::Update()
 			}
 		}
 
+		ImGui::End();
+	}
+}
+
+void Editor::LoadIntermediateMenu::Update(const Editor& editor)
+{
+	if (!opened)
+	{
+		return;
+	}
+
+	ImGui::SetNextWindowSize({ 450.0f, 70.0f });
+	ImGui::SetNextWindowPos(ImGui::GetWindowViewport()->GetCenter(), 0, { 0.5f, 0.0f });
+	if (ImGui::Begin("Load Intermediate", nullptr,
+		ImGuiWindowFlags_NoResize
+		| ImGuiWindowFlags_NoDocking
+		| ImGuiWindowFlags_NoCollapse
+		| ImGuiWindowFlags_NoMove
+		| ImGuiWindowFlags_NoSavedSettings))
+	{
+		ImGui::Text(std::string("Work Name: " + workName).c_str());
+		ImGui::ProgressBar(workStatus, ImVec2(ImGui::GetFontSize() * 25, 0.0f));
 		ImGui::End();
 	}
 }

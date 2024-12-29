@@ -179,6 +179,7 @@ namespace Pengine::Utils
 
 	inline std::string FindUuid(const std::filesystem::path& filepath)
 	{
+		std::lock_guard<std::mutex> lock(uuidMutex);
 		auto foundItem = uuidByFilepath.find(filepath);
 		if (foundItem != uuidByFilepath.end())
 		{
@@ -190,6 +191,7 @@ namespace Pengine::Utils
 
 	inline std::filesystem::path FindFilepath(const std::string& uuid)
 	{
+		std::lock_guard<std::mutex> lock(uuidMutex);
 		auto foundItem = filepathByUuid.find(uuid);
 		if (foundItem != filepathByUuid.end())
 		{
@@ -197,6 +199,13 @@ namespace Pengine::Utils
 		}
 
 		return {};
+	}
+
+	inline void SetUUID(const std::string& uuid, const std::filesystem::path& filepath)
+	{
+		std::lock_guard<std::mutex> lock(uuidMutex);
+		filepathByUuid[uuid] = filepath;
+		uuidByFilepath[filepath] = uuid;
 	}
 
 	inline std::string EraseFromBack(std::string string, const char what)
