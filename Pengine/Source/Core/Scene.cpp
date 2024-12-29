@@ -168,7 +168,7 @@ std::shared_ptr<Entity> Scene::CloneEntity(std::shared_ptr<Entity> entity)
 
 	if (entity->HasParent())
 	{
-		entity->GetParent()->AddChild(newEntity);
+		entity->GetParent()->AddChild(newEntity, false);
 	}
 
 	return newEntity;
