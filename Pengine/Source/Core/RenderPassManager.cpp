@@ -275,7 +275,8 @@ void RenderPassManager::CreateZPrePass()
 				continue;
 			}
 
-			if (!r3d.mesh || !r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
+			// NOTE: Use GBuffer name for now, maybe in the future need to change.
+			if (!r3d.mesh || !r3d.material || !r3d.material->IsPipelineEnabled(GBuffer))
 			{
 				continue;
 			}
@@ -406,6 +407,7 @@ void RenderPassManager::CreateGBuffer()
 	glm::vec4 clearColor = { 0.4f, 0.4f, 0.4f, 1.0f };
 	glm::vec4 clearNormal = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glm::vec4 clearShading = { 0.0f, 0.0f, 0.0f, 0.0f };
+	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
@@ -424,6 +426,19 @@ void RenderPassManager::CreateGBuffer()
 	shading.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	shading.load = RenderPass::Load::LOAD;
 	shading.store = RenderPass::Store::STORE;
+
+	RenderPass::AttachmentDescription emissive{};
+	emissive.format = Format::B10G11R11_UFLOAT_PACK32;
+	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	emissive.load = RenderPass::Load::LOAD;
+	emissive.store = RenderPass::Store::STORE;
+
+	Texture::SamplerCreateInfo emissiveSamplerCreateInfo{};
+	emissiveSamplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
+	emissiveSamplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK;
+	emissiveSamplerCreateInfo.maxAnisotropy = 1.0f;
+
+	emissive.samplerCreateInfo = emissiveSamplerCreateInfo;
 
 	RenderPass::AttachmentDescription depth{};
 	depth.format = Format::D32_SFLOAT;
@@ -444,9 +459,9 @@ void RenderPassManager::CreateGBuffer()
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = GBuffer;
-	createInfo.clearColors = { clearColor, clearNormal, clearShading };
+	createInfo.clearColors = { clearColor, clearNormal, clearShading, clearEmissive };
 	createInfo.clearDepths = { clearDepth };
-	createInfo.attachmentDescriptions = { color, normal, shading, depth };
+	createInfo.attachmentDescriptions = { color, normal, shading, emissive, depth };
 	createInfo.resizeWithViewport = true;
 	createInfo.resizeViewportScale = { 1.0f, 1.0f };
 
@@ -582,7 +597,7 @@ void RenderPassManager::CreateGBuffer()
 void RenderPassManager::CreateDeferred()
 {
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 1.0f };
+	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
@@ -595,6 +610,11 @@ void RenderPassManager::CreateDeferred()
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	emissive.load = RenderPass::Load::LOAD;
 	emissive.store = RenderPass::Store::STORE;
+	emissive.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
+	{
+		index = 3;
+		return renderTarget->GetFrameBuffer(GBuffer);
+	};
 
 	Texture::SamplerCreateInfo samplerCreateInfo{};
 	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
@@ -945,7 +965,6 @@ void RenderPassManager::CreateTransparent()
 	clearDepth.clearStencil = 0;
 
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-
 	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	RenderPass::AttachmentDescription color{};
@@ -966,8 +985,8 @@ void RenderPassManager::CreateTransparent()
 	emissive.store = RenderPass::Store::STORE;
 	emissive.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
-		index = 1;
-		return renderTarget->GetFrameBuffer(Deferred);
+		index = 3;
+		return renderTarget->GetFrameBuffer(GBuffer);
 	};
 
 	Texture::SamplerCreateInfo samplerCreateInfo{};

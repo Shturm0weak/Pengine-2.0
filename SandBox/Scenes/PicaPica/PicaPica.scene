@@ -1,0 +1,453 @@
+Viewports:
+  - Viewport: Main
+    Camera: b97d0d95-7d3e-4164-9ad5-6ae084001737
+Settings:
+  DrawBoundingBoxes: false
+GraphicsSettings: 2a15697d-4170-421d-a1a6-67ed8e8a41db
+Scene:
+  - UUID: b97d0d95-7d3e-4164-9ad5-6ae084001737
+    Name: Camera
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [-2.26967049, 3.55141425, 4.3703084]
+      Rotation: [-0.540551007, -0.457250834, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Camera:
+      Fov: 1.57079637
+      Type: 1
+      ZNear: 0.100000001
+      ZFar: 1000
+      RenderPassName: Final
+      RenderTargetIndex: 0
+  - UUID: cc5a92e2-42d0-4e0b-ae74-02613b60d175
+    Name: Sun
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [2.12930179, 1.04719758, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    DirectionalLight:
+      Color: [1, 1, 1]
+      Intensity: 3
+      Ambient: 0.100000001
+  - UUID: bf152398-01ac-4983-b180-3c7c5d9663a6
+    Name: PicaPica
+    IsEnabled: true
+    Childs:
+      - 3d776538-f3cc-4f6c-8e53-82ef2b3c4c88
+      - 32e4bba0-85c2-438b-b574-628ee8db66b1
+      - a0ee33fa-46af-4420-9ed4-0871af0492d3
+      - 68e66acb-d462-4c42-9d25-b22bcae274c9
+      - ed679245-e3b2-429d-88d1-9becbe729a74
+      - f2bfecb8-2649-47a6-97cb-f9a75ea568a2
+      - 484efebe-4de4-4886-8f0c-889a125663f1
+      - 0b3b6acc-6d91-4b9d-b7c4-f635c6342794
+      - a747de64-0783-4af9-9c46-c3fd8eb73969
+      - 7e0dd6af-7068-4ce9-b59c-e48b44f509d4
+      - 659d80d8-f94d-4dae-b622-79a1a9d50fb7
+      - 38fa0b72-a9d0-439e-8cea-f3765fa2c20b
+      - 66317991-3540-4375-9d6b-8b2a631e030a
+      - 39427d5a-4a6f-459b-baed-77dc7e68144f
+      - 983fa48d-d4fd-47e9-9f64-47fd4a17e8d1
+      - 062d7e45-bfa8-4941-aca9-597a01e1c695
+      - cfdb8cfd-299b-4eb8-a922-0bf9506c4a23
+      - 7b2d9d59-e915-477e-8212-30558ec8e885
+      - fbeee0bb-198e-4d8a-983b-1274453dc3c6
+      - 68a93581-f5ff-422d-afca-4b9541307094
+      - cdfb2e53-b8f4-435a-903c-ac5e3cdf063b
+      - f86d64d6-dd68-47c4-8db2-a860ece867ce
+      - 1fb126b6-a670-411d-96cd-d5e5bc248892
+      - 255e9963-dbf2-4d70-9081-43250988556e
+      - f98a598e-e112-4504-bdb3-a555d8ccf898
+      - fd233cf2-35d9-4d16-aa45-992654c6baa0
+      - e8d648e0-2115-462c-a9ef-b6a07b0c3323
+      - 4c1dbf85-8166-456c-8007-3c7d7c258bd2
+      - 1ddbee72-7ad7-4a11-949c-de5ea71f094b
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+  - UUID: 3d776538-f3cc-4f6c-8e53-82ef2b3c4c88
+    Name: Walls_Plastic_Wall_Only_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 92c2512a-5a54-4e1b-8f34-1e46402f3bb0
+      Material: 80022360-938a-4bd4-a6cf-3b0ba54273fc
+  - UUID: 32e4bba0-85c2-438b-b574-628ee8db66b1
+    Name: Inlet_Plastic_Grey_Dark_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 3effbc58-7dae-4ad4-9398-261f0965d296
+      Material: f0d10e18-da3f-4b0f-ae60-a3750f0173f6
+  - UUID: a0ee33fa-46af-4420-9ed4-0871af0492d3
+    Name: Wall_Prop_Clock_01_Frame_Plastic_Red_Matte_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1350440c-0714-4501-8495-8b0d60fd2f73
+      Material: fd0eccff-ae68-446e-a42f-a70728d7684c
+  - UUID: 68e66acb-d462-4c42-9d25-b22bcae274c9
+    Name: pCylinder143_Plastic_Blue_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 19215f76-8374-4dfc-a2c0-f1f46955c926
+      Material: 94288b2c-098c-4683-ad2f-f6d0704f02f7
+  - UUID: ed679245-e3b2-429d-88d1-9becbe729a74
+    Name: pCube212_Plastic_MediumGrey_Glossy_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9534daee-0c27-486c-acd9-04ed1a2745e0
+      Material: 47368cab-8498-4ca3-ace0-b63151b6f435
+  - UUID: f2bfecb8-2649-47a6-97cb-f9a75ea568a2
+    Name: Box_036_Plastic_Brown_Satin_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 540b575e-9712-4acb-9d58-db864a959994
+      Material: 5f6dc7f8-545e-4892-9a39-1bf50e841db2
+  - UUID: 484efebe-4de4-4886-8f0c-889a125663f1
+    Name: Recycle4_Plastic_Orange_Satin_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 520762bc-aa9e-4e39-a147-ee9d7f9b571b
+      Material: 2cb77227-7294-45ef-b742-cb0a41d13cd5
+  - UUID: 0b3b6acc-6d91-4b9d-b7c4-f635c6342794
+    Name: Broom_Handle_Plastic_Brown_Dark_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: cdf25796-ffc6-43db-9d00-4c19d33658c6
+      Material: ab764700-495f-4252-ade8-7041ae5f163e
+  - UUID: a747de64-0783-4af9-9c46-c3fd8eb73969
+    Name: Box_035_Plastic_Tape_Glossy_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 35fce0f0-f092-41f1-8338-a875c2fb6edb
+      Material: 7b448802-1ea2-4e10-a638-c236cd6f798d
+  - UUID: 7e0dd6af-7068-4ce9-b59c-e48b44f509d4
+    Name: Panel_02_Plastic_Blue_Satin_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 747ed0a6-d05b-4c26-9e5b-769971e95365
+      Material: 94723962-a10c-4db7-939e-344491b2ec27
+  - UUID: 659d80d8-f94d-4dae-b622-79a1a9d50fb7
+    Name: pCube244_Decal_Note_01_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 58314f64-fd3b-428e-a270-e5388bdd85f9
+      Material: e682c092-e2c7-416a-93c9-bf51e5d89dc7
+  - UUID: 38fa0b72-a9d0-439e-8cea-f3765fa2c20b
+    Name: Body_Plastic_White_Matte_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 29d36fa0-4501-4716-96a4-3e4a520ac451
+      Material: c2095de4-4e10-4789-82d0-9c309d2fe60c
+  - UUID: 66317991-3540-4375-9d6b-8b2a631e030a
+    Name: Floor_Junk_Cluster_01_Pin3_Plastic_White_Matte_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d7d46732-5dad-4df3-87a5-09334eb581eb
+      Material: c2095de4-4e10-4789-82d0-9c309d2fe60c
+  - UUID: 39427d5a-4a6f-459b-baed-77dc7e68144f
+    Name: First_Aid_Wall_Kit2_Decal_First_Aid_Kit_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 72020058-c406-4fba-bcf1-89889677e2fa
+      Material: 36fb453d-b975-44bb-9f1a-148a5375758e
+  - UUID: 983fa48d-d4fd-47e9-9f64-47fd4a17e8d1
+    Name: Body_Plastic_Dark_Matte_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d0a56d1d-eb97-4b20-8621-84ab9847dd1f
+      Material: 4fe38c5f-7584-469b-8da7-9e88e0ae5f61
+  - UUID: 062d7e45-bfa8-4941-aca9-597a01e1c695
+    Name: Floor_Junk_Cluster_01_Clip2_Metal_Aluminium_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 697d0638-fa04-490f-bc78-76413994be0b
+      Material: d4ff29ce-795d-48a3-8b43-3f074c688d49
+  - UUID: cfdb8cfd-299b-4eb8-a922-0bf9506c4a23
+    Name: Floor_Junk_Cluster_01_Pin3_Metal_Aluminium_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 325cb5fb-f8a5-4c61-b0b1-418375eab565
+      Material: d4ff29ce-795d-48a3-8b43-3f074c688d49
+  - UUID: 7b2d9d59-e915-477e-8212-30558ec8e885
+    Name: pTorus5_Plastic_Pink_Details_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 687a0f6f-929e-4822-8977-b4bd7c0e22fe
+      Material: 07630e1d-a840-4029-b678-462bb8d34f9d
+  - UUID: fbeee0bb-198e-4d8a-983b-1274453dc3c6
+    Name: Decal_Floor_Caution_Line_Plastic_Decals_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5ee26994-4fe0-4cb3-9a82-45e4e8998e84
+      Material: 72128a5f-631d-4479-817f-17f51a61106d
+  - UUID: 68a93581-f5ff-422d-afca-4b9541307094
+    Name: pCube188_Decal_Caution_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d248451d-cde0-4675-957d-42a7f57cf6b5
+      Material: 1f7ea661-e810-4093-bfa6-5a34495231aa
+  - UUID: cdfb2e53-b8f4-435a-903c-ac5e3cdf063b
+    Name: Panel_02_Decal_Keyboard_01_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: ce57b00d-d882-48a5-b237-decc3c9d94dc
+      Material: 1431b8ad-915e-43c0-9698-0a138055054c
+  - UUID: f86d64d6-dd68-47c4-8db2-a860ece867ce
+    Name: Led_03_Glass_Dark_01_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: e7440b68-28f8-4833-9596-121bb8aeb5be
+      Material: b6fb4f3a-8736-4a74-a757-b1318879f39e
+  - UUID: 1fb126b6-a670-411d-96cd-d5e5bc248892
+    Name: Body_Plastic_Blue_ExtraLight_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: cd1ec0ef-00ba-471a-bfbe-321527f92075
+      Material: 736f80c9-5535-45f1-b590-1a52f5fca28a
+  - UUID: 255e9963-dbf2-4d70-9081-43250988556e
+    Name: Floor_Junk_Cluster_01_Bolt3_Metal_Blue_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d3a5d626-3a78-4bff-9f33-0a9a74fce566
+      Material: f2095803-47b8-469e-bdcf-5c5d98e2f8bc
+  - UUID: f98a598e-e112-4504-bdb3-a555d8ccf898
+    Name: Floor_Junk_Cluster_01_Pin3_Plastic_Red_Transparent_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0e922564-693f-4090-aef6-4292acdb1b53
+      Material: f9f6dcf8-124f-4739-8322-6098c6e00413
+  - UUID: fd233cf2-35d9-4d16-aa45-992654c6baa0
+    Name: Wax_Pastel_02_Wax_Pastel_Label_02_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 84cacafb-981f-481a-ae8f-0616a42111a3
+      Material: 5168c4f2-aeef-4e70-bd4a-c5e3319dd185
+  - UUID: e8d648e0-2115-462c-a9ef-b6a07b0c3323
+    Name: Wax_Pastel_03_Wax_Pastel_Yellow_01_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 7a368c30-cd4d-4573-80d2-8915472b3366
+      Material: 0fda0f4c-f6b1-44ac-a7d9-34837b965d01
+  - UUID: 4c1dbf85-8166-456c-8007-3c7d7c258bd2
+    Name: Wax_Pastel_02_Wax_Pastel_Blue_01_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 4eebd6e9-2a47-4e0d-a1d8-7d9a191e6107
+      Material: 4571496c-497a-4832-b940-02b786ec879c
+  - UUID: 1ddbee72-7ad7-4a11-949c-de5ea71f094b
+    Name: Floor_Junk_Cluster_01_Clip2_Coated_Black_Glossy_0
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [10, 10, 10]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: c158e6eb-7c2c-4fe9-b90b-7e6eee7282a4
+      Material: af2f007b-0d2a-44fd-84cb-a03922899c23

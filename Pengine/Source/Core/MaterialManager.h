@@ -48,6 +48,8 @@ namespace Pengine
 		MaterialManager() = default;
 		~MaterialManager() = default;
 
+		void ManipulateOnAllMaterialsDebug();
+
 		std::unordered_map<std::filesystem::path, std::shared_ptr<Material>, path_hash> m_MaterialsByFilepath;
 		std::unordered_map<std::filesystem::path, std::shared_ptr<BaseMaterial>, path_hash> m_BaseMaterialsByFilepath;
 

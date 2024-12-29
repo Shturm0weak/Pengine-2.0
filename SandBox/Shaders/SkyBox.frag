@@ -7,6 +7,7 @@ layout(location = 0) in vec3 uv;
 layout(location = 0) out vec4 outAlbedo;
 layout(location = 1) out vec4 outNormal;
 layout(location = 2) out vec4 outShading;
+layout(location = 3) out vec4 outEmissive;
 
 void main()
 {
@@ -14,8 +15,10 @@ void main()
 
     // Apply reverse gamma correction, otherwise the skybox will be too bright,
     // you can play around with it.
-    color.rgb = pow(color.rgb, vec3(2.2 / 1.0));
+    color.xyz = pow(color.xyz, vec3(2.2f / 1.0f));
 
     outAlbedo = color;
     outNormal = vec4(0.0f);
+    outShading = vec4(0.0f);
+    outEmissive = vec4(0.0f);
 }

@@ -35,7 +35,7 @@ namespace Pengine
 
 		static std::shared_ptr<Material> Load(const std::filesystem::path& filepath);
 
-		static void Save(const std::shared_ptr<Material>& material);
+		static void Save(const std::shared_ptr<Material>& material, bool useLog = true);
 
 		static void Reload(const std::shared_ptr<Material>& material, bool reloadBaseMaterial = true);
 

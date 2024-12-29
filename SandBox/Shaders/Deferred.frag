@@ -40,8 +40,9 @@ layout(set = 1, binding = 6) uniform Lights
 void main()
 {
 	vec3 albedoColor = texture(albedoTexture, uv).xyz;
-	vec4 normal = texture(normalTexture, uv);
 	vec3 shading = texture(shadingTexture, uv).xyz;
+
+	vec4 normal = texture(normalTexture, uv);
 	vec3 ssao = texture(ssaoTexture, uv).xyz;
 
     vec3 position = CalculatePositionFromDepth(
@@ -93,7 +94,6 @@ void main()
 		}
 	}
 
-    outEmissive = vec4(IsBrightPixel(result, brightnessThreshold), 1.0f);
-
+	outEmissive = vec4(IsBrightPixel(result, brightnessThreshold), 1.0f);
 	outColor = vec4(result * ssao, 1.0f);
 }

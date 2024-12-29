@@ -20,9 +20,14 @@ Mat:
           Value: ""
         - Name: aoTexture
           Value: ""
+        - Name: emissiveTexture
+          Value: ""
         - Name: GBufferMaterial
           Values:
-            - Name: material.color
+            - Name: material.albedoColor
+              Value: [1, 1, 1, 1]
+              Type: vec4
+            - Name: material.emissiveColor
               Value: [1, 1, 1, 1]
               Type: vec4
             - Name: material.uvTransform
@@ -37,6 +42,9 @@ Mat:
             - Name: material.aoFactor
               Value: 1
               Type: float
+            - Name: material.emissiveFactor
+              Value: 0
+              Type: float
             - Name: material.useNormalMap
               Value: 0
               Type: int
@@ -44,4 +52,6 @@ Mat:
       Uniforms:
         - RenderPass: CSM
           Uniforms:
-            []
+            - RenderPass: ZPrePass
+              Uniforms:
+                []

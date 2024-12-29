@@ -35,6 +35,7 @@ Basemat:
         - BlendEnabled: false
         - BlendEnabled: false
         - BlendEnabled: false
+        - BlendEnabled: false
     - RenderPass: CSM
       DepthTest: true
       DepthWrite: true

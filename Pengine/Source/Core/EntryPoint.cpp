@@ -226,7 +226,15 @@ void EntryPoint::Run() const
 
 					if (!cameraComponent.GetRenderPassName().empty())
 					{
-						viewport->Update(renderTarget->GetFrameBuffer(cameraComponent.GetRenderPassName())->GetAttachment(cameraComponent.GetRenderTargetIndex()));
+						const std::shared_ptr<FrameBuffer> frameBuffer = renderTarget->GetFrameBuffer(cameraComponent.GetRenderPassName());
+						if (frameBuffer)
+						{
+							viewport->Update(frameBuffer->GetAttachment(cameraComponent.GetRenderTargetIndex()));
+						}
+						else
+						{
+							viewport->Update(TextureManager::GetInstance().GetWhite());
+						}
 					}
 					else
 					{

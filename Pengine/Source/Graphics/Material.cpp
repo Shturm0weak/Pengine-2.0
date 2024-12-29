@@ -18,9 +18,9 @@ std::shared_ptr<Material> Material::Load(const std::filesystem::path& filepath)
 	return Create(Utils::GetFilename(filepath), filepath, Serializer::LoadMaterial(filepath));
 }
 
-void Material::Save(const std::shared_ptr<Material>& material)
+void Material::Save(const std::shared_ptr<Material>& material, bool useLog)
 {
-	Serializer::SerializeMaterial(material);
+	Serializer::SerializeMaterial(material, useLog);
 }
 
 void Material::Reload(const std::shared_ptr<Material>& material, bool reloadBaseMaterial)
