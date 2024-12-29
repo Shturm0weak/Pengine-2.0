@@ -101,7 +101,7 @@ void RenderTarget::DeleteFrameBuffer(const std::string& name)
 	}
 }
 
-void* RenderTarget::GetCustomData(const std::string& name)
+CustomData* RenderTarget::GetCustomData(const std::string& name)
 {
 	if (const auto customDataByName = m_CustomDataByName.find(name);
 		customDataByName != m_CustomDataByName.end())
@@ -112,7 +112,7 @@ void* RenderTarget::GetCustomData(const std::string& name)
 	return nullptr;
 }
 
-void RenderTarget::SetCustomData(const std::string& name, void* data)
+void RenderTarget::SetCustomData(const std::string& name, CustomData* data)
 {
 	if (!data)
 	{

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Core/Core.h"
+#include "../Core/CustomData.h"
 #include "../Graphics/Buffer.h"
 #include "../Graphics/FrameBuffer.h"
 #include "../Graphics/UniformWriter.h"
@@ -37,9 +38,9 @@ namespace Pengine
 
 		void DeleteFrameBuffer(const std::string& name);
 
-		void* GetCustomData(const std::string& name);
+		CustomData* GetCustomData(const std::string& name);
 
-		void SetCustomData(const std::string& name, void* data);
+		void SetCustomData(const std::string& name, CustomData* data);
 
 		void Resize(const glm::ivec2& size) const;
 
@@ -47,7 +48,7 @@ namespace Pengine
 		std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> m_FrameBuffersByName;
 		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByName;
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
-		std::unordered_map<std::string, void*> m_CustomDataByName;
+		std::unordered_map<std::string, CustomData*> m_CustomDataByName;
 
 		std::vector<std::string> m_RenderPassOrder;
 	};

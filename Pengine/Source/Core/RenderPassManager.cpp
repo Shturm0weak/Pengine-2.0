@@ -252,10 +252,6 @@ void RenderPassManager::CreateZPrePass()
 	{
 		const std::string renderPassName = renderInfo.renderPass->GetType();
 
-		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
-		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
-		using RenderableEntities = std::unordered_map<std::shared_ptr<BaseMaterial>, MeshesByMaterial>;
-
 		RenderableEntities renderableEntities;
 
 		size_t renderableCount = 0;
@@ -369,11 +365,6 @@ void RenderPassManager::CreateZPrePass()
 			}
 		}
 
-		struct RenderableData
-		{
-			RenderableEntities renderableEntities;
-			size_t renderableCount = 0;
-		};
 		RenderableData* renderableData = (RenderableData*)renderInfo.renderTarget->GetCustomData("RenderableData");
 		if (!renderableData)
 		{
@@ -466,16 +457,7 @@ void RenderPassManager::CreateGBuffer()
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		const std::string renderPassName = renderInfo.renderPass->GetType();
-		
-		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
-		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
-		using RenderableEntities = std::unordered_map<std::shared_ptr<BaseMaterial>, MeshesByMaterial>;
 
-		struct RenderableData
-		{
-			RenderableEntities renderableEntities;
-			size_t renderableCount = 0;
-		};
 		RenderableData* renderableData = (RenderableData*)renderInfo.renderTarget->GetCustomData("RenderableData");
 
 		LineRenderer* lineRenderer = (LineRenderer*)renderInfo.scene->GetRenderTarget()->GetCustomData("LineRenderer");
@@ -1935,7 +1917,7 @@ void RenderPassManager::CreateBloom()
 
 		// Used to store unique view (camera) bloom information to compare with current graphics settings
 		// and in case if not equal then recreate resources.
-		struct BloomData
+		struct BloomData : public CustomData
 		{
 			int mipCount = 0;
 			glm::ivec2 sourceSize = { 0, 0 };

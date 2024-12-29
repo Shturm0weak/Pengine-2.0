@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core.h"
+#include "CustomData.h"
 #include "Visualizer.h"
 
 #include "../Graphics/Buffer.h"
@@ -9,10 +10,10 @@
 namespace Pengine
 {
 
-	class PENGINE_API LineRenderer
+	class PENGINE_API LineRenderer : public CustomData
 	{
 	public:
-		~LineRenderer();
+		virtual ~LineRenderer() override;
 		
 		void Render(const RenderPass::RenderCallbackInfo& renderInfo);
 

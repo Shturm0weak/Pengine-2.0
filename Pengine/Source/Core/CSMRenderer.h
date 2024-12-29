@@ -1,14 +1,15 @@
 #pragma once
 
 #include "Core.h"
+#include "CustomData.h"
 
 namespace Pengine
 {
 
-	class PENGINE_API CSMRenderer
+	class PENGINE_API CSMRenderer : public CustomData
 	{
 	public:
-
+		virtual ~CSMRenderer() override = default;
 		/**
 		 * @return whether the frame buffer has to be recreated due to changed cascade count.
 		 */

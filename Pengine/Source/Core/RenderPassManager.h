@@ -35,6 +35,15 @@ namespace Pengine
 		static void PrepareUniformsPerViewportBeforeDraw(const RenderPass::RenderCallbackInfo& renderInfo);
 
 	private:
+		using EntitiesByMesh = std::unordered_map<std::shared_ptr<class Mesh>, std::vector<entt::entity>>;
+		using MeshesByMaterial = std::unordered_map<std::shared_ptr<class Material>, EntitiesByMesh>;
+		using RenderableEntities = std::unordered_map<std::shared_ptr<class BaseMaterial>, MeshesByMaterial>;
+
+		struct RenderableData : public CustomData
+		{
+			RenderableEntities renderableEntities;
+			size_t renderableCount = 0;
+		};
 
 		struct InstanceData
 		{
