@@ -1888,6 +1888,33 @@ void Editor::MaterialMenu::Update(Editor& editor)
 								const ShaderReflection::ReflectVariable& variable,
 								bool& isChanged)
 							{
+								// Variables with names that contain any "color" part and types vec3 or vec4 will be considered as a color variable
+								// and will be represented in the editor as color pickers.
+								if (Utils::Contains(Utils::ToLower(variable.name), "color"))
+								{
+									if (variable.type == ShaderReflection::ReflectVariable::Type::VEC3)
+									{
+										isChanged += ImGui::ColorEdit3(variable.name.c_str(), &Utils::GetValue<glm::vec3>(data, variable.offset)[0]);
+									}
+									if (variable.type == ShaderReflection::ReflectVariable::Type::VEC4)
+									{
+										isChanged += ImGui::ColorEdit4(variable.name.c_str(), &Utils::GetValue<glm::vec4>(data, variable.offset)[0]);
+									}
+
+									return;
+								}
+
+								// Variable with names that contain any "color" part and types int will be considered as a bool variable
+								// and will be represented in the editor as check boxes.
+								if (Utils::Contains(Utils::ToLower(variable.name), "use"))
+								{
+									if (variable.type == ShaderReflection::ReflectVariable::Type::INT)
+									{
+										isChanged += ImGui::Checkbox(variable.name.c_str(), &Utils::GetValue<bool>(data, variable.offset));
+									}
+									return;
+								}
+
 								if (variable.type == ShaderReflection::ReflectVariable::Type::FLOAT)
 								{
 									isChanged += ImGui::SliderFloat(variable.name.c_str(), &Utils::GetValue<float>(data, variable.offset), 0.0f, 1.0f);

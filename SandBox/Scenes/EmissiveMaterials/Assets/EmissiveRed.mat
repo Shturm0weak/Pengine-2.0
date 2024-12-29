@@ -28,7 +28,7 @@ Mat:
               Value: [1, 1, 1, 1]
               Type: vec4
             - Name: material.emissiveColor
-              Value: [1, 0.0500000007, 0.0500000007, 1]
+              Value: [1, 0.0588235296, 0.0588235296, 1]
               Type: vec4
             - Name: material.uvTransform
               Value: [1, 1, 0, 0]
