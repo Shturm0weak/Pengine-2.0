@@ -1,16 +1,17 @@
 #pragma once
 
 #include "Core.h"
+#include "CustomData.h"
 
 #include <array>
 
 namespace Pengine
 {
 
-	class PENGINE_API SSAORenderer
+	class PENGINE_API SSAORenderer : public CustomData
 	{
 	public:
-		~SSAORenderer();
+		virtual ~SSAORenderer() override;
 
 		void GenerateSamples(const int kernelSize);
 
