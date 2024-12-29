@@ -8,6 +8,7 @@
 #include "RenderPassManager.h"
 #include "SceneManager.h"
 #include "TextureManager.h"
+#include "ThreadPool.h"
 #include "ViewportManager.h"
 #include "Viewport.h"
 
@@ -424,8 +425,8 @@ void Serializer::GenerateFilesUUID(const std::filesystem::path& directory)
 					}
 
 					const std::filesystem::path shortFilepath = Utils::GetShortFilepath(filepath);
-					filepathByUuid[uuid] = shortFilepath;
-					uuidByFilepath[shortFilepath] = uuid;
+
+					Utils::SetUUID(uuid, shortFilepath);
 				}
 			}
 		}
@@ -455,8 +456,7 @@ std::string Serializer::GenerateFileUUID(const std::filesystem::path& filepath)
 	fout << out.c_str();
 	fout.close();
 
-	filepathByUuid[uuid] = filepath;
-	uuidByFilepath[filepath] = uuid;
+	Utils::SetUUID(uuid, filepath);
 
 	return uuid;
 }
@@ -1650,8 +1650,13 @@ std::optional<ShaderReflection::ReflectShaderModule> Serializer::DeserializeShad
 }
 
 std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>>
-Serializer::LoadIntermediate(const std::filesystem::path& filepath)
+Serializer::LoadIntermediate(
+	const std::filesystem::path& filepath,
+	std::string& workName,
+	float& workStatus)
 {
+	workName = "Loading " + filepath.string();
+
 	const std::filesystem::path directory = filepath.parent_path();
 
 	Assimp::Importer import;
@@ -1666,15 +1671,51 @@ Serializer::LoadIntermediate(const std::filesystem::path& filepath)
 		FATAL_ERROR(std::string("ASSIMP::" + std::string(import.GetErrorString())).c_str());
 	}
 
-	// TODO: Use vector.
+	const float maxWorkStatus = scene->mNumMaterials + scene->mNumMeshes;
+	float currentWorkStatus = 0.0f;
+
+	workName = "Generating Materials";
+	std::mutex futureMaterialMutex;
+	std::condition_variable futureMaterialCondVar;
+	std::atomic<int> materialCount = 0;
 	std::unordered_map<size_t, std::shared_ptr<Material>> materialsByIndex;
 	for (size_t materialIndex = 0; materialIndex < scene->mNumMaterials; materialIndex++)
 	{
-		materialsByIndex[materialIndex] = GenerateMaterial(scene->mMaterials[materialIndex], directory);
+		ThreadPool::GetInstance().EnqueueAsync([
+			aiMaterial = scene->mMaterials[materialIndex],
+				directory,
+				materialIndex,
+				maxWorkStatus,
+				&materialCount,
+				&futureMaterialMutex,
+				&futureMaterialCondVar,
+				&materialsByIndex,
+				&workStatus,
+				&currentWorkStatus]()
+		{
+			std::shared_ptr<Material> material = GenerateMaterial(aiMaterial, directory);
+
+			std::lock_guard<std::mutex> lock(futureMaterialMutex);
+
+			workStatus = currentWorkStatus++ / maxWorkStatus;
+			
+			materialsByIndex[materialIndex] = material;
+
+			materialCount.store(materialsByIndex.size());
+
+			futureMaterialCondVar.notify_all();
+		});
 	}
 
-	// TODO: Use vector.
-	std::unordered_map<size_t, std::shared_ptr<Mesh>> meshesByIndex;
+	std::mutex futureMaterialCondVarMutex;
+	std::unique_lock<std::mutex> lock(futureMaterialCondVarMutex);
+	futureMaterialCondVar.wait(lock, [&materialCount, scene]
+	{
+		return materialCount.load() == scene->mNumMaterials;
+	});
+
+	workName = "Generating Meshes";
+	std::vector<std::shared_ptr<Mesh>> meshesByIndex(scene->mNumMeshes);
 	std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>> materialsByMeshes;
 	for (size_t meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++)
 	{
@@ -1682,21 +1723,24 @@ Serializer::LoadIntermediate(const std::filesystem::path& filepath)
 		std::shared_ptr<Mesh> mesh = GenerateMesh(aiMesh, directory);
 		meshesByIndex[meshIndex] = mesh;
 		materialsByMeshes[mesh] = materialsByIndex[aiMesh->mMaterialIndex];
+
+		workStatus = currentWorkStatus++ / maxWorkStatus;
 	}
 
-	SceneManager::GetInstance().Create("GenerateGameObject", "GenerateGameObject");
-
-	// Consider that only a hierarchy of game objects can be serilized as a prefab.
-	if (std::shared_ptr<Entity> root = GenerateEntity(scene->mRootNode, meshesByIndex, materialsByMeshes);
-		root->GetChilds().size() > 0)
+	if (scene->mNumMeshes > 1)
 	{
+		workName = "Generating Prefab";
+
+		std::shared_ptr<Scene> GenerateGameObjectScene = SceneManager::GetInstance().Create("GenerateGameObject", "GenerateGameObject");
+		std::shared_ptr<Entity> root = GenerateEntity(scene->mRootNode, GenerateGameObjectScene, meshesByIndex, materialsByMeshes);
+		
 		std::filesystem::path prefabFilepath = directory / root->GetName();
 		prefabFilepath.replace_extension(FileFormats::Prefab());
 		SerializePrefab(prefabFilepath, root);
+
+		SceneManager::GetInstance().Delete(GenerateGameObjectScene);
 	}
-
-	SceneManager::GetInstance().Delete("GenerateGameObject");
-
+	
 	return {};
 }
 
@@ -1860,14 +1904,14 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	const std::string materialName = std::string(aiMaterialName.C_Str());
 	if (materialName == "DefaultMaterial")
 	{
-		return MaterialManager::GetInstance().LoadMaterial("Materials/MeshBase.mat");
+		return AsyncAssetLoader::GetInstance().SyncLoadMaterial("Materials/MeshBase.mat");
 	}
 
 	std::filesystem::path materialFilepath = directory / materialName;
 	materialFilepath.concat(FileFormats::Mat());
 
-	const std::shared_ptr<Material> meshBaseMaterial = MaterialManager::GetInstance().LoadMaterial("Materials/MeshBase.mat");
-	const std::shared_ptr<Material> meshBaseDoubleSidedMaterial = MaterialManager::GetInstance().LoadMaterial("Materials/MeshBaseDoubleSided.mat");
+	const std::shared_ptr<Material> meshBaseMaterial = AsyncAssetLoader::GetInstance().SyncLoadMaterial("Materials/MeshBase.mat");
+	const std::shared_ptr<Material> meshBaseDoubleSidedMaterial = AsyncAssetLoader::GetInstance().SyncLoadMaterial("Materials/MeshBaseDoubleSided.mat");
 
 	// Maybe use later.
 	bool doubleSided = false;
@@ -1927,7 +1971,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), aiTextureName);
 		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
 
-		uniformWriter->WriteTexture("albedoTexture", TextureManager::GetInstance().Load(textureFilepath));
+		uniformWriter->WriteTexture("albedoTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
 	}
 
 	numTextures = aiMaterial->GetTextureCount(aiTextureType_NORMALS);
@@ -1936,7 +1980,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_NORMALS, 0), aiTextureName);
 		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
 
-		uniformWriter->WriteTexture("normalTexture", TextureManager::GetInstance().Load(textureFilepath));
+		uniformWriter->WriteTexture("normalTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
 
 		constexpr int useNormalMap = 1;
 		material->WriteToBuffer("GBufferMaterial", "material.useNormalMap", useNormalMap);
@@ -1948,7 +1992,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_METALNESS, 0), aiTextureName);
 		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
 
-		uniformWriter->WriteTexture("metalnessTexture", TextureManager::GetInstance().Load(textureFilepath));
+		uniformWriter->WriteTexture("metalnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
 	}
 
 	numTextures = aiMaterial->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS);
@@ -1957,7 +2001,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE_ROUGHNESS, 0), aiTextureName);
 		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
 
-		uniformWriter->WriteTexture("roughnessTexture", TextureManager::GetInstance().Load(textureFilepath));
+		uniformWriter->WriteTexture("roughnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
 	}
 
 	numTextures = aiMaterial->GetTextureCount(aiTextureType_AMBIENT_OCCLUSION);
@@ -1966,7 +2010,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_AMBIENT_OCCLUSION, 0), aiTextureName);
 		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
 
-		uniformWriter->WriteTexture("aoTexture", TextureManager::GetInstance().Load(textureFilepath));
+		uniformWriter->WriteTexture("aoTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
 	}
 
 	numTextures = aiMaterial->GetTextureCount(aiTextureType_EMISSIVE);
@@ -1975,7 +2019,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_EMISSIVE, 0), aiTextureName);
 		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
 
-		uniformWriter->WriteTexture("emissiveTexture", TextureManager::GetInstance().Load(textureFilepath));
+		uniformWriter->WriteTexture("emissiveTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
 	}
 
 	material->GetBuffer("GBufferMaterial")->Flush();
@@ -1986,8 +2030,10 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	return material;
 }
 
-std::shared_ptr<Entity> Serializer::GenerateEntity(const aiNode* assimpNode,
-	const std::unordered_map<size_t, std::shared_ptr<Mesh>>& meshesByIndex,
+std::shared_ptr<Entity> Serializer::GenerateEntity(
+	const aiNode* assimpNode,
+	const std::shared_ptr<Scene>& scene,
+	const std::vector<std::shared_ptr<Mesh>>& meshesByIndex,
 	const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes)
 {
 	if (!assimpNode)
@@ -1995,7 +2041,6 @@ std::shared_ptr<Entity> Serializer::GenerateEntity(const aiNode* assimpNode,
 		return nullptr;
 	}
 
-	const std::shared_ptr<Scene> scene = SceneManager::GetInstance().GetSceneByTag("GenerateGameObject");
 	std::shared_ptr<Entity> node = scene->CreateEntity(assimpNode->mName.C_Str());
 	Transform& nodeTransform = node->AddComponent<Transform>(node);
 
@@ -2007,17 +2052,15 @@ std::shared_ptr<Entity> Serializer::GenerateEntity(const aiNode* assimpNode,
 
 	for (size_t meshIndex = 0; meshIndex < assimpNode->mNumMeshes; meshIndex++)
 	{
-		if (const auto meshByIndex = meshesByIndex.find(assimpNode->mMeshes[meshIndex]); meshByIndex != meshesByIndex.end())
-		{
-			r3d->mesh = meshByIndex->second;
-			r3d->material = materialsByMeshes.find(meshByIndex->second)->second;
-		}
+		const std::shared_ptr<Mesh> mesh = meshesByIndex[assimpNode->mMeshes[meshIndex]];
+		r3d->mesh = mesh;
+		r3d->material = materialsByMeshes.find(mesh)->second;
 	}
 
 	for (size_t childIndex = 0; childIndex < assimpNode->mNumChildren; childIndex++)
 	{
 		const aiNode* child = assimpNode->mChildren[childIndex];
-		node->AddChild(GenerateEntity(child, meshesByIndex, materialsByMeshes));
+		node->AddChild(GenerateEntity(child, scene, meshesByIndex, materialsByMeshes));
 	}
 
 	aiVector3D aiPosition;

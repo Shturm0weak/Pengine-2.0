@@ -22,11 +22,15 @@ namespace Pengine
 
 		void AsyncLoadMesh(const std::filesystem::path& filepath, std::function<void(std::shared_ptr<class Mesh>)>&& callback);
 
+		void AsyncLoadTexture(const std::filesystem::path& filepath, std::function<void(std::shared_ptr<class Texture>)>&& callback);
+
 		std::shared_ptr<class Material> SyncLoadMaterial(const std::filesystem::path& filepath);
 
 		std::shared_ptr<class BaseMaterial> SyncLoadBaseMaterial(const std::filesystem::path& filepath);
 
 		std::shared_ptr<class Mesh> SyncLoadMesh(const std::filesystem::path& filepath);
+
+		std::shared_ptr<class Texture> SyncLoadTexture(const std::filesystem::path& filepath);
 
 		void Update();
 
@@ -37,14 +41,17 @@ namespace Pengine
 		std::unordered_map<std::filesystem::path, std::vector<std::function<void(std::shared_ptr<class Material>)>>> m_MaterialsToBeLoaded;
 		std::unordered_map<std::filesystem::path, std::vector<std::function<void(std::shared_ptr<class BaseMaterial>)>>> m_BaseMaterialsToBeLoaded;
 		std::unordered_map<std::filesystem::path, std::vector<std::function<void(std::shared_ptr<class Mesh>)>>> m_MeshesToBeLoaded;
+		std::unordered_map<std::filesystem::path, std::vector<std::function<void(std::shared_ptr<class Texture>)>>> m_TexturesToBeLoaded;
 
 		std::mutex m_MaterialMutex;
 		std::mutex m_BaseMaterialMutex;
 		std::mutex m_MeshMutex;
+		std::mutex m_TextureMutex;
 
 		std::unordered_set<std::filesystem::path> m_MaterialsLoading;
 		std::unordered_set<std::filesystem::path> m_BaseMaterialsLoading;
 		std::unordered_set<std::filesystem::path> m_MeshesLoading;
+		std::unordered_set<std::filesystem::path> m_TexturesLoading;
 	};
 
 }

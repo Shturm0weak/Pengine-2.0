@@ -139,6 +139,16 @@ namespace Pengine
 			void Update(const Editor& editor);
 		} m_CreateViewportMenu;
 
+		struct LoadIntermediateMenu
+		{
+			bool opened = false;
+
+			std::string workName = none;
+			float workStatus = 0.0f;
+
+			void Update(const Editor& editor);
+		} m_LoadIntermediateMenu;
+
 		std::filesystem::path m_RootDirectory = std::filesystem::current_path();
 		std::filesystem::path m_CurrentDirectory = m_RootDirectory;
 

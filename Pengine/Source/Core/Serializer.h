@@ -49,14 +49,19 @@ namespace Pengine
 
 		static std::optional<ShaderReflection::ReflectShaderModule> DeserializeShaderModuleReflection(const std::filesystem::path& filepath);
 
-		static std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> LoadIntermediate(const std::filesystem::path& filepath);
+		static std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> LoadIntermediate(
+			const std::filesystem::path& filepath,
+			std::string& workName,
+			float& workStatus);
 
 		static std::shared_ptr<Mesh> GenerateMesh(aiMesh* aiMesh, const std::filesystem::path& directory);
 
 		static std::shared_ptr<Material> GenerateMaterial(const aiMaterial* aiMaterial, const std::filesystem::path& directory);
 
-		static std::shared_ptr<Entity> GenerateEntity(const aiNode* aiNode,
-			const std::unordered_map<size_t, std::shared_ptr<Mesh>>& meshesByIndex,
+		static std::shared_ptr<Entity> GenerateEntity(
+			const aiNode* aiNode,
+			const std::shared_ptr<Scene>& scene,
+			const std::vector<std::shared_ptr<Mesh>>& meshesByIndex,
 			const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes);
 
 		static void SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entity>& entity, bool withChilds = true);

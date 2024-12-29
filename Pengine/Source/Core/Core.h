@@ -29,6 +29,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <string>
 #include <set>
@@ -88,6 +89,7 @@ inline GraphicsAPI graphicsAPI;
 
 namespace Pengine
 {
+	inline std::mutex uuidMutex;
 	inline std::unordered_map<std::string, std::filesystem::path> filepathByUuid;
 	inline std::unordered_map<std::filesystem::path, std::string, path_hash> uuidByFilepath;
 
