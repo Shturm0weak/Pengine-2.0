@@ -28,6 +28,19 @@ namespace Pengine::Utils
 		return string.find(content) != std::string::npos;
 	}
 
+	inline std::string ToLower(const std::string& string)
+	{
+		const size_t size = string.size();
+		std::string lowerString;
+		lowerString.resize(size);
+		for (size_t i = 0; i < size; i++)
+		{
+			lowerString[i] = std::tolower(string[i]);
+		}
+
+		return lowerString;
+	}
+
 	inline std::string GetFileFormat(const std::filesystem::path& filepath)
 	{
 		if (filepath.has_extension())
