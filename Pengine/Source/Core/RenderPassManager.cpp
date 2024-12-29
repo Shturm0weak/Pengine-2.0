@@ -404,7 +404,7 @@ void RenderPassManager::CreateGBuffer()
 	clearDepth.clearDepth = 1.0f;
 	clearDepth.clearStencil = 0;
 
-	glm::vec4 clearColor = { 0.4f, 0.4f, 0.4f, 1.0f };
+	glm::vec4 clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
 	glm::vec4 clearNormal = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glm::vec4 clearShading = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -412,25 +412,25 @@ void RenderPassManager::CreateGBuffer()
 	RenderPass::AttachmentDescription color{};
 	color.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::LOAD;
+	color.load = RenderPass::Load::CLEAR;
 	color.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription normal{};
 	normal.format = Format::R32G32B32A32_SFLOAT;
 	normal.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	normal.load = RenderPass::Load::LOAD;
+	normal.load = RenderPass::Load::CLEAR;
 	normal.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription shading{};
 	shading.format = Format::R8G8B8A8_SRGB;
 	shading.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	shading.load = RenderPass::Load::LOAD;
+	shading.load = RenderPass::Load::CLEAR;
 	shading.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription emissive{};
 	emissive.format = Format::R16G16B16A16_SFLOAT;
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	emissive.load = RenderPass::Load::LOAD;
+	emissive.load = RenderPass::Load::CLEAR;
 	emissive.store = RenderPass::Store::STORE;
 
 	Texture::SamplerCreateInfo emissiveSamplerCreateInfo{};
@@ -566,6 +566,7 @@ void RenderPassManager::CreateGBuffer()
 		m_LineRenderer.Render(renderInfo);
 
 		// Render SkyBox.
+		if (!registry.view<DirectionalLight>().empty())
 		{
 			std::shared_ptr<Mesh> cubeMesh = MeshManager::GetInstance().LoadMesh("SkyBoxCube");
 			std::shared_ptr<BaseMaterial> skyBoxBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SkyBox.basemat");
@@ -869,13 +870,31 @@ void RenderPassManager::CreateAtmosphere()
 
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		const std::string renderPassName = renderInfo.renderPass->GetType();
+		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.scene->GetRenderTarget()->GetFrameBuffer(Atmosphere);
+		auto directionalLightView = renderInfo.scene->GetRegistry().view<DirectionalLight>();
+
+		const bool hasDirectionalLight = !directionalLightView.empty();
+		if (!hasDirectionalLight)
+		{
+			renderInfo.scene->GetRenderTarget()->DeleteFrameBuffer(renderPassName);
+
+			return;
+		}
+		else
+		{
+			if (!frameBuffer)
+			{
+				frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.scene->GetRenderTarget().get(), {});
+				renderInfo.scene->GetRenderTarget()->SetFrameBuffer(renderPassName, frameBuffer);
+			}
+		}
+
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().GetMesh("FullScreenQuad");
 		if (!plane)
 		{
 			return;
 		}
-
-		const std::string renderPassName = renderInfo.renderPass->GetType();
 
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\Atmosphere.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
@@ -884,8 +903,7 @@ void RenderPassManager::CreateAtmosphere()
 			return;
 		}
 
-		auto directionalLightView = renderInfo.scene->GetRegistry().view<DirectionalLight>();
-		if (!directionalLightView.empty())
+		if (hasDirectionalLight)
 		{
 			const entt::entity& entity = directionalLightView.back();
 			DirectionalLight& dl = renderInfo.scene->GetRegistry().get<DirectionalLight>(entity);
@@ -906,7 +924,6 @@ void RenderPassManager::CreateAtmosphere()
 			baseMaterial->WriteToBuffer("AtmosphereBuffer", "hasDirectionalLight", hasDirectionalLight);
 		}
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.scene->GetRenderTarget()->GetFrameBuffer(Atmosphere);
 		const glm::vec2 faceSize = frameBuffer->GetSize();
 		baseMaterial->WriteToBuffer("AtmosphereBuffer", "faceSize", faceSize);
 
