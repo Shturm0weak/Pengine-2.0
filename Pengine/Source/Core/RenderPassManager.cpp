@@ -1083,6 +1083,11 @@ void RenderPassManager::CreateTransparent()
 			renderableCount++;
 		}
 
+		if (renderableCount == 0)
+		{
+			return;
+		}
+
 		const glm::vec3 cameraPosition = renderInfo.camera->GetComponent<Transform>().GetPosition();
 
 		auto isFurther = [cameraPosition](const RenderData& a, const RenderData& b)
@@ -1341,16 +1346,19 @@ void RenderPassManager::CreateSSAO()
 			}
 		}
 
+		renderInfo.renderer->BeginCommandLabel(renderPassName, topLevelRenderPassDebugColor, renderInfo.frame);
+
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
 		submitInfo.frameBuffer = frameBuffer;
-		renderInfo.renderer->BeginRenderPass(submitInfo);
+		renderInfo.renderer->BeginRenderPass(submitInfo, renderPassName, { 1.0f, 1.0f, 0.0f });
 
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 		if (!plane)
 		{
 			renderInfo.renderer->EndRenderPass(submitInfo);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 			return;
 		}
 
@@ -1359,6 +1367,7 @@ void RenderPassManager::CreateSSAO()
 		if (!pipeline)
 		{
 			renderInfo.renderer->EndRenderPass(submitInfo);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 			return;
 		}
 
@@ -1433,6 +1442,7 @@ void RenderPassManager::CreateSSAO()
 		if (!noiseTexture)
 		{
 			renderInfo.renderer->EndRenderPass(submitInfo);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 			return;
 		}
 		
@@ -1520,12 +1530,13 @@ void RenderPassManager::CreateSSAOBlur()
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
 		submitInfo.frameBuffer = frameBuffer;
-		renderInfo.renderer->BeginRenderPass(submitInfo);
+		renderInfo.renderer->BeginRenderPass(submitInfo, renderPassName, { 1.0f, 1.0f, 0.0f });
 
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 		if (!plane)
 		{
 			renderInfo.renderer->EndRenderPass(submitInfo);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 			return;
 		}
 
@@ -1534,6 +1545,7 @@ void RenderPassManager::CreateSSAOBlur()
 		if (!pipeline)
 		{
 			renderInfo.renderer->EndRenderPass(submitInfo);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 			return;
 		}
 
@@ -1576,6 +1588,8 @@ void RenderPassManager::CreateSSAOBlur()
 			renderInfo.frame);
 
 		renderInfo.renderer->EndRenderPass(submitInfo);
+
+		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 	};
 
 	Create(createInfo);
