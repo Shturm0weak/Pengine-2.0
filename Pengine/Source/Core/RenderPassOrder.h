@@ -20,6 +20,8 @@ namespace Pengine
 		SSAOBlur,
 		Deferred,
 		Transparent,
+		SSR,
+		SSRBlur,
 		Bloom,
 		Final,
 	};

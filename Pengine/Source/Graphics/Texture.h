@@ -79,7 +79,7 @@ namespace Pengine
 		{
 			SamplerCreateInfo samplerCreateInfo{};
 			glm::ivec2 size = { 0, 0 };
-			void* data;
+			void* data = nullptr;
 			uint32_t instanceSize = sizeof(uint8_t);
 			uint32_t mipLevels = 1;
 			uint32_t layerCount = 1;
@@ -105,7 +105,9 @@ namespace Pengine
 
 		[[nodiscard]] virtual void* GetId() const { return nullptr;  }
 
-		virtual void GenerateMipMaps() = 0;
+		virtual void GenerateMipMaps(void* frame = nullptr) = 0;
+
+		virtual void Copy(std::shared_ptr<Texture> src, void* frame = nullptr) = 0;
 
 		[[nodiscard]] glm::ivec2 GetSize() const { return m_Size; }
 

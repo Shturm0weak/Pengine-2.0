@@ -1,16 +1,16 @@
 Basemat:
   Pipelines:
-    - RenderPass: SSAOBlur
+    - RenderPass: SSRBlur
       DepthTest: false
       DepthWrite: false
       CullMode: None
       PolygonMode: Fill
       TopologyMode: TriangleList
       Vertex: Shaders/SSAOBlur.vert
-      Fragment: Shaders/SSAOBlur.frag
+      Fragment: Shaders/SSRBlur.frag
       DescriptorSets:
         - Type: Renderer
-          RenderPass: SSAOBlur
+          RenderPass: SSRBlur
           Set: 0
       VertexInputBindingDescriptions:
         - Binding: 0
@@ -21,4 +21,4 @@ Basemat:
         - BlendEnabled: false
       Uniforms:
         - Name: sourceTexture
-          RenderTarget: "SSAO[0]"
+          RenderTarget: "SSR[0]"

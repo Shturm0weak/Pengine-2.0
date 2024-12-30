@@ -80,6 +80,17 @@ namespace Pengine
 
 		void CreateBloom();
 
+		void CreateSSR();
+
+		void CreateSSRBlur();
+
+		void BlurRenderPassTemplate(
+			const RenderPass::RenderCallbackInfo& renderInfo,
+			const RenderPass::SubmitInfo submitInfo,
+			std::shared_ptr<class BaseMaterial> baseMaterial,
+			std::shared_ptr<class Pipeline> pipeline,
+			const std::string& renderPassName);
+
 		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
 	};
 

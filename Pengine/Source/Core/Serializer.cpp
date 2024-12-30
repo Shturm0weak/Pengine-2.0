@@ -2694,6 +2694,7 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Key << "NoiseSize" << YAML::Value << graphicsSettings.ssao.noiseSize;
 	out << YAML::Key << "Radius" << YAML::Value << graphicsSettings.ssao.radius;
 	out << YAML::Key << "ResolutionScale" << YAML::Value << graphicsSettings.ssao.resolutionScale;
+	out << YAML::Key << "ResolutionBlurScale" << YAML::Value << graphicsSettings.ssao.resolutionBlurScale;
 
 	out << YAML::EndMap;
 	//
@@ -2722,6 +2723,24 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.bloom.isEnabled;
 	out << YAML::Key << "MipCount" << YAML::Value << graphicsSettings.bloom.mipCount;
 	out << YAML::Key << "BrightnessThreshold" << YAML::Value << graphicsSettings.bloom.brightnessThreshold;
+
+	out << YAML::EndMap;
+	//
+
+	// SSR.
+	out << YAML::Key << "SSR";
+	out << YAML::Value << YAML::BeginMap;
+
+	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.ssr.isEnabled;
+	out << YAML::Key << "IsMipMapsEnabled" << YAML::Value << graphicsSettings.ssr.isMipMapsEnabled;
+	out << YAML::Key << "MaxDistance" << YAML::Value << graphicsSettings.ssr.maxDistance;
+	out << YAML::Key << "Resolution" << YAML::Value << graphicsSettings.ssr.resolution;
+	out << YAML::Key << "ResolutionBlurScale" << YAML::Value << graphicsSettings.ssr.resolutionBlurScale;
+	out << YAML::Key << "ResolutionScale" << YAML::Value << graphicsSettings.ssr.resolutionScale;
+	out << YAML::Key << "StepCount" << YAML::Value << graphicsSettings.ssr.stepCount;
+	out << YAML::Key << "Thickness" << YAML::Value << graphicsSettings.ssr.thickness;
+	out << YAML::Key << "BlurRange" << YAML::Value << graphicsSettings.ssr.blurRange;
+	out << YAML::Key << "BlurOffset" << YAML::Value << graphicsSettings.ssr.blurOffset;
 
 	out << YAML::EndMap;
 	//
@@ -2803,6 +2822,11 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		{
 			graphicsSettings.ssao.resolutionScale = glm::min(resolutionScaleData.as<int>(), 3);
 		}
+
+		if (const auto& resolutionBlurScaleData = ssaoData["ResolutionBlurScale"])
+		{
+			graphicsSettings.ssao.resolutionBlurScale = glm::min(resolutionBlurScaleData.as<int>(), 3);
+		}
 	}
 
 	if (const auto& csmData = data["CSM"])
@@ -2854,32 +2878,85 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		}
 	}
 
-	if (const auto& ssaoData = data["Bloom"])
+	if (const auto& bloomData = data["Bloom"])
 	{
-		if (const auto& isEnabledData = ssaoData["IsEnabled"])
+		if (const auto& isEnabledData = bloomData["IsEnabled"])
 		{
 			graphicsSettings.bloom.isEnabled = isEnabledData.as<bool>();
 		}
 
-		if (const auto& mipCountData = ssaoData["MipCount"])
+		if (const auto& mipCountData = bloomData["MipCount"])
 		{
 			graphicsSettings.bloom.mipCount = mipCountData.as<int>();
 		}
 	}
 
-	if (const auto& ssaoData = data["PostProcess"])
+	if (const auto& ssrData = data["SSR"])
 	{
-		if (const auto& gammaData = ssaoData["Gamma"])
+		if (const auto& isEnabledData = ssrData["IsEnabled"])
+		{
+			graphicsSettings.ssr.isEnabled = isEnabledData.as<bool>();
+		}
+
+		if (const auto& isMipMapsEnabledData = ssrData["IsMipMapsEnabled"])
+		{
+			graphicsSettings.ssr.isMipMapsEnabled = isMipMapsEnabledData.as<bool>();
+		}
+
+		if (const auto& maxDistanceData = ssrData["MaxDistance"])
+		{
+			graphicsSettings.ssr.maxDistance = maxDistanceData.as<float>();
+		}
+
+		if (const auto& resolutionData = ssrData["Resolution"])
+		{
+			graphicsSettings.ssr.resolution = resolutionData.as<float>();
+		}
+
+		if (const auto& resolutionBlurScaleData = ssrData["ResolutionBlurScale"])
+		{
+			graphicsSettings.ssr.resolutionBlurScale = glm::min(resolutionBlurScaleData.as<int>(), 4);
+		}
+
+		if (const auto& resolutionScaleData = ssrData["ResolutionScale"])
+		{
+			graphicsSettings.ssr.resolutionScale = glm::min(resolutionScaleData.as<int>(), 3);
+		}
+
+		if (const auto& stepCountData = ssrData["StepCount"])
+		{
+			graphicsSettings.ssr.stepCount = stepCountData.as<int>();
+		}
+
+		if (const auto& thicknessData = ssrData["Thickness"])
+		{
+			graphicsSettings.ssr.thickness = thicknessData.as<float>();
+		}
+
+		if (const auto& blurRangeData = ssrData["BlurRange"])
+		{
+			graphicsSettings.ssr.blurRange = blurRangeData.as<int>();
+		}
+
+		if (const auto& blurOffsetData = ssrData["BlurOffset"])
+		{
+			graphicsSettings.ssr.blurOffset = blurOffsetData.as<int>();
+		}
+	}
+
+	if (const auto& postProcessData = data["PostProcess"])
+	{
+		if (const auto& gammaData = postProcessData["Gamma"])
 		{
 			graphicsSettings.postProcess.gamma = gammaData.as<float>();
 		}
 
-		if (const auto& toneMapperData = ssaoData["ToneMapper"])
+		if (const auto& toneMapperData = postProcessData["ToneMapper"])
 		{
 			graphicsSettings.postProcess.toneMapper = (GraphicsSettings::PostProcess::ToneMapper)toneMapperData.as<int>();
 		}
 
-		if (const auto& fxaaData = ssaoData["FXAA"])
+		if (const auto& fxaaData = postProcessData["FXAA"])
 		{
 			graphicsSettings.postProcess.fxaa = fxaaData.as<bool>();
 		}

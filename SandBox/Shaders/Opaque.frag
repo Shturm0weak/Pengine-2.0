@@ -47,7 +47,7 @@ void main()
 		metallic * material.metallicFactor,
 		roughness * material.roughnessFactor,
 		ao * material.aoFactor,
-		0.0f);
+		1.0f);
 	outEmissive = texture(emissiveTexture, uv) * material.emissiveColor * material.emissiveFactor;
 
 	if (material.useNormalMap > 0)

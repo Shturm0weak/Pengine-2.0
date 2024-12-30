@@ -6,6 +6,7 @@ SSAO:
   NoiseSize: 64
   Radius: 0.5
   ResolutionScale: 2
+  ResolutionBlurScale: 2
 CSM:
   IsEnabled: true
   Quality: 2
@@ -24,6 +25,17 @@ Bloom:
   IsEnabled: true
   MipCount: 10
   BrightnessThreshold: 1
+SSR:
+  IsEnabled: true
+  IsMipMapsEnabled: false
+  MaxDistance: 15
+  Resolution: 0.300000012
+  ResolutionBlurScale: 0
+  ResolutionScale: 1
+  StepCount: 10
+  Thickness: 5
+  BlurRange: 5
+  BlurOffset: 5
 PostProcess:
   Gamma: 2.20000005
   ToneMapper: 1

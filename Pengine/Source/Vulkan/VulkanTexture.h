@@ -60,7 +60,9 @@ namespace Pengine::Vk
 
 		[[nodiscard]] virtual void* GetId() const override { return (void*)m_DescriptorSet; }
 
-		virtual void GenerateMipMaps() override;
+		virtual void GenerateMipMaps(void* frame = nullptr) override;
+
+		virtual void Copy(std::shared_ptr<Texture> src, void* frame = nullptr) override;
 
 		[[nodiscard]] VkImageView GetImageView() const { return m_View; }
 
@@ -70,21 +72,25 @@ namespace Pengine::Vk
 
 		[[nodiscard]] VkImageLayout GetLayout() const { return m_Layout; }
 
-		void TransitionToWrite();
+		void TransitionToDst(VkCommandBuffer commandBuffer = VK_NULL_HANDLE);
 
-		void TransitionToRead();
+		void TransitionToSrc(VkCommandBuffer commandBuffer = VK_NULL_HANDLE);
 
-		void TransitionToColorAttachment();
+		void TransitionToRead(VkCommandBuffer commandBuffer = VK_NULL_HANDLE);
+
+		void TransitionToPrevious(VkCommandBuffer commandBuffer = VK_NULL_HANDLE);
+
+		void TransitionToColorAttachment(VkCommandBuffer commandBuffer = VK_NULL_HANDLE);
 
 	private:
 		VkSampler m_Sampler{};
 		VkImage m_Image{};
-		VkImageLayout m_ImageLayout{};
 		VmaAllocation m_VmaAllocation = VK_NULL_HANDLE;
 		VmaAllocationInfo m_VmaAllocationInfo{};
 		VkImageView m_View{};
 		VkDescriptorSet m_DescriptorSet{};
 		VkImageLayout m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
+		VkImageLayout m_PreviousLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	};
 
 }
