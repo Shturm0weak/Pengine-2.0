@@ -1083,6 +1083,11 @@ void RenderPassManager::CreateTransparent()
 			renderableCount++;
 		}
 
+		if (renderableCount == 0)
+		{
+			return;
+		}
+
 		const glm::vec3 cameraPosition = renderInfo.camera->GetComponent<Transform>().GetPosition();
 
 		auto isFurther = [cameraPosition](const RenderData& a, const RenderData& b)
