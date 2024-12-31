@@ -171,6 +171,7 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 	m_MousePosition = mousePosition - m_Position;
 
 	const std::shared_ptr<Entity> camera = m_Camera.lock();
+	const std::shared_ptr<Scene> scene = camera ? camera->GetScene() : nullptr;
 	if (m_DrawGizmosCallback)
 	{
 		if (camera)
@@ -180,23 +181,32 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 		m_DrawGizmosCallback = {};
 	}
 
+	if (scene && IsFocused() && Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL) && Input::KeyBoard::IsKeyPressed(Keycode::KEY_A))
+	{
+		scene->GetSelectedEntities().clear();
+		for (const std::shared_ptr<Entity> entity : scene->GetEntities())
+		{
+			scene->GetSelectedEntities().emplace(entity);
+		}
+	}
+
 	if (!m_ActiveGuizmo && m_IsHovered && Input::Mouse::IsMousePressed(Keycode::MOUSE_BUTTON_1))
 	{
 		if (camera)
 		{
 			const glm::vec3 ray = GetMouseRay(m_MousePosition);
 
-			const auto hits = Raycast::RaycastScene(camera->GetScene(), camera->GetComponent<Transform>().GetPosition(), ray, camera->GetComponent<Camera>().GetZFar());
+			const auto hits = Raycast::RaycastScene(scene, camera->GetComponent<Transform>().GetPosition(), ray, camera->GetComponent<Camera>().GetZFar());
 			if (!hits.empty())
 			{
 				std::shared_ptr<Entity> entity = hits.begin()->second;
-				if (entity->GetParent() && !camera->GetScene()->GetSelectedEntities().count(entity->GetParent()))
+				if (entity->GetParent() && !scene->GetSelectedEntities().count(entity->GetParent()))
 				{
 					entity = entity->GetParent();
 				}
 
-				camera->GetScene()->GetSelectedEntities().clear();
-				camera->GetScene()->GetSelectedEntities().emplace(entity);
+				scene->GetSelectedEntities().clear();
+				scene->GetSelectedEntities().emplace(entity);
 			}
 		}
 	}

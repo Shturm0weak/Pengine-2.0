@@ -41,6 +41,8 @@ namespace Pengine
 		bool DrawIVec4Control(const std::string& label, glm::ivec4& values, float resetValue = 0.0f,
 			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f) const;
 
+		bool ImageCheckBox(const void* id, ImTextureID textureOn, ImTextureID textureOff, bool& enabled);
+
 		void Hierarchy(const std::shared_ptr<Scene>& scene);
 
 		void SceneInfo(const std::shared_ptr<Scene>& scene);
@@ -73,11 +75,17 @@ namespace Pengine
 
 		void AssetBrowser(const std::shared_ptr<Scene>& scene);
 
+		void AssetBrowserHierarchy();
+
+		void DrawAssetBrowserHierarchy(const std::filesystem::path& directory);
+
 		void SetDarkThemeColors();
 
 		void Manipulate(const std::shared_ptr<Scene>& scene);
 
 		void MoveCamera(const std::shared_ptr<Entity>& camera);
+
+		ImTextureID GetFileIcon(const std::filesystem::path& filepath, const std::string& format);
 
 		struct MaterialMenu
 		{
@@ -152,7 +160,7 @@ namespace Pengine
 		std::filesystem::path m_RootDirectory = std::filesystem::current_path();
 		std::filesystem::path m_CurrentDirectory = m_RootDirectory;
 
-		//char m_FilterBuffer[64];
+		char m_AssetBrowserFilterBuffer[64];
 
 		float m_ThumbnailScale = 0.8f;
 

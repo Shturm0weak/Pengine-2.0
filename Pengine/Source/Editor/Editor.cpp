@@ -36,6 +36,8 @@ Editor::Editor()
 {
 	SetDarkThemeColors();
 	ViewportManager::GetInstance().Create("Main", { 800, 800 });
+
+	m_AssetBrowserFilterBuffer[0] = '\0';
 }
 
 void Editor::Update(const std::shared_ptr<Scene>& scene)
@@ -81,6 +83,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	SceneInfo(scene);
 	Properties(scene);
 	AssetBrowser(scene);
+	AssetBrowserHierarchy();
 
 	m_MaterialMenu.Update(*this);
 	m_BaseMaterialMenu.Update(*this);
@@ -614,16 +617,41 @@ bool Editor::DrawIVec4Control(
 	return changed;
 }
 
+bool Editor::ImageCheckBox(const void* id, ImTextureID textureOn, ImTextureID textureOff, bool& enabled)
+{
+	const ImTextureID isEnabledIcon = enabled ? textureOn : textureOff;
+
+	bool clicked = false;
+
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	ImGui::PushID(id);
+	if (ImGui::ImageButton(isEnabledIcon, { ImGui::GetFontSize(), ImGui::GetFontSize() }))
+	{
+		clicked = true;
+		enabled = !enabled;
+	}
+	ImGui::PopID();
+	ImGui::PopStyleColor();
+
+	return clicked;
+}
+
 void Editor::Hierarchy(const std::shared_ptr<Scene>& scene)
 {
-	if (ImGui::Begin("Hierarchy"))
+	if (ImGui::Begin("Scene Hierarchy"))
 	{
+		if (ImGui::IsWindowFocused() && Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL) && Input::KeyBoard::IsKeyPressed(Keycode::KEY_A))
+		{
+			scene->GetSelectedEntities().clear();
+			for (const std::shared_ptr<Entity> entity : scene->GetEntities())
+			{
+				scene->GetSelectedEntities().emplace(entity);
+			}
+		}
+
 		if (scene)
 		{
-			if (ImGui::CollapsingHeader("Game Objects"))
-			{
-				DrawScene(scene);
-			}
+			DrawScene(scene);
 
 			GameObjectPopUpMenu(scene);
 		}
@@ -713,13 +741,15 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 
 	Indent indent;
 
-	ImGui::PushID(entity.get());
 	bool enabled = entity->IsEnabled();
-	if (ImGui::Checkbox("##IsEnabled", &enabled))
+
+	const ImTextureID showIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\ShowIcon.png")->GetId();
+	const ImTextureID hideIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\HideIcon.png")->GetId();
+
+	if (ImageCheckBox(entity.get(), showIconId, hideIconId, enabled))
 	{
 		entity->SetEnabled(enabled);
 	}
-	ImGui::PopID();
 
 	ImGui::SameLine();
 
@@ -769,14 +799,22 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 		ImGui::EndDragDropTarget();
 	}
 
-	if (ImGui::IsItemHovered() && Input::Mouse::IsMouseReleased(Keycode::MOUSE_BUTTON_1))
+	if (ImGui::IsItemClicked() && (ImGui::GetMousePos().x - ImGui::GetItemRectMin().x) > ImGui::GetTreeNodeToLabelSpacing())
 	{
+		auto& selectedEntities = entity->GetScene()->GetSelectedEntities();
 		if (!Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL))
 		{
-			entity->GetScene()->GetSelectedEntities().clear();
+			selectedEntities.clear();
 		}
 		
-		entity->GetScene()->GetSelectedEntities().emplace(entity);
+		if (selectedEntities.contains(entity))
+		{
+			selectedEntities.erase(entity);
+		}
+		else
+		{
+			selectedEntities.emplace(entity);
+		}
 	}
 
 	if (opened)
@@ -1170,11 +1208,47 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 			{
 				m_CurrentDirectory = m_CurrentDirectory.parent_path();
 			}
-
-			ImGui::SameLine();
+		}
+		else
+		{
+			ImGui::Button("<-");
 		}
 
-		//ImGui::InputText("Filter", m_FilterBuffer, 64);
+		ImGui::SameLine();
+
+		ImGui::PushItemWidth(32 * ImGui::GetFontSize());
+		ImGui::InputTextWithHint("##AssetBrowserFilter", "Search", m_AssetBrowserFilterBuffer, 64);
+		ImGui::PopItemWidth();
+
+		{
+			std::vector<std::filesystem::path> paths;
+			std::filesystem::path currentPath = m_CurrentDirectory;
+			paths.emplace_back(currentPath);
+
+			while (currentPath != m_RootDirectory)
+			{
+				currentPath = currentPath.parent_path();
+				paths.emplace_back(currentPath);
+			}
+
+			for (auto path = paths.rbegin(); path != paths.rend(); path++)
+			{
+				ImGui::SameLine();
+
+				std::string pathString = path->string();
+				const size_t index = pathString.find_last_of('\\');
+				pathString = pathString.substr(index + 1, pathString.size() - index);
+
+				if (ImGui::Button(pathString.c_str()))
+				{
+					m_CurrentDirectory = *path;
+				}
+
+				ImGui::SameLine();
+
+				ImGui::Text("/");
+			}
+		}
 
 		const float padding = 16.0f;
 		const float thumbnailSize = 128.0f * m_ThumbnailScale;
@@ -1224,8 +1298,7 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 
 			const std::string filename = path.filename().string();
 			const std::string format = Utils::GetFileFormat(path);
-			ImTextureID currentIcon;
-
+			
 			if (FileFormats::IsAsset(format))
 			{
 				std::filesystem::path metaFilePath = path;
@@ -1236,42 +1309,12 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 				}
 			}
 
-			//if (m_FilterBuffer[0] != '\0' && !Utils::Contains(filename, m_FilterBuffer))
-			//{
-			//	continue;
-			//}
+			if (m_AssetBrowserFilterBuffer[0] != '\0' && !Utils::Contains(Utils::ToLower(filename), m_AssetBrowserFilterBuffer))
+			{
+				continue;
+			}
 
-			if (directoryIter.is_directory())
-			{
-				currentIcon = folderIconId;
-			}
-			else if (format == FileFormats::Mat())
-			{
-				currentIcon = materialIconId;
-			}
-			else if (format == FileFormats::Meta())
-			{
-				currentIcon = metaIconId;
-			}
-			else if (format == FileFormats::Mesh())
-			{
-				currentIcon = meshIconId;
-			}
-			else if (FileFormats::IsTexture(format))
-			{
-				if (const std::shared_ptr<Texture>& texture = TextureManager::GetInstance().GetTexture(path))
-				{
-					currentIcon = (ImTextureID)texture->GetId();
-				}
-				else
-				{
-					currentIcon = fileIconId;
-				}
-			}
-			else
-			{
-				currentIcon = fileIconId;
-			}
+			const ImTextureID currentIcon = GetFileIcon(directoryIter.path(), format);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 			ImGui::PushID(filename.c_str());
@@ -1372,6 +1415,61 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 		ImGui::Columns(1);
 
 		ImGui::End();
+	}
+}
+
+void Editor::AssetBrowserHierarchy()
+{
+	if (ImGui::Begin("Asset Browser Hierarchy"))
+	{
+		DrawAssetBrowserHierarchy(m_RootDirectory);
+
+		ImGui::End();
+	}
+}
+
+void Editor::DrawAssetBrowserHierarchy(const std::filesystem::path& directory)
+{
+	Indent indent;
+
+	for (auto& directoryIter : std::filesystem::directory_iterator(directory))
+	{
+		const std::filesystem::path path = Utils::GetShortFilepath(directoryIter.path());
+		if (Utils::Contains(path.string(), ".cpp") || Utils::Contains(path.string(), ".h"))
+		{
+			continue;
+		}
+
+		const bool isDirectory = std::filesystem::is_directory(path);
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
+		if (!isDirectory)
+		{
+			flags |= ImGuiTreeNodeFlags_Leaf;
+		}
+
+		ImGui::Image(GetFileIcon(path, Utils::GetFileFormat(path)), ImVec2(ImGui::GetFontSize(), ImGui::GetFontSize()));
+		ImGui::SameLine();
+
+		const std::string filename = path.filename().string();
+		const bool opened = ImGui::TreeNodeEx(filename.c_str(), flags);
+
+		if (isDirectory)
+		{
+			if (ImGui::IsItemClicked() && (ImGui::GetMousePos().x - ImGui::GetItemRectMin().x) > ImGui::GetTreeNodeToLabelSpacing())
+			{
+				m_CurrentDirectory = directoryIter.path();
+			}
+		}
+
+		if (opened)
+		{
+			ImGui::TreePop();
+
+			if (isDirectory)
+			{
+				DrawAssetBrowserHierarchy(directoryIter.path());
+			}
+		}
 	}
 }
 
@@ -1580,6 +1678,32 @@ void Editor::MoveCamera(const std::shared_ptr<Entity>& camera)
 	{
 		transform.Translate(transform.GetPosition() + transform.GetUp() * (float)Time::GetDeltaTime() * speed);
 	}
+}
+
+ImTextureID Editor::GetFileIcon(const std::filesystem::path& filepath, const std::string& format)
+{
+	if (std::filesystem::is_directory(filepath))
+	{
+		return (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\FolderIcon.png")->GetId();
+	}
+	else if (format == FileFormats::Mat())
+	{
+		return (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\MaterialIcon.png")->GetId();
+	}
+	else if (format == FileFormats::Meta())
+	{
+		return (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\MetaIcon.png")->GetId();
+	}
+	else if (format == FileFormats::Mesh())
+	{
+		return (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\MeshIcon.png")->GetId();
+	}
+	else if (FileFormats::IsTexture(format))
+	{
+		return (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\FileIcon.png")->GetId();
+	}
+
+	return (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\FileIcon.png")->GetId();
 }
 
 void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
