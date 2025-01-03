@@ -1,17 +1,20 @@
 Basemat:
   Pipelines:
-    - RenderPass: Final
+    - RenderPass: SSR
       DepthTest: false
       DepthWrite: false
       CullMode: None
       PolygonMode: Fill
       TopologyMode: TriangleList
-      Vertex: Shaders/Final.vert
-      Fragment: Shaders/Final.frag
+      Vertex: Shaders/SSR.vert
+      Fragment: Shaders/SSR.frag
       DescriptorSets:
         - Type: Renderer
-          RenderPass: Final
+          RenderPass: DefaultReflection
           Set: 0
+        - Type: Renderer
+          RenderPass: SSR
+          Set: 1
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex
@@ -20,13 +23,11 @@ Basemat:
       ColorBlendStates:
         - BlendEnabled: false
       Uniforms:
-        - Name: deferredTexture
-          RenderTarget: "Deferred[0]"
+        - Name: normalTexture
+          RenderTarget: "GBuffer[1]"
         - Name: shadingTexture
           RenderTarget: "GBuffer[2]"
-        - Name: rawSSRTexture
-          RenderTarget: "SSR[0]"
-          RenderTargetDefault: "Black"
-        - Name: bloomTexture
-          RenderTarget: "BloomFrameBuffers(0)[0]"
-          RenderTargetDefault: "Black"
+        - Name: depthTexture
+          RenderTarget: "GBuffer[4]"
+        - Name: colorTexture
+          RenderTarget: "Deferred[0]"

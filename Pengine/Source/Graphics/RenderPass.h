@@ -19,6 +19,8 @@ namespace Pengine
 	const std::string SSAOBlur = "SSAOBlur";
 	const std::string CSM = "CSM";
 	const std::string Bloom = "Bloom";
+	const std::string SSR = "SSR";
+	const std::string SSRBlur = "SSRBlur";
 	
 	class FrameBuffer;
 	class Window;
@@ -55,12 +57,13 @@ namespace Pengine
 		{
 			Texture::SamplerCreateInfo samplerCreateInfo{};
 			Texture::Layout layout;
+			std::vector<Texture::Usage> usage;
 			Format format;
 			Load load = Load::CLEAR;
 			Store store = Store::STORE;
 			std::optional<glm::ivec2> size;
 			bool isCubeMap = false;
-			uint32_t layercount = 1;
+			uint32_t layerCount = 1;
 			std::function<std::shared_ptr<FrameBuffer>(RenderTarget*, uint32_t&)> getFrameBufferCallback;
 		};
 

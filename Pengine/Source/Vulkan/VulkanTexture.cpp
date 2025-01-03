@@ -53,7 +53,7 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 
 		stagingBuffer->WriteToBuffer(createInfo.data, stagingBuffer->GetSize());
 
-		TransitionToWrite();
+		TransitionToDst();
 
 		device->CopyBufferToImage(
 			stagingBuffer->GetBuffer(),
@@ -61,13 +61,11 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 			static_cast<uint32_t>(m_Size.x),
 			static_cast<uint32_t>(m_Size.y));
 
+		TransitionToRead();
+
 		if (m_MipLevels > 1)
 		{
 			GenerateMipMaps();
-		}
-		else
-		{
-			TransitionToRead();
 		}
 	}
 	else
@@ -446,12 +444,31 @@ Texture::SamplerCreateInfo::BorderColor VulkanTexture::ConvertBorderColor(VkBord
 	return {};
 }
 
-void VulkanTexture::GenerateMipMaps()
+void VulkanTexture::GenerateMipMaps(void* frame)
 {
-	Vk::device->GenerateMipMaps(m_Image, ConvertFormat(m_Format), m_Size.x, m_Size.y, m_MipLevels, m_LayerCount);
+	VkCommandBuffer commandBuffer = device->GetCommandBufferFromFrame(frame);
+
+	TransitionToDst(commandBuffer);
+	Vk::device->GenerateMipMaps(m_Image, ConvertFormat(m_Format), m_Size.x, m_Size.y, m_MipLevels, m_LayerCount, commandBuffer);
+	m_Layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 }
 
-void VulkanTexture::TransitionToWrite()
+void VulkanTexture::Copy(std::shared_ptr<Texture> src, void* frame)
+{
+	VkCommandBuffer commandBuffer = device->GetCommandBufferFromFrame(frame);
+
+	std::shared_ptr<VulkanTexture> vkSrc = std::static_pointer_cast<VulkanTexture>(src);
+
+	vkSrc->TransitionToSrc(commandBuffer);
+	TransitionToDst(commandBuffer);
+
+	Vk::device->CopyImageToImage(vkSrc->m_Image, vkSrc->m_Layout, m_Image, m_Layout, m_Size.x, m_Size.y, commandBuffer);
+
+	vkSrc->TransitionToPrevious(commandBuffer);
+	TransitionToPrevious(commandBuffer);
+}
+
+void VulkanTexture::TransitionToDst(VkCommandBuffer commandBuffer)
 {
 	device->TransitionImageLayout(
 		m_Image,
@@ -460,12 +477,31 @@ void VulkanTexture::TransitionToWrite()
 		m_Layout,
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		m_MipLevels,
-		m_LayerCount);
+		m_LayerCount,
+		commandBuffer);
 
+	m_PreviousLayout = m_Layout;
 	m_Layout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 }
 
-void VulkanTexture::TransitionToRead()
+
+void VulkanTexture::TransitionToSrc(VkCommandBuffer commandBuffer)
+{
+	device->TransitionImageLayout(
+		m_Image,
+		ConvertFormat(m_Format),
+		ConvertAspectMask(m_AspectMask),
+		m_Layout,
+		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+		m_MipLevels,
+		m_LayerCount,
+		commandBuffer);
+
+	m_PreviousLayout = m_Layout;
+	m_Layout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+}
+
+void VulkanTexture::TransitionToRead(VkCommandBuffer commandBuffer)
 {
 	device->TransitionImageLayout(
 		m_Image,
@@ -474,12 +510,29 @@ void VulkanTexture::TransitionToRead()
 		m_Layout,
 		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 		m_MipLevels,
-		m_LayerCount);
+		m_LayerCount,
+		commandBuffer);
 
+	m_PreviousLayout = m_Layout;
 	m_Layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 }
 
-void VulkanTexture::TransitionToColorAttachment()
+void VulkanTexture::TransitionToPrevious(VkCommandBuffer commandBuffer)
+{
+	device->TransitionImageLayout(
+		m_Image,
+		ConvertFormat(m_Format),
+		ConvertAspectMask(m_AspectMask),
+		m_Layout,
+		m_PreviousLayout,
+		m_MipLevels,
+		m_LayerCount,
+		commandBuffer);
+
+	std::swap(m_PreviousLayout, m_Layout);
+}
+
+void VulkanTexture::TransitionToColorAttachment(VkCommandBuffer commandBuffer)
 {
 	device->TransitionImageLayout(
 		m_Image,
@@ -488,7 +541,9 @@ void VulkanTexture::TransitionToColorAttachment()
 		m_Layout,
 		VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		m_MipLevels,
-		m_LayerCount);
+		m_LayerCount,
+		commandBuffer);
 
+	m_PreviousLayout = m_Layout;
 	m_Layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 }

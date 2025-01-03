@@ -8,6 +8,8 @@
 #define VMA_IMPLEMENTATION
 #include <vma/vk_mem_alloc.h>
 
+#include <imgui/backends/imgui_impl_vulkan.h>
+
 #include <cstring>
 #include <iostream>
 #include <set>
@@ -701,6 +703,46 @@ void VulkanDevice::CopyBufferToImage(
 	EndSingleTimeCommands(commandBuffer);
 }
 
+void VulkanDevice::CopyImageToImage(
+	VkImage src,
+	VkImageLayout srcImageLayout,
+	VkImage dst,
+	VkImageLayout dstImageLayout,
+	uint32_t width,
+	uint32_t height,
+	VkCommandBuffer commandBuffer)
+{
+	bool isCreatedSingleTimeCommands = false;
+	if (commandBuffer == VK_NULL_HANDLE)
+	{
+		commandBuffer = BeginSingleTimeCommands();
+		isCreatedSingleTimeCommands = true;
+	}
+
+	VkImageCopy region{};
+
+	region.dstOffset = { 0, 0, 0 };
+	region.srcOffset = { 0, 0, 0 };
+	region.extent = { width, height, 1 };
+
+	region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	region.srcSubresource.baseArrayLayer = 0;
+	region.srcSubresource.layerCount = 1;
+	region.srcSubresource.mipLevel = 0;
+
+	region.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	region.dstSubresource.baseArrayLayer = 0;
+	region.dstSubresource.layerCount = 1;
+	region.dstSubresource.mipLevel = 0;
+
+	vkCmdCopyImage(commandBuffer, src, srcImageLayout, dst, dstImageLayout, 1, &region);
+
+	if (isCreatedSingleTimeCommands)
+	{
+		EndSingleTimeCommands(commandBuffer);
+	}
+}
+
 void VulkanDevice::CreateImage(
 	const VkImageCreateInfo& imageInfo,
 	VkImage& image,
@@ -729,9 +771,20 @@ void VulkanDevice::TransitionImageLayout(
 	const VkImageLayout oldLayout,
 	const VkImageLayout newLayout,
 	const uint32_t mipLevels,
-	uint32_t layerCount) const
+	uint32_t layerCount,
+	VkCommandBuffer commandBuffer) const
 {
-	const VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
+	if (oldLayout == newLayout)
+	{
+		return;
+	}
+
+	bool isCreatedSingleTimeCommands = false;
+	if (commandBuffer == VK_NULL_HANDLE)
+	{
+		commandBuffer = BeginSingleTimeCommands();
+		isCreatedSingleTimeCommands = true;
+	}
 
 	VkImageMemoryBarrier barrier{};
 	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -759,6 +812,24 @@ void VulkanDevice::TransitionImageLayout(
 
 		sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 		destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+	}
+	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL &&
+		newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL)
+	{
+		barrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+
+		sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+	}
+	else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL&&
+		newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+	{
+		barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+		sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 	}
 	else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&
 		newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
@@ -805,6 +876,15 @@ void VulkanDevice::TransitionImageLayout(
 		sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 	}
+	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL &&
+		newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+	{
+		barrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+		sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+	}
 	else
 	{
 		FATAL_ERROR("Unsupported layout transition!");
@@ -818,7 +898,10 @@ void VulkanDevice::TransitionImageLayout(
 		0, nullptr,
 		1, &barrier);
 
-	EndSingleTimeCommands(commandBuffer);
+	if (isCreatedSingleTimeCommands)
+	{
+		EndSingleTimeCommands(commandBuffer);
+	}
 }
 
 void VulkanDevice::GenerateMipMaps(
@@ -827,7 +910,8 @@ void VulkanDevice::GenerateMipMaps(
 	const int32_t texWidth,
 	const int32_t texHeight,
 	const uint32_t mipLevels,
-	uint32_t layerCount) const
+	uint32_t layerCount,
+	VkCommandBuffer commandBuffer) const
 {
 	VkFormatProperties formatProperties;
 	vkGetPhysicalDeviceFormatProperties(m_PhysicalDevice, imageFormat, &formatProperties);
@@ -836,8 +920,13 @@ void VulkanDevice::GenerateMipMaps(
 		FATAL_ERROR("Texture image format does not support linear blitting!");
 	}
 
-	const VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
-
+	bool isCreatedSingleTimeCommands = false;
+	if (commandBuffer == VK_NULL_HANDLE)
+	{
+		commandBuffer = BeginSingleTimeCommands();
+		isCreatedSingleTimeCommands = true;
+	}
+	
 	int32_t mipWidth = texWidth;
 	int32_t mipHeight = texHeight;
 
@@ -915,7 +1004,10 @@ void VulkanDevice::GenerateMipMaps(
 			1, &barrier);
 	}
 
-	EndSingleTimeCommands(commandBuffer);
+	if (isCreatedSingleTimeCommands)
+	{
+		EndSingleTimeCommands(commandBuffer);
+	}
 }
 
 void VulkanDevice::CommandBeginLabel(
@@ -981,4 +1073,15 @@ void VulkanDevice::FlushDeletionQueue(bool immediate)
 	{
 		m_DeletionQueue.erase(frame);
 	}
+}
+
+VkCommandBuffer VulkanDevice::GetCommandBufferFromFrame(void* frame)
+{
+	if (frame)
+	{
+		const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+		return vkFrame->CommandBuffer;
+	}
+
+	return VK_NULL_HANDLE;
 }

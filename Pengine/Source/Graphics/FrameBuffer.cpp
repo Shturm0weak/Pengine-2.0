@@ -26,12 +26,18 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 		attachmentCreateInfo.filepath = renderPass->GetType() + "FrameBuffer";
 		attachmentCreateInfo.format = attachment.format;
 		attachmentCreateInfo.channels = 4;
-		attachmentCreateInfo.layerCount = attachment.layercount;
+		attachmentCreateInfo.layerCount = attachment.layerCount;
 		attachmentCreateInfo.isCubeMap = attachment.isCubeMap;
 		attachmentCreateInfo.aspectMask = isColor ? Texture::AspectMask::COLOR :
 			Texture::AspectMask::DEPTH;
-		attachmentCreateInfo.usage = { Texture::Usage::SAMPLED, 
+		attachmentCreateInfo.usage = { Texture::Usage::SAMPLED,
 			isColor ? Texture::Usage::COLOR_ATTACHMENT : Texture::Usage::DEPTH_STENCIL_ATTACHMENT };
+
+		for (const auto& usage : attachment.usage)
+		{
+			attachmentCreateInfo.usage.emplace_back(usage);
+		}
+
 		attachmentCreateInfo.size = attachment.size ? *attachment.size : glm::ivec2((glm::vec2)size * renderPass->GetResizeViewportScale());
 		attachmentCreateInfo.samplerCreateInfo = attachment.samplerCreateInfo;
 

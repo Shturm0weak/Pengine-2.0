@@ -910,13 +910,33 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			ImGui::PopID();
 
 			const char* const resolutionScales[] = { "0.25", "0.5", "0.75", "1.0"};
+			ImGui::PushID("SSAO Quality");
 			isChangedToSerialize += ImGui::Combo("Quality", &graphicsSettings.ssao.resolutionScale, resolutionScales, 4);
+			ImGui::PopID();
 
+			ImGui::PushID("SSAO Blur Quality");
+			isChangedToSerialize += ImGui::Combo("Blur Quality", &graphicsSettings.ssao.resolutionBlurScale, resolutionScales, 4);
+			ImGui::PopID();
+
+			ImGui::PushID("SSAO Bias");
 			isChangedToSerialize += ImGui::SliderFloat("Bias", &graphicsSettings.ssao.bias, 0.0f, 10.0f);
+			ImGui::PopID();
+			
+			ImGui::PushID("SSAO Radius");
 			isChangedToSerialize += ImGui::SliderFloat("Radius", &graphicsSettings.ssao.radius, 0.0f, 1.0f);
+			ImGui::PopID();
+			
+			ImGui::PushID("SSAO Kernel Size");
 			isChangedToSerialize += ImGui::SliderInt("Kernel Size", &graphicsSettings.ssao.kernelSize, 2, 64);
+			ImGui::PopID();
+			
+			ImGui::PushID("SSAO Noise Size");
 			isChangedToSerialize += ImGui::SliderInt("Noise Size", &graphicsSettings.ssao.noiseSize, 4, 64);
+			ImGui::PopID();
+			
+			ImGui::PushID("SSAO AO Scale");
 			isChangedToSerialize += ImGui::SliderFloat("AO Scale", &graphicsSettings.ssao.aoScale, 0.0f, 10.0f);
+			ImGui::PopID();
 		}
 
 		if (ImGui::CollapsingHeader("Shadows"))
@@ -926,25 +946,50 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			ImGui::PopID();
 
 			const char* const qualities[] = { "1024", "2048", "4096" };
+			ImGui::PushID("Shadows Quality");
 			isChangedToSerialize += ImGui::Combo("Quality", &graphicsSettings.shadows.quality, qualities, 3);
+			ImGui::PopID();
 
+			ImGui::PushID("Shadows Cascade Count");
 			if (ImGui::SliderInt("Cascade Count", &graphicsSettings.shadows.cascadeCount, 2, 10))
 			{
 				isChangedToSerialize += true;
 
 				graphicsSettings.shadows.biases.resize(graphicsSettings.shadows.cascadeCount, 0.0f);
 			}
+			ImGui::PopID();
 
+			ImGui::PushID("Shadows Visualize");
 			ImGui::Checkbox("Visualize", &graphicsSettings.shadows.visualize);
+			ImGui::PopID();
+
+			ImGui::PushID("Shadows Pcf Enabled");
 			isChangedToSerialize += ImGui::Checkbox("Pcf Enabled", &graphicsSettings.shadows.pcfEnabled);
+			ImGui::PopID();
+
+			ImGui::PushID("Shadows Pcf Range");
 			isChangedToSerialize += ImGui::SliderInt("Pcf Range", &graphicsSettings.shadows.pcfRange, 1, 5);
+			ImGui::PopID();
+
+			ImGui::PushID("Shadows Split Factor");
 			isChangedToSerialize += ImGui::SliderFloat("Split Factor", &graphicsSettings.shadows.splitFactor, 0.0f, 1.0f);
+			ImGui::PopID();
+
+			ImGui::PushID("Shadows Max Distance");
 			isChangedToSerialize += ImGui::SliderFloat("Max Distance", &graphicsSettings.shadows.maxDistance, 0.0f, 1000.0f);
+			ImGui::PopID();
+
+			ImGui::PushID("Shadows Fog Factor");
 			isChangedToSerialize += ImGui::SliderFloat("Fog Factor", &graphicsSettings.shadows.fogFactor, 0.0f, 1.0f);
+			ImGui::PopID();
+
 			for (size_t i = 0; i < graphicsSettings.shadows.biases.size(); i++)
 			{
 				const std::string biasName = "Bias " + std::to_string(i);
+				const std::string idName = "Shadows " + biasName;
+				ImGui::PushID(idName.c_str());
 				isChangedToSerialize += ImGui::SliderFloat(biasName.c_str(), &graphicsSettings.shadows.biases[i], 0.0f, 1.0f);
+				ImGui::PopID();
 			}
 		}
 
@@ -954,18 +999,75 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.bloom.isEnabled);
 			ImGui::PopID();
 
+			ImGui::PushID("Bloom Mip Count");
 			isChangedToSerialize += ImGui::SliderInt("Mip Count", &graphicsSettings.bloom.mipCount, 1, 10);
+			ImGui::PopID();
+
+			ImGui::PushID("Bloom Brightness Threshold");
 			isChangedToSerialize += ImGui::SliderFloat("Brightness Threshold", &graphicsSettings.bloom.brightnessThreshold, 0.0f, 2.0f);
+			ImGui::PopID();
+		}
+
+		if (ImGui::CollapsingHeader("SSR"))
+		{
+			ImGui::PushID("SSR Is Enabled");
+			isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.ssr.isEnabled);
+			ImGui::PopID();
+
+			ImGui::PushID("SSR Is Mip Maps Enabled");
+			isChangedToSerialize += ImGui::Checkbox("Is Mip Maps Enabled", &graphicsSettings.ssr.isMipMapsEnabled);
+			ImGui::PopID();
+
+			const char* const resolutionScales[] = { "0.25", "0.5", "0.75", "1.0" };
+			ImGui::PushID("SSR Quality");
+			isChangedToSerialize += ImGui::Combo("Quality", &graphicsSettings.ssr.resolutionScale, resolutionScales, 4);
+			ImGui::PopID();
+
+			const char* const resolutionBlurScales[] = { "0.125", "0.25", "0.5", "0.75", "1.0" };
+			ImGui::PushID("SSR Blur Quality");
+			isChangedToSerialize += ImGui::Combo("Blur Quality", &graphicsSettings.ssr.resolutionBlurScale, resolutionBlurScales, 5);
+			ImGui::PopID();
+
+			ImGui::PushID("SSR Max Distance");
+			isChangedToSerialize += ImGui::SliderFloat("Max Distance", &graphicsSettings.ssr.maxDistance, 1.0f, 100.0f);
+			ImGui::PopID();
+
+			ImGui::PushID("SSR Resolution");
+			isChangedToSerialize += ImGui::SliderFloat("Resolution", &graphicsSettings.ssr.resolution, 0.0f, 1.0f);
+			ImGui::PopID();
+
+			ImGui::PushID("SSR Step Count");
+			isChangedToSerialize += ImGui::SliderInt("Step Count", &graphicsSettings.ssr.stepCount, 0, 20);
+			ImGui::PopID();
+
+			ImGui::PushID("SSR Thickness");
+			isChangedToSerialize += ImGui::SliderFloat("Thickness", &graphicsSettings.ssr.thickness, 0.0f, 5.0f);
+			ImGui::PopID();
+
+			ImGui::PushID("SSR Blur Range");
+			isChangedToSerialize += ImGui::SliderInt("Blur Range", &graphicsSettings.ssr.blurRange, 0, 10);
+			ImGui::PopID();
+
+			ImGui::PushID("SSR Blur Offset");
+			isChangedToSerialize += ImGui::SliderInt("Blur Offset", &graphicsSettings.ssr.blurOffset, 0, 10);
+			ImGui::PopID();
 		}
 
 		if (ImGui::CollapsingHeader("Post Process"))
 		{
+			ImGui::PushID("Post Process FXAA");
 			isChangedToSerialize += ImGui::Checkbox("FXAA", &graphicsSettings.postProcess.fxaa);
+			ImGui::PopID();
+
+			ImGui::PushID("Post Process Gamma");
 			isChangedToSerialize += ImGui::SliderFloat("Gamma", &graphicsSettings.postProcess.gamma, 0.0f, 3.0f);
+			ImGui::PopID();
 
 			const char* const toneMappers[] = {"NONE", "ACES" };
 			int* toneMapperIndex = (int*)(&graphicsSettings.postProcess.toneMapper);
+			ImGui::PushID("Post Process Tone Mapper");
 			isChangedToSerialize += ImGui::Combo("Tone Mapper", toneMapperIndex, toneMappers, (int)GraphicsSettings::PostProcess::ToneMapper::COUNT);
+			ImGui::PopID();
 		}
 
 		if (isChangedToSerialize && std::filesystem::exists(graphicsSettings.GetFilepath()))

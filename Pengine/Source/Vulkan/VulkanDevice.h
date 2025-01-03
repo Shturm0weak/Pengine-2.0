@@ -101,6 +101,15 @@ namespace Pengine::Vk
 			uint32_t width,
 			uint32_t height);
 
+		void CopyImageToImage(
+			VkImage src,
+			VkImageLayout srcImageLayout,
+			VkImage dst,
+			VkImageLayout dstImageLayout,
+			uint32_t width,
+			uint32_t height,
+			VkCommandBuffer commandBuffer);
+
 		void CreateImage(
 			const VkImageCreateInfo& imageInfo,
 			VkImage& image,
@@ -114,7 +123,8 @@ namespace Pengine::Vk
 			VkImageLayout oldLayout,
 			VkImageLayout newLayout,
 			uint32_t mipLevels,
-			uint32_t layerCount) const;
+			uint32_t layerCount,
+			VkCommandBuffer commandBuffer) const;
 
 		void GenerateMipMaps(
 			VkImage image,
@@ -122,7 +132,8 @@ namespace Pengine::Vk
 			int32_t texWidth,
 			int32_t texHeight,
 			uint32_t mipLevels,
-			uint32_t layerCount) const;
+			uint32_t layerCount,
+			VkCommandBuffer commandBuffer) const;
 
 		void CommandBeginLabel(
 			const std::string& name,
@@ -137,6 +148,7 @@ namespace Pengine::Vk
 
 		void FlushDeletionQueue(bool immediate = false);
 
+		VkCommandBuffer GetCommandBufferFromFrame(void* frame);
 	private:
 		void CreateInstance(const std::string& applicationName);
 

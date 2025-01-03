@@ -54,7 +54,7 @@ void main()
 	vec3 viewDirection = normalize(-position);
 	vec3 result = vec3(0.0f);
 
-	if (normal.a == 0)
+	if (normal.a <= 0.0f)
 	{
 		result = albedoColor;
 	}

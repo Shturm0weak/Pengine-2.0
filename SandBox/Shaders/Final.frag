@@ -11,13 +11,18 @@ layout(location = 0) out vec4 outColor;
 
 layout(set = 0, binding = 0) uniform sampler2D deferredTexture;
 layout(set = 0, binding = 1) uniform sampler2D bloomTexture;
+layout(set = 0, binding = 2) uniform sampler2D shadingTexture;
+layout(set = 0, binding = 3) uniform sampler2D SSRTexture;
+layout(set = 0, binding = 4) uniform sampler2D rawSSRTexture;
 
-layout(set = 0, binding = 2) uniform PostProcessBuffer
+layout(set = 0, binding = 5) uniform PostProcessBuffer
 {
 	int toneMapperIndex;
 	float gamma;
 	vec2 viewportSize;
 	int fxaa;
+	int isSSREnabled;
+	int isSSRMipMapsEnabled;
 };
 
 #include "Shaders/Includes/ACES.h"
@@ -45,6 +50,29 @@ void main()
 		deferred = texture(deferredTexture, uv).xyz;
 	}
 
+	vec4 shading = texture(shadingTexture, uv);
+	float metallic = shading.r;
+	float roughness = shading.g;
+	float alpha = shading.a;
+
+	vec4 reflectionColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	if (isSSREnabled == 1)
+	{
+		if (isSSRMipMapsEnabled == 1)
+		{
+			int reflectionLod0 = int(floor(roughness * 7.0f));
+			int reflectionLod1 = min(reflectionLod0 + 1, 7);
+			reflectionColor = mix(textureLod(SSRTexture, uv, reflectionLod0), textureLod(SSRTexture, uv, reflectionLod1), roughness * 7.0f - reflectionLod0);
+		}
+		else
+		{
+			reflectionColor = mix(texture(rawSSRTexture, uv), textureLod(SSRTexture, uv, 0), roughness);
+		}
+	}
+
+	deferred = mix(deferred, reflectionColor.xyz, metallic * reflectionColor.a * isSSREnabled);
+	
 	if (toneMapperIndex == 0)
 	{
 		outColor = vec4(pow(deferred + bloom, vec3(1.0f / gamma)), 1.0f);

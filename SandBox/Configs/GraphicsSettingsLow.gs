@@ -22,6 +22,14 @@ Bloom:
   IsEnabled: false
   MipCount: 10
   BrightnessThreshold: 1
+SSR:
+  IsEnabled: false
+  MaxDistance: 30
+  Resolution: 0.300000012
+  ResolutionBlurScale: 1
+  ResolutionScale: 1
+  StepCount: 10
+  Thickness: 5
 PostProcess:
   Gamma: 2.20000005
   ToneMapper: 1

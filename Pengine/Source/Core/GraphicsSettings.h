@@ -29,6 +29,12 @@ namespace Pengine
 			 * 0.75 by default.
 			 */
 			int resolutionScale = 2;
+
+			/**
+			 * Resolution scale: 0.25 / 0.5 / 0.75 / 1.0
+			 * 0.75 by default.
+			 */
+			int resolutionBlurScale = 2;
 		} ssao;
 
 		struct Shadows
@@ -74,6 +80,32 @@ namespace Pengine
 			float gamma = 2.2f;
 			bool fxaa = true;
 		} postProcess;
+
+		struct SSR
+		{
+			bool isEnabled = true;
+			bool isMipMapsEnabled = true;
+
+			int blurRange = 2;
+			int blurOffset = 1;
+
+			float maxDistance = 30.0f;
+			float resolution = 0.3f;
+			float thickness = 5.0f;
+			int stepCount = 10;
+
+			/**
+			 * Resolution scale: 0.25 / 0.5 / 0.75 / 1.0
+			 * 0.5 by default.
+			 */
+			int resolutionScale = 1;
+
+			/**
+			 * Resolution scale: 0.125, 0.25 / 0.5 / 0.75 / 1.0
+			 * 0.125 by default.
+			 */
+			int resolutionBlurScale = 1;
+		} ssr;
 	};
 
 }
