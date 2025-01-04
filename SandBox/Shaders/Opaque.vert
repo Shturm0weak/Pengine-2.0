@@ -9,8 +9,10 @@ layout(location = 5) in mat4 transformA;
 layout(location = 9) in mat3 inverseTransformA;
 
 layout(location = 0) out vec3 normal;
-layout(location = 1) out vec2 uv;
-layout(location = 2) out mat3 TBN;
+layout(location = 1) out vec3 tangent;
+layout(location = 2) out vec3 bitangent;
+layout(location = 3) out vec2 uv;
+
 
 #include "Shaders/Includes/Camera.h"
 
@@ -30,8 +32,7 @@ void main()
 {
 	gl_Position = camera.viewProjectionMat4 * transformA * vec4(positionA, 1.0f);
 	normal = normalize(mat3(camera.viewMat4) * inverseTransformA * normalA);
-	vec3 tangent = normalize(inverseTransformA * tangentA);
-	vec3 bitangent = normalize(inverseTransformA * bitangentA);
-	TBN = mat3(tangent, bitangent, normal);
+	tangent = normalize(inverseTransformA * tangentA);
+	bitangent = normalize(inverseTransformA * bitangentA);
 	uv = uvA * material.uvTransform.xy + material.uvTransform.zw;
 }

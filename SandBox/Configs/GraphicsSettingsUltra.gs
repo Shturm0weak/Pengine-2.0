@@ -29,12 +29,12 @@ Bloom:
 SSR:
   IsEnabled: true
   IsMipMapsEnabled: false
-  MaxDistance: 35
-  Resolution: 0.5
+  MaxDistance: 30
+  Resolution: 0.400000006
   ResolutionBlurScale: 0
   ResolutionScale: 2
   StepCount: 10
-  Thickness: 5
+  Thickness: 0.200000003
   BlurRange: 5
   BlurOffset: 5
 PostProcess:

@@ -596,24 +596,30 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 			}
 		}
 
+		auto getShaderFilepath = [](const YAML::Node& node)
+		{
+			const std::string filepathOrUUID = node.as<std::string>();
+			return std::filesystem::exists(filepathOrUUID) ? filepathOrUUID : Utils::FindFilepath(filepathOrUUID).string();
+		};
+
 		if (const auto& vertexData = pipelineData["Vertex"])
 		{
-			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::VERTEX] = vertexData.as<std::string>();
+			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::VERTEX] = getShaderFilepath(vertexData);
 		}
 
 		if (const auto& fragmentData = pipelineData["Fragment"])
 		{
-			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::FRAGMENT] = fragmentData.as<std::string>();
+			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::FRAGMENT] = getShaderFilepath(fragmentData);
 		}
 
 		if (const auto& geometryData = pipelineData["Geometry"])
 		{
-			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::GEOMETRY] = geometryData.as<std::string>();
+			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::GEOMETRY] = getShaderFilepath(geometryData);
 		}
 
 		if (const auto& computeData = pipelineData["Compute"])
 		{
-			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::COMPUTE] = computeData.as<std::string>();
+			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::COMPUTE] = getShaderFilepath(computeData);
 		}
 
 		for (const auto& descriptorSetData : pipelineData["DescriptorSets"])
@@ -1751,6 +1757,8 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 
 	std::string defaultMeshName = aiMesh->mName.C_Str();
 	std::string meshName = defaultMeshName;
+	meshName.erase(std::remove(meshName.begin(), meshName.end(), ':'), meshName.end());
+
 	std::filesystem::path meshFilepath = directory / (meshName + FileFormats::Mesh());
 
 	int containIndex = 0;
@@ -1920,7 +1928,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	const std::shared_ptr<Material> material = MaterialManager::GetInstance().Clone(
 		materialName,
 		materialFilepath,
-		meshBaseMaterial);
+		doubleSided ? meshBaseDoubleSidedMaterial : meshBaseMaterial);
 
 	const std::shared_ptr<UniformWriter> uniformWriter = material->GetUniformWriter(GBuffer);
 	
@@ -1943,10 +1951,23 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	{
 		material->WriteToBuffer("GBufferMaterial", "material.metallicFactor", metallic);
 	}
+
+	float specular = 0.0f;
+	if (aiMaterial->Get(AI_MATKEY_SPECULAR_FACTOR, specular) == aiReturn_SUCCESS)
+	{
+		material->WriteToBuffer("GBufferMaterial", "material.metallicFactor", specular);
+	}
 	
 	float roughness = 1.0f;
 	if (aiMaterial->Get(AI_MATKEY_ROUGHNESS_FACTOR, roughness) == aiReturn_SUCCESS)
 	{
+		material->WriteToBuffer("GBufferMaterial", "material.roughnessFactor", roughness);
+	}
+
+	float glossines = 0.0f;
+	if (aiMaterial->Get(AI_MATKEY_GLOSSINESS_FACTOR, glossines) == aiReturn_SUCCESS)
+	{
+		roughness = 1.0f - glossines;
 		material->WriteToBuffer("GBufferMaterial", "material.roughnessFactor", roughness);
 	}
 
@@ -1974,6 +1995,15 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		uniformWriter->WriteTexture("albedoTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
 	}
 
+	numTextures = aiMaterial->GetTextureCount(aiTextureType_BASE_COLOR);
+	if (numTextures > 0)
+	{
+		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_BASE_COLOR, 0), aiTextureName);
+		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
+
+		uniformWriter->WriteTexture("albedoTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
+	}
+
 	numTextures = aiMaterial->GetTextureCount(aiTextureType_NORMALS);
 	if (numTextures > 0)
 	{
@@ -1995,10 +2025,28 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		uniformWriter->WriteTexture("metalnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
 	}
 
+	numTextures = aiMaterial->GetTextureCount(aiTextureType_SPECULAR);
+	if (numTextures > 0)
+	{
+		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_SPECULAR, 0), aiTextureName);
+		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
+
+		uniformWriter->WriteTexture("metalnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
+	}
+
 	numTextures = aiMaterial->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS);
 	if (numTextures > 0)
 	{
 		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE_ROUGHNESS, 0), aiTextureName);
+		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
+
+		uniformWriter->WriteTexture("roughnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
+	}
+
+	numTextures = aiMaterial->GetTextureCount(aiTextureType_SHININESS);
+	if (numTextures > 0)
+	{
+		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_SHININESS, 0), aiTextureName);
 		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
 
 		uniformWriter->WriteTexture("roughnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));

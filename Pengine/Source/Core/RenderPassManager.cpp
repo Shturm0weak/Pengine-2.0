@@ -154,6 +154,13 @@ void RenderPassManager::PrepareUniformsPerViewportBeforeDraw(const RenderPass::R
 		"camera.time",
 		time);
 
+	const float deltaTime = Time::GetDeltaTime();
+	reflectionBaseMaterial->WriteToBuffer(
+		globalBuffer,
+		globalBufferName,
+		"camera.deltaTime",
+		deltaTime);
+
 	const float zNear = camera.GetZNear();
 	reflectionBaseMaterial->WriteToBuffer(
 		globalBuffer,
@@ -407,7 +414,7 @@ void RenderPassManager::CreateGBuffer()
 	color.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription normal{};
-	normal.format = Format::R32G32B32A32_SFLOAT;
+	normal.format = Format::R16G16B16A16_SFLOAT;
 	normal.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	normal.load = RenderPass::Load::CLEAR;
 	normal.store = RenderPass::Store::STORE;
@@ -836,6 +843,7 @@ void RenderPassManager::CreateDefaultReflection()
 	createInfo.clearColors = { clearColor };
 	createInfo.clearDepths = { clearDepth };
 	createInfo.attachmentDescriptions = { color };
+	createInfo.createFrameBuffer = false;
 
 	Create(createInfo);
 }
@@ -2138,138 +2146,138 @@ void RenderPassManager::CreateSSR()
 	const std::shared_ptr<Mesh> planeMesh = nullptr;
 
 	createInfo.renderCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
-		{
-			const std::string renderPassName = renderInfo.renderPass->GetType();
-			std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
+	{
+		const std::string renderPassName = renderInfo.renderPass->GetType();
+		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
 
-			const GraphicsSettings::SSR& ssrSettings = renderInfo.scene->GetGraphicsSettings().ssr;
-			if (ssrSettings.isEnabled)
+		const GraphicsSettings::SSR& ssrSettings = renderInfo.scene->GetGraphicsSettings().ssr;
+		if (ssrSettings.isEnabled)
+		{
+			if (!frameBuffer)
 			{
-				if (!frameBuffer)
+				frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), renderInfo.viewportSize);
+				renderInfo.renderTarget->SetFrameBuffer(renderPassName, frameBuffer);
+			}
+		}
+		else
+		{
+			renderInfo.renderTarget->DeleteFrameBuffer(renderPassName);
+
+			return;
+		}
+
+		renderInfo.renderer->BeginCommandLabel(renderPassName, topLevelRenderPassDebugColor, renderInfo.frame);
+
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo, renderPassName, { 1.0f, 1.0f, 0.0f });
+
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
+		if (!plane)
+		{
+			renderInfo.renderer->EndRenderPass(submitInfo);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+			return;
+		}
+
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SSR.basemat");
+		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+		if (!pipeline)
+		{
+			renderInfo.renderer->EndRenderPass(submitInfo);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+			return;
+		}
+
+		constexpr float resolutionScales[] = { 0.25f, 0.5f, 0.75f, 1.0f };
+
+		if (renderInfo.renderPass->GetResizeViewportScale() != glm::vec2(resolutionScales[ssrSettings.resolutionScale]))
+		{
+			auto callback = [resolutionScales, frameBuffer, ssrSettings, renderInfo]()
+			{
+				renderInfo.renderPass->SetResizeViewportScale(glm::vec2(resolutionScales[ssrSettings.resolutionScale]));
+				frameBuffer->Resize(glm::vec2(renderInfo.viewportSize) * resolutionScales[ssrSettings.resolutionScale]);
+			};
+
+			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+			EventSystem::GetInstance().SendEvent(resizeEvent);
+		}
+
+		std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderTarget->GetUniformWriter(renderPassName);
+		if (!renderUniformWriter)
+		{
+			std::shared_ptr<UniformLayout> renderUniformLayout =
+				pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, renderPassName));
+			renderUniformWriter = UniformWriter::Create(renderUniformLayout);
+			renderInfo.renderTarget->SetUniformWriter(renderPassName, renderUniformWriter);
+
+			for (const auto& binding : renderUniformLayout->GetBindings())
+			{
+				if (binding.buffer && binding.buffer->name == "SSRBuffer")
 				{
-					frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), renderInfo.viewportSize);
-					renderInfo.renderTarget->SetFrameBuffer(renderPassName, frameBuffer);
+					const std::shared_ptr<Buffer> buffer = Buffer::Create(
+						binding.buffer->size,
+						1,
+						Buffer::Usage::UNIFORM_BUFFER,
+						Buffer::MemoryType::CPU);
+
+					renderInfo.renderTarget->SetBuffer("SSRBuffer", buffer);
+					renderUniformWriter->WriteBuffer(binding.buffer->name, buffer);
+					renderUniformWriter->Flush();
+
+					break;
 				}
+			}
+		}
+
+		for (const auto& [name, renderTargetInfo] : pipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
+		{
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderTargetInfo.renderPassName);
+			if (frameBuffer)
+			{
+				renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
 			}
 			else
 			{
-				renderInfo.renderTarget->DeleteFrameBuffer(renderPassName);
-
-				return;
+				const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.scene->GetRenderTarget()->GetFrameBuffer(renderTargetInfo.renderPassName);
+				renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
 			}
+		}
 
-			renderInfo.renderer->BeginCommandLabel(renderPassName, topLevelRenderPassDebugColor, renderInfo.frame);
+		const std::shared_ptr<Buffer> ssrBuffer = renderInfo.renderTarget->GetBuffer("SSRBuffer");
+		baseMaterial->WriteToBuffer(ssrBuffer, "SSRBuffer", "viewportScale", GetRenderPass(renderPassName)->GetResizeViewportScale());
+		baseMaterial->WriteToBuffer(ssrBuffer, "SSRBuffer", "maxDistance", ssrSettings.maxDistance);
+		baseMaterial->WriteToBuffer(ssrBuffer, "SSRBuffer", "resolution", ssrSettings.resolution);
+		baseMaterial->WriteToBuffer(ssrBuffer, "SSRBuffer", "stepCount", ssrSettings.stepCount);
+		baseMaterial->WriteToBuffer(ssrBuffer, "SSRBuffer", "thickness", ssrSettings.thickness);
 
-			RenderPass::SubmitInfo submitInfo{};
-			submitInfo.frame = renderInfo.frame;
-			submitInfo.renderPass = renderInfo.renderPass;
-			submitInfo.frameBuffer = frameBuffer;
-			renderInfo.renderer->BeginRenderPass(submitInfo, renderPassName, { 1.0f, 1.0f, 0.0f });
+		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 
-			const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
-			if (!plane)
+		for (const auto& uniformWriter : uniformWriters)
+		{
+			uniformWriter->Flush();
+
+			for (const auto& [location, buffer] : uniformWriter->GetBuffersByLocation())
 			{
-				renderInfo.renderer->EndRenderPass(submitInfo);
-				renderInfo.renderer->EndCommandLabel(renderInfo.frame);
-				return;
+				buffer->Flush();
 			}
+		}
 
-			const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SSR.basemat");
-			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
-			if (!pipeline)
-			{
-				renderInfo.renderer->EndRenderPass(submitInfo);
-				renderInfo.renderer->EndCommandLabel(renderInfo.frame);
-				return;
-			}
+		renderInfo.renderer->Render(
+			GetVertexBuffers(pipeline, plane),
+			plane->GetIndexBuffer(),
+			plane->GetIndexCount(),
+			pipeline,
+			nullptr,
+			0,
+			1,
+			uniformWriters,
+			renderInfo.frame);
 
-			constexpr float resolutionScales[] = { 0.25f, 0.5f, 0.75f, 1.0f };
-
-			if (renderInfo.renderPass->GetResizeViewportScale() != glm::vec2(resolutionScales[ssrSettings.resolutionScale]))
-			{
-				auto callback = [resolutionScales, frameBuffer, ssrSettings, renderInfo]()
-				{
-					renderInfo.renderPass->SetResizeViewportScale(glm::vec2(resolutionScales[ssrSettings.resolutionScale]));
-					frameBuffer->Resize(glm::vec2(renderInfo.viewportSize) * resolutionScales[ssrSettings.resolutionScale]);
-				};
-
-				std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
-				EventSystem::GetInstance().SendEvent(resizeEvent);
-			}
-
-			std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderTarget->GetUniformWriter(renderPassName);
-			if (!renderUniformWriter)
-			{
-				std::shared_ptr<UniformLayout> renderUniformLayout =
-					pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, renderPassName));
-				renderUniformWriter = UniformWriter::Create(renderUniformLayout);
-				renderInfo.renderTarget->SetUniformWriter(renderPassName, renderUniformWriter);
-
-				for (const auto& binding : renderUniformLayout->GetBindings())
-				{
-					if (binding.buffer && binding.buffer->name == "SSRBuffer")
-					{
-						const std::shared_ptr<Buffer> buffer = Buffer::Create(
-							binding.buffer->size,
-							1,
-							Buffer::Usage::UNIFORM_BUFFER,
-							Buffer::MemoryType::CPU);
-
-						renderInfo.renderTarget->SetBuffer("SSRBuffer", buffer);
-						renderUniformWriter->WriteBuffer(binding.buffer->name, buffer);
-						renderUniformWriter->Flush();
-
-						break;
-					}
-				}
-			}
-
-			for (const auto& [name, renderTargetInfo] : pipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
-			{
-				const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderTargetInfo.renderPassName);
-				if (frameBuffer)
-				{
-					renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
-				}
-				else
-				{
-					const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.scene->GetRenderTarget()->GetFrameBuffer(renderTargetInfo.renderPassName);
-					renderUniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
-				}
-			}
-
-			const std::shared_ptr<Buffer> ssrBuffer = renderInfo.renderTarget->GetBuffer("SSRBuffer");
-			baseMaterial->WriteToBuffer(ssrBuffer, "SSRBuffer", "viewportScale", GetRenderPass(renderPassName)->GetResizeViewportScale());
-			baseMaterial->WriteToBuffer(ssrBuffer, "SSRBuffer", "maxDistance", ssrSettings.maxDistance);
-			baseMaterial->WriteToBuffer(ssrBuffer, "SSRBuffer", "resolution", ssrSettings.resolution);
-			baseMaterial->WriteToBuffer(ssrBuffer, "SSRBuffer", "stepCount", ssrSettings.stepCount);
-			baseMaterial->WriteToBuffer(ssrBuffer, "SSRBuffer", "thickness", ssrSettings.thickness);
-
-			std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-
-			for (const auto& uniformWriter : uniformWriters)
-			{
-				uniformWriter->Flush();
-
-				for (const auto& [location, buffer] : uniformWriter->GetBuffersByLocation())
-				{
-					buffer->Flush();
-				}
-			}
-
-			renderInfo.renderer->Render(
-				GetVertexBuffers(pipeline, plane),
-				plane->GetIndexBuffer(),
-				plane->GetIndexCount(),
-				pipeline,
-				nullptr,
-				0,
-				1,
-				uniformWriters,
-				renderInfo.frame);
-
-			renderInfo.renderer->EndRenderPass(submitInfo);
-		};
+		renderInfo.renderer->EndRenderPass(submitInfo);
+	};
 
 	Create(createInfo);
 }

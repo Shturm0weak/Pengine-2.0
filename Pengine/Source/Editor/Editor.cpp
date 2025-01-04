@@ -862,7 +862,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene)
 
 			ImGui::Text("UUID: %s", entity->GetUUID().Get().c_str());
 
-			char name[64];
+			char name[256];
 			strcpy(name, entity->GetName().c_str());
 			if (ImGui::InputText("Name", name, sizeof(name)))
 			{
@@ -2096,6 +2096,31 @@ void Editor::MaterialMenu::Update(Editor& editor)
 
 									ImGui::EndDragDropTarget();
 								}
+
+								ImGui::SameLine();
+
+								const std::string whiteId = "Set White" + binding.name;
+								ImGui::PushID(whiteId.c_str());
+								if (ImGui::Button("White"))
+								{
+									material->GetUniformWriter(renderPassName)->WriteTexture(binding.name, TextureManager::GetInstance().GetWhite());
+
+									isChangedToSerialize = true;
+								}
+								ImGui::PopID();
+
+								ImGui::SameLine();
+
+								const std::string blackId = "Set Black" + binding.name;
+								ImGui::PushID(blackId.c_str());
+								if (ImGui::Button("Black"))
+								{
+									material->GetUniformWriter(renderPassName)->WriteTexture(binding.name, TextureManager::GetInstance().GetBlack());
+
+									isChangedToSerialize = true;
+								}
+								ImGui::PopID();
+
 							}
 						}
 						else if (binding.type == ShaderReflection::Type::UNIFORM_BUFFER)

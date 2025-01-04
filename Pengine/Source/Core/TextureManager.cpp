@@ -41,7 +41,8 @@ std::shared_ptr<Texture> TextureManager::Load(const std::filesystem::path& filep
 			return texture;
 		}
 
-		return GetWhite();
+		// Need to consider.
+		//return GetWhite();
 	}
 }
 

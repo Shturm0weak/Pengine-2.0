@@ -26,31 +26,13 @@ layout(set = 1, binding = 5) uniform SSRBuffer
     float thickness; 
 };
 
-void main()
+vec4 SSR(
+    in vec2 viewportSize,
+    in vec3 positionFrom,
+    in vec3 pivot,
+    in vec3 unitPosition,
+    in float roughness)
 {
-    vec4 normal = texture(normalTexture, uv);
-    float metallic = texture(shadingTexture, uv).x;
-    if (normal.a <= 0.0f || metallic <= 0.0f)
-    {
-        outColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-        return;
-    }
-
-    vec2 viewportSize = camera.viewportSize * viewportScale;
-
-    vec3 positionFrom = CalculatePositionFromDepth(
-        texture(depthTexture, uv).x,
-        camera.projectionMat4,
-        viewRay);
-
-    vec3 unitPosition = normalize(positionFrom);
-    vec3 pivot = normalize(reflect(unitPosition, normalize(normal.xyz)));
-    if(pivot.z > 0.0f)
-    {
-        outColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-        return;
-    }
-
     vec4 start = vec4(positionFrom, 1.0f);
     vec4 end = vec4(positionFrom + (pivot * maxDistance), 1.0f);
 
@@ -67,7 +49,7 @@ void main()
     startFragment.xy *= viewportSize;
 
     vec4 endFragment = end;
-    endFragment /= (endFragment.z < 0.0f ? endFragment.z : 1.0f);
+    endFragment /= endFragment.z < 0.0f ? endFragment.z : 1.0f;
     endFragment = camera.projectionMat4 * endFragment;
     endFragment.xyz /= endFragment.w;
     endFragment.xy = endFragment.xy * 0.5f + 0.5f;
@@ -81,7 +63,7 @@ void main()
     float deltaY = endFragment.y - startFragment.y;
 
     float useX = abs(deltaX) >= abs(deltaY) ? 1.0f : 0.0f;
-    float delta = mix(abs(deltaY), abs(deltaX), useX) * clamp(resolution, 0.0f, 1.0f);
+    float delta = mix(abs(deltaY), abs(deltaX), useX) * clamp(resolution * (1.0f - roughness * 0.5f), 0.0f, 1.0f);
     vec2 increment = vec2(deltaX, deltaY) / max(delta, 0.001f);
 
     float search0 = 0.0f;
@@ -135,17 +117,13 @@ void main()
         viewDistance = (start.z * end.z) / mix(end.z, start.z, search1);
         depth = positionTo.z - viewDistance;
 
-        if (depth > 0 && depth < thickness)
-        {
-            hit1 = 1;
-            search1 = search0 + ((search1 - search0) / 2.0f);
-        }
-        else
-        {
-            float temp = search1;
-            search1 = search1 + ((search1 - search0) / 2.0f);
-            search0 = temp;
-        }
+        bool hit = depth > 0 && depth < thickness;
+
+        hit1 = hit ? 1 : hit1;
+
+        float temp = search1;
+        search1 = hit ? search0 + ((search1 - search0) / 2.0f) : search1 + ((search1 - search0) / 2.0f);
+        search0 = hit ? search0 : temp;
     }
 
     float visibility = hit1 * (1.0f - max(dot(-unitPosition, pivot), 0.0f))
@@ -156,8 +134,40 @@ void main()
 
     visibility = clamp(visibility, 0.0f, 1.0f);
 
-    vec3 reflectionColor = mix(vec3(0.0f, 0.0f, 0.0f), texture(colorTexture, fragmentUV).xyz, visibility);
+    return vec4(mix(vec3(0.0f, 0.0f, 0.0f), texture(colorTexture, fragmentUV).xyz, visibility), visibility);
+}
 
-    outColor = vec4(reflectionColor, visibility);
+float random(vec2 uv)
+{
+    return fract(sin(dot(uv, vec2(12.9898f, 78.233f))) * 43758.5453123f);
+}
+
+void main()
+{
+    vec4 normal = texture(normalTexture, uv);
+    vec2 shading = texture(shadingTexture, uv).xy;
+    if (normal.a <= 0.0f || shading.x <= 0.0f)
+    {
+        outColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+        return;
+    }
+
+    vec2 viewportSize = camera.viewportSize * viewportScale;
+
+    vec3 positionFrom = CalculatePositionFromDepth(
+        texture(depthTexture, uv).x,
+        camera.projectionMat4,
+        viewRay);
+
+    vec3 unitPosition = normalize(positionFrom);
+    vec3 pivot = normalize(reflect(unitPosition, normalize(normal.xyz)));
+    if(pivot.z > 0.0f)
+    {
+        outColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+        return;
+    }
+
+    outColor = SSR(viewportSize, positionFrom, pivot, unitPosition, shading.y);
+    outColor *= clamp(abs(pivot.z) / 0.1f, 0.0f, 1.0f);
     //outColor = vec4(visibility, visibility, visibility, 1.0f);
 }

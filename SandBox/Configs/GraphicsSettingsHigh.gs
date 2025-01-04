@@ -31,9 +31,9 @@ SSR:
   MaxDistance: 15
   Resolution: 0.300000012
   ResolutionBlurScale: 0
-  ResolutionScale: 3
+  ResolutionScale: 1
   StepCount: 10
-  Thickness: 5
+  Thickness: 0.300000012
   BlurRange: 5
   BlurOffset: 5
 PostProcess:

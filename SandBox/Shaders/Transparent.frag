@@ -2,8 +2,9 @@
 
 layout(location = 0) in vec3 viewSpaceNormal;
 layout(location = 1) in vec3 viewSpacePosition;
-layout(location = 2) in vec2 uv;
-layout(location = 3) in mat3 TBN;
+layout(location = 2) in vec3 tangent;
+layout(location = 3) in vec3 bitangent;
+layout(location = 4) in vec2 uv;
 
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec4 outEmissive;
@@ -69,60 +70,51 @@ void main()
 		ao * material.aoFactor,
 		1.0f);
 		
-	vec4 normal;
+	vec3 normal = gl_FrontFacing ? viewSpaceNormal : -viewSpaceNormal;
+	normal = normalize(normal);
 	if (material.useNormalMap > 0)
 	{
+		mat3 TBN = mat3(tangent, bitangent, normal);
 		vec3 normalMap = texture(normalTexture, uv).xyz;
 		normalMap *= normalMap * 2.0f - 1.0f;
-		normal = vec4(normalize(TBN * normalMap), 1.0f);
-	}
-	else
-	{
-		normal = vec4(viewSpaceNormal, 1.0f);
+		normal = normalize(TBN * normalMap);
 	}
 
 	vec3 basicReflectivity = mix(vec3(0.05), albedoColor.xyz, shading.x);
 	vec3 viewDirection = normalize(-viewSpacePosition);
 	vec3 result = vec3(0.0f);
 
-	if (normal.a == 0)
+	if (hasDirectionalLight == 1)
 	{
-		result = albedoColor.xyz;
-	}
-	else
-	{
-		if (hasDirectionalLight == 1)
+	    vec3 shadow = vec3(0.0f);
+		if (csm.isEnabled == 1)
 		{
-		    vec3 shadow = vec3(0.0f);
-			if (csm.isEnabled == 1)
-			{
-				vec3 worldSpacePosition = (camera.inverseViewMat4 * vec4(viewSpacePosition, 1.0f)).xyz;
+			vec3 worldSpacePosition = (camera.inverseViewMat4 * vec4(viewSpacePosition, 1.0f)).xyz;
 
-				shadow = CalculateCSM(
-					deferredCSMTexture,
-					csm,
-					abs(viewSpacePosition.z),
-					worldSpacePosition,
-					normal.xyz,
-					directionalLight.direction);
-			}
-
-			result += CalculateDirectionalLight(
-				directionalLight,
-				viewDirection,
-				basicReflectivity,
+			shadow = CalculateCSM(
+				deferredCSMTexture,
+				csm,
+				abs(viewSpacePosition.z),
+				worldSpacePosition,
 				normal.xyz,
-				albedoColor.xyz,
-				shading.x,
-				shading.y,
-				shading.z,
-				shadow);
+				directionalLight.direction);
 		}
 
-		for (int i = 0; i < pointLightsCount; i++)
-		{
-			result += CalculatePointLight(pointLights[i], viewSpacePosition, normal.xyz) * albedoColor.xyz;
-		}
+		result += CalculateDirectionalLight(
+			directionalLight,
+			viewDirection,
+			basicReflectivity,
+			normal.xyz,
+			albedoColor.xyz,
+			shading.x,
+			shading.y,
+			shading.z,
+			shadow);
+	}
+
+	for (int i = 0; i < pointLightsCount; i++)
+	{
+		result += CalculatePointLight(pointLights[i], viewSpacePosition, normal.xyz) * albedoColor.xyz;
 	}
 
 	vec3 emissiveColor = texture(emissiveTexture, uv).xyz;

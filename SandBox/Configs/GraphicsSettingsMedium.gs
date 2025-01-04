@@ -28,11 +28,11 @@ SSR:
   IsEnabled: true
   IsMipMapsEnabled: false
   MaxDistance: 10
-  Resolution: 0.200000003
+  Resolution: 0.300000012
   ResolutionBlurScale: 0
   ResolutionScale: 0
   StepCount: 10
-  Thickness: 5
+  Thickness: 1
   BlurRange: 2
   BlurOffset: 5
 PostProcess:

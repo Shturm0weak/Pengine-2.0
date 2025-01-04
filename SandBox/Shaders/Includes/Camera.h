@@ -9,6 +9,7 @@ struct Camera
 	float aspectRatio;
 	float tanHalfFOV;
 	float time;
+	float deltaTime;
 	float zFar;
 	float zNear;
 };

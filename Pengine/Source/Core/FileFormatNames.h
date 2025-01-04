@@ -87,6 +87,26 @@ namespace Pengine::FileFormats
 		return ".gs";
 	}
 
+	inline const char* Frag()
+	{
+		return ".frag";
+	}
+
+	inline const char* Vert()
+	{
+		return ".vert";
+	}
+
+	inline const char* Geom()
+	{
+		return ".geom";
+	}
+
+	inline const char* Comp()
+	{
+		return ".comp";
+	}
+
 	inline bool IsTexture(const std::string& fileFormat)
 	{
 		return fileFormat == Png()
@@ -94,6 +114,14 @@ namespace Pengine::FileFormats
 			|| fileFormat == Jpg()
 			|| fileFormat == Dds()
 			|| fileFormat == Tga();
+	}
+
+	inline bool IsShader(const std::string& fileFormat)
+	{
+		return fileFormat == Frag()
+			|| fileFormat == Vert()
+			|| fileFormat == Geom()
+			|| fileFormat == Comp();
 	}
 
 	inline bool IsMeshIntermediate(const std::string& fileFormat)
@@ -106,6 +134,7 @@ namespace Pengine::FileFormats
 	inline bool IsAsset(const std::string& fileFormat)
 	{
 		if (IsTexture(fileFormat)
+			|| IsShader(fileFormat)
 			|| fileFormat == BaseMat()
 			|| fileFormat == Mat()
 			|| fileFormat == Mesh()
