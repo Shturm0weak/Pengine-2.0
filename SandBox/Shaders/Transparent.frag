@@ -7,7 +7,9 @@ layout(location = 3) in vec3 bitangent;
 layout(location = 4) in vec2 uv;
 
 layout(location = 0) out vec4 outColor;
-layout(location = 1) out vec4 outEmissive;
+layout(location = 1) out vec4 outNormal;
+layout(location = 2) out vec4 outShading;
+layout(location = 3) out vec4 outEmissive;
 
 #include "Shaders/Includes/Camera.h"
 
@@ -68,7 +70,7 @@ void main()
 		metallic * material.metallicFactor,
 		roughness * material.roughnessFactor,
 		ao * material.aoFactor,
-		1.0f);
+		albedoColor.a);
 		
 	vec3 normal = gl_FrontFacing ? viewSpaceNormal : -viewSpaceNormal;
 	normal = normalize(normal);
@@ -119,5 +121,7 @@ void main()
 
 	vec3 emissiveColor = texture(emissiveTexture, uv).xyz;
     outEmissive = max(vec4(emissiveColor * material.emissiveColor.xyz * material.emissiveFactor, albedoColor.a), vec4(IsBrightPixel(result, brightnessThreshold), albedoColor.a));
-	outColor = vec4(result, albedoColor.w);
+	outColor = vec4(result, albedoColor.a);
+	outNormal = vec4(normal, 1.0f);
+	outShading = shading;
 }

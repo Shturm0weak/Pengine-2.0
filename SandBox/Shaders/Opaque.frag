@@ -33,8 +33,8 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 
 void main()
 {
-	vec4 albedo = texture(albedoTexture, uv) * material.albedoColor;
-	if (albedo.a < 0.01f)
+	vec4 albedoColor = texture(albedoTexture, uv) * material.albedoColor;
+	if (albedoColor.a < 0.01f)
 	{
 		discard;
 	}
@@ -43,7 +43,7 @@ void main()
 	float roughness = texture(roughnessTexture, uv).r;
 	float ao = texture(aoTexture, uv).r;
 
-	outAlbedo = albedo;
+	outAlbedo = albedoColor;
 	outShading = vec4(
 		metallic * material.metallicFactor,
 		roughness * material.roughnessFactor,

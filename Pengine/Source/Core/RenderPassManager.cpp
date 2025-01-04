@@ -980,6 +980,8 @@ void RenderPassManager::CreateTransparent()
 	clearDepth.clearStencil = 0;
 
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glm::vec4 clearNormal = { 0.0f, 0.0f, 0.0f, 0.0f };
+	glm::vec4 clearShading = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	RenderPass::AttachmentDescription color{};
@@ -991,6 +993,28 @@ void RenderPassManager::CreateTransparent()
 	{
 		index = 0;
 		return renderTarget->GetFrameBuffer(Deferred);
+	};
+
+	RenderPass::AttachmentDescription normal{};
+	normal.format = Format::R16G16B16A16_SFLOAT;
+	normal.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	normal.load = RenderPass::Load::LOAD;
+	normal.store = RenderPass::Store::STORE;
+	normal.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
+	{
+		index = 1;
+		return renderTarget->GetFrameBuffer(GBuffer);
+	};
+
+	RenderPass::AttachmentDescription shading{};
+	shading.format = Format::R8G8B8A8_SRGB;
+	shading.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	shading.load = RenderPass::Load::LOAD;
+	shading.store = RenderPass::Store::STORE;
+	shading.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
+	{
+		index = 2;
+		return renderTarget->GetFrameBuffer(GBuffer);
 	};
 
 	RenderPass::AttachmentDescription emissive{};
@@ -1015,7 +1039,7 @@ void RenderPassManager::CreateTransparent()
 	depth.format = Format::D32_SFLOAT;
 	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 	depth.load = RenderPass::Load::LOAD;
-	depth.store = RenderPass::Store::NONE;
+	depth.store = RenderPass::Store::STORE;
 	depth.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
 		index = 0;
@@ -1025,8 +1049,8 @@ void RenderPassManager::CreateTransparent()
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = Transparent;
 	createInfo.clearDepths = { clearDepth };
-	createInfo.clearColors = { clearColor, clearEmissive };
-	createInfo.attachmentDescriptions = { color, emissive, depth };
+	createInfo.clearColors = { clearColor, clearNormal, clearShading, clearEmissive };
+	createInfo.attachmentDescriptions = { color, normal, shading, emissive, depth };
 	createInfo.resizeWithViewport = true;
 
 	createInfo.renderCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)

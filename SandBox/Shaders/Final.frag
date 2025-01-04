@@ -71,7 +71,7 @@ void main()
 		}
 	}
 
-	deferred = mix(deferred, reflectionColor.xyz, metallic * reflectionColor.a * isSSREnabled);
+	deferred = mix(deferred, reflectionColor.xyz, metallic * reflectionColor.a * isSSREnabled * alpha);
 	
 	if (toneMapperIndex == 0)
 	{

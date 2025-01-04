@@ -38,7 +38,7 @@ Basemat:
         - BlendEnabled: false
     - RenderPass: Transparent
       DepthTest: true
-      DepthWrite: false
+      DepthWrite: true
       CullMode: None
       PolygonMode: Fill
       Vertex: Shaders/Transparent.vert
@@ -72,6 +72,8 @@ Basemat:
             - inverseTransformA
       ColorBlendStates:
         - BlendEnabled: true
+        - BlendEnabled: false
+        - BlendEnabled: false
         - BlendEnabled: true
     - RenderPass: CSM
       DepthTest: true
