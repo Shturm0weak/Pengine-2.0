@@ -979,7 +979,8 @@ void RenderPassManager::CreateTransparent()
 			float distance2ToCamera = 0.0f;
 		};
 
-		std::vector<RenderData> renderDatas;
+		std::vector<std::vector<RenderData>> renderDatasByRenderingOrder;
+		renderDatasByRenderingOrder.resize(11);
 
 		size_t renderableCount = 0;
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
@@ -1029,7 +1030,7 @@ void RenderPassManager::CreateTransparent()
 			renderData.scale = transform.GetScale();
 			renderData.position = transform.GetPosition();
 
-			renderDatas.emplace_back(renderData);
+			renderDatasByRenderingOrder[r3d.renderingOrder].emplace_back(renderData);
 
 			renderableCount++;
 		}
@@ -1041,37 +1042,40 @@ void RenderPassManager::CreateTransparent()
 
 		const glm::vec3 cameraPosition = renderInfo.camera->GetComponent<Transform>().GetPosition();
 
-		for (RenderData& renderData : renderDatas)
+		for (auto& renderDataByRenderingOrder : renderDatasByRenderingOrder)
 		{
-			const glm::vec3 boundingBoxWorldPosition = renderData.position + renderData.r3d.mesh->GetBoundingBox().offset * renderData.scale;
-			const glm::vec3 direction = glm::normalize((boundingBoxWorldPosition) - cameraPosition);
+			for (RenderData& renderData : renderDataByRenderingOrder)
+			{
+				const glm::vec3 boundingBoxWorldPosition = renderData.position + renderData.r3d.mesh->GetBoundingBox().offset * renderData.scale;
+				const glm::vec3 direction = glm::normalize((boundingBoxWorldPosition)-cameraPosition);
 
-			Raycast::Hit hit{};
-			if (Raycast::IntersectBoxOBB(
-				cameraPosition,
-				direction,
-				renderData.r3d.mesh->GetBoundingBox().min,
-				renderData.r3d.mesh->GetBoundingBox().max,
-				renderData.position,
-				renderData.scale,
-				renderData.rotationMat4,
-				FLT_MAX,
-				hit))
-			{
-				renderData.distance2ToCamera = glm::distance2(cameraPosition, hit.point);
+				Raycast::Hit hit{};
+				if (Raycast::IntersectBoxOBB(
+					cameraPosition,
+					direction,
+					renderData.r3d.mesh->GetBoundingBox().min,
+					renderData.r3d.mesh->GetBoundingBox().max,
+					renderData.position,
+					renderData.scale,
+					renderData.rotationMat4,
+					FLT_MAX,
+					hit))
+				{
+					renderData.distance2ToCamera = glm::distance2(cameraPosition, hit.point);
+				}
+				else
+				{
+					renderData.distance2ToCamera = glm::distance2(cameraPosition, renderData.position);
+				}
 			}
-			else
-			{
-				renderData.distance2ToCamera = glm::distance2(cameraPosition, renderData.position);
-			}
+
+			auto isFurther = [cameraPosition](const RenderData& a, const RenderData& b)
+				{
+					return a.distance2ToCamera > b.distance2ToCamera;
+				};
+
+			std::sort(renderDataByRenderingOrder.begin(), renderDataByRenderingOrder.end(), isFurther);
 		}
-
-		auto isFurther = [cameraPosition](const RenderData& a, const RenderData& b)
-		{
-			return a.distance2ToCamera > b.distance2ToCamera;
-		};
-
-		std::sort(renderDatas.begin(), renderDatas.end(), isFurther);
 
 		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderTarget->GetBuffer("InstanceBufferTransparent");
 		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
@@ -1095,35 +1099,37 @@ void RenderPassManager::CreateTransparent()
 		submitInfo.frameBuffer = frameBuffer;
 		renderInfo.renderer->BeginRenderPass(submitInfo);
 
-		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
-		for (const auto& renderData : renderDatas)
+		for (auto& renderDataByRenderingOrder : renderDatasByRenderingOrder)
 		{
-			const std::shared_ptr<Pipeline> pipeline = renderData.r3d.material->GetBaseMaterial()->GetPipeline(renderPassName);
+			for (const auto& renderData : renderDataByRenderingOrder)
+			{
+				const std::shared_ptr<Pipeline> pipeline = renderData.r3d.material->GetBaseMaterial()->GetPipeline(renderPassName);
 
-			const size_t instanceDataOffset = instanceDatas.size();
+				const size_t instanceDataOffset = instanceDatas.size();
 
-			InstanceData data{};
-			data.transform = renderData.transformMat4;
-			data.inverseTransform = glm::transpose(renderData.inversetransformMat3);
-			instanceDatas.emplace_back(data);
+				InstanceData data{};
+				data.transform = renderData.transformMat4;
+				data.inverseTransform = glm::transpose(renderData.inversetransformMat3);
+				instanceDatas.emplace_back(data);
 
-			std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(
-				pipeline,
-				renderData.r3d.material->GetBaseMaterial(),
-				renderData.r3d.material,
-				renderInfo);
-			FlushUniformWriters(uniformWriters);
+				std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(
+					pipeline,
+					renderData.r3d.material->GetBaseMaterial(),
+					renderData.r3d.material,
+					renderInfo);
+				FlushUniformWriters(uniformWriters);
 
-			renderInfo.renderer->Render(
-				GetVertexBuffers(pipeline, renderData.r3d.mesh),
-				renderData.r3d.mesh->GetIndexBuffer(),
-				renderData.r3d.mesh->GetIndexCount(),
-				pipeline,
-				instanceBuffer,
-				instanceDataOffset * instanceBuffer->GetInstanceSize(),
-				1,
-				uniformWriters,
-				renderInfo.frame);
+				renderInfo.renderer->Render(
+					GetVertexBuffers(pipeline, renderData.r3d.mesh),
+					renderData.r3d.mesh->GetIndexBuffer(),
+					renderData.r3d.mesh->GetIndexCount(),
+					pipeline,
+					instanceBuffer,
+					instanceDataOffset * instanceBuffer->GetInstanceSize(),
+					1,
+					uniformWriters,
+					renderInfo.frame);
+			}
 		}
 
 		// Because these are all just commands and will be rendered later we can write the instance buffer

@@ -1971,6 +1971,11 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 
 			ImGui::EndDragDropTarget();
 		}
+
+		const char* const renderingOrder[] = { "-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3", "4", "5", };
+		ImGui::PushID("R3D Rendering Order");
+		ImGui::Combo("Rendering Order", &r3d.renderingOrder, renderingOrder, 11);
+		ImGui::PopID();
 	}
 }
 

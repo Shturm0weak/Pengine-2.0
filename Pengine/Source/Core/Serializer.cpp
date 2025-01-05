@@ -2347,6 +2347,7 @@ void Serializer::SerializeRenderer3D(YAML::Emitter& out, const std::shared_ptr<E
 
 	out << YAML::Key << "Mesh" << YAML::Value << Utils::FindUuid(r3d.mesh->GetFilepath());
 	out << YAML::Key << "Material" << YAML::Value << Utils::FindUuid(r3d.material->GetFilepath());
+	out << YAML::Key << "RenderingOrder" << YAML::Value << r3d.renderingOrder;
 
 	if (Utils::FindUuid(r3d.material->GetFilepath()).empty())
 	{
@@ -2366,6 +2367,11 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 		}
 
 		Renderer3D& r3d = entity->GetComponent<Renderer3D>();
+
+		if (const auto& renderingOrderData = renderer3DData["RenderingOrder"])
+		{
+			r3d.renderingOrder = glm::clamp(renderingOrderData.as<int>(), 0, 10);
+		}
 
 		if (const auto& meshData = renderer3DData["Mesh"])
 		{
