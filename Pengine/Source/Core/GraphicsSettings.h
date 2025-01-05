@@ -65,6 +65,13 @@ namespace Pengine
 			bool isEnabled = true;
 			int mipCount = 8;
 			float brightnessThreshold = 1.0f;
+			float intensity = 1.0f;
+
+			/**
+			 * Resolution scale: 0.25 / 0.5 / 0.75 / 1.0
+			 * 1.0 by default.
+			 */
+			int resolutionScale = 3;
 		} bloom;
 
 		struct PostProcess

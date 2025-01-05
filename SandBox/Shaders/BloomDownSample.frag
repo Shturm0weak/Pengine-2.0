@@ -11,10 +11,14 @@ layout(set = 0, binding = 0) uniform sampler2D sourceTexture;
 layout(set = 0, binding = 1) uniform MipBuffer
 {
     vec2 sourceSize;
+    int mipLevel;
+    float bloomIntensity;
 };
 
 void main()
 {
+    float intensity = mipLevel == 0 ? bloomIntensity : 1.0f;
+
     vec2 srcTexelSize = 1.0f / sourceSize;
     float x = srcTexelSize.x;
     float y = srcTexelSize.y;
@@ -26,22 +30,22 @@ void main()
     // - l - m -
     // g - h - i
     // === ('e' is the current texel) ===
-    vec3 a = texture(sourceTexture, vec2(uv.x - 2*x, uv.y + 2*y)).rgb;
-    vec3 b = texture(sourceTexture, vec2(uv.x,       uv.y + 2*y)).rgb;
-    vec3 c = texture(sourceTexture, vec2(uv.x + 2*x, uv.y + 2*y)).rgb;
+    vec3 a = texture(sourceTexture, vec2(uv.x - 2*x, uv.y + 2*y)).rgb * intensity;
+    vec3 b = texture(sourceTexture, vec2(uv.x,       uv.y + 2*y)).rgb * intensity;
+    vec3 c = texture(sourceTexture, vec2(uv.x + 2*x, uv.y + 2*y)).rgb * intensity;
 
-    vec3 d = texture(sourceTexture, vec2(uv.x - 2*x, uv.y)).rgb;
-    vec3 e = texture(sourceTexture, vec2(uv.x,       uv.y)).rgb;
-    vec3 f = texture(sourceTexture, vec2(uv.x + 2*x, uv.y)).rgb;
+    vec3 d = texture(sourceTexture, vec2(uv.x - 2*x, uv.y)).rgb * intensity;
+    vec3 e = texture(sourceTexture, vec2(uv.x,       uv.y)).rgb * intensity;
+    vec3 f = texture(sourceTexture, vec2(uv.x + 2*x, uv.y)).rgb * intensity;
 
-    vec3 g = texture(sourceTexture, vec2(uv.x - 2*x, uv.y - 2*y)).rgb;
-    vec3 h = texture(sourceTexture, vec2(uv.x,       uv.y - 2*y)).rgb;
-    vec3 i = texture(sourceTexture, vec2(uv.x + 2*x, uv.y - 2*y)).rgb;
+    vec3 g = texture(sourceTexture, vec2(uv.x - 2*x, uv.y - 2*y)).rgb * intensity;
+    vec3 h = texture(sourceTexture, vec2(uv.x,       uv.y - 2*y)).rgb * intensity;
+    vec3 i = texture(sourceTexture, vec2(uv.x + 2*x, uv.y - 2*y)).rgb * intensity;
 
-    vec3 j = texture(sourceTexture, vec2(uv.x - x, uv.y + y)).rgb;
-    vec3 k = texture(sourceTexture, vec2(uv.x + x, uv.y + y)).rgb;
-    vec3 l = texture(sourceTexture, vec2(uv.x - x, uv.y - y)).rgb;
-    vec3 m = texture(sourceTexture, vec2(uv.x + x, uv.y - y)).rgb;
+    vec3 j = texture(sourceTexture, vec2(uv.x - x, uv.y + y)).rgb * intensity;
+    vec3 k = texture(sourceTexture, vec2(uv.x + x, uv.y + y)).rgb * intensity;
+    vec3 l = texture(sourceTexture, vec2(uv.x - x, uv.y - y)).rgb * intensity;
+    vec3 m = texture(sourceTexture, vec2(uv.x + x, uv.y - y)).rgb * intensity;
 
     // Apply weighted distribution:
     // 0.5 + 0.125 + 0.125 + 0.125 + 0.125 = 1

@@ -1694,15 +1694,21 @@ void RenderPassManager::CreateBloom()
 			int mipCount = 0;
 			glm::ivec2 sourceSize = { 0, 0 };
 		};
+		
+		constexpr float resolutionScales[] = { 0.25f, 0.5f, 0.75f, 1.0f };
+		if (renderInfo.renderPass->GetResizeViewportScale() != glm::vec2(resolutionScales[bloomSettings.resolutionScale]))
+		{
+			renderInfo.renderPass->SetResizeViewportScale(glm::vec2(resolutionScales[bloomSettings.resolutionScale]));
+		}
+		const glm::ivec2 viewportSize = glm::vec2(renderInfo.viewportSize) * renderInfo.renderPass->GetResizeViewportScale();
 
 		bool recreateResources = false;
-		
 		BloomData* bloomData = (BloomData*)renderInfo.renderTarget->GetCustomData("BloomData");
 		if (!bloomData)
 		{
 			bloomData = new BloomData();
 			bloomData->mipCount = mipCount;
-			bloomData->sourceSize = renderInfo.viewportSize;
+			bloomData->sourceSize = viewportSize;
 			renderInfo.renderTarget->SetCustomData("BloomData", bloomData);
 		
 			recreateResources = true;
@@ -1726,7 +1732,7 @@ void RenderPassManager::CreateBloom()
 			// Create FrameBuffers.
 			if (recreateResources || !renderInfo.renderTarget->GetFrameBuffer(renderPassName))
 			{
-				glm::ivec2 size = renderInfo.viewportSize;
+				glm::ivec2 size = viewportSize;
 				for (int mipLevel = 0; mipLevel < mipCount; mipLevel++)
 				{
 					const std::string mipLevelString = std::to_string(mipLevel);
@@ -1734,8 +1740,8 @@ void RenderPassManager::CreateBloom()
 					// NOTE: There are parentheses in the name because square brackets are used in the base material file to find the attachment index.
 					renderInfo.renderTarget->SetFrameBuffer("BloomFrameBuffers(" + mipLevelString + ")", FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), size));
 
-					size.x = glm::max(size.x / 2, 1);
-					size.y = glm::max(size.y / 2, 1);
+					size.x = glm::max(size.x / 2, 4);
+					size.y = glm::max(size.y / 2, 4);
 				}
 
 				// For viewport visualization and easy access by render pass name.
@@ -1754,12 +1760,12 @@ void RenderPassManager::CreateBloom()
 					GetOrCreateRenderBuffer(renderInfo.renderTarget, renderUniformWriter, "MipBuffer", "BloomBuffers[" + mipLevelString + "]");
 				}
 			}
-			
+
 			// Resize.
-			if (bloomData->sourceSize.x != renderInfo.viewportSize.x ||
-				bloomData->sourceSize.y != renderInfo.viewportSize.y)
+			if (bloomData->sourceSize.x != viewportSize.x ||
+				bloomData->sourceSize.y != viewportSize.y)
 			{
-				glm::ivec2 size = renderInfo.viewportSize;
+				glm::ivec2 size = viewportSize;
 				bloomData->sourceSize = size;
 				for (size_t mipLevel = 0; mipLevel < mipCount; mipLevel++)
 				{
@@ -1789,6 +1795,9 @@ void RenderPassManager::CreateBloom()
 				glm::vec2 sourceSize = submitInfo.frameBuffer->GetSize();
 				const std::shared_ptr<Buffer> mipBuffer = renderInfo.renderTarget->GetBuffer("BloomBuffers[" + mipLevelString + "]");
 				baseMaterial->WriteToBuffer(mipBuffer, "MipBuffer", "sourceSize", sourceSize);
+				baseMaterial->WriteToBuffer(mipBuffer, "MipBuffer", "bloomIntensity", bloomSettings.intensity);
+				baseMaterial->WriteToBuffer(mipBuffer, "MipBuffer", "mipLevel", mipLevel);
+				
 				mipBuffer->Flush();
 
 				const std::shared_ptr<UniformWriter> downUniformWriter = renderInfo.renderTarget->GetUniformWriter("BloomDownUniformWriters[" + mipLevelString + "]");

@@ -22,8 +22,10 @@ CSM:
     - 0.300000012
 Bloom:
   IsEnabled: true
-  MipCount: 8
+  MipCount: 10
   BrightnessThreshold: 1
+  Intensity: 1
+  ResolutionScale: 1
 SSR:
   IsEnabled: true
   MaxDistance: 10

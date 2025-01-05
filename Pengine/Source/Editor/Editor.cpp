@@ -1000,8 +1000,17 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.bloom.isEnabled);
 			ImGui::PopID();
 
+			const char* const resolutionScales[] = { "0.25", "0.5", "0.75", "1.0" };
+			ImGui::PushID("Bloom Quality");
+			isChangedToSerialize += ImGui::Combo("Quality", &graphicsSettings.bloom.resolutionScale, resolutionScales, 4);
+			ImGui::PopID();
+
 			ImGui::PushID("Bloom Mip Count");
 			isChangedToSerialize += ImGui::SliderInt("Mip Count", &graphicsSettings.bloom.mipCount, 1, 10);
+			ImGui::PopID();
+
+			ImGui::PushID("Bloom Intensity");
+			isChangedToSerialize += ImGui::SliderFloat("Intensity", &graphicsSettings.bloom.intensity, 0.0f, 2.0f);
 			ImGui::PopID();
 
 			ImGui::PushID("Bloom Brightness Threshold");

@@ -25,6 +25,8 @@ Bloom:
   IsEnabled: true
   MipCount: 10
   BrightnessThreshold: 1
+  Intensity: 1
+  ResolutionScale: 3
 SSR:
   IsEnabled: true
   MaxDistance: 15

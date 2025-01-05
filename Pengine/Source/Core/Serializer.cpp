@@ -2776,6 +2776,8 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.bloom.isEnabled;
 	out << YAML::Key << "MipCount" << YAML::Value << graphicsSettings.bloom.mipCount;
 	out << YAML::Key << "BrightnessThreshold" << YAML::Value << graphicsSettings.bloom.brightnessThreshold;
+	out << YAML::Key << "Intensity" << YAML::Value << graphicsSettings.bloom.intensity;
+	out << YAML::Key << "ResolutionScale" << YAML::Value << graphicsSettings.bloom.resolutionScale;
 
 	out << YAML::EndMap;
 	//
@@ -2872,12 +2874,12 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 
 		if (const auto& resolutionScaleData = ssaoData["ResolutionScale"])
 		{
-			graphicsSettings.ssao.resolutionScale = glm::min(resolutionScaleData.as<int>(), 3);
+			graphicsSettings.ssao.resolutionScale = glm::clamp(resolutionScaleData.as<int>(), 0, 3);
 		}
 
 		if (const auto& resolutionBlurScaleData = ssaoData["ResolutionBlurScale"])
 		{
-			graphicsSettings.ssao.resolutionBlurScale = glm::min(resolutionBlurScaleData.as<int>(), 3);
+			graphicsSettings.ssao.resolutionBlurScale = glm::clamp(resolutionBlurScaleData.as<int>(), 0, 3);
 		}
 	}
 
@@ -2941,6 +2943,21 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		{
 			graphicsSettings.bloom.mipCount = mipCountData.as<int>();
 		}
+
+		if (const auto& brightnessThresholdData = bloomData["BrightnessThreshold"])
+		{
+			graphicsSettings.bloom.brightnessThreshold = brightnessThresholdData.as<float>();
+		}
+
+		if (const auto& intensityData = bloomData["Intensity"])
+		{
+			graphicsSettings.bloom.intensity = intensityData.as<float>();
+		}
+
+		if (const auto& resolutionScaleData = bloomData["ResolutionScale"])
+		{
+			graphicsSettings.bloom.resolutionScale = glm::clamp(resolutionScaleData.as<int>(), 0, 3);
+		}
 	}
 
 	if (const auto& ssrData = data["SSR"])
@@ -2962,12 +2979,12 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 
 		if (const auto& resolutionBlurScaleData = ssrData["ResolutionBlurScale"])
 		{
-			graphicsSettings.ssr.resolutionBlurScale = glm::min(resolutionBlurScaleData.as<int>(), 4);
+			graphicsSettings.ssr.resolutionBlurScale = glm::clamp(resolutionBlurScaleData.as<int>(), 0, 4);
 		}
 
 		if (const auto& resolutionScaleData = ssrData["ResolutionScale"])
 		{
-			graphicsSettings.ssr.resolutionScale = glm::min(resolutionScaleData.as<int>(), 3);
+			graphicsSettings.ssr.resolutionScale = glm::clamp(resolutionScaleData.as<int>(), 0, 3);
 		}
 
 		if (const auto& stepCountData = ssrData["StepCount"])
