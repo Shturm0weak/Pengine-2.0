@@ -13,11 +13,6 @@ SSAORenderer::~SSAORenderer()
 
 void SSAORenderer::GenerateSamples(const int kernelSize)
 {
-	if (kernelSize == m_KernelSize)
-	{
-		return;
-	}
-
 	m_KernelSize = kernelSize;
 
 	auto ourLerp = [](float a, float b, float f)
@@ -42,11 +37,6 @@ void SSAORenderer::GenerateSamples(const int kernelSize)
 
 void SSAORenderer::GenerateNoiseTexture(const int noiseSize)
 {
-	if (noiseSize == m_NoiseSize)
-	{
-		return;
-	}
-
 	m_NoiseSize = noiseSize;
 
 	ShutDown();

@@ -84,7 +84,6 @@ namespace Pengine
 		struct SSR
 		{
 			bool isEnabled = true;
-			bool isMipMapsEnabled = true;
 
 			int blurRange = 2;
 			int blurOffset = 1;

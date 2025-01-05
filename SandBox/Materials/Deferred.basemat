@@ -37,6 +37,7 @@ Basemat:
           RenderTarget: "GBuffer[4]"
         - Name: ssaoTexture
           RenderTarget: "SSAOBlur[0]"
+          RenderTargetDefault: "White"
         - Name: CSMTexture
           RenderTarget: "CSM[0]"
           RenderTargetDefault: "WhiteLayered"

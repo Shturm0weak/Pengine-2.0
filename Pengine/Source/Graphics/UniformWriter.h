@@ -33,6 +33,8 @@ namespace Pengine
 
 		const std::unordered_map<std::string, std::shared_ptr<Texture>>& GetTextures() const { return m_TexturesByName; }
 
+		std::shared_ptr<UniformLayout> GetUniformLayout() const { return m_UniformLayout; }
+
 	protected:
 		std::shared_ptr<UniformLayout> m_UniformLayout;
 		std::unordered_map<uint32_t, std::shared_ptr<Buffer>> m_BuffersByLocation;

@@ -27,6 +27,9 @@ Basemat:
         - Name: rawSSRTexture
           RenderTarget: "SSR[0]"
           RenderTargetDefault: "Black"
+        - Name: blurSSRTexture
+          RenderTarget: "SSRBlur[0]"
+          RenderTargetDefault: "Black"
         - Name: bloomTexture
           RenderTarget: "BloomFrameBuffers(0)[0]"
           RenderTargetDefault: "Black"

@@ -84,12 +84,32 @@ namespace Pengine
 
 		void CreateSSRBlur();
 
-		bool BlurRenderPassTemplate(
+		static void BlurRenderPassTemplate(
 			const RenderPass::RenderCallbackInfo& renderInfo,
 			const RenderPass::SubmitInfo submitInfo,
 			std::shared_ptr<class BaseMaterial> baseMaterial,
 			std::shared_ptr<class Pipeline> pipeline,
 			const std::string& renderPassName);
+
+		static void FlushUniformWriters(const std::vector<std::shared_ptr<class UniformWriter>>& uniformWriters);
+
+		static void WriteRenderTargets(
+			std::shared_ptr<class RenderTarget> cameraRenderTarget,
+			std::shared_ptr<class RenderTarget> sceneRenderTarget,
+			std::shared_ptr<class Pipeline> pipeline,
+			std::shared_ptr<class UniformWriter> uniformWriter);
+
+		static std::shared_ptr<class UniformWriter> GetOrCreateRenderUniformWriter(
+			std::shared_ptr<class RenderTarget> renderTarget,
+			std::shared_ptr<class Pipeline> pipeline,
+			const std::string& renderPassName,
+			const std::string& setUniformWriterName = {});
+
+		static std::shared_ptr<class Buffer> GetOrCreateRenderBuffer(
+			std::shared_ptr<class RenderTarget> renderTarget,
+			std::shared_ptr<class UniformWriter> uniformWriter,
+			const std::string& bufferName,
+			const std::string& setBufferName = {});
 
 		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
 	};

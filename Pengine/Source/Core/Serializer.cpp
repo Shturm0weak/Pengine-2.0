@@ -1183,13 +1183,13 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 {
 	if (!std::filesystem::exists(filepath))
 	{
-		Logger::Error(filepath.string() + ": doesn't exist!");
+		Logger::Error(filepath.string() + ":Doesn't exist!");
 		return nullptr;
 	}
 
 	if (FileFormats::Mesh() != Utils::GetFileFormat(filepath))
 	{
-		Logger::Error(filepath.string() + ": is not mesh asset!");
+		Logger::Error(filepath.string() + ":Is not mesh asset!");
 		return nullptr;
 	}
 
@@ -1766,7 +1766,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 	while (MeshManager::GetInstance().GetMesh(meshFilepath))
 	{
 		meshName = defaultMeshName + "_" + std::to_string(containIndex);
-		meshFilepath.replace_filename(meshName);
+		meshFilepath.replace_filename(meshName + FileFormats::Mesh());
 		containIndex++;
 	}
 
@@ -2785,7 +2785,6 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Value << YAML::BeginMap;
 
 	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.ssr.isEnabled;
-	out << YAML::Key << "IsMipMapsEnabled" << YAML::Value << graphicsSettings.ssr.isMipMapsEnabled;
 	out << YAML::Key << "MaxDistance" << YAML::Value << graphicsSettings.ssr.maxDistance;
 	out << YAML::Key << "Resolution" << YAML::Value << graphicsSettings.ssr.resolution;
 	out << YAML::Key << "ResolutionBlurScale" << YAML::Value << graphicsSettings.ssr.resolutionBlurScale;
@@ -2949,11 +2948,6 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& isEnabledData = ssrData["IsEnabled"])
 		{
 			graphicsSettings.ssr.isEnabled = isEnabledData.as<bool>();
-		}
-
-		if (const auto& isMipMapsEnabledData = ssrData["IsMipMapsEnabled"])
-		{
-			graphicsSettings.ssr.isMipMapsEnabled = isMipMapsEnabledData.as<bool>();
 		}
 
 		if (const auto& maxDistanceData = ssrData["MaxDistance"])

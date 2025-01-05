@@ -1015,10 +1015,6 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.ssr.isEnabled);
 			ImGui::PopID();
 
-			ImGui::PushID("SSR Is Mip Maps Enabled");
-			isChangedToSerialize += ImGui::Checkbox("Is Mip Maps Enabled", &graphicsSettings.ssr.isMipMapsEnabled);
-			ImGui::PopID();
-
 			const char* const resolutionScales[] = { "0.25", "0.5", "0.75", "1.0" };
 			ImGui::PushID("SSR Quality");
 			isChangedToSerialize += ImGui::Combo("Quality", &graphicsSettings.ssr.resolutionScale, resolutionScales, 4);
@@ -1423,16 +1419,6 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 			ImGui::PushID(filename.c_str());
 			if (ImGui::ImageButton(currentIcon, { thumbnailSize, thumbnailSize }, ImVec2(0, 1), ImVec2(1, 0)))
 			{
-				if (format == FileFormats::Mat())
-				{
-					m_MaterialMenu.opened = true;
-					m_MaterialMenu.material = MaterialManager::GetInstance().LoadMaterial(path);
-				}
-				else if (format == FileFormats::BaseMat())
-				{
-					m_BaseMaterialMenu.opened = true;
-					m_BaseMaterialMenu.baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(path);
-				}
 			}
 			ImGui::PopID();
 
@@ -1488,8 +1474,21 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 						EventSystem::GetInstance().SendEvent(event);
 					}
 				}
+				else if (format == FileFormats::BaseMat())
+				{
+					if (ImGui::MenuItem("Load"))
+					{
+						m_BaseMaterialMenu.opened = true;
+						m_BaseMaterialMenu.baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(path);
+					}
+				}
 				if (format == FileFormats::Mat())
 				{
+					if (ImGui::MenuItem("Load"))
+					{
+						m_MaterialMenu.opened = true;
+						m_MaterialMenu.material = MaterialManager::GetInstance().LoadMaterial(path);
+					}
 					if (ImGui::MenuItem("Clone"))
 					{
 						m_CloneMaterialMenu.opened = true;
@@ -2052,9 +2051,10 @@ void Editor::MaterialMenu::Update(Editor& editor)
 
 		bool isChangedToSerialize = false;
 
-		if (ImGui::CollapsingHeader("Options"))
+		auto optionsByName = material->GetOptionsByName();
+		if (!optionsByName.empty() && ImGui::CollapsingHeader("Options"))
 		{
-			for (auto& [name, option] : material->GetOptionsByName())
+			for (auto& [name, option] : optionsByName)
 			{
 				if (ImGui::Checkbox(name.c_str(), &option.m_IsEnabled))
 				{

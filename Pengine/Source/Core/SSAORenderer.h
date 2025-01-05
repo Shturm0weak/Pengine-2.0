@@ -23,6 +23,10 @@ namespace Pengine
 
 		const std::array<glm::vec4, 64>& GetSamples() const { return m_Samples; }
 
+		int GetNoiseSize() const { return m_NoiseSize; }
+
+		int GetKernelSize() const { return m_KernelSize; }
+
 	private:
 		std::array<glm::vec4, 64> m_Samples;
 

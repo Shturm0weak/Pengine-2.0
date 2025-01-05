@@ -27,7 +27,6 @@ Bloom:
   BrightnessThreshold: 1
 SSR:
   IsEnabled: true
-  IsMipMapsEnabled: false
   MaxDistance: 15
   Resolution: 0.300000012
   ResolutionBlurScale: 0

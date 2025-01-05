@@ -17,24 +17,23 @@ CSM:
   PcfEnabled: true
   PcfRange: 1
   Biases:
-    - 0
-    - 0
-    - 0
+    - 0.0500000007
+    - 0.100000001
+    - 0.300000012
 Bloom:
   IsEnabled: true
   MipCount: 8
   BrightnessThreshold: 1
 SSR:
   IsEnabled: true
-  IsMipMapsEnabled: false
   MaxDistance: 10
   Resolution: 0.300000012
   ResolutionBlurScale: 0
   ResolutionScale: 0
   StepCount: 10
   Thickness: 1
-  BlurRange: 2
-  BlurOffset: 5
+  BlurRange: 4
+  BlurOffset: 4
 PostProcess:
   Gamma: 2.20000005
   ToneMapper: 1
