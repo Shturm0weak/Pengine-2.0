@@ -1,0 +1,48 @@
+Mat:
+  Basemat: Materials\Custom\Water\Water.basemat
+  Options:
+    []
+  Pipelines:
+    - RenderPass: Transparent
+      Uniforms:
+        - Name: albedoTexture
+          Value: ""
+        - Name: normalTexture
+          Value: 31f64da2-b6d0-4564-9f4c-668f200ae972
+        - Name: metalnessTexture
+          Value: ""
+        - Name: roughnessTexture
+          Value: ""
+        - Name: aoTexture
+          Value: ""
+        - Name: emissiveTexture
+          Value: ""
+        - Name: GBufferMaterial
+          Values:
+            - Name: material.albedoColor
+              Value: [0.20784314, 0.80392158, 1, 0.588235319]
+              Type: vec4
+            - Name: material.emissiveColor
+              Value: [0, 0, 0, 1]
+              Type: vec4
+            - Name: material.uvTransform
+              Value: [55, 55, 0, 0]
+              Type: vec4
+            - Name: material.metallicFactor
+              Value: 0.699999988
+              Type: float
+            - Name: material.roughnessFactor
+              Value: 0.300000012
+              Type: float
+            - Name: material.aoFactor
+              Value: 1
+              Type: float
+            - Name: material.emissiveFactor
+              Value: 0
+              Type: float
+            - Name: material.useNormalMap
+              Value: 1
+              Type: int
+            - Name: speed
+              Value: 0.100000001
+              Type: float
