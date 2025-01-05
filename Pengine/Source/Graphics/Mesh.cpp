@@ -97,6 +97,8 @@ Mesh::Mesh(
 				m_BoundingBox.max.z = vertexPosition->z;
 			}
 		}
+
+		m_BoundingBox.offset = m_BoundingBox.max + (m_BoundingBox.min - m_BoundingBox.max) * 0.5f;
 	}
 
 	if (createInfo.raycastCallback)

@@ -22,12 +22,15 @@ namespace Pengine
 		};
 
 		static std::shared_ptr<Buffer> Create(
-			size_t instanceSize,
-			uint32_t instanceCount,
-			Usage usage,
-			MemoryType memoryType);
+			const size_t instanceSize,
+			const uint32_t instanceCount,
+			const Usage usage,
+			const MemoryType memoryType,
+			const bool isMultiBuffered = false);
 
-		Buffer(MemoryType memoryType);
+		Buffer(
+			const MemoryType memoryType,
+			const bool isMultiBuffered);
 		virtual ~Buffer() = default;
 		Buffer(const Buffer&) = delete;
 		Buffer& operator=(const Buffer&) = delete;
@@ -53,8 +56,12 @@ namespace Pengine
 
 		[[nodiscard]] MemoryType GetMemoryType() const { return m_MemoryType; }
 
+		[[nodiscard]] bool IsMultiBuffered() const { return m_IsMultiBuffered; }
+
 	protected:
 		MemoryType m_MemoryType = MemoryType::CPU;
+
+		bool m_IsMultiBuffered = false;
 	};
 
 }

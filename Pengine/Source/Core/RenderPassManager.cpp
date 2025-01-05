@@ -7,6 +7,7 @@
 #include "TextureManager.h"
 #include "Time.h"
 #include "FrustumCulling.h"
+#include "Raycast.h"
 
 #include "../Components/Camera.h"
 #include "../Components/DirectionalLight.h"
@@ -305,7 +306,8 @@ void RenderPassManager::CreateZPrePass()
 				sizeof(glm::mat4),
 				renderableCount,
 				Buffer::Usage::VERTEX_BUFFER,
-				Buffer::MemoryType::CPU);
+				Buffer::MemoryType::CPU,
+				true);
 
 			renderInfo.renderTarget->SetBuffer("InstanceBufferZPrePass", instanceBuffer);
 		}
@@ -368,6 +370,7 @@ void RenderPassManager::CreateZPrePass()
 		if (instanceBuffer && !instanceDatas.empty())
 		{
 			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(glm::mat4));
+			instanceBuffer->Flush();
 		}
 
 		renderInfo.renderer->EndRenderPass(submitInfo);
@@ -468,7 +471,8 @@ void RenderPassManager::CreateGBuffer()
 				sizeof(InstanceData),
 				renderableCount,
 				Buffer::Usage::VERTEX_BUFFER,
-				Buffer::MemoryType::CPU);
+				Buffer::MemoryType::CPU,
+				true);
 
 			renderInfo.renderTarget->SetBuffer("InstanceBuffer", instanceBuffer);
 		}
@@ -530,6 +534,7 @@ void RenderPassManager::CreateGBuffer()
 		if (instanceBuffer && !instanceDatas.empty())
 		{
 			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(InstanceData));
+			instanceBuffer->Flush();
 		}
 
 		lineRenderer->Render(renderInfo);
@@ -967,8 +972,11 @@ void RenderPassManager::CreateTransparent()
 		{
 			Renderer3D r3d;
 			glm::mat4 transformMat4;
+			glm::mat4 rotationMat4;
 			glm::mat3 inversetransformMat3;
+			glm::vec3 scale;
 			glm::vec3 position;
+			float distance2ToCamera = 0.0f;
 		};
 
 		std::vector<RenderData> renderDatas;
@@ -1015,9 +1023,12 @@ void RenderPassManager::CreateTransparent()
 
 			RenderData renderData{};
 			renderData.r3d = r3d;
-			renderData.position = transform.GetPosition();
 			renderData.transformMat4 = transform.GetTransform();
+			renderData.rotationMat4 = transform.GetRotationMat4();
 			renderData.inversetransformMat3 = transform.GetInverseTransform();
+			renderData.scale = transform.GetScale();
+			renderData.position = transform.GetPosition();
+
 			renderDatas.emplace_back(renderData);
 
 			renderableCount++;
@@ -1030,12 +1041,34 @@ void RenderPassManager::CreateTransparent()
 
 		const glm::vec3 cameraPosition = renderInfo.camera->GetComponent<Transform>().GetPosition();
 
+		for (RenderData& renderData : renderDatas)
+		{
+			const glm::vec3 boundingBoxWorldPosition = renderData.position + renderData.r3d.mesh->GetBoundingBox().offset * renderData.scale;
+			const glm::vec3 direction = glm::normalize((boundingBoxWorldPosition) - cameraPosition);
+
+			Raycast::Hit hit{};
+			if (Raycast::IntersectBoxOBB(
+				cameraPosition,
+				direction,
+				renderData.r3d.mesh->GetBoundingBox().min,
+				renderData.r3d.mesh->GetBoundingBox().max,
+				renderData.position,
+				renderData.scale,
+				renderData.rotationMat4,
+				FLT_MAX,
+				hit))
+			{
+				renderData.distance2ToCamera = glm::distance2(cameraPosition, hit.point);
+			}
+			else
+			{
+				renderData.distance2ToCamera = glm::distance2(cameraPosition, renderData.position);
+			}
+		}
+
 		auto isFurther = [cameraPosition](const RenderData& a, const RenderData& b)
 		{
-			float distance2A = glm::length2(cameraPosition - a.position);
-			float distance2B = glm::length2(cameraPosition - b.position);
-
-			return distance2A > distance2B;
+			return a.distance2ToCamera > b.distance2ToCamera;
 		};
 
 		std::sort(renderDatas.begin(), renderDatas.end(), isFurther);
@@ -1047,7 +1080,8 @@ void RenderPassManager::CreateTransparent()
 				sizeof(InstanceData),
 				renderableCount,
 				Buffer::Usage::VERTEX_BUFFER,
-				Buffer::MemoryType::CPU);
+				Buffer::MemoryType::CPU,
+				true);
 
 			renderInfo.renderTarget->SetBuffer("InstanceBufferTransparent", instanceBuffer);
 		}
@@ -1097,6 +1131,7 @@ void RenderPassManager::CreateTransparent()
 		if (instanceBuffer && !instanceDatas.empty())
 		{
 			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(InstanceData));
+			instanceBuffer->Flush();
 		}
 
 		renderInfo.renderer->EndRenderPass(submitInfo);
@@ -1527,7 +1562,8 @@ void RenderPassManager::CreateCSM()
 				sizeof(InstanceDataCSM),
 				renderableCount,
 				Buffer::Usage::VERTEX_BUFFER,
-				Buffer::MemoryType::CPU);
+				Buffer::MemoryType::CPU,
+				true);
 
 			renderInfo.renderTarget->SetBuffer("InstanceBufferCSM", instanceBuffer);
 		}
@@ -1634,6 +1670,7 @@ void RenderPassManager::CreateCSM()
 		if (instanceBuffer && !instanceDatas.empty())
 		{
 			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(InstanceDataCSM));
+			instanceBuffer->Flush();
 		}
 
 		renderInfo.renderer->EndRenderPass(submitInfo);

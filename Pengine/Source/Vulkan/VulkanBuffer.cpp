@@ -47,7 +47,8 @@ std::shared_ptr<VulkanBuffer> VulkanBuffer::Create(
 	const size_t instanceSize,
 	const uint32_t instanceCount,
 	const Usage usage,
-	const MemoryType memoryType)
+	const MemoryType memoryType,
+	const bool isMultiBuffered)
 {
 	VkBufferUsageFlags bufferUsageFlags = ConvertUsage(usage) | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 	VmaMemoryUsage memoryUsage{};
@@ -63,8 +64,6 @@ std::shared_ptr<VulkanBuffer> VulkanBuffer::Create(
 		memoryUsage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
 	}
 
-	bool singleBufferLevel = usage == Usage::UNIFORM_BUFFER ? false : true;
-
 	return std::make_shared<VulkanBuffer>(
 		instanceSize,
 		instanceCount,
@@ -72,7 +71,7 @@ std::shared_ptr<VulkanBuffer> VulkanBuffer::Create(
 		memoryUsage,
 		memoryFlags,
 		memoryType,
-		singleBufferLevel);
+		usage == Usage::UNIFORM_BUFFER ? true : isMultiBuffered);
 }
 
 std::shared_ptr<VulkanBuffer> VulkanBuffer::CreateStagingBuffer(
@@ -86,7 +85,7 @@ std::shared_ptr<VulkanBuffer> VulkanBuffer::CreateStagingBuffer(
 		VMA_MEMORY_USAGE_AUTO_PREFER_HOST,
 		VMA_ALLOCATION_CREATE_MAPPED_BIT | VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT,
 		MemoryType::CPU,
-		true);
+		false);
 }
 
 VkBufferUsageFlagBits VulkanBuffer::ConvertUsage(const Usage usage)
@@ -127,9 +126,9 @@ VulkanBuffer::VulkanBuffer(
 	const VmaMemoryUsage memoryUsage,
 	const VmaAllocationCreateFlags memoryFlags,
 	const MemoryType memoryType,
-	bool singleBufferLevel,
+	const bool isMultiBuffered,
 	const VkDeviceSize minOffsetAlignment)
-	: Buffer(memoryType)
+	: Buffer(memoryType, isMultiBuffered)
 	, m_InstanceCount(instanceCount)
 	, m_InstanceSize(instanceSize)
 	, m_UsageFlags(bufferUsageFlags)
@@ -139,13 +138,13 @@ VulkanBuffer::VulkanBuffer(
 	m_AlignmentSize = GetAlignment(instanceSize, minOffsetAlignment);
 	m_BufferSize = m_AlignmentSize * instanceCount;
 
-	if (!singleBufferLevel)
+	if (m_IsMultiBuffered)
 	{
 		m_Data = new uint8_t[m_BufferSize];
 	}
 
-	m_IsChanged.resize(singleBufferLevel ? 1 : swapChainImageCount, false);
-	m_BufferDatas.resize(singleBufferLevel ? 1 : swapChainImageCount);
+	m_IsChanged.resize(m_IsMultiBuffered ? swapChainImageCount : 1, false);
+	m_BufferDatas.resize(m_IsMultiBuffered ? swapChainImageCount : 1);
 	for (BufferData& bufferData : m_BufferDatas)
 	{
 		device->CreateBuffer(
@@ -178,7 +177,7 @@ VulkanBuffer::~VulkanBuffer()
 
 void* VulkanBuffer::GetData() const
 {
-	if (m_UsageFlags & VkBufferUsageFlagBits::VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)
+	if (m_IsMultiBuffered)
 	{
 		return m_Data;
 	}
@@ -194,7 +193,7 @@ void* VulkanBuffer::GetData() const
 
 void VulkanBuffer::WriteToBuffer(void* data, const size_t size, const size_t offset)
 {
-	if (m_UsageFlags & VkBufferUsageFlagBits::VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)
+	if (m_IsMultiBuffered)
 	{
 		m_IsChanged.assign(m_IsChanged.size(), true);
 		memcpy((void*)&m_Data[offset], data, size);
@@ -218,7 +217,7 @@ void VulkanBuffer::Copy(
 
 	m_IsChanged.assign(m_IsChanged.size(), true);
 
-	if (m_UsageFlags & VkBufferUsageFlagBits::VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)
+	if (m_IsMultiBuffered)
 	{
 		memcpy((void*)m_Data[dstOffset], vkBuffer->m_Data, GetSize());
 	}
@@ -235,7 +234,7 @@ void VulkanBuffer::Copy(
 
 void VulkanBuffer::Flush()
 {
-	if (!(m_UsageFlags & VkBufferUsageFlagBits::VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT))
+	if (!m_IsMultiBuffered)
 	{
 		return;
 	}
@@ -289,7 +288,7 @@ VkDescriptorBufferInfo VulkanBuffer::DescriptorInfo(
 
 VkBuffer VulkanBuffer::GetBuffer() const
 {
-	if (m_UsageFlags & VkBufferUsageFlagBits::VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)
+	if (m_IsMultiBuffered)
 	{
 		return m_BufferDatas[swapChainImageIndex].m_Buffer;
 	}

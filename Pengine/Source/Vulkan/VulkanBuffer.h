@@ -12,10 +12,11 @@ namespace Pengine::Vk
 	{
 	public:
 		static std::shared_ptr<VulkanBuffer> Create(
-			size_t instanceSize,
-			uint32_t instanceCount,
-			Usage usage,
-			MemoryType memoryType);
+			const size_t instanceSize,
+			const uint32_t instanceCount,
+			const Usage usage,
+			const MemoryType memoryType,
+			const bool isMultiBuffered);
 
 		static std::shared_ptr<VulkanBuffer> CreateStagingBuffer(
 			VkDeviceSize instanceSize,
@@ -26,14 +27,14 @@ namespace Pengine::Vk
 		static Usage ConvertUsage(VkBufferUsageFlagBits usage);
 
 		VulkanBuffer(
-			VkDeviceSize instanceSize,
-			uint32_t instanceCount,
-			VkBufferUsageFlags bufferUsageFlags,
-			VmaMemoryUsage memoryUsage,
-			VmaAllocationCreateFlags memoryFlags,
-			MemoryType memoryType,
-			bool singleBufferLevel = false,
-			VkDeviceSize minOffsetAlignment = 1);
+			const VkDeviceSize instanceSize,
+			const uint32_t instanceCount,
+			const VkBufferUsageFlags bufferUsageFlags,
+			const VmaMemoryUsage memoryUsage,
+			const VmaAllocationCreateFlags memoryFlags,
+			const MemoryType memoryType,
+			const bool isMultiBuffered,
+			const VkDeviceSize minOffsetAlignment = 1);
 		~VulkanBuffer() override;
 		VulkanBuffer(const VkBuffer&) = delete;
 		VulkanBuffer(VkBuffer&&) = delete;
