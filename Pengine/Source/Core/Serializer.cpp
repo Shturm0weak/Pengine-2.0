@@ -1284,7 +1284,14 @@ void Serializer::SerializeShaderCache(const std::filesystem::path& filepath, con
 		std::filesystem::create_directories(directory);
 	}
 
-	std::filesystem::path cacheFilepath = directory / filepath.filename();
+	const std::string uuid = Utils::FindUuid(filepath);
+	if (uuid.empty())
+	{
+		Logger::Error(filepath.string() + ":Failed to serialize shader cache! No uuid was found for such filepath!");
+		return;
+	}
+
+	std::filesystem::path cacheFilepath = directory / uuid;
 	cacheFilepath.concat(FileFormats::Spv());
 	std::ofstream out(cacheFilepath, std::ostream::binary);
 
@@ -1299,11 +1306,19 @@ std::string Serializer::DeserializeShaderCache(const std::filesystem::path& file
 {
 	if (filepath.empty())
 	{
+		Logger::Error("Failed to deserialize shader cache! Filepath is empty!");
+		return {};
+	}
+
+	const std::string uuid = Utils::FindUuid(filepath);
+	if (uuid.empty())
+	{
+		Logger::Error(filepath.string() + ":Failed to deserialize shader cache! No uuid was found for such filepath!");
 		return {};
 	}
 
 	const std::filesystem::path directory = "Shaders\\Cache\\";
-	std::filesystem::path cacheFilepath = directory / filepath.filename();
+	std::filesystem::path cacheFilepath = directory / uuid;
 	cacheFilepath.concat(FileFormats::Spv());
 	if (std::filesystem::exists(cacheFilepath))
 	{
@@ -1320,7 +1335,7 @@ std::string Serializer::DeserializeShaderCache(const std::filesystem::path& file
 		size_t lastWriteTime = 0;
 		in.read((char*)&lastWriteTime, sizeof(size_t));
 
-		if(lastWriteTime != std::filesystem::last_write_time(filepath).time_since_epoch().count())
+		if (lastWriteTime != std::filesystem::last_write_time(filepath).time_since_epoch().count())
 		{
 			return {};
 		}
@@ -1372,7 +1387,14 @@ void Serializer::SerializeShaderModuleReflection(
 		std::filesystem::create_directories(directory);
 	}
 
-	std::filesystem::path reflectShaderModuleFilepath = directory / filepath.filename();
+	const std::string uuid = Utils::FindUuid(filepath);
+	if (uuid.empty())
+	{
+		Logger::Error(filepath.string() + ":Failed to serialize shader reflection! No uuid was found for such filepath!");
+		return;
+	}
+
+	std::filesystem::path reflectShaderModuleFilepath = directory / uuid;
 	reflectShaderModuleFilepath.concat(FileFormats::Refl());
 
 	const size_t lastWriteTime = std::filesystem::last_write_time(filepath).time_since_epoch().count();
@@ -1469,11 +1491,19 @@ std::optional<ShaderReflection::ReflectShaderModule> Serializer::DeserializeShad
 {
 	if (filepath.empty())
 	{
-		return std::nullopt;
+		Logger::Error("Failed to deserialize shader reflection! Filepath is empty!");
+		return {};
+	}
+
+	const std::string uuid = Utils::FindUuid(filepath);
+	if (uuid.empty())
+	{
+		Logger::Error(filepath.string() + ":Failed to deserialize shader reflection! No uuid was found for such filepath!");
+		return {};
 	}
 
 	const std::filesystem::path directory = "Shaders\\Cache\\";
-	std::filesystem::path reflectShaderModuleFilepath = directory / filepath.filename();
+	std::filesystem::path reflectShaderModuleFilepath = directory / uuid;
 	reflectShaderModuleFilepath.concat(FileFormats::Refl());
 
 	std::ifstream stream(reflectShaderModuleFilepath);
