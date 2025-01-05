@@ -22,7 +22,7 @@ std::shared_ptr<Mesh> MeshManager::CreateMesh(Mesh::CreateInfo& createInfo)
 	else
 	{
 		mesh = std::make_shared<Mesh>(createInfo);
-		std::lock_guard lock(m_MutexMesh);
+		std::lock_guard<std::mutex> lock(m_MutexMesh);
 		m_MeshesByFilepath[createInfo.filepath] = mesh;
 
 		return mesh;
@@ -43,7 +43,7 @@ std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::filesystem::path& filepat
 			FATAL_ERROR(filepath.string() + ":There is no such mesh!");
 		}
 
-		std::lock_guard lock(m_MutexMesh);
+		std::lock_guard<std::mutex> lock(m_MutexMesh);
 		m_MeshesByFilepath.emplace(filepath, mesh);
 
 		return mesh;
@@ -52,6 +52,7 @@ std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::filesystem::path& filepat
 
 std::shared_ptr<Mesh> MeshManager::GetMesh(const std::filesystem::path& filepath)
 {
+	std::lock_guard<std::mutex> lock(m_MutexMesh);
 	auto meshByFilepath = m_MeshesByFilepath.find(filepath);
 	if (meshByFilepath != m_MeshesByFilepath.end())
 	{
@@ -63,11 +64,12 @@ std::shared_ptr<Mesh> MeshManager::GetMesh(const std::filesystem::path& filepath
 
 void MeshManager::DeleteMesh(std::shared_ptr<Mesh> mesh)
 {
-	std::lock_guard lock(m_MutexMesh);
+	std::lock_guard<std::mutex> lock(m_MutexMesh);
 	m_MeshesByFilepath.erase(mesh->GetFilepath());
 }
 
 void MeshManager::ShutDown()
 {
+	std::lock_guard<std::mutex> lock(m_MutexMesh);
 	m_MeshesByFilepath.clear();
 }

@@ -451,7 +451,7 @@ std::string Serializer::GenerateFileUUID(const std::filesystem::path& filepath)
 	out << YAML::EndMap;
 
 	std::filesystem::path metaFilepath = filepath;
-	metaFilepath.concat(".meta"); 
+	metaFilepath.concat(FileFormats::Meta()); 
 	std::ofstream fout(metaFilepath);
 	fout << out.c_str();
 	fout.close();
@@ -1174,10 +1174,7 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 
 	out.close();
 
-	if (const std::string uuid = Utils::FindUuid(mesh->GetFilepath()); uuid.empty())
-	{
-		GenerateFileUUID(mesh->GetFilepath());
-	}
+	GenerateFileUUID(mesh->GetFilepath());
 
 	Logger::Log("Mesh:" + outMeshFilepath.string() + " has been serialized!", BOLDGREEN);
 }
@@ -2373,7 +2370,7 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 		if (const auto& meshData = renderer3DData["Mesh"])
 		{
 			const std::string uuid = meshData.as<std::string>();
-			AsyncAssetLoader::GetInstance().AsyncLoadMesh(Utils::Find(uuid, filepathByUuid), [wEntity = std::weak_ptr(entity)](std::shared_ptr<Mesh> mesh)
+			AsyncAssetLoader::GetInstance().AsyncLoadMesh(Utils::FindFilepath(uuid), [wEntity = std::weak_ptr(entity)](std::shared_ptr<Mesh> mesh)
 			{
 				if (std::shared_ptr<Entity> entity = wEntity.lock())
 				{
@@ -2389,7 +2386,7 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 		{
 			const std::string uuid = materialData.as<std::string>();
 
-			AsyncAssetLoader::GetInstance().AsyncLoadMaterial(Utils::Find(uuid, filepathByUuid), [wEntity = std::weak_ptr(entity)](std::shared_ptr<Material> material)
+			AsyncAssetLoader::GetInstance().AsyncLoadMaterial(Utils::FindFilepath(uuid), [wEntity = std::weak_ptr(entity)](std::shared_ptr<Material> material)
 			{
 				if (std::shared_ptr<Entity> entity = wEntity.lock())
 				{

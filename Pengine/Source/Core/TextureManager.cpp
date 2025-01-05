@@ -19,7 +19,7 @@ std::shared_ptr<Texture> TextureManager::Create(const Texture::CreateInfo& creat
 {
 	std::shared_ptr<Texture> texture = Texture::Create(createInfo);
 
-	std::lock_guard lock(m_Mutex);
+	std::lock_guard<std::mutex> lock(m_MutexTexture);
 	m_TexturesByFilepath[createInfo.filepath] = texture;
 
 	return texture;
@@ -37,7 +37,7 @@ std::shared_ptr<Texture> TextureManager::Load(const std::filesystem::path& filep
 		texture = Texture::Load(filepath, meta);
 		if (texture)
 		{
-			std::lock_guard lock(m_Mutex);
+			std::lock_guard<std::mutex> lock(m_MutexTexture);
 			m_TexturesByFilepath[filepath] = texture;
 
 			return texture;
@@ -66,8 +66,9 @@ std::vector<std::shared_ptr<Texture>> TextureManager::LoadFromFolder(const std::
 	return textures;
 }
 
-std::shared_ptr<Texture> TextureManager::GetTexture(const std::filesystem::path& filepath) const
+std::shared_ptr<Texture> TextureManager::GetTexture(const std::filesystem::path& filepath)
 {
+	std::lock_guard<std::mutex> lock(m_MutexTexture);
 	if (const auto textureByFilepath = m_TexturesByFilepath.find(filepath);
 		textureByFilepath != m_TexturesByFilepath.end())
 	{
@@ -77,23 +78,24 @@ std::shared_ptr<Texture> TextureManager::GetTexture(const std::filesystem::path&
 	return nullptr;
 }
 
-std::shared_ptr<Texture> TextureManager::GetWhite() const
+std::shared_ptr<Texture> TextureManager::GetWhite()
 {
 	return GetTexture("White");
 }
 
-std::shared_ptr<Texture> Pengine::TextureManager::GetBlack() const
+std::shared_ptr<Texture> TextureManager::GetBlack()
 {
 	return GetTexture("Black");
 }
 
 void TextureManager::Delete(const std::filesystem::path& filepath)
 {
-	std::lock_guard lock(m_Mutex);
+	std::lock_guard<std::mutex> lock(m_MutexTexture);
 	m_TexturesByFilepath.erase(filepath);
 }
 
 void TextureManager::ShutDown()
 {
+	std::lock_guard<std::mutex> lock(m_MutexTexture);
 	m_TexturesByFilepath.clear();
 }

@@ -24,7 +24,7 @@ std::shared_ptr<Material> MaterialManager::LoadMaterial(const std::filesystem::p
 			FATAL_ERROR(filepath.string() + ":There is no such material!");
 		}
 
-		std::lock_guard lock(m_MutexMaterial);
+		std::lock_guard<std::mutex> lock(m_MutexMaterial);
 		m_MaterialsByFilepath.emplace(filepath, material);
 
 		return material;
@@ -45,7 +45,7 @@ std::shared_ptr<BaseMaterial> MaterialManager::LoadBaseMaterial(const std::files
 			FATAL_ERROR(filepath.string() + ":There is no such base material!");
 		}
 
-		std::lock_guard lock(m_MutexBaseMaterial);
+		std::lock_guard<std::mutex> lock(m_MutexBaseMaterial);
 		m_BaseMaterialsByFilepath.emplace(filepath, baseMaterial);
 
 		return baseMaterial;
@@ -54,7 +54,7 @@ std::shared_ptr<BaseMaterial> MaterialManager::LoadBaseMaterial(const std::files
 
 std::shared_ptr<Material> MaterialManager::GetMaterial(const std::filesystem::path& filepath)
 {
-	std::lock_guard lock(m_MutexMaterial);
+	std::lock_guard<std::mutex> lock(m_MutexMaterial);
 	if (const auto materialByFilepath = m_MaterialsByFilepath.find(filepath);
 		materialByFilepath != m_MaterialsByFilepath.end())
 	{
@@ -66,7 +66,7 @@ std::shared_ptr<Material> MaterialManager::GetMaterial(const std::filesystem::pa
 
 std::shared_ptr<BaseMaterial> MaterialManager::GetBaseMaterial(const std::filesystem::path& filepath)
 {
-	std::lock_guard lock(m_MutexBaseMaterial);
+	std::lock_guard<std::mutex> lock(m_MutexBaseMaterial);
 	if (const auto baseMaterialByFilepath = m_BaseMaterialsByFilepath.find(filepath);
 		baseMaterialByFilepath != m_BaseMaterialsByFilepath.end())
 	{
@@ -81,7 +81,7 @@ std::shared_ptr<Material> MaterialManager::Clone(const std::string& name, const 
 {
 	std::shared_ptr<Material> clonedMaterial = Material::Clone(name, filepath, material);
 
-	std::lock_guard lock(m_MutexMaterial);
+	std::lock_guard<std::mutex> lock(m_MutexMaterial);
 	m_MaterialsByFilepath[filepath] = clonedMaterial;
 
 	return clonedMaterial;
@@ -89,7 +89,7 @@ std::shared_ptr<Material> MaterialManager::Clone(const std::string& name, const 
 
 void MaterialManager::DeleteMaterial(std::shared_ptr<Material> material)
 {
-	std::lock_guard lock(m_MutexMaterial);
+	std::lock_guard<std::mutex> lock(m_MutexMaterial);
 	if (std::filesystem::exists(material->GetFilepath()))
 	{
 		m_MaterialsByFilepath.erase(material->GetFilepath());
@@ -98,7 +98,7 @@ void MaterialManager::DeleteMaterial(std::shared_ptr<Material> material)
 
 void MaterialManager::DeleteBaseMaterial(std::shared_ptr<BaseMaterial> baseMaterial)
 {
-	std::lock_guard lock(m_MutexBaseMaterial);
+	std::lock_guard<std::mutex> lock(m_MutexBaseMaterial);
 	if (std::filesystem::exists(baseMaterial->GetFilepath()))
 	{
 		m_BaseMaterialsByFilepath.erase(baseMaterial->GetFilepath());

@@ -50,8 +50,10 @@ Mat:
               Type: int
     - RenderPass: Transparent
       Uniforms:
-        - RenderPass: CSM
-          Uniforms:
-            - RenderPass: ZPrePass
-              Uniforms:
-                []
+        []
+    - RenderPass: CSM
+      Uniforms:
+        []
+    - RenderPass: ZPrePass
+      Uniforms:
+        []
