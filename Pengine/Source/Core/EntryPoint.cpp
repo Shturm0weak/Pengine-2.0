@@ -31,7 +31,7 @@ EntryPoint::EntryPoint(Application* application)
 
 void PrepareResources()
 {
-	Texture::CreateInfo whiteTextureCreateInfo;
+	Texture::CreateInfo whiteTextureCreateInfo{};
 	whiteTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
 	whiteTextureCreateInfo.channels = 4;
 	whiteTextureCreateInfo.filepath = "White";
@@ -48,7 +48,24 @@ void PrepareResources()
 	whiteTextureCreateInfo.data = whitePixels.data();
 	TextureManager::GetInstance().Create(whiteTextureCreateInfo);
 
-	Texture::CreateInfo blackTextureCreateInfo;
+	Texture::CreateInfo pinkTextureCreateInfo{};
+	pinkTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	pinkTextureCreateInfo.channels = 4;
+	pinkTextureCreateInfo.filepath = "Pink";
+	pinkTextureCreateInfo.name = "Pink";
+	pinkTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
+	pinkTextureCreateInfo.size = { 1, 1 };
+	pinkTextureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_DST };
+	std::vector<uint8_t> pinkPixels = {
+		255,
+		0,
+		255,
+		255
+	};
+	pinkTextureCreateInfo.data = pinkPixels.data();
+	TextureManager::GetInstance().Create(pinkTextureCreateInfo);
+
+	Texture::CreateInfo blackTextureCreateInfo{};
 	blackTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
 	blackTextureCreateInfo.channels = 4;
 	blackTextureCreateInfo.filepath = "Black";

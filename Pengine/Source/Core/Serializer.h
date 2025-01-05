@@ -103,7 +103,7 @@ namespace Pengine
 
 		static void SerializeTextureMeta(const Texture::Meta& meta);
 
-		static Texture::Meta DeserializeTextureMeta(const std::filesystem::path& filepath);
+		static std::optional<Texture::Meta> DeserializeTextureMeta(const std::filesystem::path& filepath);
 
 	private:
 		static void ParseUniformValues(

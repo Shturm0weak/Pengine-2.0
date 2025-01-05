@@ -2041,9 +2041,11 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_NORMALS, 0), aiTextureName);
 		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
 
-		Texture::Meta meta = DeserializeTextureMeta(textureFilepath.string() + FileFormats::Meta());
-		meta.srgb = false;
-		SerializeTextureMeta(meta);
+		if (auto meta = DeserializeTextureMeta(textureFilepath.string() + FileFormats::Meta()))
+		{
+			meta->srgb = false;
+			SerializeTextureMeta(*meta);
+		}
 
 		uniformWriter->WriteTexture("normalTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
 
@@ -3087,16 +3089,18 @@ void Serializer::SerializeTextureMeta(const Texture::Meta& meta)
 	fout.close();
 }
 
-Texture::Meta Serializer::DeserializeTextureMeta(const std::filesystem::path& filepath)
+std::optional<Texture::Meta> Serializer::DeserializeTextureMeta(const std::filesystem::path& filepath)
 {
 	if (filepath.empty())
 	{
 		Logger::Error("Failed to serialize texture meta, filepath is empty!");
+		return std::nullopt;
 	}
 
 	if (!std::filesystem::exists(filepath))
 	{
-		FATAL_ERROR(filepath.string() + ":Failed to load! The file doesn't exist");
+		Logger::Error(filepath.string() + ":Failed to load texture meta! The file doesn't exist");
+		return std::nullopt;
 	}
 
 	std::ifstream stream(filepath);
@@ -3109,7 +3113,8 @@ Texture::Meta Serializer::DeserializeTextureMeta(const std::filesystem::path& fi
 	YAML::Node data = YAML::LoadMesh(stringStream.str());
 	if (!data)
 	{
-		FATAL_ERROR(filepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
+		Logger::Error(filepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
+		return std::nullopt;
 	}
 
 	Texture::Meta meta{};
@@ -3197,19 +3202,27 @@ void Serializer::ParseUniformValues(
 
 		if (const auto& nameData = uniformData["Value"])
 		{
-			const std::string textureFilepath = nameData.as<std::string>();
+			const std::string textureFilepathOrUUID = nameData.as<std::string>();
 
-			if (textureFilepath.empty())
+			if (textureFilepathOrUUID.empty())
 			{
 				uniformsInfo.texturesByName.emplace(uniformName, TextureManager::GetInstance().GetWhite()->GetName());
 			}
-			else if (std::filesystem::exists(textureFilepath))
+			else if (std::filesystem::exists(textureFilepathOrUUID))
 			{
-				uniformsInfo.texturesByName.emplace(uniformName, textureFilepath);
+				uniformsInfo.texturesByName.emplace(uniformName, textureFilepathOrUUID);
 			}
 			else
 			{
-				uniformsInfo.texturesByName.emplace(uniformName, Utils::Find(textureFilepath, filepathByUuid).string());
+				const auto filepathByUUID = Utils::FindFilepath(textureFilepathOrUUID);
+				if (!filepathByUUID.empty())
+				{
+					uniformsInfo.texturesByName.emplace(uniformName, filepathByUUID.string());
+				}
+				else
+				{
+					uniformsInfo.texturesByName.emplace(uniformName, TextureManager::GetInstance().GetPink()->GetName());
+				}
 			}
 		}
 

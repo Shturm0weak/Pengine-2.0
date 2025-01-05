@@ -1510,7 +1510,7 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 					if (ImGui::MenuItem("Meta"))
 					{
 						m_TextureMetaPropertiesMenu.opened = true;
-						m_TextureMetaPropertiesMenu.meta = Serializer::DeserializeTextureMeta(path.string() + FileFormats::Meta());
+						m_TextureMetaPropertiesMenu.meta = *Serializer::DeserializeTextureMeta(path.string() + FileFormats::Meta());
 					}
 				}
 				if (ImGui::MenuItem("Delete file"))

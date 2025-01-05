@@ -33,8 +33,8 @@ std::shared_ptr<Texture> TextureManager::Load(const std::filesystem::path& filep
 	}
 	else
 	{
-		const Texture::Meta meta = Serializer::DeserializeTextureMeta(filepath.string() + FileFormats::Meta());
-		texture = Texture::Load(filepath, meta);
+		auto meta = Serializer::DeserializeTextureMeta(filepath.string() + FileFormats::Meta());
+		texture = Texture::Load(filepath, *meta);
 		if (texture)
 		{
 			std::lock_guard<std::mutex> lock(m_MutexTexture);
@@ -43,8 +43,7 @@ std::shared_ptr<Texture> TextureManager::Load(const std::filesystem::path& filep
 			return texture;
 		}
 
-		// Need to consider.
-		//return GetWhite();
+		return GetPink();
 	}
 }
 
@@ -86,6 +85,11 @@ std::shared_ptr<Texture> TextureManager::GetWhite()
 std::shared_ptr<Texture> TextureManager::GetBlack()
 {
 	return GetTexture("Black");
+}
+
+std::shared_ptr<Texture> TextureManager::GetPink()
+{
+	return GetTexture("Pink");
 }
 
 void TextureManager::Delete(const std::filesystem::path& filepath)
