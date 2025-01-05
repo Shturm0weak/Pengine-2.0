@@ -17,10 +17,10 @@ CSM:
   PcfEnabled: true
   PcfRange: 2
   Biases:
-    - 0
-    - 0
-    - 0
-    - 0
+    - 0.0199999996
+    - 0.0399999991
+    - 0.150000006
+    - 0.400000006
 Bloom:
   IsEnabled: true
   MipCount: 10

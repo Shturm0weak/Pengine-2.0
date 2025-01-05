@@ -8,11 +8,12 @@ layout(location = 4) in vec3 bitangentA;
 layout(location = 5) in mat4 transformA;
 layout(location = 9) in mat3 inverseTransformA;
 
-layout(location = 0) out vec3 viewSpaceNormal;
-layout(location = 1) out vec3 viewSpacePosition;
-layout(location = 2) out vec3 tangent;
-layout(location = 3) out vec3 bitangent;
-layout(location = 4) out vec2 uv;
+layout(location = 0) out vec3 positionViewSpace;
+layout(location = 1) out vec3 positionWorldSpace;
+layout(location = 2) out vec3 normalViewSpace;
+layout(location = 3) out vec3 tangentViewSpace;
+layout(location = 4) out vec3 bitangentViewSpace;
+layout(location = 5) out vec2 uv;
 
 #include "Shaders/Includes/Camera.h"
 
@@ -30,10 +31,13 @@ layout(set = 1, binding = 6) uniform GBufferMaterial
 
 void main()
 {
-	viewSpacePosition = (camera.viewMat4 * transformA * vec4(positionA, 1.0f)).xyz;
-	gl_Position = camera.projectionMat4 * vec4(viewSpacePosition, 1.0f);
-	viewSpaceNormal = normalize(mat3(camera.viewMat4) * inverseTransformA * normalA);
-	tangent = normalize(inverseTransformA * tangentA);
-	bitangent = normalize(inverseTransformA * bitangentA);
+	positionWorldSpace = (transformA * vec4(positionA, 1.0f)).xyz;
+	positionViewSpace = (camera.viewMat4 * vec4(positionWorldSpace, 1.0f)).xyz;
+	gl_Position = camera.projectionMat4 * vec4(positionViewSpace, 1.0f);
+
+	normalViewSpace = normalize(mat3(camera.viewMat4) * inverseTransformA * normalize(normalA));
+	tangentViewSpace = normalize(mat3(camera.viewMat4) * inverseTransformA * normalize(tangentA));
+	bitangentViewSpace = normalize(mat3(camera.viewMat4) * inverseTransformA * normalize(bitangentA));
+
 	uv = uvA * material.uvTransform.xy + material.uvTransform.zw;
 }

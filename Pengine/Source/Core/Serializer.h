@@ -101,6 +101,10 @@ namespace Pengine
 
 		static GraphicsSettings DeserializeGraphicsSettings(const std::filesystem::path& filepath);
 
+		static void SerializeTextureMeta(const Texture::Meta& meta);
+
+		static Texture::Meta DeserializeTextureMeta(const std::filesystem::path& filepath);
+
 	private:
 		static void ParseUniformValues(
 			const YAML::detail::iterator_value& data,

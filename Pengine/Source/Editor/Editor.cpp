@@ -91,7 +91,8 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	m_DeleteFileMenu.Update();
 	m_CloneMaterialMenu.Update();
 	m_CreateViewportMenu.Update(*this);
-	m_LoadIntermediateMenu.Update(*this);
+	m_LoadIntermediateMenu.Update();
+	m_TextureMetaPropertiesMenu.Update();
 
 	ImGui::Begin("Settings");
 	ImGui::Text("FPS: %.0f", 1.0f / static_cast<float>(Time::GetDeltaTime()));
@@ -1455,6 +1456,8 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 					if (ImGui::MenuItem("Generate meshes"))
 					{
 						m_LoadIntermediateMenu.opened = true;
+						m_LoadIntermediateMenu.workStatus = 0;
+						m_LoadIntermediateMenu.workName.clear();
 
 						ThreadPool::GetInstance().EnqueueAsync([path, this]()
 						{
@@ -1492,6 +1495,14 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 						m_CloneMaterialMenu.opened = true;
 						m_CloneMaterialMenu.material = MaterialManager::GetInstance().LoadMaterial(path);
 						m_CloneMaterialMenu.name[0] = '\0';
+					}
+				}
+				if (FileFormats::IsTexture(format))
+				{
+					if (ImGui::MenuItem("Meta"))
+					{
+						m_TextureMetaPropertiesMenu.opened = true;
+						m_TextureMetaPropertiesMenu.meta = Serializer::DeserializeTextureMeta(path.string() + FileFormats::Meta());
 					}
 				}
 				if (ImGui::MenuItem("Delete file"))
@@ -2409,7 +2420,7 @@ void Editor::CloneMaterialMenu::Update()
 	}
 }
 
-void Editor::LoadIntermediateMenu::Update(const Editor& editor)
+void Editor::LoadIntermediateMenu::Update()
 {
 	if (!opened)
 	{
@@ -2427,6 +2438,29 @@ void Editor::LoadIntermediateMenu::Update(const Editor& editor)
 	{
 		ImGui::Text(std::string("Work Name: " + workName).c_str());
 		ImGui::ProgressBar(workStatus, ImVec2(ImGui::GetFontSize() * 25, 0.0f));
+		ImGui::End();
+	}
+}
+
+void Editor::TextureMetaPropertiesMenu::Update()
+{
+	if (!opened)
+	{
+		return;
+	}
+
+	if (opened && ImGui::Begin("Texture Meta Properties", &opened))
+	{
+		bool isChangedToSerialize = false;
+		ImGui::Text("Filepath: %s", meta.filepath.string().c_str());
+		isChangedToSerialize += ImGui::Checkbox("Create Mip Maps", &meta.createMipMaps);
+		isChangedToSerialize += ImGui::Checkbox("SRGB", &meta.srgb);
+		
+		if (isChangedToSerialize)
+		{
+			Serializer::SerializeTextureMeta(meta);
+		}
+
 		ImGui::End();
 	}
 }

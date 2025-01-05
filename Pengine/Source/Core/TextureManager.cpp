@@ -1,6 +1,7 @@
 #include "TextureManager.h"
 
 #include "FileFormatNames.h"
+#include "Serializer.h"
 
 #include "../Utils/Utils.h"
 
@@ -32,7 +33,8 @@ std::shared_ptr<Texture> TextureManager::Load(const std::filesystem::path& filep
 	}
 	else
 	{
-		texture = Texture::Load(filepath);
+		const Texture::Meta meta = Serializer::DeserializeTextureMeta(filepath.string() + FileFormats::Meta());
+		texture = Texture::Load(filepath, meta);
 		if (texture)
 		{
 			std::lock_guard lock(m_Mutex);

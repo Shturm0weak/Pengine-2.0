@@ -154,8 +154,17 @@ namespace Pengine
 			std::string workName = none;
 			float workStatus = 0.0f;
 
-			void Update(const Editor& editor);
+			void Update();
 		} m_LoadIntermediateMenu;
+
+		struct TextureMetaPropertiesMenu
+		{
+			bool opened = false;
+
+			Texture::Meta meta{};
+
+			void Update();
+		} m_TextureMetaPropertiesMenu;
 
 		std::filesystem::path m_RootDirectory = std::filesystem::current_path();
 		std::filesystem::path m_CurrentDirectory = m_RootDirectory;

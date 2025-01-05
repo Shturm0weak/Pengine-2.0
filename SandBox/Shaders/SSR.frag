@@ -144,9 +144,9 @@ float random(vec2 uv)
 
 void main()
 {
-    vec4 normal = texture(normalTexture, uv);
+    vec4 normalViewSpace = texture(normalTexture, uv);
     vec2 shading = texture(shadingTexture, uv).xy;
-    if (normal.a <= 0.0f || shading.x <= 0.0f)
+    if (normalViewSpace.a <= 0.0f || shading.x <= 0.0f)
     {
         outColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
         return;
@@ -154,20 +154,20 @@ void main()
 
     vec2 viewportSize = camera.viewportSize * viewportScale;
 
-    vec3 positionFrom = CalculatePositionFromDepth(
+    vec3 positionViewSpace = CalculatePositionFromDepth(
         texture(depthTexture, uv).x,
         camera.projectionMat4,
         viewRay);
 
-    vec3 unitPosition = normalize(positionFrom);
-    vec3 pivot = normalize(reflect(unitPosition, normalize(normal.xyz)));
+    vec3 unitPosition = normalize(positionViewSpace);
+    vec3 pivot = normalize(reflect(unitPosition, normalize(normalViewSpace.xyz)));
     if(pivot.z > 0.0f)
     {
         outColor = vec4(0.0f, 0.0f, 0.0f, 0.0f);
         return;
     }
 
-    outColor = SSR(viewportSize, positionFrom, pivot, unitPosition, shading.y);
+    outColor = SSR(viewportSize, positionViewSpace, pivot, unitPosition, shading.y);
     outColor *= clamp(abs(pivot.z) / 0.1f, 0.0f, 1.0f);
     //outColor = vec4(visibility, visibility, visibility, 1.0f);
 }

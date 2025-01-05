@@ -75,6 +75,14 @@ namespace Pengine
 			BorderColor borderColor = BorderColor::FLOAT_OPAQUE_BLACK;
 		};
 
+		struct Meta
+		{
+			std::filesystem::path filepath;
+			UUID uuid;
+			bool createMipMaps = true;
+			bool srgb = true;
+		};
+
 		struct CreateInfo
 		{
 			SamplerCreateInfo samplerCreateInfo{};
@@ -90,11 +98,20 @@ namespace Pengine
 			AspectMask aspectMask;
 			std::vector<Usage> usage;
 			bool isCubeMap = false;
+
+			Meta meta;
+		};
+
+		struct LoadInfo
+		{
+			std::filesystem::path filepath;
+			bool createMipMaps = true;
+			bool srgb = true;
 		};
 
 		static std::shared_ptr<Texture> Create(const CreateInfo& createInfo);
 
-		static std::shared_ptr<Texture> Load(const std::filesystem::path& filepath);
+		static std::shared_ptr<Texture> Load(const std::filesystem::path& filepath, const Texture::Meta& meta);
 		
 		explicit Texture(const CreateInfo& createInfo);
 		virtual ~Texture() = default;
@@ -121,6 +138,8 @@ namespace Pengine
 
 		[[nodiscard]] uint32_t GetLayerCount() const { return m_LayerCount; }
 
+		[[nodiscard]] Meta GetMeta() const { return m_Meta; }
+
 	protected:
 		glm::ivec2 m_Size = { 0, 0 };
 
@@ -131,6 +150,8 @@ namespace Pengine
 
 		Format m_Format{};
 		AspectMask m_AspectMask{};
+
+		Meta m_Meta{};
 	};
 
 }

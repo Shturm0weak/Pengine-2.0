@@ -20,16 +20,17 @@ std::shared_ptr<Texture> Texture::Create(const CreateInfo& createInfo)
 	return nullptr;
 }
 
-std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath)
+std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath, const Texture::Meta& meta)
 {
 	stbi_set_flip_vertically_on_load(true);
 
 	CreateInfo textureCreateInfo{};
+	textureCreateInfo.meta = meta;
 	textureCreateInfo.name = Utils::GetFilename(filepath);
 	textureCreateInfo.filepath = filepath;
 	textureCreateInfo.aspectMask = AspectMask::COLOR;
 
-	textureCreateInfo.format = Format::R8G8B8A8_SRGB;
+	textureCreateInfo.format = meta.srgb ? Format::R8G8B8A8_SRGB : Format::R8G8B8A8_UNORM;
 	void* data = stbi_load(
 		filepath.string().c_str(),
 		&textureCreateInfo.size.x,
@@ -74,6 +75,7 @@ std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath)
 Texture::Texture(const CreateInfo& createInfo)
 	: Asset(createInfo.name, createInfo.filepath)
 {
+	m_Meta = createInfo.meta;
 	m_Size = createInfo.size;
 	m_Channels = createInfo.channels;
 	m_Format = createInfo.format;

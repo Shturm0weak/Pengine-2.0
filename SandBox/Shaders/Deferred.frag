@@ -42,19 +42,19 @@ void main()
 	vec3 albedoColor = texture(albedoTexture, uv).xyz;
 	vec3 shading = texture(shadingTexture, uv).xyz;
 
-	vec4 normal = texture(normalTexture, uv);
+	vec4 normalViewSpace = texture(normalTexture, uv);
 	vec3 ssao = texture(ssaoTexture, uv).xyz;
 
-    vec3 position = CalculatePositionFromDepth(
+    vec3 positionViewSpace = CalculatePositionFromDepth(
         texture(depthTexture, uv).x,
         camera.projectionMat4,
         viewRay);
 
 	vec3 basicReflectivity = mix(vec3(0.05), albedoColor, shading.x);
-	vec3 viewDirection = normalize(-position);
+	vec3 viewDirection = normalize(-positionViewSpace);
 	vec3 result = vec3(0.0f);
 
-	if (normal.a <= 0.0f)
+	if (normalViewSpace.a <= 0.0f)
 	{
 		result = albedoColor;
 	}
@@ -65,14 +65,14 @@ void main()
 			vec3 shadow = vec3(0.0f);
 			if (csm.isEnabled == 1)
 			{
-				vec3 worldSpacePosition = (camera.inverseViewMat4 * vec4(position, 1.0f)).xyz;
+				vec3 worldSpacePosition = (camera.inverseViewMat4 * vec4(positionViewSpace, 1.0f)).xyz;
 
 				shadow = CalculateCSM(
 					CSMTexture,
 					csm,
-					abs(position.z),
+					abs(positionViewSpace.z),
 					worldSpacePosition,
-					normal.xyz,
+					normalViewSpace.xyz,
 					directionalLight.direction);
 			}
 			
@@ -80,7 +80,7 @@ void main()
 				directionalLight,
 				viewDirection,
 				basicReflectivity,
-				normal.xyz,
+				normalViewSpace.xyz,
 				albedoColor,
 				shading.x,
 				shading.y,
@@ -90,7 +90,7 @@ void main()
 
 		for (int i = 0; i < pointLightsCount; i++)
 		{
-			result += CalculatePointLight(pointLights[i], position, normal.xyz) * albedoColor;
+			result += CalculatePointLight(pointLights[i], positionViewSpace, normalViewSpace.xyz) * albedoColor;
 		}
 	}
 

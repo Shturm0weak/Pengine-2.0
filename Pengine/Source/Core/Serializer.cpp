@@ -1000,6 +1000,10 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material, bo
 		std::optional<uint32_t> descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, renderPassName);
 		if (!descriptorSetIndex)
 		{
+			out << YAML::EndSeq;
+
+			out << YAML::EndMap;
+
 			continue;
 		}
 		for (const auto& binding : pipeline->GetUniformLayout(*descriptorSetIndex)->GetBindings())
@@ -1668,7 +1672,7 @@ Serializer::LoadIntermediate(
 	Assimp::Importer import;
 	constexpr auto importFlags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_PreTransformVertices |
 		aiProcess_OptimizeMeshes | aiProcess_RemoveRedundantMaterials | aiProcess_ImproveCacheLocality |
-		aiProcess_JoinIdenticalVertices | aiProcess_GenUVCoords | aiProcess_SortByPType | aiProcess_FindInstances |
+		aiProcess_JoinIdenticalVertices | aiProcess_GenUVCoords | aiProcess_CalcTangentSpace | aiProcess_SortByPType | aiProcess_FindInstances |
 		aiProcess_ValidateDataStructure | aiProcess_FindDegenerates | aiProcess_FindInvalidData;
 	const aiScene* scene = import.ReadFile(filepath.string(), importFlags);
 
@@ -2009,6 +2013,10 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	{
 		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_NORMALS, 0), aiTextureName);
 		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
+
+		Texture::Meta meta = DeserializeTextureMeta(textureFilepath.string() + FileFormats::Meta());
+		meta.srgb = false;
+		SerializeTextureMeta(meta);
 
 		uniformWriter->WriteTexture("normalTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
 
@@ -3011,6 +3019,74 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 	}
 
 	return graphicsSettings;
+}
+
+void Serializer::SerializeTextureMeta(const Texture::Meta& meta)
+{
+	if (meta.filepath.empty())
+	{
+		Logger::Error("Failed to serialize texture meta, filepath is empty!");
+	}
+
+	YAML::Emitter out;
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "UUID" << YAML::Value << meta.uuid;
+	out << YAML::Key << "SRGB" << YAML::Value << meta.srgb;
+	out << YAML::Key << "CreateMipMaps" << YAML::Value << meta.createMipMaps;
+
+	out << YAML::EndMap;
+
+	std::ofstream fout(meta.filepath);
+	fout << out.c_str();
+	fout.close();
+}
+
+Texture::Meta Serializer::DeserializeTextureMeta(const std::filesystem::path& filepath)
+{
+	if (filepath.empty())
+	{
+		Logger::Error("Failed to serialize texture meta, filepath is empty!");
+	}
+
+	if (!std::filesystem::exists(filepath))
+	{
+		FATAL_ERROR(filepath.string() + ":Failed to load! The file doesn't exist");
+	}
+
+	std::ifstream stream(filepath);
+	std::stringstream stringStream;
+
+	stringStream << stream.rdbuf();
+
+	stream.close();
+
+	YAML::Node data = YAML::LoadMesh(stringStream.str());
+	if (!data)
+	{
+		FATAL_ERROR(filepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
+	}
+
+	Texture::Meta meta{};
+	if (YAML::Node uuidData = data["UUID"])
+	{
+		meta.uuid = uuidData.as<std::string>();
+	}
+
+	if (YAML::Node srgbData = data["SRGB"])
+	{
+		meta.srgb = srgbData.as<bool>();
+	}
+
+	if (YAML::Node createMipMapsData = data["CreateMipMaps"])
+	{
+		meta.createMipMaps = createMipMapsData.as<bool>();
+	}
+
+	meta.filepath = filepath;
+
+	return meta;
 }
 
 void Serializer::ParseUniformValues(

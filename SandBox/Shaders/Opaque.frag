@@ -1,8 +1,8 @@
 #version 450
 
-layout(location = 0) in vec3 normal;
-layout(location = 1) in vec3 tangent;
-layout(location = 2) in vec3 bitangent;
+layout(location = 0) in vec3 normalViewSpace;
+layout(location = 1) in vec3 tangentViewSpace;
+layout(location = 2) in vec3 bitangentViewSpace;
 layout(location = 3) in vec2 uv;
 
 layout(location = 0) out vec4 outAlbedo;
@@ -51,17 +51,17 @@ void main()
 		1.0f);
 	outEmissive = texture(emissiveTexture, uv) * material.emissiveColor * material.emissiveFactor;
 
-	vec3 normalViewSpace = gl_FrontFacing ? normal : -normal;
-	normalViewSpace = normalize(normalViewSpace);
+	vec3 normal = gl_FrontFacing ? normalViewSpace : -normalViewSpace;
+	normal = normalize(normal);
 	if (material.useNormalMap > 0)
 	{
-		mat3 TBN = mat3(tangent, bitangent, normalViewSpace);
-		vec3 normalMap = texture(normalTexture, uv).xyz;
-		normalMap *= normalMap * 2.0f - 1.0f;
-		outNormal = vec4(normalize(TBN * normalMap), 1.0f);
+		mat3 TBN = mat3(normalize(tangentViewSpace), normalize(bitangentViewSpace), normal);
+		normal = texture(normalTexture, uv).xyz;
+		normal = normal * 2.0f - 1.0f;
+		outNormal = vec4(normalize(TBN * normal), 1.0f);
 	}
 	else
 	{
-		outNormal = vec4(normalViewSpace, 1.0f);
+		outNormal = vec4(normal, 1.0f);
 	}
 }
