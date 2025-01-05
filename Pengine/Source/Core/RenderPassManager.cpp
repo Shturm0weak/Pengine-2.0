@@ -1436,16 +1436,17 @@ void RenderPassManager::CreateSSAO()
 		}
 		ssaoRenderer->GenerateSamples(ssaoSettings.kernelSize);
 
-		auto callback = [weakRenderTarget = std::weak_ptr<RenderTarget>(renderInfo.renderTarget), ssaoSettings]()
-		{
-			if (std::shared_ptr<RenderTarget> renderTarget = weakRenderTarget.lock())
+		// TODO: Rework this place.
+		//auto callback = [weakRenderTarget = std::weak_ptr<RenderTarget>(renderInfo.renderTarget), ssaoSettings]()
+		//{
+			//if (std::shared_ptr<RenderTarget> renderTarget = weakRenderTarget.lock())
 			{
-				((SSAORenderer*)renderTarget->GetCustomData("SSAORenderer"))->GenerateNoiseTexture(ssaoSettings.noiseSize);
+				((SSAORenderer*)renderInfo.renderTarget->GetCustomData("SSAORenderer"))->GenerateNoiseTexture(ssaoSettings.noiseSize);
 			}
-		};
+		//};
 
-		std::shared_ptr<NextFrameEvent> generateNoiseTextureEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
-		EventSystem::GetInstance().SendEvent(generateNoiseTextureEvent);
+		//std::shared_ptr<NextFrameEvent> generateNoiseTextureEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+		//EventSystem::GetInstance().SendEvent(generateNoiseTextureEvent);
 
 		constexpr float resolutionScales[] = { 0.25f, 0.5f, 0.75f, 1.0f };
 
@@ -1569,6 +1570,8 @@ void RenderPassManager::CreateSSAOBlur()
 		if (!ssaoSettings.isEnabled)
 		{
 			renderInfo.renderTarget->DeleteFrameBuffer(renderPassName);
+
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 
 			return;
 		}
@@ -2478,7 +2481,12 @@ void RenderPassManager::CreateSSRBlur()
 		baseMaterial->WriteToBuffer(ssrBuffer, "SSRBlurBuffer", "blurRange", ssrSettings.blurRange);
 		baseMaterial->WriteToBuffer(ssrBuffer, "SSRBlurBuffer", "blurOffset", ssrSettings.blurOffset);
 
-		BlurRenderPassTemplate(renderInfo, submitInfo, baseMaterial, pipeline, renderPassName);
+		if (!BlurRenderPassTemplate(renderInfo, submitInfo, baseMaterial, pipeline, renderPassName))
+		{
+			renderInfo.renderer->EndRenderPass(submitInfo);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+			return;
+		}
 
 		renderInfo.renderer->EndRenderPass(submitInfo);
 
@@ -2502,7 +2510,7 @@ void RenderPassManager::CreateSSRBlur()
 	Create(createInfo);
 }
 
-void RenderPassManager::BlurRenderPassTemplate(
+bool RenderPassManager::BlurRenderPassTemplate(
 	const RenderPass::RenderCallbackInfo& renderInfo,
 	const RenderPass::SubmitInfo submitInfo,
 	std::shared_ptr<class BaseMaterial> baseMaterial,
@@ -2512,9 +2520,7 @@ void RenderPassManager::BlurRenderPassTemplate(
 	const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 	if (!plane)
 	{
-		renderInfo.renderer->EndRenderPass(submitInfo);
-		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
-		return;
+		return false;
 	}
 
 	std::shared_ptr<UniformWriter> renderUniformWriter = renderInfo.renderTarget->GetUniformWriter(renderPassName);
@@ -2554,4 +2560,6 @@ void RenderPassManager::BlurRenderPassTemplate(
 		1,
 		uniformWriters,
 		renderInfo.frame);
+
+	return true;
 }

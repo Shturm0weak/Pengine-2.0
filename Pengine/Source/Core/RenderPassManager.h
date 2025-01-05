@@ -84,7 +84,7 @@ namespace Pengine
 
 		void CreateSSRBlur();
 
-		void BlurRenderPassTemplate(
+		bool BlurRenderPassTemplate(
 			const RenderPass::RenderCallbackInfo& renderInfo,
 			const RenderPass::SubmitInfo submitInfo,
 			std::shared_ptr<class BaseMaterial> baseMaterial,
