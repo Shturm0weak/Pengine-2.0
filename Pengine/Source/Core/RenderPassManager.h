@@ -35,7 +35,12 @@ namespace Pengine
 		static void PrepareUniformsPerViewportBeforeDraw(const RenderPass::RenderCallbackInfo& renderInfo);
 
 	private:
-		using EntitiesByMesh = std::unordered_map<std::shared_ptr<class Mesh>, std::vector<entt::entity>>;
+		struct EntitiesByMesh
+		{
+			std::unordered_map<std::shared_ptr<class Mesh>, std::vector<entt::entity>> instanced;
+			std::vector<std::pair<std::shared_ptr<class Mesh>, entt::entity>> single;
+		};
+
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<class Material>, EntitiesByMesh>;
 		using RenderableEntities = std::unordered_map<std::shared_ptr<class BaseMaterial>, MeshesByMaterial>;
 
@@ -110,6 +115,11 @@ namespace Pengine
 			std::shared_ptr<class UniformWriter> uniformWriter,
 			const std::string& bufferName,
 			const std::string& setBufferName = {});
+
+		static void UpdateSkeletalAnimator(
+			class SkeletalAnimator* skeletalAnimator,
+			std::shared_ptr<class BaseMaterial> baseMaterial,
+			std::shared_ptr<class Pipeline> pipeline);
 
 		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
 	};

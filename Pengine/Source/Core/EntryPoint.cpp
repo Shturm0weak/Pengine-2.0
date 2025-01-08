@@ -115,7 +115,7 @@ void PrepareResources()
 		createInfo.vertexCount = 4;
 		createInfo.vertexLayouts =
 		{
-			VertexLayout(createInfo.vertexSize)
+			VertexLayout(createInfo.vertexSize, "Position")
 		};
 
 		MeshManager::GetInstance().CreateMesh(createInfo);
@@ -168,7 +168,7 @@ void PrepareResources()
 		createInfo.vertexCount = 8;
 		createInfo.vertexLayouts =
 		{
-			VertexLayout(createInfo.vertexSize)
+			VertexLayout(createInfo.vertexSize, "Position")
 		};
 
 		MeshManager::GetInstance().CreateMesh(createInfo);

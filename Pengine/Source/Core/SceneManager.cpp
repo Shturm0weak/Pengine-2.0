@@ -2,6 +2,8 @@
 
 #include "MaterialManager.h"
 
+#include "../ComponentSystems/SkeletalAnimatorSystem.h"
+
 using namespace Pengine;
 
 SceneManager& SceneManager::GetInstance()
@@ -95,5 +97,5 @@ void SceneManager::ShutDown()
 
 SceneManager::SceneManager()
 {
-
+	SetComponentSystem("SkeletalAnimatorSystem", std::make_shared<SkeletalAnimatorSystem>());
 }

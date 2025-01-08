@@ -1,0 +1,262 @@
+Viewports:
+  - Viewport: Main
+    Camera: c3f41d33-af6e-455f-8cf6-180edbc6456b
+Settings:
+  DrawBoundingBoxes: false
+GraphicsSettings: 72f214e2-b3dc-47a1-996c-00ac5bbb4106
+Scene:
+  - UUID: c3f41d33-af6e-455f-8cf6-180edbc6456b
+    Name: Camera
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [1.62104928, 1.91777956, 2.34284425]
+      Rotation: [-0.295702457, 0.36497575, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Camera:
+      Fov: 1.57079637
+      Type: 1
+      ZNear: 0.100000001
+      ZFar: 1000
+      RenderPassName: Final
+      RenderTargetIndex: 0
+  - UUID: a4b9f0f1-bfc4-4349-92d9-0ed3637d02c3
+    Name: Sun
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [2.46091413, 0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    DirectionalLight:
+      Color: [1, 1, 1]
+      Intensity: 5
+      Ambient: 0.100000001
+  - UUID: 30b95c46-d4ce-4a6f-bc31-3b9f34696599
+    Name: Cube
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 1, -2]
+      Rotation: [0, -0, 0]
+      Scale: [3, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9673d2af-e815-4769-8552-5bf0ab359280
+      Material: 28a5a27a-1bd9-4349-aa17-b48e6a4ecf50
+      RenderingOrder: 5
+  - UUID: e6ac9156-0973-4c42-af4d-328b03df325c
+    Name: Plane
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [3, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0d14ec5c-0266-46cf-a363-0581df699678
+      Material: 28a5a27a-1bd9-4349-aa17-b48e6a4ecf50
+      RenderingOrder: 5
+  - UUID: a0926bd8-9106-4ff8-a4af-4f2d7ba29bd3
+    Name: SoldierWalkAndFire
+    IsEnabled: true
+    Childs:
+      - 1c4a12ac-d5cb-43ea-9742-2fc34b3a7b01
+      - 14f032ab-a340-4c37-9780-be184e810e0f
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [1.57079649, -0, 0]
+      Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+      FollowOwner: true
+  - UUID: 1c4a12ac-d5cb-43ea-9742-2fc34b3a7b01
+    Name: Body
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [1.57079649, -0, 0]
+      Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1b2ae8bd-538b-4073-87f7-35fc07f0e582
+      Material: 694579ac-dc05-49da-a4a2-c95a14669aba
+      RenderingOrder: 5
+    SkeletalAnimator:
+      Skeleton: dc33b6f5-3f7e-4576-8d01-26e03b92c132
+      SkeletalAnimation: 655a5125-4b28-4294-ba19-e3477fc5bad5
+      Speed: 1
+      CurrentTime: 1104.47729
+  - UUID: 14f032ab-a340-4c37-9780-be184e810e0f
+    Name: Head
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [1.57079649, -0, 0]
+      Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: a9a65d69-b90a-4311-b542-57e8a9649a19
+      Material: a82c9a85-6081-4eef-b12a-3b2ae756db09
+      RenderingOrder: 5
+    SkeletalAnimator:
+      Skeleton: d34b7711-d195-4ed7-b19c-d2ff73595c23
+      SkeletalAnimation: 655a5125-4b28-4294-ba19-e3477fc5bad5
+      Speed: 1
+      CurrentTime: 1104.47729
+  - UUID: 2b60f8fc-12f7-42db-94cc-05f2f430afbf
+    Name: SoldierRunForward
+    IsEnabled: true
+    Childs:
+      - 9f74aa34-98e5-4b92-b282-c441c7eb02e7
+      - b6f7f498-1e52-4331-9e58-ac6efb972891
+    Transform:
+      Position: [-1, 0, 0]
+      Rotation: [1.57079637, -0, 0]
+      Scale: [0.00999999978, 0.00999999233, 0.00999999233]
+      FollowOwner: true
+  - UUID: 9f74aa34-98e5-4b92-b282-c441c7eb02e7
+    Name: Body
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [-1, 0, 0]
+      Rotation: [1.57079637, -0, 0]
+      Scale: [0.00999999978, 0.00999998953, 0.00999998953]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1b2ae8bd-538b-4073-87f7-35fc07f0e582
+      Material: 694579ac-dc05-49da-a4a2-c95a14669aba
+      RenderingOrder: 5
+    SkeletalAnimator:
+      Skeleton: dc33b6f5-3f7e-4576-8d01-26e03b92c132
+      SkeletalAnimation: 6635cc0a-2dd2-4cdf-8240-8ee6903aea19
+      Speed: 1
+      CurrentTime: 374.591156
+  - UUID: b6f7f498-1e52-4331-9e58-ac6efb972891
+    Name: Head
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [-1, 0, 0]
+      Rotation: [1.57079637, -0, 0]
+      Scale: [0.00999999978, 0.00999998953, 0.00999998953]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: a9a65d69-b90a-4311-b542-57e8a9649a19
+      Material: a82c9a85-6081-4eef-b12a-3b2ae756db09
+      RenderingOrder: 5
+    SkeletalAnimator:
+      Skeleton: d34b7711-d195-4ed7-b19c-d2ff73595c23
+      SkeletalAnimation: 6635cc0a-2dd2-4cdf-8240-8ee6903aea19
+      Speed: 1
+      CurrentTime: 374.591156
+  - UUID: 86ccdcdd-990c-49bc-ade6-895bb7cf008b
+    Name: SoldierRifleReload
+    IsEnabled: true
+    Childs:
+      - da676c88-7adf-4e40-9c61-a5de55009e34
+      - fd969015-540f-430b-a25e-2a72ce87dca5
+    Transform:
+      Position: [1, 0, 0]
+      Rotation: [1.57079649, -0, 0]
+      Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+      FollowOwner: true
+  - UUID: da676c88-7adf-4e40-9c61-a5de55009e34
+    Name: Body
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [1, 0, 0]
+      Rotation: [1.57079649, -0, 0]
+      Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1b2ae8bd-538b-4073-87f7-35fc07f0e582
+      Material: 694579ac-dc05-49da-a4a2-c95a14669aba
+      RenderingOrder: 5
+    SkeletalAnimator:
+      Skeleton: dc33b6f5-3f7e-4576-8d01-26e03b92c132
+      SkeletalAnimation: efd4d5ba-88cd-4238-b95f-0dfe71d22025
+      Speed: 1
+      CurrentTime: 1462.77478
+  - UUID: fd969015-540f-430b-a25e-2a72ce87dca5
+    Name: Head
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [1, 0, 0]
+      Rotation: [1.57079649, -0, 0]
+      Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: a9a65d69-b90a-4311-b542-57e8a9649a19
+      Material: a82c9a85-6081-4eef-b12a-3b2ae756db09
+      RenderingOrder: 5
+    SkeletalAnimator:
+      Skeleton: d34b7711-d195-4ed7-b19c-d2ff73595c23
+      SkeletalAnimation: efd4d5ba-88cd-4238-b95f-0dfe71d22025
+      Speed: 1
+      CurrentTime: 1462.77478
+  - UUID: 551aa8e5-5c92-48f1-a18c-ba2ac038b693
+    Name: SoldierRifleIdle
+    IsEnabled: true
+    Childs:
+      - 8f52fffd-e053-4a2d-9715-0b9c9ff57fc5
+      - 66419cfb-2931-4702-83c4-2325dcf15e45
+    Transform:
+      Position: [2, 0, 0]
+      Rotation: [1.57079649, -0, 0]
+      Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+      FollowOwner: true
+  - UUID: 8f52fffd-e053-4a2d-9715-0b9c9ff57fc5
+    Name: Body
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [2, 0, 0]
+      Rotation: [1.57079649, -0, 0]
+      Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1b2ae8bd-538b-4073-87f7-35fc07f0e582
+      Material: 694579ac-dc05-49da-a4a2-c95a14669aba
+      RenderingOrder: 5
+    SkeletalAnimator:
+      Skeleton: dc33b6f5-3f7e-4576-8d01-26e03b92c132
+      SkeletalAnimation: 09461b32-4700-4a7d-aad3-3e1d228fdfcd
+      Speed: 1
+      CurrentTime: 8554.79297
+  - UUID: 66419cfb-2931-4702-83c4-2325dcf15e45
+    Name: Head
+    IsEnabled: true
+    Childs:
+      []
+    Transform:
+      Position: [2, 0, 0]
+      Rotation: [1.57079649, -0, 0]
+      Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: a9a65d69-b90a-4311-b542-57e8a9649a19
+      Material: a82c9a85-6081-4eef-b12a-3b2ae756db09
+      RenderingOrder: 5
+    SkeletalAnimator:
+      Skeleton: d34b7711-d195-4ed7-b19c-d2ff73595c23
+      SkeletalAnimation: 09461b32-4700-4a7d-aad3-3e1d228fdfcd
+      Speed: 1
+      CurrentTime: 8554.79297

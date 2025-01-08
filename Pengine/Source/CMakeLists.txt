@@ -14,11 +14,13 @@ set(COMPONENTS_SOURCES
 	Components/PointLight.h
 	Components/Transform.cpp Components/Transform.h
 	Components/Renderer3D.h
+	Components/SkeletalAnimator.cpp Components/SkeletalAnimator.h
 )
 source_group("Components" FILES ${COMPONENTS_SOURCES})
 
 set(SYSTEMS_SOURCES
 	ComponentSystems/ComponentSystem.h
+	ComponentSystems/SkeletalAnimatorSystem.cpp ComponentSystems/SkeletalAnimatorSystem.h
 )
 source_group("ComponentSystems" FILES ${SYSTEMS_SOURCES})
 
@@ -81,6 +83,9 @@ set(GRAPHICS_SOURCES
 	Graphics/RenderPass.cpp Graphics/RenderPass.h
 	Graphics/RenderTarget.cpp Graphics/RenderTarget.h
 	Graphics/ShaderReflection.h
+	Graphics/SkeletalAnimation.cpp Graphics/SkeletalAnimation.h
+	Graphics/Skeleton.h
+	Graphics/Skin.h
 	Graphics/stb_image.h
 	Graphics/Texture.cpp Graphics/Texture.h
 	Graphics/UniformLayout.cpp Graphics/UniformLayout.h
@@ -116,6 +121,7 @@ source_group("SpirvReflect" FILES ${SPIRV_REFLECT_SOURCES})
 
 set(UTILS_SOURCES
 	Utils/Utils.h
+	Utils/AssimpHelpers.h
 )
 source_group("Utils" FILES ${UTILS_SOURCES})
 

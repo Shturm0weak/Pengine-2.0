@@ -1,0 +1,745 @@
+- UUID: a0926bd8-9106-4ff8-a4af-4f2d7ba29bd3
+  Name: Armature
+  IsEnabled: true
+  Childs:
+    - 1c4a12ac-d5cb-43ea-9742-2fc34b3a7b01
+    - 14f032ab-a340-4c37-9780-be184e810e0f
+    - 924ea7ce-39e5-48e7-a137-31a60744580a
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [1.57079649, -0, 0]
+    Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+    FollowOwner: true
+- UUID: 1c4a12ac-d5cb-43ea-9742-2fc34b3a7b01
+  Name: Soldier_body
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [1.57079649, -0, 0]
+    Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: 1b2ae8bd-538b-4073-87f7-35fc07f0e582
+    Material: 694579ac-dc05-49da-a4a2-c95a14669aba
+    RenderingOrder: 5
+- UUID: 14f032ab-a340-4c37-9780-be184e810e0f
+  Name: Soldier_head
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0, 0, 0]
+    Rotation: [1.57079649, -0, 0]
+    Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+    FollowOwner: true
+  Renderer3D:
+    Mesh: a9a65d69-b90a-4311-b542-57e8a9649a19
+    Material: a82c9a85-6081-4eef-b12a-3b2ae756db09
+    RenderingOrder: 5
+- UUID: 924ea7ce-39e5-48e7-a137-31a60744580a
+  Name: mixamorig:Hips
+  IsEnabled: true
+  Childs:
+    - 428a5d33-313e-47a5-9d92-c4b025227e5b
+    - 62908070-4578-40df-a8ea-62aedbff85ad
+    - d7c96a1e-d3ca-4ca6-aa44-9a317ef7a661
+  Transform:
+    Position: [3.49229445e-08, 0.963686526, -0.000356778881]
+    Rotation: [2.38418579e-07, 8.7809618e-05, 2.78700099e-06]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+    FollowOwner: true
+- UUID: 428a5d33-313e-47a5-9d92-c4b025227e5b
+  Name: mixamorig:Spine
+  IsEnabled: true
+  Childs:
+    - e0c954ee-8bd3-4d28-bd69-780e41ff1164
+  Transform:
+    Position: [1.35887248e-07, 1.05594957, 0.0154142361]
+    Rotation: [-0.0101876743, 8.73624813e-05, -8.49896605e-05]
+    Scale: [0.00999999978, 0.00999999791, 0.00999999791]
+    FollowOwner: true
+- UUID: e0c954ee-8bd3-4d28-bd69-780e41ff1164
+  Name: mixamorig:Spine1
+  IsEnabled: true
+  Childs:
+    - e1f77c38-10cb-4956-8024-1720b8e94361
+  Transform:
+    Position: [1.35893174e-07, 1.21848941, 0.0137582626]
+    Rotation: [-0.0944639444, 8.73624813e-05, -8.47174088e-05]
+    Scale: [0.00999999978, 0.00999999605, 0.00999999512]
+    FollowOwner: true
+- UUID: e1f77c38-10cb-4956-8024-1720b8e94361
+  Name: mixamorig:Spine2
+  IsEnabled: true
+  Childs:
+    - 8354f093-d6b5-4bdf-8da5-3e15e0654aab
+    - 5637cd81-a56d-4b9a-a794-d415663fd05c
+    - 1751aa94-b7df-4895-8a09-5a7931ba5810
+  Transform:
+    Position: [1.3589208e-07, 1.3548851, 0.000835320912]
+    Rotation: [-0.304034054, 8.74334946e-05, -8.40421635e-05]
+    Scale: [0.00999999978, 0.00999999698, 0.00999999605]
+    FollowOwner: true
+- UUID: 8354f093-d6b5-4bdf-8da5-3e15e0654aab
+  Name: mixamorig:Neck
+  IsEnabled: true
+  Childs:
+    - 20bc7d17-2080-4a7d-b445-3e1c0cc9f82b
+  Transform:
+    Position: [1.36027126e-07, 1.49365914, -0.0427066348]
+    Rotation: [2.68220901e-07, 9.06791829e-05, -8.40421635e-05]
+    Scale: [0.00999999978, 0.00999999512, 0.00999999419]
+    FollowOwner: true
+- UUID: 20bc7d17-2080-4a7d-b445-3e1c0cc9f82b
+  Name: mixamorig:Neck1
+  IsEnabled: true
+  Childs:
+    - a50dec09-6a12-4a76-af30-f25939613c4c
+  Transform:
+    Position: [1.36067044e-07, 1.53705895, -0.0334376395]
+    Rotation: [2.9717549e-07, 9.06791829e-05, -8.40421635e-05]
+    Scale: [0.00999999978, 0.00999999512, 0.00999999512]
+    FollowOwner: true
+- UUID: a50dec09-6a12-4a76-af30-f25939613c4c
+  Name: mixamorig:Head
+  IsEnabled: true
+  Childs:
+    - 561bde13-87f7-41bc-894c-10c9b97e4e79
+    - 199011a9-29f0-42f8-91d7-bd8ed94090e4
+    - fa3df360-f0ed-43f5-9221-8e7c4a646052
+    - c9fe0b2a-3b07-4591-8038-51799193b6ba
+  Transform:
+    Position: [1.36103807e-07, 1.57732522, -0.0248526316]
+    Rotation: [3.17337083e-07, 9.06791829e-05, -8.40421635e-05]
+    Scale: [0.00999999978, 0.00999999512, 0.00999999605]
+    FollowOwner: true
+- UUID: 561bde13-87f7-41bc-894c-10c9b97e4e79
+  Name: mixamorig:HeadTop_End
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [1.36306681e-07, 1.79481316, -0.0248525739]
+    Rotation: [3.18184817e-07, 9.06791829e-05, -8.40421635e-05]
+    Scale: [0.00999999978, 0.00999999512, 0.00999999698]
+    FollowOwner: true
+- UUID: 199011a9-29f0-42f8-91d7-bd8ed94090e4
+  Name: mixamorig:LeftEye
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0.0300571397, 1.64994299, 0.0547033772]
+    Rotation: [3.17337083e-07, 9.06791829e-05, -8.40421635e-05]
+    Scale: [0.00999999978, 0.00999999512, 0.00999999698]
+    FollowOwner: true
+- UUID: fa3df360-f0ed-43f5-9221-8e7c4a646052
+  Name: mixamorig:RightEye
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-0.030056864, 1.64994299, 0.0547033772]
+    Rotation: [3.17337083e-07, 9.06791829e-05, -8.40421635e-05]
+    Scale: [0.00999999978, 0.00999999512, 0.00999999698]
+    FollowOwner: true
+- UUID: c9fe0b2a-3b07-4591-8038-51799193b6ba
+  Name: mixamorig:Jaw
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [1.36120676e-07, 1.59762812, -0.000290632248]
+    Rotation: [3.17337083e-07, 9.06791829e-05, -8.40421635e-05]
+    Scale: [0.00999999978, 0.00999999512, 0.00999999698]
+    FollowOwner: true
+- UUID: 5637cd81-a56d-4b9a-a794-d415663fd05c
+  Name: mixamorig:LeftShoulder
+  IsEnabled: true
+  Childs:
+    - b441e156-1d0d-471d-b9ff-cbf00d7ad6ad
+  Transform:
+    Position: [0.0614421256, 1.45675528, -0.0370966606]
+    Rotation: [-2.94383955, 1.22388113, 2.004426]
+    Scale: [0.00999999885, 0.00999999791, 0.00999999605]
+    FollowOwner: true
+- UUID: b441e156-1d0d-471d-b9ff-cbf00d7ad6ad
+  Name: mixamorig:LeftArm
+  IsEnabled: true
+  Childs:
+    - 613412a8-1262-4fce-90c5-ebdf840a922a
+  Transform:
+    Position: [0.18463318, 1.44562531, -0.0550316349]
+    Rotation: [-3.03394127, 1.22388113, 2.1484189]
+    Scale: [0.00999999698, 0.00999999698, 0.00999999605]
+    FollowOwner: true
+- UUID: 613412a8-1262-4fce-90c5-ebdf840a922a
+  Name: mixamorig:LeftForeArm
+  IsEnabled: true
+  Childs:
+    - 918b9cdd-6020-497f-8045-818903ac219e
+  Transform:
+    Position: [0.461503208, 1.44562531, -0.0550316088]
+    Rotation: [-3.03394294, 1.22388113, 2.1484189]
+    Scale: [0.00999999698, 0.00999999698, 0.00999999605]
+    FollowOwner: true
+- UUID: 918b9cdd-6020-497f-8045-818903ac219e
+  Name: mixamorig:LeftHand
+  IsEnabled: true
+  Childs:
+    - 41199d09-6a35-4da8-af9b-3b607a44292b
+    - 8a6db1ea-4edd-4029-9203-3578761ee94b
+    - a622a646-14de-4f15-a875-afe9f660aab3
+    - f38ab5bd-e95b-4e31-a1d3-02c8ab4f10e9
+    - 224a005f-f8ae-4f75-877d-4d49118bd17c
+  Transform:
+    Position: [0.740241051, 1.44562542, -0.055031579]
+    Rotation: [-3.03394008, 1.22388113, 2.1484189]
+    Scale: [0.00999999698, 0.00999999698, 0.00999999605]
+    FollowOwner: true
+- UUID: 41199d09-6a35-4da8-af9b-3b607a44292b
+  Name: mixamorig:LeftHandThumb1
+  IsEnabled: true
+  Childs:
+    - 361c78e5-db03-4101-9b58-df99ad67538b
+  Transform:
+    Position: [0.764451265, 1.43166971, -0.0311079863]
+    Rotation: [-2.5572629, 0.998367906, 2.55705976]
+    Scale: [0.00999999605, 0.00999999791, 0.00999999605]
+    FollowOwner: true
+- UUID: 361c78e5-db03-4101-9b58-df99ad67538b
+  Name: mixamorig:LeftHandThumb2
+  IsEnabled: true
+  Childs:
+    - 3e5590dd-3da1-46fb-874d-0ccb015e2d66
+  Transform:
+    Position: [0.799416542, 1.41148281, -0.0109208077]
+    Rotation: [-2.55726314, 0.998367131, 2.55705953]
+    Scale: [0.00999999605, 0.00999999791, 0.00999999512]
+    FollowOwner: true
+- UUID: 3e5590dd-3da1-46fb-874d-0ccb015e2d66
+  Name: mixamorig:LeftHandThumb3
+  IsEnabled: true
+  Childs:
+    - 30ccdf44-9c6c-4e60-bd35-5bb9de755672
+  Transform:
+    Position: [0.839530528, 1.38832283, 0.0122389123]
+    Rotation: [-2.55726504, 0.998367608, 2.55706024]
+    Scale: [0.00999999605, 0.00999999885, 0.00999999605]
+    FollowOwner: true
+- UUID: 30ccdf44-9c6c-4e60-bd35-5bb9de755672
+  Name: mixamorig:LeftHandThumb4
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0.860488236, 1.37622273, 0.0243387222]
+    Rotation: [-2.51987195, 1.24825382, 2.70718694]
+    Scale: [0.00999999326, 0.00999999698, 0.00999999326]
+    FollowOwner: true
+- UUID: 8a6db1ea-4edd-4029-9203-3578761ee94b
+  Name: mixamorig:LeftHandIndex1
+  IsEnabled: true
+  Childs:
+    - 0db9691d-a98c-440b-9f66-a20b6bbfb411
+  Transform:
+    Position: [0.84538877, 1.44331157, -0.0323830917]
+    Rotation: [-3.03394175, 1.22388113, 2.1484189]
+    Scale: [0.00999999698, 0.00999999698, 0.00999999605]
+    FollowOwner: true
+- UUID: 0db9691d-a98c-440b-9f66-a20b6bbfb411
+  Name: mixamorig:LeftHandIndex2
+  IsEnabled: true
+  Childs:
+    - 272bf98a-b248-4267-a413-7690d4713cfc
+  Transform:
+    Position: [0.900881767, 1.44331157, -0.0323830843]
+    Rotation: [-3.03394175, 1.22388148, 2.14841914]
+    Scale: [0.00999999698, 0.00999999698, 0.00999999605]
+    FollowOwner: true
+- UUID: 272bf98a-b248-4267-a413-7690d4713cfc
+  Name: mixamorig:LeftHandIndex3
+  IsEnabled: true
+  Childs:
+    - c4f90406-97d1-4645-98de-406891d91f4d
+  Transform:
+    Position: [0.934792817, 1.44331157, -0.0323830657]
+    Rotation: [-3.03394175, 1.2238816, 2.14841938]
+    Scale: [0.00999999698, 0.00999999698, 0.00999999605]
+    FollowOwner: true
+- UUID: c4f90406-97d1-4645-98de-406891d91f4d
+  Name: mixamorig:LeftHandIndex4
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0.95813632, 1.44331157, -0.0323829502]
+    Rotation: [-3.03394175, 1.23188412, 2.14846206]
+    Scale: [0.00999999605, 0.00999999698, 0.00999999605]
+    FollowOwner: true
+- UUID: a622a646-14de-4f15-a875-afe9f660aab3
+  Name: mixamorig:LeftHandMiddle1
+  IsEnabled: true
+  Childs:
+    - e38892ee-5e61-4159-b3aa-afec0e11c114
+  Transform:
+    Position: [0.845148683, 1.44562507, -0.0550315492]
+    Rotation: [-3.03394175, 1.22388113, 2.1484189]
+    Scale: [0.00999999698, 0.00999999698, 0.00999999605]
+    FollowOwner: true
+- UUID: e38892ee-5e61-4159-b3aa-afec0e11c114
+  Name: mixamorig:LeftHandMiddle2
+  IsEnabled: true
+  Childs:
+    - bddc256a-3516-4baf-b747-df840c7852cf
+  Transform:
+    Position: [0.903069675, 1.44562519, -0.055031538]
+    Rotation: [-3.03394175, 1.22388113, 2.1484189]
+    Scale: [0.00999999698, 0.00999999605, 0.00999999605]
+    FollowOwner: true
+- UUID: bddc256a-3516-4baf-b747-df840c7852cf
+  Name: mixamorig:LeftHandMiddle3
+  IsEnabled: true
+  Childs:
+    - 6e16e4b4-adee-4e91-806b-38a8d8f3e77c
+  Transform:
+    Position: [0.9402017, 1.44562531, -0.0550315417]
+    Rotation: [-3.03393626, 1.22388124, 2.14841914]
+    Scale: [0.00999999698, 0.00999999605, 0.00999999698]
+    FollowOwner: true
+- UUID: 6e16e4b4-adee-4e91-806b-38a8d8f3e77c
+  Name: mixamorig:LeftHandMiddle4
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0.967722118, 1.44562507, -0.0550313182]
+    Rotation: [-3.03395295, 1.23303962, 2.14711118]
+    Scale: [0.00999999698, 0.00999999605, 0.00999999791]
+    FollowOwner: true
+- UUID: f38ab5bd-e95b-4e31-a1d3-02c8ab4f10e9
+  Name: mixamorig:LeftHandRing1
+  IsEnabled: true
+  Childs:
+    - ef812493-28bd-4040-ae91-61e61cbfc859
+  Transform:
+    Position: [0.842648566, 1.4451648, -0.0781730339]
+    Rotation: [-3.03393888, 1.22388113, 2.14854288]
+    Scale: [0.00999999698, 0.00999999698, 0.00999999605]
+    FollowOwner: true
+- UUID: ef812493-28bd-4040-ae91-61e61cbfc859
+  Name: mixamorig:LeftHandRing2
+  IsEnabled: true
+  Childs:
+    - 0b4ad8a1-2fed-4d7b-88fe-08f6232d8099
+  Transform:
+    Position: [0.897100568, 1.44516456, -0.0781662613]
+    Rotation: [-3.0339458, 1.22388089, 2.14823723]
+    Scale: [0.00999999698, 0.00999999605, 0.00999999605]
+    FollowOwner: true
+- UUID: 0b4ad8a1-2fed-4d7b-88fe-08f6232d8099
+  Name: mixamorig:LeftHandRing3
+  IsEnabled: true
+  Childs:
+    - 5e55ca2a-2627-4669-8065-fa72f6fd0736
+  Transform:
+    Position: [0.934232473, 1.44516504, -0.0781729892]
+    Rotation: [-3.03394175, 1.22388136, 2.14839864]
+    Scale: [0.00999999698, 0.00999999605, 0.00999999698]
+    FollowOwner: true
+- UUID: 5e55ca2a-2627-4669-8065-fa72f6fd0736
+  Name: mixamorig:LeftHandRing4
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0.957039714, 1.44516504, -0.0781734511]
+    Rotation: [-3.03391504, 1.23867416, 2.14995432]
+    Scale: [0.00999999791, 0.00999999605, 0.00999999605]
+    FollowOwner: true
+- UUID: 224a005f-f8ae-4f75-877d-4d49118bd17c
+  Name: mixamorig:LeftHandPinky1
+  IsEnabled: true
+  Childs:
+    - 59580ff4-20b1-4db1-af28-69b099ea4658
+  Transform:
+    Position: [0.838443637, 1.44352782, -0.0992162302]
+    Rotation: [-3.03394175, 1.22388113, 2.1484189]
+    Scale: [0.00999999698, 0.00999999605, 0.00999999605]
+    FollowOwner: true
+- UUID: 59580ff4-20b1-4db1-af28-69b099ea4658
+  Name: mixamorig:LeftHandPinky2
+  IsEnabled: true
+  Childs:
+    - 41a8abbd-a4fc-4ab6-bd7d-84a6dd3d5df7
+  Transform:
+    Position: [0.87520659, 1.44352782, -0.0992162302]
+    Rotation: [-3.03394175, 1.22388148, 2.14841914]
+    Scale: [0.00999999698, 0.00999999605, 0.00999999698]
+    FollowOwner: true
+- UUID: 41a8abbd-a4fc-4ab6-bd7d-84a6dd3d5df7
+  Name: mixamorig:LeftHandPinky3
+  IsEnabled: true
+  Childs:
+    - c38cb591-e757-424b-960a-3e6a217b7eca
+  Transform:
+    Position: [0.903319538, 1.44352782, -0.0992162153]
+    Rotation: [-3.03394175, 1.22388113, 2.1484189]
+    Scale: [0.00999999698, 0.00999999605, 0.00999999791]
+    FollowOwner: true
+- UUID: c38cb591-e757-424b-960a-3e6a217b7eca
+  Name: mixamorig:LeftHandPinky4
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0.91991502, 1.44352782, -0.0992162153]
+    Rotation: [-3.03395104, 1.23208523, 2.14727926]
+    Scale: [0.00999999512, 0.00999999698, 0.00999999885]
+    FollowOwner: true
+- UUID: 1751aa94-b7df-4895-8a09-5a7931ba5810
+  Name: mixamorig:RightShoulder
+  IsEnabled: true
+  Childs:
+    - 1906efb9-f851-48a5-8515-0f3dcb6debd1
+  Transform:
+    Position: [-0.0614018664, 1.45675552, -0.037096709]
+    Rotation: [-2.94398952, -1.22373462, -2.00446534]
+    Scale: [0.00999999791, 0.00999999978, 0.00999999605]
+    FollowOwner: true
+- UUID: 1906efb9-f851-48a5-8515-0f3dcb6debd1
+  Name: mixamorig:RightArm
+  IsEnabled: true
+  Childs:
+    - 316dad51-e2e6-46d3-a090-11b4e135c1dc
+  Transform:
+    Position: [-0.184632838, 1.44562554, -0.055031687]
+    Rotation: [-3.03406453, -1.22373474, -2.14841247]
+    Scale: [0.00999999885, 0.00999999978, 0.00999999698]
+    FollowOwner: true
+- UUID: 316dad51-e2e6-46d3-a090-11b4e135c1dc
+  Name: mixamorig:RightForeArm
+  IsEnabled: true
+  Childs:
+    - c8f744a3-2cc8-41a5-b812-0d3795d5b04e
+  Transform:
+    Position: [-0.461502701, 1.44562554, -0.0550316833]
+    Rotation: [-3.03406334, -1.22373486, -2.14841247]
+    Scale: [0.00999999885, 0.00999999978, 0.00999999605]
+    FollowOwner: true
+- UUID: c8f744a3-2cc8-41a5-b812-0d3795d5b04e
+  Name: mixamorig:RightHand
+  IsEnabled: true
+  Childs:
+    - 79d03f3a-bd20-4177-870c-f17d37be0d1e
+    - c58ae2d2-1010-4928-a8e1-522caab7af57
+    - b2280bf3-ffb5-4d5f-b899-ef9e782c959d
+    - 5ad88cfb-4e21-4b55-b370-e3c0625eb7d0
+    - 2b310985-d889-4710-9393-1bf81651c350
+  Transform:
+    Position: [-0.740240574, 1.44562519, -0.0550316684]
+    Rotation: [-3.03406382, -1.22373474, -2.14841247]
+    Scale: [0.00999999885, 0.00999999978, 0.00999999512]
+    FollowOwner: true
+- UUID: 79d03f3a-bd20-4177-870c-f17d37be0d1e
+  Name: mixamorig:RightHandPinky1
+  IsEnabled: true
+  Childs:
+    - c7c0a18a-89bc-4cf4-a6e9-d1ec1b9ad036
+  Transform:
+    Position: [-0.838150799, 1.44349575, -0.0988150463]
+    Rotation: [-3.03406382, -1.22373474, -2.14841247]
+    Scale: [0.00999999885, 0.00999999978, 0.00999999419]
+    FollowOwner: true
+- UUID: c7c0a18a-89bc-4cf4-a6e9-d1ec1b9ad036
+  Name: mixamorig:RightHandPinky2
+  IsEnabled: true
+  Childs:
+    - 7da80e4e-4f01-4959-b652-89fe44267d28
+  Transform:
+    Position: [-0.874678791, 1.44349575, -0.0988150537]
+    Rotation: [-3.03406382, -1.22373474, -2.14841247]
+    Scale: [0.00999999885, 0.00999999978, 0.00999999326]
+    FollowOwner: true
+- UUID: 7da80e4e-4f01-4959-b652-89fe44267d28
+  Name: mixamorig:RightHandPinky3
+  IsEnabled: true
+  Childs:
+    - 06f48fac-2480-4246-a139-312c253e3c29
+  Transform:
+    Position: [-0.902498662, 1.44349575, -0.0988150612]
+    Rotation: [-3.03418684, -1.22373474, -2.14841485]
+    Scale: [0.00999999885, 0.00999999978, 0.00999999233]
+    FollowOwner: true
+- UUID: 06f48fac-2480-4246-a139-312c253e3c29
+  Name: mixamorig:RightHandPinky4
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-0.918619931, 1.44349778, -0.0988150239]
+    Rotation: [-3.03426266, -1.24073267, -2.14400697]
+    Scale: [0.00999999791, 0.00999999978, 0.00999998953]
+    FollowOwner: true
+- UUID: c58ae2d2-1010-4928-a8e1-522caab7af57
+  Name: mixamorig:RightHandRing1
+  IsEnabled: true
+  Childs:
+    - d1c07f36-6f1f-4012-b1aa-a0837faaf4be
+  Transform:
+    Position: [-0.844159722, 1.44667661, -0.07853055]
+    Rotation: [-3.03406382, -1.22373474, -2.14841247]
+    Scale: [0.00999999885, 0.00999999978, 0.00999999419]
+    FollowOwner: true
+- UUID: d1c07f36-6f1f-4012-b1aa-a0837faaf4be
+  Name: mixamorig:RightHandRing2
+  IsEnabled: true
+  Childs:
+    - fc24eb85-3590-420d-86ad-de494be0f94b
+  Transform:
+    Position: [-0.898172796, 1.44667661, -0.0785305351]
+    Rotation: [-3.03406382, -1.22373474, -2.14841247]
+    Scale: [0.00999999885, 0.00999999978, 0.00999999326]
+    FollowOwner: true
+- UUID: fc24eb85-3590-420d-86ad-de494be0f94b
+  Name: mixamorig:RightHandRing3
+  IsEnabled: true
+  Childs:
+    - 6845280f-97eb-43e1-9965-6e5d73c952e3
+  Transform:
+    Position: [-0.932088792, 1.44667661, -0.0785305277]
+    Rotation: [-3.03419352, -1.22373497, -2.14839888]
+    Scale: [0.00999999885, 0.00999999978, 0.00999999233]
+    FollowOwner: true
+- UUID: 6845280f-97eb-43e1-9965-6e5d73c952e3
+  Name: mixamorig:RightHandRing4
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-0.955620527, 1.44667947, -0.0785308406]
+    Rotation: [-3.03418064, -1.23896134, -2.1490078]
+    Scale: [0.00999999791, 0.00999999885, 0.00999998953]
+    FollowOwner: true
+- UUID: b2280bf3-ffb5-4d5f-b899-ef9e782c959d
+  Name: mixamorig:RightHandMiddle1
+  IsEnabled: true
+  Childs:
+    - bd860ad3-0e99-48c1-93dc-ff0c80d1de23
+  Transform:
+    Position: [-0.848032951, 1.44562507, -0.0550316423]
+    Rotation: [-3.03406382, -1.22373474, -2.14841247]
+    Scale: [0.00999999885, 0.00999999978, 0.00999999419]
+    FollowOwner: true
+- UUID: bd860ad3-0e99-48c1-93dc-ff0c80d1de23
+  Name: mixamorig:RightHandMiddle2
+  IsEnabled: true
+  Childs:
+    - ccd1dc0c-f661-4559-8f04-82477503d629
+  Transform:
+    Position: [-0.904201031, 1.44562495, -0.0550316423]
+    Rotation: [-3.03406382, -1.22373474, -2.14841247]
+    Scale: [0.00999999885, 0.00999999978, 0.00999999326]
+    FollowOwner: true
+- UUID: ccd1dc0c-f661-4559-8f04-82477503d629
+  Name: mixamorig:RightHandMiddle3
+  IsEnabled: true
+  Childs:
+    - ff3d2fbd-9321-411a-ba47-5ddbfc54d518
+  Transform:
+    Position: [-0.941564977, 1.44562483, -0.0550316423]
+    Rotation: [-3.03418851, -1.22373462, -2.14840198]
+    Scale: [0.00999999885, 0.00999999978, 0.00999999233]
+    FollowOwner: true
+- UUID: ff3d2fbd-9321-411a-ba47-5ddbfc54d518
+  Name: mixamorig:RightHandMiddle4
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-0.968480289, 1.44562805, -0.0550319292]
+    Rotation: [-3.03414321, -1.2371248, -2.15183115]
+    Scale: [0.00999999698, 0.00999999885, 0.00999999139]
+    FollowOwner: true
+- UUID: 5ad88cfb-4e21-4b55-b370-e3c0625eb7d0
+  Name: mixamorig:RightHandIndex1
+  IsEnabled: true
+  Childs:
+    - 0946d729-f080-432f-8229-d0f2ce2db838
+  Transform:
+    Position: [-0.846013844, 1.44387138, -0.0321581811]
+    Rotation: [-3.03406382, -1.22373462, -2.1484127]
+    Scale: [0.00999999885, 0.00999999885, 0.00999999419]
+    FollowOwner: true
+- UUID: 0946d729-f080-432f-8229-d0f2ce2db838
+  Name: mixamorig:RightHandIndex2
+  IsEnabled: true
+  Childs:
+    - 0a42a4ca-f2f4-443d-9a56-145e9931dbff
+  Transform:
+    Position: [-0.899781764, 1.44387138, -0.0321581624]
+    Rotation: [-3.03406382, -1.22373462, -2.1484127]
+    Scale: [0.00999999885, 0.00999999885, 0.00999999419]
+    FollowOwner: true
+- UUID: 0a42a4ca-f2f4-443d-9a56-145e9931dbff
+  Name: mixamorig:RightHandIndex3
+  IsEnabled: true
+  Childs:
+    - 56cfaa61-77d9-4a33-ab90-1d2a4ada963b
+  Transform:
+    Position: [-0.933636725, 1.44387138, -0.032158155]
+    Rotation: [-3.03419304, -1.22373462, -2.14843011]
+    Scale: [0.00999999885, 0.00999999885, 0.00999999419]
+    FollowOwner: true
+- UUID: 56cfaa61-77d9-4a33-ab90-1d2a4ada963b
+  Name: mixamorig:RightHandIndex4
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-0.957272351, 1.44387448, -0.032157734]
+    Rotation: [-3.03422523, -1.23715341, -2.14566159]
+    Scale: [0.00999999978, 0.00999999885, 0.00999999419]
+    FollowOwner: true
+- UUID: 2b310985-d889-4710-9393-1bf81651c350
+  Name: mixamorig:RightHandThumb1
+  IsEnabled: true
+  Childs:
+    - c9e5bb3e-3ab9-4474-8ed3-cde5b9fe6c4b
+  Transform:
+    Position: [-0.765945077, 1.43317401, -0.0318411365]
+    Rotation: [-2.55738783, -0.998224616, -2.55704999]
+    Scale: [0.00999999978, 0.0100000007, 0.00999999419]
+    FollowOwner: true
+- UUID: c9e5bb3e-3ab9-4474-8ed3-cde5b9fe6c4b
+  Name: mixamorig:RightHandThumb2
+  IsEnabled: true
+  Childs:
+    - 568b9d67-53cd-46ed-a36e-7c898b29ba63
+  Transform:
+    Position: [-0.801132858, 1.41285825, -0.0115255285]
+    Rotation: [-2.55738759, -0.998224139, -2.55704975]
+    Scale: [0.00999999978, 0.00999999978, 0.00999999326]
+    FollowOwner: true
+- UUID: 568b9d67-53cd-46ed-a36e-7c898b29ba63
+  Name: mixamorig:RightHandThumb3
+  IsEnabled: true
+  Childs:
+    - 77e417ae-82ea-4f12-8b0d-1f9a34babebb
+  Transform:
+    Position: [-0.84058547, 1.39008057, 0.0112520345]
+    Rotation: [-2.55749989, -0.998278081, -2.55705571]
+    Scale: [0.00999999885, 0.00999999978, 0.00999999233]
+    FollowOwner: true
+- UUID: 77e417ae-82ea-4f12-8b0d-1f9a34babebb
+  Name: mixamorig:RightHandThumb4
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-0.861140549, 1.37821686, 0.0231187027]
+    Rotation: [-2.51950383, -1.25106931, -2.70787096]
+    Scale: [0.00999999698, 0.00999999698, 0.00999999139]
+    FollowOwner: true
+- UUID: 62908070-4578-40df-a8ea-62aedbff85ad
+  Name: mixamorig:LeftUpLeg
+  IsEnabled: true
+  Childs:
+    - dad97adc-cfcf-4ce8-991c-d43e96ee7163
+  Transform:
+    Position: [0.0963379964, 0.930953503, -0.000356788078]
+    Rotation: [-0.0132604958, 8.5023501e-05, 3.14135242]
+    Scale: [0.00999999885, 0.0100000026, 0.00999999978]
+    FollowOwner: true
+- UUID: dad97adc-cfcf-4ce8-991c-d43e96ee7163
+  Name: mixamorig:LeftLeg
+  IsEnabled: true
+  Childs:
+    - e49491e9-cd8c-4fbe-beda-5db260982404
+  Transform:
+    Position: [0.0962731391, 0.513331771, -0.00589515781]
+    Rotation: [-0.0516032428, 7.98191977e-05, 3.14167356]
+    Scale: [0.00999999885, 0.0100000016, 0.00999999978]
+    FollowOwner: true
+- UUID: e49491e9-cd8c-4fbe-beda-5db260982404
+  Name: mixamorig:LeftFoot
+  IsEnabled: true
+  Childs:
+    - fd8c11b7-2469-417c-bb49-907bac6da06b
+  Transform:
+    Position: [0.0963381007, 0.121861935, -0.02611438]
+    Rotation: [0.59689492, 0.000864940288, 3.12648678]
+    Scale: [0.00999999605, 0.0100000016, 0.00999999978]
+    FollowOwner: true
+- UUID: fd8c11b7-2469-417c-bb49-907bac6da06b
+  Name: mixamorig:LeftToeBase
+  IsEnabled: true
+  Childs:
+    - f217ff65-97c4-4a93-a4ae-89b4246325c2
+  Transform:
+    Position: [0.0945051163, 4.88758087e-06, 0.0567085817]
+    Rotation: [1.55297804, 0.0102108577, 3.11555123]
+    Scale: [0.00999999326, 0.00999999978, 0.00999999605]
+    FollowOwner: true
+- UUID: f217ff65-97c4-4a93-a4ae-89b4246325c2
+  Name: mixamorig:LeftToe_End
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [0.0935582742, -0.00116298778, 0.123341821]
+    Rotation: [1.55297804, 0.010210854, 3.11555123]
+    Scale: [0.00999999233, 0.00999999978, 0.00999999512]
+    FollowOwner: true
+- UUID: d7c96a1e-d3ca-4ca6-aa44-9a317ef7a661
+  Name: mixamorig:RightUpLeg
+  IsEnabled: true
+  Childs:
+    - 1ceda2a8-3324-43d8-9ba5-2e66e88e14d0
+  Transform:
+    Position: [-0.096337989, 0.930953681, -0.000356781413]
+    Rotation: [-0.0133096864, 8.50173674e-05, 3.14135218]
+    Scale: [0.00999999978, 0.00999999978, 0.0100000007]
+    FollowOwner: true
+- UUID: 1ceda2a8-3324-43d8-9ba5-2e66e88e14d0
+  Name: mixamorig:RightLeg
+  IsEnabled: true
+  Childs:
+    - 9cc3337c-b092-4490-a796-946dc6318189
+  Transform:
+    Position: [-0.0964029431, 0.513332367, -0.00591569394]
+    Rotation: [-0.0515522696, 7.96997847e-05, 3.14167356]
+    Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+    FollowOwner: true
+- UUID: 9cc3337c-b092-4490-a796-946dc6318189
+  Name: mixamorig:RightFoot
+  IsEnabled: true
+  Childs:
+    - 3e3e582a-bb02-4eaa-b878-ae59490725dc
+  Transform:
+    Position: [-0.0963380635, 0.121861488, -0.0261149704]
+    Rotation: [0.596895099, 0.000864144764, 3.12648678]
+    Scale: [0.00999999698, 0.0100000016, 0.0100000007]
+    FollowOwner: true
+- UUID: 3e3e582a-bb02-4eaa-b878-ae59490725dc
+  Name: mixamorig:RightToeBase
+  IsEnabled: true
+  Childs:
+    - f667e3d5-1862-4f87-8c5a-63a73f3c635d
+  Transform:
+    Position: [-0.0981710553, 4.48524952e-06, 0.0567080081]
+    Rotation: [1.55339026, 0.00796354283, 3.16160774]
+    Scale: [0.00999999698, 0.00999999885, 0.00999999978]
+    FollowOwner: true
+- UUID: f667e3d5-1862-4f87-8c5a-63a73f3c635d
+  Name: mixamorig:RightToe_End
+  IsEnabled: true
+  Childs:
+    []
+  Transform:
+    Position: [-0.0972241983, -0.00116415776, 0.123466678]
+    Rotation: [1.55339015, 0.00796354748, 3.16160774]
+    Scale: [0.00999999605, 0.00999999791, 0.00999999885]
+    FollowOwner: true

@@ -54,6 +54,8 @@ namespace Pengine
 
 		std::shared_ptr<BaseMaterial> GetBaseMaterial() const { return m_BaseMaterial; }
 
+		void SetBaseMaterial(std::shared_ptr<BaseMaterial> baseMaterial) { m_BaseMaterial = baseMaterial; }
+
 		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& renderPassName) const;
 
 		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
@@ -88,7 +90,7 @@ namespace Pengine
 	template<typename T>
 	inline void Material::WriteToBuffer(
 		const std::string& uniformBufferName,
-		const std::string& valueName, 
+		const std::string& valueName,
 		T& value)
 	{
 		m_BaseMaterial->WriteToBuffer(GetBuffer(uniformBufferName), uniformBufferName, valueName, value);

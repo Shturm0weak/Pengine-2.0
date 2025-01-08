@@ -14,6 +14,12 @@ namespace Pengine
 	class PENGINE_API Mesh final : public Asset
 	{
 	public:
+		enum class Type
+		{
+			STATIC,
+			SKINNED
+		};
+
 		struct CreateInfo
 		{
 			std::string name;
@@ -24,6 +30,7 @@ namespace Pengine
 			void* vertices;
 			std::vector<uint32_t> indices;
 			std::optional<BoundingBox> boundingBox;
+			Type type = Type::STATIC;
 
 			std::function<bool(
 				const glm::vec3& start,
@@ -62,6 +69,8 @@ namespace Pengine
 
 		[[nodiscard]] const std::vector<VertexLayout>& GetVertexLayouts() const { return m_VertexLayouts; }
 
+		[[nodiscard]] Type GetType() const { return m_Type; }
+
 		[[nodiscard]] bool Raycast(
 			const glm::vec3& start,
 			const glm::vec3& direction,
@@ -80,6 +89,7 @@ namespace Pengine
 		uint32_t m_IndexCount = 0;
 		uint32_t m_VertexSize = 0;
 		std::vector<VertexLayout> m_VertexLayouts;
+		Type m_Type = Type::STATIC;
 		std::function<bool(
 			const glm::vec3& start,
 			const glm::vec3& direction,

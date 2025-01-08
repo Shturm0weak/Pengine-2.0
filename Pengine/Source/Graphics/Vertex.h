@@ -14,6 +14,17 @@ namespace Pengine
 		glm::vec3 bitangent;
 	};
 
+	struct PENGINE_API VertexDefaultSkinned
+	{
+		glm::vec3 position;
+		glm::vec2 uv;
+		glm::vec3 normal;
+		glm::vec3 tangent;
+		glm::vec3 bitangent;
+		glm::vec4 weights;
+		glm::ivec4 boneIds;
+	};
+
 	struct PENGINE_API VertexPosition
 	{
 		glm::vec3 position;
@@ -27,9 +38,16 @@ namespace Pengine
 		glm::vec3 bitangent;
 	};
 
+	struct PENGINE_API VertexSkinned
+	{
+		glm::vec4 weights;
+		glm::ivec4 boneIds;
+	};
+
 	struct PENGINE_API VertexLayout
 	{
 		uint32_t size;
+		std::string tag;
 	};
 
 }
