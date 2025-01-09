@@ -14,6 +14,12 @@ std::shared_ptr<Scene> SceneManager::Create(const std::string& name, const std::
 {
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>(name, none);
 	scene->SetTag(tag);
+
+	for (const auto& [name, system] : m_ComponentSystemsByName)
+	{
+		scene->SetComponentSystem(name, system);
+	}
+
 	m_ScenesByName[name] = scene;
 	m_ScenesByTag[tag] = scene;
 	
@@ -84,4 +90,10 @@ void SceneManager::ShutDown()
 {
 	m_ScenesByName.clear();
 	m_ScenesByTag.clear();
+	m_ComponentSystemsByName.clear();
+}
+
+SceneManager::SceneManager()
+{
+
 }

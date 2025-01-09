@@ -120,6 +120,14 @@ Scene& Scene::operator=(const Scene& scene)
 	return *this;
 }
 
+void Scene::Update(const float deltaTime)
+{
+	for (const auto& [name, system] : m_ComponentSystemsByName)
+	{
+		system->OnUpdate(deltaTime, shared_from_this());
+	}
+}
+
 std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name, const UUID& uuid)
 {
 	std::shared_ptr<Entity> entity = std::make_shared<Entity>(shared_from_this(), name, uuid);

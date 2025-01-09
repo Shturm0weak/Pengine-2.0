@@ -7,6 +7,7 @@
 #include "GraphicsSettings.h"
 
 #include "../Graphics/RenderTarget.h"
+#include "../ComponentSystems/ComponentSystem.h"
 
 namespace Pengine
 {
@@ -23,6 +24,8 @@ namespace Pengine
 		Scene(const Scene& scene);
 		~Scene();
 		Scene& operator=(const Scene& scene);
+
+		void Update(const float deltaTime);
 
 		std::shared_ptr<Entity> CreateEntity(const std::string& name = "Unnamed", const UUID& uuid = UUID());
 
@@ -60,6 +63,7 @@ namespace Pengine
 
 		void SetRenderTarget(std::shared_ptr<RenderTarget> renderTarget) { m_RenderTarget = renderTarget; }
 
+		void SetComponentSystem(const std::string& name, std::shared_ptr<ComponentSystem> componentSystem) { m_ComponentSystemsByName[name] = componentSystem; }
 	private:
 		struct Resources
 		{
@@ -71,6 +75,8 @@ namespace Pengine
 		Resources CollectResources(std::vector<std::shared_ptr<Entity>> entities);
 
 		void DeleteResources(const Resources& resources);
+
+		std::unordered_map<std::string, std::shared_ptr<ComponentSystem>> m_ComponentSystemsByName;
 
 		std::vector<std::shared_ptr<Entity>> m_Entities;
 		entt::registry m_Registry;
