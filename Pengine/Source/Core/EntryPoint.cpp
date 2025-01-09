@@ -212,7 +212,12 @@ void EntryPoint::Run() const
 
 		m_Application->OnUpdate();
 
-		for (const auto& window : WindowManager::GetInstance().GetWindows())
+		if (const std::shared_ptr<Scene> scene = SceneManager::GetInstance().GetSceneByTag("Main"))
+		{
+			scene->Update(Time::GetDeltaTime());
+		}
+		
+		for (const std::shared_ptr<Window>& window : WindowManager::GetInstance().GetWindows())
 		{
 			if (!window->IsRunning())
 			{

@@ -17,6 +17,11 @@ set(COMPONENTS_SOURCES
 )
 source_group("Components" FILES ${COMPONENTS_SOURCES})
 
+set(SYSTEMS_SOURCES
+	ComponentSystems/ComponentSystem.h
+)
+source_group("ComponentSystems" FILES ${SYSTEMS_SOURCES})
+
 set(CORE_SOURCES
 	Core/Application.h
 	Core/Asset.h
@@ -133,6 +138,7 @@ add_library(${PROJECT_NAME} SHARED
 	${GRAPHICS_SOURCES}
 	${VULKAN_SOURCES}
 	${SPIRV_REFLECT_SOURCES}
+	${SYSTEMS_SOURCES}
 	${UTILS_SOURCES}
 	${CONFIGS_SOURCES}
 	${EVENT_SYSTEM_SOURCES}
