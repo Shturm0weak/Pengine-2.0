@@ -505,10 +505,15 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 		{
 			pipelineCreateInfo.depthTest = depthTestData.as<bool>();
 		}
-
+		
 		if (const auto& depthWriteData = pipelineData["DepthWrite"])
 		{
 			pipelineCreateInfo.depthWrite = depthWriteData.as<bool>();
+		}
+
+		if (const auto& depthClampData = pipelineData["DepthClamp"])
+		{
+			pipelineCreateInfo.depthClamp = depthClampData.as<bool>();
 		}
 
 		if (const auto& depthCompareData = pipelineData["DepthCompare"])
