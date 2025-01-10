@@ -143,6 +143,7 @@ namespace Pengine
 			TopologyMode topologyMode = TopologyMode::TRIANGLE_LIST;
 			bool depthTest = true;
 			bool depthWrite = true;
+			bool depthClamp = false;
 			DepthCompare depthCompare = DepthCompare::LESS_OR_EQUAL;
 		};
 

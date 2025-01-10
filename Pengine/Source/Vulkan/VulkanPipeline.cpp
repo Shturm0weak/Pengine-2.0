@@ -75,6 +75,7 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 	pipelineConfigInfo.depthStencilInfo.depthTestEnable = static_cast<VkBool32>(pipelineCreateInfo.depthTest);
 	pipelineConfigInfo.depthStencilInfo.depthCompareOp = static_cast<VkCompareOp>(pipelineCreateInfo.depthCompare);
 	pipelineConfigInfo.depthStencilInfo.back.compareOp = VK_COMPARE_OP_ALWAYS;
+	pipelineConfigInfo.rasterizationInfo.depthClampEnable = pipelineCreateInfo.depthClamp;
 	pipelineConfigInfo.rasterizationInfo.cullMode = ConvertCullMode(pipelineCreateInfo.cullMode);
 	pipelineConfigInfo.inputAssemblyInfo.topology = ConvertTopologyMode(pipelineCreateInfo.topologyMode);
 	pipelineConfigInfo.rasterizationInfo.polygonMode = ConvertPolygonMode(pipelineCreateInfo.polygonMode);
