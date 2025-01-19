@@ -7,7 +7,7 @@
 #pragma once
 #endif
 
-#include "../yaml-cpp/noexcept.h"
+#include "yaml-cpp/noexcept.h"
 #include <memory>
 #include <utility>
 #include <vector>

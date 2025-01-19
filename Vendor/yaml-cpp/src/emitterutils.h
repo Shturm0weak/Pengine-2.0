@@ -10,8 +10,8 @@
 #include <string>
 
 #include "emitterstate.h"
-#include "../yaml-cpp/emittermanip.h"
-#include "../yaml-cpp/ostream_wrapper.h"
+#include "yaml-cpp/emittermanip.h"
+#include "yaml-cpp/ostream_wrapper.h"
 
 namespace YAML {
 class ostream_wrapper;

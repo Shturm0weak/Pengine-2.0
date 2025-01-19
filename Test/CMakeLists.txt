@@ -23,6 +23,7 @@ set(CORE_SOURCES
 	Scene.cpp
 	Entity.cpp
 	Transform.cpp
+	GetShortFilepath.cpp
 )
 source_group("Core" FILES ${CORE_SOURCES})
 

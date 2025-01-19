@@ -1,4 +1,4 @@
-#include "../yaml-cpp/depthguard.h"
+#include "yaml-cpp/depthguard.h"
 
 namespace YAML {
 

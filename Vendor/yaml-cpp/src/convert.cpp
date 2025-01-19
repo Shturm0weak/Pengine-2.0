@@ -1,6 +1,6 @@
 #include <algorithm>
 
-#include "../yaml-cpp/node/convert.h"
+#include "yaml-cpp/node/convert.h"
 
 namespace {
 // we're not gonna mess with the mess that is all the isupper/etc. functions

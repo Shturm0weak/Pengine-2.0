@@ -14,4 +14,4 @@ file(GLOB_RECURSE SOURCE_FILES
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES})
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/yaml-cpp)
+target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor)

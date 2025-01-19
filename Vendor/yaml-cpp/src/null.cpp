@@ -1,4 +1,4 @@
-#include "../yaml-cpp/null.h"
+#include "yaml-cpp/null.h"
 
 namespace YAML {
 _Null Null;

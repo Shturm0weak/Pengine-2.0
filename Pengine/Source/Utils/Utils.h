@@ -241,9 +241,28 @@ namespace Pengine::Utils
 		return string;
 	}
 
-	inline std::string GetShortFilepath(std::filesystem::path filepath)
+	inline std::filesystem::path GetShortFilepath(const std::filesystem::path& filepath)
 	{
-		return Erase(filepath.string(), std::filesystem::current_path().string() + "\\");
+		const std::filesystem::path directory = std::filesystem::current_path();
+
+		auto beginFilepath = filepath.begin();
+		auto beginDirectory = directory.begin();
+
+		while ((beginFilepath != filepath.end() && beginDirectory != directory.end()) &&
+			(beginFilepath->wstring() == beginDirectory->wstring()))
+		{
+			beginFilepath++;
+			beginDirectory++;
+		}
+
+		std::filesystem::path shortFilepath;
+		while (beginFilepath != filepath.end())
+		{
+			shortFilepath /= *beginFilepath;
+			beginFilepath++;
+		}
+
+		return shortFilepath;
 	}
 
 	inline std::string ReadFile(const std::filesystem::path& filepath)

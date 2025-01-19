@@ -1,5 +1,5 @@
-#include "../yaml-cpp/exceptions.h"
-#include "../yaml-cpp/noexcept.h"
+#include "yaml-cpp/exceptions.h"
+#include "yaml-cpp/noexcept.h"
 
 namespace YAML {
 

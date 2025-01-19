@@ -89,7 +89,8 @@ std::vector<std::shared_ptr<UniformWriter>> RenderPassManager::GetUniformWriters
 
 void RenderPassManager::PrepareUniformsPerViewportBeforeDraw(const RenderPass::RenderCallbackInfo& renderInfo)
 {
-	const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\DefaultReflection.basemat");
+	const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+		std::filesystem::path("Materials") / "DefaultReflection.basemat");
 	const std::shared_ptr<Pipeline> pipeline = reflectionBaseMaterial->GetPipeline(DefaultReflection);
 	if (!pipeline)
 	{
@@ -240,7 +241,7 @@ void RenderPassManager::CreateZPrePass()
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = ZPrePass;
-	createInfo.clearColors = { };
+	createInfo.clearColors = {};
 	createInfo.clearDepths = { clearDepth };
 	createInfo.attachmentDescriptions = { depth };
 	createInfo.resizeWithViewport = true;
@@ -543,7 +544,8 @@ void RenderPassManager::CreateGBuffer()
 		if (!registry.view<DirectionalLight>().empty())
 		{
 			std::shared_ptr<Mesh> cubeMesh = MeshManager::GetInstance().LoadMesh("SkyBoxCube");
-			std::shared_ptr<BaseMaterial> skyBoxBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SkyBox.basemat");
+			std::shared_ptr<BaseMaterial> skyBoxBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+				std::filesystem::path("Materials") / "SkyBox.basemat");
 
 			const std::shared_ptr<Pipeline> pipeline = skyBoxBaseMaterial->GetPipeline(renderPassName);
 			if (pipeline)
@@ -613,7 +615,8 @@ void RenderPassManager::CreateDeferred()
 
 		const std::string renderPassName = renderInfo.renderPass->GetType();
 
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\Deferred.basemat");
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+			std::filesystem::path("Materials") / "Deferred.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 		if (!pipeline)
 		{
@@ -814,7 +817,8 @@ void RenderPassManager::CreateAtmosphere()
 
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().GetMesh("FullScreenQuad");
 
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\Atmosphere.basemat");
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+			std::filesystem::path("Materials") / "Atmosphere.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 		if (!pipeline)
 		{
@@ -869,7 +873,8 @@ void RenderPassManager::CreateAtmosphere()
 
 		// Update SkyBox.
 		{
-			std::shared_ptr<BaseMaterial> skyBoxBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SkyBox.basemat");
+			std::shared_ptr<BaseMaterial> skyBoxBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+				std::filesystem::path("Materials") / "SkyBox.basemat");
 
 			const std::shared_ptr<Pipeline> pipeline = skyBoxBaseMaterial->GetPipeline(GBuffer);
 			if (pipeline)
@@ -1271,7 +1276,8 @@ void RenderPassManager::CreateSSAO()
 
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SSAO.basemat");
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+			std::filesystem::path("Materials") / "SSAO.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 		if (!pipeline)
 		{
@@ -1405,7 +1411,8 @@ void RenderPassManager::CreateSSAOBlur()
 			EventSystem::GetInstance().SendEvent(resizeEvent);
 		}
 
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SSAOBlur.basemat");
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+			std::filesystem::path("Materials") / "SSAOBlur.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 		if (!pipeline)
 		{
@@ -1765,7 +1772,8 @@ void RenderPassManager::CreateBloom()
 		renderInfo.renderer->BeginCommandLabel("Bloom", topLevelRenderPassDebugColor, renderInfo.frame);
 		// Down Sample.
 		{
-			const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\BloomDownSample.basemat");
+			const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+				std::filesystem::path("Materials") / "BloomDownSample.basemat");
 			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 			if (!pipeline)
 			{
@@ -1868,7 +1876,8 @@ void RenderPassManager::CreateBloom()
 
 		// Up Sample.
 		{
-			const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\BloomUpSample.basemat");
+			const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+				std::filesystem::path("Materials") / "BloomUpSample.basemat");
 			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 			if (!pipeline)
 			{
@@ -1963,7 +1972,8 @@ void RenderPassManager::CreateSSR()
 
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SSR.basemat");
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+			std::filesystem::path("Materials") / "SSR.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 		if (!pipeline)
 		{
@@ -2079,7 +2089,8 @@ void RenderPassManager::CreateSSRBlur()
 			EventSystem::GetInstance().SendEvent(resizeEvent);
 		}
 
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials\\SSRBlur.basemat");
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+			std::filesystem::path("Materials") / "SSRBlur.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 		if (!pipeline)
 		{

@@ -152,7 +152,7 @@ Mesh::~Mesh()
 {
 	if (m_RawVertices)
 	{
-		delete[] m_RawVertices;
+		delete m_RawVertices;
 		m_RawVertices = nullptr;
 	}
 }

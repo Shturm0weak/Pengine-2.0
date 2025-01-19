@@ -8,7 +8,7 @@ void ThreadPool::Initialize()
 
 	for (size_t i = 0; i < m_ThreadsAmount; i++)
 	{
-		m_Threads.emplace_back([=]
+		m_Threads.emplace_back([this]
 		{
 			while (true)
 			{
@@ -22,7 +22,7 @@ void ThreadPool::Initialize()
 				Task task;
 				{
 					std::unique_lock<std::mutex> lock(m_Mutex);
-					m_RunCondVar.wait(lock, [=]
+					m_RunCondVar.wait(lock, [this]
 					{
 						return m_IsStoped || !m_Tasks.empty();
 					});
@@ -82,7 +82,7 @@ void ThreadPool::Shutdown()
 void ThreadPool::WaitIdle()
 {
 	std::unique_lock<std::mutex> lock(m_Mutex);
-	m_WaitCondVar.wait(lock, [=]
+	m_WaitCondVar.wait(lock, [this]
 	{
 		bool b = false;
 		for (const auto& [id, busy] : m_IsThreadBusy)

@@ -158,7 +158,7 @@ void VulkanRenderer::BeginRenderPass(
 	viewport.height = -static_cast<float>(size.y);
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
-	const VkRect2D scissor{ { 0, 0}, { size.x, size.y } };
+	const VkRect2D scissor{ { 0, 0}, { (uint32_t)size.x, (uint32_t)size.y } };
 	vkCmdSetViewport(frame->CommandBuffer, 0, 1, &viewport);
 	vkCmdSetScissor(frame->CommandBuffer, 0, 1, &scissor);
 }

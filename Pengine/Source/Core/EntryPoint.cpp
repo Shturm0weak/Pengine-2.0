@@ -25,7 +25,7 @@ using namespace Pengine;
 EntryPoint::EntryPoint(Application* application)
 	: m_Application(application)
 {
-	const auto [configGraphicsAPI] = Serializer::DeserializeEngineConfig("Configs\\Engine.yaml");
+	const auto [configGraphicsAPI] = Serializer::DeserializeEngineConfig(std::filesystem::path("Configs") / "Engine.yaml");
 	graphicsAPI = configGraphicsAPI;
 }
 
@@ -195,7 +195,7 @@ void EntryPoint::Run() const
 
 	Serializer::GenerateFilesUUID(std::filesystem::current_path());
 
-	TextureManager::GetInstance().LoadFromFolder("Editor\\Images");
+	TextureManager::GetInstance().LoadFromFolder(std::filesystem::path("Editor") / "Images");
 
 	ThreadPool::GetInstance().Initialize();
 

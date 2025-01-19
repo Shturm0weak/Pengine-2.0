@@ -1,4 +1,4 @@
-#include "../yaml-cpp/binary.h"
+#include "yaml-cpp/binary.h"
 
 #include <cctype>
 

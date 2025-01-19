@@ -143,7 +143,7 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 								const std::shared_ptr<Entity> entity = camera->GetScene()->CreateEntity(mesh->GetName());
 								entity->AddComponent<Transform>(entity).Translate(position);
 								Renderer3D& r3d = entity->AddComponent<Renderer3D>();
-								r3d.material = MaterialManager::GetInstance().LoadMaterial("Materials\\MeshBase.mat");
+								r3d.material = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "MeshBase.mat");
 								r3d.mesh = mesh;
 							}
 						}

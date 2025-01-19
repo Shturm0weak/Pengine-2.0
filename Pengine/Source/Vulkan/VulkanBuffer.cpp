@@ -212,7 +212,7 @@ void VulkanBuffer::Copy(
 
 	if (GetSize() < vkBuffer->GetSize())
 	{
-		Logger::Error("Can't copy buffer, src size is buffer than dst size!");
+		Logger::Error("Can't copy buffer, src size is bigger than dst size!");
 	}
 
 	m_IsChanged.assign(m_IsChanged.size(), true);
@@ -246,7 +246,7 @@ void VulkanBuffer::Flush()
 		return;
 	}
 
-	// TODO: can be done more optimal by coping just updated part of the buffer.
+	// TODO: can be done more optimal by coping just updated parts of the buffer.
 	if (m_MemoryType == MemoryType::CPU)
 	{
 		vmaCopyMemoryToAllocation(
