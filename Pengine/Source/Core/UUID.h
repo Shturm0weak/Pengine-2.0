@@ -33,6 +33,7 @@ namespace Pengine
 		UUID& operator=(UUID&& uuid) noexcept;
 
 		operator const std::string&() const { return m_UUID; }
+		bool operator==(const UUID& uuid) const { return m_UUID == uuid.Get(); }
 		[[nodiscard]] const std::string& Get() const { return m_UUID; }
 
 	private:

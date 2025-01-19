@@ -1987,7 +1987,7 @@ void RenderPassManager::CreateBloom()
 				baseMaterial->WriteToBuffer(mipBuffer, "MipBuffer", "sourceSize", sourceSize);
 				baseMaterial->WriteToBuffer(mipBuffer, "MipBuffer", "bloomIntensity", bloomSettings.intensity);
 				baseMaterial->WriteToBuffer(mipBuffer, "MipBuffer", "mipLevel", mipLevel);
-				
+
 				mipBuffer->Flush();
 
 				const std::shared_ptr<UniformWriter> downUniformWriter = renderInfo.renderTarget->GetUniformWriter("BloomDownUniformWriters[" + mipLevelString + "]");

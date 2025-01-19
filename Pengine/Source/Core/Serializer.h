@@ -82,14 +82,15 @@ namespace Pengine
 			const std::vector<std::shared_ptr<Mesh>>& meshesByIndex,
 			const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes);
 
-		static void SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entity>& entity, bool withChilds = true);
+		static void SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entity>& entity, bool rootEntity = false, bool isSerializingPrefab = false);
 
-		static std::shared_ptr<Entity> DeserializeEntity(const YAML::Node& in, const std::shared_ptr<Scene>& scene,
-			std::vector<std::string>& childs);
+		static std::shared_ptr<Entity> DeserializeEntity(const YAML::Node& in, const std::shared_ptr<Scene>& scene);
 
 		static void SerializePrefab(const std::filesystem::path& filepath, const std::shared_ptr<Entity>& entity);
 
-		static void DeserializePrefab(const std::filesystem::path& filepath, const std::shared_ptr<Scene>& scene);
+		static std::shared_ptr<Entity> DeserializePrefab(const std::filesystem::path& filepath, const std::shared_ptr<Scene>& scene);
+
+		static void UpdatePrefab(const std::filesystem::path& filepath, const std::vector<std::shared_ptr<Entity>> entities);
 
 		static void SerializeTransform(YAML::Emitter& out, const std::shared_ptr<Entity>& entity);
 

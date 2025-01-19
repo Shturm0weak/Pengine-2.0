@@ -41,7 +41,6 @@ namespace Pengine
 		bool m_Copyable = true;
 		bool m_IsDirty = true;
 
-		void Copy(const Transform& transform);
 		void Move(Transform&& transform) noexcept;
 		void UpdateVectors();
 		void UpdateTransforms();
@@ -59,6 +58,7 @@ namespace Pengine
 		Transform& operator=(const Transform& transform);
 		Transform& operator=(Transform&& transform) noexcept;
 
+		void Copy(const Transform& transform);
 		void CopyGlobal(const Transform& transform);
 
 		void SetEntity(std::shared_ptr<Entity> entity);

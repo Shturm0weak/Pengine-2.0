@@ -140,7 +140,12 @@ std::shared_ptr<Entity> Scene::CloneEntity(std::shared_ptr<Entity> entity)
 {
 	std::function<std::shared_ptr<Entity>(std::shared_ptr<Entity>)> cloneEntity = [this, &cloneEntity](std::shared_ptr<Entity> entity)
 	{
-		std::shared_ptr<Entity> newEntity = CreateEntity(entity->GetName() + "Clone");
+		std::shared_ptr<Entity> newEntity = CreateEntity(entity->GetName());
+
+		if (entity->IsPrefab())
+		{
+			newEntity->SetPrefabFilepathUUID(entity->GetPrefabFilepathUUID());
+		}
 
 		for (auto [id, storage] : m_Registry.storage())
 		{
