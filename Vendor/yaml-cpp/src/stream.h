@@ -7,7 +7,7 @@
 #pragma once
 #endif
 
-#include "../yaml-cpp/mark.h"
+#include "yaml-cpp/mark.h"
 #include <cstddef>
 #include <deque>
 #include <ios>

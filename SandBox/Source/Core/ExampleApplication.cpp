@@ -14,8 +14,8 @@ void ExampleApplication::OnPreStart()
 
 void ExampleApplication::OnStart()
 {
-	//ViewportManager::GetInstance().Create("Main", { 2560, 1440 });
-	//Serializer::DeserializeScene("Scenes\\Sponza.scene");
+	//ViewportManager::GetInstance().Create("Main", { 800, 600 });
+	//Serializer::DeserializeScene("Scenes/Sponza/Sponza.scene");
 }
 
 void ExampleApplication::OnUpdate()

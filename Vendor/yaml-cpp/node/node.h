@@ -10,12 +10,12 @@
 #include <stdexcept>
 #include <string>
 
-#include "../yaml-cpp/dll.h"
-#include "../yaml-cpp/emitterstyle.h"
-#include "../yaml-cpp/mark.h"
-#include "../yaml-cpp/node/detail/iterator_fwd.h"
-#include "../yaml-cpp/node/ptr.h"
-#include "../yaml-cpp/node/type.h"
+#include "yaml-cpp/dll.h"
+#include "yaml-cpp/emitterstyle.h"
+#include "yaml-cpp/mark.h"
+#include "yaml-cpp/node/detail/iterator_fwd.h"
+#include "yaml-cpp/node/ptr.h"
+#include "yaml-cpp/node/type.h"
 
 namespace YAML {
 namespace detail {

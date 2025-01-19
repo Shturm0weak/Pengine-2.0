@@ -1,12 +1,12 @@
-#include "../yaml-cpp/node/parse.h"
+#include "yaml-cpp/node/parse.h"
 
 #include <fstream>
 #include <sstream>
 
 #include "nodebuilder.h"
-#include "../yaml-cpp/node/impl.h"
-#include "../yaml-cpp/node/node.h"
-#include "../yaml-cpp/parser.h"
+#include "yaml-cpp/node/impl.h"
+#include "yaml-cpp/node/node.h"
+#include "yaml-cpp/parser.h"
 
 namespace YAML {
 Node LoadMesh(const std::string& input) {
