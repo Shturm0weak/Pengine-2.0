@@ -744,8 +744,8 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 
 	bool enabled = entity->IsEnabled();
 
-	const ImTextureID showIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\ShowIcon.png")->GetId();
-	const ImTextureID hideIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\HideIcon.png")->GetId();
+	const ImTextureID showIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(std::filesystem::path("Editor") / "Images" / "ShowIcon.png")->GetId();
+	const ImTextureID hideIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(std::filesystem::path("Editor") / "Images" / "HideIcon.png")->GetId();
 
 	if (ImageCheckBox(entity.get(), showIconId, hideIconId, enabled))
 	{
@@ -1375,11 +1375,12 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 
 		const bool leftMouseButtonDoubleClicked = ImGui::IsMouseDoubleClicked(GLFW_MOUSE_BUTTON_1);
 
-		const ImTextureID folderIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\FolderIcon.png")->GetId();
-		const ImTextureID fileIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\FileIcon.png")->GetId();
-		const ImTextureID metaIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\MetaIcon.png")->GetId();
-		const ImTextureID materialIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\MaterialIcon.png")->GetId();
-		const ImTextureID meshIconId = (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\MeshIcon.png")->GetId();
+		const std::filesystem::path editorImagesPath = std::filesystem::path("Editor") / "Images";
+		const ImTextureID folderIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FolderIcon.png")->GetId();
+		const ImTextureID fileIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FileIcon.png")->GetId();
+		const ImTextureID metaIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MetaIcon.png")->GetId();
+		const ImTextureID materialIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MaterialIcon.png")->GetId();
+		const ImTextureID meshIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MeshIcon.png")->GetId();
 
 		bool iconHovered = false;
 
@@ -1803,28 +1804,30 @@ void Editor::MoveCamera(const std::shared_ptr<Entity>& camera)
 
 ImTextureID Editor::GetFileIcon(const std::filesystem::path& filepath, const std::string& format)
 {
+	const std::filesystem::path editorImagesPath = std::filesystem::path("Editor") / "Images";
+
 	if (std::filesystem::is_directory(filepath))
 	{
-		return (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\FolderIcon.png")->GetId();
+		return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FolderIcon.png")->GetId();
 	}
 	else if (format == FileFormats::Mat())
 	{
-		return (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\MaterialIcon.png")->GetId();
+		return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MaterialIcon.png")->GetId();
 	}
 	else if (format == FileFormats::Meta())
 	{
-		return (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\MetaIcon.png")->GetId();
+		return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MetaIcon.png")->GetId();
 	}
 	else if (format == FileFormats::Mesh())
 	{
-		return (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\MeshIcon.png")->GetId();
+		return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MeshIcon.png")->GetId();
 	}
 	else if (FileFormats::IsTexture(format))
 	{
-		return (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\FileIcon.png")->GetId();
+		return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FileIcon.png")->GetId();
 	}
 
-	return (ImTextureID)TextureManager::GetInstance().GetTexture("Editor\\Images\\FileIcon.png")->GetId();
+	return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FileIcon.png")->GetId();
 }
 
 void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)

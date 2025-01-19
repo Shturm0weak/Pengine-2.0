@@ -11,7 +11,7 @@ namespace Pengine::Vk
 	class PENGINE_API VulkanTexture final : public Texture
 	{
 	public:
-		explicit VulkanTexture(const CreateInfo& ñreateInfo);
+		explicit VulkanTexture(const CreateInfo& createInfo);
 		virtual ~VulkanTexture() override;
 		VulkanTexture(const VulkanTexture&) = delete;
 		VulkanTexture(VulkanTexture&&) = delete;

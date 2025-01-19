@@ -725,6 +725,9 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 				{
 					return Pipeline::BlendStateAttachment::BlendOp::MIN;
 				}
+
+				Logger::Error(blendOpType + ":Can't parse blend op type!");
+				return Pipeline::BlendStateAttachment::BlendOp::ADD;
 			};
 
 			auto blendFactorParse = [](const std::string& blendFactorType)
@@ -789,6 +792,9 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 				{
 					return Pipeline::BlendStateAttachment::BlendFactor::ZERO;
 				}
+
+				Logger::Error(blendFactorType + ":Can't parse blend factor type!");
+				return Pipeline::BlendStateAttachment::BlendFactor::ONE;
 			};
 
 			if (const auto& blendOpData = colorBlendStateData["ColorBlendOp"])
@@ -1282,7 +1288,7 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 
 void Serializer::SerializeShaderCache(const std::filesystem::path& filepath, const std::string& code)
 {
-	const std::filesystem::path directory = "Shaders\\Cache\\";
+	const std::filesystem::path directory = std::filesystem::path("Shaders") / "Cache";
 
 	if (!std::filesystem::exists(directory))
 	{
@@ -1322,7 +1328,7 @@ std::string Serializer::DeserializeShaderCache(const std::filesystem::path& file
 		return {};
 	}
 
-	const std::filesystem::path directory = "Shaders\\Cache\\";
+	const std::filesystem::path directory = std::filesystem::path("Shaders") / "Cache";
 	std::filesystem::path cacheFilepath = directory / uuid;
 	cacheFilepath.concat(FileFormats::Spv());
 	if (std::filesystem::exists(cacheFilepath))
@@ -1385,7 +1391,7 @@ void Serializer::SerializeShaderModuleReflection(
 		out << YAML::EndSeq;
 	};
 
-	const std::filesystem::path directory = "Shaders\\Cache\\";
+	const std::filesystem::path directory = std::filesystem::path("Shaders") / "Cache";
 
 	if (!std::filesystem::exists(directory))
 	{
@@ -1507,7 +1513,7 @@ std::optional<ShaderReflection::ReflectShaderModule> Serializer::DeserializeShad
 		return {};
 	}
 
-	const std::filesystem::path directory = "Shaders\\Cache\\";
+	const std::filesystem::path directory = std::filesystem::path("Shaders") / "Cache";
 	std::filesystem::path reflectShaderModuleFilepath = directory / uuid;
 	reflectShaderModuleFilepath.concat(FileFormats::Refl());
 
