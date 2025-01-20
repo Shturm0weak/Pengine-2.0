@@ -34,7 +34,8 @@ cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 For example how I set it:\
 `VULKAN_INCLUDE_PATH = /home/alexander/Vulkan/1.4.304.0/x86_64/include`\
 `VULKAN_LIB_PATH = /home/alexander/Vulkan/1.4.304.0/x86_64/lib`\
-`VULKAN_SPIRV_REFLECT_PATH = /home/alexander/Vulkan/1.4.304.0/x86_64/include`
+`VULKAN_SPIRV_REFLECT_PATH = /home/alexander/Vulkan/1.4.304.0/x86_64/include`\
+Setting these variables can be done as a `.sh` script and run that script on startup by placing another `.sh` script in `/etc/profile.d` containing the line `source <path to your .sh script>`
 * Clone and run CMake.
 ```
 git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
