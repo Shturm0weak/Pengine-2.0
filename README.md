@@ -8,14 +8,14 @@ A simple 3D game engine written in C++ and Vulkan.
 ## **How to build**
 ### **Windows**
 * Download GLFW 64-bit Windows binaries from https://www.glfw.org/download.html.
-* Download Vulkan SDK from https://vulkan.lunarg.com.
-* Set up next environment variables: `GLFW_INCLUDE`, `GLFW_PATH_LIB`, `SPIRV_REFLECT`, `VULKAN_INCLUDE`, `VULKAN_LIB`.\
+* Download Vulkan SDK from https://vulkan.lunarg.com and install it.
+* Set up next environment variables: `GLFW_INCLUDE_PATH`, `GLFW_LIB_PATH`, `VULKAN_SPIRV_REFLECT_PATH`, `VULKAN_INCLUDE_PATH`, `VULKAN_LIB_PATH`.\
 For example how I set it:\
-`GLFW_INCLUDE = C:/GLFW/Includes`\
-`GLFW_PATH_LIB = C:/GLFW/Lib`\
-`VULKAN_INCLUDE = C:/VulkanSDK/1.3.268.0/Include`\
-`VULKAN_LIB = C:/VulkanSDK/1.3.268.0/Lib`\
-`SPIRV_REFLECT = C:/VulkanSDK/1.3.268.0/Source`
+`GLFW_INCLUDE_PATH = C:/GLFW/Includes`\
+`GLFW_LIB_PATH = C:/GLFW/Lib`\
+`VULKAN_INCLUDE_PATH = C:/VulkanSDK/1.3.268.0/Include`\
+`VULKAN_LIB_PATH = C:/VulkanSDK/1.3.268.0/Lib`\
+`VULKAN_SPIRV_REFLECT_PATH = C:/VulkanSDK/1.3.268.0/Source`
 * Clone and run CMake.
 ```
 git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
@@ -23,17 +23,18 @@ git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
 ```
 cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 ```
-* Open Pengine (for VS 20XX `Pengine-2.0/Build/Pengine.sln`) and set up `SandBox` as a startup project.
+* Open Pengine (for VS 20XX `Pengine-2.0/Build/Pengine.sln`) and set up `SandBox` as a startup project. If you are using another IDE, the working directory should be set manually to `Pengine-2.0/SandBox/`.
 * Try to build and run.
 
 ### **Linux**
 * If there is no GLFW, so download GLFW for your linux distribution.
 * Download Vulkan SDK from https://vulkan.lunarg.com.
-* Set up next environment variables: `SPIRV_REFLECT`, `VULKAN_INCLUDE`, `VULKAN_LIB`.\
+* Install Vulkan SDK as shown in the documentation https://vulkan.lunarg.com/doc/view/latest/linux/getting_started.html.
+* Set up next environment variables: `VULKAN_SPIRV_REFLECT_PATH`, `VULKAN_INCLUDE_PATH`, `VULKAN_LIB_PATH`.\
 For example how I set it:\
-`VULKAN_INCLUDE = /home/alexander/Vulkan/1.3.275.0/x86_64/include`\
-`VULKAN_LIB = /home/alexander/Vulkan/1.3.275.0/x86_64/lib64`\
-`SPIRV_REFLECT = /home/alexander/Vulkan/1.3.275.0/x86_64/include`
+`VULKAN_INCLUDE_PATH = /home/alexander/Vulkan/1.4.304.0/x86_64/include`\
+`VULKAN_LIB_PATH = /home/alexander/Vulkan/1.4.304.0/x86_64/lib`\
+`VULKAN_SPIRV_REFLECT_PATH = /home/alexander/Vulkan/1.4.304.0/x86_64/include`
 * Clone and run CMake.
 ```
 git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
@@ -41,6 +42,7 @@ git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
 ```
 cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 ```
+* Set up the working directory to `Pengine-2.0/SandBox/`.
 * Open Pengine and set up `SandBox` as a startup project.
 * Try to build and run.
 
