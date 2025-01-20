@@ -109,8 +109,8 @@ set(VULKAN_SOURCES
 source_group("Vulkan" FILES ${VULKAN_SOURCES})
 
 set(SPIRV_REFLECT_SOURCES
-	$ENV{SPIRV_REFLECT}/SPIRV-Reflect/spirv_reflect.c
-	$ENV{SPIRV_REFLECT}/SPIRV-Reflect/spirv_reflect.h
+	$ENV{VULKAN_SPIRV_REFLECT_PATH}/SPIRV-Reflect/spirv_reflect.c
+	$ENV{VULKAN_SPIRV_REFLECT_PATH}/SPIRV-Reflect/spirv_reflect.h
 )
 source_group("SpirvReflect" FILES ${SPIRV_REFLECT_SOURCES})
 
@@ -150,7 +150,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE YAML)
 target_link_libraries(${PROJECT_NAME} PRIVATE ImGui)
 target_link_libraries(${PROJECT_NAME} PRIVATE assimp)
 
-find_library(GLFW_LIBRARY NAMES glfw glfw3 HINTS $ENV{GLFW_PATH_LIB} REQUIRED)
+find_library(GLFW_LIBRARY NAMES glfw glfw3 HINTS $ENV{GLFW_LIB_PATH} REQUIRED)
 if (GLFW_LIBRARY)
 	message(${GLFW_LIBRARY} " has been found")
 	target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIBRARY})
@@ -158,7 +158,7 @@ else ()
 	message(FATAL_ERROR "GLFW library has not been found")
 endif ()
 
-find_library(VULKAN_LIBRARY NAMES vulkan vulkan-1 HINTS $ENV{VULKAN_LIB} REQUIRED)
+find_library(VULKAN_LIBRARY NAMES vulkan vulkan-1 HINTS $ENV{VULKAN_LIB_PATH} REQUIRED)
 if (VULKAN_LIBRARY)
 	message(${VULKAN_LIBRARY} " has been found")
 	target_link_libraries(${PROJECT_NAME} PRIVATE ${VULKAN_LIBRARY})
@@ -167,14 +167,14 @@ else ()
 endif ()
 
 if (WIN32)
-	find_library(SHADERC_COMBINED_R_LIBRARY NAMES shaderc_combined HINTS $ENV{VULKAN_LIB} REQUIRED)
+	find_library(SHADERC_COMBINED_R_LIBRARY NAMES shaderc_combined HINTS $ENV{VULKAN_LIB_PATH} REQUIRED)
 	if (SHADERC_COMBINED_R_LIBRARY)
 		message(${SHADERC_COMBINED_R_LIBRARY} " has been found")
 	else ()
 		message(FATAL_ERROR "Shaderc combined library release has not been found")
 	endif ()
 
-	find_library(SHADERC_COMBINED_D_LIBRARY NAMES shaderc_combinedd HINTS $ENV{VULKAN_LIB} REQUIRED)
+	find_library(SHADERC_COMBINED_D_LIBRARY NAMES shaderc_combinedd HINTS $ENV{VULKAN_LIB_PATH} REQUIRED)
 	if (SHADERC_COMBINED_D_LIBRARY)
 		message(${SHADERC_COMBINED_D_LIBRARY} " has been found")
 	else ()
@@ -183,7 +183,7 @@ if (WIN32)
 
 	target_link_libraries(${PROJECT_NAME} PRIVATE debug ${SHADERC_COMBINED_D_LIBRARY} optimized ${SHADERC_COMBINED_R_LIBRARY})
 elseif (UNIX)
-	find_library(SHADERC_LIBRARY NAMES libshaderc_combined.a HINTS $ENV{VULKAN_LIB} REQUIRED)
+	find_library(SHADERC_LIBRARY NAMES libshaderc_combined.a HINTS $ENV{VULKAN_LIB_PATH} REQUIRED)
 	if (SHADERC_LIBRARY)
 		message(${SHADERC_LIBRARY} " has been found")
 	else ()
@@ -197,9 +197,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/yaml-cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/imgui)
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/assimp/include)
 
-target_include_directories(${PROJECT_NAME} PRIVATE $ENV{GLFW_INCLUDE})
-target_include_directories(${PROJECT_NAME} PRIVATE $ENV{VULKAN_INCLUDE})
-target_include_directories(${PROJECT_NAME} PRIVATE $ENV{SPIRV_REFLECT})
+target_include_directories(${PROJECT_NAME} PRIVATE $ENV{GLFW_INCLUDE_PATH})
+target_include_directories(${PROJECT_NAME} PRIVATE $ENV{VULKAN_INCLUDE_PATH})
+target_include_directories(${PROJECT_NAME} PRIVATE $ENV{VULKAN_SPIRV_REFLECT_PATH})
 
 if (WIN32)
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
