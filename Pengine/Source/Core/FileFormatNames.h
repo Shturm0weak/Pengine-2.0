@@ -107,6 +107,16 @@ namespace Pengine::FileFormats
 		return ".comp";
 	}
 
+	inline const char* Anim()
+	{
+		return ".anim";
+	}
+
+	inline const char* Skeleton()
+	{
+		return ".skeleton";
+	}
+
 	inline bool IsTexture(const std::string& fileFormat)
 	{
 		return fileFormat == Png()
@@ -139,7 +149,9 @@ namespace Pengine::FileFormats
 			|| fileFormat == Mat()
 			|| fileFormat == Mesh()
 			|| fileFormat == Prefab()
-			|| fileFormat == GraphicsSettings())
+			|| fileFormat == GraphicsSettings()
+			|| fileFormat == Anim()
+			|| fileFormat == Skeleton())
 		{
 			return true;
 		}

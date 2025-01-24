@@ -13,6 +13,7 @@
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
 #include "../Components/Renderer3D.h"
+#include "../Components/SkeletalAnimator.h"
 #include "../Components/Transform.h"
 #include "../Graphics/Renderer.h"
 #include "../Graphics/RenderTarget.h"
@@ -210,13 +211,24 @@ std::vector<std::shared_ptr<Buffer>> RenderPassManager::GetVertexBuffers(
 {
 	const auto& bindingDescriptions = pipeline->GetCreateInfo().bindingDescriptions;
 
+	// TODO: Optimize search.
 	std::vector<std::shared_ptr<Buffer>> vertexBuffers;
-	for (size_t i = 0; i < bindingDescriptions.size(); i++)
+	for (const auto& bindingDescription : bindingDescriptions)
 	{
-		// NOTE: Consider that InputRate::Instance is always the last one.
-		if (bindingDescriptions[i].inputRate == Pipeline::InputRate::VERTEX)
+		if (bindingDescription.inputRate != Pipeline::InputRate::VERTEX)
 		{
-			vertexBuffers.emplace_back(mesh->GetVertexBuffer(i));
+			continue;
+		}
+
+		uint32_t vertexLayoutIndex = 0;
+		for (const auto& vertexLayout : mesh->GetVertexLayouts())
+		{
+			if (vertexLayout.tag == bindingDescription.tag)
+			{
+				vertexBuffers.emplace_back(mesh->GetVertexBuffer(vertexLayoutIndex));
+			}
+
+			vertexLayoutIndex++;
 		}
 	}
 
@@ -255,11 +267,11 @@ void RenderPassManager::CreateZPrePass()
 
 		size_t renderableCount = 0;
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
-		const entt::registry& registry = scene->GetRegistry();
+		entt::registry& registry = scene->GetRegistry();
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 		const glm::mat4 viewProjectionMat4 = renderInfo.projection * camera.GetViewMat4();
 		const auto r3dView = registry.view<Renderer3D>();
-		for (const entt::entity& entity : r3dView)
+		for (entt::entity entity : r3dView)
 		{
 			const Renderer3D& r3d = registry.get<Renderer3D>(entity);
 			const Transform& transform = registry.get<Transform>(entity);
@@ -282,10 +294,26 @@ void RenderPassManager::CreateZPrePass()
 
 			const glm::mat4& transformMat4 = transform.GetTransform();
 			const BoundingBox& box = r3d.mesh->GetBoundingBox();
-			bool isInFrustum = FrustumCulling::CullBoundingBox(viewProjectionMat4, transformMat4, box.min, box.max, camera.GetZNear());
-			if (!isInFrustum)
+			
+			if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
 			{
-				continue;
+				SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
+				if (skeletalAnimator)
+				{
+					UpdateSkeletalAnimator(skeletalAnimator, r3d.material->GetBaseMaterial(), pipeline);
+				}
+
+				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].single.emplace_back(std::make_pair(r3d.mesh, entity));
+			}
+			else if (r3d.mesh->GetType() == Mesh::Type::STATIC)
+			{
+				bool isInFrustum = FrustumCulling::CullBoundingBox(viewProjectionMat4, transformMat4, box.min, box.max, camera.GetZNear());
+				if (!isInFrustum)
+				{
+					continue;
+				}
+
+				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh].emplace_back(entity);
 			}
 
 			if (scene->GetSettings().m_DrawBoundingBoxes)
@@ -294,8 +322,6 @@ void RenderPassManager::CreateZPrePass()
 
 				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
 			}
-
-			renderableEntities[r3d.material->GetBaseMaterial()][r3d.material][r3d.mesh].emplace_back(entity);
 
 			renderableCount++;
 		}
@@ -333,7 +359,7 @@ void RenderPassManager::CreateZPrePass()
 				const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
 				FlushUniformWriters(uniformWriters);
 
-				for (const auto& [mesh, entities] : gameObjectsByMeshes)
+				for (const auto& [mesh, entities] : gameObjectsByMeshes.instanced)
 				{
 					const size_t instanceDataOffset = instanceDatas.size();
 
@@ -353,6 +379,33 @@ void RenderPassManager::CreateZPrePass()
 						entities.size(),
 						uniformWriters,
 						renderInfo.frame);
+				}
+
+				for (const auto& [mesh, entity] : gameObjectsByMeshes.single)
+				{
+					const size_t instanceDataOffset = instanceDatas.size();
+
+					const Transform& transform = registry.get<Transform>(entity);
+					instanceDatas.emplace_back(transform.GetTransform());
+
+					const SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
+					if (skeletalAnimator)
+					{
+						std::vector<std::shared_ptr<UniformWriter>> newUniformWriters = uniformWriters;
+						newUniformWriters.emplace_back(skeletalAnimator->GetUniformWriter());
+						skeletalAnimator->GetUniformWriter()->Flush();
+
+						renderInfo.renderer->Render(
+							GetVertexBuffers(pipeline, mesh),
+							mesh->GetIndexBuffer(),
+							mesh->GetIndexCount(),
+							pipeline,
+							instanceBuffer,
+							instanceDataOffset * instanceBuffer->GetInstanceSize(),
+							1,
+							newUniformWriters,
+							renderInfo.frame);
+					}
 				}
 			}
 		}
@@ -425,8 +478,9 @@ void RenderPassManager::CreateGBuffer()
 	RenderPass::AttachmentDescription depth{};
 	depth.format = Format::D32_SFLOAT;
 	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	depth.load = RenderPass::Load::LOAD;
-	depth.store = RenderPass::Store::NONE;
+	// TODO: Revert Changes to LOAD, NONE!
+	depth.load = RenderPass::Load::CLEAR;
+	depth.store = RenderPass::Store::STORE;
 	depth.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
 	{
 		index = 0;
@@ -497,12 +551,13 @@ void RenderPassManager::CreateGBuffer()
 			{
 				const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
 				// Already updated in ZPrePass.
-				// FlushUniformWriters(uniformWriters);
+				//FlushUniformWriters(uniformWriters);
 
-				for (const auto& [mesh, entities] : gameObjectsByMeshes)
+				for (const auto& [mesh, entities] : gameObjectsByMeshes.instanced)
 				{
 					const size_t instanceDataOffset = instanceDatas.size();
 
+					bool hasSkltAnim = false;
 					for (const entt::entity& entity : entities)
 					{
 						InstanceData data{};
@@ -518,10 +573,41 @@ void RenderPassManager::CreateGBuffer()
 						mesh->GetIndexCount(),
 						pipeline,
 						instanceBuffer,
-						instanceDataOffset * instanceBuffer->GetInstanceSize(),
+						instanceDataOffset* instanceBuffer->GetInstanceSize(),
 						entities.size(),
 						uniformWriters,
 						renderInfo.frame);
+				}
+
+				for (const auto& [mesh, entity] : gameObjectsByMeshes.single)
+				{
+					const size_t instanceDataOffset = instanceDatas.size();
+
+					InstanceData data{};
+					const Transform& transform = registry.get<Transform>(entity);
+					data.transform = transform.GetTransform();
+					data.inverseTransform = glm::transpose(transform.GetInverseTransform());
+					instanceDatas.emplace_back(data);
+
+					const SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
+					if (skeletalAnimator)
+					{
+						std::vector<std::shared_ptr<UniformWriter>> newUniformWriters = uniformWriters;
+						newUniformWriters.emplace_back(skeletalAnimator->GetUniformWriter());
+						// Already updated in ZPrePass.
+						//skeletalAnimator->uniformWriter->Flush();
+
+						renderInfo.renderer->Render(
+							GetVertexBuffers(pipeline, mesh),
+							mesh->GetIndexBuffer(),
+							mesh->GetIndexCount(),
+							pipeline,
+							instanceBuffer,
+							instanceDataOffset * instanceBuffer->GetInstanceSize(),
+							1,
+							newUniformWriters,
+							renderInfo.frame);
+					}
 				}
 			}
 		}
@@ -981,6 +1067,7 @@ void RenderPassManager::CreateTransparent()
 			glm::mat3 inversetransformMat3;
 			glm::vec3 scale;
 			glm::vec3 position;
+			entt::entity entity;
 			float distance2ToCamera = 0.0f;
 		};
 
@@ -1014,10 +1101,14 @@ void RenderPassManager::CreateTransparent()
 			const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 			const glm::mat4& transformMat4 = transform.GetTransform();
 			const BoundingBox& box = r3d.mesh->GetBoundingBox();
-			bool isInFrustum = FrustumCulling::CullBoundingBox(renderInfo.projection * camera.GetViewMat4(), transformMat4, box.min, box.max, camera.GetZNear());
-			if (!isInFrustum)
+
+			if (r3d.mesh->GetType() == Mesh::Type::STATIC)
 			{
-				continue;
+				bool isInFrustum = FrustumCulling::CullBoundingBox(renderInfo.projection * camera.GetViewMat4(), transformMat4, box.min, box.max, camera.GetZNear());
+				if (!isInFrustum)
+				{
+					continue;
+				}
 			}
 
 			if (scene->GetSettings().m_DrawBoundingBoxes)
@@ -1028,12 +1119,19 @@ void RenderPassManager::CreateTransparent()
 			}
 
 			RenderData renderData{};
+			renderData.entity = entity;
 			renderData.r3d = r3d;
 			renderData.transformMat4 = transform.GetTransform();
 			renderData.rotationMat4 = transform.GetRotationMat4();
 			renderData.inversetransformMat3 = transform.GetInverseTransform();
 			renderData.scale = transform.GetScale();
 			renderData.position = transform.GetPosition();
+
+			SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
+			if (skeletalAnimator)
+			{
+				UpdateSkeletalAnimator(skeletalAnimator, r3d.material->GetBaseMaterial(), pipeline);
+			}
 
 			renderDatasByRenderingOrder[r3d.renderingOrder].emplace_back(renderData);
 
@@ -1075,9 +1173,9 @@ void RenderPassManager::CreateTransparent()
 			}
 
 			auto isFurther = [cameraPosition](const RenderData& a, const RenderData& b)
-				{
-					return a.distance2ToCamera > b.distance2ToCamera;
-				};
+			{
+				return a.distance2ToCamera > b.distance2ToCamera;
+			};
 
 			std::sort(renderDataByRenderingOrder.begin(), renderDataByRenderingOrder.end(), isFurther);
 		}
@@ -1117,11 +1215,19 @@ void RenderPassManager::CreateTransparent()
 				data.inverseTransform = glm::transpose(renderData.inversetransformMat3);
 				instanceDatas.emplace_back(data);
 
+				// Can be done more optimal I guess.
 				std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(
 					pipeline,
 					renderData.r3d.material->GetBaseMaterial(),
 					renderData.r3d.material,
 					renderInfo);
+				
+				const SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(renderData.entity);
+				if (skeletalAnimator)
+				{
+					uniformWriters.emplace_back(skeletalAnimator->GetUniformWriter());
+				}
+				
 				FlushUniformWriters(uniformWriters);
 
 				renderInfo.renderer->Render(
@@ -1512,16 +1618,12 @@ void RenderPassManager::CreateCSM()
 			return;
 		}
 
-		using EntitiesByMesh = std::unordered_map<std::shared_ptr<Mesh>, std::vector<entt::entity>>;
-		using MeshesByMaterial = std::unordered_map<std::shared_ptr<Material>, EntitiesByMesh>;
-		using MaterialByBaseMaterial = std::unordered_map<std::shared_ptr<BaseMaterial>, MeshesByMaterial>;
-
-		MaterialByBaseMaterial materialMeshGameObjects;
+		RenderableEntities renderableEntities;
 
 		size_t renderableCount = 0;
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
-		const entt::registry& registry = scene->GetRegistry();
+		entt::registry& registry = scene->GetRegistry();
 		const auto r3dView = registry.view<Renderer3D>();
 
 		glm::vec3 lightDirection{};
@@ -1558,7 +1660,20 @@ void RenderPassManager::CreateCSM()
 				continue;
 			}
 
-			materialMeshGameObjects[r3d.material->GetBaseMaterial()][r3d.material][r3d.mesh].emplace_back(entity);
+			if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
+			{
+				SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
+				if (skeletalAnimator)
+				{
+					UpdateSkeletalAnimator(skeletalAnimator, r3d.material->GetBaseMaterial(), pipeline);
+				}
+
+				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].single.emplace_back(std::make_pair(r3d.mesh, entity));
+			}
+			else if (r3d.mesh->GetType() == Mesh::Type::STATIC)
+			{
+				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh].emplace_back(entity);
+			}
 
 			renderableCount++;
 		}
@@ -1592,11 +1707,9 @@ void RenderPassManager::CreateCSM()
 		renderInfo.renderer->BeginRenderPass(submitInfo);
 
 		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
-		for (const auto& [baseMaterial, meshesByMaterial] : materialMeshGameObjects)
+		for (const auto& [baseMaterial, meshesByMaterial] : renderableEntities)
 		{
 			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
-
-			
 
 			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, renderPassName);
 			const std::string lightSpaceMatricesBufferName = "LightSpaceMatrices";
@@ -1649,7 +1762,10 @@ void RenderPassManager::CreateCSM()
 			
 			for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
 			{
-				for (const auto& [mesh, entities] : gameObjectsByMeshes)
+				std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
+				FlushUniformWriters(uniformWriters);
+
+				for (const auto& [mesh, entities] : gameObjectsByMeshes.instanced)
 				{
 					const size_t instanceDataOffset = instanceDatas.size();
 
@@ -1661,9 +1777,6 @@ void RenderPassManager::CreateCSM()
 						instanceDatas.emplace_back(data);
 					}
 
-					std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
-					FlushUniformWriters(uniformWriters);
-
 					renderInfo.renderer->Render(
 						GetVertexBuffers(pipeline, mesh),
 						mesh->GetIndexBuffer(),
@@ -1674,6 +1787,32 @@ void RenderPassManager::CreateCSM()
 						entities.size(),
 						uniformWriters,
 						renderInfo.frame);
+				}
+
+				for (const auto& [mesh, entity] : gameObjectsByMeshes.single)
+				{
+					const size_t instanceDataOffset = instanceDatas.size();
+
+					const Transform& transform = registry.get<Transform>(entity);
+					instanceDatas.emplace_back(transform.GetTransform());
+
+					const SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
+					if (skeletalAnimator)
+					{
+						std::vector<std::shared_ptr<UniformWriter>> newUniformWriters = uniformWriters;
+						newUniformWriters.emplace_back(skeletalAnimator->GetUniformWriter());
+
+						renderInfo.renderer->Render(
+							GetVertexBuffers(pipeline, mesh),
+							mesh->GetIndexBuffer(),
+							mesh->GetIndexCount(),
+							pipeline,
+							instanceBuffer,
+							instanceDataOffset * instanceBuffer->GetInstanceSize(),
+							1,
+							newUniformWriters,
+							renderInfo.frame);
+					}
 				}
 			}
 		}
@@ -2240,4 +2379,36 @@ std::shared_ptr<Buffer> RenderPassManager::GetOrCreateRenderBuffer(
 	}
 
 	FATAL_ERROR(bufferName + ":Failed to create buffer, no such binding was found!");
+}
+
+void RenderPassManager::UpdateSkeletalAnimator(
+	SkeletalAnimator* skeletalAnimator,
+	std::shared_ptr<class BaseMaterial> baseMaterial,
+	std::shared_ptr<class Pipeline> pipeline)
+{
+	if (!skeletalAnimator->GetUniformWriter())
+	{
+		const std::shared_ptr<UniformLayout> renderUniformLayout =
+			pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::OBJECT, GBuffer));
+		skeletalAnimator->SetUniformWriter(UniformWriter::Create(renderUniformLayout));
+	}
+
+	if (!skeletalAnimator->GetBuffer())
+	{
+		auto binding = skeletalAnimator->GetUniformWriter()->GetUniformLayout()->GetBindingByName("BonesMatrices");
+		if (binding && binding->buffer)
+		{
+			skeletalAnimator->SetBuffer(Buffer::Create(
+				binding->buffer->size,
+				1,
+				Buffer::Usage::UNIFORM_BUFFER,
+				Buffer::MemoryType::CPU));
+
+			skeletalAnimator->GetUniformWriter()->WriteBuffer(binding->buffer->name, skeletalAnimator->GetBuffer());
+			skeletalAnimator->GetUniformWriter()->Flush();
+		}
+	}
+
+	baseMaterial->WriteToBuffer(skeletalAnimator->GetBuffer(), "BonesMatrices", "bonesMatrices", *skeletalAnimator->GetFinalBoneMatrices().data());
+	skeletalAnimator->GetBuffer()->Flush();
 }

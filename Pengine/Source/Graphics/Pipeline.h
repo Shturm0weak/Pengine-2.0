@@ -86,6 +86,7 @@ namespace Pengine
 			RENDERPASS,
 			BASE_MATERIAL,
 			MATERIAL,
+			OBJECT,
 			TOTAL
 		};
 
@@ -112,6 +113,7 @@ namespace Pengine
 			uint32_t binding;
 			InputRate inputRate;
 			std::vector<std::string> names;
+			std::string tag;
 		};
 
 		struct UniformBufferInfo

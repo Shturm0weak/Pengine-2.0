@@ -5,15 +5,19 @@
 #include "GraphicsSettings.h"
 
 #include "../Configs/EngineConfig.h"
+#include "../Graphics/SkeletalAnimation.h"
 #include "../Graphics/Material.h"
 #include "../Graphics/Mesh.h"
 #include "../Graphics/Pipeline.h"
+#include "../Graphics/Skeleton.h"
+#include "../Graphics/Skin.h"
 
 #include "yaml-cpp/yaml.h"
 
 class aiMesh;
 class aiNode;
 class aiMaterial;
+class aiAnimation;
 
 namespace Pengine
 {
@@ -41,6 +45,14 @@ namespace Pengine
 
 		static std::shared_ptr<Mesh> DeserializeMesh(const std::filesystem::path& filepath);
 
+		static void SerializeSkeleton(const std::shared_ptr<Skeleton>& skeleton);
+
+		static std::shared_ptr<Skeleton> DeserializeSkeleton(const std::filesystem::path& filepath);
+
+		static void SerializeSkeletalAnimation(const std::shared_ptr<SkeletalAnimation>& skeletalAnimation);
+
+		static std::shared_ptr<SkeletalAnimation> DeserializeSkeletalAnimation(const std::filesystem::path& filepath);
+
 		static void SerializeShaderCache(const std::filesystem::path& filepath, const std::string& code);
 
 		static std::string DeserializeShaderCache(const std::filesystem::path& filepath);
@@ -55,6 +67,12 @@ namespace Pengine
 			float& workStatus);
 
 		static std::shared_ptr<Mesh> GenerateMesh(aiMesh* aiMesh, const std::filesystem::path& directory);
+
+		static std::shared_ptr<Mesh> GenerateMeshSkinned(const std::shared_ptr<Skeleton>& skeleton, aiMesh* aiMesh, const std::filesystem::path& directory);
+
+		static std::shared_ptr<Skeleton> GenerateSkeleton(const aiNode* aiRootNode, aiMesh* aiMesh, const std::filesystem::path& directory);
+
+		static std::shared_ptr<SkeletalAnimation> GenerateAnimation(aiAnimation* aiAnimation, const std::filesystem::path& directory);
 
 		static std::shared_ptr<Material> GenerateMaterial(const aiMaterial* aiMaterial, const std::filesystem::path& directory);
 
@@ -89,6 +107,10 @@ namespace Pengine
 
 		static void DeserializeDirectionalLight(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
 
+		static void SerializeSkeletalAnimator(YAML::Emitter& out, const std::shared_ptr<Entity>& entity);
+
+		static void DeserializeSkeletalAnimator(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
+
 		static void SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entity>& entity);
 
 		static void DeserializeCamera(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
@@ -105,6 +127,7 @@ namespace Pengine
 
 		static std::optional<Texture::Meta> DeserializeTextureMeta(const std::filesystem::path& filepath);
 
+		static std::filesystem::path DeserializeFilepath(const std::string& uuidOrFilepath);
 	private:
 		static void ParseUniformValues(
 			const YAML::detail::iterator_value& data,

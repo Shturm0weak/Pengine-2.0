@@ -133,6 +133,7 @@ namespace Pengine
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
 
 		// map<BufferName, map<ValueName, <Size, Offset>>>
+		mutable std::mutex m_UniformCacheMutex;
 		mutable std::unordered_map<std::string, std::unordered_map<std::string, std::pair<uint32_t, uint32_t>>> m_UniformsCache;
 	};
 

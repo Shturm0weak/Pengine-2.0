@@ -14,6 +14,7 @@ Mesh::Mesh(
 	, m_VertexSize(createInfo.vertexSize)
 	, m_IndexCount(m_RawIndices.size())
 	, m_VertexLayouts(std::move(createInfo.vertexLayouts))
+	, m_Type(createInfo.type)
 {
 	m_Indices = Buffer::Create(
 		sizeof(m_RawIndices[0]),

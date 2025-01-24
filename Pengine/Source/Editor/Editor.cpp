@@ -4,6 +4,7 @@
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
 #include "../Components/Renderer3D.h"
+#include "../Components/SkeletalAnimator.h"
 #include "../Components/Transform.h"
 #include "../Core/FileFormatNames.h"
 #include "../Core/Input.h"
@@ -877,6 +878,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene)
 			Renderer3DComponent(entity);
 			PointLightComponent(entity);
 			DirectionalLightComponent(entity);
+			SkeletalAnimatorComponent(entity);
 
 			ImGui::NewLine();
 		}
@@ -1187,10 +1189,14 @@ void Editor::TransformComponent(const std::shared_ptr<Entity>& entity)
 
 	Transform& transform = entity->GetComponent<Transform>();
 
+	ImGui::PushID("Transform O");
 	if (ImGui::Button("O"))
 	{
 	}
+	ImGui::PopID();
+	
 	ImGui::SameLine();
+	
 	if (ImGui::CollapsingHeader("Transform"))
 	{
 		Indent indent;
@@ -1400,13 +1406,15 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 		for (auto& directoryIter : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
 			const std::filesystem::path path = Utils::GetShortFilepath(directoryIter.path());
-			if (Utils::Contains(path.string(), ".cpp") || Utils::Contains(path.string(), ".h"))
+			const std::string filename = path.filename().string();
+			const std::string format = Utils::GetFileFormat(path);
+
+			if (format == ".cpp"
+				|| format == ".h"
+				|| format == FileFormats::Meta())
 			{
 				continue;
 			}
-
-			const std::string filename = path.filename().string();
-			const std::string format = Utils::GetFileFormat(path);
 			
 			if (FileFormats::IsAsset(format))
 			{
@@ -1429,6 +1437,7 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 			ImGui::PushID(filename.c_str());
 			if (ImGui::ImageButton(currentIcon, { thumbnailSize, thumbnailSize }, ImVec2(0, 1), ImVec2(1, 0)))
 			{
+
 			}
 			ImGui::PopID();
 
@@ -1853,6 +1862,10 @@ void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
 		{
 			entity->AddComponent<DirectionalLight>();
 		}
+		else if (ImGui::MenuItem("SkeletalAnimator"))
+		{
+			entity->AddComponent<SkeletalAnimator>();
+		}
 		ImGui::EndPopup();
 	}
 }
@@ -1910,11 +1923,15 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 
 	Renderer3D& r3d = entity->GetComponent<Renderer3D>();
 
+	ImGui::PushID("Renderer3D X");
 	if (ImGui::Button("X"))
 	{
 		entity->RemoveComponent<Renderer3D>();
 	}
+	ImGui::PopID();
+	
 	ImGui::SameLine();
+	
 	if (ImGui::CollapsingHeader("Renderer3D"))
 	{
 		Indent indent;
@@ -1991,11 +2008,15 @@ void Editor::PointLightComponent(const std::shared_ptr<Entity>& entity)
 
 	PointLight& pointLight = entity->GetComponent<PointLight>();
 
+	ImGui::PushID("PointLight X");
 	if (ImGui::Button("X"))
 	{
 		entity->RemoveComponent<PointLight>();
 	}
+	ImGui::PopID();
+
 	ImGui::SameLine();
+
 	if (ImGui::CollapsingHeader("PointLight"))
 	{
 		Indent indent;
@@ -2016,11 +2037,15 @@ void Editor::DirectionalLightComponent(const std::shared_ptr<Entity>& entity)
 
 	DirectionalLight& directionalLight = entity->GetComponent<DirectionalLight>();
 
+	ImGui::PushID("DirectionalLight X");
 	if (ImGui::Button("X"))
 	{
 		entity->RemoveComponent<DirectionalLight>();
 	}
+	ImGui::PopID();
+	
 	ImGui::SameLine();
+	
 	if (ImGui::CollapsingHeader("DirectionalLight"))
 	{
 		Indent indent;
@@ -2028,6 +2053,97 @@ void Editor::DirectionalLightComponent(const std::shared_ptr<Entity>& entity)
 		ImGui::ColorEdit3("Color", &directionalLight.color[0]);
 		ImGui::SliderFloat("Intensity", &directionalLight.intensity, 0.0f, 10.0f);
 		ImGui::SliderFloat("Ambient", &directionalLight.ambient, 0.0f, 0.3f);
+	}
+}
+
+void Editor::SkeletalAnimatorComponent(const std::shared_ptr<Entity>& entity)
+{
+	if (!entity->HasComponent<SkeletalAnimator>())
+	{
+		return;
+	}
+
+	SkeletalAnimator& skeletalAnimator = entity->GetComponent<SkeletalAnimator>();
+
+	ImGui::PushID("SkeletalAnimator X");
+	if (ImGui::Button("X"))
+	{
+		entity->RemoveComponent<SkeletalAnimator>();
+	}
+	ImGui::PopID();
+
+	ImGui::SameLine();
+	
+	if (ImGui::CollapsingHeader("SkeletalAnimator"))
+	{
+		Indent indent;
+
+		if (skeletalAnimator.GetSkeleton())
+		{
+			ImGui::Text("Skeleton: %s", skeletalAnimator.GetSkeleton()->GetName().c_str());
+		}
+		else
+		{
+			ImGui::Text("Skeleton: %s", none);
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+			{
+				std::wstring filepath((const wchar_t*)payload->Data);
+				filepath.resize(payload->DataSize / sizeof(wchar_t));
+
+				if (Utils::GetFileFormat(filepath) == FileFormats::Skeleton())
+				{
+					skeletalAnimator.SetSkeleton(MeshManager::GetInstance().LoadSkeleton(Utils::GetShortFilepath(filepath)));
+				}
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGui::Text("Animation:");
+		ImGui::SameLine();
+		if (skeletalAnimator.GetSkeletalAnimation())
+		{
+			ImGui::Button(skeletalAnimator.GetSkeletalAnimation()->GetName().c_str());
+		}
+		else
+		{
+			ImGui::Button(none);
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+			{
+				std::wstring filepath((const wchar_t*)payload->Data);
+				filepath.resize(payload->DataSize / sizeof(wchar_t));
+
+				if (Utils::GetFileFormat(filepath) == FileFormats::Anim())
+				{
+					skeletalAnimator.SetSkeletalAnimation(MeshManager::GetInstance().LoadSkeletalAnimation(filepath));
+				}
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		float speed = skeletalAnimator.GetSpeed();
+		if (ImGui::SliderFloat("Animation Speed", &speed, 0.0f, 5.0f))
+		{
+			skeletalAnimator.SetSpeed(speed);
+		}
+
+		if (skeletalAnimator.GetSkeletalAnimation())
+		{
+			float currentTime = skeletalAnimator.GetCurrentTime();
+			if (ImGui::SliderFloat("Animation Current Time", &currentTime, 0.0f, skeletalAnimator.GetSkeletalAnimation()->GetDuration()))
+			{
+				skeletalAnimator.SetCurrentTime(currentTime);
+			}
+		}
 	}
 }
 

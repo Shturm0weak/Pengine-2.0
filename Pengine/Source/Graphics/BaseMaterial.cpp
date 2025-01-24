@@ -230,6 +230,7 @@ bool BaseMaterial::GetUniformDetails(
 
 					if (found)
 					{
+						std::lock_guard<std::mutex> lock(m_UniformCacheMutex);
 						m_UniformsCache[uniformBufferName][valueName] = std::make_pair(size, offset);
 						return true;
 					}

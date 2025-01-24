@@ -15,6 +15,7 @@ Basemat:
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex
+          Tag: Position
           Names:
             - positionA
             - colorA

@@ -16,15 +16,14 @@
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
 #include "../Components/Renderer3D.h"
+#include "../Components/SkeletalAnimator.h"
 #include "../Components/Transform.h"
 
 #include "../Utils/Utils.h"
 
 #include "../Graphics/Vertex.h"
 
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
+#include "../Utils/AssimpHelpers.h"
 
 #include <filesystem>
 #include <fstream>
@@ -106,6 +105,90 @@ namespace YAML
 			rhs.y = node[1].as<float>();
 			rhs.z = node[2].as<float>();
 			rhs.w = node[3].as<float>();
+			return true;
+		}
+	};
+
+	template<>
+	struct convert<glm::quat>
+	{
+		static Node encode(const glm::quat& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.push_back(rhs.z);
+			node.push_back(rhs.w);
+			node.SetStyle(EmitterStyle::Flow);
+			return node;
+		}
+
+		static bool decode(const Node& node, glm::quat& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 4)
+				return false;
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
+			rhs.w = node[3].as<float>();
+			return true;
+		}
+	};
+
+	template<>
+	struct convert<glm::mat4>
+	{
+		static Node encode(const glm::mat4& rhs)
+		{
+			Node node;
+			node.push_back(rhs[0][0]);
+			node.push_back(rhs[0][1]);
+			node.push_back(rhs[0][2]);
+			node.push_back(rhs[0][3]);
+
+			node.push_back(rhs[1][0]);
+			node.push_back(rhs[1][1]);
+			node.push_back(rhs[1][2]);
+			node.push_back(rhs[1][3]);
+
+			node.push_back(rhs[2][0]);
+			node.push_back(rhs[2][1]);
+			node.push_back(rhs[2][2]);
+			node.push_back(rhs[2][3]);
+
+			node.push_back(rhs[3][0]);
+			node.push_back(rhs[3][1]);
+			node.push_back(rhs[3][2]);
+			node.push_back(rhs[3][3]);
+			node.SetStyle(EmitterStyle::Flow);
+			return node;
+		}
+
+		static bool decode(const Node& node, glm::mat4& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 16)
+				return false;
+
+			rhs[0][0] = node[0].as<float>();
+			rhs[0][1] = node[1].as<float>();
+			rhs[0][2] = node[2].as<float>();
+			rhs[0][3] = node[3].as<float>();
+
+			rhs[1][0] = node[4].as<float>();
+			rhs[1][1] = node[5].as<float>();
+			rhs[1][2] = node[6].as<float>();
+			rhs[1][3] = node[7].as<float>();
+
+			rhs[2][0] = node[8].as<float>();
+			rhs[2][1] = node[9].as<float>();
+			rhs[2][2] = node[10].as<float>();
+			rhs[2][3] = node[11].as<float>();
+
+			rhs[3][0] = node[12].as<float>();
+			rhs[3][1] = node[13].as<float>();
+			rhs[3][2] = node[14].as<float>();
+			rhs[3][3] = node[15].as<float>();
 			return true;
 		}
 	};
@@ -282,6 +365,13 @@ YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
 }
 
 YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec4& v)
+{
+	out << YAML::Flow;
+	out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
+	return out;
+}
+
+YAML::Emitter& operator<<(YAML::Emitter& out, const glm::quat& v)
 {
 	out << YAML::Flow;
 	out << YAML::BeginSeq << v.x << v.y << v.z << v.w << YAML::EndSeq;
@@ -649,6 +739,10 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 				{
 					type = Pipeline::DescriptorSetIndexType::MATERIAL;
 				}
+				else if (typeName == "Object")
+				{
+					type = Pipeline::DescriptorSetIndexType::OBJECT;
+				}
 			}
 
 			std::string attachedrenderPassName = renderPassName;
@@ -691,6 +785,11 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 			for (const auto& nameData : vertexInputBindingDescriptionData["Names"])
 			{
 				bindingDescription.names.emplace_back(nameData.as<std::string>());
+			}
+
+			if (const auto& tagData = vertexInputBindingDescriptionData["Tag"])
+			{
+				bindingDescription.tag = tagData.as<std::string>();
 			}
 		}
 
@@ -835,7 +934,7 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 		pipelineCreateInfos.emplace_back(pipelineCreateInfo);
 	}
 
-	Logger::Log("BaseMaterial:" + filepath.string() + " has been deserialized!", BOLDGREEN);
+	Logger::Log("BaseMaterial:" + filepath.string() + " has been loaded!", BOLDGREEN);
 
 	return createInfo;
 }
@@ -939,7 +1038,7 @@ Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filep
 		createInfo.uniformInfos.emplace(renderPass, uniformInfo);
 	}
 
-	Logger::Log("Material:" + filepath.string() + " has been deserialized!", BOLDGREEN);
+	Logger::Log("Material:" + filepath.string() + " has been loaded!", BOLDGREEN);
 
 	return createInfo;
 }
@@ -954,7 +1053,7 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material, bo
 
 	out << YAML::BeginMap;
 
-	out << YAML::Key << "Basemat" << YAML::Value << material->GetBaseMaterial()->GetFilepath();
+	out << YAML::Key << "Basemat" << YAML::Value << Utils::FindUuid(material->GetBaseMaterial()->GetFilepath());
 
 	out << YAML::Key << "Options";
 
@@ -1106,14 +1205,11 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material, bo
 	fout << out.c_str();
 	fout.close();
 
-	if (const std::string uuid = Utils::FindUuid(material->GetFilepath()); uuid.empty())
-	{
-		GenerateFileUUID(material->GetFilepath());
-	}
+	GenerateFileUUID(material->GetFilepath());
 
 	if (useLog)
 	{
-		Logger::Log("Material:" + material->GetFilepath().string() + " has been serialized!", BOLDGREEN);
+		Logger::Log("Material:" + material->GetFilepath().string() + " has been saved!", BOLDGREEN);
 	}
 }
 
@@ -1121,16 +1217,35 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 {
 	const std::string meshName = mesh->GetName();
 
+	size_t vertexLayoutsSize = 0;
+	for (const VertexLayout& vertexLayout : mesh->GetVertexLayouts())
+	{
+		// Size.
+		vertexLayoutsSize += sizeof(uint32_t);
+		
+		// Tag Size.
+		vertexLayoutsSize += sizeof(uint32_t);
+	
+		// Tag.
+		vertexLayoutsSize += vertexLayout.tag.size();
+	}
+
 	size_t dataSize = mesh->GetVertexCount() * mesh->GetVertexSize() +
-		mesh->GetVertexLayouts().size() * sizeof(VertexLayout) +
+		vertexLayoutsSize +
 		mesh->GetIndexCount() * sizeof(uint32_t) +
 		mesh->GetName().size() +
 		mesh->GetFilepath().string().size() +
-		6 * 4; // Vertex Count, Vertex Size, Index Count, Mesh Size, Filepath Size, Vertex Layout Count.
+		7 * 4; // Type, Vertex Count, Vertex Size, Index Count, Mesh Size, Filepath Size, Vertex Layout Count.
 
 	uint32_t offset = 0;
 
 	uint8_t* data = new uint8_t[dataSize];
+
+	// Type.
+	{
+		Utils::GetValue<uint32_t>(data, offset) = (uint32_t)mesh->GetType();
+		offset += sizeof(uint32_t);
+	}
 
 	// Name.
 	{
@@ -1160,8 +1275,20 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 
 		for (const VertexLayout& vertexLayout : mesh->GetVertexLayouts())
 		{
-			memcpy(&Utils::GetValue<uint8_t>(data, offset), &vertexLayout.size, sizeof(uint32_t));
-			offset += sizeof(uint32_t);
+			// Tag.
+			{
+				Utils::GetValue<uint32_t>(data, offset) = static_cast<uint32_t>(vertexLayout.tag.size());
+				offset += sizeof(uint32_t);
+
+				memcpy(&Utils::GetValue<uint8_t>(data, offset), vertexLayout.tag.data(), vertexLayout.tag.size());
+				offset += static_cast<uint32_t>(vertexLayout.tag.size());
+			}
+
+			// Size.
+			{
+				memcpy(&Utils::GetValue<uint8_t>(data, offset), &vertexLayout.size, sizeof(uint32_t));
+				offset += sizeof(uint32_t);
+			}
 		}
 	}
 
@@ -1187,7 +1314,7 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 
 	GenerateFileUUID(mesh->GetFilepath());
 
-	Logger::Log("Mesh:" + outMeshFilepath.string() + " has been serialized!", BOLDGREEN);
+	Logger::Log("Mesh:" + outMeshFilepath.string() + " has been saved!", BOLDGREEN);
 }
 
 std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& filepath)
@@ -1218,6 +1345,13 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 
 	int offset = 0;
 
+	Mesh::Type type;
+	// Type.
+	{
+		type = (Mesh::Type)Utils::GetValue<uint32_t>(data, offset);
+		offset += sizeof(uint32_t);
+	}
+
 	std::string meshName;
 	// Name.
 	{
@@ -1242,16 +1376,31 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 	}
 
 	// Vertex Layouts.
+	std::vector<VertexLayout> vertexLayouts;
 	{
 		const uint32_t vertexLayoutCount = Utils::GetValue<uint32_t>(data, offset);
 		offset += sizeof(uint32_t);
 
-		std::vector<VertexLayout> vertexLayouts;
 		for (size_t i = 0; i < vertexLayoutCount; i++)
 		{
-			VertexLayout vertexLayout = vertexLayouts.emplace_back();
-			memcpy(&vertexLayout, &Utils::GetValue<uint32_t>(data, offset), sizeof(uint32_t));
-			offset += sizeof(uint32_t);
+			VertexLayout& vertexLayout = vertexLayouts.emplace_back();
+
+			// Tag.
+			{
+				uint32_t tagSize = 0;
+				memcpy(&tagSize, &Utils::GetValue<uint32_t>(data, offset), sizeof(uint32_t));
+				offset += sizeof(uint32_t);
+
+				vertexLayout.tag.resize(tagSize);
+				memcpy(vertexLayout.tag.data(), &Utils::GetValue<uint8_t>(data, offset), tagSize);
+				offset += tagSize;
+			}
+
+			// Size.
+			{
+				memcpy(&vertexLayout, &Utils::GetValue<uint32_t>(data, offset), sizeof(uint32_t));
+				offset += sizeof(uint32_t);
+			}
 		}
 	}
 
@@ -1268,22 +1417,338 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 
 	delete[] data;
 
-	Logger::Log("Mesh:" + filepath.string() + " has been deserialized!", BOLDGREEN);
+	Logger::Log("Mesh:" + filepath.string() + " has been loaded!", BOLDGREEN);
 
 	Mesh::CreateInfo createInfo{};
 	createInfo.filepath = filepath;
 	createInfo.name = meshName;
+	createInfo.type = type;
 	createInfo.indices = indices;
 	createInfo.vertices = vertices;
 	createInfo.vertexCount = vertexCount;
 	createInfo.vertexSize = vertexSize;
-	createInfo.vertexLayouts =
-	{
-		VertexLayout(sizeof(VertexPosition)),
-		VertexLayout(sizeof(VertexNormal))
-	};
+	createInfo.vertexLayouts = vertexLayouts;
 
 	return std::make_shared<Mesh>(createInfo);
+}
+
+void Serializer::SerializeSkeleton(const std::shared_ptr<Skeleton>& skeleton)
+{
+	if (skeleton->GetFilepath().empty())
+	{
+		Logger::Error("Failed to save skeleton, filepath is empty!");
+	}
+
+	YAML::Emitter out;
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "RootBoneId" << YAML::Value << skeleton->GetRootBoneId();
+
+	out << YAML::Key << "Bones";
+
+	out << YAML::BeginSeq;
+
+	for (const Skeleton::Bone& bone : skeleton->GetBones())
+	{
+		out << YAML::BeginMap;
+
+		out << YAML::Key << "Id" << YAML::Value << bone.id;
+		out << YAML::Key << "ParentId" << YAML::Value << bone.parentId;
+		out << YAML::Key << "Name" << YAML::Value << bone.name;
+		out << YAML::Key << "Offset" << YAML::Value << glm::value_ptr(bone.offset);
+		out << YAML::Key << "Transform" << YAML::Value << glm::value_ptr(bone.transform);
+		out << YAML::Key << "ChildIds" << YAML::Value << bone.childIds;
+
+		out << YAML::EndMap;
+	}
+
+	out << YAML::EndSeq;
+
+	out << YAML::EndMap;
+
+	std::ofstream fout(skeleton->GetFilepath());
+	fout << out.c_str();
+	fout.close();
+
+	Logger::Log("Skeleton:" + skeleton->GetFilepath().string() + " has been saved!", BOLDGREEN);
+}
+
+std::shared_ptr<Skeleton> Serializer::DeserializeSkeleton(const std::filesystem::path& filepath)
+{
+	if (filepath.empty())
+	{
+		Logger::Error("Failed to load skeleton, filepath is empty!");
+		return nullptr;
+	}
+
+	if (!std::filesystem::exists(filepath))
+	{
+		Logger::Error(filepath.string() + ":Failed to load skeleton! The file doesn't exist");
+		return nullptr;
+	}
+
+	std::ifstream stream(filepath);
+	std::stringstream stringStream;
+
+	stringStream << stream.rdbuf();
+
+	stream.close();
+
+	YAML::Node data = YAML::LoadMesh(stringStream.str());
+	if (!data)
+	{
+		Logger::Error(filepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
+		return nullptr;
+	}
+
+	Skeleton::CreateInfo createInfo{};
+	createInfo.name = Utils::GetFilename(filepath);
+	createInfo.filepath = filepath;
+
+	if (const auto& rootBoneIdData = data["RootBoneId"])
+	{
+		createInfo.rootBoneId = rootBoneIdData.as<uint32_t>();
+	}
+
+	for (const auto& boneData : data["Bones"])
+	{
+		Skeleton::Bone& bone =  createInfo.bones.emplace_back();
+		
+		if (const auto& idData = boneData["Id"])
+		{
+			bone.id = idData.as<uint32_t>();
+		}
+
+		if (const auto& parentIdData = boneData["ParentId"])
+		{
+			bone.parentId = parentIdData.as<uint32_t>();
+		}
+
+		if (const auto& nameData = boneData["Name"])
+		{
+			bone.name = nameData.as<std::string>();
+		}
+
+		if (const auto& offsetData = boneData["Offset"])
+		{
+			bone.offset = offsetData.as<glm::mat4>();
+		}
+
+		if (const auto& transformData = boneData["Transform"])
+		{
+			bone.transform = transformData.as<glm::mat4>();
+		}
+
+		if (const auto& childIdsData = boneData["ChildIds"])
+		{
+			bone.childIds = childIdsData.as<std::vector<uint32_t>>();
+		}
+	}
+
+	Logger::Log("Skeleton:" + filepath.string() + " has been loaded!", BOLDGREEN);
+
+	return MeshManager::GetInstance().CreateSkeleton(createInfo);
+}
+
+void Serializer::SerializeSkeletalAnimation(const std::shared_ptr<SkeletalAnimation>& skeletalAnimation)
+{
+	if (skeletalAnimation->GetFilepath().empty())
+	{
+		Logger::Error("Failed to save skeletal animation, filepath is empty!");
+	}
+
+	YAML::Emitter out;
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "Duration" << YAML::Value << skeletalAnimation->GetDuration();
+	out << YAML::Key << "TicksPerSecond" << YAML::Value << skeletalAnimation->GetTicksPerSecond();
+
+	out << YAML::Key << "Bones";
+
+	out << YAML::BeginSeq;
+
+	for (const auto& [name, bone] : skeletalAnimation->GetBonesByName())
+	{
+		out << YAML::BeginMap;
+
+		out << YAML::Key << "Name" << YAML::Value << name;
+
+		// Positions.
+		out << YAML::Key << "Positions";
+
+		out << YAML::BeginSeq;
+
+		for (const auto& positionKey : bone.positions)
+		{
+			out << YAML::BeginMap;
+
+			out << YAML::Key << "Time" << YAML::Value << positionKey.time;
+			out << YAML::Key << "Value" << YAML::Value << positionKey.value;
+
+			out << YAML::EndMap;
+		}
+
+		out << YAML::EndSeq;
+		//
+
+		// Rotations.
+		out << YAML::Key << "Rotations";
+
+		out << YAML::BeginSeq;
+
+		for (const auto& rotationKey : bone.rotations)
+		{
+			out << YAML::BeginMap;
+
+			out << YAML::Key << "Time" << YAML::Value << rotationKey.time;
+			out << YAML::Key << "Value" << YAML::Value << rotationKey.value;
+
+			out << YAML::EndMap;
+		}
+
+		out << YAML::EndSeq;
+		//
+
+		// Scales.
+		out << YAML::Key << "Scales";
+
+		out << YAML::BeginSeq;
+
+		for (const auto& scaleKey : bone.scales)
+		{
+			out << YAML::BeginMap;
+
+			out << YAML::Key << "Time" << YAML::Value << scaleKey.time;
+			out << YAML::Key << "Value" << YAML::Value << scaleKey.value;
+
+			out << YAML::EndMap;
+		}
+
+		out << YAML::EndSeq;
+		//
+
+		out << YAML::EndMap;
+	}
+
+	out << YAML::EndSeq;
+
+	out << YAML::EndMap;
+
+	std::ofstream fout(skeletalAnimation->GetFilepath());
+	fout << out.c_str();
+	fout.close();
+
+	Logger::Log("Skeletal Animation:" + skeletalAnimation->GetFilepath().string() + " has been saved!", BOLDGREEN);
+}
+
+std::shared_ptr<SkeletalAnimation> Serializer::DeserializeSkeletalAnimation(const std::filesystem::path& filepath)
+{
+	if (filepath.empty())
+	{
+		Logger::Error("Failed to load skeletal animation, filepath is empty!");
+		return nullptr;
+	}
+
+	if (!std::filesystem::exists(filepath))
+	{
+		Logger::Error(filepath.string() + ":Failed to load skeletal animation! The file doesn't exist");
+		return nullptr;
+	}
+
+	std::ifstream stream(filepath);
+	std::stringstream stringStream;
+
+	stringStream << stream.rdbuf();
+
+	stream.close();
+
+	YAML::Node data = YAML::LoadMesh(stringStream.str());
+	if (!data)
+	{
+		Logger::Error(filepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
+		return nullptr;
+	}
+
+	SkeletalAnimation::CreateInfo createInfo{};
+	createInfo.name = Utils::GetFilename(filepath);
+	createInfo.filepath = filepath;
+
+	if (const auto& durationData = data["Duration"])
+	{
+		createInfo.duration = durationData.as<double>();
+	}
+
+	if (const auto& ticksPerSecondData = data["TicksPerSecond"])
+	{
+		createInfo.ticksPerSecond = ticksPerSecondData.as<double>();
+	}
+
+	for (const auto& boneData : data["Bones"])
+	{
+		std::string name;
+		if (const auto& nameData = boneData["Name"])
+		{
+			name = nameData.as<std::string>();
+		}
+		else
+		{
+			Logger::Error(filepath.string() + ": Bone doesn't have any name, the bone will be skipped!");
+			continue;
+		}
+
+		SkeletalAnimation::Bone& bone = createInfo.bonesByName[name];
+
+		for (const auto& positionKeyData : boneData["Positions"])
+		{
+			auto& positionKey = bone.positions.emplace_back();
+			
+			if (const auto& timeData = positionKeyData["Time"])
+			{
+				positionKey.time = timeData.as<double>();
+			}
+			
+			if (const auto& valueData = positionKeyData["Value"])
+			{
+				positionKey.value = valueData.as<glm::vec3>();
+			}
+		}
+
+		for (const auto& rotationKeyData : boneData["Rotations"])
+		{
+			auto& rotationKey = bone.rotations.emplace_back();
+
+			if (const auto& timeData = rotationKeyData["Time"])
+			{
+				rotationKey.time = timeData.as<double>();
+			}
+
+			if (const auto& valueData = rotationKeyData["Value"])
+			{
+				rotationKey.value = valueData.as<glm::quat>();
+			}
+		}
+
+		for (const auto& scaleKeyData : boneData["Scales"])
+		{
+			auto& scaleKey = bone.scales.emplace_back();
+
+			if (const auto& timeData = scaleKeyData["Time"])
+			{
+				scaleKey.time = timeData.as<double>();
+			}
+
+			if (const auto& valueData = scaleKeyData["Value"])
+			{
+				scaleKey.value = valueData.as<glm::vec3>();
+			}
+		}
+	}
+
+	Logger::Log("Skeletal Animation:" + filepath.string() + " has been loaded!", BOLDGREEN);
+
+	return MeshManager::GetInstance().CreateSkeletalAnimation(createInfo);
 }
 
 void Serializer::SerializeShaderCache(const std::filesystem::path& filepath, const std::string& code)
@@ -1298,7 +1763,7 @@ void Serializer::SerializeShaderCache(const std::filesystem::path& filepath, con
 	const std::string uuid = Utils::FindUuid(filepath);
 	if (uuid.empty())
 	{
-		Logger::Error(filepath.string() + ":Failed to serialize shader cache! No uuid was found for such filepath!");
+		Logger::Error(filepath.string() + ":Failed to save shader cache! No uuid was found for such filepath!");
 		return;
 	}
 
@@ -1317,14 +1782,14 @@ std::string Serializer::DeserializeShaderCache(const std::filesystem::path& file
 {
 	if (filepath.empty())
 	{
-		Logger::Error("Failed to deserialize shader cache! Filepath is empty!");
+		Logger::Error("Failed to load shader cache! Filepath is empty!");
 		return {};
 	}
 
 	const std::string uuid = Utils::FindUuid(filepath);
 	if (uuid.empty())
 	{
-		Logger::Error(filepath.string() + ":Failed to deserialize shader cache! No uuid was found for such filepath!");
+		Logger::Error(filepath.string() + ":Failed to load shader cache! No uuid was found for such filepath!");
 		return {};
 	}
 
@@ -1401,7 +1866,7 @@ void Serializer::SerializeShaderModuleReflection(
 	const std::string uuid = Utils::FindUuid(filepath);
 	if (uuid.empty())
 	{
-		Logger::Error(filepath.string() + ":Failed to serialize shader reflection! No uuid was found for such filepath!");
+		Logger::Error(filepath.string() + ":Failed to save shader reflection! No uuid was found for such filepath!");
 		return;
 	}
 
@@ -1502,14 +1967,14 @@ std::optional<ShaderReflection::ReflectShaderModule> Serializer::DeserializeShad
 {
 	if (filepath.empty())
 	{
-		Logger::Error("Failed to deserialize shader reflection! Filepath is empty!");
+		Logger::Error("Failed to load shader reflection! Filepath is empty!");
 		return {};
 	}
 
 	const std::string uuid = Utils::FindUuid(filepath);
 	if (uuid.empty())
 	{
-		Logger::Error(filepath.string() + ":Failed to deserialize shader reflection! No uuid was found for such filepath!");
+		Logger::Error(filepath.string() + ":Failed to load shader reflection! No uuid was found for such filepath!");
 		return {};
 	}
 
@@ -1708,18 +2173,18 @@ Serializer::LoadIntermediate(
 	const std::filesystem::path directory = filepath.parent_path();
 
 	Assimp::Importer import;
-	constexpr auto importFlags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_PreTransformVertices |
+	constexpr auto importFlags = aiProcess_Triangulate | aiProcess_GenSmoothNormals |
 		aiProcess_OptimizeMeshes | aiProcess_RemoveRedundantMaterials | aiProcess_ImproveCacheLocality |
-		aiProcess_JoinIdenticalVertices | aiProcess_GenUVCoords | aiProcess_CalcTangentSpace | aiProcess_SortByPType | aiProcess_FindInstances |
-		aiProcess_ValidateDataStructure | aiProcess_FindDegenerates | aiProcess_FindInvalidData;
+		aiProcess_JoinIdenticalVertices | aiProcess_GenUVCoords | aiProcess_CalcTangentSpace | aiProcess_SortByPType |
+		aiProcess_ValidateDataStructure | aiProcess_FindDegenerates | aiProcess_FindInvalidData | aiProcess_PopulateArmatureData;
 	const aiScene* scene = import.ReadFile(filepath.string(), importFlags);
 
-	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+	if (!scene)
 	{
 		FATAL_ERROR(std::string("ASSIMP::" + std::string(import.GetErrorString())).c_str());
 	}
 
-	const float maxWorkStatus = scene->mNumMaterials + scene->mNumMeshes;
+	const float maxWorkStatus = scene->mNumMaterials + scene->mNumMeshes + scene->mNumAnimations;
 	float currentWorkStatus = 0.0f;
 
 	workName = "Generating Materials";
@@ -1768,14 +2233,32 @@ Serializer::LoadIntermediate(
 	for (size_t meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++)
 	{
 		aiMesh* aiMesh = scene->mMeshes[meshIndex];
-		std::shared_ptr<Mesh> mesh = GenerateMesh(aiMesh, directory);
+		const std::shared_ptr<Skeleton> skeleton = GenerateSkeleton(scene->mRootNode, aiMesh, directory);
+
+		std::shared_ptr<Mesh> mesh;
+		if (skeleton)
+		{
+			mesh = GenerateMeshSkinned(skeleton, aiMesh, directory);
+		}
+		else
+		{
+			mesh = GenerateMesh(aiMesh, directory);
+		}
 		meshesByIndex[meshIndex] = mesh;
 		materialsByMeshes[mesh] = materialsByIndex[aiMesh->mMaterialIndex];
 
 		workStatus = currentWorkStatus++ / maxWorkStatus;
 	}
 
-	if (scene->mNumMeshes > 1)
+	workName = "Generating Animations";
+	for (size_t animIndex = 0; animIndex < scene->mNumAnimations; animIndex++)
+	{
+		GenerateAnimation(scene->mAnimations[animIndex], directory);
+
+		workStatus = currentWorkStatus++ / maxWorkStatus;
+	}
+
+	if (scene->mRootNode && scene->mNumMeshes > 1)
 	{
 		workName = "Generating Prefab";
 
@@ -1789,6 +2272,7 @@ Serializer::LoadIntermediate(
 		SceneManager::GetInstance().Delete(GenerateGameObjectScene);
 	}
 	
+	// TODO: Remove or put here something, now the result is unused.
 	return {};
 }
 
@@ -1800,6 +2284,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 	std::string defaultMeshName = aiMesh->mName.C_Str();
 	std::string meshName = defaultMeshName;
 	meshName.erase(std::remove(meshName.begin(), meshName.end(), ':'), meshName.end());
+	meshName.erase(std::remove(meshName.begin(), meshName.end(), '|'), meshName.end());
 
 	std::filesystem::path meshFilepath = directory / (meshName + FileFormats::Mesh());
 
@@ -1852,6 +2337,8 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 		}
 		else
 		{
+			Logger::Error(meshFilepath.string() + ":No tangents and bitangents!");
+
 			// Tangent.
 			vertex->tangent.x = 0.0f;
 			vertex->tangent.y = 0.0f;
@@ -1870,80 +2357,303 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 		{
 			indices.emplace_back(aiMesh->mFaces[faceIndex].mIndices[i]);
 		}
-
-		if (aiMesh->HasTextureCoords(0) && !aiMesh->HasTangentsAndBitangents())
-		{
-			size_t i0 = aiMesh->mFaces[faceIndex].mIndices[0];
-			size_t i1 = aiMesh->mFaces[faceIndex].mIndices[1];
-			size_t i2 = aiMesh->mFaces[faceIndex].mIndices[2];
-
-			glm::vec3 position1 = { aiMesh->mVertices[i0].x, aiMesh->mVertices[i0].y, aiMesh->mVertices[i0].z };
-			glm::vec3 position2 = { aiMesh->mVertices[i1].x, aiMesh->mVertices[i1].y, aiMesh->mVertices[i1].z };
-			glm::vec3 position3 = { aiMesh->mVertices[i2].x, aiMesh->mVertices[i2].y, aiMesh->mVertices[i2].z };
-
-			glm::vec2 uv1 = { aiMesh->mTextureCoords[0][i0].x, aiMesh->mTextureCoords[0][i0].y };
-			glm::vec2 uv2 = { aiMesh->mTextureCoords[0][i1].x, aiMesh->mTextureCoords[0][i1].y };
-			glm::vec2 uv3 = { aiMesh->mTextureCoords[0][i2].x, aiMesh->mTextureCoords[0][i2].y };
-
-			glm::vec3 edge1 = position2 - position1;
-			glm::vec3 edge2 = position3 - position1;
-			glm::vec2 deltaUV1 = uv2 - uv1;
-			glm::vec2 deltaUV2 = uv3 - uv1;
-
-			float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-
-			glm::vec3 tangent, bitangent;
-
-			tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
-			tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
-			tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
-			tangent = glm::normalize(tangent);
-
-			bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-			bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-			bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
-			bitangent = glm::normalize(bitangent);
-
-			vertices[i0].tangent.x = tangent.x;
-			vertices[i0].tangent.y = tangent.y;
-			vertices[i0].tangent.z = tangent.z;
-			vertices[i0].bitangent.x = bitangent.x;
-			vertices[i0].bitangent.y = bitangent.y;
-			vertices[i0].bitangent.z = bitangent.z;
-
-			vertices[i1].tangent.x = tangent.x;
-			vertices[i1].tangent.y = tangent.y;
-			vertices[i1].tangent.z = tangent.z;
-			vertices[i1].bitangent.x = bitangent.x;
-			vertices[i1].bitangent.y = bitangent.y;
-			vertices[i1].bitangent.z = bitangent.z;
-
-			vertices[i2].tangent.x = tangent.x;
-			vertices[i2].tangent.y = tangent.y;
-			vertices[i2].tangent.z = tangent.z;
-			vertices[i2].bitangent.x = bitangent.x;
-			vertices[i2].bitangent.y = bitangent.y;
-			vertices[i2].bitangent.z = bitangent.z;
-		}
 	}
 
 	Mesh::CreateInfo createInfo{};
 	createInfo.filepath = std::move(meshFilepath);
 	createInfo.name = std::move(meshName);
+	createInfo.type = Mesh::Type::STATIC;
 	createInfo.indices = std::move(indices);
 	createInfo.vertices = vertices;
 	createInfo.vertexCount = aiMesh->mNumVertices;
 	createInfo.vertexSize = sizeof(VertexDefault);
 	createInfo.vertexLayouts =
 	{
-		VertexLayout(sizeof(VertexPosition)),
-		VertexLayout(sizeof(VertexNormal))
+		VertexLayout(sizeof(VertexPosition), "Position"),
+		VertexLayout(sizeof(VertexNormal), "Normal")
 	};
 
 	std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(createInfo);
 	SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
 
 	return mesh;
+}
+
+std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
+	const std::shared_ptr<Skeleton>& skeleton,
+	aiMesh* aiMesh,
+	const std::filesystem::path& directory)
+{
+	VertexDefaultSkinned* vertices = new VertexDefaultSkinned[aiMesh->mNumVertices];
+	std::vector<uint32_t> indices;
+
+	std::string defaultMeshName = aiMesh->mName.C_Str();
+	std::string meshName = defaultMeshName;
+	meshName.erase(std::remove(meshName.begin(), meshName.end(), ':'), meshName.end());
+	meshName.erase(std::remove(meshName.begin(), meshName.end(), '|'), meshName.end());
+
+	std::filesystem::path meshFilepath = directory / (meshName + FileFormats::Mesh());
+
+	int containIndex = 0;
+	while (MeshManager::GetInstance().GetMesh(meshFilepath))
+	{
+		meshName = defaultMeshName + "_" + std::to_string(containIndex);
+		meshFilepath.replace_filename(meshName + FileFormats::Mesh());
+		containIndex++;
+	}
+
+	VertexDefaultSkinned* vertex = vertices;
+	for (size_t vertexIndex = 0; vertexIndex < aiMesh->mNumVertices; vertexIndex++, vertex++)
+	{
+		aiVector3D position = aiMesh->mVertices[vertexIndex];
+		vertex->position.x = position.x;
+		vertex->position.y = position.y;
+		vertex->position.z = position.z;
+
+		if (aiMesh->HasTextureCoords(0))
+		{
+			aiVector3D uv = aiMesh->mTextureCoords[0][vertexIndex];
+			vertex->uv.x = uv.x;
+			vertex->uv.y = uv.y;
+		}
+		else
+		{
+			vertex->uv.x = 0.0f;
+			vertex->uv.y = 0.0f;
+		}
+
+		aiVector3D normal = aiMesh->mNormals[vertexIndex];
+		vertex->normal.x = normal.x;
+		vertex->normal.y = normal.y;
+		vertex->normal.z = normal.z;
+
+		if (aiMesh->HasTangentsAndBitangents())
+		{
+			// Tangent.
+			aiVector3D tangent = aiMesh->mTangents[vertexIndex];
+			vertex->tangent.x = tangent.x;
+			vertex->tangent.y = tangent.y;
+			vertex->tangent.z = tangent.z;
+
+			// Bitngent.
+			aiVector3D bitangent = aiMesh->mBitangents[vertexIndex];
+			vertex->bitangent.x = bitangent.x;
+			vertex->bitangent.y = bitangent.y;
+			vertex->bitangent.z = bitangent.z;
+		}
+		else
+		{
+			Logger::Error(meshFilepath.string() + ":No tangents and bitangents!");
+
+			// Tangent.
+			vertex->tangent.x = 0.0f;
+			vertex->tangent.y = 0.0f;
+			vertex->tangent.z = 0.0f;
+
+			// Bitngent.
+			vertex->bitangent.x = 0.0f;
+			vertex->bitangent.y = 0.0f;
+			vertex->bitangent.z = 0.0f;
+		}
+
+		vertex->weights = glm::vec4(0.0f);
+		vertex->boneIds = glm::ivec4(-1);
+	}
+
+	for (size_t faceIndex = 0; faceIndex < aiMesh->mNumFaces; faceIndex++)
+	{
+		for (size_t i = 0; i < aiMesh->mFaces[faceIndex].mNumIndices; i++)
+		{
+			indices.emplace_back(aiMesh->mFaces[faceIndex].mIndices[i]);
+		}
+	}
+
+	std::vector<uint8_t> vertexInfluenceCount(aiMesh->mNumVertices, 0);
+
+	for (size_t boneIndex = 0; boneIndex < aiMesh->mNumBones; ++boneIndex)
+	{
+		aiBone* aiBone = aiMesh->mBones[boneIndex];
+		for (size_t weightIndex = 0; weightIndex < aiBone->mNumWeights; weightIndex++)
+		{
+			aiVertexWeight aiWeight = aiBone->mWeights[weightIndex];
+			if (aiWeight.mWeight == 0.0f)
+			{
+				continue;
+			}
+
+			if (vertexInfluenceCount[aiWeight.mVertexId] == 4)
+			{
+				// Can't store more than for weights for one vertex.
+				continue;
+			}
+
+			vertices[aiWeight.mVertexId].weights[vertexInfluenceCount[aiWeight.mVertexId]] = aiWeight.mWeight;
+			vertices[aiWeight.mVertexId].boneIds[vertexInfluenceCount[aiWeight.mVertexId]] = skeleton->FindBoneIdByName(aiBone->mName.C_Str());
+
+			vertexInfluenceCount[aiWeight.mVertexId]++;
+		}
+	}
+
+	Mesh::CreateInfo createInfo{};
+	createInfo.filepath = std::move(meshFilepath);
+	createInfo.name = std::move(meshName);
+	createInfo.type = Mesh::Type::SKINNED;
+	createInfo.indices = std::move(indices);
+	createInfo.vertices = vertices;
+	createInfo.vertexCount = aiMesh->mNumVertices;
+	createInfo.vertexSize = sizeof(VertexDefaultSkinned);
+	createInfo.vertexLayouts =
+	{
+		VertexLayout(sizeof(VertexPosition), "Position"),
+		VertexLayout(sizeof(VertexNormal), "Normal"),
+		VertexLayout(sizeof(VertexSkinned), "Bones")
+	};
+
+	std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(createInfo);
+	SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
+
+	return mesh;
+}
+
+std::shared_ptr<Skeleton> Serializer::GenerateSkeleton(
+	const aiNode* aiRootNode,
+	aiMesh* aiMesh,
+	const std::filesystem::path& directory)
+{
+	if (!aiMesh->HasBones())
+	{
+		return nullptr;
+	}
+
+	Skeleton::CreateInfo createInfo{};
+	createInfo.name = aiMesh->mName.C_Str();
+	createInfo.filepath = (directory / createInfo.name).concat(FileFormats::Skeleton());
+
+	std::unordered_map<std::string, uint32_t> boneIndicesByName;
+
+	for (size_t boneIndex = 0; boneIndex < aiMesh->mNumBones; ++boneIndex)
+	{
+		aiBone* aiBone = aiMesh->mBones[boneIndex];
+		Skeleton::Bone& bone = createInfo.bones.emplace_back();
+		bone.name = aiBone->mName.C_Str();
+		bone.id = boneIndex;
+		bone.offset = Utils::AiMat4ToGlmMat4(aiBone->mOffsetMatrix);
+
+		// TODO: Remove after some tests.
+		if (boneIndicesByName.contains(bone.name))
+		{
+			Logger::Error(bone.name + ": Such bone already exists!");
+		}
+		else
+		{
+			boneIndicesByName.emplace(bone.name, bone.id);
+		}
+	}
+
+	std::function<void(const aiNode*, const glm::mat4&)> traverseAiNode;
+	
+	traverseAiNode = [&createInfo, &boneIndicesByName, &traverseAiNode](const aiNode* node, const glm::mat4& parentTransform)
+	{
+		const glm::mat4 nodeTransform = Utils::AiMat4ToGlmMat4(node->mTransformation);
+		const glm::mat4 globalTransform = parentTransform * nodeTransform;
+		auto boneIndexByName = boneIndicesByName.find(node->mName.C_Str());
+		if (boneIndexByName != boneIndicesByName.end())
+		{
+			Skeleton::Bone& bone = createInfo.bones[boneIndexByName->second];
+
+			if (createInfo.rootBoneId == -1)
+			{
+				createInfo.rootBoneId = bone.id;
+				bone.transform = globalTransform;
+			}
+			else
+			{
+				bone.transform = nodeTransform;
+			}
+
+			if (node->mParent)
+			{
+				auto parentBoneIndexByName = boneIndicesByName.find(node->mParent->mName.C_Str());
+				if (parentBoneIndexByName != boneIndicesByName.end())
+				{
+					bone.parentId = parentBoneIndexByName->second;
+				}
+			}
+
+			for (size_t childIndex = 0; childIndex < node->mNumChildren; childIndex++)
+			{
+				aiNode* child = node->mChildren[childIndex];
+
+				bone.childIds.emplace_back(boneIndicesByName.at(child->mName.C_Str()));
+				traverseAiNode(child, globalTransform);
+			}
+		}
+		else
+		{
+			for (size_t childIndex = 0; childIndex < node->mNumChildren; childIndex++)
+			{
+				traverseAiNode(node->mChildren[childIndex], globalTransform);
+			}
+		}
+	};
+
+	traverseAiNode(aiRootNode, glm::mat4(1.0f));
+
+	const std::shared_ptr<Skeleton> skeleton = MeshManager::GetInstance().CreateSkeleton(createInfo);
+	SerializeSkeleton(skeleton);
+
+	return skeleton;
+}
+
+std::shared_ptr<SkeletalAnimation> Serializer::GenerateAnimation(aiAnimation* aiAnimation, const std::filesystem::path& directory)
+{
+	std::string name = aiAnimation->mName.C_Str();
+	name.erase(std::remove(name.begin(), name.end(), ':'), name.end());
+	name.erase(std::remove(name.begin(), name.end(), '|'), name.end());
+
+	SkeletalAnimation::CreateInfo createInfo{};
+	createInfo.name = name;
+	createInfo.filepath = (directory / createInfo.name).concat(FileFormats::Anim());
+	createInfo.duration = aiAnimation->mDuration;
+	createInfo.ticksPerSecond = aiAnimation->mTicksPerSecond;
+
+	for (size_t i = 0; i < aiAnimation->mNumChannels; i++)
+	{
+		aiNodeAnim* aiBone = aiAnimation->mChannels[i];
+		SkeletalAnimation::Bone& bone = createInfo.bonesByName[aiBone->mNodeName.C_Str()];
+		
+		for (size_t j = 0; j < aiBone->mNumPositionKeys; j++)
+		{
+			const aiVectorKey& aiPositionKey = aiBone->mPositionKeys[j];
+			SkeletalAnimation::KeyVec& positionKey = bone.positions.emplace_back();
+
+			positionKey.time = aiPositionKey.mTime;
+			positionKey.value = Utils::AiVec3ToGlmVec3(aiPositionKey.mValue);
+		}
+
+		for (size_t j = 0; j < aiBone->mNumRotationKeys; j++)
+		{
+			const aiQuatKey& aiRotationKey = aiBone->mRotationKeys[j];
+			SkeletalAnimation::KeyQuat& rotationKey = bone.rotations.emplace_back();
+
+			rotationKey.time = aiRotationKey.mTime;
+			rotationKey.value = Utils::AiQuatToGlmQuat(aiRotationKey.mValue);
+		}
+
+		for (size_t j = 0; j < aiBone->mNumScalingKeys; j++)
+		{
+			const aiVectorKey& aiScaleKey = aiBone->mScalingKeys[j];
+			SkeletalAnimation::KeyVec& scaleKey = bone.scales.emplace_back();
+
+			scaleKey.time = aiScaleKey.mTime;
+			scaleKey.value = Utils::AiVec3ToGlmVec3(aiScaleKey.mValue);
+		}
+	}
+
+	const std::shared_ptr<SkeletalAnimation> skeletalAnimation = MeshManager::GetInstance().CreateSkeletalAnimation(createInfo);
+	SerializeSkeletalAnimation(skeletalAnimation);
+
+	return skeletalAnimation;
 }
 
 std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMaterial, const std::filesystem::path& directory)
@@ -1954,16 +2664,18 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	const std::string materialName = std::string(aiMaterialName.C_Str());
 	if (materialName == "DefaultMaterial")
 	{
-		return AsyncAssetLoader::GetInstance().SyncLoadMaterial("Materials/MeshBase.mat");
+		return AsyncAssetLoader::GetInstance().SyncLoadMaterial(
+			std::filesystem::path("Materials") / "MeshBase.mat");
 	}
 
 	std::filesystem::path materialFilepath = directory / materialName;
 	materialFilepath.concat(FileFormats::Mat());
 
-	const std::shared_ptr<Material> meshBaseMaterial = AsyncAssetLoader::GetInstance().SyncLoadMaterial("Materials/MeshBase.mat");
-	const std::shared_ptr<Material> meshBaseDoubleSidedMaterial = AsyncAssetLoader::GetInstance().SyncLoadMaterial("Materials/MeshBaseDoubleSided.mat");
+	const std::shared_ptr<Material> meshBaseMaterial = AsyncAssetLoader::GetInstance().SyncLoadMaterial(
+		std::filesystem::path("Materials") / "MeshBase.mat");
+	const std::shared_ptr<Material> meshBaseDoubleSidedMaterial = AsyncAssetLoader::GetInstance().SyncLoadMaterial(
+		std::filesystem::path("Materials") / "MeshBaseDoubleSided.mat");
 
-	// Maybe use later.
 	bool doubleSided = false;
 	aiMaterial->Get(AI_MATKEY_TWOSIDED, doubleSided);
 
@@ -2151,6 +2863,13 @@ std::shared_ptr<Entity> Serializer::GenerateEntity(
 		const std::shared_ptr<Mesh> mesh = meshesByIndex[assimpNode->mMeshes[meshIndex]];
 		r3d->mesh = mesh;
 		r3d->material = materialsByMeshes.find(mesh)->second;
+
+		if (r3d->mesh->GetType() == Mesh::Type::SKINNED)
+		{
+			r3d->material->SetBaseMaterial(MaterialManager::GetInstance().LoadBaseMaterial(
+				std::filesystem::path("Materials") / "MeshBaseSkinned.basemat"));
+			Material::Save(r3d->material, false);
+		}
 	}
 
 	for (size_t childIndex = 0; childIndex < assimpNode->mNumChildren; childIndex++)
@@ -2204,6 +2923,7 @@ void Serializer::SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entit
 	SerializeRenderer3D(out, entity);
 	SerializePointLight(out, entity);
 	SerializeDirectionalLight(out, entity);
+	SerializeSkeletalAnimator(out, entity);
 
 	out << YAML::EndMap;
 
@@ -2255,6 +2975,7 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 	DeserializeRenderer3D(in, entity);
 	DeserializePointLight(in, entity);
 	DeserializeDirectionalLight(in, entity);
+	DeserializeSkeletalAnimator(in, entity);
 
 	return entity;
 }
@@ -2318,7 +3039,7 @@ void Serializer::DeserializePrefab(const std::filesystem::path& filepath, const 
 		}
 	}
 
-	Logger::Log("Prefab:" + filepath.string() + " has been deserialized!", BOLDGREEN);
+	Logger::Log("Prefab:" + filepath.string() + " has been loaded!", BOLDGREEN);
 }
 
 void Serializer::SerializeTransform(YAML::Emitter& out, const std::shared_ptr<Entity>& entity)
@@ -2391,11 +3112,6 @@ void Serializer::SerializeRenderer3D(YAML::Emitter& out, const std::shared_ptr<E
 	out << YAML::Key << "Mesh" << YAML::Value << Utils::FindUuid(r3d.mesh->GetFilepath());
 	out << YAML::Key << "Material" << YAML::Value << Utils::FindUuid(r3d.material->GetFilepath());
 	out << YAML::Key << "RenderingOrder" << YAML::Value << r3d.renderingOrder;
-
-	if (Utils::FindUuid(r3d.material->GetFilepath()).empty())
-	{
-		Logger::Error("error");
-	}
 
 	out << YAML::EndMap;
 }
@@ -2551,6 +3267,68 @@ void Serializer::DeserializeDirectionalLight(const YAML::Node& in, const std::sh
 	}
 }
 
+void Serializer::SerializeSkeletalAnimator(YAML::Emitter& out, const std::shared_ptr<Entity>& entity)
+{
+	if (!entity->HasComponent<SkeletalAnimator>())
+	{
+		return;
+	}
+
+	const SkeletalAnimator& skeletalAnimator = entity->GetComponent<SkeletalAnimator>();
+
+	out << YAML::Key << "SkeletalAnimator";
+
+	out << YAML::BeginMap;
+
+	if (skeletalAnimator.GetSkeleton())
+	{
+		out << YAML::Key << "Skeleton" << YAML::Value << Utils::FindUuid(skeletalAnimator.GetSkeleton()->GetFilepath());
+	}
+
+	if (skeletalAnimator.GetSkeletalAnimation())
+	{
+		out << YAML::Key << "SkeletalAnimation" << YAML::Value << Utils::FindUuid(skeletalAnimator.GetSkeletalAnimation()->GetFilepath());
+	}
+
+	out << YAML::Key << "Speed" << YAML::Value << skeletalAnimator.GetSpeed();
+	out << YAML::Key << "CurrentTime" << YAML::Value << skeletalAnimator.GetCurrentTime();
+
+	out << YAML::EndMap;
+}
+
+void Serializer::DeserializeSkeletalAnimator(const YAML::Node& in, const std::shared_ptr<Entity>& entity)
+{
+	if (const auto& skeletalAnimatorData = in["SkeletalAnimator"])
+	{
+		if (!entity->HasComponent<SkeletalAnimator>())
+		{
+			entity->AddComponent<SkeletalAnimator>();
+		}
+
+		SkeletalAnimator& skeletalAnimator = entity->GetComponent<SkeletalAnimator>();
+
+		if (const auto& skeletonData = skeletalAnimatorData["Skeleton"])
+		{
+			skeletalAnimator.SetSkeleton(MeshManager::GetInstance().LoadSkeleton(DeserializeFilepath(skeletonData.as<std::string>())));
+		}
+
+		if (const auto& skeletalAnimationData = skeletalAnimatorData["SkeletalAnimation"])
+		{
+			skeletalAnimator.SetSkeletalAnimation(MeshManager::GetInstance().LoadSkeletalAnimation(DeserializeFilepath(skeletalAnimationData.as<std::string>())));
+		}
+
+		if (const auto& speedData = skeletalAnimatorData["Speed"])
+		{
+			skeletalAnimator.SetSpeed(speedData.as<float>());
+		}
+
+		if (const auto& currentTimeData = skeletalAnimatorData["CurrentTime"])
+		{
+			skeletalAnimator.SetCurrentTime(currentTimeData.as<float>());
+		}
+	}
+}
+
 void Serializer::SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entity>& entity)
 {
 	if (!entity->HasComponent<Camera>())
@@ -2621,7 +3399,7 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 {
 	if (!scene)
 	{
-		Logger::Error("Failed to serialize a scene, the scene is invalid!");
+		Logger::Error("Failed to save a scene, the scene is invalid!");
 		return;
 	}
 
@@ -2682,7 +3460,7 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 	fout << out.c_str();
 	fout.close();
 
-	Logger::Log("Scene:" + filepath.string() + " has been serialized!", BOLDGREEN);
+	Logger::Log("Scene:" + filepath.string() + " has been saved!", BOLDGREEN);
 }
 
 std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path& filepath)
@@ -2774,7 +3552,7 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path&
 		}
 	}
 
-	Logger::Log("Scene:" + filepath.string() + " has been deserialized!", BOLDGREEN);
+	Logger::Log("Scene:" + filepath.string() + " has been loaded!", BOLDGREEN);
 
 	return scene;
 }
@@ -3082,7 +3860,7 @@ void Serializer::SerializeTextureMeta(const Texture::Meta& meta)
 {
 	if (meta.filepath.empty())
 	{
-		Logger::Error("Failed to serialize texture meta, filepath is empty!");
+		Logger::Error("Failed to save texture meta, filepath is empty!");
 	}
 
 	YAML::Emitter out;
@@ -3104,7 +3882,7 @@ std::optional<Texture::Meta> Serializer::DeserializeTextureMeta(const std::files
 {
 	if (filepath.empty())
 	{
-		Logger::Error("Failed to serialize texture meta, filepath is empty!");
+		Logger::Error("Failed to load texture meta, filepath is empty!");
 		return std::nullopt;
 	}
 
@@ -3147,6 +3925,22 @@ std::optional<Texture::Meta> Serializer::DeserializeTextureMeta(const std::files
 	meta.filepath = filepath;
 
 	return meta;
+}
+
+std::filesystem::path Serializer::DeserializeFilepath(const std::string& uuidOrFilepath)
+{
+	if (std::filesystem::exists(uuidOrFilepath))
+	{
+		return uuidOrFilepath;
+	}
+
+	std::filesystem::path filepath = Utils::FindFilepath(uuidOrFilepath);
+	if (filepath.empty())
+	{
+		Logger::Error(uuidOrFilepath + ":Failed to deserialize filepath!");
+	}
+
+	return filepath;
 }
 
 void Serializer::ParseUniformValues(

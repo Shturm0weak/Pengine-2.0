@@ -20,13 +20,13 @@ Mat:
         - Name: GBufferMaterial
           Values:
             - Name: material.albedoColor
-              Value: [0.20784314, 0.80392158, 1, 0.588235319]
+              Value: [0, 0.176470593, 0.254901975, 0.937254906]
               Type: vec4
             - Name: material.emissiveColor
               Value: [0, 0, 0, 1]
               Type: vec4
             - Name: material.uvTransform
-              Value: [55, 55, 0, 0]
+              Value: [25, 25, 0, 0]
               Type: vec4
             - Name: material.metallicFactor
               Value: 0.699999988

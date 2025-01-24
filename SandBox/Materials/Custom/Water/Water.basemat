@@ -20,11 +20,13 @@ Basemat:
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex
+          Tag: Position
           Names:
             - positionA
             - uvA
         - Binding: 1
           InputRate: Vertex
+          Tag: Normal
           Names:
             - normalA
             - tangentA
