@@ -78,9 +78,17 @@ namespace Pengine
 
 		const UUID& GetUUID() const { return m_UUID; }
 
+		void SetUUID(const UUID& uuid) { m_UUID = uuid; }
+
 		bool IsEnabled() const;
 
 		void SetEnabled(const bool isEnabled) { m_IsEnabled = isEnabled; }
+
+		void SetPrefabFilepathUUID(const UUID& prefabFilepathUUID) { m_PrefabFilepathUUID = prefabFilepathUUID; }
+		
+		const UUID& GetPrefabFilepathUUID() const { return m_PrefabFilepathUUID; }
+
+		bool IsPrefab() const { return !m_PrefabFilepathUUID.Get().empty(); }
 
 	private:
 		void Copy(const Entity& entity);
@@ -95,6 +103,8 @@ namespace Pengine
 		entt::registry* m_Registry = nullptr;
 		std::string m_Name;
 		UUID m_UUID;
+
+		UUID m_PrefabFilepathUUID = UUID("");
 
 		bool m_IsEnabled = true;
 

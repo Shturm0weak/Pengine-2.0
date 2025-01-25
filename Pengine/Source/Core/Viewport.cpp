@@ -63,11 +63,26 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 
 			if (scene && FileFormats::Prefab() == Utils::GetFileFormat(path))
 			{
-				auto callback = [weakScene = std::weak_ptr<Scene>(scene), path]()
+				auto callback = [this, weakScene = std::weak_ptr<Scene>(scene), path]()
 				{
 					if (const std::shared_ptr<Scene> currentScene = weakScene.lock())
 					{
-						Serializer::DeserializePrefab(path, currentScene);
+						const std::shared_ptr<Entity> entity = Serializer::DeserializePrefab(path, currentScene);
+
+						if (std::shared_ptr<Entity> camera = m_Camera.lock())
+						{
+							if (camera)
+							{
+								const glm::vec3 ray = GetMouseRay(m_MousePosition);
+
+								const glm::vec3 start = camera->GetComponent<Transform>().GetPosition();
+								const auto hits = Raycast::RaycastScene(camera->GetScene(), start, ray, camera->GetComponent<Camera>().GetZFar());
+								if (!hits.empty())
+								{
+									entity->GetComponent<Transform>().Translate(start + ray * hits.begin()->first);
+								}
+							}
+						}
 					}
 				};
 

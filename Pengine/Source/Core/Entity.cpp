@@ -204,6 +204,7 @@ void Entity::Copy(const Entity& entity)
 	m_Name = entity.GetName();
 	m_UUID = entity.GetUUID();
 	m_IsEnabled = entity.IsEnabled();
+	m_PrefabFilepathUUID = entity.GetPrefabFilepathUUID();
 }
 
 void Entity::Move(Entity&& entity) noexcept
@@ -215,6 +216,7 @@ void Entity::Move(Entity&& entity) noexcept
 	m_Registry = entity.m_Registry;
 	m_Name = std::move(entity.m_Name);
 	m_IsEnabled = entity.m_IsEnabled;
+	m_PrefabFilepathUUID = std::move(entity.m_PrefabFilepathUUID);
 
 	entity.m_Handle = entt::tombstone;
 	entity.m_Scene.reset();

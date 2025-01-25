@@ -756,6 +756,10 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 	ImGui::SameLine();
 
 	ImGuiStyle* style = &ImGui::GetStyle();
+	if (entity->IsPrefab())
+	{
+		style->Colors[ImGuiCol_Text] = ImVec4(0.557f, 0.792f, 0.902f, 1.0f);
+	}
 
 	const bool opened = ImGui::TreeNodeEx((void*)entity.get(), flags, entity->GetName().c_str());
 	style->Colors[ImGuiCol_Text] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -869,6 +873,92 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene)
 			if (ImGui::InputText("Name", name, sizeof(name)))
 			{
 				entity->SetName(name);
+			}
+
+			if (ImGui::CollapsingHeader("Prefab"))
+			{
+				bool validUUID = false;
+				if (entity->IsPrefab())
+				{
+					ImGui::PushID("Deattach Prefab");
+					if (ImGui::Button("X"))
+					{
+						entity->SetPrefabFilepathUUID(UUID(""));
+					}
+					ImGui::PopID();
+
+					ImGui::SameLine();
+					
+					const std::filesystem::path prefabFilepath = Utils::FindFilepath(entity->GetPrefabFilepathUUID());
+					if (std::filesystem::exists(prefabFilepath))
+					{
+						ImGui::Text("Filepath: %s", prefabFilepath.string().c_str());
+					
+						validUUID = true;
+
+						ImGui::PushID("Save Prefab");
+						if (ImGui::Button("Save"))
+						{
+							Serializer::SerializePrefab(Utils::FindFilepath(entity->GetPrefabFilepathUUID()), entity);
+
+							auto callback = [scene, entity]()
+							{
+								std::vector<std::shared_ptr<Entity>> entitiesToDelete;
+								for (const auto& maybePrefabEntity : scene->GetEntities())
+								{
+									if (maybePrefabEntity != entity && maybePrefabEntity->GetPrefabFilepathUUID() == entity->GetPrefabFilepathUUID())
+									{
+										entitiesToDelete.emplace_back(maybePrefabEntity);
+									}
+								}
+
+								for (auto& entityToDelete : entitiesToDelete)
+								{
+									std::shared_ptr<Entity> clonedEntity = scene->CloneEntity(entity);
+
+									if (clonedEntity->HasParent())
+									{
+										clonedEntity->GetParent()->RemoveChild(clonedEntity);
+									}
+
+									if (entityToDelete->HasParent())
+									{
+										entityToDelete->GetParent()->AddChild(clonedEntity);
+									}
+
+									clonedEntity->GetComponent<Transform>().Copy(entityToDelete->GetComponent<Transform>());
+								}
+
+								for (auto& entityToDelete : entitiesToDelete)
+								{
+									scene->DeleteEntity(entityToDelete);
+								}
+							};
+
+							std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+							EventSystem::GetInstance().SendEvent(event);
+						}
+						ImGui::PopID();
+					}
+					else
+					{
+						ImGuiStyle* style = &ImGui::GetStyle();
+						auto previousColor = style->Colors[ImGuiCol_Text];
+						style->Colors[ImGuiCol_Text] = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+						ImGui::Text("Filepath: prefab uuid is invalid!");
+						style->Colors[ImGuiCol_Text] = previousColor;
+					}
+				}
+				else
+				{
+					ImGui::PushID("Save Prefab");
+					if (ImGui::Button("Save as prefab"))
+					{
+						Serializer::SerializePrefab(Utils::GetShortFilepath(m_CurrentDirectory / (entity->GetName() + FileFormats::Prefab())), entity);
+					}
+					ImGui::PopID();
+
+				}
 			}
 
 			ComponentsPopUpMenu(entity);
@@ -2421,7 +2511,7 @@ void Editor::DeleteFileMenu::Update()
 		| ImGuiWindowFlags_NoDocking
 		| ImGuiWindowFlags_NoSavedSettings))
 	{
-		ImGui::Text("Are you sure you want to delete\n%s?", filepath.filename().c_str());
+		ImGui::Text("Are you sure you want to delete\n%s?", filepath.filename().string().c_str());
 		if (ImGui::Button("Yes"))
 		{
 			if (Utils::GetFileFormat(filepath.string()).empty())
@@ -2431,7 +2521,18 @@ void Editor::DeleteFileMenu::Update()
 			else
 			{
 				std::filesystem::remove(filepath);
+
+				const std::filesystem::path metaFilepath = filepath.concat(FileFormats::Meta());
+				if (std::filesystem::exists(metaFilepath))
+				{
+					std::filesystem::remove(metaFilepath);
+				}
 			}
+
+			// TODO: Do it more optimal, fine for now, very slow.
+			filepathByUuid.clear();
+			uuidByFilepath.clear();
+			Serializer::GenerateFilesUUID(std::filesystem::current_path());
 
 			opened = false;
 		}

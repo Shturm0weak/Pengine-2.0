@@ -2894,29 +2894,35 @@ std::shared_ptr<Entity> Serializer::GenerateEntity(
 	return node;
 }
 
-void Serializer::SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entity>& entity, const bool withChilds)
+void Serializer::SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entity>& entity, bool rootEntity, bool isSerializingPrefab)
 {
 	if (!entity)
 	{
 		return;
 	}
 
-	out << YAML::BeginMap;
-
-	out << YAML::Key << "UUID" << YAML::Value << entity->GetUUID();
-	out << YAML::Key << "Name" << YAML::Value << entity->GetName();
-	out << YAML::Key << "IsEnabled" << YAML::Value << entity->IsEnabled();
-
-	std::vector<std::string> childUUIDs;
-	for (const std::weak_ptr<Entity> weakChild : entity->GetChilds())
+	if (!(isSerializingPrefab && rootEntity) && entity->IsPrefab())
 	{
-		if (const std::shared_ptr<Entity> child = weakChild.lock())
-		{
-			childUUIDs.emplace_back(child->GetUUID());
-		}
+		out << YAML::BeginMap;
+
+		out << YAML::Key << "PrefabFilepath" << YAML::Value << entity->GetPrefabFilepathUUID();
+		out << YAML::Key << "UUID" << YAML::Value << entity->GetUUID();
+		SerializeTransform(out, entity);
+
+		out << YAML::EndMap;
+
+		return;
 	}
 
-	out << YAML::Key << "Childs" << YAML::Value << childUUIDs;
+	out << YAML::BeginMap;
+
+	if (!isSerializingPrefab)
+	{
+		out << YAML::Key << "UUID" << YAML::Value << entity->GetUUID();
+	}
+
+	out << YAML::Key << "Name" << YAML::Value << entity->GetName();
+	out << YAML::Key << "IsEnabled" << YAML::Value << entity->IsEnabled();
 
 	SerializeTransform(out, entity);
 	SerializeCamera(out, entity);
@@ -2925,27 +2931,49 @@ void Serializer::SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entit
 	SerializeDirectionalLight(out, entity);
 	SerializeSkeletalAnimator(out, entity);
 
-	out << YAML::EndMap;
-
-	if (!withChilds)
-	{
-		return;
-	}
+	// Childs.
+	out << YAML::Key << "Childs";
+	out << YAML::BeginSeq;
 
 	for (const std::weak_ptr<Entity> weakChild : entity->GetChilds())
 	{
 		if (const std::shared_ptr<Entity> child = weakChild.lock())
 		{
-			SerializeEntity(out, child);
+			SerializeEntity(out, child, false, isSerializingPrefab);
 		}
 	}
+
+	out << YAML::EndSeq;
+	//
+
+	out << YAML::EndMap;
 }
 
 std::shared_ptr<Entity> Serializer::DeserializeEntity(
 	const YAML::Node& in,
-	const std::shared_ptr<Scene>& scene,
-	std::vector<std::string>& childs)
+	const std::shared_ptr<Scene>& scene)
 {
+	if (const auto& prefabFilepathData = in["PrefabFilepath"])
+	{
+		const std::string prefabUUID = prefabFilepathData.as<std::string>();
+		const std::filesystem::path prefabFilepath = Utils::FindFilepath(prefabUUID);
+		if (!std::filesystem::exists(prefabFilepath))
+		{
+			Logger::Error(prefabUUID + ":Prefab doesn't exist!");
+			return nullptr;
+		}
+
+		const std::shared_ptr<Entity> prefab = DeserializePrefab(prefabFilepath, scene);
+		DeserializeTransform(in, prefab);
+
+		if (const auto& uuidData = in["UUID"])
+		{
+			prefab->SetUUID(uuidData.as<std::string>());
+		}
+
+		return prefab;
+	}
+
 	UUID uuid;
 	if (const auto& uuidData = in["UUID"])
 	{
@@ -2958,16 +2986,11 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 		name = nameData.as<std::string>();
 	}
 
-	std::shared_ptr<Entity> entity = scene->CreateEntity(name, uuid);
+	std::shared_ptr<Entity> entity = scene->CreateEntity(name, uuid.Get().empty() ? UUID() : uuid);
 
 	if (const auto& isEnabledData = in["IsEnabled"])
 	{
 		entity->SetEnabled(isEnabledData.as<bool>());
-	}
-
-	for (const auto& childsData : in["Childs"])
-	{
-		childs.emplace_back(childsData.as<std::string>());
 	}
 
 	DeserializeTransform(in, entity);
@@ -2977,30 +3000,42 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 	DeserializeDirectionalLight(in, entity);
 	DeserializeSkeletalAnimator(in, entity);
 
+	for (const auto& childData : in["Childs"])
+	{
+		if (const std::shared_ptr<Entity> child = DeserializeEntity(childData, scene))
+		{
+			entity->AddChild(child);
+		}
+	}
+
 	return entity;
 }
 
 void Serializer::SerializePrefab(const std::filesystem::path& filepath, const std::shared_ptr<Entity>& entity)
 {
+	if (filepath.empty() || filepath == none || Utils::GetFileFormat(filepath) != FileFormats::Prefab())
+	{
+		Logger::Error(filepath.string() + ":Failed to serialize prefab! Filepath is incorrect!");
+		return;
+	}
+
 	YAML::Emitter out;
 
-	out << YAML::BeginSeq;
-
-	SerializeEntity(out, entity);
-
-	out << YAML::EndSeq;
+	SerializeEntity(out, entity, true, true);
 
 	std::ofstream fout(filepath);
 	fout << out.c_str();
 	fout.close();
+
+	entity->SetPrefabFilepathUUID(GenerateFileUUID(filepath));
 }
 
-void Serializer::DeserializePrefab(const std::filesystem::path& filepath, const std::shared_ptr<Scene>& scene)
+std::shared_ptr<Entity> Serializer::DeserializePrefab(const std::filesystem::path& filepath, const std::shared_ptr<Scene>& scene)
 {
 	if (filepath.empty() || filepath == none || Utils::GetFileFormat(filepath) != FileFormats::Prefab())
 	{
 		Logger::Error(filepath.string() + ":Failed to load prefab! Filepath is incorrect!");
-		return;
+		return nullptr;
 	}
 
 	std::ifstream stream(filepath);
@@ -3016,30 +3051,22 @@ void Serializer::DeserializePrefab(const std::filesystem::path& filepath, const 
 		FATAL_ERROR(filepath.string() + ":Failed to load yaml file! The file doesn't contain data or doesn't exist!");
 	}
 
-	std::unordered_map<std::shared_ptr<Entity>, std::vector<std::string>> childsUUIDByEntity;
-	for (const auto& entitiyData : data)
+	std::shared_ptr<Entity> entity = DeserializeEntity(data, scene);
+	if (entity)
 	{
-		std::vector<std::string> childs;
-		std::shared_ptr<Entity> entity = DeserializeEntity(entitiyData, scene, childs);
-		childsUUIDByEntity[entity] = std::move(childs);
+		entity->SetPrefabFilepathUUID(Utils::FindUuid(filepath));
+
+		Logger::Log("Prefab:" + filepath.string() + " has been loaded!", BOLDGREEN);	
 	}
 
-	for (const auto& [entity, childsUUID] : childsUUIDByEntity)
-	{
-		for (const auto& childUUID : childsUUID)
-		{
-			if (std::shared_ptr<Entity> child = scene->FindEntityByUUID(childUUID))
-			{
-				entity->AddChild(child);
-			}
-			else
-			{
-				FATAL_ERROR("Child entity is not valid!");
-			}
-		}
-	}
+	return entity;
+}
 
-	Logger::Log("Prefab:" + filepath.string() + " has been loaded!", BOLDGREEN);
+void Serializer::UpdatePrefab(
+	const std::filesystem::path& filepath,
+	const std::vector<std::shared_ptr<Entity>> entities)
+{
+
 }
 
 void Serializer::SerializeTransform(YAML::Emitter& out, const std::shared_ptr<Entity>& entity)
@@ -3349,6 +3376,18 @@ void Serializer::SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entit
 	out << YAML::Key << "RenderPassName" << YAML::Value << camera.GetRenderPassName();
 	out << YAML::Key << "RenderTargetIndex" << YAML::Value << camera.GetRenderTargetIndex();
 
+	// TODO: Maybe do it more optimal.
+	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
+	{
+		if (const std::shared_ptr<Entity> viewportCamera = viewport->GetCamera().lock())
+		{
+			if (viewportCamera->GetUUID() == entity->GetUUID())
+			{
+				out << YAML::Key << "Viewport" << YAML::Value << name;
+			}
+		}
+	}
+
 	out << YAML::EndMap;
 }
 
@@ -3392,6 +3431,15 @@ void Serializer::DeserializeCamera(const YAML::Node& in, const std::shared_ptr<E
 		{
 			camera.SetRenderTargetIndex(renderTargetIndexData.as<int>());
 		}
+
+		if (const auto& viewportData = cameraData["Viewport"])
+		{
+			const std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport(viewportData.as<std::string>());
+			if (viewport)
+			{
+				viewport->SetCamera(entity);
+			}
+		}
 	}
 }
 
@@ -3406,24 +3454,6 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 	YAML::Emitter out;
 
 	out << YAML::BeginMap;
-
-	// Viewports.
-	out << YAML::Key << "Viewports";
-	out << YAML::Value << YAML::BeginSeq;
-
-	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
-	{
-		if (const std::shared_ptr<Entity> camera = viewport->GetCamera().lock())
-		{
-			out << YAML::BeginMap;
-			out << YAML::Key << "Viewport" << YAML::Value << name;
-			out << YAML::Key << "Camera" << YAML::Value << camera->GetUUID();
-			out << YAML::EndMap;
-		}
-	}
-
-	out << YAML::EndSeq;
-	//
 
 	// Settings.
 	out << YAML::Key << "Settings";
@@ -3448,7 +3478,10 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 
 	for (const auto& entity : scene->GetEntities())
 	{
-		SerializeEntity(out, entity, false);
+		if (!entity->HasParent())
+		{
+			SerializeEntity(out, entity, true, false);
+		}
 	}
 
 	out << YAML::EndSeq;
@@ -3489,50 +3522,9 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path&
 		"Main");
 	scene->SetFilepath(filepath);
 
-	std::unordered_map<std::shared_ptr<Entity>, std::vector<std::string>> childsUUIDByEntity;
 	for (const auto& entityData : data["Scene"])
 	{
-		std::vector<std::string> childs;
-		std::shared_ptr<Entity> entity = DeserializeEntity(entityData, scene, childs);
-		childsUUIDByEntity[entity] = std::move(childs);
-	}
-
-	for (const auto& [entity, childsUUID] : childsUUIDByEntity)
-	{
-		for (const auto& childUUID : childsUUID)
-		{
-			if (std::shared_ptr<Entity> child = scene->FindEntityByUUID(childUUID))
-			{
-				entity->AddChild(child);
-			}
-			else
-			{
-				FATAL_ERROR("Child entity is not valid!");
-			}
-		}
-	}
-
-	for (const auto& viewportData : data["Viewports"])
-	{
-		std::shared_ptr<Entity> camera;
-		if (const auto& cameraUuidData = viewportData["Camera"])
-		{
-			camera = scene->FindEntityByUUID(cameraUuidData.as<std::string>());
-		}
-
-		std::shared_ptr<Viewport> viewport;
-		if (const auto& viewportNameData = viewportData["Viewport"])
-		{
-			viewport = ViewportManager::GetInstance().GetViewport(viewportNameData.as<std::string>());
-		}
-
-		if (viewport)
-		{
-			if (camera)
-			{
-				viewport->SetCamera(camera);
-			}
-		}
+		DeserializeEntity(entityData, scene);
 	}
 
 	if (const auto& settingsData = data["Settings"])
