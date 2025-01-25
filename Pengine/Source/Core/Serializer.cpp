@@ -2165,6 +2165,10 @@ std::optional<ShaderReflection::ReflectShaderModule> Serializer::DeserializeShad
 std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>>
 Serializer::LoadIntermediate(
 	const std::filesystem::path& filepath,
+	const bool importMeshes,
+	const bool importMaterials,
+	const bool importSkeletons,
+	const int flags,
 	std::string& workName,
 	float& workStatus)
 {
@@ -2173,10 +2177,10 @@ Serializer::LoadIntermediate(
 	const std::filesystem::path directory = filepath.parent_path();
 
 	Assimp::Importer import;
-	constexpr auto importFlags = aiProcess_Triangulate | aiProcess_GenSmoothNormals |
+	const auto importFlags = flags | aiProcess_Triangulate | aiProcess_GenSmoothNormals |
 		aiProcess_OptimizeMeshes | aiProcess_RemoveRedundantMaterials | aiProcess_ImproveCacheLocality |
 		aiProcess_JoinIdenticalVertices | aiProcess_GenUVCoords | aiProcess_CalcTangentSpace | aiProcess_SortByPType |
-		aiProcess_ValidateDataStructure | aiProcess_FindDegenerates | aiProcess_FindInvalidData | aiProcess_PopulateArmatureData;
+		aiProcess_ValidateDataStructure | aiProcess_FindDegenerates | aiProcess_FindInvalidData;
 	const aiScene* scene = import.ReadFile(filepath.string(), importFlags);
 
 	if (!scene)
@@ -2187,78 +2191,87 @@ Serializer::LoadIntermediate(
 	const float maxWorkStatus = scene->mNumMaterials + scene->mNumMeshes + scene->mNumAnimations;
 	float currentWorkStatus = 0.0f;
 
-	workName = "Generating Materials";
-	std::mutex futureMaterialMutex;
-	std::condition_variable futureMaterialCondVar;
-	std::atomic<int> materialCount = 0;
 	std::unordered_map<size_t, std::shared_ptr<Material>> materialsByIndex;
-	for (size_t materialIndex = 0; materialIndex < scene->mNumMaterials; materialIndex++)
+	if (importMaterials)
 	{
-		ThreadPool::GetInstance().EnqueueAsync([
-			aiMaterial = scene->mMaterials[materialIndex],
-				directory,
-				materialIndex,
-				maxWorkStatus,
-				&materialCount,
-				&futureMaterialMutex,
-				&futureMaterialCondVar,
-				&materialsByIndex,
-				&workStatus,
-				&currentWorkStatus]()
+		workName = "Generating Materials";
+		std::mutex futureMaterialMutex;
+		std::condition_variable futureMaterialCondVar;
+		std::atomic<int> materialCount = 0;
+		for (size_t materialIndex = 0; materialIndex < scene->mNumMaterials; materialIndex++)
 		{
-			std::shared_ptr<Material> material = GenerateMaterial(aiMaterial, directory);
+			ThreadPool::GetInstance().EnqueueAsync([
+				aiMaterial = scene->mMaterials[materialIndex],
+					directory,
+					materialIndex,
+					maxWorkStatus,
+					&materialCount,
+					&futureMaterialMutex,
+					&futureMaterialCondVar,
+					&materialsByIndex,
+					&workStatus,
+					&currentWorkStatus]()
+				{
+					std::shared_ptr<Material> material = GenerateMaterial(aiMaterial, directory);
 
-			std::lock_guard<std::mutex> lock(futureMaterialMutex);
+					std::lock_guard<std::mutex> lock(futureMaterialMutex);
+
+					workStatus = currentWorkStatus++ / maxWorkStatus;
+
+					materialsByIndex[materialIndex] = material;
+
+					materialCount.store(materialsByIndex.size());
+
+					futureMaterialCondVar.notify_all();
+				});
+		}
+
+		std::mutex futureMaterialCondVarMutex;
+		std::unique_lock<std::mutex> lock(futureMaterialCondVarMutex);
+		futureMaterialCondVar.wait(lock, [&materialCount, scene]
+			{
+				return materialCount.load() == scene->mNumMaterials;
+			});
+	}
+
+	std::vector<std::shared_ptr<Mesh>> meshesByIndex(importMeshes ? scene->mNumMeshes : 0);
+	std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>> materialsByMeshes;
+	if (importMeshes)
+	{
+		workName = "Generating Meshes";
+		for (size_t meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++)
+		{
+			aiMesh* aiMesh = scene->mMeshes[meshIndex];
+			const std::shared_ptr<Skeleton> skeleton = importSkeletons ? GenerateSkeleton(scene->mRootNode, aiMesh, directory) : nullptr;
+
+			std::shared_ptr<Mesh> mesh;
+			if (skeleton)
+			{
+				mesh = GenerateMeshSkinned(skeleton, aiMesh, directory);
+			}
+			else
+			{
+				mesh = GenerateMesh(aiMesh, directory);
+			}
+			meshesByIndex[meshIndex] = mesh;
+			materialsByMeshes[mesh] = materialsByIndex[aiMesh->mMaterialIndex];
 
 			workStatus = currentWorkStatus++ / maxWorkStatus;
-			
-			materialsByIndex[materialIndex] = material;
-
-			materialCount.store(materialsByIndex.size());
-
-			futureMaterialCondVar.notify_all();
-		});
-	}
-
-	std::mutex futureMaterialCondVarMutex;
-	std::unique_lock<std::mutex> lock(futureMaterialCondVarMutex);
-	futureMaterialCondVar.wait(lock, [&materialCount, scene]
-	{
-		return materialCount.load() == scene->mNumMaterials;
-	});
-
-	workName = "Generating Meshes";
-	std::vector<std::shared_ptr<Mesh>> meshesByIndex(scene->mNumMeshes);
-	std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>> materialsByMeshes;
-	for (size_t meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++)
-	{
-		aiMesh* aiMesh = scene->mMeshes[meshIndex];
-		const std::shared_ptr<Skeleton> skeleton = GenerateSkeleton(scene->mRootNode, aiMesh, directory);
-
-		std::shared_ptr<Mesh> mesh;
-		if (skeleton)
-		{
-			mesh = GenerateMeshSkinned(skeleton, aiMesh, directory);
 		}
-		else
-		{
-			mesh = GenerateMesh(aiMesh, directory);
-		}
-		meshesByIndex[meshIndex] = mesh;
-		materialsByMeshes[mesh] = materialsByIndex[aiMesh->mMaterialIndex];
-
-		workStatus = currentWorkStatus++ / maxWorkStatus;
 	}
-
-	workName = "Generating Animations";
-	for (size_t animIndex = 0; animIndex < scene->mNumAnimations; animIndex++)
+	
+	if (importFlags & aiProcess_PopulateArmatureData)
 	{
-		GenerateAnimation(scene->mAnimations[animIndex], directory);
+		workName = "Generating Animations";
+		for (size_t animIndex = 0; animIndex < scene->mNumAnimations; animIndex++)
+		{
+			GenerateAnimation(scene->mAnimations[animIndex], directory);
 
-		workStatus = currentWorkStatus++ / maxWorkStatus;
+			workStatus = currentWorkStatus++ / maxWorkStatus;
+		}
 	}
 
-	if (scene->mRootNode && scene->mNumMeshes > 1)
+	if (!meshesByIndex.empty() && scene->mRootNode && scene->mNumMeshes > 1)
 	{
 		workName = "Generating Prefab";
 
@@ -2862,11 +2875,29 @@ std::shared_ptr<Entity> Serializer::GenerateEntity(
 	{
 		const std::shared_ptr<Mesh> mesh = meshesByIndex[assimpNode->mMeshes[meshIndex]];
 		r3d->mesh = mesh;
-		r3d->material = materialsByMeshes.find(mesh)->second;
+
+		const std::shared_ptr<Material> material = materialsByMeshes.find(mesh)->second;
+		if (material)
+		{
+			r3d->material = material;
+		}
+		else
+		{
+			if (r3d->mesh->GetType() == Mesh::Type::STATIC)
+			{
+				r3d->material = AsyncAssetLoader::GetInstance().SyncLoadMaterial(
+					std::filesystem::path("Materials") / "MeshBase.mat");
+			}
+			else if (r3d->mesh->GetType() == Mesh::Type::SKINNED)
+			{
+				r3d->material = AsyncAssetLoader::GetInstance().SyncLoadMaterial(
+					std::filesystem::path("Materials") / "MeshBaseSkinned.mat");
+			}
+		}
 
 		if (r3d->mesh->GetType() == Mesh::Type::SKINNED)
 		{
-			r3d->material->SetBaseMaterial(MaterialManager::GetInstance().LoadBaseMaterial(
+			r3d->material->SetBaseMaterial(AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(
 				std::filesystem::path("Materials") / "MeshBaseSkinned.basemat"));
 			Material::Save(r3d->material, false);
 		}
@@ -3136,8 +3167,16 @@ void Serializer::SerializeRenderer3D(YAML::Emitter& out, const std::shared_ptr<E
 
 	out << YAML::BeginMap;
 
-	out << YAML::Key << "Mesh" << YAML::Value << Utils::FindUuid(r3d.mesh->GetFilepath());
-	out << YAML::Key << "Material" << YAML::Value << Utils::FindUuid(r3d.material->GetFilepath());
+	if (r3d.mesh)
+	{
+		out << YAML::Key << "Mesh" << YAML::Value << Utils::FindUuid(r3d.mesh->GetFilepath());
+	}
+
+	if (r3d.material)
+	{
+		out << YAML::Key << "Material" << YAML::Value << Utils::FindUuid(r3d.material->GetFilepath());
+	}
+
 	out << YAML::Key << "RenderingOrder" << YAML::Value << r3d.renderingOrder;
 
 	out << YAML::EndMap;

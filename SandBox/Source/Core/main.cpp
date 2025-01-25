@@ -28,7 +28,7 @@ int main()
 	}
 	catch (const std::runtime_error& runtimeError)
 	{
-		
+		Pengine::Logger::Error(runtimeError.what());
 	}
 
 	return 0;

@@ -63,6 +63,10 @@ namespace Pengine
 
 		static std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> LoadIntermediate(
 			const std::filesystem::path& filepath,
+			const bool importMeshes,
+			const bool importMaterials,
+			const bool importSkeletons,
+			const int flags,
 			std::string& workName,
 			float& workStatus);
 

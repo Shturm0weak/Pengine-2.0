@@ -28,6 +28,8 @@
 #include <fstream>
 #include <format>
 
+#include <assimp/postprocess.h>
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -94,6 +96,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	m_CreateViewportMenu.Update(*this);
 	m_LoadIntermediateMenu.Update();
 	m_TextureMetaPropertiesMenu.Update();
+	m_ImportMenu.Update(*this);
 
 	ImGui::Begin("Settings");
 	ImGui::Text("FPS: %.0f", 1.0f / static_cast<float>(Time::GetDeltaTime()));
@@ -1550,19 +1553,9 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 				{
 					if (ImGui::MenuItem("Generate meshes"))
 					{
-						m_LoadIntermediateMenu.opened = true;
-						m_LoadIntermediateMenu.workStatus = 0;
-						m_LoadIntermediateMenu.workName.clear();
-
-						ThreadPool::GetInstance().EnqueueAsync([path, this]()
-						{
-							Serializer::LoadIntermediate(
-								Utils::Erase(path.string(), m_RootDirectory.string() + "/"),
-								m_LoadIntermediateMenu.workName,
-								m_LoadIntermediateMenu.workStatus);
-
-							m_LoadIntermediateMenu.opened = false;
-						});
+						m_ImportMenu = {};
+						m_ImportMenu.opened = true;
+						m_ImportMenu.filepath = path;
 					}
 				}
 				if (format == FileFormats::Scene())
@@ -2693,6 +2686,64 @@ void Editor::TextureMetaPropertiesMenu::Update()
 		if (isChangedToSerialize)
 		{
 			Serializer::SerializeTextureMeta(meta);
+		}
+
+		ImGui::End();
+	}
+}
+
+void Editor::ImportMenu::Update(Editor& editor)
+{
+	if (!opened)
+	{
+		return;
+	}
+
+	if (opened && ImGui::Begin("Import Properties", &opened))
+	{
+		ImGui::Checkbox("Meshes", &importMeshes);
+
+		bool preTransformVertices = importFlags & aiProcess_PreTransformVertices;
+		if (importMeshes && ImGui::Checkbox("PreTransform Vertices", &preTransformVertices))
+		{
+			importFlags = preTransformVertices ? importFlags | aiProcess_PreTransformVertices : importFlags & ~aiProcess_PreTransformVertices;
+			importFlags = importFlags & ~aiProcess_PopulateArmatureData;
+		}
+
+		bool animations = importFlags & aiProcess_PopulateArmatureData;
+		if (importMeshes && !preTransformVertices && ImGui::Checkbox("Animations", &animations))
+		{
+			importFlags = animations ? importFlags | aiProcess_PopulateArmatureData : importFlags & ~aiProcess_PopulateArmatureData;
+		}
+
+		if (importMeshes && !preTransformVertices)
+		{
+			ImGui::Checkbox("Skeletons", &importSkeletons);
+		}
+
+		ImGui::Checkbox("Materials", &importMaterials);
+
+		if (ImGui::Button("Import"))
+		{
+			opened = false;
+
+			editor.m_LoadIntermediateMenu.opened = true;
+			editor.m_LoadIntermediateMenu.workStatus = 0;
+			editor.m_LoadIntermediateMenu.workName.clear();
+
+			ThreadPool::GetInstance().EnqueueAsync([&editor, this]()
+			{
+				Serializer::LoadIntermediate(
+					Utils::Erase(filepath.string(), editor.m_RootDirectory.string() + "/"),
+					importMeshes,
+					importMaterials,
+					importSkeletons,
+					importFlags,
+					editor.m_LoadIntermediateMenu.workName,
+					editor.m_LoadIntermediateMenu.workStatus);
+
+				editor.m_LoadIntermediateMenu.opened = false;
+			});
 		}
 
 		ImGui::End();
