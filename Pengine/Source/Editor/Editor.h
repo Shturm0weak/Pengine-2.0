@@ -168,6 +168,20 @@ namespace Pengine
 			void Update();
 		} m_TextureMetaPropertiesMenu;
 
+		struct ImportMenu
+		{
+			bool opened = false;
+
+			std::filesystem::path filepath;
+			int importFlags = 0;
+
+			bool importMeshes = true;
+			bool importSkeletons = true;
+			bool importMaterials = true;
+
+			void Update(Editor& editor);
+		} m_ImportMenu;
+
 		std::filesystem::path m_RootDirectory = std::filesystem::current_path();
 		std::filesystem::path m_CurrentDirectory = m_RootDirectory;
 
