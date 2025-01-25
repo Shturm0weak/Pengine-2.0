@@ -501,7 +501,7 @@ void VulkanWindow::InitializeImGui()
 
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF("../Vendor/imgui/misc/fonts/Calibri.ttf", 20);
+	io.Fonts->AddFontFromFileTTF("Editor/Fonts/Calibri.ttf", 16);
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	ImGui::StyleColorsDark();
