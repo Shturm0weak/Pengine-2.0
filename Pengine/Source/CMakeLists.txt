@@ -156,7 +156,16 @@ target_link_libraries(${PROJECT_NAME} PRIVATE YAML)
 target_link_libraries(${PROJECT_NAME} PRIVATE ImGui)
 target_link_libraries(${PROJECT_NAME} PRIVATE assimp)
 
-find_library(GLFW_LIBRARY NAMES glfw glfw3 HINTS $ENV{GLFW_LIB_PATH} REQUIRED)
+if (WIN32)
+	if (MSVC)
+		find_library(GLFW_LIBRARY NAMES glfw glfw3 HINTS $ENV{GLFW_LIB_PATH} REQUIRED)
+	elseif (MINGW)
+		find_library(GLFW_LIBRARY NAMES glfw3dll HINTS $ENV{GLFW_LIB_PATH} REQUIRED)
+	endif ()
+elseif (UNIX)
+	find_library(GLFW_LIBRARY NAMES glfw glfw3 HINTS $ENV{GLFW_LIB_PATH} REQUIRED)
+endif ()
+
 if (GLFW_LIBRARY)
 	message(${GLFW_LIBRARY} " has been found")
 	target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIBRARY})
@@ -173,14 +182,20 @@ else ()
 endif ()
 
 if (WIN32)
-	find_library(SHADERC_COMBINED_R_LIBRARY NAMES shaderc_combined HINTS $ENV{VULKAN_LIB_PATH} REQUIRED)
+	if (MSVC)
+		find_library(SHADERC_COMBINED_R_LIBRARY NAMES shaderc_combined HINTS $ENV{VULKAN_LIB_PATH} REQUIRED)
+		find_library(SHADERC_COMBINED_D_LIBRARY NAMES shaderc_combinedd HINTS $ENV{VULKAN_LIB_PATH} REQUIRED)
+	elseif (MINGW)
+		find_library(SHADERC_COMBINED_R_LIBRARY NAMES shaderc_shared HINTS $ENV{VULKAN_LIB_PATH} REQUIRED)
+		find_library(SHADERC_COMBINED_D_LIBRARY NAMES shaderc_sharedd HINTS $ENV{VULKAN_LIB_PATH} REQUIRED)
+	endif ()
+
 	if (SHADERC_COMBINED_R_LIBRARY)
 		message(${SHADERC_COMBINED_R_LIBRARY} " has been found")
 	else ()
 		message(FATAL_ERROR "Shaderc combined library release has not been found")
 	endif ()
 
-	find_library(SHADERC_COMBINED_D_LIBRARY NAMES shaderc_combinedd HINTS $ENV{VULKAN_LIB_PATH} REQUIRED)
 	if (SHADERC_COMBINED_D_LIBRARY)
 		message(${SHADERC_COMBINED_D_LIBRARY} " has been found")
 	else ()
@@ -207,24 +222,22 @@ target_include_directories(${PROJECT_NAME} PRIVATE $ENV{GLFW_INCLUDE_PATH})
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{VULKAN_INCLUDE_PATH})
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{VULKAN_SPIRV_REFLECT_PATH})
 
-if (WIN32)
-	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
-		COMMAND "${CMAKE_COMMAND}" -E copy_directory
-		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin/$<CONFIG>
-		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
-elseif (UNIX)
+if (GENERATOR_IS_MULTI_CONFIG)
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin
-		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
-endif ()
+		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin/$<CONFIG>
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
 
-if (WIN32)
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>
 		${CMAKE_BINARY_DIR}/${APP_NAME}/Build/$<CONFIG>)
-elseif (UNIX)
+else ()
+	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
+
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build

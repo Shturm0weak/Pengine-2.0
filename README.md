@@ -9,13 +9,14 @@ A simple 3D game engine written in C++ and Vulkan.
 ### **Windows**
 * Download GLFW 64-bit Windows binaries from https://www.glfw.org/download.html.
 * Download Vulkan SDK from https://vulkan.lunarg.com and install it.
-* Set up next environment variables: `GLFW_INCLUDE_PATH`, `GLFW_LIB_PATH`, `VULKAN_SPIRV_REFLECT_PATH`, `VULKAN_INCLUDE_PATH`, `VULKAN_LIB_PATH`.\
+* Set up next environment variables: `GLFW_INCLUDE_PATH`, `GLFW_LIB_PATH`, `VULKAN_SPIRV_REFLECT_PATH`, `VULKAN_INCLUDE_PATH`, `VULKAN_LIB_PATH`, `VULKAN_BIN_PATH`.\
 For example how I set it:\
 `GLFW_INCLUDE_PATH = C:/GLFW/Includes`\
 `GLFW_LIB_PATH = C:/GLFW/Lib`\
 `VULKAN_INCLUDE_PATH = C:/VulkanSDK/1.3.268.0/Include`\
 `VULKAN_LIB_PATH = C:/VulkanSDK/1.3.268.0/Lib`\
-`VULKAN_SPIRV_REFLECT_PATH = C:/VulkanSDK/1.3.268.0/Source`
+`VULKAN_SPIRV_REFLECT_PATH = C:/VulkanSDK/1.3.268.0/Source`\
+`VULKAN_BIN_PATH = C:/VulkanSDK/1.3.268.0/Bin`
 * Clone and run CMake.
 ```
 git clone --recursive -b main https://github.com/Shturm0weak/Pengine-2.0.git
@@ -30,11 +31,12 @@ cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 * If there is no GLFW, so download GLFW for your linux distribution.
 * Download Vulkan SDK from https://vulkan.lunarg.com.
 * Install Vulkan SDK as shown in the documentation https://vulkan.lunarg.com/doc/view/latest/linux/getting_started.html.
-* Set up next environment variables: `VULKAN_SPIRV_REFLECT_PATH`, `VULKAN_INCLUDE_PATH`, `VULKAN_LIB_PATH`.\
+* Set up next environment variables: `VULKAN_SPIRV_REFLECT_PATH`, `VULKAN_INCLUDE_PATH`, `VULKAN_LIB_PATH`, `VULKAN_BIN_PATH`.\
 For example how I set it:\
 `VULKAN_INCLUDE_PATH = /home/alexander/Vulkan/1.4.304.0/x86_64/include`\
 `VULKAN_LIB_PATH = /home/alexander/Vulkan/1.4.304.0/x86_64/lib`\
 `VULKAN_SPIRV_REFLECT_PATH = /home/alexander/Vulkan/1.4.304.0/x86_64/include`\
+`VULKAN_BIN_PATH = /home/alexander/Vulkan/1.4.304.0/x86_64/bin`
 Setting these variables can be done as a `.sh` script and run that script on startup by placing another `.sh` script in `/etc/profile.d` containing the line `source <path to your .sh script>`
 * Clone and run CMake.
 ```

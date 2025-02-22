@@ -44,23 +44,61 @@ if (MSVC)
 	set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}")
 endif ()
 
-if (WIN32)
-	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
-		COMMAND "${CMAKE_COMMAND}" -E copy_directory
-		${CMAKE_BINARY_DIR}/bin/$<CONFIG>
-		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
-endif ()
-
-if (WIN32)
+if (GENERATOR_IS_MULTI_CONFIG)
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/Pengine/Build/$<CONFIG>
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
-endif ()
 
-if (WIN32)
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND "${CMAKE_COMMAND}" -E copy_directory
 		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin/$<CONFIG>
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
+else ()
+	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_BINARY_DIR}/Pengine/Build
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
+
+	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+		COMMAND "${CMAKE_COMMAND}" -E copy_directory
+		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
 endif ()
+
+if (WIN32)
+	if (MINGW)
+		if (GENERATOR_IS_MULTI_CONFIG)
+			add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different
+				$ENV{GLFW_LIB_PATH}/glfw3.dll
+				${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>/glfw3.dll)
+
+			add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different
+				$ENV{VULKAN_BIN_PATH}/shaderc_shared.dll
+				${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>/shaderc_shared.dll)
+
+			add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different
+				$ENV{VULKAN_BIN_PATH}/shaderc_sharedd.dll
+				${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>/shaderc_sharedd.dll)
+		else ()
+			add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different
+				$ENV{GLFW_LIB_PATH}/glfw3.dll
+				${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/glfw3.dll)
+
+			add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different
+				$ENV{VULKAN_BIN_PATH}/shaderc_shared.dll
+				${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/shaderc_shared.dll)
+
+			add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+				COMMAND ${CMAKE_COMMAND} -E copy_if_different
+				$ENV{VULKAN_BIN_PATH}/shaderc_sharedd.dll
+				${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/shaderc_sharedd.dll)
+		endif ()
+	endif()
+endif ()
+

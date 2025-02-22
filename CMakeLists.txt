@@ -4,7 +4,7 @@ project(Pengine VERSION 1.0)
 
 set(APP_NAME "SandBox")
 
-if (UNIX)
+if (UNIX OR MINGW)
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif ()
 
