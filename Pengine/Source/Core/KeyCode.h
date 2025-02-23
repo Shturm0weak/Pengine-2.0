@@ -3,7 +3,7 @@
 namespace Pengine
 {
 
-	enum PENGINE_API Keycode
+	enum Keycode
 	{
 		SPACE = 32,
 

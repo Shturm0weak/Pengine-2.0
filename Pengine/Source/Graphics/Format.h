@@ -5,7 +5,7 @@
 namespace Pengine
 {
 
-	enum class PENGINE_API Format
+	enum class Format
 	{
 		UNDEFINED = 0,
 		R4G4_UNORM_PACK8 = 1,

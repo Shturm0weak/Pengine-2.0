@@ -15,6 +15,7 @@ AsyncAssetLoader& Pengine::AsyncAssetLoader::GetInstance()
 
 void AsyncAssetLoader::AsyncLoadMaterial(const std::filesystem::path& filepath, std::function<void(std::shared_ptr<Material>)>&& callback)
 {
+	std::lock_guard<std::mutex> lock(m_MaterialMutex);
 	if (!m_MaterialsLoading.count(filepath))
 	{
 		ThreadPool::GetInstance().EnqueueAsync([this, filepath]()
@@ -25,14 +26,14 @@ void AsyncAssetLoader::AsyncLoadMaterial(const std::filesystem::path& filepath, 
 			m_MaterialsLoading.erase(filepath);
 		});
 	}
-	
-	std::lock_guard<std::mutex> lock(m_MaterialMutex);
+
 	m_MaterialsLoading.emplace(filepath);
 	m_MaterialsToBeLoaded[filepath].emplace_back(std::move(callback));
 }
 
 void AsyncAssetLoader::AsyncLoadBaseMaterial(const std::filesystem::path& filepath, std::function<void(std::shared_ptr<BaseMaterial>)>&& callback)
 {
+	std::lock_guard<std::mutex> lock(m_BaseMaterialMutex);
 	if (!m_BaseMaterialsLoading.count(filepath))
 	{
 		ThreadPool::GetInstance().EnqueueAsync([this, filepath]()
@@ -44,13 +45,13 @@ void AsyncAssetLoader::AsyncLoadBaseMaterial(const std::filesystem::path& filepa
 		});
 	}
 
-	std::lock_guard<std::mutex> lock(m_BaseMaterialMutex);
 	m_BaseMaterialsLoading.emplace(filepath);
 	m_BaseMaterialsToBeLoaded[filepath].emplace_back(std::move(callback));
 }
 
 void AsyncAssetLoader::AsyncLoadMesh(const std::filesystem::path& filepath, std::function<void(std::shared_ptr<Mesh>)>&& callback)
 {
+	std::lock_guard<std::mutex> lock(m_MeshMutex);
 	if (!m_MeshesLoading.count(filepath))
 	{
 		ThreadPool::GetInstance().EnqueueAsync([this, filepath]()
@@ -62,13 +63,13 @@ void AsyncAssetLoader::AsyncLoadMesh(const std::filesystem::path& filepath, std:
 		});
 	}
 
-	std::lock_guard<std::mutex> lock(m_MeshMutex);
 	m_MeshesLoading.emplace(filepath);
 	m_MeshesToBeLoaded[filepath].emplace_back(std::move(callback));
 }
 
 void AsyncAssetLoader::AsyncLoadTexture(const std::filesystem::path& filepath, std::function<void(std::shared_ptr<class Texture>)>&& callback)
 {
+	std::lock_guard<std::mutex> lock(m_TextureMutex);
 	if (!m_TexturesLoading.count(filepath))
 	{
 		ThreadPool::GetInstance().EnqueueAsync([this, filepath]()
@@ -80,7 +81,6 @@ void AsyncAssetLoader::AsyncLoadTexture(const std::filesystem::path& filepath, s
 		});
 	}
 
-	std::lock_guard<std::mutex> lock(m_TextureMutex);
 	m_TexturesLoading.emplace(filepath);
 	m_TexturesToBeLoaded[filepath].emplace_back(std::move(callback));
 }
@@ -248,57 +248,63 @@ void AsyncAssetLoader::Update()
 {
 	MaterialManager& materialManager = MaterialManager::GetInstance();
 
-	for (auto& [filepath, callbacks] : m_MaterialsToBeLoaded)
 	{
-		const std::shared_ptr<Material> material = materialManager.GetMaterial(filepath);
-		if (!material)
-		{
-			continue;
-		}
-
-		for (const auto& callback : callbacks)
-		{
-			callback(material);
-		}
-
 		std::lock_guard<std::mutex> lock(m_MaterialMutex);
-		m_MaterialsToBeLoaded.erase(filepath);
-		break;
+		for (auto& [filepath, callbacks] : m_MaterialsToBeLoaded)
+		{
+			const std::shared_ptr<Material> material = materialManager.GetMaterial(filepath);
+			if (!material)
+			{
+				continue;
+			}
+
+			for (const auto& callback : callbacks)
+			{
+				callback(material);
+			}
+
+			m_MaterialsToBeLoaded.erase(filepath);
+			break;
+		}
 	}
 
-	for (auto& [filepath, callbacks] : m_BaseMaterialsToBeLoaded)
 	{
-		const std::shared_ptr<BaseMaterial> baseMaterial = materialManager.GetBaseMaterial(filepath);
-		if (!baseMaterial)
-		{
-			continue;
-		}
-
-		for (const auto& callback : callbacks)
-		{
-			callback(baseMaterial);
-		}
-
 		std::lock_guard<std::mutex> lock(m_BaseMaterialMutex);
-		m_BaseMaterialsToBeLoaded.erase(filepath);
-		break;
+		for (auto& [filepath, callbacks] : m_BaseMaterialsToBeLoaded)
+		{
+			const std::shared_ptr<BaseMaterial> baseMaterial = materialManager.GetBaseMaterial(filepath);
+			if (!baseMaterial)
+			{
+				continue;
+			}
+
+			for (const auto& callback : callbacks)
+			{
+				callback(baseMaterial);
+			}
+
+			m_BaseMaterialsToBeLoaded.erase(filepath);
+			break;
+		}
 	}
 
-	for (auto& [filepath, callbacks] : m_MeshesToBeLoaded)
 	{
-		const std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().GetMesh(filepath);
-		if (!mesh)
-		{
-			continue;
-		}
-
-		for (const auto& callback : callbacks)
-		{
-			callback(mesh);
-		}
-
 		std::lock_guard<std::mutex> lock(m_MeshMutex);
-		m_MeshesToBeLoaded.erase(filepath);
-		break;
+		for (auto& [filepath, callbacks] : m_MeshesToBeLoaded)
+		{
+			const std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().GetMesh(filepath);
+			if (!mesh)
+			{
+				continue;
+			}
+
+			for (const auto& callback : callbacks)
+			{
+				callback(mesh);
+			}
+
+			m_MeshesToBeLoaded.erase(filepath);
+			break;
+		}
 	}
 }

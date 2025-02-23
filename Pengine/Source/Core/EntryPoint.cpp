@@ -1,6 +1,7 @@
 #include "EntryPoint.h"
 
 #include "AsyncAssetLoader.h"
+#include "FileFormatNames.h"
 #include "Input.h"
 #include "MaterialManager.h"
 #include "MeshManager.h"
@@ -27,6 +28,33 @@ EntryPoint::EntryPoint(Application* application)
 {
 	const auto [configGraphicsAPI] = Serializer::DeserializeEngineConfig(std::filesystem::path("Configs") / "Engine.yaml");
 	graphicsAPI = configGraphicsAPI;
+}
+
+void LoadAllBaseMaterials(const std::filesystem::path& filepath)
+{
+	std::vector<std::filesystem::path> baseMaterialFilepaths;
+	for (auto& directoryIter : std::filesystem::recursive_directory_iterator(filepath))
+	{
+		if (Utils::GetFileFormat(directoryIter.path()) == FileFormats::BaseMat())
+		{
+			baseMaterialFilepaths.emplace_back(directoryIter.path());
+		}
+	}
+
+	std::atomic<int> baseMaterialsLoadedCount = 0;
+	for (const auto& filepath : baseMaterialFilepaths)
+	{
+		AsyncAssetLoader::GetInstance().AsyncLoadBaseMaterial(filepath, [
+			&baseMaterialsLoadedCount](std::shared_ptr<BaseMaterial> baseMaterial)
+		{
+			baseMaterialsLoadedCount.store(baseMaterialsLoadedCount.load() + 1);
+		});
+	}
+
+	while (baseMaterialsLoadedCount.load() != baseMaterialFilepaths.size())
+	{
+		AsyncAssetLoader::GetInstance().Update();
+	}
 }
 
 void PrepareResources()
@@ -183,21 +211,20 @@ void EntryPoint::Run() const
 
 	WindowManager::GetInstance().SetCurrentWindow(mainWindow);
 
+	Serializer::GenerateFilesUUID(std::filesystem::current_path());
+	RenderPassManager::GetInstance();
+	ThreadPool::GetInstance().Initialize();
+
+	PrepareResources();
+	LoadAllBaseMaterials(std::filesystem::path("Materials"));
+
+	TextureManager::GetInstance().LoadFromFolder(std::filesystem::path("Editor") / "Images");
+
 #ifndef NO_EDITOR
 	Editor editor;
 #endif
 
-	RenderPassManager::GetInstance();
-
-	PrepareResources();
-
 	m_Application->OnPreStart();
-
-	Serializer::GenerateFilesUUID(std::filesystem::current_path());
-
-	TextureManager::GetInstance().LoadFromFolder(std::filesystem::path("Editor") / "Images");
-
-	ThreadPool::GetInstance().Initialize();
 
 	const std::shared_ptr<Renderer> renderer = Renderer::Create();
 	
