@@ -21,7 +21,7 @@ namespace Pengine
 	const std::string Bloom = "Bloom";
 	const std::string SSR = "SSR";
 	const std::string SSRBlur = "SSRBlur";
-	const std::string TestCompute = "TestCompute";
+	const std::string ComputeSSAO = "ComputeSSAO";
 
 	class FrameBuffer;
 	class Window;

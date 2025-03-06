@@ -30,6 +30,8 @@ namespace Pengine
 
 		const CreateComputeInfo& GetCreateInfo() const { return m_CreateInfo; }
 
+		virtual const UniformInfo& GetUniformInfo() const override { return m_CreateInfo.uniformInfo; }
+
 		virtual std::map<std::string, uint32_t> GetDescriptorSetIndexByType(const DescriptorSetIndexType type) const override;
 
 	  private:

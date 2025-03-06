@@ -240,7 +240,7 @@ RenderPassManager::RenderPassManager()
 	CreateBloom();
 	CreateSSR();
 	CreateSSRBlur();
-	CreateTestCompute();
+	CreateComputeSSAO();
 }
 
 std::vector<std::shared_ptr<Buffer>> RenderPassManager::GetVertexBuffers(
@@ -1580,6 +1580,10 @@ void RenderPassManager::CreateSSAOBlur()
 			return;
 		}
 
+		std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, renderPassName);
+		SSAORenderer* ssaoRenderer = (SSAORenderer*)renderInfo.renderTarget->GetCustomData("SSAORenderer");
+		renderUniformWriter->WriteTexture("sourceTexture", ssaoRenderer->GetSSAOTexture());
+
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
 		submitInfo.renderPass = renderInfo.renderPass;
@@ -2318,44 +2322,107 @@ void RenderPassManager::CreateSSRBlur()
 	CreateRenderPass(createInfo);
 }
 
-void RenderPassManager::CreateTestCompute()
+void RenderPassManager::CreateComputeSSAO()
 {
 	ComputePass::CreateInfo createInfo{};
 	createInfo.type = Pass::Type::COMPUTE;
-	createInfo.name = "TestCompute";
+	createInfo.name = ComputeSSAO;
 
 	createInfo.executeCallback = [passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
-			std::filesystem::path("Materials") / "Custom" / "Compute" / "TestCompute.basemat");
+			std::filesystem::path("Materials") / "Custom" / "Compute" / "ComputeSSAO.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(passName);
-
-		TestCompute* testCompute = (TestCompute*)renderInfo.renderTarget->GetCustomData("TestCompute");
-		if (!testCompute)
+		if (!pipeline)
 		{
-			testCompute = new TestCompute();
-			renderInfo.renderTarget->SetCustomData("TestCompute", testCompute);
-
-			Texture::CreateInfo createInfo{};
-			createInfo.aspectMask = Texture::AspectMask::COLOR;
-			createInfo.channels = 4;
-			createInfo.filepath = "TestCompute";
-			createInfo.name = "TestCompute";
-			createInfo.format = Format::R8G8B8A8_UNORM;
-			createInfo.size = { 1024, 1024 };
-			createInfo.usage = { Texture::Usage::STORAGE, Texture::Usage::SAMPLED };
-			createInfo.isMultiBuffered = true;
-
-			testCompute->texture = TextureManager::GetInstance().Create(createInfo);
-
-			baseMaterial->GetUniformWriter(passName)->WriteTexture("outputImage", testCompute->texture);
+			return;
 		}
+
+		const GraphicsSettings::SSAO& ssaoSettings = renderInfo.scene->GetGraphicsSettings().ssao;
+		constexpr float resolutionScales[] = { 0.25f, 0.5f, 0.75f, 1.0f };
+		glm::ivec2 currentViewportSize = glm::vec2(renderInfo.viewportSize) * glm::vec2(resolutionScales[ssaoSettings.resolutionScale]);
+
+		Texture::CreateInfo createInfo{};
+		createInfo.aspectMask = Texture::AspectMask::COLOR;
+		createInfo.channels = 4;
+		createInfo.filepath = "ComputeSSAO";
+		createInfo.name = "ComputeSSAO";
+		createInfo.format = Format::R8G8B8A8_UNORM;
+		createInfo.size = currentViewportSize;
+		createInfo.usage = { Texture::Usage::STORAGE, Texture::Usage::SAMPLED };
+		createInfo.isMultiBuffered = true;
+
+		SSAORenderer* ssaoRenderer = (SSAORenderer*)renderInfo.renderTarget->GetCustomData("SSAORenderer");
+		if (!ssaoRenderer)
+		{
+			ssaoRenderer = new SSAORenderer();
+			renderInfo.renderTarget->SetCustomData("SSAORenderer", ssaoRenderer);
+		}
+
+		if (!ssaoSettings.isEnabled)
+		{
+			ssaoRenderer->SetSSAOTexture(nullptr);
+
+			return;
+		}
+		else
+		{
+			if (!ssaoRenderer->GetSSAOTexture())
+			{
+				ssaoRenderer->SetSSAOTexture(Texture::Create(createInfo));
+				GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName)->WriteTexture("outColor", ssaoRenderer->GetSSAOTexture());
+			}
+		}
+
+		if (currentViewportSize != ssaoRenderer->GetSSAOTexture()->GetSize())
+		{
+			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName);
+			auto callback = [renderUniformWriter, passName, createInfo, ssaoRenderer]()
+			{
+				ssaoRenderer->SetSSAOTexture(Texture::Create(createInfo));
+				renderUniformWriter->WriteTexture("outColor", ssaoRenderer->GetSSAOTexture());
+			};
+
+			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, ssaoRenderer);
+			EventSystem::GetInstance().SendEvent(resizeEvent);
+		}
+
+		if (ssaoRenderer->GetKernelSize() != ssaoSettings.kernelSize)
+		{
+			ssaoRenderer->GenerateSamples(ssaoSettings.kernelSize);
+		}
+		if (ssaoRenderer->GetNoiseSize() != ssaoSettings.noiseSize)
+		{
+			ssaoRenderer->GenerateNoiseTexture(ssaoSettings.noiseSize);
+		}
+
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName);
+		const std::string ssaoBufferName = "SSAOBuffer";
+		const std::shared_ptr<Buffer> ssaoBuffer = GetOrCreateRenderBuffer(renderInfo.renderTarget, renderUniformWriter, ssaoBufferName);
+
+		WriteRenderTargets(renderInfo.renderTarget, renderInfo.scene->GetRenderTarget(), pipeline, renderUniformWriter);
+		renderUniformWriter->WriteTexture("noiseTexture", ssaoRenderer->GetNoiseTexture());
+
+		const glm::vec2 viewportScale = glm::vec2(resolutionScales[ssaoSettings.resolutionScale]);
+		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "viewportScale", viewportScale);
+		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "kernelSize", ssaoSettings.kernelSize);
+		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "noiseSize", ssaoSettings.noiseSize);
+		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "aoScale", ssaoSettings.aoScale);
+		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "samples", ssaoRenderer->GetSamples());
+		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "radius", ssaoSettings.radius);
+		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "bias", ssaoSettings.bias);
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 		FlushUniformWriters(uniformWriters);
 
 		renderInfo.renderer->BeginCommandLabel(passName, topLevelRenderPassDebugColor, renderInfo.frame);
-		renderInfo.renderer->Dispatch(pipeline, { 64, 64, 1 }, uniformWriters, renderInfo.frame);
+
+		renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
+
+		glm::uvec2 groupCount = renderInfo.viewportSize / glm::ivec2(16, 16);
+		groupCount += glm::uvec2(1, 1);
+		renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
+
 		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 	};
 
@@ -2408,14 +2475,7 @@ void RenderPassManager::WriteRenderTargets(
 	std::shared_ptr<Pipeline> pipeline,
 	std::shared_ptr<UniformWriter> uniformWriter)
 {
-	if (pipeline->GetType() != Pipeline::Type::GRAPHICS)
-	{
-		FATAL_ERROR("Can't write render targets, pipeline has a type of compute pipeline!");
-	}
-
-	std::shared_ptr<GraphicsPipeline> graphicsPipeline = std::dynamic_pointer_cast<GraphicsPipeline>(pipeline);
-
-	for (const auto& [name, renderTargetInfo] : graphicsPipeline->GetCreateInfo().uniformInfo.renderTargetsByName)
+	for (const auto& [name, renderTargetInfo] : pipeline->GetUniformInfo().renderTargetsByName)
 	{
 		const std::shared_ptr<FrameBuffer> frameBuffer = cameraRenderTarget->GetFrameBuffer(renderTargetInfo.renderPassName);
 		if (frameBuffer)

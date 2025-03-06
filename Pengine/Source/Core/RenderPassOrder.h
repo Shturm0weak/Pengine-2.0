@@ -16,7 +16,7 @@ namespace Pengine
 		ZPrePass,
 		GBuffer,
 		CSM,
-		SSAO,
+		ComputeSSAO,
 		SSAOBlur,
 		Deferred,
 		Transparent,
@@ -24,7 +24,6 @@ namespace Pengine
 		SSRBlur,
 		Bloom,
 		Final,
-		TestCompute,
 	};
 
 }

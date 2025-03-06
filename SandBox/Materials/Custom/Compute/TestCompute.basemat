@@ -1,9 +1,0 @@
-Basemat:
-  Pipelines:
-    - RenderPass: TestCompute
-      Type: Compute
-      Compute: Shaders/Custom/TestCompute.comp
-      DescriptorSets:
-        - Type: BaseMaterial
-          RenderPass: TestCompute
-          Set: 0

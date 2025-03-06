@@ -27,7 +27,7 @@ layout(set = 1, binding = 1) uniform sampler2D depthTexture;
 layout(set = 1, binding = 2) uniform sampler2D normalTexture;
 layout(set = 1, binding = 3) uniform sampler2D noiseTexture;
 
-vec2 noiseScale = vec2((camera.viewportSize.x * viewportScale.x) / noiseSize, (camera.viewportSize.y * viewportScale) / noiseSize);
+vec2 noiseScale = vec2((camera.viewportSize.x * viewportScale.x) / noiseSize, (camera.viewportSize.y * viewportScale.y) / noiseSize);
 
 void main()
 {

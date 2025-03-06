@@ -72,6 +72,8 @@ namespace Pengine
 
 		const std::map<uint32_t, std::shared_ptr<UniformLayout>>& GetUniformLayouts() const { return m_UniformLayoutsByDescriptorSet; }
 
+		virtual const UniformInfo& GetUniformInfo() const = 0;
+
 		virtual std::map<std::string, uint32_t> GetDescriptorSetIndexByType(const DescriptorSetIndexType type) const = 0;
 
 		const std::optional<uint32_t> GetDescriptorSetIndexByType(const DescriptorSetIndexType type, const std::string& renderPassName) const;

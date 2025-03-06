@@ -216,9 +216,6 @@ void EntryPoint::Run() const
 	ThreadPool::GetInstance().Initialize();
 
 	PrepareResources();
-
-	MaterialManager::GetInstance().LoadBaseMaterial(std::filesystem::path("Materials") / "Custom" / "Compute" / "TestCompute.basemat");
-
 	LoadAllBaseMaterials(std::filesystem::path("Materials"));
 
 	TextureManager::GetInstance().LoadFromFolder(std::filesystem::path("Editor") / "Images");

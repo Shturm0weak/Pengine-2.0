@@ -57,11 +57,6 @@ namespace Pengine
 			size_t renderableCount = 0;
 		};
 
-		struct TestCompute : public CustomData
-		{
-			std::shared_ptr<Texture> texture;
-		};
-
 		struct InstanceData
 		{
 			glm::mat4 transform;
@@ -101,7 +96,7 @@ namespace Pengine
 
 		void CreateSSRBlur();
 
-		void CreateTestCompute();
+		void CreateComputeSSAO();
 
 		static void BlurRenderPassTemplate(
 			const RenderPass::RenderCallbackInfo& renderInfo,
