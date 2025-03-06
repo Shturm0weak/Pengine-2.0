@@ -5,6 +5,7 @@
 #include "SSAORenderer.h"
 #include "CSMRenderer.h"
 
+#include "../Graphics/ComputePass.h"
 #include "../Graphics/RenderPass.h"
 
 namespace Pengine
@@ -18,11 +19,17 @@ namespace Pengine
 		RenderPassManager(const RenderPassManager&) = delete;
 		RenderPassManager& operator=(const RenderPassManager&) = delete;
 
-		std::shared_ptr<RenderPass> Create(const RenderPass::CreateInfo& createInfo);
+		std::shared_ptr<RenderPass> CreateRenderPass(const RenderPass::CreateInfo& createInfo);
 
-		std::shared_ptr<RenderPass> GetRenderPass(const std::string& type) const;
+		std::shared_ptr<ComputePass> CreateComputePass(const ComputePass::CreateInfo& createInfo);
 
-		size_t GetRenderPassesCount() const { return m_RenderPassesByType.size(); }
+		std::shared_ptr<Pass> GetPass(const std::string& name) const;
+
+		std::shared_ptr<RenderPass> GetRenderPass(const std::string& name) const;
+
+		std::shared_ptr<ComputePass> GetComputePass(const std::string& name) const;
+
+		size_t GetPassesCount() const { return m_PassesByName.size(); }
 
 		void ShutDown();
 
@@ -48,6 +55,11 @@ namespace Pengine
 		{
 			RenderableEntities renderableEntities;
 			size_t renderableCount = 0;
+		};
+
+		struct TestCompute : public CustomData
+		{
+			std::shared_ptr<Texture> texture;
 		};
 
 		struct InstanceData
@@ -89,9 +101,10 @@ namespace Pengine
 
 		void CreateSSRBlur();
 
+		void CreateTestCompute();
+
 		static void BlurRenderPassTemplate(
 			const RenderPass::RenderCallbackInfo& renderInfo,
-			const RenderPass::SubmitInfo submitInfo,
 			std::shared_ptr<class BaseMaterial> baseMaterial,
 			std::shared_ptr<class Pipeline> pipeline,
 			const std::string& renderPassName);
@@ -107,7 +120,7 @@ namespace Pengine
 		static std::shared_ptr<class UniformWriter> GetOrCreateRenderUniformWriter(
 			std::shared_ptr<class RenderTarget> renderTarget,
 			std::shared_ptr<class Pipeline> pipeline,
-			const std::string& renderPassName,
+			const std::string& passName,
 			const std::string& setUniformWriterName = {});
 
 		static std::shared_ptr<class Buffer> GetOrCreateRenderBuffer(
@@ -121,7 +134,7 @@ namespace Pengine
 			std::shared_ptr<class BaseMaterial> baseMaterial,
 			std::shared_ptr<class Pipeline> pipeline);
 
-		std::unordered_map<std::string, std::shared_ptr<RenderPass>> m_RenderPassesByType;
+		std::unordered_map<std::string, std::shared_ptr<Pass>> m_PassesByName;
 	};
 
 }

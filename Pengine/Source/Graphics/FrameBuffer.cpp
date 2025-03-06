@@ -22,8 +22,8 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 		const bool isColor = attachment.layout == Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
 		Texture::CreateInfo attachmentCreateInfo{};
-		attachmentCreateInfo.name = renderPass->GetType() + "FrameBuffer";
-		attachmentCreateInfo.filepath = renderPass->GetType() + "FrameBuffer";
+		attachmentCreateInfo.name = renderPass->GetName() + "FrameBuffer";
+		attachmentCreateInfo.filepath = renderPass->GetName() + "FrameBuffer";
 		attachmentCreateInfo.format = attachment.format;
 		attachmentCreateInfo.channels = 4;
 		attachmentCreateInfo.layerCount = attachment.layerCount;

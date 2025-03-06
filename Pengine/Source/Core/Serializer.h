@@ -35,6 +35,19 @@ namespace Pengine
 
 		//static void LoadFilesUUID();
 
+		static void DeserializeDescriptorSets(
+			const YAML::detail::iterator_value& pipelineData,
+			const std::string& passName,
+			std::map<Pipeline::DescriptorSetIndexType, std::map<std::string, uint32_t>>& descriptorSetIndicesByType);
+
+		static void DeserializeShaderFilepaths(
+			const YAML::detail::iterator_value& pipelineData,
+			std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType);
+
+		static GraphicsPipeline::CreateGraphicsInfo DeserializeGraphicsPipeline(const YAML::detail::iterator_value& pipelineData);
+
+		static ComputePipeline::CreateComputeInfo DeserializeComputePipeline(const YAML::detail::iterator_value& pipelineData);
+
 		static BaseMaterial::CreateInfo LoadBaseMaterial(const std::filesystem::path& filepath);
 
 		static Material::CreateInfo LoadMaterial(const std::filesystem::path& filepath);

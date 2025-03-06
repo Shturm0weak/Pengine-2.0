@@ -81,7 +81,7 @@ void VulkanUniformWriter::WriteTexture(
 
 	for (size_t i = 0; i < swapChainImageCount; i++)
 	{
-		m_DescriptorSetWrites[i].m_ImageInfos.emplace_back(std::static_pointer_cast<VulkanTexture>(texture)->GetDescriptorInfo());
+		m_DescriptorSetWrites[i].m_ImageInfos.emplace_back(std::static_pointer_cast<VulkanTexture>(texture)->GetDescriptorInfo(i));
 
 		VkWriteDescriptorSet write{};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -110,7 +110,7 @@ void VulkanUniformWriter::WriteTextures(
 		const size_t index = m_DescriptorSetWrites[i].m_ImageInfos.size();
 		for (const auto& texture : textures)
 		{
-			m_DescriptorSetWrites[i].m_ImageInfos.emplace_back(std::static_pointer_cast<VulkanTexture>(texture)->GetDescriptorInfo());
+			m_DescriptorSetWrites[i].m_ImageInfos.emplace_back(std::static_pointer_cast<VulkanTexture>(texture)->GetDescriptorInfo(i));
 		}
 
 		VkWriteDescriptorSet write{};

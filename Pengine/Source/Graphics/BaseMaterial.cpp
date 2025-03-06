@@ -29,8 +29,8 @@ void BaseMaterial::Reload(const std::shared_ptr<BaseMaterial>& baseMaterial)
 {
 	auto callback = [baseMaterial]()
 	{
-		baseMaterial->m_PipelinesByRenderPass.clear();
-		baseMaterial->m_UniformWriterByRenderPass.clear();
+		baseMaterial->m_PipelinesByPass.clear();
+		baseMaterial->m_UniformWriterByPass.clear();
 		baseMaterial->m_RenderTargetsByName.clear();
 		baseMaterial->m_BuffersByName.clear();
 		baseMaterial->m_UniformsCache.clear();
@@ -68,9 +68,9 @@ BaseMaterial::BaseMaterial(
 
 BaseMaterial::~BaseMaterial()
 {
-	m_PipelinesByRenderPass.clear();
+	m_PipelinesByPass.clear();
 
-	for (const auto& [renderPass, uniformWriter] : m_UniformWriterByRenderPass)
+	for (const auto& [pass, uniformWriter] : m_UniformWriterByPass)
 	{
 		for (const auto& [name, texture] : uniformWriter->GetTextures())
 		{
@@ -82,20 +82,20 @@ BaseMaterial::~BaseMaterial()
 	}
 }
 
-std::shared_ptr<Pipeline> BaseMaterial::GetPipeline(const std::string& renderPassName) const
+std::shared_ptr<Pipeline> BaseMaterial::GetPipeline(const std::string& passName) const
 {
-	if (const auto pipelineByRenderPass = m_PipelinesByRenderPass.find(renderPassName);
-		pipelineByRenderPass != m_PipelinesByRenderPass.end())
+	if (const auto pipelineByPass = m_PipelinesByPass.find(passName);
+		pipelineByPass != m_PipelinesByPass.end())
 	{
-		return pipelineByRenderPass->second;
+		return pipelineByPass->second;
 	}
 	
 	return nullptr;
 }
 
-std::shared_ptr<UniformWriter> BaseMaterial::GetUniformWriter(const std::string& renderPassName) const
+std::shared_ptr<UniformWriter> BaseMaterial::GetUniformWriter(const std::string& passName) const
 {
-	return Utils::Find(renderPassName, m_UniformWriterByRenderPass);
+	return Utils::Find(passName, m_UniformWriterByPass);
 }
 
 std::shared_ptr<Buffer> BaseMaterial::GetBuffer(const std::string& name) const
@@ -218,7 +218,7 @@ bool BaseMaterial::GetUniformDetails(
 		}
 	}
 
-	for (const auto& [renderPassName, pipeline] : m_PipelinesByRenderPass)
+	for (const auto& [passName, pipeline] : m_PipelinesByPass)
 	{
 		for (const auto& [set, layout] : pipeline->GetUniformLayouts())
 		{
@@ -294,7 +294,7 @@ std::optional<ShaderReflection::ReflectVariable> BaseMaterial::GetUniformValue(
 		return *variable;
 	};
 
-	for (const auto& [renderPassName, pipeline] : m_PipelinesByRenderPass)
+	for (const auto& [passName, pipeline] : m_PipelinesByPass)
 	{
 		for (const auto& [set, layout] : pipeline->GetUniformLayouts())
 		{
@@ -313,77 +313,104 @@ std::optional<ShaderReflection::ReflectVariable> BaseMaterial::GetUniformValue(
 
 void BaseMaterial::CreateResources(const CreateInfo& createInfo)
 {
-	for (const Pipeline::CreateInfo& pipelineCreateInfo : createInfo.pipelineCreateInfos)
+	for (const GraphicsPipeline::CreateGraphicsInfo& pipelineCreateGraphicsInfo : createInfo.pipelineCreateGraphicsInfos)
 	{
-		const std::string renderPassName = pipelineCreateInfo.renderPass->GetType();
+		const std::string passName = pipelineCreateGraphicsInfo.renderPass->GetName();
 
-		const std::shared_ptr<Pipeline> pipeline = Pipeline::Create(pipelineCreateInfo);
+		const std::shared_ptr<Pipeline> pipeline = GraphicsPipeline::Create(pipelineCreateGraphicsInfo);
 
-		auto baseMaterialIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::BASE_MATERIAL, renderPassName);
-		if (baseMaterialIndex)
+		CreatePipelineResources(passName, pipeline, pipelineCreateGraphicsInfo.uniformInfo);
+	}
+
+	for (const ComputePipeline::CreateComputeInfo& pipelineCreateComputeInfo : createInfo.pipelineCreateComputeInfos)
+	{
+		const std::string passName = pipelineCreateComputeInfo.passName;
+
+		const std::shared_ptr<Pipeline> pipeline = ComputePipeline::Create(pipelineCreateComputeInfo);
+
+		CreatePipelineResources(passName, pipeline, pipelineCreateComputeInfo.uniformInfo);
+	}
+}
+
+void BaseMaterial::CreatePipelineResources(
+	const std::string& passName,
+	std::shared_ptr<Pipeline> pipeline,
+	const Pipeline::UniformInfo& uniformInfo)
+{
+	auto baseMaterialIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::BASE_MATERIAL, passName);
+	if (baseMaterialIndex)
+	{
+		const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*baseMaterialIndex);
+		const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
+		m_UniformWriterByPass[passName] = uniformWriter;
+
+		for (const auto& binding : uniformLayout->GetBindings())
 		{
-			const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*baseMaterialIndex);
-			const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
-			m_UniformWriterByRenderPass[renderPassName] = uniformWriter;
-
-			for (const auto& binding : uniformLayout->GetBindings())
+			if (binding.buffer)
 			{
-				if (binding.buffer)
+				Buffer::Usage usage{};
+				if (binding.type == ShaderReflection::Type::UNIFORM_BUFFER)
 				{
-					const std::shared_ptr<Buffer> buffer = Buffer::Create(
-						binding.buffer->size,
-						1,
-						Buffer::Usage::UNIFORM_BUFFER,
-						Buffer::MemoryType::CPU);
-
-					m_BuffersByName[binding.buffer->name] = buffer;
-					uniformWriter->WriteBuffer(binding.buffer->name, buffer);
-					uniformWriter->Flush();
+					usage = Buffer::Usage::UNIFORM_BUFFER;
 				}
+				else if (binding.type == ShaderReflection::Type::STORAGE_BUFFER)
+				{
+					usage = Buffer::Usage::STORAGE_BUFFER;
+				}
+
+				const std::shared_ptr<Buffer> buffer = Buffer::Create(
+					binding.buffer->size,
+					1,
+					usage,
+					Buffer::MemoryType::CPU);
+
+				m_BuffersByName[binding.buffer->name] = buffer;
+				uniformWriter->WriteBuffer(binding.buffer->name, buffer);
+				uniformWriter->Flush();
 			}
 		}
+	}
 
-		m_PipelinesByRenderPass[renderPassName] = pipeline;
+	m_PipelinesByPass[passName] = pipeline;
 
-		if (pipelineCreateInfo.uniformInfo.texturesByName.empty() && pipelineCreateInfo.uniformInfo.uniformBuffersByName.empty())
+	if (uniformInfo.texturesByName.empty() && uniformInfo.uniformBuffersByName.empty())
+	{
+		return;
+	}
+
+	const std::shared_ptr<UniformWriter> uniformWriter = GetUniformWriter(passName);
+	for (const auto& [name, filepath] : uniformInfo.texturesByName)
+	{
+		std::shared_ptr<Texture> texture = TextureManager::GetInstance().Load(filepath);
+		uniformWriter->WriteTexture(name, texture);
+	}
+	uniformWriter->Flush();
+
+	for (const auto& [uniformBufferName, bufferInfo] : uniformInfo.uniformBuffersByName)
+	{
+		for (auto const& [loadedValueName, loadedValue] : bufferInfo.floatValuesByName)
 		{
-			continue;
+			WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
 		}
 
-		const std::shared_ptr<UniformWriter> uniformWriter = GetUniformWriter(renderPassName);
-		for (const auto& [name, filepath] : pipelineCreateInfo.uniformInfo.texturesByName)
+		for (auto const& [loadedValueName, loadedValue] : bufferInfo.intValuesByName)
 		{
-			std::shared_ptr<Texture> texture = TextureManager::GetInstance().Load(filepath);
-			uniformWriter->WriteTexture(name, texture);
+			WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
 		}
-		uniformWriter->Flush();
 
-		for (const auto& [uniformBufferName, bufferInfo] : pipelineCreateInfo.uniformInfo.uniformBuffersByName)
+		for (auto const& [loadedValueName, loadedValue] : bufferInfo.vec4ValuesByName)
 		{
-			for (auto const& [loadedValueName, loadedValue] : bufferInfo.floatValuesByName)
-			{
-				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
-			}
+			WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
+		}
 
-			for (auto const& [loadedValueName, loadedValue] : bufferInfo.intValuesByName)
-			{
-				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
-			}
+		for (auto const& [loadedValueName, loadedValue] : bufferInfo.vec3ValuesByName)
+		{
+			WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
+		}
 
-			for (auto const& [loadedValueName, loadedValue] : bufferInfo.vec4ValuesByName)
-			{
-				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
-			}
-
-			for (auto const& [loadedValueName, loadedValue] : bufferInfo.vec3ValuesByName)
-			{
-				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
-			}
-
-			for (auto const& [loadedValueName, loadedValue] : bufferInfo.vec2ValuesByName)
-			{
-				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
-			}
+		for (auto const& [loadedValueName, loadedValue] : bufferInfo.vec2ValuesByName)
+		{
+			WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
 		}
 	}
 }

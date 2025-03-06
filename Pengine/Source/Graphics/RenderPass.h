@@ -2,9 +2,9 @@
 
 #include "../Core/Core.h"
 
+#include "Pass.h"
 #include "Texture.h"
 #include "Format.h"
-#include "UniformWriter.h"
 
 namespace Pengine
 {
@@ -21,7 +21,8 @@ namespace Pengine
 	const std::string Bloom = "Bloom";
 	const std::string SSR = "SSR";
 	const std::string SSRBlur = "SSRBlur";
-	
+	const std::string TestCompute = "TestCompute";
+
 	class FrameBuffer;
 	class Window;
 	class Camera;
@@ -30,7 +31,7 @@ namespace Pengine
 	class Scene;
 	class Entity;
 
-	class PENGINE_API RenderPass
+	class PENGINE_API RenderPass : public Pass
 	{
 	public:
 		struct ClearDepth
@@ -74,27 +75,15 @@ namespace Pengine
 			void* frame;
 		};
 
-		struct RenderCallbackInfo
-		{
-			std::shared_ptr<RenderPass> renderPass;
-			std::shared_ptr<Window> window;
-			std::shared_ptr<RenderTarget> renderTarget;
-			std::shared_ptr<Renderer> renderer;
-			std::shared_ptr<Scene> scene;
-			std::shared_ptr<Entity> camera;
-			glm::mat4 projection;
-			glm::ivec2 viewportSize;
-			void* frame;
-		};
-
 		struct CreateInfo
 		{
-			std::string type;
+			Type type;
+			std::string name;
 			std::vector<glm::vec4> clearColors;
 			std::vector<ClearDepth> clearDepths;
 			std::vector<AttachmentDescription> attachmentDescriptions;
-			std::function<void(const RenderCallbackInfo&)> renderCallback;
-			std::function<void(RenderPass&)> createCallback;
+			std::function<void(const RenderCallbackInfo&)> executeCallback;
+			std::function<void(Pass*)> createCallback;
 			bool resizeWithViewport = false;
 			bool createFrameBuffer = true;
 			glm::vec2 resizeViewportScale = { 1.0f, 1.0f };
@@ -103,27 +92,17 @@ namespace Pengine
 		static std::shared_ptr<RenderPass> Create(const CreateInfo& createInfo);
 
 		explicit RenderPass(const CreateInfo& createInfo);
-		virtual ~RenderPass() = default;
+		virtual ~RenderPass() override = default;
 		RenderPass(const RenderPass&) = delete;
 		RenderPass(RenderPass&&) = delete;
 		RenderPass& operator=(const RenderPass&) = delete;
 		RenderPass& operator=(RenderPass&&) = delete;
 
-		[[nodiscard]] const std::string& GetType() const { return m_Type; }
-
 		[[nodiscard]] std::vector<glm::vec4> GetClearColors() const { return m_ClearColors; }
 
 		[[nodiscard]] std::vector<ClearDepth> GetClearDepth() const { return m_ClearDepths; }
 
-		[[nodiscard]] std::shared_ptr<UniformWriter> GetUniformWriter() const { return m_UniformWriter; }
-
-		[[nodiscard]] std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
-
-		void SetBuffer(const std::string& name, const std::shared_ptr<Buffer>& buffer);
-
-		void SetUniformWriter(std::shared_ptr<UniformWriter> uniformWriter);
-
-		void Render(const RenderCallbackInfo& renderInfo) const;
+		virtual void Execute(const RenderCallbackInfo& renderInfo) const override;
 
 		[[nodiscard]] std::vector<AttachmentDescription>& GetAttachmentDescriptions() { return m_AttachmentDescriptions; }
 
@@ -137,18 +116,11 @@ namespace Pengine
 		std::vector<AttachmentDescription> m_AttachmentDescriptions; 
 		std::vector<glm::vec4> m_ClearColors;
 		std::vector<ClearDepth> m_ClearDepths;
-		std::shared_ptr<UniformWriter> m_UniformWriter;
-		std::string m_Type = none;
-		std::function<void(RenderCallbackInfo)> m_RenderCallback;
-		std::function<void(RenderPass&)> m_CreateCallback;
-		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
-		bool m_IsInitialized = false;
 		bool m_ResizeWithViewport = false;
 		bool m_CreateFrameBuffer = true;
 		glm::vec2 m_ResizeViewportScale = { 1.0f, 1.0f };
 
 		friend class RenderTarget;
-		friend class Renderer;
 	};
 
 }

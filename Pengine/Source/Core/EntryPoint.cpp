@@ -216,6 +216,9 @@ void EntryPoint::Run() const
 	ThreadPool::GetInstance().Initialize();
 
 	PrepareResources();
+
+	MaterialManager::GetInstance().LoadBaseMaterial(std::filesystem::path("Materials") / "Custom" / "Compute" / "TestCompute.basemat");
+
 	LoadAllBaseMaterials(std::filesystem::path("Materials"));
 
 	TextureManager::GetInstance().LoadFromFolder(std::filesystem::path("Editor") / "Images");
@@ -279,21 +282,13 @@ void EntryPoint::Run() const
 						if (frameBuffer)
 						{
 							viewport->Update(frameBuffer->GetAttachment(cameraComponent.GetRenderTargetIndex()));
-						}
-						else
-						{
-							viewport->Update(TextureManager::GetInstance().GetWhite());
+
+							continue;
 						}
 					}
-					else
-					{
-						viewport->Update(TextureManager::GetInstance().GetWhite());
-					}
 				}
-				else
-				{
-					viewport->Update(TextureManager::GetInstance().GetWhite());
-				}
+
+				viewport->Update(TextureManager::GetInstance().GetWhite());
 			}
 
 #ifndef NO_EDITOR

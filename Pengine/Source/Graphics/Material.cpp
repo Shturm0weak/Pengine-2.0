@@ -32,7 +32,7 @@ void Material::Reload(const std::shared_ptr<Material>& material, bool reloadBase
 
 	auto callback = [material]()
 	{
-		material->m_UniformWriterByRenderPass.clear();
+		material->m_UniformWriterByPass.clear();
 		material->m_BuffersByName.clear();
 		material->m_OptionsByName.clear();
 		material->m_PipelineStates.clear();
@@ -61,9 +61,9 @@ std::shared_ptr<Material> Material::Clone(
 	createInfo.baseMaterial = material->GetBaseMaterial();
 	createInfo.optionsByName = material->GetOptionsByName();
 
-	for (const auto& [renderPassName, pipeline] : createInfo.baseMaterial->GetPipelinesByRenderPass())
+	for (const auto& [passName, pipeline] : createInfo.baseMaterial->GetPipelinesByPass())
 	{
-		std::optional<uint32_t> descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, renderPassName);
+		std::optional<uint32_t> descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, passName);
 		if (!descriptorSetIndex)
 		{
 			continue;
@@ -72,14 +72,14 @@ std::shared_ptr<Material> Material::Clone(
 		{
 			if (binding.type == ShaderReflection::Type::COMBINED_IMAGE_SAMPLER)
 			{
-				createInfo.uniformInfos[renderPassName].texturesByName[binding.name] = material->GetUniformWriter(renderPassName)->GetTexture(binding.name)->GetFilepath().string();
+				createInfo.uniformInfos[passName].texturesByName[binding.name] = material->GetUniformWriter(passName)->GetTexture(binding.name)->GetFilepath().string();
 			}
 			else if (binding.type == ShaderReflection::Type::UNIFORM_BUFFER)
 			{
 				const std::shared_ptr<Buffer> buffer = material->GetBuffer(binding.name);
 				void* data = buffer->GetData();
 
-				auto& uniformBufferInfo = createInfo.uniformInfos[renderPassName].uniformBuffersByName[binding.name];
+				auto& uniformBufferInfo = createInfo.uniformInfos[passName].uniformBuffersByName[binding.name];
 
 				std::function<void(const ShaderReflection::ReflectVariable&, std::string)> copyValue = [data, &copyValue, &uniformBufferInfo]
 				(const ShaderReflection::ReflectVariable& value, std::string parentName)
@@ -137,7 +137,7 @@ Material::Material(
 
 Material::~Material()
 {
-	for (const auto& [renderPass, uniformWriter] : m_UniformWriterByRenderPass)
+	for (const auto& [renderPass, uniformWriter] : m_UniformWriterByPass)
 	{
 		for (const auto& [name, texture] : uniformWriter->GetTextures())
 		{
@@ -149,9 +149,9 @@ Material::~Material()
 	}
 }
 
-std::shared_ptr<UniformWriter> Material::GetUniformWriter(const std::string& renderPassName) const
+std::shared_ptr<UniformWriter> Material::GetUniformWriter(const std::string& passName) const
 {
-	return Utils::Find(renderPassName, m_UniformWriterByRenderPass);
+	return Utils::Find(passName, m_UniformWriterByPass);
 }
 
 std::shared_ptr<Buffer> Material::GetBuffer(const std::string& name) const
@@ -159,9 +159,9 @@ std::shared_ptr<Buffer> Material::GetBuffer(const std::string& name) const
 	return Utils::Find(name, m_BuffersByName);
 }
 
-bool Material::IsPipelineEnabled(const std::string& renderPassName) const
+bool Material::IsPipelineEnabled(const std::string& passName) const
 {
-	auto pipelineState = m_PipelineStates.find(renderPassName);
+	auto pipelineState = m_PipelineStates.find(passName);
 	if (pipelineState != m_PipelineStates.end())
 	{
 		return pipelineState->second;
@@ -200,15 +200,14 @@ void Material::CreateResources(const CreateInfo& createInfo)
 		SetOption(name, option.m_IsEnabled);
 	}
 
-	for (const auto& [renderPassName, pipeline] : m_BaseMaterial->GetPipelinesByRenderPass())
+	for (const auto& [passName, pipeline] : m_BaseMaterial->GetPipelinesByPass())
 	{
-		const Pipeline::CreateInfo& pipelineCreateInfo = pipeline->GetCreateInfo();
-		auto baseMaterialIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, renderPassName);
+		auto baseMaterialIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, passName);
 		if (baseMaterialIndex)
 		{
 			const std::shared_ptr<UniformLayout> uniformLayout = pipeline->GetUniformLayout(*baseMaterialIndex);
 			const std::shared_ptr<UniformWriter> uniformWriter = UniformWriter::Create(uniformLayout);
-			m_UniformWriterByRenderPass[renderPassName] = uniformWriter;
+			m_UniformWriterByPass[passName] = uniformWriter;
 
 			for (const auto& binding : uniformLayout->GetBindings())
 			{
@@ -227,14 +226,14 @@ void Material::CreateResources(const CreateInfo& createInfo)
 		}
 	}
 
-	for (const auto& [renderPassName, uniformInfo] : createInfo.uniformInfos)
+	for (const auto& [passName, uniformInfo] : createInfo.uniformInfos)
 	{
 		if (uniformInfo.texturesByName.empty() && uniformInfo.uniformBuffersByName.empty())
 		{
 			continue;
 		}
 
-		const std::shared_ptr<UniformWriter> uniformWriter = GetUniformWriter(renderPassName);
+		const std::shared_ptr<UniformWriter> uniformWriter = GetUniformWriter(passName);
 		if (!uniformWriter)
 		{
 			continue;

@@ -104,21 +104,3 @@ void VulkanFrameBuffer::Clear()
 	m_FrameBuffers.clear();
 	m_Attachments.clear();
 }
-
-void VulkanFrameBuffer::TransitionToRead() const
-{
-	for (const auto& attachment : m_Attachments[swapChainImageIndex])
-	{
-		const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(attachment);
-		vkTexture->TransitionToRead();
-	}
-}
-
-void VulkanFrameBuffer::TransitionToColorAttachment() const
-{
-	for (const auto& attachment : m_Attachments[swapChainImageIndex])
-	{
-		const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(attachment);
-		vkTexture->TransitionToColorAttachment();
-	}
-}

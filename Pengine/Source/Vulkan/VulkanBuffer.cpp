@@ -71,7 +71,7 @@ std::shared_ptr<VulkanBuffer> VulkanBuffer::Create(
 		memoryUsage,
 		memoryFlags,
 		memoryType,
-		usage == Usage::UNIFORM_BUFFER ? true : isMultiBuffered);
+		(usage == Usage::UNIFORM_BUFFER || usage == Usage::STORAGE_BUFFER) ? true : isMultiBuffered);
 }
 
 std::shared_ptr<VulkanBuffer> VulkanBuffer::CreateStagingBuffer(
@@ -98,6 +98,8 @@ VkBufferUsageFlagBits VulkanBuffer::ConvertUsage(const Usage usage)
 		return VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 	case Pengine::Buffer::Usage::INDEX_BUFFER:
 		return VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+	case Pengine::Buffer::Usage::STORAGE_BUFFER:
+		return VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 	}
 
 	FATAL_ERROR("Failed to convert buffer usage!");
@@ -113,6 +115,8 @@ Buffer::Usage VulkanBuffer::ConvertUsage(const VkBufferUsageFlagBits usage)
 		return Pengine::Buffer::Usage::VERTEX_BUFFER;
 	case VK_BUFFER_USAGE_INDEX_BUFFER_BIT:
 		return Pengine::Buffer::Usage::INDEX_BUFFER;
+	case VK_BUFFER_USAGE_STORAGE_BUFFER_BIT:
+		return Pengine::Buffer::Usage::STORAGE_BUFFER;
 	}
 
 	FATAL_ERROR("Failed to convert buffer usage!");

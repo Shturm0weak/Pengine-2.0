@@ -78,6 +78,10 @@ set(GRAPHICS_SOURCES
 	Graphics/FrameBuffer.cpp Graphics/FrameBuffer.h
 	Graphics/Mesh.cpp Graphics/Mesh.h
 	Graphics/Material.cpp Graphics/Material.h
+	Graphics/ComputePass.cpp Graphics/ComputePass.h
+	Graphics/ComputePipeline.cpp Graphics/ComputePipeline.h
+	Graphics/GraphicsPipeline.cpp Graphics/GraphicsPipeline.h
+	Graphics/Pass.cpp Graphics/Pass.h
 	Graphics/Pipeline.cpp Graphics/Pipeline.h
 	Graphics/Renderer.cpp Graphics/Renderer.h
 	Graphics/RenderPass.cpp Graphics/RenderPass.h
@@ -98,11 +102,13 @@ source_group("Graphics" FILES ${GRAPHICS_SOURCES})
 set(VULKAN_SOURCES
 	Vulkan/ShaderIncluder.cpp Vulkan/ShaderIncluder.h
 	Vulkan/VulkanBuffer.cpp Vulkan/VulkanBuffer.h
+	Vulkan/VulkanComputePipeline.cpp Vulkan/VulkanComputePipeline.h
+	Vulkan/VulkanGraphicsPipeline.cpp Vulkan/VulkanGraphicsPipeline.h
+	Vulkan/VulkanPipelineUtils.cpp Vulkan/VulkanPipelineUtils.h
 	Vulkan/VulkanDescriptors.cpp Vulkan/VulkanDescriptors.h
 	Vulkan/VulkanDevice.cpp Vulkan/VulkanDevice.h
 	Vulkan/VulkanFormat.h
 	Vulkan/VulkanFrameBuffer.cpp Vulkan/VulkanFrameBuffer.h
-	Vulkan/VulkanPipeline.cpp Vulkan/VulkanPipeline.h
 	Vulkan/VulkanRenderer.cpp Vulkan/VulkanRenderer.h
 	Vulkan/VulkanRenderPass.cpp Vulkan/VulkanRenderPass.h
 	Vulkan/VulkanSamplerManager.cpp Vulkan/VulkanSamplerManager.h

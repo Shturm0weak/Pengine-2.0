@@ -23,9 +23,15 @@ RenderTarget::RenderTarget(
 {
 	for (const auto& name : m_RenderPassOrder)
 	{
-		if (std::shared_ptr<RenderPass> renderPass =
-			RenderPassManager::GetInstance().GetRenderPass(name))
+		if (std::shared_ptr<Pass> pass =
+			RenderPassManager::GetInstance().GetPass(name))
 		{
+			if (pass->GetType() == Pass::Type::COMPUTE)
+			{
+				continue;
+			}
+
+			std::shared_ptr<RenderPass> renderPass = std::dynamic_pointer_cast<RenderPass>(pass);
 			if (!renderPass->m_CreateFrameBuffer)
 			{
 				continue;

@@ -18,7 +18,7 @@ namespace Pengine::Vk
 		VulkanTexture& operator=(const VulkanTexture&) = delete;
 		VulkanTexture& operator=(VulkanTexture&&) = delete;
 
-		VkDescriptorImageInfo GetDescriptorInfo();
+		VkDescriptorImageInfo GetDescriptorInfo(const uint32_t index = Vk::swapChainImageIndex);
 
 		static VkImageView CreateImageView(
 			VkImage image,
@@ -58,39 +58,36 @@ namespace Pengine::Vk
 
 		static SamplerCreateInfo::BorderColor ConvertBorderColor(VkBorderColor borderColor);
 
-		[[nodiscard]] virtual void* GetId() const override { return (void*)m_DescriptorSet; }
+		[[nodiscard]] virtual void* GetId() const override { return m_IsMultiBuffered ? (void*)m_ImageDatas[Vk::swapChainImageIndex].descriptorSet : m_ImageDatas[0].descriptorSet; }
 
 		virtual void GenerateMipMaps(void* frame = nullptr) override;
 
 		virtual void Copy(std::shared_ptr<Texture> src, void* frame = nullptr) override;
 
-		[[nodiscard]] VkImageView GetImageView() const { return m_View; }
+		[[nodiscard]] VkImageView GetImageView(const uint32_t index = Vk::swapChainImageIndex) const { return m_IsMultiBuffered ? m_ImageDatas[index].view : m_ImageDatas[0].view; }
 
-		[[nodiscard]] VkImage GetImage() const { return m_Image; }
+		[[nodiscard]] VkImage GetImage(const uint32_t index = Vk::swapChainImageIndex) const { return m_IsMultiBuffered ? m_ImageDatas[index].image : m_ImageDatas[0].image; }
 
 		[[nodiscard]] VkSampler GetSampler() const { return m_Sampler; }
 
-		[[nodiscard]] VkImageLayout GetLayout() const { return m_Layout; }
-
-		void TransitionToDst(VkCommandBuffer commandBuffer = VK_NULL_HANDLE);
-
-		void TransitionToSrc(VkCommandBuffer commandBuffer = VK_NULL_HANDLE);
-
-		void TransitionToRead(VkCommandBuffer commandBuffer = VK_NULL_HANDLE);
-
-		void TransitionToPrevious(VkCommandBuffer commandBuffer = VK_NULL_HANDLE);
-
-		void TransitionToColorAttachment(VkCommandBuffer commandBuffer = VK_NULL_HANDLE);
+		[[nodiscard]] VkImageLayout GetLayout(const uint32_t index = Vk::swapChainImageIndex) const { return m_IsMultiBuffered ? m_ImageDatas[index].m_Layout : m_ImageDatas[0].m_Layout; }
 
 	private:
+		struct ImageData
+		{
+			VkImage image{};
+			VmaAllocation vmaAllocation = VK_NULL_HANDLE;
+			VmaAllocationInfo vmaAllocationInfo{};
+			VkImageView view{};
+			VkDescriptorSet descriptorSet{};
+			VkImageLayout m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
+			VkImageLayout m_PreviousLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		};
+
+		void Transition(ImageData& imageData, VkImageLayout layout);
+
+		std::vector<ImageData> m_ImageDatas;
 		VkSampler m_Sampler{};
-		VkImage m_Image{};
-		VmaAllocation m_VmaAllocation = VK_NULL_HANDLE;
-		VmaAllocationInfo m_VmaAllocationInfo{};
-		VkImageView m_View{};
-		VkDescriptorSet m_DescriptorSet{};
-		VkImageLayout m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
-		VkImageLayout m_PreviousLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	};
 
 }

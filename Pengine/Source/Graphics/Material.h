@@ -56,11 +56,11 @@ namespace Pengine
 
 		void SetBaseMaterial(std::shared_ptr<BaseMaterial> baseMaterial) { m_BaseMaterial = baseMaterial; }
 
-		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& renderPassName) const;
+		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& passName) const;
 
 		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
 
-		bool IsPipelineEnabled(const std::string& renderPassName) const;
+		bool IsPipelineEnabled(const std::string& passName) const;
 
 		std::unordered_map<std::string, Option> GetOptionsByName() const { return m_OptionsByName; }
 
@@ -81,7 +81,7 @@ namespace Pengine
 		void CreateResources(const CreateInfo& createInfo);
 
 		std::shared_ptr<BaseMaterial> m_BaseMaterial;
-		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPass;
+		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByPass;
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
 		std::unordered_map<std::string, Option> m_OptionsByName;
 		std::unordered_map<std::string, bool> m_PipelineStates;

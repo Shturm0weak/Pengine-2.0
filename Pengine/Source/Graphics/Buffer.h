@@ -12,7 +12,8 @@ namespace Pengine
 		{
 			UNIFORM_BUFFER,
 			VERTEX_BUFFER,
-			INDEX_BUFFER
+			INDEX_BUFFER,
+			STORAGE_BUFFER
 		};
 
 		enum class MemoryType

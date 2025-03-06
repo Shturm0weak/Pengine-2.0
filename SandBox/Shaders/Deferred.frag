@@ -45,13 +45,6 @@ void main()
 	vec4 normalViewSpace = texture(normalTexture, uv);
 	vec3 ssao = texture(ssaoTexture, uv).xyz;
 
-    vec3 positionViewSpace = CalculatePositionFromDepth(
-        texture(depthTexture, uv).x,
-        camera.projectionMat4,
-        viewRay);
-
-	vec3 basicReflectivity = mix(vec3(0.05), albedoColor, shading.x);
-	vec3 viewDirection = normalize(-positionViewSpace);
 	vec3 result = vec3(0.0f);
 
 	if (normalViewSpace.a <= 0.0f)
@@ -60,6 +53,11 @@ void main()
 	}
 	else
 	{
+		vec3 positionViewSpace = CalculatePositionFromDepth(
+			texture(depthTexture, uv).x,
+			camera.projectionMat4,
+			viewRay);
+
 		if (hasDirectionalLight == 1)
 		{
 			vec3 shadow = vec3(0.0f);
@@ -75,7 +73,9 @@ void main()
 					normalViewSpace.xyz,
 					directionalLight.direction);
 			}
-			
+
+			vec3 basicReflectivity = mix(vec3(0.05), albedoColor, shading.x);
+			vec3 viewDirection = normalize(-positionViewSpace);
 			result += CalculateDirectionalLight(
 				directionalLight,
 				viewDirection,

@@ -32,7 +32,8 @@ namespace Pengine
 			TRANSFER_DST,
 			TRANSFER_SRC,
 			DEPTH_STENCIL_ATTACHMENT,
-			COLOR_ATTACHMENT
+			COLOR_ATTACHMENT,
+			STORAGE
 		};
 
 		struct SamplerCreateInfo
@@ -98,7 +99,8 @@ namespace Pengine
 			AspectMask aspectMask;
 			std::vector<Usage> usage;
 			bool isCubeMap = false;
-
+			bool isMultiBuffered = false;
+			
 			Meta meta;
 		};
 
@@ -140,6 +142,8 @@ namespace Pengine
 
 		[[nodiscard]] Meta GetMeta() const { return m_Meta; }
 
+		[[nodiscard]] bool IsMultiBuffered() const { return m_IsMultiBuffered; }
+
 	protected:
 		glm::ivec2 m_Size = { 0, 0 };
 
@@ -150,6 +154,8 @@ namespace Pengine
 
 		Format m_Format{};
 		AspectMask m_AspectMask{};
+
+		bool m_IsMultiBuffered = false;
 
 		Meta m_Meta{};
 	};

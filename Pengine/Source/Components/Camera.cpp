@@ -101,7 +101,7 @@ void Camera::CreateRenderTarget(const std::string& name, const glm::ivec2& size)
 {
 	auto callback = [this, name, size]()
 	{
-		m_RenderTargetsByName[name] = RenderTarget::Create(renderPassPerViewportOrder, size);
+		m_RenderTargetsByName[name] = RenderTarget::Create(passPerViewportOrder, size);
 	};
 
 	std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);

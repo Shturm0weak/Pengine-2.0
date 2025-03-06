@@ -120,10 +120,10 @@ namespace Pengine::Vk
 			VkImage image,
 			VkFormat format,
 			VkImageAspectFlagBits aspectMask,
-			VkImageLayout oldLayout,
-			VkImageLayout newLayout,
 			uint32_t mipLevels,
 			uint32_t layerCount,
+			VkImageLayout oldLayout,
+			VkImageLayout newLayout,
 			VkCommandBuffer commandBuffer) const;
 
 		void GenerateMipMaps(

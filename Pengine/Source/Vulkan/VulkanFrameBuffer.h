@@ -31,10 +31,6 @@ namespace Pengine::Vk
 
 		virtual void Clear() override;
 
-		void TransitionToRead() const;
-
-		void TransitionToColorAttachment() const;
-
 	private:
 		std::vector<VkFramebuffer> m_FrameBuffers;
 		std::vector<std::vector<std::shared_ptr<Texture>>> m_Attachments;

@@ -1,44 +1,45 @@
-#include "VulkanPipeline.h"
+#include "VulkanGraphicsPipeline.h"
 
 #include "VulkanDevice.h"
 #include "VulkanRenderPass.h"
-#include "VulkanTexture.h"
 #include "VulkanUniformLayout.h"
-#include "VulkanUniformWriter.h"
 #include "VulkanFormat.h"
 #include "ShaderIncluder.h"
+#include "VulkanPipelineUtils.h"
 
-#include "../Core/Logger.h"
 #include "../Core/Serializer.h"
-#include "../Utils/Utils.h"
 
 using namespace Pengine;
 using namespace Vk;
 
-VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
-	: Pipeline(pipelineCreateInfo)
+VulkanGraphicsPipeline::VulkanGraphicsPipeline(const CreateGraphicsInfo& createGraphicsInfo)
+	: GraphicsPipeline(createGraphicsInfo)
 {
 	std::map<ShaderType, VkShaderModule> shaderModulesByType;
 	std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
-	shaderStages.reserve(pipelineCreateInfo.shaderFilepathsByType.size());
+	shaderStages.reserve(createGraphicsInfo.shaderFilepathsByType.size());
 
 	shaderc::CompileOptions options{};
 	options.SetOptimizationLevel(shaderc_optimization_level_zero);
 	options.SetIncluder(std::make_unique<ShaderIncluder>());
 
-	for (const auto& [type, filepath] : pipelineCreateInfo.shaderFilepathsByType)
+	for (const auto& [type, filepath] : createGraphicsInfo.shaderFilepathsByType)
 	{
-		const std::string vertexSpv = CompileShaderModule(filepath, options, type);
-		m_ReflectShaderModulesByType[type] = Reflect(filepath, type);
+		const std::string vertexSpv = VulkanPipelineUtils::CompileShaderModule(filepath, options, type);
+		m_ReflectShaderModulesByType[type] = VulkanPipelineUtils::Reflect(filepath, type);
 		VkShaderModule shaderModule{};
-		CreateShaderModule(vertexSpv, &shaderModule);
+		VulkanPipelineUtils::CreateShaderModule(vertexSpv, &shaderModule);
 		shaderModulesByType[type] = shaderModule;
-		CreateDescriptorSetLayouts(m_ReflectShaderModulesByType[type]);
+		auto uniformLayoutsByDescriptorSets = VulkanPipelineUtils::CreateDescriptorSetLayouts(m_ReflectShaderModulesByType[type]);
+		for (const auto& [set, layout] : uniformLayoutsByDescriptorSets)
+		{
+			m_UniformLayoutsByDescriptorSet[set] = layout;
+		}
 
 		VkPipelineShaderStageCreateInfo& shaderStage = shaderStages.emplace_back();
 
 		shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		shaderStage.stage = ConvertShaderStage(type);
+		shaderStage.stage = VulkanPipelineUtils::ConvertShaderStage(type);
 		shaderStage.module = shaderModule;
 		shaderStage.pName = "main";
 		shaderStage.flags = 0;
@@ -69,18 +70,18 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 	DefaultPipelineConfigInfo(pipelineConfigInfo);
 
 	pipelineConfigInfo.renderPass = std::static_pointer_cast<VulkanRenderPass>(
-		pipelineCreateInfo.renderPass)->GetRenderPass();
+		createGraphicsInfo.renderPass)->GetRenderPass();
 	pipelineConfigInfo.pipelineLayout = m_PipelineLayout;
-	pipelineConfigInfo.depthStencilInfo.depthWriteEnable = static_cast<VkBool32>(pipelineCreateInfo.depthWrite);
-	pipelineConfigInfo.depthStencilInfo.depthTestEnable = static_cast<VkBool32>(pipelineCreateInfo.depthTest);
-	pipelineConfigInfo.depthStencilInfo.depthCompareOp = static_cast<VkCompareOp>(pipelineCreateInfo.depthCompare);
+	pipelineConfigInfo.depthStencilInfo.depthWriteEnable = static_cast<VkBool32>(createGraphicsInfo.depthWrite);
+	pipelineConfigInfo.depthStencilInfo.depthTestEnable = static_cast<VkBool32>(createGraphicsInfo.depthTest);
+	pipelineConfigInfo.depthStencilInfo.depthCompareOp = static_cast<VkCompareOp>(createGraphicsInfo.depthCompare);
 	pipelineConfigInfo.depthStencilInfo.back.compareOp = VK_COMPARE_OP_ALWAYS;
-	pipelineConfigInfo.rasterizationInfo.depthClampEnable = pipelineCreateInfo.depthClamp;
-	pipelineConfigInfo.rasterizationInfo.cullMode = ConvertCullMode(pipelineCreateInfo.cullMode);
-	pipelineConfigInfo.inputAssemblyInfo.topology = ConvertTopologyMode(pipelineCreateInfo.topologyMode);
-	pipelineConfigInfo.rasterizationInfo.polygonMode = ConvertPolygonMode(pipelineCreateInfo.polygonMode);
+	pipelineConfigInfo.rasterizationInfo.depthClampEnable = createGraphicsInfo.depthClamp;
+	pipelineConfigInfo.rasterizationInfo.cullMode = ConvertCullMode(createGraphicsInfo.cullMode);
+	pipelineConfigInfo.inputAssemblyInfo.topology = ConvertTopologyMode(createGraphicsInfo.topologyMode);
+	pipelineConfigInfo.rasterizationInfo.polygonMode = ConvertPolygonMode(createGraphicsInfo.polygonMode);
 	pipelineConfigInfo.colorBlendAttachments.clear();
-	for (const auto& blendStateAttachment : pipelineCreateInfo.colorBlendStateAttachments)
+	for (const auto& blendStateAttachment : createGraphicsInfo.colorBlendStateAttachments)
 	{
 		VkPipelineColorBlendAttachmentState colorBlendState = ConvertBlendAttachmentState(blendStateAttachment);
 		colorBlendState.colorWriteMask =
@@ -91,8 +92,8 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 	pipelineConfigInfo.colorBlendInfo.attachmentCount = pipelineConfigInfo.colorBlendAttachments.size();
 	pipelineConfigInfo.colorBlendInfo.pAttachments = pipelineConfigInfo.colorBlendAttachments.data();
 
-	auto bindingDescriptions = CreateBindingDescriptions(m_ReflectShaderModulesByType[ShaderType::VERTEX], pipelineCreateInfo.bindingDescriptions);
-	auto attributeDescriptions = CreateAttributeDescriptions(m_ReflectShaderModulesByType[ShaderType::VERTEX], pipelineCreateInfo.bindingDescriptions);
+	auto bindingDescriptions = CreateBindingDescriptions(m_ReflectShaderModulesByType[ShaderType::VERTEX], createGraphicsInfo.bindingDescriptions);
+	auto attributeDescriptions = CreateAttributeDescriptions(m_ReflectShaderModulesByType[ShaderType::VERTEX], createGraphicsInfo.bindingDescriptions);
 	VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo{};
 	vertexInputCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vertexInputCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
@@ -132,7 +133,7 @@ VulkanPipeline::VulkanPipeline(const CreateInfo& pipelineCreateInfo)
 	}
 }
 
-VulkanPipeline::~VulkanPipeline()
+VulkanGraphicsPipeline::~VulkanGraphicsPipeline()
 {
 	device->DeleteResource([pipelineLayout = m_PipelineLayout, graphicsPipeline = m_GraphicsPipeline]()
 	{
@@ -141,17 +142,17 @@ VulkanPipeline::~VulkanPipeline()
 	});
 }
 
-VkCullModeFlagBits VulkanPipeline::ConvertCullMode(const CullMode cullMode)
+VkCullModeFlagBits VulkanGraphicsPipeline::ConvertCullMode(const CullMode cullMode)
 {
 	switch (cullMode)
 	{
-	case Pengine::Pipeline::CullMode::NONE:
+	case Pengine::GraphicsPipeline::CullMode::NONE:
 		return VK_CULL_MODE_NONE;
-	case Pengine::Pipeline::CullMode::FRONT:
+	case Pengine::GraphicsPipeline::CullMode::FRONT:
 		return VK_CULL_MODE_FRONT_BIT;
-	case Pengine::Pipeline::CullMode::BACK:
+	case Pengine::GraphicsPipeline::CullMode::BACK:
 		return VK_CULL_MODE_BACK_BIT;
-	case Pengine::Pipeline::CullMode::FRONT_AND_BACK:
+	case Pengine::GraphicsPipeline::CullMode::FRONT_AND_BACK:
 		return VK_CULL_MODE_FRONT_AND_BACK;
 	}
 
@@ -159,33 +160,33 @@ VkCullModeFlagBits VulkanPipeline::ConvertCullMode(const CullMode cullMode)
 	return VkCullModeFlagBits::VK_CULL_MODE_NONE;
 }
 
-Pipeline::CullMode VulkanPipeline::ConvertCullMode(const VkCullModeFlagBits cullMode)
+GraphicsPipeline::CullMode VulkanGraphicsPipeline::ConvertCullMode(const VkCullModeFlagBits cullMode)
 {
 	switch (cullMode)
 	{
 	case VK_CULL_MODE_NONE:
-		return Pengine::Pipeline::CullMode::NONE;
+		return Pengine::GraphicsPipeline::CullMode::NONE;
 	case VK_CULL_MODE_FRONT_BIT:
-		return Pengine::Pipeline::CullMode::FRONT;
+		return Pengine::GraphicsPipeline::CullMode::FRONT;
 	case VK_CULL_MODE_BACK_BIT:
-		return Pengine::Pipeline::CullMode::BACK;
+		return Pengine::GraphicsPipeline::CullMode::BACK;
 	case VK_CULL_MODE_FRONT_AND_BACK:
-		return Pengine::Pipeline::CullMode::FRONT_AND_BACK;
+		return Pengine::GraphicsPipeline::CullMode::FRONT_AND_BACK;
 	}
 
 	FATAL_ERROR("Failed to convert cull mode!");
 	return CullMode::NONE;
 }
 
-VkPrimitiveTopology VulkanPipeline::ConvertTopologyMode(TopologyMode topologyMode)
+VkPrimitiveTopology VulkanGraphicsPipeline::ConvertTopologyMode(TopologyMode topologyMode)
 {
 	switch (topologyMode)
 	{
-	case Pengine::Pipeline::TopologyMode::POINT_LIST:
+	case Pengine::GraphicsPipeline::TopologyMode::POINT_LIST:
 		return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
-	case Pengine::Pipeline::TopologyMode::LINE_LIST:
+	case Pengine::GraphicsPipeline::TopologyMode::LINE_LIST:
 		return VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
-	case Pengine::Pipeline::TopologyMode::TRIANGLE_LIST:
+	case Pengine::GraphicsPipeline::TopologyMode::TRIANGLE_LIST:
 		return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 	}
 
@@ -193,29 +194,29 @@ VkPrimitiveTopology VulkanPipeline::ConvertTopologyMode(TopologyMode topologyMod
 	return {};
 }
 
-Pipeline::TopologyMode VulkanPipeline::ConvertTopologyMode(VkPrimitiveTopology topologyMode)
+GraphicsPipeline::TopologyMode VulkanGraphicsPipeline::ConvertTopologyMode(VkPrimitiveTopology topologyMode)
 {
 	switch (topologyMode)
 	{
 	case VK_PRIMITIVE_TOPOLOGY_POINT_LIST:
-		return Pengine::Pipeline::TopologyMode::POINT_LIST;
+		return Pengine::GraphicsPipeline::TopologyMode::POINT_LIST;
 	case VK_PRIMITIVE_TOPOLOGY_LINE_LIST:
-		return Pengine::Pipeline::TopologyMode::LINE_LIST;
+		return Pengine::GraphicsPipeline::TopologyMode::LINE_LIST;
 	case VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST:
-		return Pengine::Pipeline::TopologyMode::TRIANGLE_LIST;
+		return Pengine::GraphicsPipeline::TopologyMode::TRIANGLE_LIST;
 	}
 
 	FATAL_ERROR("Failed to convert polygon mode!");
 	return {};
 }
 
-VkPolygonMode VulkanPipeline::ConvertPolygonMode(const PolygonMode polygonMode)
+VkPolygonMode VulkanGraphicsPipeline::ConvertPolygonMode(const PolygonMode polygonMode)
 {
 	switch (polygonMode)
 	{
-	case Pengine::Pipeline::PolygonMode::FILL:
+	case Pengine::GraphicsPipeline::PolygonMode::FILL:
 		return VK_POLYGON_MODE_FILL;
-	case Pengine::Pipeline::PolygonMode::LINE:
+	case Pengine::GraphicsPipeline::PolygonMode::LINE:
 		return VK_POLYGON_MODE_LINE;
 	}
 
@@ -223,57 +224,21 @@ VkPolygonMode VulkanPipeline::ConvertPolygonMode(const PolygonMode polygonMode)
 	return {};
 }
 
-Pipeline::PolygonMode VulkanPipeline::ConvertPolygonMode(const VkPolygonMode polygonMode)
+GraphicsPipeline::PolygonMode VulkanGraphicsPipeline::ConvertPolygonMode(const VkPolygonMode polygonMode)
 {
 	switch (polygonMode)
 	{
 	case VK_POLYGON_MODE_FILL:
-		return Pengine::Pipeline::PolygonMode::FILL;
+		return Pengine::GraphicsPipeline::PolygonMode::FILL;
 	case VK_POLYGON_MODE_LINE:
-		return Pengine::Pipeline::PolygonMode::LINE;
+		return Pengine::GraphicsPipeline::PolygonMode::LINE;
 	}
 
 	FATAL_ERROR("Failed to convert polygon mode!");
 	return {};
 }
 
-VkShaderStageFlagBits VulkanPipeline::ConvertShaderStage(ShaderType stage)
-{
-	switch (stage)
-	{
-	case Pengine::Pipeline::ShaderType::VERTEX:
-		return VK_SHADER_STAGE_VERTEX_BIT;
-	case Pengine::Pipeline::ShaderType::FRAGMENT:
-		return VK_SHADER_STAGE_FRAGMENT_BIT;
-	case Pengine::Pipeline::ShaderType::GEOMETRY:
-		return VK_SHADER_STAGE_GEOMETRY_BIT;
-	case Pengine::Pipeline::ShaderType::COMPUTE:
-		return VK_SHADER_STAGE_COMPUTE_BIT;
-	}
-
-	FATAL_ERROR("Failed to convert shader type!");
-	return {};
-}
-
-Pipeline::ShaderType VulkanPipeline::ConvertShaderStage(VkShaderStageFlagBits stage)
-{
-	switch (stage)
-	{
-	case VK_SHADER_STAGE_VERTEX_BIT:
-		return Pengine::Pipeline::ShaderType::VERTEX;
-	case VK_SHADER_STAGE_FRAGMENT_BIT:
-		return Pengine::Pipeline::ShaderType::FRAGMENT;
-	case VK_SHADER_STAGE_GEOMETRY_BIT:
-		return Pengine::Pipeline::ShaderType::GEOMETRY;
-	case VK_SHADER_STAGE_COMPUTE_BIT:
-		return Pengine::Pipeline::ShaderType::COMPUTE;
-	}
-
-	FATAL_ERROR("Failed to convert shader type!");
-	return {};
-}
-
-VkPipelineColorBlendAttachmentState VulkanPipeline::ConvertBlendAttachmentState(const BlendStateAttachment& blendStateAttachment)
+VkPipelineColorBlendAttachmentState VulkanGraphicsPipeline::ConvertBlendAttachmentState(const BlendStateAttachment& blendStateAttachment)
 {
 	VkPipelineColorBlendAttachmentState vkPipelineColorBlendAttachmentState{};
 	vkPipelineColorBlendAttachmentState.blendEnable = (VkBool32)blendStateAttachment.blendEnabled;
@@ -289,7 +254,7 @@ VkPipelineColorBlendAttachmentState VulkanPipeline::ConvertBlendAttachmentState(
 	return vkPipelineColorBlendAttachmentState;
 }
 
-Pipeline::BlendStateAttachment VulkanPipeline::ConvertBlendAttachmentState(const VkPipelineColorBlendAttachmentState& blendStateAttachment)
+GraphicsPipeline::BlendStateAttachment VulkanGraphicsPipeline::ConvertBlendAttachmentState(const VkPipelineColorBlendAttachmentState& blendStateAttachment)
 {
 	BlendStateAttachment pipelineColorBlendAttachmentState{};
 	pipelineColorBlendAttachmentState.blendEnabled = blendStateAttachment.blendEnable;
@@ -305,39 +270,39 @@ Pipeline::BlendStateAttachment VulkanPipeline::ConvertBlendAttachmentState(const
 	return pipelineColorBlendAttachmentState;
 }
 
-VkBlendFactor VulkanPipeline::ConvertBlendFactor(BlendStateAttachment::BlendFactor blendFactor)
+VkBlendFactor VulkanGraphicsPipeline::ConvertBlendFactor(BlendStateAttachment::BlendFactor blendFactor)
 {
 	switch (blendFactor)
 	{
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ZERO:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ZERO:
 		return VkBlendFactor::VK_BLEND_FACTOR_ZERO;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE:
 		return VkBlendFactor::VK_BLEND_FACTOR_ONE;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::SRC_COLOR:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::SRC_COLOR:
 		return VkBlendFactor::VK_BLEND_FACTOR_SRC_COLOR;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_COLOR:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_COLOR:
 		return VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::DST_COLOR:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::DST_COLOR:
 		return VkBlendFactor::VK_BLEND_FACTOR_DST_COLOR;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_COLOR:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_COLOR:
 		return VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA:
 		return VkBlendFactor::VK_BLEND_FACTOR_SRC_ALPHA;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_ALPHA:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_ALPHA:
 		return VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::DST_ALPHA:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::DST_ALPHA:
 		return VkBlendFactor::VK_BLEND_FACTOR_DST_ALPHA;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_ALPHA:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_ALPHA:
 		return VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::CONSTANT_COLOR:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::CONSTANT_COLOR:
 		return VkBlendFactor::VK_BLEND_FACTOR_CONSTANT_COLOR;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_COLOR:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_COLOR:
 		return VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::CONSTANT_ALPHA:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::CONSTANT_ALPHA:
 		return VkBlendFactor::VK_BLEND_FACTOR_CONSTANT_ALPHA;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_ALPHA:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_ALPHA:
 		return VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA;
-	case Pengine::Pipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA_SATURATE:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA_SATURATE:
 		return VkBlendFactor::VK_BLEND_FACTOR_SRC_ALPHA_SATURATE;
 	}
 
@@ -345,59 +310,59 @@ VkBlendFactor VulkanPipeline::ConvertBlendFactor(BlendStateAttachment::BlendFact
 	return {};
 }
 
-Pipeline::BlendStateAttachment::BlendFactor VulkanPipeline::ConvertBlendFactor(VkBlendFactor blendFactor)
+GraphicsPipeline::BlendStateAttachment::BlendFactor VulkanGraphicsPipeline::ConvertBlendFactor(VkBlendFactor blendFactor)
 {
 	switch (blendFactor)
 	{
 	case VkBlendFactor::VK_BLEND_FACTOR_ZERO:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ZERO;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ZERO;
 	case VkBlendFactor::VK_BLEND_FACTOR_ONE:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE;
 	case VkBlendFactor::VK_BLEND_FACTOR_SRC_COLOR:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::SRC_COLOR;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::SRC_COLOR;
 	case VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_COLOR;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_COLOR;
 	case VkBlendFactor::VK_BLEND_FACTOR_DST_COLOR:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::DST_COLOR;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::DST_COLOR;
 	case VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_COLOR;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_COLOR;
 	case VkBlendFactor::VK_BLEND_FACTOR_SRC_ALPHA:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA;
 	case VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_ALPHA;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_ALPHA;
 	case VkBlendFactor::VK_BLEND_FACTOR_DST_ALPHA:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::DST_ALPHA;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::DST_ALPHA;
 	case VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_ALPHA;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_ALPHA;
 	case VkBlendFactor::VK_BLEND_FACTOR_CONSTANT_COLOR:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::CONSTANT_COLOR;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::CONSTANT_COLOR;
 	case VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_COLOR;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_COLOR;
 	case VkBlendFactor::VK_BLEND_FACTOR_CONSTANT_ALPHA:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::CONSTANT_ALPHA;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::CONSTANT_ALPHA;
 	case VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_ALPHA;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_ALPHA;
 	case VkBlendFactor::VK_BLEND_FACTOR_SRC_ALPHA_SATURATE:
-		return Pengine::Pipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA_SATURATE;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA_SATURATE;
 	}
 
 	FATAL_ERROR("Failed to convert shader type!");
 	return {};
 }
 
-VkBlendOp VulkanPipeline::ConvertBlendOp(BlendStateAttachment::BlendOp blendOp)
+VkBlendOp VulkanGraphicsPipeline::ConvertBlendOp(BlendStateAttachment::BlendOp blendOp)
 {
 	switch (blendOp)
 	{
-	case Pengine::Pipeline::BlendStateAttachment::BlendOp::ADD:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendOp::ADD:
 		return VkBlendOp::VK_BLEND_OP_ADD;
-	case Pengine::Pipeline::BlendStateAttachment::BlendOp::SUBTRACT:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendOp::SUBTRACT:
 		return VkBlendOp::VK_BLEND_OP_SUBTRACT;
-	case Pengine::Pipeline::BlendStateAttachment::BlendOp::REVERSE_SUBTRACT:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendOp::REVERSE_SUBTRACT:
 		return VkBlendOp::VK_BLEND_OP_REVERSE_SUBTRACT;
-	case Pengine::Pipeline::BlendStateAttachment::BlendOp::MIN:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendOp::MIN:
 		return VkBlendOp::VK_BLEND_OP_MIN;
-	case Pengine::Pipeline::BlendStateAttachment::BlendOp::MAX:
+	case Pengine::GraphicsPipeline::BlendStateAttachment::BlendOp::MAX:
 		return VkBlendOp::VK_BLEND_OP_MAX;
 	}
 
@@ -405,27 +370,27 @@ VkBlendOp VulkanPipeline::ConvertBlendOp(BlendStateAttachment::BlendOp blendOp)
 	return {};
 }
 
-Pipeline::BlendStateAttachment::BlendOp VulkanPipeline::ConvertBlendOp(VkBlendOp blendOp)
+GraphicsPipeline::BlendStateAttachment::BlendOp VulkanGraphicsPipeline::ConvertBlendOp(VkBlendOp blendOp)
 {
 	switch (blendOp)
 	{
 	case VkBlendOp::VK_BLEND_OP_ADD:
-		return Pengine::Pipeline::BlendStateAttachment::BlendOp::ADD;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendOp::ADD;
 	case VkBlendOp::VK_BLEND_OP_SUBTRACT:
-		return Pengine::Pipeline::BlendStateAttachment::BlendOp::SUBTRACT;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendOp::SUBTRACT;
 	case VkBlendOp::VK_BLEND_OP_REVERSE_SUBTRACT:
-		return Pengine::Pipeline::BlendStateAttachment::BlendOp::REVERSE_SUBTRACT;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendOp::REVERSE_SUBTRACT;
 	case VkBlendOp::VK_BLEND_OP_MIN:
-		return Pengine::Pipeline::BlendStateAttachment::BlendOp::MIN;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendOp::MIN;
 	case VkBlendOp::VK_BLEND_OP_MAX:
-		return Pengine::Pipeline::BlendStateAttachment::BlendOp::MAX;
+		return Pengine::GraphicsPipeline::BlendStateAttachment::BlendOp::MAX;
 	}
 
 	FATAL_ERROR("Failed to convert shader type!");
 	return {};
 }
 
-std::vector<VkVertexInputBindingDescription> VulkanPipeline::CreateBindingDescriptions(
+std::vector<VkVertexInputBindingDescription> VulkanGraphicsPipeline::CreateBindingDescriptions(
 	const ShaderReflection::ReflectShaderModule& reflectShaderModule,
 	const std::vector<BindingDescription>& bindingDescriptions)
 {
@@ -469,7 +434,7 @@ std::vector<VkVertexInputBindingDescription> VulkanPipeline::CreateBindingDescri
 	return vkBindingDescriptions;
 }
 
-std::vector<VkVertexInputAttributeDescription> VulkanPipeline::CreateAttributeDescriptions(
+std::vector<VkVertexInputAttributeDescription> VulkanGraphicsPipeline::CreateAttributeDescriptions(
 	const ShaderReflection::ReflectShaderModule& reflectShaderModule,
 	const std::vector<BindingDescription>& bindingDescriptions)
 {
@@ -524,13 +489,13 @@ std::vector<VkVertexInputAttributeDescription> VulkanPipeline::CreateAttributeDe
 	return vkAttributeDescriptions;
 }
 
-VkVertexInputRate VulkanPipeline::ConvertVertexInputRate(const InputRate vertexInputRate)
+VkVertexInputRate VulkanGraphicsPipeline::ConvertVertexInputRate(const InputRate vertexInputRate)
 {
 	switch (vertexInputRate)
 	{
-	case Pengine::Vk::VulkanPipeline::InputRate::VERTEX:
+	case Pengine::Vk::VulkanGraphicsPipeline::InputRate::VERTEX:
 		return VK_VERTEX_INPUT_RATE_VERTEX;
-	case Pengine::Vk::VulkanPipeline::InputRate::INSTANCE:
+	case Pengine::Vk::VulkanGraphicsPipeline::InputRate::INSTANCE:
 		return VK_VERTEX_INPUT_RATE_INSTANCE;
 	}
 
@@ -538,339 +503,26 @@ VkVertexInputRate VulkanPipeline::ConvertVertexInputRate(const InputRate vertexI
 	return VkVertexInputRate::VK_VERTEX_INPUT_RATE_MAX_ENUM;
 }
 
-VulkanPipeline::InputRate VulkanPipeline::ConvertVertexInputRate(const VkVertexInputRate vertexInputRate)
+VulkanGraphicsPipeline::InputRate VulkanGraphicsPipeline::ConvertVertexInputRate(const VkVertexInputRate vertexInputRate)
 {
 	switch (vertexInputRate)
 	{
 	case VK_VERTEX_INPUT_RATE_VERTEX:
-		return Pengine::Vk::VulkanPipeline::InputRate::VERTEX;
+		return Pengine::Vk::VulkanGraphicsPipeline::InputRate::VERTEX;
 	case VK_VERTEX_INPUT_RATE_INSTANCE:
-		return Pengine::Vk::VulkanPipeline::InputRate::INSTANCE;
+		return Pengine::Vk::VulkanGraphicsPipeline::InputRate::INSTANCE;
 	}
 
 	FATAL_ERROR("Failed to convert vertex input rate!");
 	return {};
 }
 
-void VulkanPipeline::CreateShaderModule(
-	const std::string& code,
-	VkShaderModule* shaderModule)
-{
-	VkShaderModuleCreateInfo shaderModuleCreateInfo{};
-	shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	shaderModuleCreateInfo.codeSize = code.size();
-	shaderModuleCreateInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
-
-	if (vkCreateShaderModule(device->GetDevice(), &shaderModuleCreateInfo, nullptr,
-		shaderModule) != VK_SUCCESS)
-	{
-		FATAL_ERROR("Failed to create shader module!");
-	}
-}
-
-std::string VulkanPipeline::CompileShaderModule(
-	const std::string& filepath,
-	shaderc::CompileOptions options,
-	const ShaderType type,
-	bool useCache,
-	bool useLog)
-{
-	shaderc_shader_kind kind;
-	switch (type)
-	{
-	case Pengine::Pipeline::ShaderType::VERTEX:
-		kind = shaderc_shader_kind::shaderc_glsl_vertex_shader;
-		break;
-	case Pengine::Pipeline::ShaderType::FRAGMENT:
-		kind = shaderc_shader_kind::shaderc_glsl_fragment_shader;
-		break;
-	case Pengine::Pipeline::ShaderType::GEOMETRY:
-		kind = shaderc_shader_kind::shaderc_glsl_geometry_shader;
-		break;
-	case Pengine::Pipeline::ShaderType::COMPUTE:
-		kind = shaderc_shader_kind::shaderc_glsl_compute_shader;
-		break;
-	default:
-		return {};
-	}
-
-	std::string spv;
-	
-	if (useCache)
-	{
-		spv = Serializer::DeserializeShaderCache(filepath);
-	}
-
-	if (spv.empty())
-	{
-		shaderc::Compiler compiler{};
-
-		shaderc::SpvCompilationResult module =
-			compiler.CompileGlslToSpv(Utils::ReadFile(filepath), kind, filepath.c_str(), options);
-
-		if (module.GetCompilationStatus() != shaderc_compilation_status_success)
-		{
-			Logger::Error(module.GetErrorMessage());
-			return {};
-		}
-
-		spv = std::move(std::string((const char*)module.cbegin(), (const char*)module.cend()));
-
-		if (useCache)
-		{
-			Serializer::SerializeShaderCache(filepath, spv);
-		}
-
-		if (useLog)
-		{
-			Logger::Log("Shader:" + filepath + " has been compiled!", BOLDGREEN);
-		}
-	}
-	else
-	{
-		if (useLog)
-		{
-			Logger::Log("Shader Cache:" + filepath + " has been loaded!", BOLDGREEN);
-		}
-	}
-
-	return spv;
-}
-
-ShaderReflection::ReflectShaderModule VulkanPipeline::Reflect(const std::string& filepath, ShaderType type)
-{
-	std::optional<ShaderReflection::ReflectShaderModule> loadedReflectShaderModule = Serializer::DeserializeShaderModuleReflection(filepath);
-	if (loadedReflectShaderModule)
-	{
-		return *loadedReflectShaderModule;
-	}
-
-	shaderc::CompileOptions options{};
-	options.SetOptimizationLevel(shaderc_optimization_level_zero);
-	options.SetGenerateDebugInfo();
-	options.SetPreserveBindings(true);
-	options.SetIncluder(std::make_unique<ShaderIncluder>());
-
-	std::string spv = CompileShaderModule(filepath, options, type, false, false);
-
-	SpvReflectShaderModule reflectModule{};
-	SpvReflectResult result = spvReflectCreateShaderModule(spv.size(), spv.data(), &reflectModule);
-	if (result != SPV_REFLECT_RESULT_SUCCESS)
-	{
-		FATAL_ERROR("Failed to get spirv reflection!");
-	}
-
-	ShaderReflection::ReflectShaderModule reflectShaderModule{};
-
-	ReflectDescriptorSets(reflectModule, reflectShaderModule);
-	ReflectInputVariables(reflectModule, reflectShaderModule);
-
-	spvReflectDestroyShaderModule(&reflectModule);
-
-	Serializer::SerializeShaderModuleReflection(filepath, reflectShaderModule);
-
-	return reflectShaderModule;
-}
-
-void VulkanPipeline::ReflectDescriptorSets(
-	SpvReflectShaderModule& reflectModule,
-	ShaderReflection::ReflectShaderModule& reflectShaderModule)
-{
-	uint32_t count = 0;
-	SpvReflectResult result = spvReflectEnumerateDescriptorSets(&reflectModule, &count, NULL);
-	if (result != SPV_REFLECT_RESULT_SUCCESS)
-	{
-		FATAL_ERROR("Failed to reflect to enumerate descriptor sets!");
-	}
-
-	std::vector<SpvReflectDescriptorSet*> reflectSets(count);
-	result = spvReflectEnumerateDescriptorSets(&reflectModule, &count, reflectSets.data());
-	if (result != SPV_REFLECT_RESULT_SUCCESS)
-	{
-		FATAL_ERROR("Failed to reflect to enumerate descriptor sets!");
-	}
-
-	std::function<void(ShaderReflection::ReflectVariable&, const SpvReflectBlockVariable&)> reflectStruct;
-
-	reflectStruct = [&reflectStruct](
-		ShaderReflection::ReflectVariable& variable,
-		const SpvReflectBlockVariable& reflectBlock)
-		{
-			for (uint32_t memberIndex = 0; memberIndex < reflectBlock.member_count; memberIndex++)
-			{
-				const auto& member = reflectBlock.members[memberIndex];
-				ShaderReflection::ReflectVariable& memberVariable = variable.variables.emplace_back();
-
-				memberVariable.name = member.name;
-				memberVariable.size = member.size;
-				memberVariable.offset = member.offset;
-				memberVariable.type = ShaderReflection::ReflectVariable::Type::UNDEFINED;
-
-				// NOTE: Support only single dimensional array.
-				if (member.array.dims_count == 1)
-				{
-					memberVariable.count = member.array.dims[0];
-				}
-
-				if (!member.type_description)
-				{
-					continue;
-				}
-
-				switch (member.type_description->op)
-				{
-				case SpvOp::SpvOpTypeStruct:
-				{
-					memberVariable.type = ShaderReflection::ReflectVariable::Type::STRUCT;
-					reflectStruct(memberVariable, member);
-					break;
-				}
-				case SpvOp::SpvOpTypeMatrix:
-				{
-					memberVariable.type = ShaderReflection::ReflectVariable::Type::MATRIX;
-					break;
-				}
-				case SpvOp::SpvOpTypeFloat:
-				{
-					memberVariable.type = ShaderReflection::ReflectVariable::Type::FLOAT;
-					break;
-				}
-				case SpvOp::SpvOpTypeInt:
-				{
-					memberVariable.type = ShaderReflection::ReflectVariable::Type::INT;
-					break;
-				}
-				case SpvOp::SpvOpTypeVector:
-				{
-					switch (member.numeric.vector.component_count)
-					{
-					case 2:
-					{
-						memberVariable.type = ShaderReflection::ReflectVariable::Type::VEC2;
-						break;
-					}
-					case 3:
-					{
-						memberVariable.type = ShaderReflection::ReflectVariable::Type::VEC3;
-						break;
-					}
-					case 4:
-					{
-						memberVariable.type = ShaderReflection::ReflectVariable::Type::VEC4;
-						break;
-					}
-					default:
-						break;
-					}
-					break;
-				}
-				default:
-					break;
-				}
-
-				if (member.member_count > 0 && member.array.dims_count == 1)
-				{
-					memberVariable.type = ShaderReflection::ReflectVariable::Type::STRUCT;
-					reflectStruct(memberVariable, member);
-				}
-			}
-		};
-
-	for (const auto& reflectSet : reflectSets)
-	{
-		ShaderReflection::ReflectDescriptorSetLayout& setLayout = reflectShaderModule.setLayouts.emplace_back();
-		setLayout.set = reflectSet->set;
-		for (uint32_t bindingIndex = 0; bindingIndex < reflectSet->binding_count; ++bindingIndex)
-		{
-			const SpvReflectDescriptorBinding& reflectBinding = *(reflectSet->bindings[bindingIndex]);
-			ShaderReflection::ReflectDescriptorSetBinding& binding = setLayout.bindings.emplace_back();
-
-			if (reflectBinding.descriptor_type == SpvReflectDescriptorType::SPV_REFLECT_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
-			{
-				binding.name = reflectBinding.type_description->type_name;
-				binding.binding = reflectBinding.binding;
-				binding.type = VulkanUniformLayout::ConvertDescriptorType(static_cast<VkDescriptorType>(reflectBinding.descriptor_type));
-				binding.count = 1;
-
-				ShaderReflection::ReflectVariable& buffer = binding.buffer.emplace();
-				buffer.size = reflectBinding.block.size;
-				buffer.name = reflectBinding.type_description->type_name;
-				buffer.offset = reflectBinding.block.offset;
-				buffer.type = ShaderReflection::ReflectVariable::Type::STRUCT;
-
-				reflectStruct(buffer, reflectBinding.block);
-			}
-			else if (reflectBinding.descriptor_type == SpvReflectDescriptorType::SPV_REFLECT_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)
-			{
-				binding.name = reflectBinding.name;
-				binding.binding = reflectBinding.binding;
-				binding.type = VulkanUniformLayout::ConvertDescriptorType(static_cast<VkDescriptorType>(reflectBinding.descriptor_type));
-				binding.count = 1;
-				for (uint32_t dimIndex = 0; dimIndex < reflectBinding.array.dims_count; ++dimIndex)
-				{
-					// Check exactly.
-					binding.count *= reflectBinding.array.dims[dimIndex];
-				}
-			}
-		}
-	}
-}
-
-void VulkanPipeline::ReflectInputVariables(
-	SpvReflectShaderModule& reflectModule,
-	ShaderReflection::ReflectShaderModule& reflectShaderModule)
-{
-	uint32_t count = 0;
-	SpvReflectResult result = spvReflectEnumerateInputVariables(&reflectModule, &count, NULL);
-	if (result != SPV_REFLECT_RESULT_SUCCESS)
-	{
-		FATAL_ERROR("Failed to reflect to enumerate descriptor sets!");
-	}
-
-	std::vector<SpvReflectInterfaceVariable*> inputVariables(count);
-	result = spvReflectEnumerateInputVariables(&reflectModule, &count, inputVariables.data());
-	if (result != SPV_REFLECT_RESULT_SUCCESS)
-	{
-		FATAL_ERROR("Failed to reflect to enumerate descriptor sets!");
-	}
-
-	for (const auto& inputVariable : inputVariables)
-	{
-		if (inputVariable->decoration_flags & SPV_REFLECT_DECORATION_BUILT_IN)
-		{
-			continue;
-		}
-
-		ShaderReflection::AttributeDescription& attributeDescription = reflectShaderModule.attributeDescriptions.emplace_back();
-		attributeDescription.name = inputVariable->name;
-		attributeDescription.location = inputVariable->location;
-		attributeDescription.format = ConvertFormat(static_cast<VkFormat>(inputVariable->format));
-		attributeDescription.size = FormatSize(attributeDescription.format);
-		attributeDescription.count = 1;
-
-		// Matrix as a shader vertex attribute is splited into a certain amount of vectors,
-		// so we need to now how many of these vectors are there.
-		if (inputVariable->type_description->op == SpvOp::SpvOpTypeMatrix)
-		{
-			attributeDescription.count = inputVariable->numeric.matrix.row_count;
-		}
-	}
-}
-
-void VulkanPipeline::CreateDescriptorSetLayouts(const ShaderReflection::ReflectShaderModule& reflectShaderModule)
-{
-	for (const auto& [set, bindings] : reflectShaderModule.setLayouts)
-	{
-		m_UniformLayoutsByDescriptorSet[set] = UniformLayout::Create(bindings);
-	}
-}
-
-void VulkanPipeline::Bind(const VkCommandBuffer commandBuffer) const
+void VulkanGraphicsPipeline::Bind(const VkCommandBuffer commandBuffer) const
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline);
 }
 
-void VulkanPipeline::DefaultPipelineConfigInfo(PipelineConfigInfo& pipelineConfigInfo)
+void VulkanGraphicsPipeline::DefaultPipelineConfigInfo(PipelineConfigInfo& pipelineConfigInfo)
 {
 	pipelineConfigInfo.inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 	pipelineConfigInfo.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
