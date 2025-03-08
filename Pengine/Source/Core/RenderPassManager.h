@@ -84,8 +84,6 @@ namespace Pengine
 
 		void CreateFinal();
 
-		void CreateSSAO();
-
 		void CreateSSAOBlur();
 
 		void CreateCSM();
@@ -96,7 +94,7 @@ namespace Pengine
 
 		void CreateSSRBlur();
 
-		void CreateComputeSSAO();
+		void CreateSSAO();
 
 		static void BlurRenderPassTemplate(
 			const RenderPass::RenderCallbackInfo& renderInfo,

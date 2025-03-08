@@ -16,7 +16,7 @@ namespace Pengine
 		ZPrePass,
 		GBuffer,
 		CSM,
-		ComputeSSAO,
+		SSAO,
 		SSAOBlur,
 		Deferred,
 		Transparent,

@@ -1,277 +1,190 @@
-[Fri Mar  7 01:06:30 2025] Engine config has been loaded!
-[Fri Mar  7 01:06:30 2025] Graphics API:2
-[Fri Mar  7 01:06:30 2025] Available extensions:
-[Fri Mar  7 01:06:30 2025] 	VK_KHR_device_group_creation
-[Fri Mar  7 01:06:30 2025] 	VK_KHR_external_fence_capabilities
-[Fri Mar  7 01:06:30 2025] 	VK_KHR_external_memory_capabilities
-[Fri Mar  7 01:06:30 2025] 	VK_KHR_external_semaphore_capabilities
-[Fri Mar  7 01:06:30 2025] 	VK_KHR_get_physical_device_properties2
-[Fri Mar  7 01:06:30 2025] 	VK_KHR_get_surface_capabilities2
-[Fri Mar  7 01:06:30 2025] 	VK_KHR_surface
-[Fri Mar  7 01:06:30 2025] 	VK_KHR_surface_protected_capabilities
-[Fri Mar  7 01:06:30 2025] 	VK_KHR_win32_surface
-[Fri Mar  7 01:06:30 2025] 	VK_EXT_debug_report
-[Fri Mar  7 01:06:30 2025] 	VK_EXT_debug_utils
-[Fri Mar  7 01:06:30 2025] 	VK_EXT_surface_maintenance1
-[Fri Mar  7 01:06:30 2025] 	VK_EXT_swapchain_colorspace
-[Fri Mar  7 01:06:30 2025] 	VK_NV_external_memory_capabilities
-[Fri Mar  7 01:06:30 2025] 	VK_KHR_portability_enumeration
-[Fri Mar  7 01:06:30 2025] 	VK_LUNARG_direct_driver_loading
-[Fri Mar  7 01:06:30 2025] Required extensions:
-[Fri Mar  7 01:06:30 2025] 	VK_KHR_surface
-[Fri Mar  7 01:06:30 2025] 	VK_KHR_win32_surface
-[Fri Mar  7 01:06:30 2025] 	VK_EXT_debug_utils
-[Fri Mar  7 01:06:30 2025] Physical device count: 2
-[Fri Mar  7 01:06:30 2025] Physical devices:
-[Fri Mar  7 01:06:30 2025]  * NVIDIA GeForce RTX 3080 Ti Laptop GPU - Suitable
-[Fri Mar  7 01:06:30 2025]  * Intel(R) Iris(R) Xe Graphics - Suitable
-[Fri Mar  7 01:06:30 2025] Choosen physical device: NVIDIA GeForce RTX 3080 Ti Laptop GPU
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\Custom\Compute\ComputeSSAO.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\BloomDownSample.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\DefaultReflection.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\Atmosphere.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\BloomUpSample.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\Line.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/BloomUpSample.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/BloomDownSample.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\Final.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\Custom\Water\Water.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\Deferred.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Atmosphere.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/DefaultReflection.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Line.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/BloomUpSample.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Final.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/BloomDownSample.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders\Transparent.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Atmosphere.geom has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Deferred.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\Custom\Rotate.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Atmosphere.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Final.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/DefaultReflection.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Line.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Deferred.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\MeshBaseDoubleSided.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\SkyBox.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\SSAO.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\SSAOBlur.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/SSAOBlur.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/SSAO.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/SkyBox.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/SSAOBlur.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\SSR.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\MeshBaseSkinned.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/SSR.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Materials\Custom\Water\Shaders\Water.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] BaseMaterial:Materials\SSRBlur.basemat has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Custom/Rotate.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/OpaqueSkinned.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/SSAOBlur.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/SSRBlur.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/SSAO.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/SkyBox.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/SSR.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/TransparentSkinned.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/CSMSkinned.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/ZPrePassSkinned.vert has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Fri Mar  7 01:06:30 2025] Shader:Shaders/Custom/ComputeSSAO.comp has been compiled!
-[Fri Mar  7 01:06:30 2025] Texture:Editor\Images\FileIcon.png has been loaded!
-[Fri Mar  7 01:06:30 2025] Texture:Editor\Images\FolderIcon.png has been loaded!
-[Fri Mar  7 01:06:30 2025] Texture:Editor\Images\HideIcon.png has been loaded!
-[Fri Mar  7 01:06:30 2025] Texture:Editor\Images\MaterialIcon.png has been loaded!
-[Fri Mar  7 01:06:30 2025] Texture:Editor\Images\MeshIcon.png has been loaded!
-[Fri Mar  7 01:06:30 2025] Texture:Editor\Images\MetaIcon.png has been loaded!
-[Fri Mar  7 01:06:30 2025] Texture:Editor\Images\PlayButton.png has been loaded!
-[Fri Mar  7 01:06:30 2025] Texture:Editor\Images\ShowIcon.png has been loaded!
-[Fri Mar  7 01:06:30 2025] Texture:Editor\Images\StopButton.png has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__25.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__298.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_257_sponza_257_Material__47.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_Material__57.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_39_sponza_39_arch.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_382_sponza_382_bricks.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_38_sponza_38_ceiling.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_339_sponza_339_chain.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_10_sponza_10_column_a.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\Material__25.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_141_sponza_141_column_b.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\Material__298.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\Material__47.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_83_sponza_83_column_c.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\Material__57.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\arch.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\bricks.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_72_sponza_72_details.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\lion.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\ceiling.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\chain.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\column_a.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\background.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\column_b.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\vase_plant.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\column_c.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\chain_texture.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_arch_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_288_sponza_288_fabric_a.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Scene:Scenes\Sponza\Sponza.scene has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_a_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\spnza_bricks_a_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_ceiling_a_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_b_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_325_sponza_325_fabric_c.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_289_sponza_289_fabric_d.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_c_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\details.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\fabric_c.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\fabric_a.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\fabric_d.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_285_sponza_285_fabric_e.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_327_sponza_327_fabric_f.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_details_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\fabric_e.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\fabric_f.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_326_sponza_326_fabric_g.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_blue_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_271_sponza_271_flagpole.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\fabric_g.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_green_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_18_sponza_18_floor.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\flagpole.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_275_sponza_275_leaf.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_373_sponza_373_vase.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_381_sponza_381_roof.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_flagpole_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\floor.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\leaf.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\vase.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\roof.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_344_sponza_344_vase_hanging.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_thorn_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_vase_round.mesh has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\vase_hanging.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Material:Scenes\Sponza\Assets\vase_round.mat has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\vase_dif.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_floor_a_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_roof_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_blue_diff.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\vase_round.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\vase_hanging.tga has been loaded!
-[Fri Mar  7 01:06:38 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_green_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__25.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__298.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_257_sponza_257_Material__47.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_Material__57.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_39_sponza_39_arch.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_382_sponza_382_bricks.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_38_sponza_38_ceiling.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_339_sponza_339_chain.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_10_sponza_10_column_a.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_141_sponza_141_column_b.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_83_sponza_83_column_c.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] BaseMaterial:Materials/MeshBase.basemat has been loaded!
-[Fri Mar  7 01:06:55 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Fri Mar  7 01:06:55 2025] Scene:Scenes\Sponza\Sponza.scene has been loaded!
-[Fri Mar  7 01:06:55 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Fri Mar  7 01:06:55 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Fri Mar  7 01:06:55 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Fri Mar  7 01:06:55 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Fri Mar  7 01:06:55 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Fri Mar  7 01:06:55 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Fri Mar  7 01:06:55 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Fri Mar  7 01:06:55 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\Material__25.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\Material__47.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\ceiling.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\arch.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\bricks.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\column_b.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\Material__298.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\column_a.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\chain.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\Material__57.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\column_c.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\lion.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_72_sponza_72_details.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_ceiling_a_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_288_sponza_288_fabric_a.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\chain_texture.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_arch_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\fabric_a.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\vase_plant.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\spnza_bricks_a_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_325_sponza_325_fabric_c.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\details.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_b_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\background.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_c_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_a_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_289_sponza_289_fabric_d.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\fabric_c.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_details_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_285_sponza_285_fabric_e.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_327_sponza_327_fabric_f.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_326_sponza_326_fabric_g.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\fabric_d.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_271_sponza_271_flagpole.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_18_sponza_18_floor.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_275_sponza_275_leaf.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\fabric_e.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_381_sponza_381_roof.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_373_sponza_373_vase.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\fabric_g.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_blue_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\fabric_f.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\floor.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\flagpole.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\leaf.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\roof.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\vase.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_thorn_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_344_sponza_344_vase_hanging.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_vase_round.mesh has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\vase_hanging.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\vase_dif.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_roof_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Material:Scenes\Sponza\Assets\vase_round.mat has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_floor_a_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_flagpole_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_green_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\vase_hanging.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\vase_round.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_green_diff.tga has been loaded!
-[Fri Mar  7 01:06:55 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_blue_diff.tga has been loaded!
+[Sat Mar  8 20:52:26 2025] Engine config has been loaded!
+[Sat Mar  8 20:52:26 2025] Graphics API:2
+[Sat Mar  8 20:52:26 2025] ERROR:Validation layer: Failed to open dynamic library "C:\Program Files (x86)\RivaTuner Statistics Server\Vulkan\.\RTSSVkLayer64.dll" with error 126
+[Sat Mar  8 20:52:26 2025] Available extensions:
+[Sat Mar  8 20:52:26 2025] 	VK_KHR_device_group_creation
+[Sat Mar  8 20:52:26 2025] 	VK_KHR_external_fence_capabilities
+[Sat Mar  8 20:52:26 2025] 	VK_KHR_external_memory_capabilities
+[Sat Mar  8 20:52:26 2025] 	VK_KHR_external_semaphore_capabilities
+[Sat Mar  8 20:52:26 2025] 	VK_KHR_get_physical_device_properties2
+[Sat Mar  8 20:52:26 2025] 	VK_KHR_get_surface_capabilities2
+[Sat Mar  8 20:52:26 2025] 	VK_KHR_surface
+[Sat Mar  8 20:52:26 2025] 	VK_KHR_surface_protected_capabilities
+[Sat Mar  8 20:52:26 2025] 	VK_KHR_win32_surface
+[Sat Mar  8 20:52:26 2025] 	VK_EXT_debug_report
+[Sat Mar  8 20:52:26 2025] 	VK_EXT_debug_utils
+[Sat Mar  8 20:52:26 2025] 	VK_EXT_surface_maintenance1
+[Sat Mar  8 20:52:26 2025] 	VK_EXT_swapchain_colorspace
+[Sat Mar  8 20:52:26 2025] 	VK_NV_external_memory_capabilities
+[Sat Mar  8 20:52:26 2025] 	VK_KHR_portability_enumeration
+[Sat Mar  8 20:52:26 2025] 	VK_LUNARG_direct_driver_loading
+[Sat Mar  8 20:52:26 2025] Required extensions:
+[Sat Mar  8 20:52:26 2025] 	VK_KHR_surface
+[Sat Mar  8 20:52:26 2025] 	VK_KHR_win32_surface
+[Sat Mar  8 20:52:26 2025] 	VK_EXT_debug_utils
+[Sat Mar  8 20:52:26 2025] Physical device count: 2
+[Sat Mar  8 20:52:26 2025] Physical devices:
+[Sat Mar  8 20:52:26 2025]  * NVIDIA GeForce RTX 3080 Ti Laptop GPU - Suitable
+[Sat Mar  8 20:52:26 2025]  * Intel(R) Iris(R) Xe Graphics - Suitable
+[Sat Mar  8 20:52:26 2025] Choosen physical device: NVIDIA GeForce RTX 3080 Ti Laptop GPU
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\BloomDownSample.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\DefaultReflection.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\Final.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\Line.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/BloomDownSample.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\Custom\Water\Water.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\BloomUpSample.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\Deferred.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/BloomUpSample.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\Atmosphere.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Final.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Line.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders\Transparent.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/DefaultReflection.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/BloomDownSample.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\Custom\Rotate.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Deferred.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Atmosphere.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\MeshBaseDoubleSided.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/BloomUpSample.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Final.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Atmosphere.geom has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/DefaultReflection.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Atmosphere.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Line.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Deferred.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\SkyBox.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Materials\Custom\Water\Shaders\Water.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/SkyBox.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\SSAO.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/SSAO.comp has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\SSAOBlur.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\SSRBlur.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/SSAOBlur.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\SSR.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Custom/Rotate.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/SSAOBlur.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/SSR.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/SSAOBlur.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/SSRBlur.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/SkyBox.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] BaseMaterial:Materials\MeshBaseSkinned.basemat has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/OpaqueSkinned.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/SSR.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/CSM.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/CSM.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/CSM.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/TransparentSkinned.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/CSMSkinned.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/ZPrePassSkinned.vert has been loaded!
+[Sat Mar  8 20:52:26 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Sat Mar  8 20:52:26 2025] Texture:Editor\Images\FileIcon.png has been loaded!
+[Sat Mar  8 20:52:26 2025] Texture:Editor\Images\FolderIcon.png has been loaded!
+[Sat Mar  8 20:52:26 2025] Texture:Editor\Images\HideIcon.png has been loaded!
+[Sat Mar  8 20:52:26 2025] Texture:Editor\Images\MaterialIcon.png has been loaded!
+[Sat Mar  8 20:52:26 2025] Texture:Editor\Images\MeshIcon.png has been loaded!
+[Sat Mar  8 20:52:26 2025] Texture:Editor\Images\MetaIcon.png has been loaded!
+[Sat Mar  8 20:52:26 2025] Texture:Editor\Images\PlayButton.png has been loaded!
+[Sat Mar  8 20:52:26 2025] Texture:Editor\Images\ShowIcon.png has been loaded!
+[Sat Mar  8 20:52:26 2025] Texture:Editor\Images\StopButton.png has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__25.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_257_sponza_257_Material__47.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__298.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_Material__57.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_382_sponza_382_bricks.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_39_sponza_39_arch.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\Material__25.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\Material__47.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\Material__298.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\Material__57.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\arch.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Scene:Scenes\Sponza\Sponza.scene has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\bricks.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_339_sponza_339_chain.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_38_sponza_38_ceiling.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_10_sponza_10_column_a.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\ceiling.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\chain.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\column_a.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\vase_plant.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_141_sponza_141_column_b.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\chain_texture.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_arch_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\lion.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\background.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\column_b.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\spnza_bricks_a_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_ceiling_a_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_83_sponza_83_column_c.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_a_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_b_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_72_sponza_72_details.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\column_c.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_288_sponza_288_fabric_a.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_325_sponza_325_fabric_c.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_289_sponza_289_fabric_d.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\details.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\fabric_a.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\fabric_d.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\fabric_c.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_285_sponza_285_fabric_e.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_c_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_327_sponza_327_fabric_f.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\fabric_e.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\fabric_f.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_326_sponza_326_fabric_g.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_blue_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\fabric_g.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_details_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_271_sponza_271_flagpole.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\flagpole.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_green_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_18_sponza_18_floor.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\floor.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_275_sponza_275_leaf.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_green_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\leaf.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_flagpole_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_381_sponza_381_roof.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_thorn_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_blue_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_floor_a_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_373_sponza_373_vase.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_344_sponza_344_vase_hanging.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\roof.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\vase.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_vase_round.mesh has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\vase_hanging.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Material:Scenes\Sponza\Assets\vase_round.mat has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\vase_hanging.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\sponza_roof_diff.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\vase_dif.tga has been loaded!
+[Sat Mar  8 20:52:29 2025] Texture:Scenes\Sponza\Assets\textures\vase_round.tga has been loaded!

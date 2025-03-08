@@ -240,7 +240,6 @@ RenderPassManager::RenderPassManager()
 	CreateBloom();
 	CreateSSR();
 	CreateSSRBlur();
-	CreateComputeSSAO();
 }
 
 std::vector<std::shared_ptr<Buffer>> RenderPassManager::GetVertexBuffers(
@@ -1394,130 +1393,6 @@ void RenderPassManager::CreateFinal()
 	CreateRenderPass(createInfo);
 }
 
-void RenderPassManager::CreateSSAO()
-{
-	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	RenderPass::AttachmentDescription color{};
-	color.format = Format::R8G8B8A8_SRGB;
-	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::LOAD;
-	color.store = RenderPass::Store::STORE;
-
-	RenderPass::CreateInfo createInfo{};
-	createInfo.type = Pass::Type::GRAPHICS;
-	createInfo.name = SSAO;
-	createInfo.clearColors = { clearColor };
-	createInfo.attachmentDescriptions = { color };
-	createInfo.resizeWithViewport = true;
-
-	const std::shared_ptr<Mesh> planeMesh = nullptr;
-
-	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
-	{
-		const std::string renderPassName = renderInfo.renderPass->GetName();
-		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
-
-		const GraphicsSettings::SSAO& ssaoSettings = renderInfo.scene->GetGraphicsSettings().ssao;
-		if (!ssaoSettings.isEnabled)
-		{
-			renderInfo.renderTarget->DeleteFrameBuffer(renderPassName);
-
-			return;
-		}
-		else
-		{
-			if (!frameBuffer)
-			{
-				frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), renderInfo.viewportSize);
-				renderInfo.renderTarget->SetFrameBuffer(renderPassName, frameBuffer);
-			}
-		}
-
-		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
-
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
-			std::filesystem::path("Materials") / "SSAO.basemat");
-		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
-		if (!pipeline)
-		{
-			return;
-		}
-
-		SSAORenderer* ssaoRenderer = (SSAORenderer*)renderInfo.renderTarget->GetCustomData("SSAORenderer");
-		if (!ssaoRenderer)
-		{
-			ssaoRenderer = new SSAORenderer();
-
-			renderInfo.renderTarget->SetCustomData("SSAORenderer", ssaoRenderer);
-		}
-
-		if (ssaoRenderer->GetKernelSize() != ssaoSettings.kernelSize)
-		{
-			ssaoRenderer->GenerateSamples(ssaoSettings.kernelSize);
-		}
-		if (ssaoRenderer->GetNoiseSize() != ssaoSettings.noiseSize)
-		{
-			ssaoRenderer->GenerateNoiseTexture(ssaoSettings.noiseSize);
-		}
-
-		constexpr float resolutionScales[] = { 0.25f, 0.5f, 0.75f, 1.0f };
-
-		if (renderInfo.renderPass->GetResizeViewportScale() != glm::vec2(resolutionScales[ssaoSettings.resolutionScale]))
-		{
-			auto callback = [resolutionScales, frameBuffer, ssaoSettings, renderInfo]()
-			{
-				renderInfo.renderPass->SetResizeViewportScale(glm::vec2(resolutionScales[ssaoSettings.resolutionScale]));
-				frameBuffer->Resize(glm::vec2(renderInfo.viewportSize) * resolutionScales[ssaoSettings.resolutionScale]);
-			};
-
-			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
-			EventSystem::GetInstance().SendEvent(resizeEvent);
-		}
-
-		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, renderPassName);
-		const std::string ssaoBufferName = "SSAOBuffer";
-		const std::shared_ptr<Buffer> ssaoBuffer = GetOrCreateRenderBuffer(renderInfo.renderTarget, renderUniformWriter, ssaoBufferName);
-
-		WriteRenderTargets(renderInfo.renderTarget, renderInfo.scene->GetRenderTarget(), pipeline, renderUniformWriter);
-		renderUniformWriter->WriteTexture("noiseTexture", ssaoRenderer->GetNoiseTexture());
-
-		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "viewportScale", GetRenderPass(renderPassName)->GetResizeViewportScale());
-		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "kernelSize", ssaoSettings.kernelSize);
-		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "noiseSize", ssaoSettings.noiseSize);
-		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "aoScale", ssaoSettings.aoScale);
-		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "samples", ssaoRenderer->GetSamples());
-		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "radius", ssaoSettings.radius);
-		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "bias", ssaoSettings.bias);
-
-		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-		FlushUniformWriters(uniformWriters);
-
-		renderInfo.renderer->BeginCommandLabel(renderPassName, topLevelRenderPassDebugColor, renderInfo.frame);
-
-		RenderPass::SubmitInfo submitInfo{};
-		submitInfo.frame = renderInfo.frame;
-		submitInfo.renderPass = renderInfo.renderPass;
-		submitInfo.frameBuffer = frameBuffer;
-		renderInfo.renderer->BeginRenderPass(submitInfo, renderPassName, { 1.0f, 1.0f, 0.0f });
-
-		renderInfo.renderer->Render(
-			GetVertexBuffers(pipeline, plane),
-			plane->GetIndexBuffer(),
-			plane->GetIndexCount(),
-			pipeline,
-			nullptr,
-			0,
-			1,
-			uniformWriters,
-			renderInfo.frame);
-
-		renderInfo.renderer->EndRenderPass(submitInfo);
-	};
-
-	CreateRenderPass(createInfo);
-}
-
 void RenderPassManager::CreateSSAOBlur()
 {
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -2322,16 +2197,16 @@ void RenderPassManager::CreateSSRBlur()
 	CreateRenderPass(createInfo);
 }
 
-void RenderPassManager::CreateComputeSSAO()
+void RenderPassManager::CreateSSAO()
 {
 	ComputePass::CreateInfo createInfo{};
 	createInfo.type = Pass::Type::COMPUTE;
-	createInfo.name = ComputeSSAO;
+	createInfo.name = SSAO;
 
 	createInfo.executeCallback = [passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
-			std::filesystem::path("Materials") / "Custom" / "Compute" / "ComputeSSAO.basemat");
+			std::filesystem::path("Materials") / "SSAO.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(passName);
 		if (!pipeline)
 		{
@@ -2345,8 +2220,8 @@ void RenderPassManager::CreateComputeSSAO()
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
 		createInfo.channels = 4;
-		createInfo.filepath = "ComputeSSAO";
-		createInfo.name = "ComputeSSAO";
+		createInfo.filepath = "SSAO";
+		createInfo.name = "SSAO";
 		createInfo.format = Format::R8G8B8A8_UNORM;
 		createInfo.size = currentViewportSize;
 		createInfo.usage = { Texture::Usage::STORAGE, Texture::Usage::SAMPLED };

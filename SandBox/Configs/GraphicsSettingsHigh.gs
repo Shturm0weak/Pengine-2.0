@@ -1,7 +1,7 @@
 SSAO:
   IsEnabled: true
   AoScale: 1
-  Bias: 0.00499999989
+  Bias: 0.0500000007
   KernelSize: 16
   NoiseSize: 64
   Radius: 0.5
