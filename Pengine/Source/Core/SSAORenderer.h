@@ -17,8 +17,6 @@ namespace Pengine
 
 		void GenerateNoiseTexture(const int noiseSize);
 
-		void ShutDown();
-
 		std::shared_ptr<class Texture> GetNoiseTexture() const { return m_NoiseTexture; }
 
 		std::shared_ptr<class Texture> GetSSAOTexture() const { return m_SSAOTexture; }
@@ -31,12 +29,30 @@ namespace Pengine
 
 		int GetKernelSize() const { return m_KernelSize; }
 
+		class SSAOBlurData : public CustomData
+		{
+		public:
+			virtual ~SSAOBlurData() override
+			{
+				m_SSAOBlurTexture = nullptr;
+			}
+
+			std::shared_ptr<class Texture> GetSSAOBlurTexture() const { return m_SSAOBlurTexture; }
+
+			void SetSSAOBlurTexture(std::shared_ptr<class Texture> texture) { m_SSAOBlurTexture = texture; }
+		private:
+			std::shared_ptr<class Texture> m_SSAOBlurTexture;
+		};
+
+		SSAOBlurData& GetSSAOBlurData() { return m_SSAOBlurData; }
+
 	private:
 		std::array<glm::vec4, 64> m_Samples;
 
 		std::shared_ptr<class Texture> m_NoiseTexture;
-
 		std::shared_ptr<class Texture> m_SSAOTexture;
+
+		SSAOBlurData m_SSAOBlurData;
 
 		int m_NoiseSize = 0;
 		int m_KernelSize = 0;

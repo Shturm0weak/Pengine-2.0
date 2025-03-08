@@ -66,24 +66,28 @@ void main()
         offset = camera.projectionMat4 * offset;
         offset.xyz /= offset.w;
         offset.xyz = offset.xyz * 0.5f + 0.5f;
+		//offset.y = 1.0f - offset.y;
 
+		vec2 offsetPixelCoord = offset.xy * ssaoSize - vec2(0.5f);
+		vec2 fWorkGroupID = offsetPixelCoord / vec2(16.0f, 16.0f);
+		uvec2 workGroupID = uvec2(fWorkGroupID);
+		vec2 localIDScale = fWorkGroupID - vec2(workGroupID);
+		uvec2 localID = uvec2(localIDScale * vec2(16.0f, 16.0f));
 
-		//vec2 offsetPixelCoord = offset.xy * ssaoSize - vec2(0.5f);
-		//vec2 fWorkGroupID = offsetPixelCoord / vec2(16.0f, 16.0f);
-		//uvec2 workGroupID = uvec2(fWorkGroupID);
-		//vec2 localIDScale = (fWorkGroupID / vec2(workGroupID)) - 1.0f;
-		//uvec2 localID = uvec2(localIDScale * vec2(gl_WorkGroupSize.x, ));
-
-		//float sampleDepth = 0.0f;
+		float sampleDepth = 0.0f;
 		//if (workGroupID.x == gl_WorkGroupID.x && workGroupID.y == gl_WorkGroupID.y)
 		//{
-		//	uint localIndex = localID.y * 16 + localID.x;
-		//	sampleDepth = positionSharedData[localIndex].z;
+			//uint localIndex = localID.y * 16 + localID.x;
+			//sampleDepth = positionSharedData[localIndex].z;
+
+			//pixelCoord.y = int(ssaoSize.y) - pixelCoord.y;
+            //imageStore(outColor, pixelCoord, vec4(1.0f, 0.0f, 0.0f, 1.0f));
+            //return;
 		//}
 		//else
 		//{
 			offset.y = 1.0f - offset.y;
-			float sampleDepth = CalculatePositionFromDepth(
+			sampleDepth = CalculatePositionFromDepth(
                 texture(depthTexture, offset.xy).x,
                 camera.projectionMat4,
                 viewRay).z;

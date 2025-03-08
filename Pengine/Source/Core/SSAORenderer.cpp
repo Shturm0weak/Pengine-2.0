@@ -8,7 +8,8 @@ using namespace Pengine;
 
 SSAORenderer::~SSAORenderer()
 {
-	ShutDown();
+	m_NoiseTexture = nullptr;
+	m_SSAOTexture = nullptr;
 }
 
 void SSAORenderer::GenerateSamples(const int kernelSize)
@@ -38,8 +39,7 @@ void SSAORenderer::GenerateSamples(const int kernelSize)
 void SSAORenderer::GenerateNoiseTexture(const int noiseSize)
 {
 	m_NoiseSize = noiseSize;
-
-	ShutDown();
+	m_NoiseTexture = nullptr;
 
 	std::uniform_real_distribution<float> randomFloats(0.0f, 1.0f);
 	std::default_random_engine generator;
@@ -70,9 +70,4 @@ void SSAORenderer::GenerateNoiseTexture(const int noiseSize)
 	noiseCreateInfo.samplerCreateInfo = samplerCreateInfo;
 
 	m_NoiseTexture = Texture::Create(noiseCreateInfo);
-}
-
-void SSAORenderer::ShutDown()
-{
-	m_NoiseTexture = nullptr;
 }

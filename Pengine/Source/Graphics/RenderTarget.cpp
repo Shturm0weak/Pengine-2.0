@@ -128,6 +128,17 @@ void RenderTarget::SetCustomData(const std::string& name, CustomData* data)
 	m_CustomDataByName[name] = data;
 }
 
+void RenderTarget::DeleteCustomData(const std::string& name)
+{
+	auto customDataByName = m_CustomDataByName.find(name);
+	if (customDataByName != m_CustomDataByName.end())
+	{
+		delete customDataByName->second;
+
+		m_CustomDataByName.erase(customDataByName);
+	}
+}
+
 void RenderTarget::Resize(const glm::ivec2& size) const
 {
 	for (const std::string& renderPassName : m_RenderPassOrder)

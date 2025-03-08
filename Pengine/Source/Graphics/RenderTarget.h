@@ -28,9 +28,13 @@ namespace Pengine
 
 		void SetUniformWriter(const std::string& name, std::shared_ptr<UniformWriter> uniformWriter);
 
+		void DeleteUniformWriter(const std::string& name) { m_UniformWriterByName.erase(name); }
+
 		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
 
 		void SetBuffer(const std::string& name, std::shared_ptr<Buffer> buffer);
+
+		void DeleteBuffer(const std::string& name) { m_BuffersByName.erase(name); }
 
 		std::shared_ptr<FrameBuffer> GetFrameBuffer(const std::string& type) const;
 
@@ -41,6 +45,8 @@ namespace Pengine
 		CustomData* GetCustomData(const std::string& name);
 
 		void SetCustomData(const std::string& name, CustomData* data);
+
+		void DeleteCustomData(const std::string& name);
 
 		void Resize(const glm::ivec2& size) const;
 
