@@ -29,16 +29,16 @@ Basemat:
           DstColorBlendFactor: dst color
       Uniforms:
         - Name: albedoTexture
-          RenderTarget: "GBuffer[0]"
+          TextureAttachment: "GBuffer[0]"
         - Name: normalTexture
-          RenderTarget: "GBuffer[1]"
+          TextureAttachment: "GBuffer[1]"
         - Name: shadingTexture
-          RenderTarget: "GBuffer[2]"
+          TextureAttachment: "GBuffer[2]"
         - Name: depthTexture
-          RenderTarget: "GBuffer[4]"
+          TextureAttachment: "GBuffer[4]"
         - Name: ssaoTexture
-          RenderTarget: "SSAOBlur[0]"
-          RenderTargetDefault: "White"
+          TextureAttachment: "SSAOBlur"
+          TextureAttachmentDefault: "White"
         - Name: CSMTexture
-          RenderTarget: "CSM[0]"
-          RenderTargetDefault: "WhiteLayered"
+          TextureAttachment: "CSM[0]"
+          TextureAttachmentDefault: "WhiteLayered"

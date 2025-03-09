@@ -1,0 +1,1724 @@
+Name: ROOT
+IsEnabled: true
+Transform:
+  Position: [0, 0, 0]
+  Rotation: [0, -0, 0]
+  Scale: [1, 1, 1]
+  FollowOwner: true
+Childs:
+  - Name: Bistro_Research_Exterior__lod0_Glass_3919
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: db1abca6-6e69-4983-be98-dec40559cbd1
+      Material: 40f22cc0-7470-418d-8a6d-4f8487483592
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior__lod0_Italian_Cypress_3921-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 2bc4dcb4-dbcf-4c9f-99c1-bea245271598
+      Material: f1c47026-2e01-45a4-a0b9-f449713d42b6
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior__lod0_Italian_Cypress_3921-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1c2e026e-6360-4c13-9c26-70b826b30d38
+      Material: 75a430ad-7396-4d69-9860-8065d469bb45
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior__lod0_Odometer_3935
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 786a3622-0292-45b7-8e7f-63a4e766a16c
+      Material: c8f79f7b-7276-4e3c-8bee-0244a649eacc
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior__lod0_Vespa_3937-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d5089918-7c1a-449f-96ef-c590436d2adc
+      Material: a3b80ccf-7ee6-4b77-932c-c1628ab983e5
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior__lod0_Vespa_3937-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 681e7ec4-883a-4626-bb00-4334acb827f7
+      Material: 7e9303b8-70c1-4d71-8af3-1bedf9c44526
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_bux_hedge_cylinder_low_4007
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 363f6d19-f031-4123-a0d8-535a2f1ac2a9
+      Material: 29586cfe-cd84-4507-bdce-ee8686719ecf
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Ivy_Ivy_4049-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9d8b60c9-a03c-4372-a039-cdf1c164dda1
+      Material: 6ecb911f-cc4b-49c9-a0c1-489d479c261e
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Ivy_Ivy_4049-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: f7f818ec-6e38-45ce-8de4-4dfc2b1913bf
+      Material: 40aae4f0-cafc-4a42-88f5-2f7534c8fa26
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Linde_Tree_Large_linde_tree_large_4051-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 8f5bd13e-4e94-4010-85eb-68bed96686cd
+      Material: ae19bf6d-3617-42e3-b340-a2533e7238e0
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Linde_Tree_Large_linde_tree_large_4051-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: ecbfc110-9f09-4eac-903a-72a545fe3e0c
+      Material: 8b0548f2-1b84-4c9c-8166-5e5c9899c885
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Linde_Tree_Large_linde_tree_large_4051-2
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1ccbc160-b135-485e-9710-15018970515a
+      Material: cab24b92-2e77-42ff-869b-b31c9a2061bd
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_ShopSign_01C_6161-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 47b8c39e-09a1-4f22-afcd-800e04f1443a
+      Material: 795bc38f-0098-4809-b82c-02ea7d1ec280
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Aerial_01C_4057-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1df98d5b-9064-447c-8fa8-fd117117adef
+      Material: e71683c9-2b09-40fe-a6d9-8eb6c5c07b9d
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Aerial_01C_4057-2
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1c9bbdf1-cd16-4b15-aea2-32f9c3a004d8
+      Material: b5461db1-247f-424c-9bc1-7c044fb14926
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Ashtray_01_mesh___9__4093
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 96345f66-2c63-4acc-afa7-e7295f9499fe
+      Material: cd5e2498-d92e-4a35-8d43-936adc93b27a
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_BistroAwning_02B_4113
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 43a366df-d8c3-4b7e-a109-ab95eb063735
+      Material: 75c3645b-c827-43b0-8a69-abbb16671a00
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_Bistroawning_4105-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 047dd044-0974-4542-adf7-47b0a04206f9
+      Material: 24e9e935-51c0-4949-b3a4-5e04c535368b
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_Bistroawning_4105-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: ea5726d5-d9ab-4060-8e49-cc559039c65f
+      Material: 8a58f69e-810e-496f-9760-65d12f423a28
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_BistroFrontBanner_01_4131-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: f66a52b3-5ef0-4ffd-aa85-b77b2c8a7ea4
+      Material: 427906ab-b60c-4bf5-bdfa-e62f85377bc4
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_BistroFrontBanner_01_4131-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0d70989e-489e-457d-be2f-9d9ab89b206f
+      Material: e7e356d2-4365-48be-bc6c-5c5e6ba4957f
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Spotlights_6525-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: e5983f9a-e4e8-423b-9cbc-4444c819a173
+      Material: 9b3443fa-7279-49d2-918c-4faefc7267df
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Bollard_01A_4133
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 87fa58a6-b082-4641-96c1-733d169e1cd5
+      Material: ab68f563-390e-4af5-b19e-9521b7fcf8d6
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_08_paris_building_0.012-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: a2315e38-126d-4c60-8eb9-ee25c0bcd857
+      Material: 1a5d2f09-3bf0-4ccd-b516-ee457012dbe4
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_11_5905
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 34894fbc-11a9-4b40-921e-f72c40b772b2
+      Material: ba47c0fd-b519-480c-b6a5-829eda569e2c
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_0.197
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 34d0d17e-9005-4148-bc03-ded22973c705
+      Material: 9dc38bb9-c4bb-48a8-b1e3-6a1f56ec1713
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_10_5473
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: eec32f89-2db2-4d7d-b8e2-4c40b0308d0c
+      Material: 2ad574a8-e0c0-4553-a504-5f68a29c4f12
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_10_9__5547
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5e32c22b-e45e-4459-b179-8a93fda460ff
+      Material: 1db1177a-f070-4f92-afa4-160cfaedbddf
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_MainBalcony_01_6103-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 417bc37d-8fd0-42d7-b144-1f271faeff77
+      Material: 72bc331a-645c-42c4-97a6-f735f7e6e0b7
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_10_5471
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 8dee8279-c426-411b-8235-0aecfa45a83a
+      Material: 82097237-0434-495f-861e-932f7874eccb
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_11_5891
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 25e452c0-f675-4fb0-838b-e923ac0ef4ed
+      Material: 4cd1f116-82c2-4e83-9115-89f598b4ba29
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_10_5469
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 124a9dc2-e009-4b08-b47a-81d64fc7f1a0
+      Material: 26285e5d-ed25-4754-80d0-ffa4ab2fbee8
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_0.109
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 09226d7d-e88e-4a7f-bd1c-b1b1657b7fe5
+      Material: 2dc37c58-d85a-4c94-b62d-729d675469b4
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_0.014
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5f9461bb-c12a-4af4-b9df-06c73aa23b4a
+      Material: 11788f0b-6dc4-4749-82b8-8ed60ca43b29
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_10_8__5545
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 4e409118-076a-4d8f-b08b-796b65baa007
+      Material: 936247dc-f6a2-427f-ae60-4540dbf0c695
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_11_5901
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d547c8bb-36ec-43c7-b304-8eb5c249b3bb
+      Material: 166798aa-e199-4cfb-a11b-09107112dc92
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_0.232
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: c3e187a4-6146-446a-8899-b6ec8b486713
+      Material: 71823168-c862-496a-939f-166340d238c6
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_09_5437
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 2961b1f5-428c-4a91-b741-42ab3da847d9
+      Material: f82c6827-2f9c-4856-8610-16e7f823753e
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_01_45
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 09c2587c-c3eb-4dba-bc3c-8f907b0963bc
+      Material: 63c5fae5-af9c-45b4-b51d-de50a72bcb05
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_10_5507-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: b4c74ee3-b7e3-4fe7-8e15-8ae4af890720
+      Material: e37a791b-7da9-4249-965b-9b918e8c9089
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_ShopSign_01B2_6159-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 10effb16-4b12-46ee-9eaa-f5ed33cfc292
+      Material: 1666417b-3527-4ec7-894e-eedbd0d4af09
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_0.360
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: f2243816-346a-40e7-affe-9a8e003acc58
+      Material: 2f043bd8-bd83-4806-b4a8-ce28bab53fcf
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_01_bo
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: b72e22ae-4705-4a0c-8f07-9f4c0fc74cde
+      Material: 8c58c84d-0ba3-41e5-b199-634653cac599
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_0.240
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: f92e10e2-e505-4a77-a125-c485ce57ff66
+      Material: 92f3f092-5b43-464d-ad73-2b127afc87dd
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_0.338
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 116ee4f4-ee08-4f87-9f6e-35a0e1ee88a1
+      Material: c5abdedb-80ab-4f98-b88e-4c941494cc5b
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_0.350
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1c510a7e-9d6b-4c21-aaf6-c0f40f15b0d5
+      Material: 3dfed618-47c1-4fcc-b143-43ad061d738d
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_0.359
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9193ba73-7ee2-41e1-9ad5-82b0c06e7604
+      Material: 121bcfdb-6aaf-45a6-a0ab-199fefa74d27
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_0.358
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: e3eb5c92-959c-4453-8932-3d637cc759b5
+      Material: 121bcfdb-6aaf-45a6-a0ab-199fefa74d27
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_0.321
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 36241739-a0b9-4630-8b71-8a6a44977a9e
+      Material: 555dc527-ed65-4388-a6e2-974f012c4169
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_01_paris_building_0.337
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: ae77a782-22d6-4bea-b50f-5e948b394ccf
+      Material: 8002aa82-150d-4730-994a-629b84f193db
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_11_5551
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 29a6802d-069e-4688-9854-cae199a097f4
+      Material: 0d802054-1e11-49cf-8411-aff7e296a768
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_11_5571
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 35e205ea-cd9b-481d-ad42-4f89cbe538d2
+      Material: 9bbbfd37-691b-4c36-b6e6-bae96c685991
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_10_7__5543
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 419d2885-94c9-4606-96a2-d6937ae44238
+      Material: bcefeca6-cfc0-4614-a204-19b4fc5c7cb5
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Street_6253
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: f7353a5e-022b-4630-bff2-152ebf2aa17e
+      Material: 7edd61f7-20d0-47c1-9021-9df8a16e509b
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_11_5889
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 17da2a6c-bcb7-4be0-80ed-8cd19855dabc
+      Material: f61dce52-6800-441e-9e7d-640639b26d33
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_11_5897
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 08bf5669-0204-4ca2-8a3f-0cf6be77b267
+      Material: 671c03ca-cb3d-4fea-a677-e105bce37bf1
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Chimney_02C_5975-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 600dd926-321a-47e2-a783-f72a75885d0e
+      Material: 4168febf-a6c2-4d0b-a7ec-37ac09b2a3ef
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_03_mirrored_4965
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 7083c159-6bee-4255-88b4-652e9d510bfb
+      Material: 9b63091f-e874-4c09-a8ac-400736d9f527
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_09_5459
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 53e9526c-becb-44c2-ab1e-0f7c408ba6ef
+      Material: ad78e277-82c3-4017-a4f0-3021c00ff58b
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_09_5455
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 05422174-6342-4002-a47a-413c4311ef45
+      Material: b2fd39ef-383b-4e85-926b-00d059444120
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_04_4993
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 306fc431-aa91-4a15-ac1b-6ee3411b1bf3
+      Material: 4a2fac9e-e518-4dba-bfb5-a29b4fa0b14f
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_10_5493
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 340c7247-b393-44e7-adc7-837fec2ad43c
+      Material: b795663b-8bbb-45c2-8b18-a81dc0979961
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_11_5835
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 103394ea-ad1e-4e9d-af2e-767b578e5003
+      Material: cbbc80e2-cf82-40ae-8418-3e203a11bd59
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_10_5495
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: bc877592-9163-4944-af96-52819ab07145
+      Material: eb634c64-91cd-4ffe-a735-e79165a2a0c8
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_10_5499
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: e97150a4-688e-478c-96c0-8418d2ff8724
+      Material: c975d283-7035-4614-a18f-c51dedb41f83
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_10_5503
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 258db022-9b08-4115-b60c-55d88fb82d90
+      Material: 7958dc95-b7d5-4303-a9e8-c5b719370af4
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Building_08_paris_building_08_9_
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 16033458-e0c1-4fed-99df-ebab27735712
+      Material: 6be09dc0-c0cd-45f5-8e17-a5225ce08140
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_05_5125-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: a668ee4b-7f83-44ac-a4be-9cf2d9db1528
+      Material: 59c84bb7-7a45-46ec-b634-7ce7982e6479
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_07_5323
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 91ea870e-e555-4bf3-a8f6-31c4b856f4c6
+      Material: 26ca9451-c0ff-4231-8d10-8201c18fbd56
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_10_5501
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 7c647df7-4c5a-4125-b9af-97ca9f89c18e
+      Material: 439a919c-4e6f-4fe0-a3b5-5890b02b9f76
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_05_65__5291
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 2adf1190-4e88-4271-b3c2-2b2b229ca321
+      Material: a071d66b-9149-4399-97b4-b8bfa77d58bc
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_07_5341
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 08532156-d3b5-46b7-861e-a399c16d497d
+      Material: 74686313-3cee-4fc9-8efb-7998d5336d7c
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_07_5321
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 6e4a6330-6986-45b1-8206-78579e2994ad
+      Material: c86630e3-4467-4d98-83cd-d72313c3741d
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_09_5463
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 64af1eb7-7ea7-43cd-81d3-99888cbac67e
+      Material: 93a35fa9-5ceb-431e-bd5d-f9792857c4e1
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_paris_building_09_5465
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 248705fe-c297-409b-a8a1-e9f682767da6
+      Material: c63e9cef-115a-43f6-8b20-313cee8ea507
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Chair_01_Mesh_02___9__5949
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: e34cc82c-96ab-4657-85ae-3cd2d1996808
+      Material: 8de89184-096f-427b-9b47-91f551c58233
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Chimney_02C_5975-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 7256ba1a-d85c-42a6-b218-211ac17ac75c
+      Material: fc5820cf-efb3-494b-b271-aff65e44a208
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Chimney_01B_5955-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1648c5ac-d1f4-4f7d-bc06-01ea378357b0
+      Material: 0fe7b945-238d-4a36-ab12-b070aab5a749
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Chimney_02C_5975-2
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: b874ecaf-3279-4670-9c43-12acaf68f9b2
+      Material: b161a1bc-0530-41d3-9147-4d6953c80d34
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Chimney_02B_5973-2
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 79245ddb-6741-4aa6-802b-950c535e8a79
+      Material: 4c0b73b6-2e56-41fb-b724-96824f8233a1
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Chimney_02C_5975-3
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1f5acc1b-501b-4b2c-af2a-2612c92709e8
+      Material: 7b5bf178-a980-4bd7-96a0-96dabdd0513a
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_ElectricBox_5991
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5b9ddf06-9f92-46ef-8bca-1b3a820067af
+      Material: 280efe7e-5e3e-4aa5-9321-28d9734aedd7
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_flowers_01e_6051
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: cf07728b-ca23-4bf1-b9bf-d9466a9abed7
+      Material: 3a97bd19-d1cb-4421-9f61-2169020d0f9e
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_flowers_01d_6047-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: c1189507-37d3-43fa-9620-3d4d188bea61
+      Material: 36fe5894-27d6-407e-a3f6-ab8165ae7492
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Lantern_01A_6071
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: e2cdabad-64b6-4c00-8039-a7fb30978f36
+      Material: f801c589-a5bb-4116-b50e-f7e70cd0fbca
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_LiquorBottle_01A___9__6101-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9583e1f3-2353-4db2-864d-0121aee8fd24
+      Material: f52be9c3-b903-408c-8537-97926760ed05
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_LiquorBottle_01A___9__6101-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 85944d72-2463-487d-90f6-d1a80f04257b
+      Material: 7f51d1f1-f21e-44fe-b63a-4ae137bb9a99
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_LiquorBottle_01A___9__6101-2
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 51077029-a4df-4c18-a285-36c31dc9e80a
+      Material: ce667676-6d21-423c-bbd1-3963889dc580
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_MainBalcony_01_6103-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0bbf3e9f-13ba-4044-a275-e119a6b3445b
+      Material: 1f75dc88-db6e-43d2-9c4c-75166c7adb50
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_MainBalcony_01_6103-2
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 8b4c34d7-6d7e-4ed5-9510-dd931c125f76
+      Material: 66a3da65-f14c-4e5a-934f-8d542bc03faa
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_MainBalcony_01_6103-3
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 6c112856-bfc7-4e5d-a5f1-03ab571ce8d5
+      Material: 062c70ec-a3f6-4602-8fb8-7ca8a6213067
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_MainBalcony_01_6103-4
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 07b57f47-42c5-4309-ad21-c08b292a27c3
+      Material: b44fc33f-97bf-4816-be0b-7489eb117b6a
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_MenuSign_01a_6105
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 3e3e08a4-6fcc-4f14-b933-65dc9f2de12c
+      Material: b236b784-1087-4357-a7f1-822b0109f025
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_MenuSign_01b2_6111-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 6b7e0591-746f-4cd3-bef4-fa3abc28a93a
+      Material: 50c4c861-955e-4096-ae6d-bc6222163b81
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_MenuSign_01b2_6111-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1c1ef928-34a9-4906-8b18-d02ad26bde30
+      Material: 5d6796c9-4186-46e3-8fd4-753d8c9254b1
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_NapkinHolder_01A___9__6133
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 34e84cd4-dc83-4fba-8c71-443d22e4ebd9
+      Material: 5d6ffedd-386d-4930-98cf-5366a774e91c
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_PlantPot_01A_6135
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 93b0eaac-9a89-412c-a628-068d63969193
+      Material: c8aae398-9f5e-4133-8257-2a6adf776d06
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_ShopSign_01C_6161-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 4ac847d7-4eac-4440-a7b8-e3cccad72abb
+      Material: 540ab8db-7ada-4f78-a3c8-2a5cae0be7ba
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_ShopSign_01B2_6159-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 7c4c8092-76ea-431b-b0d8-5ea430680978
+      Material: a4ce8dc3-3361-48ea-a9f0-5b9ada422b0f
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_ShopSign_01D_6165-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 186abaf8-fca8-415d-81b0-43da6b3aaa0e
+      Material: 59459dbb-dddc-44a6-b36e-db7972dd84fa
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_ShopSign_01E_6167-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: b48655d3-f258-45f1-9886-cba704c8b6d3
+      Material: 20b91404-d5a7-453a-a1bc-90707838a3bb
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_SidewalkBarrier_01A_6169
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0399cb8b-f4a4-4aa8-91a5-617f6f15d9a5
+      Material: 9b6d7cdc-08ae-471b-b591-43ac5bcba191
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Street_6251
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 3f2c0a55-5bda-4ef7-91aa-097cf4b33ea0
+      Material: 638501fd-f015-4b6c-b3bb-23537bb15265
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Street_6185-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5ccf02e9-7a24-4aaa-82a7-96af76506a3c
+      Material: b9e8afb2-49b1-46ad-8b01-f102cf6eabb6
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Street_6185-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: e7eed7ba-0d2a-420b-af04-282768a9d79e
+      Material: 96958e2f-b549-4f64-bcb9-f7da57a01296
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Street_6185-2
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 6f461123-77d9-42a4-a40e-990bfecef52c
+      Material: 1aa5e283-060e-48be-a9cd-f9550be4e3f8
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Street_6185-3
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: f61e7443-bf95-4945-88f8-b4c91dac8278
+      Material: b5c34461-1c7c-49b4-934e-0cd128747d57
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Street_6245-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 6980e024-99bd-411c-9c12-473b5486e237
+      Material: c785435a-57b8-4bf8-b8d3-7b01e959af0e
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Street_6239-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 70717a2b-8b7a-4386-a4d3-b56b80b4bcce
+      Material: 3f08de0d-a1e6-433b-bec9-7e5d38d346cd
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Street_6239-2
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 85364cb6-a343-48e1-9c9d-107eb0ec0c5a
+      Material: c28f94fd-be03-4aaf-9b84-46a874513330
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Street_6225-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 54730b8a-e702-4f83-8f77-7d58b0f57242
+      Material: 0ac8971c-b000-4c9a-adc2-5052ff5fd043
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Street_6231-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 77d21ec0-06f4-49f5-ad8a-d4f00f577919
+      Material: 0419702f-0d6f-4a5b-b97d-5f4ddd4b5ce8
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Street_6231-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: f545e447-48f0-446b-95fb-3931e1e0dab8
+      Material: 234e65fb-2572-4878-a2dd-83e06fc9c3c8
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Street_6255
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: fa3d7de7-70cc-430f-88d3-730ce7b70f5b
+      Material: 1307695d-a70a-4590-8a20-8e377c9ffac3
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_StreetLight_01B___9__6311-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: dab3a6d6-f247-4b8d-88df-f74c2d56ae77
+      Material: 5c04acc1-410a-4d5e-a08d-03ff61a2c5fb
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_StreetLight_01a___9__6279-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5420bbee-f3f5-460e-bc8a-f920093cf74b
+      Material: 4b31b5ab-1ab5-49b5-a21a-a7324501130e
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_StringLights_01a8_6487-0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5f55ab03-adbf-4e62-ae47-ba0d06fdaa20
+      Material: 934dd741-314a-4eb6-b7c4-79482fa79096
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_StreetLight_01B___9__6311-2
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 47afe9a0-db99-4c75-9fb0-332e713236da
+      Material: 13ac104a-9f1f-4a85-afac-e3465c960995
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_StreetPivot_09_6467
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: f1d4b7bb-c96c-4a22-a79c-966999cca12f
+      Material: fb001fab-64fa-49f6-b8d4-b7cc6523aedd
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_StreetSign_01A_6469
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 34802bae-bb6f-4c8a-a338-ea5ab3a08ed6
+      Material: 2b5a595c-af40-4276-8b37-f321db874006
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_StringLights_01a8_6487-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 4ccefa47-fc46-4aba-a75c-0e763d8c0500
+      Material: 29614afc-a4fd-420c-8461-df8c14b3a3fa
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_StringLights_01a8_6487-2
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 8dd66bcc-662e-4ea3-8787-9035bdcd064b
+      Material: 19ca6dde-1ccc-4ae0-bbc7-ff145097e5ff
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_StringLights_01a8_6487-3
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 560cc7e2-7f61-4487-adaa-44601e8ad8f0
+      Material: f5774dd2-ed87-415f-889b-e10943b1073d
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_StringLights_01a8_6487-4
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 6514f6eb-0664-42a4-9379-f01be1ac97e4
+      Material: 8de425c2-9366-46f8-84d1-171db64ccc91
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_StringLights_01a8_6487-5
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 80ff88a7-8178-4ab6-a74b-187a163961f7
+      Material: 64cea1f6-b58d-4739-934a-08b5bc00f52e
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_StringLights_01a8_6487-6
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 182bbbaa-7aae-4d58-bab1-f546385f8b8c
+      Material: 027b73b4-a60b-4772-ab92-89d873fae06c
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_Table_01___9__6509
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: e93b843b-4906-4c4e-b1c1-1893da48d71e
+      Material: d9cae797-4794-45ca-a6a9-6a18beda77be
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Paris_TrafficSign_01A_6511
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: cd6a892a-5c65-45b7-8ad4-0df8305bda00
+      Material: d7747afd-cb34-45fb-84fe-d1920d4acae7
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_TrashCanOpen_01A_6527
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 55741c58-e947-443f-be7e-720485744231
+      Material: 04367268-41a3-43b0-9759-d74e37bd88d6
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Spotlights_6525-1
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: ff709f6e-827c-4594-9f94-15cf01803322
+      Material: 76c63888-ab54-4e73-8860-03f24d6ff88f
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Spotlights_6525-2
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 38a86003-6307-4231-85a2-3d8f442ac1f8
+      Material: 41291e3b-6c6b-4719-b0d0-5a1ddfe52aa1
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: Bistro_Research_Exterior_Spotlights_6525-3
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 520d7b77-2f0d-4766-95de-62c950ccfbbc
+      Material: 7ee41b90-8c85-4562-8698-cfaddb34e4f8
+      RenderingOrder: 5
+    Childs:
+      []

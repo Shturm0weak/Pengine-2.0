@@ -60,6 +60,12 @@ namespace Pengine
 			const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
 			void* frame) = 0;
 
+		virtual void Dispatch(
+			const std::shared_ptr<Pipeline>& pipeline,
+			const glm::uvec3& groupCount,
+			const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
+			void* frame) = 0;
+
 		virtual void MemoryBarrierFragmentReadWrite(void* frame) = 0;
 
 		virtual void BeginCommandLabel(

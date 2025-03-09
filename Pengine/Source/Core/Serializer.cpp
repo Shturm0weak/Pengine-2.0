@@ -551,6 +551,396 @@ std::string Serializer::GenerateFileUUID(const std::filesystem::path& filepath)
 	return uuid;
 }
 
+void Serializer::DeserializeDescriptorSets(
+	const YAML::detail::iterator_value& pipelineData,
+	const std::string& passName,
+	std::map<Pipeline::DescriptorSetIndexType, std::map<std::string, uint32_t>>& descriptorSetIndicesByType)
+{
+	for (const auto& descriptorSetData : pipelineData["DescriptorSets"])
+	{
+		Pipeline::DescriptorSetIndexType type{};
+		if (const auto& typeData = descriptorSetData["Type"])
+		{
+			std::string typeName = typeData.as<std::string>();
+			if (typeName == "Renderer")
+			{
+				type = Pipeline::DescriptorSetIndexType::RENDERER;
+			}
+			else if (typeName == "RenderPass")
+			{
+				type = Pipeline::DescriptorSetIndexType::RENDERPASS;
+			}
+			else if (typeName == "BaseMaterial")
+			{
+				type = Pipeline::DescriptorSetIndexType::BASE_MATERIAL;
+			}
+			else if (typeName == "Material")
+			{
+				type = Pipeline::DescriptorSetIndexType::MATERIAL;
+			}
+			else if (typeName == "Object")
+			{
+				type = Pipeline::DescriptorSetIndexType::OBJECT;
+			}
+		}
+
+		std::string attachedPassName = passName;
+		if (const auto& passNameData = descriptorSetData["RenderPass"])
+		{
+			attachedPassName = passNameData.as<std::string>();
+		}
+
+		uint32_t set = 0;
+		if (const auto& setData = descriptorSetData["Set"])
+		{
+			set = setData.as<uint32_t>();
+		}
+
+		descriptorSetIndicesByType[type][attachedPassName] = set;
+	}
+}
+
+void Serializer::DeserializeShaderFilepaths(
+	const YAML::detail::iterator_value& pipelineData,
+	std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType)
+{
+	auto getShaderFilepath = [](const YAML::Node& node)
+	{
+		const std::string filepathOrUUID = node.as<std::string>();
+		return std::filesystem::exists(filepathOrUUID) ? filepathOrUUID : Utils::FindFilepath(filepathOrUUID).string();
+	};
+
+	if (const auto& vertexData = pipelineData["Vertex"])
+	{
+		shaderFilepathsByType[Pipeline::ShaderType::VERTEX] = getShaderFilepath(vertexData);
+	}
+
+	if (const auto& fragmentData = pipelineData["Fragment"])
+	{
+		shaderFilepathsByType[Pipeline::ShaderType::FRAGMENT] = getShaderFilepath(fragmentData);
+	}
+
+	if (const auto& geometryData = pipelineData["Geometry"])
+	{
+		shaderFilepathsByType[Pipeline::ShaderType::GEOMETRY] = getShaderFilepath(geometryData);
+	}
+
+	if (const auto& computeData = pipelineData["Compute"])
+	{
+		shaderFilepathsByType[Pipeline::ShaderType::COMPUTE] = getShaderFilepath(computeData);
+	}
+}
+
+GraphicsPipeline::CreateGraphicsInfo Serializer::DeserializeGraphicsPipeline(const YAML::detail::iterator_value& pipelineData)
+{
+	std::string passName;
+
+	GraphicsPipeline::CreateGraphicsInfo createGraphicsInfo{};
+	if (const auto& renderPassData = pipelineData["RenderPass"])
+	{
+		passName = renderPassData.as<std::string>();
+		createGraphicsInfo.renderPass = RenderPassManager::GetInstance().GetRenderPass(passName);
+	}
+
+	if (const auto& depthTestData = pipelineData["DepthTest"])
+	{
+		createGraphicsInfo.depthTest = depthTestData.as<bool>();
+	}
+
+	if (const auto& depthWriteData = pipelineData["DepthWrite"])
+	{
+		createGraphicsInfo.depthWrite = depthWriteData.as<bool>();
+	}
+
+	if (const auto& depthClampData = pipelineData["DepthClamp"])
+	{
+		createGraphicsInfo.depthClamp = depthClampData.as<bool>();
+	}
+
+	if (const auto& depthCompareData = pipelineData["DepthCompare"])
+	{
+		const std::string depthCompare = depthCompareData.as<std::string>();
+		if (depthCompare == "Never")
+		{
+			createGraphicsInfo.depthCompare = GraphicsPipeline::DepthCompare::NEVER;
+		}
+		else if (depthCompare == "Less")
+		{
+			createGraphicsInfo.depthCompare = GraphicsPipeline::DepthCompare::LESS;
+		}
+		else if (depthCompare == "Equal")
+		{
+			createGraphicsInfo.depthCompare = GraphicsPipeline::DepthCompare::EQUAL;
+		}
+		else if (depthCompare == "LessOrEqual")
+		{
+			createGraphicsInfo.depthCompare = GraphicsPipeline::DepthCompare::LESS_OR_EQUAL;
+		}
+		else if (depthCompare == "Greater")
+		{
+			createGraphicsInfo.depthCompare = GraphicsPipeline::DepthCompare::GREATER;
+		}
+		else if (depthCompare == "NotEqual")
+		{
+			createGraphicsInfo.depthCompare = GraphicsPipeline::DepthCompare::NOT_EQUAL;
+		}
+		else if (depthCompare == "GreaterOrEqual")
+		{
+			createGraphicsInfo.depthCompare = GraphicsPipeline::DepthCompare::GREATER_OR_EQUAL;
+		}
+		else if (depthCompare == "Always")
+		{
+			createGraphicsInfo.depthCompare = GraphicsPipeline::DepthCompare::ALWAYS;
+		}
+	}
+
+	if (const auto& cullModeData = pipelineData["CullMode"])
+	{
+		if (const std::string& cullMode = cullModeData.as<std::string>(); cullMode == "Front")
+		{
+			createGraphicsInfo.cullMode = GraphicsPipeline::CullMode::FRONT;
+		}
+		else if(cullMode == "Back")
+		{
+			createGraphicsInfo.cullMode = GraphicsPipeline::CullMode::BACK;
+		}
+		else if (cullMode == "FrontAndBack")
+		{
+			createGraphicsInfo.cullMode = GraphicsPipeline::CullMode::FRONT_AND_BACK;
+		}
+		else if (cullMode == "None")
+		{
+			createGraphicsInfo.cullMode = GraphicsPipeline::CullMode::NONE;
+		}
+	}
+
+	if (const auto& topologyModeData = pipelineData["TopologyMode"])
+	{
+		if (const std::string& topologyMode = topologyModeData.as<std::string>(); topologyMode == "LineList")
+		{
+			createGraphicsInfo.topologyMode = GraphicsPipeline::TopologyMode::LINE_LIST;
+		}
+		else if (topologyMode == "PointList")
+		{
+			createGraphicsInfo.topologyMode = GraphicsPipeline::TopologyMode::POINT_LIST;
+		}
+		else if (topologyMode == "TriangleList")
+		{
+			createGraphicsInfo.topologyMode = GraphicsPipeline::TopologyMode::TRIANGLE_LIST;
+		}
+	}
+
+	if (const auto& polygonModeData = pipelineData["PolygonMode"])
+	{
+		if (const std::string& polygonMode = polygonModeData.as<std::string>(); polygonMode == "Fill")
+		{
+			createGraphicsInfo.polygonMode = GraphicsPipeline::PolygonMode::FILL;
+		}
+		else if (polygonMode == "Line")
+		{
+			createGraphicsInfo.polygonMode = GraphicsPipeline::PolygonMode::LINE;
+		}
+	}
+
+	DeserializeShaderFilepaths(pipelineData, createGraphicsInfo.shaderFilepathsByType);
+
+	DeserializeDescriptorSets(pipelineData, passName, createGraphicsInfo.descriptorSetIndicesByType);
+
+	for (const auto& vertexInputBindingDescriptionData : pipelineData["VertexInputBindingDescriptions"])
+	{
+		auto& bindingDescription = createGraphicsInfo.bindingDescriptions.emplace_back();
+
+		if (const auto& bindingData = vertexInputBindingDescriptionData["Binding"])
+		{
+			bindingDescription.binding = bindingData.as<uint32_t>();
+		}
+
+		if (const auto& inputRateData = vertexInputBindingDescriptionData["InputRate"])
+		{
+			std::string inputRateName = inputRateData.as<std::string>();
+			if (inputRateName == "Vertex")
+			{
+				bindingDescription.inputRate = GraphicsPipeline::InputRate::VERTEX;
+			}
+			else if (inputRateName == "Instance")
+			{
+				bindingDescription.inputRate = GraphicsPipeline::InputRate::INSTANCE;
+			}
+		}
+
+		for (const auto& nameData : vertexInputBindingDescriptionData["Names"])
+		{
+			bindingDescription.names.emplace_back(nameData.as<std::string>());
+		}
+
+		if (const auto& tagData = vertexInputBindingDescriptionData["Tag"])
+		{
+			bindingDescription.tag = tagData.as<std::string>();
+		}
+	}
+
+	for (const auto& colorBlendStateData : pipelineData["ColorBlendStates"])
+	{
+		GraphicsPipeline::BlendStateAttachment blendStateAttachment{};
+
+		if (const auto& blendEnabledData = colorBlendStateData["BlendEnabled"])
+		{
+			blendStateAttachment.blendEnabled = blendEnabledData.as<bool>();
+		}
+
+		auto blendOpParse = [](const std::string& blendOpType)
+		{
+			if (blendOpType == "add")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendOp::ADD;
+			}
+			else if (blendOpType == "subtract")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendOp::SUBTRACT;
+			}
+			else if (blendOpType == "reverse subtract")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendOp::REVERSE_SUBTRACT;
+			}
+			else if (blendOpType == "max")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendOp::MAX;
+			}
+			else if (blendOpType == "min")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendOp::MIN;
+			}
+
+			Logger::Error(blendOpType + ":Can't parse blend op type!");
+			return GraphicsPipeline::BlendStateAttachment::BlendOp::ADD;
+		};
+
+		auto blendFactorParse = [](const std::string& blendFactorType)
+		{
+			if (blendFactorType == "constant alpha")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::CONSTANT_ALPHA;
+			}
+			else if (blendFactorType == "constant color")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::CONSTANT_COLOR;
+			}
+			else if (blendFactorType == "dst alpha")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::DST_ALPHA;
+			}
+			else if (blendFactorType == "dst color")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::DST_COLOR;
+			}
+			else if (blendFactorType == "one")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE;
+			}
+			else if (blendFactorType == "one minus constant alpha")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_ALPHA;
+			}
+			else if (blendFactorType == "one minus constant color")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_COLOR;
+			}
+			else if (blendFactorType == "one minus dst alpha")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_ALPHA;
+			}
+			else if (blendFactorType == "one minus dst color")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_COLOR;
+			}
+			else if (blendFactorType == "one minus src alpha")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_ALPHA;
+			}
+			else if (blendFactorType == "one minus src color")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_COLOR;
+			}
+			else if (blendFactorType == "src alpha")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA;
+			}
+			else if (blendFactorType == "src alpha saturate")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA_SATURATE;
+			}
+			else if (blendFactorType == "src color")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::SRC_COLOR;
+			}
+			else if (blendFactorType == "zero")
+			{
+				return GraphicsPipeline::BlendStateAttachment::BlendFactor::ZERO;
+			}
+
+			Logger::Error(blendFactorType + ":Can't parse blend factor type!");
+			return GraphicsPipeline::BlendStateAttachment::BlendFactor::ONE;
+		};
+
+		if (const auto& blendOpData = colorBlendStateData["ColorBlendOp"])
+		{
+			blendStateAttachment.colorBlendOp = blendOpParse(blendOpData.as<std::string>());
+		}
+
+		if (const auto& blendOpData = colorBlendStateData["AlphaBlendOp"])
+		{
+			blendStateAttachment.alphaBlendOp = blendOpParse(blendOpData.as<std::string>());
+		}
+
+		if (const auto& srcBlendFactorData = colorBlendStateData["SrcColorBlendFactor"])
+		{
+			blendStateAttachment.srcColorBlendFactor = blendFactorParse(srcBlendFactorData.as<std::string>());
+		}
+
+		if (const auto& dstBlendFactorData = colorBlendStateData["DstColorBlendFactor"])
+		{
+			blendStateAttachment.dstColorBlendFactor = blendFactorParse(dstBlendFactorData.as<std::string>());
+		}
+
+		if (const auto& srcBlendFactorData = colorBlendStateData["SrcAlphaBlendFactor"])
+		{
+			blendStateAttachment.srcAlphaBlendFactor = blendFactorParse(srcBlendFactorData.as<std::string>());
+		}
+
+		if (const auto& dstBlendFactorData = colorBlendStateData["DstAlphaBlendFactor"])
+		{
+			blendStateAttachment.dstAlphaBlendFactor = blendFactorParse(dstBlendFactorData.as<std::string>());
+		}
+
+		createGraphicsInfo.colorBlendStateAttachments.emplace_back(blendStateAttachment);
+	}
+
+	ParseUniformValues(pipelineData, createGraphicsInfo.uniformInfo);
+
+	return createGraphicsInfo;
+}
+
+
+ComputePipeline::CreateComputeInfo Serializer::DeserializeComputePipeline(const YAML::detail::iterator_value& pipelineData)
+{
+	std::string passName;
+
+	ComputePipeline::CreateComputeInfo createComputeInfo{};
+	if (const auto& renderPassData = pipelineData["RenderPass"])
+	{
+		passName = renderPassData.as<std::string>();
+		createComputeInfo.passName = passName;
+	}
+
+	DeserializeShaderFilepaths(pipelineData, createComputeInfo.shaderFilepathsByType);
+
+	DeserializeDescriptorSets(pipelineData, passName, createComputeInfo.descriptorSetIndicesByType);
+
+	ParseUniformValues(pipelineData, createComputeInfo.uniformInfo);
+
+	return createComputeInfo;
+}
+
 BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::path& filepath)
 {
 	if (!std::filesystem::exists(filepath))
@@ -579,359 +969,55 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 
 	BaseMaterial::CreateInfo createInfo{};
 
-	std::vector<Pipeline::CreateInfo>& pipelineCreateInfos = createInfo.pipelineCreateInfos;
 	for (const auto& pipelineData : materialData["Pipelines"])
 	{
-		std::string renderPassName;
-
-		Pipeline::CreateInfo pipelineCreateInfo{};
-		if (const auto& renderPassData = pipelineData["RenderPass"])
+		Pipeline::Type type = Pipeline::Type::GRAPHICS;
+		if (const auto& typeData = pipelineData["Type"])
 		{
-			renderPassName = renderPassData.as<std::string>();
-			pipelineCreateInfo.renderPass = RenderPassManager::GetInstance().GetRenderPass(renderPassName);
-		}
-
-		if (const auto& depthTestData = pipelineData["DepthTest"])
-		{
-			pipelineCreateInfo.depthTest = depthTestData.as<bool>();
-		}
-		
-		if (const auto& depthWriteData = pipelineData["DepthWrite"])
-		{
-			pipelineCreateInfo.depthWrite = depthWriteData.as<bool>();
-		}
-
-		if (const auto& depthClampData = pipelineData["DepthClamp"])
-		{
-			pipelineCreateInfo.depthClamp = depthClampData.as<bool>();
-		}
-
-		if (const auto& depthCompareData = pipelineData["DepthCompare"])
-		{
-			const std::string depthCompare = depthCompareData.as<std::string>();
-			if (depthCompare == "Never")
+			std::string typeString = typeData.as<std::string>();
+			if (typeString == "Graphics")
 			{
-				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::NEVER;
+				type = Pipeline::Type::GRAPHICS;
 			}
-			else if (depthCompare == "Less")
+			else if (typeString == "Compute")
 			{
-				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::LESS;
-			}
-			else if (depthCompare == "Equal")
-			{
-				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::EQUAL;
-			}
-			else if (depthCompare == "LessOrEqual")
-			{
-				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::LESS_OR_EQUAL;
-			}
-			else if (depthCompare == "Greater")
-			{
-				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::GREATER;
-			}
-			else if (depthCompare == "NotEqual")
-			{
-				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::NOT_EQUAL;
-			}
-			else if (depthCompare == "GreaterOrEqual")
-			{
-				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::GREATER_OR_EQUAL;
-			}
-			else if (depthCompare == "Always")
-			{
-				pipelineCreateInfo.depthCompare = Pipeline::DepthCompare::ALWAYS;
+				type = Pipeline::Type::COMPUTE;
 			}
 		}
 
-		if (const auto& cullModeData = pipelineData["CullMode"])
+		auto checkFilepaths = [](
+			const std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType,
+			const std::string& baseMaterialFilepath)
 		{
-			if (const std::string& cullMode = cullModeData.as<std::string>(); cullMode == "Front")
+			for (const auto& [type, shaderFilepath] : shaderFilepathsByType)
 			{
-				pipelineCreateInfo.cullMode = Pipeline::CullMode::FRONT;
+				if (shaderFilepath.empty())
+				{
+					FATAL_ERROR("BaseMaterial: " + baseMaterialFilepath + " has empty shader filepath for type " + std::to_string((int)type) + "!");
+				}
 			}
-			else if(cullMode == "Back")
-			{
-				pipelineCreateInfo.cullMode = Pipeline::CullMode::BACK;
-			}
-			else if (cullMode == "FrontAndBack")
-			{
-				pipelineCreateInfo.cullMode = Pipeline::CullMode::FRONT_AND_BACK;
-			}
-			else if (cullMode == "None")
-			{
-				pipelineCreateInfo.cullMode = Pipeline::CullMode::NONE;
-			}
-		}
-
-		if (const auto& topologyModeData = pipelineData["TopologyMode"])
-		{
-			if (const std::string& topologyMode = topologyModeData.as<std::string>(); topologyMode == "LineList")
-			{
-				pipelineCreateInfo.topologyMode = Pipeline::TopologyMode::LINE_LIST;
-			}
-			else if (topologyMode == "PointList")
-			{
-				pipelineCreateInfo.topologyMode = Pipeline::TopologyMode::POINT_LIST;
-			}
-			else if (topologyMode == "TriangleList")
-			{
-				pipelineCreateInfo.topologyMode = Pipeline::TopologyMode::TRIANGLE_LIST;
-			}
-		}
-
-		if (const auto& polygonModeData = pipelineData["PolygonMode"])
-		{
-			if (const std::string& polygonMode = polygonModeData.as<std::string>(); polygonMode == "Fill")
-			{
-				pipelineCreateInfo.polygonMode = Pipeline::PolygonMode::FILL;
-			}
-			else if (polygonMode == "Line")
-			{
-				pipelineCreateInfo.polygonMode = Pipeline::PolygonMode::LINE;
-			}
-		}
-
-		auto getShaderFilepath = [](const YAML::Node& node)
-		{
-			const std::string filepathOrUUID = node.as<std::string>();
-			return std::filesystem::exists(filepathOrUUID) ? filepathOrUUID : Utils::FindFilepath(filepathOrUUID).string();
 		};
 
-		if (const auto& vertexData = pipelineData["Vertex"])
+		if (type == Pipeline::Type::GRAPHICS)
 		{
-			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::VERTEX] = getShaderFilepath(vertexData);
-		}
+			createInfo.pipelineCreateGraphicsInfos.emplace_back(DeserializeGraphicsPipeline(pipelineData));
+			createInfo.pipelineCreateGraphicsInfos.back().type = type;
 
-		if (const auto& fragmentData = pipelineData["Fragment"])
-		{
-			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::FRAGMENT] = getShaderFilepath(fragmentData);
-		}
-
-		if (const auto& geometryData = pipelineData["Geometry"])
-		{
-			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::GEOMETRY] = getShaderFilepath(geometryData);
-		}
-
-		if (const auto& computeData = pipelineData["Compute"])
-		{
-			pipelineCreateInfo.shaderFilepathsByType[Pipeline::ShaderType::COMPUTE] = getShaderFilepath(computeData);
-		}
-
-		for (const auto& descriptorSetData : pipelineData["DescriptorSets"])
-		{
-			Pipeline::DescriptorSetIndexType type{};
-			if (const auto& typeData = descriptorSetData["Type"])
+			for (const auto& pipelineCreateGraphicsInfo : createInfo.pipelineCreateGraphicsInfos)
 			{
-				std::string typeName = typeData.as<std::string>();
-				if (typeName == "Renderer")
-				{
-					type = Pipeline::DescriptorSetIndexType::RENDERER;
-				}
-				else if (typeName == "RenderPass")
-				{
-					type = Pipeline::DescriptorSetIndexType::RENDERPASS;
-				}
-				else if (typeName == "BaseMaterial")
-				{
-					type = Pipeline::DescriptorSetIndexType::BASE_MATERIAL;
-				}
-				else if (typeName == "Material")
-				{
-					type = Pipeline::DescriptorSetIndexType::MATERIAL;
-				}
-				else if (typeName == "Object")
-				{
-					type = Pipeline::DescriptorSetIndexType::OBJECT;
-				}
-			}
-
-			std::string attachedrenderPassName = renderPassName;
-			if (const auto& renderPassNameData = descriptorSetData["RenderPass"])
-			{
-				attachedrenderPassName = renderPassNameData.as<std::string>();
-			}
-
-			uint32_t set = 0;
-			if (const auto& setData = descriptorSetData["Set"])
-			{
-				set = setData.as<uint32_t>();
-			}
-
-			pipelineCreateInfo.descriptorSetIndicesByType[type][attachedrenderPassName] = set;
-		}
-
-		for (const auto& vertexInputBindingDescriptionData : pipelineData["VertexInputBindingDescriptions"])
-		{
-			auto& bindingDescription = pipelineCreateInfo.bindingDescriptions.emplace_back();
-
-			if (const auto& bindingData = vertexInputBindingDescriptionData["Binding"])
-			{
-				bindingDescription.binding = bindingData.as<uint32_t>();
-			}
-
-			if (const auto& inputRateData = vertexInputBindingDescriptionData["InputRate"])
-			{
-				std::string inputRateName = inputRateData.as<std::string>();
-				if (inputRateName == "Vertex")
-				{
-					bindingDescription.inputRate = Pipeline::InputRate::VERTEX;
-				}
-				else if (inputRateName == "Instance")
-				{
-					bindingDescription.inputRate = Pipeline::InputRate::INSTANCE;
-				}
-			}
-
-			for (const auto& nameData : vertexInputBindingDescriptionData["Names"])
-			{
-				bindingDescription.names.emplace_back(nameData.as<std::string>());
-			}
-
-			if (const auto& tagData = vertexInputBindingDescriptionData["Tag"])
-			{
-				bindingDescription.tag = tagData.as<std::string>();
+				checkFilepaths(pipelineCreateGraphicsInfo.shaderFilepathsByType, filepath.string());
 			}
 		}
-
-		for (const auto& colorBlendStateData : pipelineData["ColorBlendStates"])
+		else if (type == Pipeline::Type::COMPUTE)
 		{
-			Pipeline::BlendStateAttachment blendStateAttachment{};
-			
-			if (const auto& blendEnabledData = colorBlendStateData["BlendEnabled"])
+			createInfo.pipelineCreateComputeInfos.emplace_back(DeserializeComputePipeline(pipelineData));
+			createInfo.pipelineCreateComputeInfos.back().type = type;
+
+			for (const auto& pipelineCreateGraphicsInfo : createInfo.pipelineCreateGraphicsInfos)
 			{
-				blendStateAttachment.blendEnabled = blendEnabledData.as<bool>();
+				checkFilepaths(pipelineCreateGraphicsInfo.shaderFilepathsByType, filepath.string());
 			}
-			
-			auto blendOpParse = [](const std::string& blendOpType)
-			{
-				if (blendOpType == "add")
-				{
-					return Pipeline::BlendStateAttachment::BlendOp::ADD;
-				}
-				else if (blendOpType == "subtract")
-				{
-					return Pipeline::BlendStateAttachment::BlendOp::SUBTRACT;
-				}
-				else if (blendOpType == "reverse subtract")
-				{
-					return Pipeline::BlendStateAttachment::BlendOp::REVERSE_SUBTRACT;
-				}
-				else if (blendOpType == "max")
-				{
-					return Pipeline::BlendStateAttachment::BlendOp::MAX;
-				}
-				else if (blendOpType == "min")
-				{
-					return Pipeline::BlendStateAttachment::BlendOp::MIN;
-				}
-
-				Logger::Error(blendOpType + ":Can't parse blend op type!");
-				return Pipeline::BlendStateAttachment::BlendOp::ADD;
-			};
-
-			auto blendFactorParse = [](const std::string& blendFactorType)
-			{
-				if (blendFactorType == "constant alpha")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::CONSTANT_ALPHA;
-				}
-				else if (blendFactorType == "constant color")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::CONSTANT_COLOR;
-				}
-				else if (blendFactorType == "dst alpha")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::DST_ALPHA;
-				}
-				else if (blendFactorType == "dst color")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::DST_COLOR;
-				}
-				else if (blendFactorType == "one")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::ONE;
-				}
-				else if (blendFactorType == "one minus constant alpha")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_ALPHA;
-				}
-				else if (blendFactorType == "one minus constant color")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_CONSTANT_COLOR;
-				}
-				else if (blendFactorType == "one minus dst alpha")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_ALPHA;
-				}
-				else if (blendFactorType == "one minus dst color")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_DST_COLOR;
-				}
-				else if (blendFactorType == "one minus src alpha")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_ALPHA;
-				}
-				else if (blendFactorType == "one minus src color")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::ONE_MINUS_SRC_COLOR;
-				}
-				else if (blendFactorType == "src alpha")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA;
-				}
-				else if (blendFactorType == "src alpha saturate")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::SRC_ALPHA_SATURATE;
-				}
-				else if (blendFactorType == "src color")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::SRC_COLOR;
-				}
-				else if (blendFactorType == "zero")
-				{
-					return Pipeline::BlendStateAttachment::BlendFactor::ZERO;
-				}
-
-				Logger::Error(blendFactorType + ":Can't parse blend factor type!");
-				return Pipeline::BlendStateAttachment::BlendFactor::ONE;
-			};
-
-			if (const auto& blendOpData = colorBlendStateData["ColorBlendOp"])
-			{
-				blendStateAttachment.colorBlendOp = blendOpParse(blendOpData.as<std::string>());
-			}
-
-			if (const auto& blendOpData = colorBlendStateData["AlphaBlendOp"])
-			{
-				blendStateAttachment.alphaBlendOp = blendOpParse(blendOpData.as<std::string>());
-			}
-
-			if (const auto& srcBlendFactorData = colorBlendStateData["SrcColorBlendFactor"])
-			{
-				blendStateAttachment.srcColorBlendFactor = blendFactorParse(srcBlendFactorData.as<std::string>());
-			}
-
-			if (const auto& dstBlendFactorData = colorBlendStateData["DstColorBlendFactor"])
-			{
-				blendStateAttachment.dstColorBlendFactor = blendFactorParse(dstBlendFactorData.as<std::string>());
-			}
-
-			if (const auto& srcBlendFactorData = colorBlendStateData["SrcAlphaBlendFactor"])
-			{
-				blendStateAttachment.srcAlphaBlendFactor = blendFactorParse(srcBlendFactorData.as<std::string>());
-			}
-
-			if (const auto& dstBlendFactorData = colorBlendStateData["DstAlphaBlendFactor"])
-			{
-				blendStateAttachment.dstAlphaBlendFactor = blendFactorParse(dstBlendFactorData.as<std::string>());
-			}
-
-			pipelineCreateInfo.colorBlendStateAttachments.emplace_back(blendStateAttachment);
 		}
-
-		ParseUniformValues(pipelineData, pipelineCreateInfo.uniformInfo);
-
-		pipelineCreateInfos.emplace_back(pipelineCreateInfo);
 	}
 
 	Logger::Log("BaseMaterial:" + filepath.string() + " has been loaded!", BOLDGREEN);
@@ -1097,17 +1183,17 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material, bo
 
 	out << YAML::BeginSeq;
 
-	for (const auto& [renderPassName, pipeline] : material->GetBaseMaterial()->GetPipelinesByRenderPass())
+	for (const auto& [passName, pipeline] : material->GetBaseMaterial()->GetPipelinesByPass())
 	{
 		out << YAML::BeginMap;
 
-		out << YAML::Key << "RenderPass" << YAML::Value << renderPassName;
+		out << YAML::Key << "RenderPass" << YAML::Value << passName;
 
 		out << YAML::Key << "Uniforms";
 
 		out << YAML::BeginSeq;
 
-		std::optional<uint32_t> descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, renderPassName);
+		std::optional<uint32_t> descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, passName);
 		if (!descriptorSetIndex)
 		{
 			out << YAML::EndSeq;
@@ -1125,7 +1211,7 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material, bo
 			if (binding.type == ShaderReflection::Type::COMBINED_IMAGE_SAMPLER)
 			{
 				out << YAML::Key << "Value" << YAML::Value << 
-				Utils::FindUuid(material->GetUniformWriter(renderPassName)->GetTexture(binding.name)->GetFilepath());
+				Utils::FindUuid(material->GetUniformWriter(passName)->GetTexture(binding.name)->GetFilepath());
 			}
 			else if (binding.type == ShaderReflection::Type::UNIFORM_BUFFER)
 			{
@@ -3412,7 +3498,7 @@ void Serializer::SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entit
 	out << YAML::Key << "Type" << YAML::Value << static_cast<int>(camera.GetType());
 	out << YAML::Key << "ZNear" << YAML::Value << camera.GetZNear();
 	out << YAML::Key << "ZFar" << YAML::Value << camera.GetZFar();
-	out << YAML::Key << "RenderPassName" << YAML::Value << camera.GetRenderPassName();
+	out << YAML::Key << "PassName" << YAML::Value << camera.GetPassName();
 	out << YAML::Key << "RenderTargetIndex" << YAML::Value << camera.GetRenderTargetIndex();
 
 	// TODO: Maybe do it more optimal.
@@ -3461,9 +3547,9 @@ void Serializer::DeserializeCamera(const YAML::Node& in, const std::shared_ptr<E
 			camera.SetZFar(zFarData.as<float>());
 		}
 
-		if (const auto& renderPassNameData = cameraData["RenderPassName"])
+		if (const auto& passNameData = cameraData["PassName"])
 		{
-			camera.SetRenderPassName(renderPassNameData.as<std::string>());
+			camera.SetPassName(passNameData.as<std::string>());
 		}
 
 		if (const auto& renderTargetIndexData = cameraData["RenderTargetIndex"])
@@ -4062,22 +4148,22 @@ void Serializer::ParseUniformValues(
 			}
 		}
 
-		if (const auto& nameData = uniformData["RenderTarget"])
+		if (const auto& nameData = uniformData["TextureAttachment"])
 		{
-			std::string renderTargetName = nameData.as<std::string>();
-			size_t openBracketIndex = renderTargetName.find_first_of('[');
+			std::string textureAttachmentName = nameData.as<std::string>();
+			size_t openBracketIndex = textureAttachmentName.find_first_of('[');
 			if (openBracketIndex != std::string::npos)
 			{
-				size_t closeBracketIndex = renderTargetName.find_last_of(']');
+				size_t closeBracketIndex = textureAttachmentName.find_last_of(']');
 				if (closeBracketIndex != std::string::npos)
 				{
-					UniformLayout::RenderTargetInfo renderTargetInfo{};
+					Pipeline::TextureAttachmentInfo textureAttachmentInfo{};
 
-					const std::string attachmentIndexString = renderTargetName.substr(openBracketIndex + 1, closeBracketIndex - openBracketIndex - 1);
-					renderTargetInfo.renderPassName = renderTargetName.substr(0, openBracketIndex);
-					renderTargetInfo.attachmentIndex = std::stoul(attachmentIndexString);
+					const std::string attachmentIndexString = textureAttachmentName.substr(openBracketIndex + 1, closeBracketIndex - openBracketIndex - 1);
+					textureAttachmentInfo.name = textureAttachmentName.substr(0, openBracketIndex);
+					textureAttachmentInfo.attachmentIndex = std::stoul(attachmentIndexString);
 
-					uniformsInfo.renderTargetsByName[uniformName] = renderTargetInfo;
+					uniformsInfo.textureAttachmentsByName[uniformName] = textureAttachmentInfo;
 				}
 				else
 				{
@@ -4086,13 +4172,16 @@ void Serializer::ParseUniformValues(
 			}
 			else
 			{
-				Logger::Warning(uniformName + ": no attachment index for render target!");
+				// If no attachment index then the texture should be a storage texture.
+				Pipeline::TextureAttachmentInfo textureAttachmentInfo{};
+				textureAttachmentInfo.name = textureAttachmentName;
+				uniformsInfo.textureAttachmentsByName[uniformName] = textureAttachmentInfo;
 			}
 		}
 
-		if (const auto& nameData = uniformData["RenderTargetDefault"])
+		if (const auto& nameData = uniformData["TextureAttachmentDefault"])
 		{
-			uniformsInfo.renderTargetsByName[uniformName].renderTargetDefault = nameData.as<std::string>();
+			uniformsInfo.textureAttachmentsByName[uniformName].defaultName = nameData.as<std::string>();
 		}
 	}
 }

@@ -1,0 +1,59 @@
+Mat:
+  Basemat: 29181c47-c273-47f2-b4dc-03daed0c8590
+  Options:
+    - Name: Transparency
+      IsEnabled: false
+      Active:
+        - Transparent
+      Inactive:
+        - GBuffer
+  Pipelines:
+    - RenderPass: ZPrePass
+      Uniforms:
+        []
+    - RenderPass: CSM
+      Uniforms:
+        []
+    - RenderPass: Transparent
+      Uniforms:
+        []
+    - RenderPass: GBuffer
+      Uniforms:
+        - Name: albedoTexture
+          Value: 200677c6-b2ac-4093-85af-7267dabbf061
+        - Name: normalTexture
+          Value: c214823a-0cca-470e-8274-c194c7b31b5e
+        - Name: metalnessTexture
+          Value: a1797a6e-80e1-4da8-98d2-dc21e17f4e22
+        - Name: roughnessTexture
+          Value: a1797a6e-80e1-4da8-98d2-dc21e17f4e22
+        - Name: aoTexture
+          Value: ""
+        - Name: emissiveTexture
+          Value: ""
+        - Name: GBufferMaterial
+          Values:
+            - Name: material.albedoColor
+              Value: [1, 1, 1, 1]
+              Type: vec4
+            - Name: material.emissiveColor
+              Value: [0, 0, 0, 1]
+              Type: vec4
+            - Name: material.uvTransform
+              Value: [1, 1, 0, 0]
+              Type: vec4
+            - Name: material.metallicFactor
+              Value: 1
+              Type: float
+            - Name: material.roughnessFactor
+              Value: 1
+              Type: float
+            - Name: material.aoFactor
+              Value: 1
+              Type: float
+            - Name: material.emissiveFactor
+              Value: 0
+              Type: float
+            - Name: material.useNormalMap
+              Value: 1
+              Type: int

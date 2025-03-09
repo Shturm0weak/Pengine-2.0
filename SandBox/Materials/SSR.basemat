@@ -1,13 +1,8 @@
 Basemat:
   Pipelines:
     - RenderPass: SSR
-      DepthTest: false
-      DepthWrite: false
-      CullMode: None
-      PolygonMode: Fill
-      TopologyMode: TriangleList
-      Vertex: Shaders/SSR.vert
-      Fragment: Shaders/SSR.frag
+      Type: Compute
+      Compute: Shaders/SSR.comp
       DescriptorSets:
         - Type: Renderer
           RenderPass: DefaultReflection
@@ -15,20 +10,12 @@ Basemat:
         - Type: Renderer
           RenderPass: SSR
           Set: 1
-      VertexInputBindingDescriptions:
-        - Binding: 0
-          InputRate: Vertex
-          Tag: Position
-          Names:
-            - positionA
-      ColorBlendStates:
-        - BlendEnabled: false
       Uniforms:
         - Name: normalTexture
-          RenderTarget: "GBuffer[1]"
+          TextureAttachment: "GBuffer[1]"
         - Name: shadingTexture
-          RenderTarget: "GBuffer[2]"
+          TextureAttachment: "GBuffer[2]"
         - Name: depthTexture
-          RenderTarget: "GBuffer[4]"
+          TextureAttachment: "GBuffer[4]"
         - Name: colorTexture
-          RenderTarget: "Deferred[0]"
+          TextureAttachment: "Deferred[0]"

@@ -3,7 +3,8 @@
 #include "VulkanBuffer.h"
 #include "VulkanDevice.h"
 #include "VulkanFrameBuffer.h"
-#include "VulkanPipeline.h"
+#include "VulkanGraphicsPipeline.h"
+#include "VulkanComputePipeline.h"
 #include "VulkanRenderPass.h"
 #include "VulkanUniformWriter.h"
 #include "VulkanWindow.h"
@@ -30,10 +31,10 @@ void VulkanRenderer::Render(
 {
 	const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
 
-	std::shared_ptr<VulkanPipeline> vkPipeline;
+	std::shared_ptr<VulkanGraphicsPipeline> vkPipeline;
 	if (pipeline)
 	{
-		vkPipeline = std::static_pointer_cast<VulkanPipeline>(pipeline);
+		vkPipeline = std::dynamic_pointer_cast<VulkanGraphicsPipeline>(pipeline);
 	}
 	else
 	{
@@ -65,6 +66,49 @@ void VulkanRenderer::Render(
 	vertexCount += (indexCount / 3) * count;
 	BindBuffers(vkFrame->CommandBuffer, vertexBuffers, instanceBuffer, indexBuffer, instanceBufferOffset);
 	DrawIndexed(vkFrame->CommandBuffer, indexCount, count);
+}
+
+void VulkanRenderer::Dispatch(
+	const std::shared_ptr<Pipeline>& pipeline,
+	const glm::uvec3& groupCount,
+	const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
+	void* frame)
+{
+	const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+
+	std::shared_ptr<VulkanComputePipeline> vkPipeline;
+	if (pipeline)
+	{
+		vkPipeline = std::dynamic_pointer_cast<VulkanComputePipeline>(pipeline);
+	}
+	else
+	{
+		return;
+	}
+
+	vkPipeline->Bind(vkFrame->CommandBuffer);
+
+	std::vector<VkDescriptorSet> descriptorSets;
+	for (const auto& uniformWriter : uniformWriters)
+	{
+		descriptorSets.emplace_back(std::static_pointer_cast<VulkanUniformWriter>(
+			uniformWriter)->GetDescriptorSet());
+	}
+
+	if (!descriptorSets.empty())
+	{
+		vkCmdBindDescriptorSets(
+			vkFrame->CommandBuffer,
+			VK_PIPELINE_BIND_POINT_COMPUTE,
+			vkPipeline->GetPipelineLayout(),
+			0,
+			descriptorSets.size(),
+			&descriptorSets[0],
+			0,
+			nullptr);
+	}
+
+	vkCmdDispatch(vkFrame->CommandBuffer, groupCount.x, groupCount.y, groupCount.z);
 }
 
 void VulkanRenderer::MemoryBarrierFragmentReadWrite(void* frame)
@@ -116,7 +160,7 @@ void VulkanRenderer::BeginRenderPass(
 	}
 	else
 	{
-		BeginCommandLabel(renderPassSubmitInfo.renderPass->GetType(), debugColor, renderPassSubmitInfo.frame);
+		BeginCommandLabel(renderPassSubmitInfo.renderPass->GetName(), debugColor, renderPassSubmitInfo.frame);
 	}
 
 	std::vector<VkClearValue> vkClearValues;

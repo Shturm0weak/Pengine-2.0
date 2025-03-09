@@ -10,12 +10,6 @@ namespace Pengine
 	class PENGINE_API UniformLayout
 	{
 	public:
-		struct RenderTargetInfo
-		{
-			std::string renderPassName;
-			std::string renderTargetDefault;
-			uint32_t attachmentIndex;
-		};
 
 		static std::shared_ptr<UniformLayout> Create(
 			const std::vector<ShaderReflection::ReflectDescriptorSetBinding>& bindings);

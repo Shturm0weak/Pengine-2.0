@@ -1242,11 +1242,11 @@ void Editor::CameraComponent(const std::shared_ptr<Entity>& entity)
 
 		if (ImGui::BeginMenu("Render Targets"))
 		{
-			for (const auto& renderPassName : renderPassPerViewportOrder)
+			for (const auto& passName : passPerViewportOrder)
 			{
-				if (ImGui::MenuItem(renderPassName.c_str()))
+				if (ImGui::MenuItem(passName.c_str()))
 				{
-					camera.SetRenderPassName(renderPassName);
+					camera.SetPassName(passName);
 					camera.SetRenderTargetIndex(0);
 				}
 			}
@@ -1256,14 +1256,17 @@ void Editor::CameraComponent(const std::shared_ptr<Entity>& entity)
 
 		if (ImGui::BeginMenu("Render Target Index"))
 		{
-			if (!camera.GetRenderPassName().empty())
+			if (!camera.GetPassName().empty())
 			{
-				const int indexCount = RenderPassManager::GetInstance().GetRenderPass(camera.GetRenderPassName())->GetAttachmentDescriptions().size();
-				for (size_t i = 0; i < indexCount; i++)
+				if (RenderPassManager::GetInstance().GetPass(camera.GetPassName())->GetType() == Pass::Type::GRAPHICS)
 				{
-					if (ImGui::MenuItem(std::to_string(i).c_str()))
+					const int indexCount = RenderPassManager::GetInstance().GetRenderPass(camera.GetPassName())->GetAttachmentDescriptions().size();
+					for (size_t i = 0; i < indexCount; i++)
 					{
-						camera.SetRenderTargetIndex(i);
+						if (ImGui::MenuItem(std::to_string(i).c_str()))
+						{
+							camera.SetRenderTargetIndex(i);
+						}
 					}
 				}
 			}
@@ -2281,19 +2284,19 @@ void Editor::MaterialMenu::Update(Editor& editor)
 			}
 		}
 
-		for (const auto& [renderPassName, pipeline] : material->GetBaseMaterial()->GetPipelinesByRenderPass())
+		for (const auto& [passName, pipeline] : material->GetBaseMaterial()->GetPipelinesByPass())
 		{
-			if (ImGui::CollapsingHeader(renderPassName.c_str()))
+			if (ImGui::CollapsingHeader(passName.c_str()))
 			{
 				for (const auto& [set, uniformLayout] : pipeline->GetUniformLayouts())
 				{
-					const auto& descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, renderPassName);
+					const auto& descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, passName);
 					if (!descriptorSetIndex || descriptorSetIndex.value() != set)
 					{
 						continue;
 					}
 
-					const std::shared_ptr<UniformWriter> uniformWriter = material->GetUniformWriter(renderPassName);
+					const std::shared_ptr<UniformWriter> uniformWriter = material->GetUniformWriter(passName);
 
 					for (const auto& binding : uniformLayout->GetBindings())
 					{
@@ -2315,7 +2318,7 @@ void Editor::MaterialMenu::Update(Editor& editor)
 
 										if (FileFormats::IsTexture(Utils::GetFileFormat(filepath)))
 										{
-											material->GetUniformWriter(renderPassName)->WriteTexture(binding.name, TextureManager::GetInstance().Load(filepath));
+											material->GetUniformWriter(passName)->WriteTexture(binding.name, TextureManager::GetInstance().Load(filepath));
 											
 											isChangedToSerialize = true;
 										}
@@ -2330,7 +2333,7 @@ void Editor::MaterialMenu::Update(Editor& editor)
 								ImGui::PushID(whiteId.c_str());
 								if (ImGui::Button("White"))
 								{
-									material->GetUniformWriter(renderPassName)->WriteTexture(binding.name, TextureManager::GetInstance().GetWhite());
+									material->GetUniformWriter(passName)->WriteTexture(binding.name, TextureManager::GetInstance().GetWhite());
 
 									isChangedToSerialize = true;
 								}
@@ -2342,7 +2345,7 @@ void Editor::MaterialMenu::Update(Editor& editor)
 								ImGui::PushID(blackId.c_str());
 								if (ImGui::Button("Black"))
 								{
-									material->GetUniformWriter(renderPassName)->WriteTexture(binding.name, TextureManager::GetInstance().GetBlack());
+									material->GetUniformWriter(passName)->WriteTexture(binding.name, TextureManager::GetInstance().GetBlack());
 
 									isChangedToSerialize = true;
 								}

@@ -1,25 +1,12 @@
 Basemat:
   Pipelines:
     - RenderPass: SSRBlur
-      DepthTest: false
-      DepthWrite: false
-      CullMode: None
-      PolygonMode: Fill
-      TopologyMode: TriangleList
-      Vertex: Shaders/SSAOBlur.vert
-      Fragment: Shaders/SSRBlur.frag
+      Type: Compute
+      Compute: Shaders/SSRBlur.comp
       DescriptorSets:
         - Type: Renderer
           RenderPass: SSRBlur
           Set: 0
-      VertexInputBindingDescriptions:
-        - Binding: 0
-          InputRate: Vertex
-          Tag: Position
-          Names:
-            - positionA
-      ColorBlendStates:
-        - BlendEnabled: false
       Uniforms:
         - Name: sourceTexture
-          RenderTarget: "SSR[0]"
+          TextureAttachment: "SSR"

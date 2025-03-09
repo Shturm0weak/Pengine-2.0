@@ -3,7 +3,8 @@
 #include "../Core/Core.h"
 #include "../Core/Asset.h"
 
-#include "Pipeline.h"
+#include "GraphicsPipeline.h"
+#include "ComputePipeline.h"
 #include "UniformWriter.h"
 #include "UniformLayout.h"
 
@@ -17,7 +18,8 @@ namespace Pengine
 	public:
 		struct CreateInfo
 		{
-			std::vector<Pipeline::CreateInfo> pipelineCreateInfos;
+			std::vector<GraphicsPipeline::CreateGraphicsInfo> pipelineCreateGraphicsInfos;
+			std::vector<ComputePipeline::CreateComputeInfo> pipelineCreateComputeInfos;
 		};
 
 		static std::shared_ptr<BaseMaterial> Create(
@@ -37,15 +39,13 @@ namespace Pengine
 		BaseMaterial(const BaseMaterial&) = delete;
 		BaseMaterial& operator=(const BaseMaterial&) = delete;
 
-		std::shared_ptr<Pipeline> GetPipeline(const std::string& renderPassName) const;
+		std::shared_ptr<Pipeline> GetPipeline(const std::string& passName) const;
 
-		std::unordered_map<std::string, std::shared_ptr<Pipeline>> GetPipelinesByRenderPass() const { return m_PipelinesByRenderPass; }
+		std::unordered_map<std::string, std::shared_ptr<Pipeline>> GetPipelinesByPass() const { return m_PipelinesByPass; }
 
-		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& renderPassName) const;
+		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& passName) const;
 
 		std::shared_ptr<Buffer> GetBuffer(const std::string& name) const;
-
-		const std::unordered_map<std::string, UniformLayout::RenderTargetInfo>& GetRenderTargetsByName() const { return m_RenderTargetsByName; }
 
 		bool GetUniformDetails(
 			const std::string& uniformBufferName,
@@ -127,13 +127,17 @@ namespace Pengine
 	private:
 		void CreateResources(const CreateInfo& createInfo);
 
-		std::unordered_map<std::string, std::shared_ptr<Pipeline>> m_PipelinesByRenderPass;
-		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByRenderPass;
-		std::unordered_map<std::string, UniformLayout::RenderTargetInfo> m_RenderTargetsByName;
+		void CreatePipelineResources(
+			const std::string& passName,
+			std::shared_ptr<Pipeline> pipeline,
+			const Pipeline::UniformInfo& uniformInfo);
+
+		std::unordered_map<std::string, std::shared_ptr<Pipeline>> m_PipelinesByPass;
+		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByPass;
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
 
-		// map<BufferName, map<ValueName, <Size, Offset>>>
 		mutable std::mutex m_UniformCacheMutex;
+		// map<BufferName, map<ValueName, <Size, Offset>>>
 		mutable std::unordered_map<std::string, std::unordered_map<std::string, std::pair<uint32_t, uint32_t>>> m_UniformsCache;
 	};
 

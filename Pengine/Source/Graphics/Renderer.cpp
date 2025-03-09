@@ -38,10 +38,10 @@ void Renderer::Update(
 
 		if (!scene->GetRenderTarget())
 		{
-			scene->SetRenderTarget(RenderTarget::Create(renderPassPerSceneOrder, { 0, 0 }));
+			scene->SetRenderTarget(RenderTarget::Create(passPerSceneOrder, { 0, 0 }));
 		}
 
-		RenderPass::RenderCallbackInfo renderInfo{};
+		Pass::RenderCallbackInfo renderInfo{};
 		renderInfo.renderer = renderer;
 		renderInfo.camera = nullptr;
 		renderInfo.window = window;
@@ -50,26 +50,29 @@ void Renderer::Update(
 		renderInfo.frame = frame;
 		renderInfo.viewportSize = { 0, 0 };
 
-		for (const auto& type : renderPassPerSceneOrder)
+		for (const auto& type : passPerSceneOrder)
 		{
-			const std::shared_ptr<RenderPass> renderPass = RenderPassManager::GetInstance().GetRenderPass(type);
-			if (!renderPass)
+			const std::shared_ptr<Pass> pass = RenderPassManager::GetInstance().GetPass(type);
+			if (!pass)
 			{
 				continue;
 			}
 
-			if (!renderPass->m_IsInitialized)
+			if (!pass->m_IsInitialized)
 			{
-				if (renderPass->m_CreateCallback)
+				if (pass->m_CreateCallback)
 				{
-					renderPass->m_CreateCallback(*renderPass.get());
-					renderPass->m_IsInitialized = true;
+					pass->m_CreateCallback(pass.get());
+					pass->m_IsInitialized = true;
 				}
 			}
 
-			renderInfo.renderPass = renderPass;
+			if (pass->GetType() == Pass::Type::GRAPHICS)
+			{
+				renderInfo.renderPass = std::dynamic_pointer_cast<RenderPass>(pass);
+			}
 
-			renderPass->Render(renderInfo);
+			pass->Execute(renderInfo);
 		}
 		
 		for (const auto& viewport : viewports)
@@ -81,26 +84,29 @@ void Renderer::Update(
 
 			RenderPassManager::PrepareUniformsPerViewportBeforeDraw(renderInfo);
 
-			for (const auto& type : renderPassPerViewportOrder)
+			for (const auto& type : passPerViewportOrder)
 			{
-				const std::shared_ptr<RenderPass> renderPass = RenderPassManager::GetInstance().GetRenderPass(type);
-				if (!renderPass)
+				const std::shared_ptr<Pass> pass = RenderPassManager::GetInstance().GetPass(type);
+				if (!pass)
 				{
 					continue;
 				}
 
-				if (!renderPass->m_IsInitialized)
+				if (!pass->m_IsInitialized)
 				{
-					if (renderPass->m_CreateCallback)
+					if (pass->m_CreateCallback)
 					{
-						renderPass->m_CreateCallback(*renderPass.get());
-						renderPass->m_IsInitialized = true;
+						pass->m_CreateCallback(pass.get());
+						pass->m_IsInitialized = true;
 					}
 				}
 
-				renderInfo.renderPass = renderPass;
+				if (pass->GetType() == Pass::Type::GRAPHICS)
+				{
+					renderInfo.renderPass = std::dynamic_pointer_cast<RenderPass>(pass);
+				}
 
-				renderPass->Render(renderInfo);
+				pass->Execute(renderInfo);
 			}
 		}
 	}

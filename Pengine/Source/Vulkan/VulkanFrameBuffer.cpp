@@ -35,40 +35,41 @@ void VulkanFrameBuffer::Resize(const glm::ivec2& size)
 	m_Size = size;
 
 	m_FrameBuffers.resize(swapChainImageCount);
-	m_Attachments.resize(swapChainImageCount);
 
 	const auto& renderPassAttachments = m_RenderPass->GetAttachmentDescriptions();
 
 	uint32_t layers = 1;
+
+	size_t textureIndex = 0;
+	for (Texture::CreateInfo& textureCreateInfo : m_AttachmentCreateInfos)
+	{
+		std::shared_ptr<Texture> texture;
+		if (renderPassAttachments[textureIndex].getFrameBufferCallback && m_RenderTarget)
+		{
+			uint32_t attachmentIndex;
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderPassAttachments[textureIndex].getFrameBufferCallback(m_RenderTarget, attachmentIndex);
+			texture = frameBuffer->GetAttachment(attachmentIndex);
+		}
+		else
+		{
+			textureCreateInfo.size = m_Size;
+			texture = Texture::Create(textureCreateInfo);
+		}
+
+		m_Attachments.emplace_back(texture);
+
+		layers = std::max(layers, texture->GetLayerCount());
+		textureIndex++;
+	}
+
 	for (size_t frameIndex = 0; frameIndex < swapChainImageCount; frameIndex++)
 	{
 		std::vector<VkImageView> imageViews;
-		size_t textureIndex = 0;
-		for (Texture::CreateInfo& textureCreateInfo : m_AttachmentCreateInfos)
+
+		for (int i = 0; i < textureIndex; ++i)
 		{
-			std::shared_ptr<Texture> texture;
-			if (renderPassAttachments[textureIndex].getFrameBufferCallback && m_RenderTarget)
-			{
-				uint32_t attachmentIndex;
-				const std::shared_ptr<FrameBuffer> frameBuffer = renderPassAttachments[textureIndex].getFrameBufferCallback(m_RenderTarget, attachmentIndex);
-				texture = frameBuffer->GetAttachment(attachmentIndex, frameIndex);
-				const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(texture);
-				imageViews.emplace_back(vkTexture->GetImageView());
-			}
-			else
-			{
-				textureCreateInfo.size = m_Size;
-
-				texture = Texture::Create(textureCreateInfo);
-
-				const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(texture);
-				imageViews.emplace_back(vkTexture->GetImageView());
-			}
-			
-			m_Attachments[frameIndex].emplace_back(texture);
-
-			layers = std::max(layers, texture->GetLayerCount());
-			textureIndex++;
+			std::shared_ptr<VulkanTexture> vkTexture = std::dynamic_pointer_cast<VulkanTexture>(m_Attachments[i]);
+			imageViews.emplace_back(vkTexture->GetImageView(frameIndex));
 		}
 
 		VkFramebufferCreateInfo framebufferInfo{};
@@ -103,22 +104,4 @@ void VulkanFrameBuffer::Clear()
 	
 	m_FrameBuffers.clear();
 	m_Attachments.clear();
-}
-
-void VulkanFrameBuffer::TransitionToRead() const
-{
-	for (const auto& attachment : m_Attachments[swapChainImageIndex])
-	{
-		const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(attachment);
-		vkTexture->TransitionToRead();
-	}
-}
-
-void VulkanFrameBuffer::TransitionToColorAttachment() const
-{
-	for (const auto& attachment : m_Attachments[swapChainImageIndex])
-	{
-		const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(attachment);
-		vkTexture->TransitionToColorAttachment();
-	}
 }

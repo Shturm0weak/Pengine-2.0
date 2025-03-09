@@ -23,9 +23,15 @@ RenderTarget::RenderTarget(
 {
 	for (const auto& name : m_RenderPassOrder)
 	{
-		if (std::shared_ptr<RenderPass> renderPass =
-			RenderPassManager::GetInstance().GetRenderPass(name))
+		if (std::shared_ptr<Pass> pass =
+			RenderPassManager::GetInstance().GetPass(name))
 		{
+			if (pass->GetType() == Pass::Type::COMPUTE)
+			{
+				continue;
+			}
+
+			std::shared_ptr<RenderPass> renderPass = std::dynamic_pointer_cast<RenderPass>(pass);
 			if (!renderPass->m_CreateFrameBuffer)
 			{
 				continue;
@@ -49,6 +55,7 @@ RenderTarget::~RenderTarget()
 	m_FrameBuffersByName.clear();
 	m_UniformWriterByName.clear();
 	m_BuffersByName.clear();
+	m_StorageImagesByName.clear();
 }
 
 std::shared_ptr<UniformWriter> RenderTarget::GetUniformWriter(const std::string& renderPassName) const
@@ -120,6 +127,34 @@ void RenderTarget::SetCustomData(const std::string& name, CustomData* data)
 	}
 
 	m_CustomDataByName[name] = data;
+}
+
+void RenderTarget::DeleteCustomData(const std::string& name)
+{
+	auto customDataByName = m_CustomDataByName.find(name);
+	if (customDataByName != m_CustomDataByName.end())
+	{
+		delete customDataByName->second;
+
+		m_CustomDataByName.erase(customDataByName);
+	}
+}
+
+std::shared_ptr<Texture> RenderTarget::GetStorageImage(const std::string& name)
+{
+	if (const auto storageImageByName = m_StorageImagesByName.find(name);
+		storageImageByName != m_StorageImagesByName.end())
+	{
+		return storageImageByName->second;
+	}
+
+	return nullptr;
+}
+
+void RenderTarget::SetStorageImage(const std::string& name, std::shared_ptr<Texture> texture)
+{
+	// TODO: Add usage storage image check!
+	m_StorageImagesByName[name] = texture;
 }
 
 void RenderTarget::Resize(const glm::ivec2& size) const

@@ -2,42 +2,60 @@
 
 #include "../Core/Logger.h"
 #include "../Utils/Utils.h"
-#include "../Vulkan/VulkanPipeline.h"
 
 using namespace Pengine;
 
-std::shared_ptr<Pipeline> Pipeline::Create(const CreateInfo& pipelineCreateInfo)
+Pipeline::Type Pipeline::GetPipelineType(const std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType)
 {
-	if (graphicsAPI == GraphicsAPI::Vk)
+	bool isGraphicsPipeline = false;
+	bool isComputePipeline = false;
+	for (const auto& [type, filepath] : shaderFilepathsByType)
 	{
-		return std::make_shared<Vk::VulkanPipeline>(pipelineCreateInfo);
-	}
-
-	FATAL_ERROR("Failed to create the pipeline, no graphics API implementation");
-	return nullptr;
-}
-
-Pipeline::Pipeline(const CreateInfo& pipelineCreateInfo)
-	: m_CreateInfo(pipelineCreateInfo)
-{
-	for (const auto& [type, setsByrenderPass] : pipelineCreateInfo.descriptorSetIndicesByType)
-	{
-		for (const auto& [renderPassName, set] : setsByrenderPass)
+		if (type == ShaderType::VERTEX ||
+			type == ShaderType::FRAGMENT ||
+			type == ShaderType::GEOMETRY)
 		{
-			m_SortedDescriptorSets.emplace(set, std::make_pair(type, renderPassName));
+			isGraphicsPipeline = true;
+		}
+
+		if (type == ShaderType::COMPUTE)
+		{
+			isComputePipeline = true;
 		}
 	}
+
+	if (isComputePipeline && isGraphicsPipeline)
+	{
+		FATAL_ERROR("Pipeline contains two different types, graphics and compute at the same time!");
+	}
+	else if (!isComputePipeline && !isGraphicsPipeline)
+	{
+		FATAL_ERROR("Pipeline does not contain any shader stage!");
+	}
+
+	Type type{};
+	if (isGraphicsPipeline)
+	{
+		type = Type::GRAPHICS;
+	}
+	else if (isComputePipeline)
+	{
+		type = Type::COMPUTE;
+	}
+
+	return type;
 }
 
-std::map<std::string, uint32_t> Pipeline::GetDescriptorSetIndexByType(const DescriptorSetIndexType type) const
+Pipeline::Pipeline(Type type)
+	: m_Type(type)
 {
-	return Utils::Find(type, m_CreateInfo.descriptorSetIndicesByType);
+
 }
 
 const std::optional<uint32_t> Pipeline::GetDescriptorSetIndexByType(const DescriptorSetIndexType type, const std::string& renderPassName) const
 {
 	std::map<std::string, uint32_t> descriptorSetsByRenderPass = GetDescriptorSetIndexByType(type);
-	
+
 	auto foundSet = descriptorSetsByRenderPass.find(renderPassName);
 	if (foundSet != descriptorSetsByRenderPass.end())
 	{

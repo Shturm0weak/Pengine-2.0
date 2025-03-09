@@ -22,7 +22,7 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 {
 	if (std::shared_ptr<BaseMaterial> lineBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Line.basemat"))
 	{
-		std::shared_ptr<Pipeline> pipeline = lineBaseMaterial->GetPipeline(renderInfo.renderPass->GetType());
+		std::shared_ptr<Pipeline> pipeline = lineBaseMaterial->GetPipeline(renderInfo.renderPass->GetName());
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = RenderPassManager::GetUniformWriters(pipeline, lineBaseMaterial, nullptr, renderInfo);
 
 		for (const auto& uniformWriter : uniformWriters)

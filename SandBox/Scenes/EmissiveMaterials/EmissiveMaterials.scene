@@ -2,8 +2,8 @@ Settings:
   DrawBoundingBoxes: false
 GraphicsSettings: d9afc1d9-1ca8-4529-805a-055fb67d6fe0
 Scene:
-  - Name: Camera
-    UUID: c57e20af-6024-40c5-8f7b-3cea32bf0dcf
+  - UUID: c57e20af-6024-40c5-8f7b-3cea32bf0dcf
+    Name: Camera
     IsEnabled: true
     Transform:
       Position: [-12.1954288, 10.7136927, 7.17274094]
@@ -15,13 +15,13 @@ Scene:
       Type: 1
       ZNear: 0.100000001
       ZFar: 1000
-      RenderPassName: Final
+      PassName: Final
       RenderTargetIndex: 0
       Viewport: Main
     Childs:
       []
-  - Name: Sun
-    UUID: e44094ab-fa78-4c84-b18c-e504390bb9a6
+  - UUID: e44094ab-fa78-4c84-b18c-e504390bb9a6
+    Name: Sun
     IsEnabled: true
     Transform:
       Position: [0, 0, 0]
@@ -34,8 +34,8 @@ Scene:
       Ambient: 0.100000001
     Childs:
       []
-  - Name: Spheres
-    UUID: 9552ecaf-4f77-439a-850d-c1784293df04
+  - UUID: 9552ecaf-4f77-439a-850d-c1784293df04
+    Name: Spheres
     IsEnabled: true
     Transform:
       Position: [0, 0, -5]
@@ -43,8 +43,8 @@ Scene:
       Scale: [1, 1, 1]
       FollowOwner: true
     Childs:
-      - Name: SphereGreen
-        UUID: 9668bde1-b9e1-40fc-a229-35316a6d5aff
+      - UUID: 9668bde1-b9e1-40fc-a229-35316a6d5aff
+        Name: SphereGreen
         IsEnabled: true
         Transform:
           Position: [5, 0, -5]
@@ -57,8 +57,8 @@ Scene:
           RenderingOrder: 5
         Childs:
           []
-      - Name: SphereBlue
-        UUID: b5c8c444-4169-4a4d-b0fe-48e50b326822
+      - UUID: b5c8c444-4169-4a4d-b0fe-48e50b326822
+        Name: SphereBlue
         IsEnabled: true
         Transform:
           Position: [-5, 0, -5]
@@ -71,8 +71,8 @@ Scene:
           RenderingOrder: 5
         Childs:
           []
-      - Name: SphereRed
-        UUID: 24977da8-ae39-4783-b97b-b98a2ccedf48
+      - UUID: 24977da8-ae39-4783-b97b-b98a2ccedf48
+        Name: SphereRed
         IsEnabled: true
         Transform:
           Position: [0, 0, -5]
@@ -85,8 +85,8 @@ Scene:
           RenderingOrder: 5
         Childs:
           []
-  - Name: Toruses
-    UUID: 034d72a0-5c38-49b9-9a43-0b76cdecdcd1
+  - UUID: 034d72a0-5c38-49b9-9a43-0b76cdecdcd1
+    Name: Toruses
     IsEnabled: true
     Transform:
       Position: [0, 0, 5]
@@ -94,8 +94,8 @@ Scene:
       Scale: [1, 1, 1]
       FollowOwner: true
     Childs:
-      - Name: TorusRed
-        UUID: e3eaac38-c1da-4c8a-862b-9c9d49e0da7e
+      - UUID: e3eaac38-c1da-4c8a-862b-9c9d49e0da7e
+        Name: TorusRed
         IsEnabled: true
         Transform:
           Position: [0, 0, 5]
@@ -108,8 +108,8 @@ Scene:
           RenderingOrder: 5
         Childs:
           []
-      - Name: TorusBlue
-        UUID: 1b636828-33da-4c7b-9630-acc3fbd3e3b3
+      - UUID: 1b636828-33da-4c7b-9630-acc3fbd3e3b3
+        Name: TorusBlue
         IsEnabled: true
         Transform:
           Position: [-5, 0, 5]
@@ -122,8 +122,8 @@ Scene:
           RenderingOrder: 5
         Childs:
           []
-      - Name: TorusGreen
-        UUID: 5a8664c1-7d2a-4b34-9f7c-a3ac90586f4f
+      - UUID: 5a8664c1-7d2a-4b34-9f7c-a3ac90586f4f
+        Name: TorusGreen
         IsEnabled: true
         Transform:
           Position: [5, 0, 5]

@@ -35,6 +35,12 @@ namespace Pengine::Vk
 			const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
 			void* frame) override;
 
+		virtual void Dispatch(
+			const std::shared_ptr<Pipeline>& pipeline,
+			const glm::uvec3& groupCount,
+			const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
+			void* frame) override;
+
 		virtual void MemoryBarrierFragmentReadWrite(void* frame) override;
 
 		virtual void BeginCommandLabel(

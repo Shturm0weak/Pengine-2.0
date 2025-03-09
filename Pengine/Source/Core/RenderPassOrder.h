@@ -6,12 +6,12 @@
 namespace Pengine
 {
 
-	const std::vector<std::string> renderPassPerSceneOrder =
+	const std::vector<std::string> passPerSceneOrder =
 	{
 		Atmosphere
 	};
 
-	const std::vector<std::string> renderPassPerViewportOrder =
+	const std::vector<std::string> passPerViewportOrder =
 	{
 		ZPrePass,
 		GBuffer,
