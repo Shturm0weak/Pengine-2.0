@@ -1929,77 +1929,76 @@ void RenderPassManager::CreateBloom()
 
 void RenderPassManager::CreateSSR()
 {
-	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	RenderPass::AttachmentDescription color{};
-	color.format = Format::R8G8B8A8_SRGB;
-	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::LOAD;
-	color.store = RenderPass::Store::STORE;
-
 	RenderPass::CreateInfo createInfo{};
-	createInfo.type = Pass::Type::GRAPHICS;
+	createInfo.type = Pass::Type::COMPUTE;
 	createInfo.name = SSR;
-	createInfo.clearColors = { clearColor };
-	createInfo.attachmentDescriptions = { color };
-	createInfo.resizeWithViewport = true;
 
-	const std::shared_ptr<Mesh> planeMesh = nullptr;
-
-	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
+	createInfo.executeCallback = [this, passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		const std::string renderPassName = renderInfo.renderPass->GetName();
-		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
-		const std::string ssrBufferName = "SSRBuffer";
-
-		const GraphicsSettings::SSR& ssrSettings = renderInfo.scene->GetGraphicsSettings().ssr;
-		if (ssrSettings.isEnabled)
-		{
-			if (!frameBuffer)
-			{
-				frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), renderInfo.viewportSize);
-				renderInfo.renderTarget->SetFrameBuffer(renderPassName, frameBuffer);
-			}
-		}
-		else
-		{
-			renderInfo.renderTarget->DeleteUniformWriter(renderPassName);
-			renderInfo.renderTarget->DeleteFrameBuffer(renderPassName);
-			renderInfo.renderTarget->DeleteBuffer(ssrBufferName);
-
-			return;
-		}
-
-		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
-
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 			std::filesystem::path("Materials") / "SSR.basemat");
-		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(passName);
 		if (!pipeline)
 		{
 			return;
 		}
 
+		const GraphicsSettings::SSR& ssrSettings = renderInfo.scene->GetGraphicsSettings().ssr;
+		const std::string ssrBufferName = passName;
 		constexpr float resolutionScales[] = { 0.25f, 0.5f, 0.75f, 1.0f };
+		const glm::ivec2 currentViewportSize = glm::vec2(renderInfo.viewportSize) * glm::vec2(resolutionScales[ssrSettings.resolutionScale]);
 
-		if (renderInfo.renderPass->GetResizeViewportScale() != glm::vec2(resolutionScales[ssrSettings.resolutionScale]))
+		Texture::CreateInfo createInfo{};
+		createInfo.aspectMask = Texture::AspectMask::COLOR;
+		createInfo.channels = 4;
+		createInfo.filepath = passName;
+		createInfo.name = passName;
+		createInfo.format = Format::R8G8B8A8_UNORM;
+		createInfo.size = currentViewportSize;
+		createInfo.usage = { Texture::Usage::STORAGE, Texture::Usage::SAMPLED };
+		createInfo.isMultiBuffered = true;
+
+		std::shared_ptr<Texture> ssrTexture = renderInfo.renderTarget->GetStorageImage(passName);
+
+		if (ssrSettings.isEnabled)
 		{
-			auto callback = [resolutionScales, frameBuffer, ssrSettings, renderInfo]()
+			if (!ssrTexture)
 			{
-				renderInfo.renderPass->SetResizeViewportScale(glm::vec2(resolutionScales[ssrSettings.resolutionScale]));
-				frameBuffer->Resize(glm::vec2(renderInfo.viewportSize) * resolutionScales[ssrSettings.resolutionScale]);
+				ssrTexture = Texture::Create(createInfo);
+				renderInfo.renderTarget->SetStorageImage(passName, ssrTexture);
+				GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName)->WriteTexture("outColor", ssrTexture);
+			}
+		}
+		else
+		{
+			renderInfo.renderTarget->DeleteUniformWriter(passName);
+			renderInfo.renderTarget->DeleteStorageImage(passName);
+			renderInfo.renderTarget->DeleteBuffer(ssrBufferName);
+
+			return;
+		}
+
+		if (currentViewportSize != ssrTexture->GetSize())
+		{
+			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName);
+			auto callback = [renderUniformWriter, passName, createInfo, renderInfo]()
+			{
+				const std::shared_ptr<Texture> ssrTexture = Texture::Create(createInfo);
+				renderInfo.renderTarget->SetStorageImage(passName, ssrTexture);
+				renderUniformWriter->WriteTexture("outColor", ssrTexture);
 			};
 
 			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 			EventSystem::GetInstance().SendEvent(resizeEvent);
 		}
 
-		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, renderPassName);
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName);
 
 		WriteRenderTargets(renderInfo.renderTarget, renderInfo.scene->GetRenderTarget(), pipeline, renderUniformWriter);
 
+		const glm::vec2 viewportScale = glm::vec2(resolutionScales[ssrSettings.resolutionScale]);
 		const std::shared_ptr<Buffer> ssrBuffer = GetOrCreateRenderBuffer(renderInfo.renderTarget, renderUniformWriter, ssrBufferName);
-		baseMaterial->WriteToBuffer(ssrBuffer, ssrBufferName, "viewportScale", GetRenderPass(renderPassName)->GetResizeViewportScale());
+		baseMaterial->WriteToBuffer(ssrBuffer, ssrBufferName, "viewportScale", viewportScale);
 		baseMaterial->WriteToBuffer(ssrBuffer, ssrBufferName, "maxDistance", ssrSettings.maxDistance);
 		baseMaterial->WriteToBuffer(ssrBuffer, ssrBufferName, "resolution", ssrSettings.resolution);
 		baseMaterial->WriteToBuffer(ssrBuffer, ssrBufferName, "stepCount", ssrSettings.stepCount);
@@ -2008,26 +2007,15 @@ void RenderPassManager::CreateSSR()
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 		FlushUniformWriters(uniformWriters);
 
-		renderInfo.renderer->BeginCommandLabel(renderPassName, topLevelRenderPassDebugColor, renderInfo.frame);
+		renderInfo.renderer->BeginCommandLabel(passName, topLevelRenderPassDebugColor, renderInfo.frame);
 
-		RenderPass::SubmitInfo submitInfo{};
-		submitInfo.frame = renderInfo.frame;
-		submitInfo.renderPass = renderInfo.renderPass;
-		submitInfo.frameBuffer = frameBuffer;
-		renderInfo.renderer->BeginRenderPass(submitInfo, renderPassName, { 1.0f, 1.0f, 0.0f });
+		renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
 
-		renderInfo.renderer->Render(
-			GetVertexBuffers(pipeline, plane),
-			plane->GetIndexBuffer(),
-			plane->GetIndexCount(),
-			pipeline,
-			nullptr,
-			0,
-			1,
-			uniformWriters,
-			renderInfo.frame);
+		glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
+		groupCount += glm::uvec2(1, 1);
+		renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
 
-		renderInfo.renderer->EndRenderPass(submitInfo);
+		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 	};
 
 	CreateRenderPass(createInfo);
@@ -2035,87 +2023,87 @@ void RenderPassManager::CreateSSR()
 
 void RenderPassManager::CreateSSRBlur()
 {
-	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	RenderPass::AttachmentDescription color{};
-	color.format = Format::R8G8B8A8_SRGB;
-	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::LOAD;
-	color.store = RenderPass::Store::STORE;
-	color.usage = { Texture::Usage::TRANSFER_SRC };
-
 	RenderPass::CreateInfo createInfo{};
-	createInfo.type = Pass::Type::GRAPHICS;
+	createInfo.type = Pass::Type::COMPUTE;
 	createInfo.name = SSRBlur;
-	createInfo.clearColors = { clearColor };
-	createInfo.attachmentDescriptions = { color };
-	createInfo.resizeWithViewport = true;
 
-	const std::shared_ptr<Mesh> planeMesh = nullptr;
-
-	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
+	createInfo.executeCallback = [this, passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		const std::string renderPassName = renderInfo.renderPass->GetName();
-		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
-		const std::string ssrBufferName = "SSRBlurBuffer";
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+			std::filesystem::path("Materials") / "SSRBlur.basemat");
+		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(passName);
+		if (!pipeline)
+		{
+			return;
+		}
 
 		const GraphicsSettings::SSR& ssrSettings = renderInfo.scene->GetGraphicsSettings().ssr;
+		const std::string ssrBufferName = passName;
+		constexpr float resolutionScales[] = { 0.125f, 0.25f, 0.5f, 0.75f, 1.0f };
+		const glm::ivec2 currentViewportSize = glm::vec2(renderInfo.viewportSize) * glm::vec2(resolutionScales[ssrSettings.resolutionBlurScale]);
+
+		Texture::CreateInfo createInfo{};
+		createInfo.aspectMask = Texture::AspectMask::COLOR;
+		createInfo.channels = 4;
+		createInfo.filepath = passName;
+		createInfo.name = passName;
+		createInfo.format = Format::R8G8B8A8_UNORM;
+		createInfo.size = currentViewportSize;
+		createInfo.usage = { Texture::Usage::STORAGE, Texture::Usage::SAMPLED };
+		createInfo.isMultiBuffered = true;
+
+		std::shared_ptr<Texture> ssrBlurTexture = renderInfo.renderTarget->GetStorageImage(passName);
+
 		if (ssrSettings.isEnabled)
 		{
-			if (!frameBuffer)
+			if (!ssrBlurTexture)
 			{
-				frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderTarget.get(), renderInfo.viewportSize);
-				renderInfo.renderTarget->SetFrameBuffer(renderPassName, frameBuffer);
+				ssrBlurTexture = Texture::Create(createInfo);
+				renderInfo.renderTarget->SetStorageImage(passName, ssrBlurTexture);
+				GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName)->WriteTexture("outColor", ssrBlurTexture);
 			}
 		}
 		else
 		{
-			renderInfo.renderTarget->DeleteUniformWriter(renderPassName);
-			renderInfo.renderTarget->DeleteFrameBuffer(renderPassName);
+			renderInfo.renderTarget->DeleteUniformWriter(passName);
+			renderInfo.renderTarget->DeleteStorageImage(passName);
 			renderInfo.renderTarget->DeleteBuffer(ssrBufferName);
 
 			return;
 		}
 
-		constexpr float resolutionScales[] = { 0.125f, 0.25f, 0.5f, 0.75f, 1.0f };
-
-		const glm::ivec2 size = glm::vec2(renderInfo.viewportSize) * resolutionScales[ssrSettings.resolutionBlurScale];
-
-		if (renderInfo.renderPass->GetResizeViewportScale() != glm::vec2(resolutionScales[ssrSettings.resolutionBlurScale]))
+		if (currentViewportSize != ssrBlurTexture->GetSize())
 		{
-			auto callback = [resolutionScales, frameBuffer, ssrSettings, size, renderInfo]()
+			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName);
+			auto callback = [renderUniformWriter, passName, createInfo, renderInfo]()
 			{
-				renderInfo.renderPass->SetResizeViewportScale(glm::vec2(resolutionScales[ssrSettings.resolutionBlurScale]));
-				frameBuffer->Resize(size);
+				const std::shared_ptr<Texture> ssrBlurTexture = Texture::Create(createInfo);
+				renderInfo.renderTarget->SetStorageImage(passName, ssrBlurTexture);
+				renderUniformWriter->WriteTexture("outColor", ssrBlurTexture);
 			};
 
 			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 			EventSystem::GetInstance().SendEvent(resizeEvent);
 		}
 
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
-			std::filesystem::path("Materials") / "SSRBlur.basemat");
-		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
-		if (!pipeline)
-		{
-			return;
-		}
-
-		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, renderPassName);
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName);
 
 		const std::shared_ptr<Buffer> ssrBuffer = GetOrCreateRenderBuffer(renderInfo.renderTarget, renderUniformWriter, ssrBufferName);
 		baseMaterial->WriteToBuffer(ssrBuffer, ssrBufferName, "blurRange", ssrSettings.blurRange);
 		baseMaterial->WriteToBuffer(ssrBuffer, ssrBufferName, "blurOffset", ssrSettings.blurOffset);
 
-		RenderPass::SubmitInfo submitInfo{};
-		submitInfo.frame = renderInfo.frame;
-		submitInfo.renderPass = renderInfo.renderPass;
-		submitInfo.frameBuffer = frameBuffer;
-		renderInfo.renderer->BeginRenderPass(submitInfo, renderPassName, { 1.0f, 1.0f, 0.0f });
+		WriteRenderTargets(renderInfo.renderTarget, renderInfo.scene->GetRenderTarget(), pipeline, renderUniformWriter);
 
-		BlurRenderPassTemplate(renderInfo, baseMaterial, pipeline, renderPassName);
+		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
+		FlushUniformWriters(uniformWriters);
 
-		renderInfo.renderer->EndRenderPass(submitInfo);
+		renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
+
+		glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
+		groupCount += glm::uvec2(1, 1);
+		renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
+
+		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 
 		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 	};
@@ -2129,7 +2117,7 @@ void RenderPassManager::CreateSSAO()
 	createInfo.type = Pass::Type::COMPUTE;
 	createInfo.name = SSAO;
 
-	createInfo.executeCallback = [passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
+	createInfo.executeCallback = [this, passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 			std::filesystem::path("Materials") / "SSAO.basemat");
@@ -2141,7 +2129,7 @@ void RenderPassManager::CreateSSAO()
 
 		const GraphicsSettings::SSAO& ssaoSettings = renderInfo.scene->GetGraphicsSettings().ssao;
 		constexpr float resolutionScales[] = { 0.25f, 0.5f, 0.75f, 1.0f };
-		glm::ivec2 currentViewportSize = glm::vec2(renderInfo.viewportSize) * glm::vec2(resolutionScales[ssaoSettings.resolutionScale]);
+		const glm::ivec2 currentViewportSize = glm::vec2(renderInfo.viewportSize) * glm::vec2(resolutionScales[ssaoSettings.resolutionScale]);
 
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
@@ -2192,7 +2180,7 @@ void RenderPassManager::CreateSSAO()
 				renderUniformWriter->WriteTexture("outColor", ssaoTexture);
 			};
 
-			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, ssaoRenderer);
+			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 			EventSystem::GetInstance().SendEvent(resizeEvent);
 		}
 
@@ -2227,7 +2215,7 @@ void RenderPassManager::CreateSSAO()
 
 		renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
 
-		glm::uvec2 groupCount = renderInfo.viewportSize / glm::ivec2(16, 16);
+		glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
 		groupCount += glm::uvec2(1, 1);
 		renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
 
@@ -2243,7 +2231,7 @@ void RenderPassManager::CreateSSAOBlur()
 	createInfo.type = Pass::Type::COMPUTE;
 	createInfo.name = SSAOBlur;
 
-	createInfo.executeCallback = [passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
+	createInfo.executeCallback = [this, passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 			std::filesystem::path("Materials") / "SSAOBlur.basemat");
@@ -2255,7 +2243,7 @@ void RenderPassManager::CreateSSAOBlur()
 
 		const GraphicsSettings::SSAO& ssaoSettings = renderInfo.scene->GetGraphicsSettings().ssao;
 		constexpr float resolutionScales[] = { 0.25f, 0.5f, 0.75f, 1.0f };
-		glm::ivec2 currentViewportSize = glm::vec2(renderInfo.viewportSize) * glm::vec2(resolutionScales[ssaoSettings.resolutionBlurScale]);
+		const glm::ivec2 currentViewportSize = glm::vec2(renderInfo.viewportSize) * glm::vec2(resolutionScales[ssaoSettings.resolutionBlurScale]);
 
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
@@ -2295,7 +2283,7 @@ void RenderPassManager::CreateSSAOBlur()
 				renderUniformWriter->WriteTexture("outColor", ssaoBlurTexture);
 			};
 
-			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, baseMaterial.get());
+			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 			EventSystem::GetInstance().SendEvent(resizeEvent);
 		}
 
@@ -2306,7 +2294,7 @@ void RenderPassManager::CreateSSAOBlur()
 
 		renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
 
-		glm::uvec2 groupCount = renderInfo.viewportSize / glm::ivec2(16, 16);
+		glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
 		groupCount += glm::uvec2(1, 1);
 		renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
 

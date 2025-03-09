@@ -1,13 +1,8 @@
 Basemat:
   Pipelines:
     - RenderPass: SSR
-      DepthTest: false
-      DepthWrite: false
-      CullMode: None
-      PolygonMode: Fill
-      TopologyMode: TriangleList
-      Vertex: Shaders/SSR.vert
-      Fragment: Shaders/SSR.frag
+      Type: Compute
+      Compute: Shaders/SSR.comp
       DescriptorSets:
         - Type: Renderer
           RenderPass: DefaultReflection
@@ -15,14 +10,6 @@ Basemat:
         - Type: Renderer
           RenderPass: SSR
           Set: 1
-      VertexInputBindingDescriptions:
-        - Binding: 0
-          InputRate: Vertex
-          Tag: Position
-          Names:
-            - positionA
-      ColorBlendStates:
-        - BlendEnabled: false
       Uniforms:
         - Name: normalTexture
           TextureAttachment: "GBuffer[1]"
