@@ -9,7 +9,6 @@ using namespace Pengine;
 SSAORenderer::~SSAORenderer()
 {
 	m_NoiseTexture = nullptr;
-	m_SSAOTexture = nullptr;
 }
 
 void SSAORenderer::GenerateSamples(const int kernelSize)

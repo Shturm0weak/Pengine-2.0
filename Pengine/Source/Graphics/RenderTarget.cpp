@@ -55,6 +55,7 @@ RenderTarget::~RenderTarget()
 	m_FrameBuffersByName.clear();
 	m_UniformWriterByName.clear();
 	m_BuffersByName.clear();
+	m_StorageImagesByName.clear();
 }
 
 std::shared_ptr<UniformWriter> RenderTarget::GetUniformWriter(const std::string& renderPassName) const
@@ -137,6 +138,23 @@ void RenderTarget::DeleteCustomData(const std::string& name)
 
 		m_CustomDataByName.erase(customDataByName);
 	}
+}
+
+std::shared_ptr<Texture> RenderTarget::GetStorageImage(const std::string& name)
+{
+	if (const auto storageImageByName = m_StorageImagesByName.find(name);
+		storageImageByName != m_StorageImagesByName.end())
+	{
+		return storageImageByName->second;
+	}
+
+	return nullptr;
+}
+
+void RenderTarget::SetStorageImage(const std::string& name, std::shared_ptr<Texture> texture)
+{
+	// TODO: Add usage storage image check!
+	m_StorageImagesByName[name] = texture;
 }
 
 void RenderTarget::Resize(const glm::ivec2& size) const

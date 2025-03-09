@@ -273,13 +273,19 @@ void EntryPoint::Run() const
 						continue;
 					}
 
-					if (!cameraComponent.GetRenderPassName().empty())
+					if (!cameraComponent.GetPassName().empty())
 					{
-						const std::shared_ptr<FrameBuffer> frameBuffer = renderTarget->GetFrameBuffer(cameraComponent.GetRenderPassName());
+						const std::shared_ptr<FrameBuffer> frameBuffer = renderTarget->GetFrameBuffer(cameraComponent.GetPassName());
 						if (frameBuffer)
 						{
 							viewport->Update(frameBuffer->GetAttachment(cameraComponent.GetRenderTargetIndex()));
+							continue;
+						}
 
+						const std::shared_ptr<Texture> texture = renderTarget->GetStorageImage(cameraComponent.GetPassName());
+						if (texture)
+						{
+							viewport->Update(texture);
 							continue;
 						}
 					}

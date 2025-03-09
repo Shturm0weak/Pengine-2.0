@@ -21,7 +21,7 @@ Scene:
     IsEnabled: true
     Transform:
       Position: [-5.98017931, 2.98888731, -0.220263332]
-      Rotation: [-0.238579184, -1.44740927, 0]
+      Rotation: [-0.238579184, -1.47099876, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -29,7 +29,7 @@ Scene:
       Type: 1
       ZNear: 0.100000001
       ZFar: 1000
-      RenderPassName: Final
+      PassName: Final
       RenderTargetIndex: 0
       Viewport: Main
     Childs:

@@ -1246,7 +1246,7 @@ void Editor::CameraComponent(const std::shared_ptr<Entity>& entity)
 			{
 				if (ImGui::MenuItem(passName.c_str()))
 				{
-					camera.SetRenderPassName(passName);
+					camera.SetPassName(passName);
 					camera.SetRenderTargetIndex(0);
 				}
 			}
@@ -1256,14 +1256,17 @@ void Editor::CameraComponent(const std::shared_ptr<Entity>& entity)
 
 		if (ImGui::BeginMenu("Render Target Index"))
 		{
-			if (!camera.GetRenderPassName().empty())
+			if (!camera.GetPassName().empty())
 			{
-				const int indexCount = RenderPassManager::GetInstance().GetRenderPass(camera.GetRenderPassName())->GetAttachmentDescriptions().size();
-				for (size_t i = 0; i < indexCount; i++)
+				if (RenderPassManager::GetInstance().GetPass(camera.GetPassName())->GetType() == Pass::Type::GRAPHICS)
 				{
-					if (ImGui::MenuItem(std::to_string(i).c_str()))
+					const int indexCount = RenderPassManager::GetInstance().GetRenderPass(camera.GetPassName())->GetAttachmentDescriptions().size();
+					for (size_t i = 0; i < indexCount; i++)
 					{
-						camera.SetRenderTargetIndex(i);
+						if (ImGui::MenuItem(std::to_string(i).c_str()))
+						{
+							camera.SetRenderTargetIndex(i);
+						}
 					}
 				}
 			}

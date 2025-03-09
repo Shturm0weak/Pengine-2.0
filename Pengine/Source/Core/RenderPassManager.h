@@ -29,7 +29,7 @@ namespace Pengine
 
 		std::shared_ptr<ComputePass> GetComputePass(const std::string& name) const;
 
-		size_t GetPassesCount() const { return m_PassesByName.size(); }
+		size_t GetPassCount() const { return m_PassesByName.size(); }
 
 		void ShutDown();
 

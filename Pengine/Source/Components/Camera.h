@@ -54,11 +54,11 @@ namespace Pengine
 
 		[[nodiscard]] std::shared_ptr<Entity> GetEntity() const { return m_Entity; }
 
-		[[nodiscard]] const std::string& GetRenderPassName() const { return m_RenderPassName; }
+		[[nodiscard]] const std::string& GetPassName() const { return m_PassName; }
 
 		[[nodiscard]] int GetRenderTargetIndex() const { return m_RenderTargetIndex; }
 
-		void SetRenderPassName(const std::string& renderPassName) { m_RenderPassName = renderPassName; }
+		void SetPassName(const std::string& passName) { m_PassName = passName; }
 
 		void SetRenderTargetIndex(int renderTargetIndex) { m_RenderTargetIndex = renderTargetIndex; }
 
@@ -75,7 +75,7 @@ namespace Pengine
 
 		Type m_Type = Type::ORTHOGRAPHIC;
 
-		std::string m_RenderPassName = Final;
+		std::string m_PassName = Final;
 		int m_RenderTargetIndex = 0;
 
 		void Copy(const Camera& camera);

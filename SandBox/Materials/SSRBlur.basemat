@@ -6,7 +6,7 @@ Basemat:
       CullMode: None
       PolygonMode: Fill
       TopologyMode: TriangleList
-      Vertex: Shaders/SSAOBlur.vert
+      Vertex: Shaders/SSRBlur.vert
       Fragment: Shaders/SSRBlur.frag
       DescriptorSets:
         - Type: Renderer
@@ -22,4 +22,4 @@ Basemat:
         - BlendEnabled: false
       Uniforms:
         - Name: sourceTexture
-          RenderTarget: "SSR[0]"
+          TextureAttachment: "SSR[0]"

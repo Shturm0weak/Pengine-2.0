@@ -31,7 +31,6 @@ void BaseMaterial::Reload(const std::shared_ptr<BaseMaterial>& baseMaterial)
 	{
 		baseMaterial->m_PipelinesByPass.clear();
 		baseMaterial->m_UniformWriterByPass.clear();
-		baseMaterial->m_RenderTargetsByName.clear();
 		baseMaterial->m_BuffersByName.clear();
 		baseMaterial->m_UniformsCache.clear();
 

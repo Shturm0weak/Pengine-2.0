@@ -22,15 +22,15 @@ Basemat:
         - BlendEnabled: false
       Uniforms:
         - Name: deferredTexture
-          RenderTarget: "Deferred[0]"
+          TextureAttachment: "Deferred[0]"
         - Name: shadingTexture
-          RenderTarget: "GBuffer[2]"
+          TextureAttachment: "GBuffer[2]"
         - Name: rawSSRTexture
-          RenderTarget: "SSR[0]"
-          RenderTargetDefault: "Black"
+          TextureAttachment: "SSR[0]"
+          TextureAttachmentDefault: "Black"
         - Name: blurSSRTexture
-          RenderTarget: "SSRBlur[0]"
-          RenderTargetDefault: "Black"
+          TextureAttachment: "SSRBlur[0]"
+          TextureAttachmentDefault: "Black"
         - Name: bloomTexture
-          RenderTarget: "BloomFrameBuffers(0)[0]"
-          RenderTargetDefault: "Black"
+          TextureAttachment: "BloomFrameBuffers(0)[0]"
+          TextureAttachmentDefault: "Black"

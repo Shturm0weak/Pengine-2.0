@@ -860,16 +860,6 @@ void RenderPassManager::CreateDeferred()
 
 		WriteRenderTargets(renderInfo.renderTarget, renderInfo.scene->GetRenderTarget(), pipeline, renderUniformWriter);
 
-		SSAORenderer* ssaoRenderer = (SSAORenderer*)renderInfo.renderTarget->GetCustomData("SSAORenderer");
-		if (ssaoRenderer && ssaoRenderer->GetSSAOBlurData().GetSSAOBlurTexture())
-		{
-			renderUniformWriter->WriteTexture("ssaoTexture", ssaoRenderer->GetSSAOBlurData().GetSSAOBlurTexture());
-		}
-		else
-		{
-			renderUniformWriter->WriteTexture("ssaoTexture", TextureManager::GetInstance().GetWhite());
-		}
-
 		const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 		FlushUniformWriters(uniformWriters);
 
@@ -2156,8 +2146,8 @@ void RenderPassManager::CreateSSAO()
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
 		createInfo.channels = 4;
-		createInfo.filepath = "SSAO";
-		createInfo.name = "SSAO";
+		createInfo.filepath = passName;
+		createInfo.name = passName;
 		createInfo.format = Format::R8G8B8A8_UNORM;
 		createInfo.size = currentViewportSize;
 		createInfo.usage = { Texture::Usage::STORAGE, Texture::Usage::SAMPLED };
@@ -2170,32 +2160,36 @@ void RenderPassManager::CreateSSAO()
 			renderInfo.renderTarget->SetCustomData("SSAORenderer", ssaoRenderer);
 		}
 
-		const std::string ssaoBufferName = "SSAOBuffer";
+		const std::string ssaoBufferName = passName;
+		std::shared_ptr<Texture> ssaoTexture = renderInfo.renderTarget->GetStorageImage(passName);
 
 		if (!ssaoSettings.isEnabled)
 		{
 			renderInfo.renderTarget->DeleteUniformWriter(passName);
 			renderInfo.renderTarget->DeleteCustomData("SSAORenderer");
 			renderInfo.renderTarget->DeleteBuffer(ssaoBufferName);
+			renderInfo.renderTarget->DeleteStorageImage(passName);
 
 			return;
 		}
 		else
 		{
-			if (!ssaoRenderer->GetSSAOTexture())
+			if (!renderInfo.renderTarget->GetStorageImage(passName))
 			{
-				ssaoRenderer->SetSSAOTexture(Texture::Create(createInfo));
-				GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName)->WriteTexture("outColor", ssaoRenderer->GetSSAOTexture());
+				ssaoTexture = Texture::Create(createInfo);
+				renderInfo.renderTarget->SetStorageImage(passName, ssaoTexture);
+				GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName)->WriteTexture("outColor", ssaoTexture);
 			}
 		}
 
-		if (currentViewportSize != ssaoRenderer->GetSSAOTexture()->GetSize())
+		if (currentViewportSize != ssaoTexture->GetSize())
 		{
 			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName);
-			auto callback = [renderUniformWriter, passName, createInfo, ssaoRenderer]()
+			auto callback = [renderUniformWriter, passName, createInfo, renderInfo]()
 			{
-				ssaoRenderer->SetSSAOTexture(Texture::Create(createInfo));
-				renderUniformWriter->WriteTexture("outColor", ssaoRenderer->GetSSAOTexture());
+				const std::shared_ptr<Texture> ssaoTexture = Texture::Create(createInfo);
+				renderInfo.renderTarget->SetStorageImage(passName, ssaoTexture);
+				renderUniformWriter->WriteTexture("outColor", ssaoTexture);
 			};
 
 			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, ssaoRenderer);
@@ -2266,45 +2260,46 @@ void RenderPassManager::CreateSSAOBlur()
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
 		createInfo.channels = 4;
-		createInfo.filepath = "SSAOBlur";
-		createInfo.name = "SSAOBlur";
+		createInfo.filepath = passName;
+		createInfo.name = passName;
 		createInfo.format = Format::R8G8B8A8_UNORM;
 		createInfo.size = currentViewportSize;
 		createInfo.usage = { Texture::Usage::STORAGE, Texture::Usage::SAMPLED };
 		createInfo.isMultiBuffered = true;
 
-		SSAORenderer* ssaoRenderer = (SSAORenderer*)renderInfo.renderTarget->GetCustomData("SSAORenderer");
-
+		std::shared_ptr<Texture> ssaoBlurTexture = renderInfo.renderTarget->GetStorageImage(passName);
 		if (!ssaoSettings.isEnabled)
 		{
 			renderInfo.renderTarget->DeleteUniformWriter(passName);
+			renderInfo.renderTarget->DeleteStorageImage(passName);
 
 			return;
 		}
 		else
 		{
-			if (!ssaoRenderer->GetSSAOBlurData().GetSSAOBlurTexture())
+			if (!renderInfo.renderTarget->GetStorageImage(passName))
 			{
-				ssaoRenderer->GetSSAOBlurData().SetSSAOBlurTexture(Texture::Create(createInfo));
-				GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName)->WriteTexture("outColor", ssaoRenderer->GetSSAOBlurData().GetSSAOBlurTexture());
+				ssaoBlurTexture = Texture::Create(createInfo);
+				renderInfo.renderTarget->SetStorageImage(passName, ssaoBlurTexture);
+				GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName)->WriteTexture("outColor", ssaoBlurTexture);
 			}
 		}
 
-		if (currentViewportSize != ssaoRenderer->GetSSAOBlurData().GetSSAOBlurTexture()->GetSize())
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName);
+		if (currentViewportSize != ssaoBlurTexture->GetSize())
 		{
-			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName);
-			auto callback = [renderUniformWriter, passName, createInfo, ssaoRenderer]()
+			auto callback = [renderUniformWriter, passName, createInfo, renderInfo]()
 			{
-				ssaoRenderer->GetSSAOBlurData().SetSSAOBlurTexture(Texture::Create(createInfo));
-				renderUniformWriter->WriteTexture("outColor", ssaoRenderer->GetSSAOBlurData().GetSSAOBlurTexture());
+				const std::shared_ptr<Texture> ssaoBlurTexture = Texture::Create(createInfo);
+				renderInfo.renderTarget->SetStorageImage(passName, ssaoBlurTexture);
+				renderUniformWriter->WriteTexture("outColor", ssaoBlurTexture);
 			};
 
-			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, ssaoRenderer);
+			std::shared_ptr<NextFrameEvent> resizeEvent = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, baseMaterial.get());
 			EventSystem::GetInstance().SendEvent(resizeEvent);
 		}
 
-		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, passName);
-		renderUniformWriter->WriteTexture("sourceTexture", ssaoRenderer->GetSSAOTexture());
+		WriteRenderTargets(renderInfo.renderTarget, renderInfo.scene->GetRenderTarget(), pipeline, renderUniformWriter);
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 		FlushUniformWriters(uniformWriters);
@@ -2369,29 +2364,49 @@ void RenderPassManager::WriteRenderTargets(
 	std::shared_ptr<Pipeline> pipeline,
 	std::shared_ptr<UniformWriter> uniformWriter)
 {
-	for (const auto& [name, renderTargetInfo] : pipeline->GetUniformInfo().renderTargetsByName)
+	for (const auto& [name, textureAttachmentInfo] : pipeline->GetUniformInfo().textureAttachmentsByName)
 	{
-		const std::shared_ptr<FrameBuffer> frameBuffer = cameraRenderTarget->GetFrameBuffer(renderTargetInfo.renderPassName);
-		if (frameBuffer)
+		if (cameraRenderTarget)
 		{
-			uniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
-		}
-		else if (!renderTargetInfo.renderTargetDefault.empty())
-		{
-			uniformWriter->WriteTexture(name, TextureManager::GetInstance().GetTexture(renderTargetInfo.renderTargetDefault));
-		}
-		else if (sceneRenderTarget)
-		{
-			const std::shared_ptr<FrameBuffer> frameBuffer = sceneRenderTarget->GetFrameBuffer(renderTargetInfo.renderPassName);
+			const std::shared_ptr<FrameBuffer> frameBuffer = cameraRenderTarget->GetFrameBuffer(textureAttachmentInfo.name);
 			if (frameBuffer)
 			{
-				uniformWriter->WriteTexture(name, frameBuffer->GetAttachment(renderTargetInfo.attachmentIndex));
+				uniformWriter->WriteTexture(name, frameBuffer->GetAttachment(textureAttachmentInfo.attachmentIndex));
+				continue;
+			}
+
+			const std::shared_ptr<Texture> texture = cameraRenderTarget->GetStorageImage(textureAttachmentInfo.name);
+			if (texture)
+			{
+				uniformWriter->WriteTexture(name, texture);
+				continue;
 			}
 		}
-		else
+
+		if (sceneRenderTarget)
 		{
-			uniformWriter->WriteTexture(name, TextureManager::GetInstance().GetWhite());
+			const std::shared_ptr<FrameBuffer> frameBuffer = sceneRenderTarget->GetFrameBuffer(textureAttachmentInfo.name);
+			if (frameBuffer)
+			{
+				uniformWriter->WriteTexture(name, frameBuffer->GetAttachment(textureAttachmentInfo.attachmentIndex));
+				continue;
+			}
+
+			const std::shared_ptr<Texture> texture = sceneRenderTarget->GetStorageImage(textureAttachmentInfo.name);
+			if (texture)
+			{
+				uniformWriter->WriteTexture(name, texture);
+				continue;
+			}
 		}
+
+		if (!textureAttachmentInfo.defaultName.empty())
+		{
+			uniformWriter->WriteTexture(name, TextureManager::GetInstance().GetTexture(textureAttachmentInfo.defaultName));
+			continue;
+		}
+
+		uniformWriter->WriteTexture(name, TextureManager::GetInstance().GetWhite());
 	}
 }
 

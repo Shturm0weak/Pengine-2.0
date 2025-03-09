@@ -48,10 +48,17 @@ namespace Pengine
 
 		void DeleteCustomData(const std::string& name);
 
+		std::shared_ptr<Texture> GetStorageImage(const std::string& name);
+
+		void SetStorageImage(const std::string& name, std::shared_ptr<Texture> texture);
+
+		void DeleteStorageImage(const std::string& name) { m_StorageImagesByName.erase(name); }
+
 		void Resize(const glm::ivec2& size) const;
 
 	protected:
 		std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> m_FrameBuffersByName;
+		std::unordered_map<std::string, std::shared_ptr<Texture>> m_StorageImagesByName;
 		std::unordered_map<std::string, std::shared_ptr<UniformWriter>> m_UniformWriterByName;
 		std::unordered_map<std::string, std::shared_ptr<Buffer>> m_BuffersByName;
 		std::unordered_map<std::string, CustomData*> m_CustomDataByName;

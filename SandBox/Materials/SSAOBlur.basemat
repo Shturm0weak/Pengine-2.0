@@ -7,3 +7,6 @@ Basemat:
         - Type: Renderer
           RenderPass: SSAOBlur
           Set: 0
+      Uniforms:
+        - Name: sourceTexture
+          TextureAttachment: "SSAO"

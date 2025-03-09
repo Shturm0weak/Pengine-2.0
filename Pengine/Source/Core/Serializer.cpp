@@ -985,15 +985,38 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 			}
 		}
 
+		auto checkFilepaths = [](
+			const std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType,
+			const std::string& baseMaterialFilepath)
+		{
+			for (const auto& [type, shaderFilepath] : shaderFilepathsByType)
+			{
+				if (shaderFilepath.empty())
+				{
+					FATAL_ERROR("BaseMaterial: " + baseMaterialFilepath + " has empty shader filepath for type " + std::to_string((int)type) + "!");
+				}
+			}
+		};
+
 		if (type == Pipeline::Type::GRAPHICS)
 		{
 			createInfo.pipelineCreateGraphicsInfos.emplace_back(DeserializeGraphicsPipeline(pipelineData));
 			createInfo.pipelineCreateGraphicsInfos.back().type = type;
+
+			for (const auto& pipelineCreateGraphicsInfo : createInfo.pipelineCreateGraphicsInfos)
+			{
+				checkFilepaths(pipelineCreateGraphicsInfo.shaderFilepathsByType, filepath.string());
+			}
 		}
 		else if (type == Pipeline::Type::COMPUTE)
 		{
 			createInfo.pipelineCreateComputeInfos.emplace_back(DeserializeComputePipeline(pipelineData));
 			createInfo.pipelineCreateComputeInfos.back().type = type;
+
+			for (const auto& pipelineCreateGraphicsInfo : createInfo.pipelineCreateGraphicsInfos)
+			{
+				checkFilepaths(pipelineCreateGraphicsInfo.shaderFilepathsByType, filepath.string());
+			}
 		}
 	}
 
@@ -3475,7 +3498,7 @@ void Serializer::SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entit
 	out << YAML::Key << "Type" << YAML::Value << static_cast<int>(camera.GetType());
 	out << YAML::Key << "ZNear" << YAML::Value << camera.GetZNear();
 	out << YAML::Key << "ZFar" << YAML::Value << camera.GetZFar();
-	out << YAML::Key << "RenderPassName" << YAML::Value << camera.GetRenderPassName();
+	out << YAML::Key << "PassName" << YAML::Value << camera.GetPassName();
 	out << YAML::Key << "RenderTargetIndex" << YAML::Value << camera.GetRenderTargetIndex();
 
 	// TODO: Maybe do it more optimal.
@@ -3524,9 +3547,9 @@ void Serializer::DeserializeCamera(const YAML::Node& in, const std::shared_ptr<E
 			camera.SetZFar(zFarData.as<float>());
 		}
 
-		if (const auto& renderPassNameData = cameraData["RenderPassName"])
+		if (const auto& passNameData = cameraData["PassName"])
 		{
-			camera.SetRenderPassName(renderPassNameData.as<std::string>());
+			camera.SetPassName(passNameData.as<std::string>());
 		}
 
 		if (const auto& renderTargetIndexData = cameraData["RenderTargetIndex"])
@@ -4125,22 +4148,22 @@ void Serializer::ParseUniformValues(
 			}
 		}
 
-		if (const auto& nameData = uniformData["RenderTarget"])
+		if (const auto& nameData = uniformData["TextureAttachment"])
 		{
-			std::string renderTargetName = nameData.as<std::string>();
-			size_t openBracketIndex = renderTargetName.find_first_of('[');
+			std::string textureAttachmentName = nameData.as<std::string>();
+			size_t openBracketIndex = textureAttachmentName.find_first_of('[');
 			if (openBracketIndex != std::string::npos)
 			{
-				size_t closeBracketIndex = renderTargetName.find_last_of(']');
+				size_t closeBracketIndex = textureAttachmentName.find_last_of(']');
 				if (closeBracketIndex != std::string::npos)
 				{
-					UniformLayout::RenderTargetInfo renderTargetInfo{};
+					Pipeline::TextureAttachmentInfo textureAttachmentInfo{};
 
-					const std::string attachmentIndexString = renderTargetName.substr(openBracketIndex + 1, closeBracketIndex - openBracketIndex - 1);
-					renderTargetInfo.renderPassName = renderTargetName.substr(0, openBracketIndex);
-					renderTargetInfo.attachmentIndex = std::stoul(attachmentIndexString);
+					const std::string attachmentIndexString = textureAttachmentName.substr(openBracketIndex + 1, closeBracketIndex - openBracketIndex - 1);
+					textureAttachmentInfo.name = textureAttachmentName.substr(0, openBracketIndex);
+					textureAttachmentInfo.attachmentIndex = std::stoul(attachmentIndexString);
 
-					uniformsInfo.renderTargetsByName[uniformName] = renderTargetInfo;
+					uniformsInfo.textureAttachmentsByName[uniformName] = textureAttachmentInfo;
 				}
 				else
 				{
@@ -4149,13 +4172,16 @@ void Serializer::ParseUniformValues(
 			}
 			else
 			{
-				Logger::Warning(uniformName + ": no attachment index for render target!");
+				// If no attachment index then the texture should be a storage texture.
+				Pipeline::TextureAttachmentInfo textureAttachmentInfo{};
+				textureAttachmentInfo.name = textureAttachmentName;
+				uniformsInfo.textureAttachmentsByName[uniformName] = textureAttachmentInfo;
 			}
 		}
 
-		if (const auto& nameData = uniformData["RenderTargetDefault"])
+		if (const auto& nameData = uniformData["TextureAttachmentDefault"])
 		{
-			uniformsInfo.renderTargetsByName[uniformName].renderTargetDefault = nameData.as<std::string>();
+			uniformsInfo.textureAttachmentsByName[uniformName].defaultName = nameData.as<std::string>();
 		}
 	}
 }

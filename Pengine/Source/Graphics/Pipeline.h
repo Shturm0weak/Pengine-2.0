@@ -45,11 +45,26 @@ namespace Pengine
 			std::unordered_map<std::string, glm::vec4> vec4ValuesByName;
 		};
 
+		/**
+		 * Used to attach framebuffer attachments and storage images to the descriptor set of RENDERER type.
+		 * Textures will be taken from render targets of the scene and the camera.
+		 * If no attachment index then the texture will be considered as storage image.
+		 */
+		struct TextureAttachmentInfo
+		{
+			std::string name;
+			std::string defaultName;
+			uint32_t attachmentIndex = 0;
+		};
+
 		struct UniformInfo
 		{
+			// For descriptor sets of BASEMATERIAL,MATERIAL type.
 			std::unordered_map<std::string, UniformBufferInfo> uniformBuffersByName;
 			std::unordered_map<std::string, std::string> texturesByName;
-			std::unordered_map<std::string, UniformLayout::RenderTargetInfo> renderTargetsByName;
+
+			// For descriptor sets of RENDERER type.
+			std::unordered_map<std::string, TextureAttachmentInfo> textureAttachmentsByName;
 		};
 
 		struct CreateComputeInfo

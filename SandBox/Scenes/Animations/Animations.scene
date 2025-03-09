@@ -15,7 +15,7 @@ Scene:
       Type: 1
       ZNear: 0.100000001
       ZFar: 1000
-      RenderPassName: Final
+      PassName: Final
       RenderTargetIndex: 0
       Viewport: Main
     Childs:

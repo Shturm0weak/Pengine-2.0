@@ -12,6 +12,6 @@ Basemat:
           Set: 1
       Uniforms:
         - Name: normalTexture
-          RenderTarget: "GBuffer[1]"
+          TextureAttachment: "GBuffer[1]"
         - Name: depthTexture
-          RenderTarget: "GBuffer[4]"
+          TextureAttachment: "GBuffer[4]"
