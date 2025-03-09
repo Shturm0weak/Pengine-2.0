@@ -21,11 +21,11 @@ namespace Pengine::Vk
 
 		[[nodiscard]] VkFramebuffer GetFrameBuffer() const { return m_FrameBuffers[swapChainImageIndex]; }
 
-		[[nodiscard]] virtual std::shared_ptr<Texture> GetAttachment(const size_t index, const uint32_t frameIndex) const override
-		{ return m_Attachments[frameIndex][index]; }
+		[[nodiscard]] virtual std::shared_ptr<Texture> GetAttachment(const size_t index) const override
+		{ return m_Attachments[index]; }
 
 		[[nodiscard]] virtual std::vector<std::shared_ptr<Texture>> GetAttachments() const override
-		{ return m_Attachments[swapChainImageIndex]; }
+		{ return m_Attachments; }
 
 		virtual void Resize(const glm::ivec2& size) override;
 
@@ -33,7 +33,7 @@ namespace Pengine::Vk
 
 	private:
 		std::vector<VkFramebuffer> m_FrameBuffers;
-		std::vector<std::vector<std::shared_ptr<Texture>>> m_Attachments;
+		std::vector<std::shared_ptr<Texture>> m_Attachments;
 	};
 
 }

@@ -28,7 +28,7 @@ namespace Pengine
 		FrameBuffer(const FrameBuffer&) = delete;
 		FrameBuffer& operator=(const FrameBuffer&) = delete;
 
-		[[nodiscard]] virtual std::shared_ptr<Texture> GetAttachment(const size_t index, const uint32_t frameIndex = Vk::swapChainImageIndex) const = 0;
+		[[nodiscard]] virtual std::shared_ptr<Texture> GetAttachment(const size_t index) const = 0;
 
 		[[nodiscard]] virtual std::vector<std::shared_ptr<Texture>> GetAttachments() const = 0;
 
