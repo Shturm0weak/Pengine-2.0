@@ -57,71 +57,8 @@ void LoadAllBaseMaterials(const std::filesystem::path& filepath)
 	}
 }
 
-void PrepareResources()
+void CreateDefaultResources()
 {
-	Texture::CreateInfo whiteTextureCreateInfo{};
-	whiteTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	whiteTextureCreateInfo.channels = 4;
-	whiteTextureCreateInfo.filepath = "White";
-	whiteTextureCreateInfo.name = "White";
-	whiteTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
-	whiteTextureCreateInfo.size = { 1, 1 };
-	whiteTextureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_DST };
-	std::vector<uint8_t> whitePixels = {
-		255,
-		255,
-		255,
-		255
-	};
-	whiteTextureCreateInfo.data = whitePixels.data();
-	TextureManager::GetInstance().Create(whiteTextureCreateInfo);
-
-	Texture::CreateInfo pinkTextureCreateInfo{};
-	pinkTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	pinkTextureCreateInfo.channels = 4;
-	pinkTextureCreateInfo.filepath = "Pink";
-	pinkTextureCreateInfo.name = "Pink";
-	pinkTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
-	pinkTextureCreateInfo.size = { 1, 1 };
-	pinkTextureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_DST };
-	std::vector<uint8_t> pinkPixels = {
-		255,
-		0,
-		255,
-		255
-	};
-	pinkTextureCreateInfo.data = pinkPixels.data();
-	TextureManager::GetInstance().Create(pinkTextureCreateInfo);
-
-	Texture::CreateInfo blackTextureCreateInfo{};
-	blackTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	blackTextureCreateInfo.channels = 4;
-	blackTextureCreateInfo.filepath = "Black";
-	blackTextureCreateInfo.name = "Black";
-	blackTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
-	blackTextureCreateInfo.size = { 1, 1 };
-	blackTextureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_DST };
-	std::vector<uint8_t> blackPixels = {
-		0,
-		0,
-		0,
-		0
-	};
-	blackTextureCreateInfo.data = blackPixels.data();
-	TextureManager::GetInstance().Create(blackTextureCreateInfo);
-
-	Texture::CreateInfo whiteLayeredTextureCreateInfo;
-	whiteLayeredTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	whiteLayeredTextureCreateInfo.channels = 4;
-	whiteLayeredTextureCreateInfo.filepath = "WhiteLayered";
-	whiteLayeredTextureCreateInfo.name = "WhiteLayered";
-	whiteLayeredTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
-	whiteLayeredTextureCreateInfo.size = { 1, 1 };
-	whiteLayeredTextureCreateInfo.layerCount = 2;;
-	whiteLayeredTextureCreateInfo.data = nullptr;
-	whiteLayeredTextureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::COLOR_ATTACHMENT, Texture::Usage::TRANSFER_DST };
-	TextureManager::GetInstance().Create(whiteLayeredTextureCreateInfo);
-
 	{
 		glm::vec2* vertices = new glm::vec2[4];
 		vertices[0] = { -1.0f, -1.0f };
@@ -215,10 +152,11 @@ void EntryPoint::Run() const
 	RenderPassManager::GetInstance();
 	ThreadPool::GetInstance().Initialize();
 
-	PrepareResources();
-	LoadAllBaseMaterials(std::filesystem::path("Materials"));
-
+	TextureManager::GetInstance().CreateDefaultResources();
 	TextureManager::GetInstance().LoadFromFolder(std::filesystem::path("Editor") / "Images");
+
+	CreateDefaultResources();
+	LoadAllBaseMaterials(std::filesystem::path("Materials"));
 
 #ifndef NO_EDITOR
 	Editor editor;

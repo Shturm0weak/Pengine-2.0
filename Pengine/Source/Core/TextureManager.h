@@ -29,9 +29,13 @@ namespace Pengine
 
 		std::shared_ptr<Texture> GetWhite();
 
+		std::shared_ptr<Texture> GetWhiteLayered();
+
 		std::shared_ptr<Texture> GetBlack();
 
 		std::shared_ptr<Texture> GetPink();
+
+		void CreateDefaultResources();
 
 		void Delete(const std::filesystem::path& filepath);
 
@@ -42,6 +46,11 @@ namespace Pengine
 		~TextureManager() = default;
 
 		std::unordered_map<std::filesystem::path, std::shared_ptr<Texture>, path_hash> m_TexturesByFilepath;
+
+		std::shared_ptr<Texture> m_White;
+		std::shared_ptr<Texture> m_Black;
+		std::shared_ptr<Texture> m_Pink;
+		std::shared_ptr<Texture> m_WhiteLayered;
 
 		std::mutex m_MutexTexture;
 	};
