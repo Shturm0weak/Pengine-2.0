@@ -1,0 +1,42 @@
+Settings:
+  DrawBoundingBoxes: false
+Scene:
+  - UUID: e7fe6ebe-0020-44f1-ae1f-e5edada7f33f
+    Name: Camera
+    IsEnabled: true
+    Transform:
+      Position: [-10.212266, 4.51808548, -2.78372908]
+      Rotation: [-0.177899048, -1.88019788, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Camera:
+      Fov: 1.57079637
+      Type: 1
+      ZNear: 0.100000001
+      ZFar: 1000
+      PassName: Final
+      RenderTargetIndex: 0
+      Viewport: Main
+    Childs:
+      []
+  - UUID: b3525c1e-615c-4c01-ac1e-3700d3380b10
+    Name: Sun
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [1.2915436, 0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    DirectionalLight:
+      Color: [1, 1, 1]
+      Intensity: 3
+      Ambient: 0.100000001
+    Childs:
+      []
+  - PrefabFilepath: aa60e29f-a346-4999-ac60-f6a11b23a1b2
+    UUID: 53da0e09-5f30-4386-8cb8-5aaa60457562
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
