@@ -44,13 +44,13 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 			if (m_Batches.size() == batchIndex)
 			{
 				Batch batch;
-				batch.m_VertexBuffer = Buffer::Create(
+				batch.vertexBuffer = Buffer::Create(
 					sizeof(glm::vec3) * 2,
 					MAX_BATCH_LINE_COUNT * 2,
 					Buffer::Usage::VERTEX_BUFFER,
 					Buffer::MemoryType::CPU);
 
-				batch.m_IndexBuffer = Buffer::Create(
+				batch.indexBuffer = Buffer::Create(
 					sizeof(uint32_t),
 					MAX_BATCH_LINE_COUNT * 2,
 					Buffer::Usage::INDEX_BUFFER,
@@ -61,12 +61,14 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 
 			Batch& batch = m_Batches[batchIndex];
 
-			batch.m_VertexBuffer->WriteToBuffer(lineVertices.data(), lineVertices.size() * sizeof(glm::vec3));
-			batch.m_IndexBuffer->WriteToBuffer(lineIndices.data(), lineIndices.size() * sizeof(uint32_t));
+			batch.vertexBuffer->WriteToBuffer(lineVertices.data(), lineVertices.size() * sizeof(glm::vec3));
+			batch.indexBuffer->WriteToBuffer(lineIndices.data(), lineIndices.size() * sizeof(uint32_t));
 
 			renderInfo.renderer->Render(
-				{ batch.m_VertexBuffer },
-				batch.m_IndexBuffer,
+				{ batch.vertexBuffer },
+				{ 0 },
+				batch.indexBuffer,
+				0,
 				index,
 				pipeline,
 				nullptr,

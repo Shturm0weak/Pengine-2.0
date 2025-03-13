@@ -6,6 +6,7 @@
 #include "../Components/Renderer3D.h"
 #include "../Components/SkeletalAnimator.h"
 #include "../Components/Transform.h"
+#include "../Components/Canvas.h"
 #include "../Core/FileFormatNames.h"
 #include "../Core/Input.h"
 #include "../Core/KeyCode.h"
@@ -972,6 +973,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene)
 			PointLightComponent(entity);
 			DirectionalLightComponent(entity);
 			SkeletalAnimatorComponent(entity);
+			CanvasComponent(entity);
 
 			ImGui::NewLine();
 		}
@@ -1952,6 +1954,10 @@ void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
 		{
 			entity->AddComponent<SkeletalAnimator>();
 		}
+		else if (ImGui::MenuItem("Canvas"))
+		{
+			entity->AddComponent<Canvas>();
+		}
 		ImGui::EndPopup();
 	}
 }
@@ -2230,6 +2236,30 @@ void Editor::SkeletalAnimatorComponent(const std::shared_ptr<Entity>& entity)
 				skeletalAnimator.SetCurrentTime(currentTime);
 			}
 		}
+	}
+}
+
+void Editor::CanvasComponent(const std::shared_ptr<Entity>& entity)
+{
+	if (!entity->HasComponent<Canvas>())
+	{
+		return;
+	}
+
+	Canvas& canvas = entity->GetComponent<Canvas>();
+
+	ImGui::PushID("Canvas X");
+	if (ImGui::Button("X"))
+	{
+		entity->RemoveComponent<Canvas>();
+	}
+	ImGui::PopID();
+
+	ImGui::SameLine();
+
+	if (ImGui::CollapsingHeader("Canvas"))
+	{
+		Indent indent;
 	}
 }
 

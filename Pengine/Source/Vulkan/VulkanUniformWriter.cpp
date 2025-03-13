@@ -11,17 +11,20 @@
 using namespace Pengine;
 using namespace Vk;
 
-VulkanUniformWriter::VulkanUniformWriter(std::shared_ptr<UniformLayout> uniformLayout)
-	: UniformWriter(uniformLayout)
+VulkanUniformWriter::VulkanUniformWriter(
+	std::shared_ptr<UniformLayout> uniformLayout,
+	bool isMultiBuffered)
+	: UniformWriter(uniformLayout, isMultiBuffered)
 {
-	m_DescriptorSetWrites.resize(swapChainImageCount);
+	m_Count = isMultiBuffered ? swapChainImageCount : 1;
+	m_DescriptorSetWrites.resize(m_Count);
 	for (auto& descriptorSetWrite : m_DescriptorSetWrites)
 	{
 		descriptorSetWrite.m_BufferInfos.reserve(32);
 		descriptorSetWrite.m_ImageInfos.reserve(32);
 	}
 
-	m_DescriptorSets.resize(swapChainImageCount);
+	m_DescriptorSets.resize(m_Count);
 
 	if (!descriptorPool->AllocateDescriptorSets(
 		std::static_pointer_cast<VulkanUniformLayout>(m_UniformLayout)->GetDescriptorSetLayout(), m_DescriptorSets))
@@ -53,7 +56,7 @@ void VulkanUniformWriter::WriteBuffer(
 		FATAL_ERROR("Layout does not contain specified binding!");
 	}
 
-	for (size_t i = 0; i < swapChainImageCount; i++)
+	for (size_t i = 0; i < m_Count; i++)
 	{
 		m_DescriptorSetWrites[i].m_BufferInfos.emplace_back(std::static_pointer_cast<VulkanBuffer>(buffer)->DescriptorInfo(i, size, offset));
 
@@ -79,7 +82,7 @@ void VulkanUniformWriter::WriteTexture(
 		FATAL_ERROR("Layout does not contain specified binding!");
 	}
 
-	for (size_t i = 0; i < swapChainImageCount; i++)
+	for (size_t i = 0; i < m_Count; i++)
 	{
 		m_DescriptorSetWrites[i].m_ImageInfos.emplace_back(std::static_pointer_cast<VulkanTexture>(texture)->GetDescriptorInfo(i));
 
@@ -105,7 +108,7 @@ void VulkanUniformWriter::WriteTextures(
 		FATAL_ERROR("Layout does not contain specified binding!");
 	}
 
-	for (size_t i = 0; i < swapChainImageCount; i++)
+	for (size_t i = 0; i < m_Count; i++)
 	{
 		const size_t index = m_DescriptorSetWrites[i].m_ImageInfos.size();
 		for (const auto& texture : textures)
@@ -152,7 +155,7 @@ void VulkanUniformWriter::WriteTextures(
 
 void VulkanUniformWriter::Flush()
 {
-	auto& descriptorSetWrites = m_DescriptorSetWrites[swapChainImageIndex];
+	auto& descriptorSetWrites = m_DescriptorSetWrites[m_IsMultiBuffered ? swapChainImageIndex : 0];
 	if (descriptorSetWrites.m_WritesByLocation.empty())
 	{
 		return;
@@ -162,7 +165,7 @@ void VulkanUniformWriter::Flush()
 	writes.reserve(descriptorSetWrites.m_WritesByLocation.size());
 	for (auto& [location, write] : descriptorSetWrites.m_WritesByLocation)
 	{
-		write.dstSet = m_DescriptorSets[swapChainImageIndex];
+		write.dstSet = m_DescriptorSets[m_IsMultiBuffered ? swapChainImageIndex : 0];
 		writes.emplace_back(write);
 	}
 
@@ -173,7 +176,31 @@ void VulkanUniformWriter::Flush()
 	descriptorSetWrites.m_WritesByLocation.clear();
 }
 
+void VulkanUniformWriter::WriteTexture(uint32_t location, const std::vector<VkDescriptorImageInfo>& vkDescriptorImageInfos)
+{
+	const auto binding = m_UniformLayout->GetBindingByLocation(location);
+
+	if (!binding)
+	{
+		FATAL_ERROR("Layout does not contain specified binding!");
+	}
+
+	for (size_t i = 0; i < m_Count; i++)
+	{
+		m_DescriptorSetWrites[i].m_ImageInfos.emplace_back(vkDescriptorImageInfos[i]);
+
+		VkWriteDescriptorSet write{};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.descriptorType = VulkanUniformLayout::ConvertDescriptorType(binding->type);
+		write.dstBinding = location;
+		write.pImageInfo = &m_DescriptorSetWrites[i].m_ImageInfos.back();
+		write.descriptorCount = binding->count;
+
+		m_DescriptorSetWrites[i].m_WritesByLocation[location] = write;
+	}
+}
+
 VkDescriptorSet VulkanUniformWriter::GetDescriptorSet() const
 {
-	return m_DescriptorSets[swapChainImageIndex];
+	return m_DescriptorSets[m_IsMultiBuffered ? swapChainImageIndex : 0];
 }

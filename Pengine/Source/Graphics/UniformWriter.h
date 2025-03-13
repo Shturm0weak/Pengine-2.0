@@ -12,9 +12,13 @@ namespace Pengine
 	class PENGINE_API UniformWriter
 	{
 	public:
-		static std::shared_ptr<UniformWriter> Create(std::shared_ptr<UniformLayout> uniformLayout);
+		static std::shared_ptr<UniformWriter> Create(
+			std::shared_ptr<UniformLayout> uniformLayout,
+			bool isMultiBuffered = true);
 
-		explicit UniformWriter(std::shared_ptr<UniformLayout> uniformLayout);
+		explicit UniformWriter(
+			std::shared_ptr<UniformLayout> uniformLayout,
+			bool isMultiBuffered);
 		virtual ~UniformWriter() = default;
 		UniformWriter(const UniformWriter&) = delete;
 		UniformWriter& operator=(const UniformWriter&) = delete;
@@ -35,10 +39,14 @@ namespace Pengine
 
 		std::shared_ptr<UniformLayout> GetUniformLayout() const { return m_UniformLayout; }
 
+		[[nodiscard]] bool GetIsMultiBuffered() const { return m_IsMultiBuffered; }
+
 	protected:
 		std::shared_ptr<UniformLayout> m_UniformLayout;
 		std::unordered_map<uint32_t, std::shared_ptr<Buffer>> m_BuffersByLocation;
 		std::unordered_map<std::string, std::shared_ptr<Texture>> m_TexturesByName;
+
+		bool m_IsMultiBuffered = false;
 	};
 
 }

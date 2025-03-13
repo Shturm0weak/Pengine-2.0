@@ -21,6 +21,7 @@ namespace Pengine
 	const std::string Bloom = "Bloom";
 	const std::string SSR = "SSR";
 	const std::string SSRBlur = "SSRBlur";
+	const std::string UI = "UI";
 
 	class FrameBuffer;
 	class Window;
@@ -67,10 +68,25 @@ namespace Pengine
 			std::function<std::shared_ptr<FrameBuffer>(RenderTarget*, uint32_t&)> getFrameBufferCallback;
 		};
 
+		struct Scissors
+		{
+			glm::ivec2 offset;
+			glm::uvec2 size;
+		};
+
+		struct Viewport
+		{
+			glm::vec2 position;
+			glm::vec2 size;
+			glm::vec2 minMaxDepth;
+		};
+
 		struct SubmitInfo
 		{
 			std::shared_ptr<RenderPass> renderPass;
 			std::shared_ptr<FrameBuffer> frameBuffer;
+			std::optional<Scissors> scissors;
+			std::optional<Viewport> viewport;
 			void* frame;
 		};
 

@@ -58,7 +58,7 @@ namespace Pengine::Vk
 
 		static SamplerCreateInfo::BorderColor ConvertBorderColor(VkBorderColor borderColor);
 
-		[[nodiscard]] virtual void* GetId() const override { return m_IsMultiBuffered ? (void*)m_ImageDatas[Vk::swapChainImageIndex].descriptorSet : m_ImageDatas[0].descriptorSet; }
+		[[nodiscard]] virtual void* GetId() const override;
 
 		virtual void GenerateMipMaps(void* frame = nullptr) override;
 
@@ -79,7 +79,6 @@ namespace Pengine::Vk
 			VmaAllocation vmaAllocation = VK_NULL_HANDLE;
 			VmaAllocationInfo vmaAllocationInfo{};
 			VkImageView view{};
-			VkDescriptorSet descriptorSet{};
 			VkImageLayout m_Layout = VK_IMAGE_LAYOUT_UNDEFINED;
 			VkImageLayout m_PreviousLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		};

@@ -13,6 +13,7 @@ namespace Pengine
 
 	const std::vector<std::string> passPerViewportOrder =
 	{
+		UI,
 		ZPrePass,
 		GBuffer,
 		CSM,
@@ -23,7 +24,7 @@ namespace Pengine
 		SSR,
 		SSRBlur,
 		Bloom,
-		Final,
+		Final
 	};
 
 }

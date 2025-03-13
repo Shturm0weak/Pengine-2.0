@@ -49,9 +49,15 @@ namespace Pengine
 
 		virtual void EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) = 0;
 
+		virtual void SetScissors(const RenderPass::Scissors& scissors, void* frame) = 0;
+
+		virtual void SetViewport(const RenderPass::Viewport& viewport, void* frame) = 0;
+
 		virtual void Render(
 			const std::vector<std::shared_ptr<Buffer>>& vertexBuffers,
+			const std::vector<size_t>& vertexBufferOffsets,
 			const std::shared_ptr<Buffer>& indexBuffer,
+			const size_t indexBufferOffset,
 			const int indexCount,
 			const std::shared_ptr<Pipeline>& pipeline,
 			const std::shared_ptr<Buffer>& instanceBuffer,

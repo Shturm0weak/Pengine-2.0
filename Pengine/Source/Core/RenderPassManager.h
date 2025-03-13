@@ -66,9 +66,11 @@ namespace Pengine
 		RenderPassManager();
 		~RenderPassManager() = default;
 
-		static std::vector<std::shared_ptr<class Buffer>> GetVertexBuffers(
+		static void GetVertexBuffers(
 			std::shared_ptr<class Pipeline> pipeline,
-			std::shared_ptr<class Mesh> mesh);
+			std::shared_ptr<class Mesh> mesh,
+			std::vector<std::shared_ptr<class Buffer>>& vertexBuffers,
+			std::vector<size_t>& vertexBufferOffsets);
 
 		void CreateZPrePass();
 
@@ -96,11 +98,7 @@ namespace Pengine
 
 		void CreateSSAOBlur();
 
-		static void BlurRenderPassTemplate(
-			const RenderPass::RenderCallbackInfo& renderInfo,
-			std::shared_ptr<class BaseMaterial> baseMaterial,
-			std::shared_ptr<class Pipeline> pipeline,
-			const std::string& renderPassName);
+		void CreateUI();
 
 		static void FlushUniformWriters(const std::vector<std::shared_ptr<class UniformWriter>>& uniformWriters);
 

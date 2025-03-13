@@ -2,6 +2,7 @@
 
 #include "AsyncAssetLoader.h"
 #include "FileFormatNames.h"
+#include "FontManager.h"
 #include "Input.h"
 #include "MaterialManager.h"
 #include "MeshManager.h"
@@ -151,6 +152,7 @@ void EntryPoint::Run() const
 	Serializer::GenerateFilesUUID(std::filesystem::current_path());
 	RenderPassManager::GetInstance();
 	ThreadPool::GetInstance().Initialize();
+	FontManager::GetInstance().Initialize();
 
 	TextureManager::GetInstance().CreateDefaultResources();
 	TextureManager::GetInstance().LoadFromFolder(std::filesystem::path("Editor") / "Images");
@@ -283,6 +285,7 @@ void EntryPoint::Run() const
 	SceneManager::GetInstance().ShutDown();
 	MaterialManager::GetInstance().ShutDown();
 	MeshManager::GetInstance().ShutDown();
+	FontManager::GetInstance().ShutDown();
 	TextureManager::GetInstance().ShutDown();
 	RenderPassManager::GetInstance().ShutDown();
 	ViewportManager::GetInstance().ShutDown();
