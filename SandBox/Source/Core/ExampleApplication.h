@@ -13,4 +13,6 @@ public:
 	virtual void OnUpdate() override;
 
 	virtual void OnClose() override;
+
+	std::string fps;
 };

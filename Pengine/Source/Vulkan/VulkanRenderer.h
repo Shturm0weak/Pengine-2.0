@@ -25,9 +25,15 @@ namespace Pengine::Vk
 
 		virtual void EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo) override;
 
+		virtual void SetScissors(const RenderPass::Scissors& scissors, void* frame) override;
+
+		virtual void SetViewport(const RenderPass::Viewport& viewport, void* frame) override;
+
 		virtual void Render(
 			const std::vector<std::shared_ptr<Buffer>>& vertexBuffers,
+			const std::vector<size_t>& vertexBufferOffsets,
 			const std::shared_ptr<Buffer>& indexBuffer,
+			const size_t indexBufferOffset,
 			const int indexCount,
 			const std::shared_ptr<Pipeline>& pipeline,
 			const std::shared_ptr<Buffer>& instanceBuffer,
@@ -54,9 +60,11 @@ namespace Pengine::Vk
 		static void BindBuffers(
 			VkCommandBuffer commandBuffer,
 			const std::vector<std::shared_ptr<Buffer>>& vertexBuffers,
+			const std::vector<size_t>& vertexBufferOffsets,
 			const std::shared_ptr<Buffer>& instanceBuffer,
+		    const size_t instanceBufferOffset,
 			const std::shared_ptr<Buffer>& indexBuffer,
-			size_t instanceBufferOffset);
+			const size_t indexBufferOffset);
 
 		static void DrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount);
 	};

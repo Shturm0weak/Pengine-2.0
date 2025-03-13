@@ -1,0 +1,33 @@
+Basemat:
+  Pipelines:
+    - RenderPass: UI
+      DepthTest: false
+      DepthWrite: false
+      CullMode: None
+      PolygonMode: Fill
+      TopologyMode: TriangleList
+      Vertex: Shaders/RectangleUI.vert
+      Fragment: Shaders/RectangleUI.frag
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Tag: Position
+          Names:
+            - positionA
+            - positionInPixelsA
+            - uvA
+            - cornerRadiusA
+            - instanceIndexA
+      DescriptorSets:
+        - Type: Object
+          RenderPass: UI
+          Set: 0
+      DescriptorSets:
+        - Type: Object
+          RenderPass: UI
+          Set: 1
+      ColorBlendStates:
+        - BlendEnabled: true
+          AlphaBlendOp: add
+          SrcAlphaBlendFactor: one
+          DstAlphaBlendFactor: one minus src alpha

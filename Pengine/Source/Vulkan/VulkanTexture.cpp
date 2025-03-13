@@ -5,6 +5,8 @@
 #include "VulkanDevice.h"
 #include "VulkanFormat.h"
 #include "VulkanSamplerManager.h"
+#include "VulkanUniformLayout.h"
+#include "VulkanUniformWriter.h"
 
 #include "../Core/Logger.h"
 
@@ -133,17 +135,26 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 
 	m_Sampler = CreateSampler(createInfo.samplerCreateInfo);
 
-	std::unique_ptr<VulkanDescriptorSetLayout> setLayout = VulkanDescriptorSetLayout::Builder()
-		.AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
-		.Build();
-
-	VkDescriptorImageInfo descriptorImageInfo = GetDescriptorInfo();
-
-	for (auto& imageData : m_ImageDatas)
+	// Setup uniform writer. Maybe need to refactor.
 	{
-		VulkanDescriptorWriter(*setLayout, *descriptorPool)
-			.WriteImage(0, &descriptorImageInfo)
-			.Build(imageData.descriptorSet);
+		std::vector<ShaderReflection::ReflectDescriptorSetBinding> bindings;
+		ShaderReflection::ReflectDescriptorSetBinding& binding = bindings.emplace_back();
+		binding.name = "imageTexture";
+		binding.binding = 0;
+		binding.count = 1;
+		binding.type = ShaderReflection::Type::COMBINED_IMAGE_SAMPLER;
+
+		m_UniformWriter = UniformWriter::Create(UniformLayout::Create(bindings), false);
+		std::shared_ptr<VulkanUniformWriter> vkUniformWriter = std::dynamic_pointer_cast<VulkanUniformWriter>(m_UniformWriter);
+
+		std::vector<VkDescriptorImageInfo> vkDescriptorImageInfos(m_ImageDatas.size());
+		for (int i = 0; i < m_ImageDatas.size(); ++i)
+		{
+			vkDescriptorImageInfos[i] = GetDescriptorInfo(i);
+		}
+
+		vkUniformWriter->WriteTexture(0, vkDescriptorImageInfos);
+		vkUniformWriter->Flush();
 	}
 }
 
@@ -154,14 +165,10 @@ VulkanTexture::~VulkanTexture()
 		device->DeleteResource([
 			image = imageData.image,
 			view = imageData.view,
-			descriptorSet = imageData.descriptorSet,
 			vmaAllocation = imageData.vmaAllocation]()
 		{
 				vkDestroyImageView(device->GetDevice(), view, nullptr);
 				vmaDestroyImage(device->GetVmaAllocator(), image, vmaAllocation);
-
-				std::vector<VkDescriptorSet> descriptorSets = { descriptorSet };
-				descriptorPool->FreeDescriptors(descriptorSets);
 		});
 	}
 }
@@ -493,6 +500,12 @@ Texture::SamplerCreateInfo::BorderColor VulkanTexture::ConvertBorderColor(VkBord
 
 	FATAL_ERROR("Failed to convert border color!");
 	return {};
+}
+
+void* VulkanTexture::GetId() const
+{
+	std::shared_ptr<VulkanUniformWriter> vkUniformWriter = std::dynamic_pointer_cast<VulkanUniformWriter>(m_UniformWriter);
+	return (void*)vkUniformWriter->GetDescriptorSet();
 }
 
 void VulkanTexture::GenerateMipMaps(void* frame)

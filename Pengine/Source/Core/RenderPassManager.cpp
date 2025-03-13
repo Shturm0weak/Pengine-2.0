@@ -8,7 +8,9 @@
 #include "Time.h"
 #include "FrustumCulling.h"
 #include "Raycast.h"
+#include "UIRenderer.h"
 
+#include "../Components/Canvas.h"
 #include "../Components/Camera.h"
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
@@ -240,11 +242,14 @@ RenderPassManager::RenderPassManager()
 	CreateBloom();
 	CreateSSR();
 	CreateSSRBlur();
+	CreateUI();
 }
 
-std::vector<std::shared_ptr<Buffer>> RenderPassManager::GetVertexBuffers(
+void RenderPassManager::GetVertexBuffers(
 	std::shared_ptr<Pipeline> pipeline,
-	std::shared_ptr<Mesh> mesh)
+	std::shared_ptr<Mesh> mesh,
+	std::vector<std::shared_ptr<Buffer>>& vertexBuffers,
+	std::vector<size_t>& vertexBufferOffsets)
 {
 	if (pipeline->GetType() != Pipeline::Type::GRAPHICS)
 	{
@@ -257,7 +262,6 @@ std::vector<std::shared_ptr<Buffer>> RenderPassManager::GetVertexBuffers(
 	const auto& bindingDescriptions = createGraphicsInfo.bindingDescriptions;
 
 	// TODO: Optimize search.
-	std::vector<std::shared_ptr<Buffer>> vertexBuffers;
 	for (const auto& bindingDescription : bindingDescriptions)
 	{
 		if (bindingDescription.inputRate != GraphicsPipeline::InputRate::VERTEX)
@@ -271,13 +275,12 @@ std::vector<std::shared_ptr<Buffer>> RenderPassManager::GetVertexBuffers(
 			if (vertexLayout.tag == bindingDescription.tag)
 			{
 				vertexBuffers.emplace_back(mesh->GetVertexBuffer(vertexLayoutIndex));
+				vertexBufferOffsets.emplace_back(0);
 			}
 
 			vertexLayoutIndex++;
 		}
 	}
-
-	return vertexBuffers;
 }
 
 void RenderPassManager::CreateZPrePass()
@@ -362,6 +365,12 @@ void RenderPassManager::CreateZPrePass()
 				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh].emplace_back(entity);
 			}
 
+			// TODO: Remove, for now it is just temporary thing.
+			if (auto* canvas = registry.try_get<Canvas>(entity))
+			{
+				r3d.material->GetUniformWriter(GBuffer)->WriteTexture("albedoTexture", canvas->frameBuffer->GetAttachment(0));
+			}
+
 			if (scene->GetSettings().m_DrawBoundingBoxes)
 			{
 				const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -415,9 +424,15 @@ void RenderPassManager::CreateZPrePass()
 						instanceDatas.emplace_back(transform.GetTransform());
 					}
 
+					std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+					std::vector<size_t> vertexBufferOffsets;
+					GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
+
 					renderInfo.renderer->Render(
-						GetVertexBuffers(pipeline, mesh),
+						vertexBuffers,
+						vertexBufferOffsets,
 						mesh->GetIndexBuffer(),
+						0,
 						mesh->GetIndexCount(),
 						pipeline,
 						instanceBuffer,
@@ -441,9 +456,15 @@ void RenderPassManager::CreateZPrePass()
 						newUniformWriters.emplace_back(skeletalAnimator->GetUniformWriter());
 						skeletalAnimator->GetUniformWriter()->Flush();
 
+						std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+						std::vector<size_t> vertexBufferOffsets;
+						GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
+
 						renderInfo.renderer->Render(
-							GetVertexBuffers(pipeline, mesh),
+							vertexBuffers,
+							vertexBufferOffsets,
 							mesh->GetIndexBuffer(),
+							0,
 							mesh->GetIndexCount(),
 							pipeline,
 							instanceBuffer,
@@ -614,9 +635,15 @@ void RenderPassManager::CreateGBuffer()
 						instanceDatas.emplace_back(data);
 					}
 
+					std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+					std::vector<size_t> vertexBufferOffsets;
+					GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
+
 					renderInfo.renderer->Render(
-						GetVertexBuffers(pipeline, mesh),
+						vertexBuffers,
+						vertexBufferOffsets,
 						mesh->GetIndexBuffer(),
+						0,
 						mesh->GetIndexCount(),
 						pipeline,
 						instanceBuffer,
@@ -644,9 +671,15 @@ void RenderPassManager::CreateGBuffer()
 						// Already updated in ZPrePass.
 						//skeletalAnimator->uniformWriter->Flush();
 
+						std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+						std::vector<size_t> vertexBufferOffsets;
+						GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
+
 						renderInfo.renderer->Render(
-							GetVertexBuffers(pipeline, mesh),
+							vertexBuffers,
+							vertexBufferOffsets,
 							mesh->GetIndexBuffer(),
+							0,
 							mesh->GetIndexCount(),
 							pipeline,
 							instanceBuffer,
@@ -685,9 +718,15 @@ void RenderPassManager::CreateGBuffer()
 			{
 				std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, skyBoxBaseMaterial, nullptr, renderInfo);
 
+				std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+				std::vector<size_t> vertexBufferOffsets;
+				GetVertexBuffers(pipeline, cubeMesh, vertexBuffers, vertexBufferOffsets);
+
 				renderInfo.renderer->Render(
-					GetVertexBuffers(pipeline, cubeMesh),
+					vertexBuffers,
+					vertexBufferOffsets,
 					cubeMesh->GetIndexBuffer(),
+					0,
 					cubeMesh->GetIndexCount(),
 					pipeline,
 					nullptr,
@@ -870,9 +909,15 @@ void RenderPassManager::CreateDeferred()
 		submitInfo.frameBuffer = frameBuffer;
 		renderInfo.renderer->BeginRenderPass(submitInfo);
 
+		std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+		std::vector<size_t> vertexBufferOffsets;
+		GetVertexBuffers(pipeline, plane, vertexBuffers, vertexBufferOffsets);
+
 		renderInfo.renderer->Render(
-			GetVertexBuffers(pipeline, plane),
+			vertexBuffers,
+			vertexBufferOffsets,
 			plane->GetIndexBuffer(),
+			0,
 			plane->GetIndexCount(),
 			pipeline,
 			nullptr,
@@ -994,9 +1039,15 @@ void RenderPassManager::CreateAtmosphere()
 		submitInfo.frameBuffer = frameBuffer;
 		renderInfo.renderer->BeginRenderPass(submitInfo);
 
+		std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+		std::vector<size_t> vertexBufferOffsets;
+		GetVertexBuffers(pipeline, plane, vertexBuffers, vertexBufferOffsets);
+
 		renderInfo.renderer->Render(
-			GetVertexBuffers(pipeline, plane),
+			vertexBuffers,
+			vertexBufferOffsets,
 			plane->GetIndexBuffer(),
+			0,
 			plane->GetIndexCount(),
 			pipeline,
 			nullptr,
@@ -1281,9 +1332,15 @@ void RenderPassManager::CreateTransparent()
 				
 				FlushUniformWriters(uniformWriters);
 
+				std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+				std::vector<size_t> vertexBufferOffsets;
+				GetVertexBuffers(pipeline, renderData.r3d.mesh, vertexBuffers, vertexBufferOffsets);
+
 				renderInfo.renderer->Render(
-					GetVertexBuffers(pipeline, renderData.r3d.mesh),
+					vertexBuffers,
+					vertexBufferOffsets,
 					renderData.r3d.mesh->GetIndexBuffer(),
+					0,
 					renderData.r3d.mesh->GetIndexCount(),
 					pipeline,
 					instanceBuffer,
@@ -1376,9 +1433,15 @@ void RenderPassManager::CreateFinal()
 		submitInfo.frameBuffer = frameBuffer;
 		renderInfo.renderer->BeginRenderPass(submitInfo);
 
+		std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+		std::vector<size_t> vertexBufferOffsets;
+		GetVertexBuffers(pipeline, plane, vertexBuffers, vertexBufferOffsets);
+
 		renderInfo.renderer->Render(
-			GetVertexBuffers(pipeline, plane),
+			vertexBuffers,
+			vertexBufferOffsets,
 			plane->GetIndexBuffer(),
+			0,
 			plane->GetIndexCount(),
 			pipeline,
 			nullptr,
@@ -1629,9 +1692,15 @@ void RenderPassManager::CreateCSM()
 						instanceDatas.emplace_back(data);
 					}
 
+					std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+					std::vector<size_t> vertexBufferOffsets;
+					GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
+
 					renderInfo.renderer->Render(
-						GetVertexBuffers(pipeline, mesh),
+						vertexBuffers,
+						vertexBufferOffsets,
 						mesh->GetIndexBuffer(),
+						0,
 						mesh->GetIndexCount(),
 						pipeline,
 						instanceBuffer,
@@ -1654,9 +1723,15 @@ void RenderPassManager::CreateCSM()
 						std::vector<std::shared_ptr<UniformWriter>> newUniformWriters = uniformWriters;
 						newUniformWriters.emplace_back(skeletalAnimator->GetUniformWriter());
 
+						std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+						std::vector<size_t> vertexBufferOffsets;
+						GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
+
 						renderInfo.renderer->Render(
-							GetVertexBuffers(pipeline, mesh),
+							vertexBuffers,
+							vertexBufferOffsets,
 							mesh->GetIndexBuffer(),
+							0,
 							mesh->GetIndexCount(),
 							pipeline,
 							instanceBuffer,
@@ -1851,9 +1926,15 @@ void RenderPassManager::CreateBloom()
 				downUniformWriter->WriteTexture("sourceTexture", sourceTexture);
 				downUniformWriter->Flush();
 
+				std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+				std::vector<size_t> vertexBufferOffsets;
+				GetVertexBuffers(pipeline, plane, vertexBuffers, vertexBufferOffsets);
+
 				renderInfo.renderer->Render(
-					GetVertexBuffers(pipeline, plane),
+					vertexBuffers,
+					vertexBufferOffsets,
 					plane->GetIndexBuffer(),
+					0,
 					plane->GetIndexCount(),
 					pipeline,
 					nullptr,
@@ -1905,9 +1986,15 @@ void RenderPassManager::CreateBloom()
 				downUniformWriter->WriteTexture("sourceTexture", renderInfo.renderTarget->GetFrameBuffer("BloomFrameBuffers(" + std::to_string(mipLevel) + ")")->GetAttachment(0));
 				downUniformWriter->Flush();
 
+				std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+				std::vector<size_t> vertexBufferOffsets;
+				GetVertexBuffers(pipeline, plane, vertexBuffers, vertexBufferOffsets);
+
 				renderInfo.renderer->Render(
-					GetVertexBuffers(pipeline, plane),
+					vertexBuffers,
+					vertexBufferOffsets,
 					plane->GetIndexBuffer(),
+					0,
 					plane->GetIndexCount(),
 					pipeline,
 					nullptr,
@@ -2306,31 +2393,73 @@ void RenderPassManager::CreateSSAOBlur()
 	CreateComputePass(createInfo);
 }
 
-void RenderPassManager::BlurRenderPassTemplate(
-	const RenderPass::RenderCallbackInfo& renderInfo,
-	std::shared_ptr<BaseMaterial> baseMaterial,
-	std::shared_ptr<Pipeline> pipeline,
-	const std::string& renderPassName)
+void RenderPassManager::CreateUI()
 {
-	const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
+	glm::vec4 clearColor = { 0.0f, 0.0f, 0.0f, 0.0f };
 
-	std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderUniformWriter(renderInfo.renderTarget, pipeline, renderPassName);
+	RenderPass::AttachmentDescription color{};
+	color.format = Format::R8G8B8A8_UNORM;
+	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::CLEAR;
+	color.store = RenderPass::Store::STORE;
 
-	WriteRenderTargets(renderInfo.renderTarget, renderInfo.scene->GetRenderTarget(), pipeline, renderUniformWriter);
+	RenderPass::CreateInfo createInfo{};
+	createInfo.type = Pass::Type::GRAPHICS;
+	createInfo.name = UI;
+	createInfo.clearColors = { clearColor };
+	createInfo.attachmentDescriptions = { color };
+	createInfo.resizeWithViewport = true;
+	createInfo.resizeViewportScale = { 1.0f, 1.0f };
 
-	std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-	FlushUniformWriters(uniformWriters);
+	createInfo.executeCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
+	{
+		UIRenderer* uiRenderer = (UIRenderer*)renderInfo.renderTarget->GetCustomData("UIRenderer");
+		if (!uiRenderer)
+		{
+			uiRenderer = new UIRenderer();
 
-	renderInfo.renderer->Render(
-		GetVertexBuffers(pipeline, plane),
-		plane->GetIndexBuffer(),
-		plane->GetIndexCount(),
-		pipeline,
-		nullptr,
-		0,
-		1,
-		uniformWriters,
-		renderInfo.frame);
+			renderInfo.renderTarget->SetCustomData("UIRenderer", uiRenderer);
+		}
+
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/RectangleUI.basemat");
+		const auto& view = renderInfo.scene->GetRegistry().view<Canvas>();
+		std::vector<entt::entity> entities;
+		entities.reserve(view.size());
+		for (const auto& entity : view)
+		{
+			entities.emplace_back(entity);
+
+			Canvas& canvas = renderInfo.scene->GetRegistry().get<Canvas>(entity);
+			if (!canvas.drawInMainViewport)
+			{
+				if (canvas.size != glm::ivec2(0, 0))
+				{
+					if (!canvas.frameBuffer)
+					{
+						canvas.frameBuffer = FrameBuffer::Create(renderInfo.renderPass, nullptr, canvas.size);
+					}
+					else
+					{
+						if (canvas.size != canvas.frameBuffer->GetSize())
+						{
+							canvas.frameBuffer->Resize(canvas.size);
+						}
+					}
+				}
+			}
+			else
+			{
+				if (canvas.frameBuffer)
+				{
+					canvas.frameBuffer = nullptr;
+				}
+			}
+		}
+
+		uiRenderer->Render(entities, baseMaterial, renderInfo);
+	};
+
+	CreateRenderPass(createInfo);
 }
 
 void RenderPassManager::FlushUniformWriters(const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters)
@@ -2449,8 +2578,8 @@ std::shared_ptr<Buffer> RenderPassManager::GetOrCreateRenderBuffer(
 
 void RenderPassManager::UpdateSkeletalAnimator(
 	SkeletalAnimator* skeletalAnimator,
-	std::shared_ptr<class BaseMaterial> baseMaterial,
-	std::shared_ptr<class Pipeline> pipeline)
+	std::shared_ptr<BaseMaterial> baseMaterial,
+	std::shared_ptr<Pipeline> pipeline)
 {
 	if (!skeletalAnimator->GetUniformWriter())
 	{

@@ -144,6 +144,8 @@ namespace Pengine
 
 		[[nodiscard]] bool IsMultiBuffered() const { return m_IsMultiBuffered; }
 
+		[[nodiscard]] std::shared_ptr<class UniformWriter> GetUniformWriter() const { return m_UniformWriter; }
+
 	protected:
 		glm::ivec2 m_Size = { 0, 0 };
 
@@ -158,6 +160,8 @@ namespace Pengine
 		bool m_IsMultiBuffered = false;
 
 		Meta m_Meta{};
+
+		std::shared_ptr<class UniformWriter> m_UniformWriter;
 	};
 
 }

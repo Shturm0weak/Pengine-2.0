@@ -20,8 +20,8 @@ namespace Pengine
 	private:
 		struct Batch
 		{
-			std::shared_ptr<Buffer> m_VertexBuffer;
-			std::shared_ptr<Buffer> m_IndexBuffer;
+			std::shared_ptr<Buffer> vertexBuffer;
+			std::shared_ptr<Buffer> indexBuffer;
 		};
 
 		std::vector<Batch> m_Batches;
