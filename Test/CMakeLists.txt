@@ -47,22 +47,32 @@ endif ()
 if (GENERATOR_IS_MULTI_CONFIG)
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_BINARY_DIR}/bin/$<CONFIG>
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
+
+	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/Pengine/Build/$<CONFIG>
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
 
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
-		COMMAND "${CMAKE_COMMAND}" -E copy_directory
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin/$<CONFIG>
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
 else ()
+	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_BINARY_DIR}/bin
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
+
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/Pengine/Build
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
 
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
-		COMMAND "${CMAKE_COMMAND}" -E copy_directory
-		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_BINARY_DIR}/Vendor/assimp/Build
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
 endif ()
 
