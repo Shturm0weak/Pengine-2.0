@@ -277,9 +277,14 @@ void EntryPoint::Run() const
 		++currentFrame;
 	}
 
-	mainWindow->ShutDownPrepare();
-
 	m_Application->OnClose();
+
+	Time::GetInstance().Update();
+	AsyncAssetLoader::GetInstance().Update();
+
+	eventSystem.ProcessEvents();
+
+	mainWindow->ShutDownPrepare();
 
 	ThreadPool::GetInstance().Shutdown();
 	SceneManager::GetInstance().ShutDown();

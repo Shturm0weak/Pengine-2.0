@@ -44,6 +44,8 @@ namespace Pengine
 			const YAML::detail::iterator_value& pipelineData,
 			std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType);
 
+		static void SerializeTexture(const std::filesystem::path& filepath, std::shared_ptr<Texture> texture);
+
 		static GraphicsPipeline::CreateGraphicsInfo DeserializeGraphicsPipeline(const YAML::detail::iterator_value& pipelineData);
 
 		static ComputePipeline::CreateComputeInfo DeserializeComputePipeline(const YAML::detail::iterator_value& pipelineData);

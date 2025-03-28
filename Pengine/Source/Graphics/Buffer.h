@@ -16,12 +16,6 @@ namespace Pengine
 			STORAGE_BUFFER
 		};
 
-		enum class MemoryType
-		{
-			CPU,
-			GPU
-		};
-
 		static std::shared_ptr<Buffer> Create(
 			const size_t instanceSize,
 			const uint32_t instanceCount,

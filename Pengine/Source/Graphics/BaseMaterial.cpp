@@ -361,7 +361,7 @@ void BaseMaterial::CreatePipelineResources(
 					binding.buffer->size,
 					1,
 					usage,
-					Buffer::MemoryType::CPU);
+					MemoryType::CPU);
 
 				m_BuffersByName[binding.buffer->name] = buffer;
 				uniformWriter->WriteBuffer(binding.buffer->name, buffer);

@@ -22,6 +22,12 @@ namespace Pengine
 
 		void SetCamera(const std::shared_ptr<Entity>& camera);
 
+		void SetIsOpened(bool isOpened) { m_IsOpened = isOpened; }
+
+		void SetIsHeadLess(bool isHeadLess) { m_IsHeadLess = isHeadLess; }
+
+		bool IsHeadLess() const { return m_IsHeadLess; }
+
 		[[nodiscard]] glm::ivec2 GetSize() const { return m_Size; }
 
 		[[nodiscard]] glm::vec2 GetPosition() const { return m_Position; }
@@ -67,6 +73,8 @@ namespace Pengine
 		bool m_IsFocused = false;
 		bool m_IsOpened = true;
 		bool m_ActiveGuizmo = false;
+
+		bool m_IsHeadLess = false;
 	};
 
 }

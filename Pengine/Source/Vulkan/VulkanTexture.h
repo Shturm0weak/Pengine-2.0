@@ -60,6 +60,10 @@ namespace Pengine::Vk
 
 		[[nodiscard]] virtual void* GetId() const override;
 
+		[[nodiscard]] virtual void* GetData() const override;
+
+		[[nodiscard]] virtual SubresourceLayout GetSubresourceLayout() const override;
+
 		virtual void GenerateMipMaps(void* frame = nullptr) override;
 
 		virtual void Copy(std::shared_ptr<Texture> src, void* frame = nullptr) override;
@@ -84,6 +88,10 @@ namespace Pengine::Vk
 		};
 
 		void Transition(ImageData& imageData, VkImageLayout layout);
+
+		ImageData& GetImageData();
+
+		const ImageData& GetImageData() const;
 
 		std::vector<ImageData> m_ImageDatas;
 		VkSampler m_Sampler{};

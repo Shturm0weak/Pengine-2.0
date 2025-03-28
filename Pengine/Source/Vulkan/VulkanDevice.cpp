@@ -745,13 +745,16 @@ void VulkanDevice::CopyImageToImage(
 
 void VulkanDevice::CreateImage(
 	const VkImageCreateInfo& imageInfo,
+	VmaMemoryUsage memoryUsage,
+	VmaAllocationCreateFlags memoryFlags,
 	VkImage& image,
 	VmaAllocation& vmaAllocation,
 	VmaAllocationInfo& vmaAllocationInfo) const
 {
 	VmaAllocationCreateInfo allocationCreateInfo{};
-	allocationCreateInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
-	
+	allocationCreateInfo.usage = memoryUsage;
+	allocationCreateInfo.flags = memoryFlags;
+
 	if (vmaCreateImage(
 		m_VmaAllocator,
 		&imageInfo,

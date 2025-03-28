@@ -101,6 +101,8 @@ namespace Pengine
 			bool isCubeMap = false;
 			bool isMultiBuffered = false;
 			
+			MemoryType memoryType = MemoryType::GPU;
+
 			Meta meta;
 		};
 
@@ -109,6 +111,15 @@ namespace Pengine
 			std::filesystem::path filepath;
 			bool createMipMaps = true;
 			bool srgb = true;
+		};
+
+		struct SubresourceLayout
+		{
+			uint64_t offset;
+			uint64_t size;
+			uint64_t rowPitch;
+			uint64_t arrayPitch;
+			uint64_t depthPitch;
 		};
 
 		static std::shared_ptr<Texture> Create(const CreateInfo& createInfo);
@@ -123,6 +134,10 @@ namespace Pengine
 		Texture& operator=(Texture&&) = delete;
 
 		[[nodiscard]] virtual void* GetId() const { return nullptr;  }
+
+		[[nodiscard]] virtual void* GetData() const = 0;
+
+		[[nodiscard]] virtual SubresourceLayout GetSubresourceLayout() const = 0;
 
 		virtual void GenerateMipMaps(void* frame = nullptr) = 0;
 
@@ -140,6 +155,8 @@ namespace Pengine
 
 		[[nodiscard]] uint32_t GetLayerCount() const { return m_LayerCount; }
 
+		[[nodiscard]] MemoryType GetMemoryType() const { return m_MemoryType; }
+
 		[[nodiscard]] Meta GetMeta() const { return m_Meta; }
 
 		[[nodiscard]] bool IsMultiBuffered() const { return m_IsMultiBuffered; }
@@ -156,6 +173,7 @@ namespace Pengine
 
 		Format m_Format{};
 		AspectMask m_AspectMask{};
+		MemoryType m_MemoryType{};
 
 		bool m_IsMultiBuffered = false;
 

@@ -25,7 +25,7 @@ namespace Pengine
 		{
 			std::unordered_map<std::string, Pipeline::UniformInfo> uniformInfos;
 			std::unordered_map<std::string, Option> optionsByName;
-			std::shared_ptr<BaseMaterial> baseMaterial;
+			std::filesystem::path baseMaterial;
 		};
 
 		static std::shared_ptr<Material> Create(

@@ -48,13 +48,13 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 					sizeof(glm::vec3) * 2,
 					MAX_BATCH_LINE_COUNT * 2,
 					Buffer::Usage::VERTEX_BUFFER,
-					Buffer::MemoryType::CPU);
+					MemoryType::CPU);
 
 				batch.indexBuffer = Buffer::Create(
 					sizeof(uint32_t),
 					MAX_BATCH_LINE_COUNT * 2,
 					Buffer::Usage::INDEX_BUFFER,
-					Buffer::MemoryType::CPU);
+					MemoryType::CPU);
 
 				m_Batches.emplace_back(batch);
 			}

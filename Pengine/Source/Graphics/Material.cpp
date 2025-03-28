@@ -2,6 +2,7 @@
 
 #include "../Core/Serializer.h"
 #include "../Core/TextureManager.h"
+#include "../Core/AsyncAssetLoader.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 
@@ -58,10 +59,10 @@ std::shared_ptr<Material> Material::Clone(
 	const std::shared_ptr<Material>& material)
 {
 	CreateInfo createInfo{};
-	createInfo.baseMaterial = material->GetBaseMaterial();
+	createInfo.baseMaterial = material->GetBaseMaterial()->GetFilepath();
 	createInfo.optionsByName = material->GetOptionsByName();
 
-	for (const auto& [passName, pipeline] : createInfo.baseMaterial->GetPipelinesByPass())
+	for (const auto& [passName, pipeline] : material->GetBaseMaterial()->GetPipelinesByPass())
 	{
 		std::optional<uint32_t> descriptorSetIndex = pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::MATERIAL, passName);
 		if (!descriptorSetIndex)
@@ -193,7 +194,7 @@ void Material::SetOption(const std::string& name, bool isEnabled)
 
 void Material::CreateResources(const CreateInfo& createInfo)
 {
-	m_BaseMaterial = createInfo.baseMaterial;
+	m_BaseMaterial = AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(createInfo.baseMaterial);
 	m_OptionsByName = createInfo.optionsByName;
 	for (const auto& [name, option] : m_OptionsByName)
 	{
@@ -217,7 +218,7 @@ void Material::CreateResources(const CreateInfo& createInfo)
 						binding.buffer->size,
 						1,
 						Buffer::Usage::UNIFORM_BUFFER,
-						Buffer::MemoryType::CPU);
+						MemoryType::CPU);
 					m_BuffersByName[binding.buffer->name] = buffer;
 					uniformWriter->WriteBuffer(binding.buffer->name, buffer);
 					uniformWriter->Flush();

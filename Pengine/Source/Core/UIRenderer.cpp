@@ -119,6 +119,19 @@ void UIRenderer::Render(
 		return;
 	}
 
+	// TODO: Rework, for now just because we need to clear the ui framebuffer which will be passed to final render pass to compose.
+	if (entities.empty())
+	{
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(UI);
+
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
+		renderInfo.renderer->EndRenderPass(submitInfo);
+	}
+
 	uint32_t batchIndex = 0;
 	for (const entt::entity entity : entities)
 	{
@@ -402,21 +415,21 @@ UIRenderer::Batch& UIRenderer::GetOrCreateBatch(const uint32_t batchIndex, std::
 			sizeof(QuadVertex) * QUAD_VERTEX_COUNT,
 			MAX_BATCH_QUAD_COUNT,
 			Buffer::Usage::VERTEX_BUFFER,
-			Buffer::MemoryType::CPU,
+			MemoryType::CPU,
 			true);
 
 		batch.indexBuffer = Buffer::Create(
 			sizeof(uint32_t) * QUAD_INDEX_COUNT,
 			MAX_BATCH_QUAD_COUNT,
 			Buffer::Usage::INDEX_BUFFER,
-			Buffer::MemoryType::CPU,
+			MemoryType::CPU,
 			true);
 
 		batch.uniformBuffer = Buffer::Create(
 			sizeof(QuadInstance),
 			MAX_BATCH_QUAD_COUNT,
 			Buffer::Usage::STORAGE_BUFFER,
-			Buffer::MemoryType::CPU,
+			MemoryType::CPU,
 			true);
 
 		batch.uniformWriter = UniformWriter::Create(pipeline->GetUniformLayout(1));

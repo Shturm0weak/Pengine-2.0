@@ -30,7 +30,6 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 	imageInfo.mipLevels = m_MipLevels;
 	imageInfo.arrayLayers = m_LayerCount;
 	imageInfo.format = format;
-	imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
 	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -50,10 +49,26 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 		m_ImageDatas.resize(1);
 	}
 
+	VmaMemoryUsage memoryUsage{};
+	VmaAllocationCreateFlags memoryFlags{};
+	if (createInfo.memoryType == MemoryType::GPU)
+	{
+		memoryUsage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
+		imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+	}
+	else if (createInfo.memoryType == MemoryType::CPU)
+	{
+		memoryUsage = VMA_MEMORY_USAGE_AUTO_PREFER_HOST;
+		memoryFlags = VMA_ALLOCATION_CREATE_MAPPED_BIT | VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
+		imageInfo.tiling = VK_IMAGE_TILING_LINEAR;
+	}
+
 	for (auto& imageData : m_ImageDatas)
 	{
 		device->CreateImage(
 			imageInfo,
+			memoryUsage,
+			memoryFlags,
 			imageData.image,
 			imageData.vmaAllocation,
 			imageData.vmaAllocationInfo);
@@ -508,6 +523,37 @@ void* VulkanTexture::GetId() const
 	return (void*)vkUniformWriter->GetDescriptorSet();
 }
 
+void* VulkanTexture::GetData() const
+{
+	// TODO: Make possible get data from GPU.
+	if (m_MemoryType != MemoryType::CPU)
+	{
+		FATAL_ERROR("Can't get data from the buffer that is allocated on GPU!");
+	}
+
+	return GetImageData().vmaAllocationInfo.pMappedData;
+}
+
+VulkanTexture::SubresourceLayout VulkanTexture::GetSubresourceLayout() const
+{
+	const ImageData& imageData = GetImageData();
+
+	VkImageSubresource vkSubresource{};
+	vkSubresource.aspectMask = ConvertAspectMask(m_AspectMask);
+	VkSubresourceLayout vkSubresourceLayout;
+
+	vkGetImageSubresourceLayout(device->GetDevice(), imageData.image, &vkSubresource, &vkSubresourceLayout);
+
+	SubresourceLayout subresourceLayout{};
+	subresourceLayout.arrayPitch = vkSubresourceLayout.arrayPitch;
+	subresourceLayout.depthPitch = vkSubresourceLayout.depthPitch;
+	subresourceLayout.offset = vkSubresourceLayout.offset;
+	subresourceLayout.rowPitch = vkSubresourceLayout.rowPitch;
+	subresourceLayout.size = vkSubresourceLayout.size;
+
+	return subresourceLayout;
+}
+
 void VulkanTexture::GenerateMipMaps(void* frame)
 {
 	Logger::Error("Generate mipmaps is not implemented!");
@@ -519,20 +565,23 @@ void VulkanTexture::Copy(std::shared_ptr<Texture> src, void* frame)
 
 	std::shared_ptr<VulkanTexture> vkSrc = std::static_pointer_cast<VulkanTexture>(src);
 
-	Transition(vkSrc->m_ImageDatas[Vk::swapChainImageIndex], VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-	Transition(m_ImageDatas[Vk::swapChainImageIndex], VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	ImageData& srcImageData = vkSrc->GetImageData();
+	ImageData& dstImageData = GetImageData();
+
+	Transition(srcImageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+	Transition(dstImageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 	Vk::device->CopyImageToImage(
-		vkSrc->m_ImageDatas[Vk::swapChainImageIndex].image,
-		vkSrc->m_ImageDatas[Vk::swapChainImageIndex].m_Layout,
-		m_ImageDatas[Vk::swapChainImageIndex].image,
-		m_ImageDatas[Vk::swapChainImageIndex].m_Layout,
+		srcImageData.image,
+		srcImageData.m_Layout,
+		dstImageData.image,
+		dstImageData.m_Layout,
 		m_Size.x,
 		m_Size.y,
 		commandBuffer);
 
-	Transition(vkSrc->m_ImageDatas[Vk::swapChainImageIndex], vkSrc->m_ImageDatas[Vk::swapChainImageIndex].m_PreviousLayout);
-	Transition(m_ImageDatas[Vk::swapChainImageIndex], m_ImageDatas[Vk::swapChainImageIndex].m_PreviousLayout);
+	Transition(srcImageData, srcImageData.m_PreviousLayout);
+	Transition(dstImageData, dstImageData.m_PreviousLayout);
 }
 
 void VulkanTexture::Transition(ImageData& imageData, VkImageLayout layout)
@@ -549,4 +598,14 @@ void VulkanTexture::Transition(ImageData& imageData, VkImageLayout layout)
 		imageData.m_PreviousLayout,
 		imageData.m_Layout,
 		VK_NULL_HANDLE);
+}
+
+VulkanTexture::ImageData& VulkanTexture::GetImageData()
+{
+	return m_IsMultiBuffered ? m_ImageDatas[swapChainImageIndex] : m_ImageDatas[0];
+}
+
+const VulkanTexture::ImageData& VulkanTexture::GetImageData() const
+{
+	return m_IsMultiBuffered ? m_ImageDatas[swapChainImageIndex] : m_ImageDatas[0];
 }

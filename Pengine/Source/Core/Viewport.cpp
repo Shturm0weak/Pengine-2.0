@@ -32,6 +32,11 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 {
 	UpdateProjectionMat4();
 
+	if (IsHeadLess())
+	{
+		return;
+	}
+
 	if (!viewportTexture)
 	{
 		FATAL_ERROR("Viewport texture is nullptr!");

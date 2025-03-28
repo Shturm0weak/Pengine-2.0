@@ -25,6 +25,9 @@
 
 #include "../Utils/AssimpHelpers.h"
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "../Graphics/stb_image_write.h"
+
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -566,6 +569,10 @@ void Serializer::DeserializeDescriptorSets(
 			{
 				type = Pipeline::DescriptorSetIndexType::RENDERER;
 			}
+			if (typeName == "Scene")
+			{
+				type = Pipeline::DescriptorSetIndexType::SCENE;
+			}
 			else if (typeName == "RenderPass")
 			{
 				type = Pipeline::DescriptorSetIndexType::RENDERPASS;
@@ -629,6 +636,45 @@ void Serializer::DeserializeShaderFilepaths(
 	{
 		shaderFilepathsByType[Pipeline::ShaderType::COMPUTE] = getShaderFilepath(computeData);
 	}
+}
+
+void Serializer::SerializeTexture(const std::filesystem::path& filepath, std::shared_ptr<Texture> texture)
+{
+	Texture::CreateInfo createInfo{};
+	createInfo.aspectMask = texture->GetAspectMask();
+	createInfo.channels = texture->GetChannels();
+	createInfo.filepath = "Screenshot";
+	createInfo.name = "Screenshot";
+	createInfo.format = texture->GetFormat();
+	createInfo.size = texture->GetSize();
+	createInfo.usage = { Texture::Usage::TRANSFER_DST, Texture::Usage::SAMPLED };
+	createInfo.memoryType = MemoryType::CPU;
+	auto screenshot = Texture::Create(createInfo);
+
+	screenshot->Copy(texture);
+
+	uint8_t* data = (uint8_t*)screenshot->GetData();
+
+	auto subresourceLayout = screenshot->GetSubresourceLayout();
+
+	data += subresourceLayout.offset;
+
+	ThreadPool::GetInstance().EnqueueAsync([filepath, texture, data, subresourceLayout]()
+	{
+		Texture::Meta meta{};
+		meta.uuid = UUID();
+		meta.createMipMaps = false;
+		meta.srgb = true;
+		meta.filepath = filepath;
+		meta.filepath.concat(FileFormats::Meta());
+
+		Utils::SetUUID(meta.uuid, meta.filepath);
+		Serializer::SerializeTextureMeta(meta);
+
+		stbi_write_png(filepath.string().c_str(), texture->GetSize().x, texture->GetSize().y, texture->GetChannels(), (const void*)data, subresourceLayout.rowPitch);
+		
+		Logger::Log("Screenshot:" + filepath.string() + " has been saved!", BOLDGREEN);
+	});	
 }
 
 GraphicsPipeline::CreateGraphicsInfo Serializer::DeserializeGraphicsPipeline(const YAML::detail::iterator_value& pipelineData)
@@ -1058,15 +1104,14 @@ Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filep
 		const std::string filepathOrUUID = baseMaterialData.as<std::string>();
 		if (std::filesystem::exists(filepathOrUUID))
 		{
-			createInfo.baseMaterial = AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(filepathOrUUID);
+			createInfo.baseMaterial = filepathOrUUID;
 		}
 		else
 		{
-			const std::filesystem::path baseMaterialFilepath = Utils::FindFilepath(filepathOrUUID);
-			createInfo.baseMaterial = AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(baseMaterialFilepath);
+			createInfo.baseMaterial = Utils::FindFilepath(filepathOrUUID);
 		}
 
-		if (!createInfo.baseMaterial)
+		if (!std::filesystem::exists(createInfo.baseMaterial))
 		{
 			FATAL_ERROR(baseMaterialData.as<std::string>() + ":There is no such basemat!");
 		}

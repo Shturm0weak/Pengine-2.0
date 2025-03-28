@@ -112,6 +112,8 @@ namespace Pengine::Vk
 
 		void CreateImage(
 			const VkImageCreateInfo& imageInfo,
+			VmaMemoryUsage memoryUsage,
+			VmaAllocationCreateFlags memoryFlags,
 			VkImage& image,
 			VmaAllocation& vmaAllocation,
 			VmaAllocationInfo& vmaAllocationInfo) const;

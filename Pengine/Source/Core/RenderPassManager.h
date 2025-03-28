@@ -108,7 +108,13 @@ namespace Pengine
 			std::shared_ptr<class Pipeline> pipeline,
 			std::shared_ptr<class UniformWriter> uniformWriter);
 
-		static std::shared_ptr<class UniformWriter> GetOrCreateRenderUniformWriter(
+		static std::shared_ptr<class UniformWriter> GetOrCreateViewRenderTargetUniformWriter(
+			std::shared_ptr<class RenderTarget> renderTarget,
+			std::shared_ptr<class Pipeline> pipeline,
+			const std::string& passName,
+			const std::string& setUniformWriterName = {});
+
+		static std::shared_ptr<class UniformWriter> GetOrCreateSceneRenderTargetUniformWriter(
 			std::shared_ptr<class RenderTarget> renderTarget,
 			std::shared_ptr<class Pipeline> pipeline,
 			const std::string& passName,

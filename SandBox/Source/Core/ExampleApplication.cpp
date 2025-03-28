@@ -24,6 +24,8 @@ void ExampleApplication::OnPreStart()
 
 void ExampleApplication::OnStart()
 {
+	return;
+
 	//ViewportManager::GetInstance().Create("Main", { 800, 600 });
 	const auto scene = Serializer::DeserializeScene("Scenes/Sponza/Sponza.scene");
 

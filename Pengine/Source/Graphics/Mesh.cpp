@@ -20,7 +20,7 @@ Mesh::Mesh(
 		sizeof(m_RawIndices[0]),
 		m_RawIndices.size(),
 		Buffer::Usage::INDEX_BUFFER,
-		Buffer::MemoryType::GPU);
+		MemoryType::GPU);
 
 	m_Indices->WriteToBuffer(m_RawIndices.data(), m_Indices->GetSize());
 
@@ -53,7 +53,7 @@ Mesh::Mesh(
 			sizeof(vertexBuffer[0]),
 			vertexBuffer.size(),
 			Buffer::Usage::VERTEX_BUFFER,
-			Buffer::MemoryType::GPU));
+			MemoryType::GPU));
 
 		m_Vertices.back()->WriteToBuffer(vertexBuffer.data(), vertexBuffer.size());
 	}

@@ -78,6 +78,12 @@ std::string GetTypeName()
 	return typeid(T).name();
 }
 
+enum class MemoryType
+{
+	CPU,
+	GPU
+};
+
 enum class GraphicsAPI
 {
 	Software,
