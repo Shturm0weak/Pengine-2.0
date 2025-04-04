@@ -16,7 +16,7 @@ namespace Pengine
 		Viewport(const Viewport&) = delete;
 		Viewport& operator=(const Viewport&) = delete;
 
-		void Update(const std::shared_ptr<Texture>& viewportTexture);
+		void Update(const std::shared_ptr<Texture>& viewportTexture, std::shared_ptr<class Window> window);
 
 		[[nodiscard]] std::weak_ptr<Entity> GetCamera() const { return m_Camera; }
 

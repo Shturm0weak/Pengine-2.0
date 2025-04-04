@@ -30,7 +30,7 @@ VulkanUniformLayout::VulkanUniformLayout(const std::vector<ShaderReflection::Ref
 	descriptorSetLayoutCreateInfo.pBindings = setLayoutBindings.data();
 
 	if (vkCreateDescriptorSetLayout(
-		device->GetDevice(),
+		GetVkDevice()->GetDevice(),
 		&descriptorSetLayoutCreateInfo,
 		nullptr,
 		&m_DescriptorSetLayout) != VK_SUCCESS)
@@ -41,9 +41,9 @@ VulkanUniformLayout::VulkanUniformLayout(const std::vector<ShaderReflection::Ref
 
 VulkanUniformLayout::~VulkanUniformLayout()
 {
-	device->DeleteResource([descriptorSetLayout = m_DescriptorSetLayout]()
+	GetVkDevice()->DeleteResource([descriptorSetLayout = m_DescriptorSetLayout]()
 	{
-		vkDestroyDescriptorSetLayout(device->GetDevice(), descriptorSetLayout, nullptr);
+		vkDestroyDescriptorSetLayout(GetVkDevice()->GetDevice(), descriptorSetLayout, nullptr);
 	});
 }
 

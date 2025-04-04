@@ -1,19 +1,24 @@
 #pragma once
 
 #include "../Core/Core.h"
-#include "../Core/Scene.h"
+#include "../Core/GraphicsSettings.h"
+#include "../Graphics/Texture.h"
 
 #include <filesystem>
 
 namespace Pengine
 {
 
+	class Scene;
+	class Entity;
+	class Window;
+
 	class Editor
 	{
 	public:
 		Editor();
 
-		void Update(const std::shared_ptr<Scene>& scene);
+		void Update(const std::shared_ptr<Scene>& scene, Window& window);
 
 	private:
 		class Indent
@@ -43,21 +48,21 @@ namespace Pengine
 
 		bool ImageCheckBox(const void* id, ImTextureID textureOn, ImTextureID textureOff, bool& enabled);
 
-		void Hierarchy(const std::shared_ptr<Scene>& scene);
+		void Hierarchy(const std::shared_ptr<Scene>& scene, Window& window);
 
 		void SceneInfo(const std::shared_ptr<Scene>& scene);
 
-		void DrawScene(const std::shared_ptr<Scene>& scene);
+		void DrawScene(const std::shared_ptr<Scene>& scene, Window& window);
 
-		void DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags flags);
+		void DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags flags, Window& window);
 
-		void DrawChilds(const std::shared_ptr<Entity>& entity);
+		void DrawChilds(const std::shared_ptr<Entity>& entity, Window& window);
 
-		void Properties(const std::shared_ptr<Scene>& scene);
+		void Properties(const std::shared_ptr<Scene>& scene, Window& window);
 
 		void GraphicsSettingsInfo(GraphicsSettings& graphicsSettings);
 
-		void CameraComponent(const std::shared_ptr<Entity>& entity);
+		void CameraComponent(const std::shared_ptr<Entity>& entity, Window& window);
 
 		void TransformComponent(const std::shared_ptr<Entity>& entity);
 
@@ -85,9 +90,9 @@ namespace Pengine
 
 		void SetDarkThemeColors();
 
-		void Manipulate(const std::shared_ptr<Scene>& scene);
+		void Manipulate(const std::shared_ptr<Scene>& scene, Window& window);
 
-		void MoveCamera(const std::shared_ptr<Entity>& camera);
+		void MoveCamera(const std::shared_ptr<Entity>& camera, Window& window);
 
 		ImTextureID GetFileIcon(const std::filesystem::path& filepath, const std::string& format);
 
@@ -148,7 +153,7 @@ namespace Pengine
 			char name[64];
 			glm::ivec2 size = { 1024, 1024 };
 
-			void Update(const Editor& editor);
+			void Update(const Editor& editor, Window& window);
 		} m_CreateViewportMenu;
 
 		struct LoadIntermediateMenu

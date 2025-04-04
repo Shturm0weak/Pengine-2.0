@@ -1,847 +1,195 @@
-[Sat Mar 29 01:29:48 2025] Engine config has been loaded!
-[Sat Mar 29 01:29:48 2025] Graphics API:2
-[Sat Mar 29 01:29:48 2025] Available extensions:
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_device_group_creation
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_display
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_external_fence_capabilities
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_external_memory_capabilities
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_external_semaphore_capabilities
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_get_display_properties2
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_get_physical_device_properties2
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_get_surface_capabilities2
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_surface
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_surface_protected_capabilities
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_win32_surface
-[Sat Mar 29 01:29:48 2025] 	VK_EXT_debug_report
-[Sat Mar 29 01:29:48 2025] 	VK_EXT_debug_utils
-[Sat Mar 29 01:29:48 2025] 	VK_EXT_direct_mode_display
-[Sat Mar 29 01:29:48 2025] 	VK_EXT_swapchain_colorspace
-[Sat Mar 29 01:29:48 2025] 	VK_NV_external_memory_capabilities
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_portability_enumeration
-[Sat Mar 29 01:29:48 2025] 	VK_LUNARG_direct_driver_loading
-[Sat Mar 29 01:29:48 2025] Required extensions:
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_surface
-[Sat Mar 29 01:29:48 2025] 	VK_KHR_win32_surface
-[Sat Mar 29 01:29:48 2025] Physical device count: 2
-[Sat Mar 29 01:29:48 2025] Physical devices:
-[Sat Mar 29 01:29:48 2025]  * NVIDIA GeForce RTX 3080 Ti Laptop GPU - Suitable
-[Sat Mar 29 01:29:48 2025]  * Intel(R) Iris(R) Xe Graphics - Suitable
-[Sat Mar 29 01:29:48 2025] Choosen physical device: NVIDIA GeForce RTX 3080 Ti Laptop GPU
-[Sat Mar 29 01:29:48 2025] Texture:Editor\Images\FileIcon.png has been loaded!
-[Sat Mar 29 01:29:48 2025] Texture:Editor\Images\FolderIcon.png has been loaded!
-[Sat Mar 29 01:29:48 2025] Texture:Editor\Images\HideIcon.png has been loaded!
-[Sat Mar 29 01:29:48 2025] Texture:Editor\Images\MaterialIcon.png has been loaded!
-[Sat Mar 29 01:29:48 2025] Texture:Editor\Images\MeshIcon.png has been loaded!
-[Sat Mar 29 01:29:48 2025] Texture:Editor\Images\MetaIcon.png has been loaded!
-[Sat Mar 29 01:29:48 2025] Texture:Editor\Images\PlayButton.png has been loaded!
-[Sat Mar 29 01:29:48 2025] Texture:Editor\Images\ShowIcon.png has been loaded!
-[Sat Mar 29 01:29:48 2025] Texture:Editor\Images\StopButton.png has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\Atmosphere.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\BloomDownSample.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\Line.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\Final.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\DefaultReflection.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\BloomUpSample.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Atmosphere.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\Deferred.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\Custom\Water\Water.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\MeshBaseDoubleSided.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\Custom\Rotate.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/BloomDownSample.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Line.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Final.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/DefaultReflection.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/BloomUpSample.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Atmosphere.geom has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Deferred.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders\Transparent.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/BloomDownSample.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Final.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/BloomUpSample.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Materials\Custom\Water\Shaders\Water.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/DefaultReflection.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Deferred.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Line.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Atmosphere.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Custom/Rotate.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\MeshBaseSkinned.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/OpaqueSkinned.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\SkyBox.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\RectangleUI.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/SkyBox.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/RectangleUI.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/RectangleUI.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\SSRBlur.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\SSAOBlur.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/SkyBox.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\SSR.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] BaseMaterial:Materials\SSAO.basemat has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/SSRBlur.comp has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/SSAOBlur.comp has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/TransparentSkinned.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/SSR.comp has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/SSAO.comp has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/CSMSkinned.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/ZPrePassSkinned.vert has been loaded!
-[Sat Mar 29 01:29:48 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sat Mar 29 01:29:48 2025] Mesh:Scenes\Sponza\Assets\sponza_257_sponza_257_Material__47.mesh has been loaded!
-[Sat Mar 29 01:29:48 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_Material__57.mesh has been loaded!
-[Sat Mar 29 01:29:48 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__298.mesh has been loaded!
-[Sat Mar 29 01:29:48 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__25.mesh has been loaded!
-[Sat Mar 29 01:29:48 2025] Mesh:Scenes\Sponza\Assets\sponza_382_sponza_382_bricks.mesh has been loaded!
-[Sat Mar 29 01:29:48 2025] Material:Scenes\Sponza\Assets\Material__298.mat has been loaded!
-[Sat Mar 29 01:29:48 2025] Material:Scenes\Sponza\Assets\Material__25.mat has been loaded!
-[Sat Mar 29 01:29:48 2025] Material:Scenes\Sponza\Assets\Material__57.mat has been loaded!
-[Sat Mar 29 01:29:48 2025] Material:Scenes\Sponza\Assets\Material__47.mat has been loaded!
-[Sat Mar 29 01:29:48 2025] Material:Scenes\Sponza\Assets\arch.mat has been loaded!
-[Sat Mar 29 01:29:48 2025] Mesh:Scenes\Sponza\Assets\sponza_39_sponza_39_arch.mesh has been loaded!
-[Sat Mar 29 01:29:48 2025] Scene:Scenes/Sponza/Sponza.scene has been loaded!
-[Sat Mar 29 01:29:48 2025] Material:Scenes\Sponza\Assets\bricks.mat has been loaded!
-[Sat Mar 29 01:29:48 2025] Mesh:Scenes\Sponza\Assets\sponza_339_sponza_339_chain.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_38_sponza_38_ceiling.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\ceiling.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_10_sponza_10_column_a.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\chain.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\column_a.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\chain_texture.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_83_sponza_83_column_c.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\vase_plant.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_141_sponza_141_column_b.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\column_b.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\lion.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\background.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\spnza_bricks_a_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_arch_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_ceiling_a_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_a_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\column_c.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_b_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_72_sponza_72_details.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\details.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_288_sponza_288_fabric_a.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\fabric_a.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\fabric_c.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_325_sponza_325_fabric_c.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\fabric_d.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_c_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_285_sponza_285_fabric_e.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_327_sponza_327_fabric_f.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_326_sponza_326_fabric_g.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_289_sponza_289_fabric_d.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_blue_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\fabric_e.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\fabric_g.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_details_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\fabric_f.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_271_sponza_271_flagpole.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\flagpole.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_18_sponza_18_floor.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\floor.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\leaf.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_green_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_381_sponza_381_roof.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_373_sponza_373_vase.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_275_sponza_275_leaf.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\roof.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_thorn_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_flagpole_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_floor_a_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\vase.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_344_sponza_344_vase_hanging.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_roof_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_green_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_vase_round.mesh has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_blue_diff.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\vase_round.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Material:Scenes\Sponza\Assets\vase_hanging.mat has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\vase_dif.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\vase_round.tga has been loaded!
-[Sat Mar 29 01:29:49 2025] Texture:Scenes\Sponza\Assets\textures\vase_hanging.tga has been loaded!
-[Sat Mar 29 01:29:56 2025] Prefab:Scenes\Bistro\Assets\ROOT.prefab has been loaded!
-[Sat Mar 29 01:29:56 2025] Scene:Scenes\Bistro\Bistro.scene has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior__lod0_Glass_3919.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior__lod0_Odometer_3935.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior__lod0_Italian_Cypress_3921-1.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior__lod0_Vespa_3937-1.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sat Mar 29 01:29:56 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Vespa_Odometer_Glass.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior__lod0_Vespa_3937-0.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Vespa_Odometer_Glass_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_bux_hedge_cylinder_low_4007.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Vespa_Odometer_Glass_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sat Mar 29 01:29:56 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sat Mar 29 01:29:56 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sat Mar 29 01:29:56 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sat Mar 29 01:29:56 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Ivy_Ivy_4049-0.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Foliage_Bux_Hedges46.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Foliage_Leaves.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Foliage_Ivy_leaf_a.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Vespa_Headlight.001.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Vespa.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Vespa_Odometer.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Foliage_Trunk.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Foliage_Ivy_branches.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Vespa_Headlight_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Ivy_Ivy_4049-1.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Leaves_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Ivy_leaf_a_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Linde_Tree_Large_linde_tree_large_4051-0.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Bux_Hedges46_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Vespa_Odometer_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Trunk_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Vespa_Headlight_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Ivy_branches_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Vespa_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior__lod0_Italian_Cypress_3921-0.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Leaves_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Vespa_Odometer_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Ivy_leaf_a_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Foliage_Linde_Tree_Large_Trunk.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Ivy_branches_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Bux_Hedges46_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Linde_Tree_Large_linde_tree_large_4051-1.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Trunk_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Bux_Hedges46_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Ivy_leaf_a_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Vespa_Odometer_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Vespa_Headlight_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Leaves_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Ivy_branches_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Foliage_Linde_Tree_Large_Orange_Leaves.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Vespa_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Linde_Tree_Large_Trunk_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Trunk_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Linde_Tree_Large_Orange_Leaves_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Linde_Tree_Large_linde_tree_large_4051-2.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Foliage_Linde_Tree_Large_Green_Leaves.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Antenna_Metal.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Antenna_Plastic_Blue.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Aerial_01C_4057-1.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_ShopSign_01C_6161-0.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Linde_Tree_Large_Orange_Leaves_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Aerial_01C_4057-2.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Antenna_Plastic.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Antenna_Plastic_Blue_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Linde_Tree_Large_Trunk_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Linde_Tree_Large_Orange_Leaves_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Ashtray_01_mesh___9__4093.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Linde_Tree_Large_Green_Leaves_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Antenna_Plastic_Blue_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Antenna_Metal_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Linde_Tree_Large_Trunk_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Antenna_Plastic_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Linde_Tree_Large_Green_Leaves_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Ashtray.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Ashtray_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Antenna_Metal_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Antenna_Plastic_Blue_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Awnings_Hotel_Fabric.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Linde_Tree_Large_Green_Leaves_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Antenna_Plastic_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_BistroAwning_02B_4113.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Awnings_Fabric.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_Bistroawning_4105-0.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_Bistroawning_4105-1.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Antenna_Plastic_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Antenna_Metal_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Ashtray_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Awnings_Fabric_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_BistroFrontBanner_01_4131-0.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_BistroFrontBanner_01_4131-1.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Bistro_Sign_Main.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Awnings_Beams.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Bistro_Sign_Letters.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Ashtray_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Awnings_Hotel_Fabric_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Spotlights_6525-0.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Bistro_Sign_Letters_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Banner_Metal.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Bistro_Sign_Letters_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Bistro_Sign_Main_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Awnings_Beams_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Awnings_Fabric_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Bistro_Sign_Letters_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Bollard_01A_4133.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Awnings_Fabric_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\Bollards.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Wood_Painted3.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Banner_Metal_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Vespa_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_08_paris_building_0.012-0.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Awnings_Hotel_Fabric_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Bistro_Sign_Main_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Awnings_Beams_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Banner_Metal_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Painted3_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Awnings_Hotel_Fabric_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Bistro_Sign_Main_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Bollards_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Awnings_Beams_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_0.197.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Grain_Metal.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Concrete_Yellow.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Banner_Metal_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Painted3_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Grain_Metal_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_10_5473.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_11_5905.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Bollards_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Concrete_Grooved.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Painted3_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_MainBalcony_01_6103-0.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Concrete.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Glass_Dirty_MASKED.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Yellow_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Glass_Dirty_MASKED_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Grain_Metal_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Glass_Dirty_MASKED_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_11_5891.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_10_9__5547.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Concrete_Smooth.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Roofing_Shingle_Grey.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\Bollards_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Grooved_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Grain_Metal_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Yellow_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Glass_Dirty_MASKED_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Yellow_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Smooth_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_10_5471.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Roofing_Shingle_Grey_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Grooved_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_10_5469.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_0.109.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Roofing_Shingle_Green.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Concrete_Plaster1_BLENDSHADER.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_0.014.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Trim_Cornice.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Grooved_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_10_8__5545.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Smooth_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Trim_Cornice_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_11_5901.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Forge_Metal.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Plaster1_BLENDSHADER_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Roofing_Shingle_Green_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_0.232.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Curtains.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Forge_Metal_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Roofing_Shingle_Grey_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Smooth_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Trim_Cornice_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_09_5437.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Metal_Pipe.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Glass_Dirty.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Metal_Pipe_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Roofing_Shingle_Grey_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Trim_Cornice_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Curtains_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Forge_Metal_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_01_45.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Plaster1_BLENDSHADER_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Glass_Dirty_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Wood_Polished.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Roofing_Shingle_Green_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Metal_Pipe_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_10_5507-0.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Forge_Metal_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Curtains_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Plastic.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_ShopSign_01B2_6159-0.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Glass_Dirty_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Roofing_Shingle_Green_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Metal_Pipe_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Plaster1_BLENDSHADER_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Plastic_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Curtains_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Polished_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Glass_Dirty_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Metal.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_0.360.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Metal_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Polished_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_0.240.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Focus_Glass.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Focus.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Focus_Ornament.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_0.338.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Metal_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_0.350.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Bistro_Main_Door.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Polished_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Metal_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_01_bo.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Plastic_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Focus_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Light_Bulb.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Focus_Glass_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Focus_Ornament_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Glass_Exterior.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Plastic_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Bistro_Main_Door_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Focus_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_0.321.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_0.358.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Glass_Exterior_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Focus_Glass_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Light_Bulb_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_0.359.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Concrete1.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Focus_Ornament_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Focus_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Glass_Exterior_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Focus_Glass_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Bistro_Main_Door_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_01_paris_building_0.337.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Light_Bulb_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Side_Letters.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_11_5551.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Focus_Ornament_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Light_Bulb_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Bistro_Main_Door_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Side_Letters_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Glass_Exterior_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Doors.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Brick_Large_Beige_BLENDSHADER.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_11_5571.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete1_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Wood_Brown.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_10_7__5543.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Side_Letters_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Street_6253.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Brick_Small_Red_BLENDSHADER.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Side_Letters_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Wood_Painted_Green.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Doors_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete1_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Brown_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Brick_Large_Beige_BLENDSHADER_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_11_5897.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Concrete_Plaster.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_11_5889.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Painted_Green_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete1_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Chimney_02C_5975-0.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Brown_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Brick_Small_Red_BLENDSHADER_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Doors_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Black_Metal.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Plaster_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Brick_Large_Beige_BLENDSHADER_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Painted_Green_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_03_mirrored_4965.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Brown_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Brick_Large_White.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Doors_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Painted_Green_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Black_Metal_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Brick_Large_Beige_BLENDSHADER_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Building_Details.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_09_5459.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_04_4993.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Brick_Large_White_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Brick_Small_Red_BLENDSHADER_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Wood_Painted_Cyan.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Plaster_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_09_5455.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Brick_Small_Red.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Brick_Small_Red_BLENDSHADER_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_10_5493.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Plaster_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Painted_Cyan_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Building_Details_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Black_Metal_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_11_5835.mesh has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Room_Interior.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Material:Scenes\Bistro\Assets\MASTER_Roofing_Metal_01.mat has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Brick_Large_White_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Black_Metal_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Brick_Small_Red_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:56 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_10_5495.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MASTER_Awning_Beams.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Painted_Cyan_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_10_5499.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Building_Details_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Room_Interior_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Brick_Large_White_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Painted_Cyan_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Building_Details_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Room_Interior_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Roofing_Metal_01_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_10_5503.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MASTER_Boulangerie.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Brick_Small_Red_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Awning_Beams_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MASTER_Frosted_Glass.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Frosted_Glass_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Brick_Small_Red_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Room_Interior_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_05_5125-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Roofing_Metal_01_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MASTER_Awning_Fabric_Cyan.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_07_5323.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MASTER_Concrete_White.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Awning_Beams_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Boulangerie_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_White_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Building_08_paris_building_08_9_.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Awning_Beams_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Boulangerie_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Roofing_Metal_01_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MASTER_Bronze_BLENDSHADER.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Awning_Fabric_Cyan_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Frosted_Glass_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Bronze_BLENDSHADER_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Boulangerie_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MASTER_Book_Covers.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_10_5501.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_05_65__5291.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MASTER_Awning_Fabric_Red.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_White_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Awning_Fabric_Cyan_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Awning_Fabric_Cyan_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MASTER_Concrete_Smooth_BLENDSHADER.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Bronze_BLENDSHADER_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_White_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Frosted_Glass_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Awning_Fabric_Red_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Book_Covers_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MASTER_Wood_Painted_Green_BLENDSHADER.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_09_5463.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_07_5341.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MASTER_Rollup_Door.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Bronze_BLENDSHADER_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Rollup_Door_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Book_Covers_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Awning_Fabric_Red_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Smooth_BLENDSHADER_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Painted_Green_BLENDSHADER_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MASTER_Details_Dark.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_07_5321.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_paris_building_09_5465.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Awning_Fabric_Red_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Book_Covers_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Chair_01_Mesh_02___9__5949.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_Chair_01.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Painted_Green_BLENDSHADER_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Chimney_02C_5975-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Chimney_01B_5955-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Plaster.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Concrete.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_Chair_01_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Wood_Painted_Green_BLENDSHADER_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Rollup_Door_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Smooth_BLENDSHADER_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Details_Dark_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Chimney_02C_5975-2.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Chimney_02B_5973-2.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Concrete2.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Rollup_Door_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Concrete_Smooth_BLENDSHADER_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Chimneys_Metal.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Concrete_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Plaster_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Concrete2_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_ElectricBox_5991.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_Chair_01_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Concrete_Striped.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Chimney_02C_5975-3.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Details_Dark_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_Chair_01_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Chimneys_Metal_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Concrete_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MASTER_Details_Dark_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\ElectricBox.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Plaster_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Concrete_Striped_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_flowers_01d_6047-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Foliage_Paris_Flowers.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Foliage_Flowers.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Concrete2_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Plaster_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Concrete_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Concrete2_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\ElectricBox_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Flowers_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Chimneys_Metal_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Lantern_01A_6071.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Paris_Flowers_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Concrete_Striped_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_LiquorBottle_01A___9__6101-0.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_LiquorBottle_01_Glass_Wine.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Lantern.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_LiquorBottle_01_Glass_Wine_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Concrete_Striped_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_LiquorBottle_01A___9__6101-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\ElectricBox_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Chimneys_Metal_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Paris_Flowers_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Flowers_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_LiquorBottle_01_Caps.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Lantern_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\ElectricBox_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_LiquorBottle_01_Glass_Wine_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Paris_Flowers_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Foliage_Flowers_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_LiquorBottle_01_Caps_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_MainBalcony_01_6103-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_LiquorBottle_01A___9__6101-2.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_LiquorBottle_01_Labels.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Lantern_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_LiquorBottle_01_Labels_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Lantern_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Balcony_Concrete.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_LiquorBottle_01_Caps_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_MainBalcony_01_6103-2.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Balcony_Trims.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_LiquorBottle_01_Labels_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_MainBalcony_01_6103-4.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Balcony_Green_Wood.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_LiquorBottle_01_Caps_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_MainBalcony_01_6103-3.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Balcony_Ornaments.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Balcony_Trims_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_MenuSign_01a_6105.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Balcony_Green_Wood_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MenuSign_01.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Balcony_Concrete_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_MenuSign_01b2_6111-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MenuSign_02_Glass.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\MenuSign_02_Mesh.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Balcony_Green_Wood_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Balcony_Ornaments_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Balcony_Concrete_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Balcony_Green_Wood_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Balcony_Trims_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MenuSign_01_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Balcony_Concrete_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MenuSign_02_Mesh_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_NapkinHolder_01A___9__6133.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\NapkinHolder.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MenuSign_02_Glass_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Balcony_Trims_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Balcony_Ornaments_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MenuSign_02_Mesh_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_ShopSign_01C_6161-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_MenuSign_01b2_6111-0.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_PlantPot_01A_6135.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_flowers_01e_6051.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Plantpots.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MenuSign_02_Glass_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MenuSign_01_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\NapkinHolder_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MenuSign_02_Mesh_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Balcony_Ornaments_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_ShopSign_01D_6165-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_ShopSign_01B2_6159-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Shopsign_Ties_Shop.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Shopsign_Bakery.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\NapkinHolder_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MenuSign_02_Glass_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\MenuSign_01_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Plantpots_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Shopsign_Ties_Shop_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_ShopSign_01E_6167-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Shopsign_Book_Store.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Shopsign_Pharmacy.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Shopsign_Bakery_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Shopsign_Pharmacy_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\NapkinHolder_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Pavement_Curbstones.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Sidewalkbarrier.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Shopsign_Bakery_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_SidewalkBarrier_01A_6169.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Shopsign_Ties_Shop_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Street_6185-0.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Shopsign_Pharmacy_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Shopsign_Ties_Shop_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Shopsign_Bakery_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Plantpots_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Shopsign_Book_Store_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Street_6251.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Street_6185-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Sidewalkbarrier_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Pavement_Cobblestone_Small_BLENDSHADER.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Pavement_Cobblestone_Big_BLENDSHADER.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Curbstones_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Street_6185-2.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Shopsign_Book_Store_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Plantpots_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Shopsign_Book_Store_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Street_6185-3.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Street_6245-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Sidewalkbarrier_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Pavement_Cobblestone_02.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Pavement_Brick_BLENDSHADER.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_Small_BLENDSHADER_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Curbstones_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_Big_BLENDSHADER_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Curbstones_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Sidewalkbarrier_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Street_6239-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Brick_BLENDSHADER_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Pavement_Ground_Wet.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Pavement_Manhole_Cover.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Street_6239-2.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_02_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Pavement_Cobblestone_Wet_BLENDSHADER.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_Big_BLENDSHADER_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Street_6225-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_Small_BLENDSHADER_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_Big_BLENDSHADER_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_Small_BLENDSHADER_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Manhole_Cover_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Street_6231-0.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Street_6231-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Ground_Wet_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Brick_BLENDSHADER_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_Wet_BLENDSHADER_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Pavement_Cobblestone_Wet_Leaves_BLENDSHADER.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Pavement_Cobble_Leaves_BLENDSHADER.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_02_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Brick_BLENDSHADER_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_02_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Ground_Wet_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Pavement_Cobblestone_01_BLENDSHADER.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Concrete3.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_Wet_BLENDSHADER_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_Wet_Leaves_BLENDSHADER_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobble_Leaves_BLENDSHADER_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Manhole_Cover_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_Wet_BLENDSHADER_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Street_6255.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Ground_Wet_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_StreetLight_01a___9__6279-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Streetlight_Metal.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Concrete3_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_01_BLENDSHADER_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_Wet_Leaves_BLENDSHADER_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobble_Leaves_BLENDSHADER_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_StreetLight_01B___9__6311-0.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_Wet_Leaves_BLENDSHADER_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobble_Leaves_BLENDSHADER_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Manhole_Cover_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_StreetLight_01B___9__6311-2.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_StringLights_01a8_6487-0.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Concrete3_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_StringLights_01_White_Color.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Streetlight_Support_Bulb.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Streetlight_Chains.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Streetlight_Metal_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_01_BLENDSHADER_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Streetlight_Support_Bulb_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StringLights_01_White_Color_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Concrete3_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Streetlight_Chains_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_StreetSign_01A_6469.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_StreetPivot.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_StreetSign_01.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_StreetPivot_09_6467.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Streetlight_Chains_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Streetlight_Support_Bulb_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Pavement_Cobblestone_01_BLENDSHADER_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StringLights_01_White_Color_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StreetPivot_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_StringLights_01a8_6487-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_StringLights_01a8_6487-2.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StreetSign_01_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Streetlight_Chains_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Stringlights.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Streetlight_Support_Bulb_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Streetlight_Metal_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_StringLights_01_Red_Color.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StringLights_01_Red_Color_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_StringLights_01_Blue_Color.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StringLights_01_Blue_Color_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StringLights_01_Red_Color_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Streetlight_Metal_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Stringlights_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StreetSign_01_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StreetPivot_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_StringLights_01_Green_Color.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_StringLights_01a8_6487-4.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StringLights_01_Green_Color_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StringLights_01_Blue_Color_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StreetPivot_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StreetSign_01_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StringLights_01_Green_Color_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Stringlights_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_StringLights_01a8_6487-6.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_StringLights_01a8_6487-5.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_StringLights_01_Pink_Color.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_StringLights_01_Orange_Color.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_Table_01___9__6509.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StringLights_01_Orange_Color_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StringLights_01_Pink_Color_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Stringlights_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StringLights_01_Orange_Color_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_TrafficSign_01A_6511.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_StringLights_01_Pink_Color_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_TrafficSign_A.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Paris_Table_Terrace.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Spotlights_6525-1.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Trashcan.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_TrashCanOpen_01A_6527.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Spotlight_Main.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Spotlights_6525-2.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_TrafficSign_A_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Spotlights_6525-3.mesh has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Spotlight_Emissive.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_Table_Terrace_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Material:Scenes\Bistro\Assets\Spotlight_Glass.mat has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Spotlight_Main_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_TrafficSign_A_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Trashcan_0_BaseColor.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Spotlight_Emissive_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Spotlight_Emissive_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_TrafficSign_A_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Spotlight_Glass_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Spotlight_Main_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Trashcan_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Trashcan_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Spotlight_Main_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_Table_Terrace_0_Normal.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Spotlight_Glass_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Texture:Scenes\Bistro\Assets\textures\Paris_Table_Terrace_0_Specular.png has been loaded!
-[Sat Mar 29 01:29:57 2025] Mesh:Scenes\Bistro\Assets\Bistro_Research_Exterior_Paris_StringLights_01a8_6487-3.mesh has been loaded!
-[Sat Mar 29 01:30:09 2025] Screeshot:Screenshots\Screenshot.png has been saved!
+[Fri Apr  4 08:54:39 2025] Engine config has been loaded!
+[Fri Apr  4 08:54:39 2025] Graphics API:2
+[Fri Apr  4 08:54:39 2025] Available extensions:
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_device_group_creation
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_display
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_external_fence_capabilities
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_external_memory_capabilities
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_external_semaphore_capabilities
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_get_display_properties2
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_get_physical_device_properties2
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_get_surface_capabilities2
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_surface
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_surface_protected_capabilities
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_win32_surface
+[Fri Apr  4 08:54:39 2025] 	VK_EXT_debug_report
+[Fri Apr  4 08:54:39 2025] 	VK_EXT_debug_utils
+[Fri Apr  4 08:54:39 2025] 	VK_EXT_direct_mode_display
+[Fri Apr  4 08:54:39 2025] 	VK_EXT_swapchain_colorspace
+[Fri Apr  4 08:54:39 2025] 	VK_NV_external_memory_capabilities
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_portability_enumeration
+[Fri Apr  4 08:54:39 2025] 	VK_LUNARG_direct_driver_loading
+[Fri Apr  4 08:54:39 2025] Required extensions:
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_surface
+[Fri Apr  4 08:54:39 2025] 	VK_KHR_win32_surface
+[Fri Apr  4 08:54:39 2025] Physical device count: 2
+[Fri Apr  4 08:54:39 2025] Physical devices:
+[Fri Apr  4 08:54:39 2025]  * NVIDIA GeForce RTX 3080 Ti Laptop GPU - Suitable
+[Fri Apr  4 08:54:39 2025]  * Intel(R) Iris(R) Xe Graphics - Suitable
+[Fri Apr  4 08:54:39 2025] Choosen physical device: NVIDIA GeForce RTX 3080 Ti Laptop GPU
+[Fri Apr  4 08:54:39 2025] Texture:Editor\Images\FileIcon.png has been loaded!
+[Fri Apr  4 08:54:39 2025] Texture:Editor\Images\FolderIcon.png has been loaded!
+[Fri Apr  4 08:54:39 2025] Texture:Editor\Images\HideIcon.png has been loaded!
+[Fri Apr  4 08:54:39 2025] Texture:Editor\Images\MaterialIcon.png has been loaded!
+[Fri Apr  4 08:54:39 2025] Texture:Editor\Images\MeshIcon.png has been loaded!
+[Fri Apr  4 08:54:39 2025] Texture:Editor\Images\MetaIcon.png has been loaded!
+[Fri Apr  4 08:54:39 2025] Texture:Editor\Images\PlayButton.png has been loaded!
+[Fri Apr  4 08:54:39 2025] Texture:Editor\Images\ShowIcon.png has been loaded!
+[Fri Apr  4 08:54:39 2025] Texture:Editor\Images\StopButton.png has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\DefaultReflection.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\BloomUpSample.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\Atmosphere.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\Line.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\Final.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\Custom\Water\Water.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\Deferred.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/DefaultReflection.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\BloomDownSample.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/BloomUpSample.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Atmosphere.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\Custom\Rotate.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Line.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\MeshBaseDoubleSided.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Final.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders\Transparent.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Deferred.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/BloomDownSample.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/BloomUpSample.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/DefaultReflection.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Atmosphere.geom has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Line.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Final.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/BloomDownSample.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Deferred.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Materials\Custom\Water\Shaders\Water.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Atmosphere.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Custom/Rotate.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\SSAO.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/SSAO.comp has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\MeshBaseSkinned.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\RectangleUI.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\SkyBox.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/OpaqueSkinned.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/RectangleUI.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/SkyBox.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/RectangleUI.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\SSAOBlur.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\SSR.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/CSM.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/SkyBox.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] BaseMaterial:Materials\SSRBlur.basemat has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/SSAOBlur.comp has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/SSR.comp has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/SSRBlur.comp has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/TransparentSkinned.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/CSM.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/CSM.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/CSMSkinned.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/ZPrePassSkinned.vert has been loaded!
+[Fri Apr  4 08:54:39 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_257_sponza_257_Material__47.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__25.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_382_sponza_382_bricks.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__298.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_Material__57.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\Material__25.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\Material__298.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_39_sponza_39_arch.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\Material__47.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\arch.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\Material__57.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Scene:Scenes\Sponza\Sponza.scene has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\bricks.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_38_sponza_38_ceiling.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_339_sponza_339_chain.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\ceiling.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\chain.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_10_sponza_10_column_a.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\column_a.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\column_b.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\chain_texture.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_141_sponza_141_column_b.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\lion.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_arch_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\vase_plant.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\spnza_bricks_a_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_83_sponza_83_column_c.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\background.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_ceiling_a_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_a_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\column_c.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_72_sponza_72_details.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_b_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_288_sponza_288_fabric_a.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\details.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\fabric_a.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_325_sponza_325_fabric_c.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\fabric_c.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_289_sponza_289_fabric_d.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\fabric_d.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\fabric_e.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\fabric_f.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_285_sponza_285_fabric_e.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_327_sponza_327_fabric_f.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_326_sponza_326_fabric_g.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\fabric_g.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_details_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_c_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_271_sponza_271_flagpole.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\flagpole.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_blue_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_green_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_18_sponza_18_floor.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\floor.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\leaf.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\roof.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_275_sponza_275_leaf.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_381_sponza_381_roof.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_373_sponza_373_vase.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\vase.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_thorn_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_344_sponza_344_vase_hanging.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\vase_hanging.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Material:Scenes\Sponza\Assets\vase_round.mat has been loaded!
+[Fri Apr  4 08:54:46 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_vase_round.mesh has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_flagpole_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_floor_a_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_green_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_roof_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_blue_diff.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\vase_dif.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\vase_hanging.tga has been loaded!
+[Fri Apr  4 08:54:46 2025] Texture:Scenes\Sponza\Assets\textures\vase_round.tga has been loaded!
+[Fri Apr  4 08:54:51 2025] Mesh:Meshes\Torus.mesh has been loaded!
+[Fri Apr  4 08:54:51 2025] Material:Materials\MeshBase.mat has been loaded!
+[Fri Apr  4 08:55:29 2025] Material:Scenes\EmissiveMaterials\Assets\EmissiveBlue.mat has been loaded!
+[Fri Apr  4 08:55:38 2025] Material:Scenes\EmissiveMaterials\Assets\EmissiveGreen.mat has been loaded!
+[Fri Apr  4 08:55:39 2025] Material:Scenes\EmissiveMaterials\Assets\EmissiveRed.mat has been loaded!

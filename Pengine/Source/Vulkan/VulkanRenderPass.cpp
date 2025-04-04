@@ -72,7 +72,7 @@ VulkanRenderPass::VulkanRenderPass(const CreateInfo& createInfo)
 	renderPassCreateInfo.dependencyCount = 1;
 	renderPassCreateInfo.pDependencies = &dependency;
 
-	if (vkCreateRenderPass(device->GetDevice(), &renderPassCreateInfo,
+	if (vkCreateRenderPass(GetVkDevice()->GetDevice(), &renderPassCreateInfo,
 		nullptr, &m_RenderPass) != VK_SUCCESS)
 	{
 		FATAL_ERROR("Failed to create render pass!");
@@ -81,8 +81,8 @@ VulkanRenderPass::VulkanRenderPass(const CreateInfo& createInfo)
 
 VulkanRenderPass::~VulkanRenderPass()
 {
-	device->DeleteResource([renderPass = m_RenderPass]()
+	GetVkDevice()->DeleteResource([renderPass = m_RenderPass]()
 	{
-		vkDestroyRenderPass(device->GetDevice(), renderPass, nullptr);
+		vkDestroyRenderPass(GetVkDevice()->GetDevice(), renderPass, nullptr);
 	});
 }

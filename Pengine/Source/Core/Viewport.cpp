@@ -10,6 +10,7 @@
 #include "Raycast.h"
 #include "MaterialManager.h"
 #include "MeshManager.h"
+#include "Window.h"
 
 #include "../Components/Camera.h"
 #include "../Components/Transform.h"
@@ -28,7 +29,7 @@ Viewport::Viewport(std::string name, const glm::ivec2& size)
 	Resize(size);
 }
 
-void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
+void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture, std::shared_ptr<Window> window)
 {
 	UpdateProjectionMat4();
 
@@ -44,7 +45,7 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 
 	if (!m_IsOpened)
 	{
-		ViewportManager::GetInstance().Destroy(shared_from_this());
+		window->GetViewportManager().Destroy(shared_from_this());
 		return;
 	}
 
@@ -201,7 +202,8 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 		m_DrawGizmosCallback = {};
 	}
 
-	if (scene && IsFocused() && Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL) && Input::KeyBoard::IsKeyPressed(Keycode::KEY_A))
+	Input& input = Input::GetInstance(window.get());
+	if (scene && IsFocused() && input.IsKeyDown(Keycode::KEY_LEFT_CONTROL) && input.IsKeyPressed(Keycode::KEY_A))
 	{
 		scene->GetSelectedEntities().clear();
 		for (const std::shared_ptr<Entity> entity : scene->GetEntities())
@@ -210,7 +212,7 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 		}
 	}
 
-	if (!m_ActiveGuizmo && m_IsHovered && Input::Mouse::IsMousePressed(Keycode::MOUSE_BUTTON_1))
+	if (!m_ActiveGuizmo && m_IsHovered && input.IsMousePressed(Keycode::MOUSE_BUTTON_1))
 	{
 		if (camera)
 		{

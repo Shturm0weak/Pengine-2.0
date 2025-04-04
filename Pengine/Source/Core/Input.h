@@ -8,66 +8,40 @@ namespace Pengine
 	class PENGINE_API Input
 	{
 	public:
-		struct Mouse
-		{
-			static bool IsMouseDown(int button);
+		static Input& GetInstance(class Window* window);
 
-			static bool IsMousePressed(int button);
+		static void RemoveInstance(class Window* window);
 
-			static bool IsMouseReleased(int button);
+		bool IsMouseDown(int button);
 
-			static glm::dvec2 GetMousePosition();
+		bool IsMousePressed(int button);
 
-			static glm::dvec2 GetMousePositionPrevious();
+		bool IsMouseReleased(int button);
 
-			static glm::dvec2 GetMousePositionDelta();
-		};
+		glm::dvec2 GetMousePosition();
 
-		struct KeyBoard
-		{
-			static bool IsKeyDown(int keycode);
+		glm::dvec2 GetMousePositionPrevious();
 
-			static bool IsKeyPressed(int keycode);
+		glm::dvec2 GetMousePositionDelta();
 
-			static bool IsKeyReleased(int keycode);
-		};
+		bool IsKeyDown(int keycode);
+
+		bool IsKeyPressed(int keycode);
+
+		bool IsKeyReleased(int keycode);
 
 		struct JoyStick
 		{
-			static bool IsButtonDown(int buttonCode);
+		public:
+			bool IsButtonDown(int buttonCode);
 
-			static bool IsButtonPressed(int buttonCode);
+			bool IsButtonPressed(int buttonCode);
 
-			static bool IsButtonReleased(int buttonCode);
+			bool IsButtonReleased(int buttonCode);
 
-			static float GetAxis(int axisCode);
-		};
+			float GetAxis(int axisCode);
 
-		static void KeyCallback(int key, int scancode, int action, int mods);
-
-		static void MouseButtonCallback(int button, int action, int mods);
-
-		static void MousePositionCallback(double x, double y);
-
-		static void SetIsMouseDownCallback(const std::function<bool(int)>& callback);
-
-		static void SetIsKeyDownCallback(const std::function<bool(int)>& callback);
-
-		static void ResetInput();
-
-	private:
-		static std::unordered_map<int, int> s_ActionsByKeycode; // First - keycode, second - action.
-
-		static std::function<bool(int)> s_IsMouseDownCallback;
-
-		static std::function<bool(int)> s_IsKeyDownCallback;
-
-		static glm::dvec2 s_MousePosition;
-		static glm::dvec2 s_MousePositionPrevious;
-		static glm::dvec2 s_MousePositionDelta;
-
-		struct JoyStickInfo
-		{
+		private:
 			int id = 0;
 			int isPresent = 0;
 
@@ -76,7 +50,34 @@ namespace Pengine
 			std::unordered_map<int, int> previuosButtonsByKeycode; // First - keycode, second - action.
 
 			void Update();
-		} static s_JoyStick;
+
+			friend class Input;
+		};
+
+		void KeyCallback(int key, int scancode, int action, int mods);
+
+		void MouseButtonCallback(int button, int action, int mods);
+
+		void MousePositionCallback(double x, double y);
+
+		void SetIsMouseDownCallback(const std::function<bool(int)>& callback);
+
+		void SetIsKeyDownCallback(const std::function<bool(int)>& callback);
+
+		void ResetInput();
+
+	private:
+		glm::dvec2 m_MousePosition;
+		glm::dvec2 m_MousePositionPrevious;
+		glm::dvec2 m_MousePositionDelta;
+
+		std::unordered_map<int, int> m_ActionsByKeycode; // First - keycode, second - action.
+
+		std::function<bool(int)> m_IsMouseDownCallback;
+
+		std::function<bool(int)> m_IsKeyDownCallback;
+
+		JoyStick m_JoyStick;
 	};
 
 }

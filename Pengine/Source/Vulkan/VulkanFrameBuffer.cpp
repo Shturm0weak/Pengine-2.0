@@ -82,7 +82,7 @@ void VulkanFrameBuffer::Resize(const glm::ivec2& size)
 		framebufferInfo.layers = layers;
 
 		if (vkCreateFramebuffer(
-			device->GetDevice(),
+			GetVkDevice()->GetDevice(),
 			&framebufferInfo,
 			nullptr,
 			&m_FrameBuffers[frameIndex]) != VK_SUCCESS)
@@ -96,9 +96,9 @@ void VulkanFrameBuffer::Clear()
 {
 	for (const VkFramebuffer frameBuffer : m_FrameBuffers)
 	{
-		device->DeleteResource([frameBuffer]()
+		GetVkDevice()->DeleteResource([frameBuffer]()
 		{
-			vkDestroyFramebuffer(device->GetDevice(), frameBuffer, nullptr);
+			vkDestroyFramebuffer(GetVkDevice()->GetDevice(), frameBuffer, nullptr);
 		});
 	}
 	

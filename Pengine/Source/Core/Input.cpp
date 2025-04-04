@@ -1,31 +1,25 @@
 #include "Input.h"
 
+#include "Window.h"
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 using namespace Pengine;
 
-std::unordered_map<int, int> Input::s_ActionsByKeycode;
-std::function<bool(int)> Input::s_IsMouseDownCallback;
-std::function<bool(int)> Input::s_IsKeyDownCallback;
-Input::JoyStickInfo Input::s_JoyStick;
-glm::dvec2 Input::s_MousePosition;
-glm::dvec2 Input::s_MousePositionPrevious;
-glm::dvec2 Input::s_MousePositionDelta;
-
-bool Input::Mouse::IsMouseDown(const int button)
+bool Input::IsMouseDown(const int button)
 {
-	if (s_IsMouseDownCallback)
+	if (m_IsMouseDownCallback)
 	{
-		return s_IsMouseDownCallback(button);
+		return m_IsMouseDownCallback(button);
 	}
 
 	return false;
 }
 
-bool Input::Mouse::IsMousePressed(const int button)
+bool Input::IsMousePressed(const int button)
 {
-	if (const auto buttonByKeycode = s_ActionsByKeycode.find(button); buttonByKeycode != s_ActionsByKeycode.end())
+	if (const auto buttonByKeycode = m_ActionsByKeycode.find(button); buttonByKeycode != m_ActionsByKeycode.end())
 	{
 		if (buttonByKeycode->second == 1)
 		{
@@ -36,9 +30,9 @@ bool Input::Mouse::IsMousePressed(const int button)
 	return false;
 }
 
-bool Input::Mouse::IsMouseReleased(const int button)
+bool Input::IsMouseReleased(const int button)
 {
-	if (const auto buttonByKeycode = s_ActionsByKeycode.find(button); buttonByKeycode != s_ActionsByKeycode.end())
+	if (const auto buttonByKeycode = m_ActionsByKeycode.find(button); buttonByKeycode != m_ActionsByKeycode.end())
 	{
 		if (buttonByKeycode->second == 0)
 		{
@@ -49,34 +43,34 @@ bool Input::Mouse::IsMouseReleased(const int button)
 	return false;
 }
 
-glm::dvec2 Input::Mouse::GetMousePosition()
+glm::dvec2 Input::GetMousePosition()
 {
-	return s_MousePosition;
+	return m_MousePosition;
 }
 
-glm::dvec2 Input::Mouse::GetMousePositionPrevious()
+glm::dvec2 Input::GetMousePositionPrevious()
 {
-	return s_MousePositionPrevious;
+	return m_MousePositionPrevious;
 }
 
-glm::dvec2 Input::Mouse::GetMousePositionDelta()
+glm::dvec2 Input::GetMousePositionDelta()
 {
-	return s_MousePositionDelta;
+	return m_MousePositionDelta;
 }
 
-bool Input::KeyBoard::IsKeyDown(const int keycode)
+bool Input::IsKeyDown(const int keycode)
 {
-	if (s_IsKeyDownCallback)
+	if (m_IsKeyDownCallback)
 	{
-		return s_IsKeyDownCallback(keycode);
+		return m_IsKeyDownCallback(keycode);
 	}
 
 	return false;
 }
 
-bool Input::KeyBoard::IsKeyPressed(const int keycode)
+bool Input::IsKeyPressed(const int keycode)
 {
-	if (const auto keyByKeycode = s_ActionsByKeycode.find(keycode); keyByKeycode != s_ActionsByKeycode.end())
+	if (const auto keyByKeycode = m_ActionsByKeycode.find(keycode); keyByKeycode != m_ActionsByKeycode.end())
 	{
 		if (keyByKeycode->second == 1)
 		{
@@ -87,9 +81,9 @@ bool Input::KeyBoard::IsKeyPressed(const int keycode)
 	return false;
 }
 
-bool Input::KeyBoard::IsKeyReleased(const int keycode)
+bool Input::IsKeyReleased(const int keycode)
 {
-	if (const auto keyByKeycode = s_ActionsByKeycode.find(keycode); keyByKeycode != s_ActionsByKeycode.end())
+	if (const auto keyByKeycode = m_ActionsByKeycode.find(keycode); keyByKeycode != m_ActionsByKeycode.end())
 	{
 		if (keyByKeycode->second == 0)
 			return true;
@@ -100,58 +94,70 @@ bool Input::KeyBoard::IsKeyReleased(const int keycode)
 
 void Input::ResetInput()
 {
-	s_MousePositionDelta = {0.0, 0.0};
+	m_MousePositionDelta = {0.0, 0.0};
 
-	s_JoyStick.Update();
+	m_JoyStick.Update();
 
-	for (auto& [code, key] : s_ActionsByKeycode)
+	for (auto& [code, key] : m_ActionsByKeycode)
 	{
 		key = -1;
 	}
 }
 
+Input& Input::GetInstance(Window* window)
+{
+	static std::unordered_map<Window*, Input> inputs;
+	return inputs[window];
+}
+
+void Input::RemoveInstance(Window* window)
+{
+	static std::unordered_map<Window*, Input> inputs;
+	inputs.erase(window);
+}
+
 void Input::KeyCallback(const int key, const int scancode, const int action, const int mods)
 {
-	if (const auto keyByKeycode = s_ActionsByKeycode.find(key); keyByKeycode != s_ActionsByKeycode.end())
+	if (const auto keyByKeycode = m_ActionsByKeycode.find(key); keyByKeycode != m_ActionsByKeycode.end())
 	{
 		keyByKeycode->second = action;
 	}
 	else
 	{
-		s_ActionsByKeycode.insert(std::make_pair(key, action));
+		m_ActionsByKeycode.insert(std::make_pair(key, action));
 	}
 }
 
 void Input::MouseButtonCallback(const int button, const int action, const int mods)
 {
-	if (const auto buttonByKeycode = s_ActionsByKeycode.find(button); buttonByKeycode != s_ActionsByKeycode.end())
+	if (const auto buttonByKeycode = m_ActionsByKeycode.find(button); buttonByKeycode != m_ActionsByKeycode.end())
 	{
 		buttonByKeycode->second = action;
 	}
 	else
 	{
-		s_ActionsByKeycode.insert(std::make_pair(button, action));
+		m_ActionsByKeycode.insert(std::make_pair(button, action));
 	}
 }
 
 void Input::MousePositionCallback(const double x, const double y)
 {
-	s_MousePositionPrevious = s_MousePosition;
-	s_MousePosition = {x, y};
-	s_MousePositionDelta = s_MousePosition - s_MousePositionPrevious;
+	m_MousePositionPrevious = m_MousePosition;
+	m_MousePosition = {x, y};
+	m_MousePositionDelta = m_MousePosition - m_MousePositionPrevious;
 }
 
 void Input::SetIsMouseDownCallback(const std::function<bool(int)>& callback)
 {
-	s_IsMouseDownCallback = callback;
+	m_IsMouseDownCallback = callback;
 }
 
 void Input::SetIsKeyDownCallback(const std::function<bool(int)>& callback)
 {
-	s_IsKeyDownCallback = callback;
+	m_IsKeyDownCallback = callback;
 }
 
-void Input::JoyStickInfo::Update()
+void Input::JoyStick::Update()
 {
 	previuosButtonsByKeycode = buttonsByKeycode;
 
@@ -206,8 +212,8 @@ void Input::JoyStickInfo::Update()
 
 bool Input::JoyStick::IsButtonDown(const int buttonCode)
 {
-	if (const auto buttonByKeycode = s_JoyStick.buttonsByKeycode.find(buttonCode);
-		buttonByKeycode != s_JoyStick.buttonsByKeycode.end())
+	if (const auto buttonByKeycode = buttonsByKeycode.find(buttonCode);
+		buttonByKeycode != buttonsByKeycode.end())
 	{
 		if (buttonByKeycode->second == 1)
 		{
@@ -220,10 +226,10 @@ bool Input::JoyStick::IsButtonDown(const int buttonCode)
 
 bool Input::JoyStick::IsButtonPressed(const int buttonCode)
 {
-	if (const auto buttonByKeycode = s_JoyStick.buttonsByKeycode.find(buttonCode);
-		buttonByKeycode != s_JoyStick.buttonsByKeycode.end())
+	if (const auto buttonByKeycode = buttonsByKeycode.find(buttonCode);
+		buttonByKeycode != buttonsByKeycode.end())
 	{
-		if (const auto previousButtonByKeycode = s_JoyStick.previuosButtonsByKeycode.find(buttonCode);
+		if (const auto previousButtonByKeycode = previuosButtonsByKeycode.find(buttonCode);
 			buttonByKeycode->second == 1 && previousButtonByKeycode->second != 1)
 		{
 			return true;
@@ -235,8 +241,8 @@ bool Input::JoyStick::IsButtonPressed(const int buttonCode)
 
 bool Input::JoyStick::IsButtonReleased(const int buttonCode)
 {
-	if (const auto buttonByKeycode = s_JoyStick.buttonsByKeycode.find(buttonCode);
-		buttonByKeycode != s_JoyStick.buttonsByKeycode.end())
+	if (const auto buttonByKeycode = buttonsByKeycode.find(buttonCode);
+		buttonByKeycode != buttonsByKeycode.end())
 	{
 		if (buttonByKeycode->second == 0)
 		{
@@ -249,8 +255,8 @@ bool Input::JoyStick::IsButtonReleased(const int buttonCode)
 
 float Input::JoyStick::GetAxis(const int axisCode)
 {
-	if (const auto valueByAxis = s_JoyStick.valuesByAxes.find(axisCode);
-		valueByAxis != s_JoyStick.valuesByAxes.end())
+	if (const auto valueByAxis = valuesByAxes.find(axisCode);
+		valueByAxis != valuesByAxes.end())
 	{
 		return valueByAxis->second;
 	}

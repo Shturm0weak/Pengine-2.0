@@ -65,7 +65,7 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 
 	for (auto& imageData : m_ImageDatas)
 	{
-		device->CreateImage(
+		GetVkDevice()->CreateImage(
 			imageInfo,
 			memoryUsage,
 			memoryFlags,
@@ -86,7 +86,7 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 		{
 			Transition(imageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-			device->CopyBufferToImage(
+			GetVkDevice()->CopyBufferToImage(
 				stagingBuffer->GetBuffer(),
 				imageData.image,
 				static_cast<uint32_t>(m_Size.x),
@@ -98,7 +98,7 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 			{
 				Transition(imageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-				Vk::device->GenerateMipMaps(
+				GetVkDevice()->GenerateMipMaps(
 					imageData.image,
 					ConvertFormat(m_Format),
 					m_Size.x,
@@ -177,13 +177,13 @@ VulkanTexture::~VulkanTexture()
 {
 	for (auto& imageData : m_ImageDatas)
 	{
-		device->DeleteResource([
+		GetVkDevice()->DeleteResource([
 			image = imageData.image,
 			view = imageData.view,
 			vmaAllocation = imageData.vmaAllocation]()
 		{
-				vkDestroyImageView(device->GetDevice(), view, nullptr);
-				vmaDestroyImage(device->GetVmaAllocator(), image, vmaAllocation);
+			vkDestroyImageView(GetVkDevice()->GetDevice(), view, nullptr);
+			vmaDestroyImage(GetVkDevice()->GetVmaAllocator(), image, vmaAllocation);
 		});
 	}
 }
@@ -218,7 +218,7 @@ VkImageView VulkanTexture::CreateImageView(
 	viewInfo.subresourceRange.layerCount = layerCount;
 
 	VkImageView imageView;
-	if (vkCreateImageView(device->GetDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS)
+	if (vkCreateImageView(GetVkDevice()->GetDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS)
 	{
 		FATAL_ERROR("Failed to create texture image view!");
 	}
@@ -542,7 +542,7 @@ VulkanTexture::SubresourceLayout VulkanTexture::GetSubresourceLayout() const
 	vkSubresource.aspectMask = ConvertAspectMask(m_AspectMask);
 	VkSubresourceLayout vkSubresourceLayout;
 
-	vkGetImageSubresourceLayout(device->GetDevice(), imageData.image, &vkSubresource, &vkSubresourceLayout);
+	vkGetImageSubresourceLayout(GetVkDevice()->GetDevice(), imageData.image, &vkSubresource, &vkSubresourceLayout);
 
 	SubresourceLayout subresourceLayout{};
 	subresourceLayout.arrayPitch = vkSubresourceLayout.arrayPitch;
@@ -561,7 +561,7 @@ void VulkanTexture::GenerateMipMaps(void* frame)
 
 void VulkanTexture::Copy(std::shared_ptr<Texture> src, void* frame)
 {
-	VkCommandBuffer commandBuffer = device->GetCommandBufferFromFrame(frame);
+	VkCommandBuffer commandBuffer = GetVkDevice()->GetCommandBufferFromFrame(frame);
 
 	std::shared_ptr<VulkanTexture> vkSrc = std::static_pointer_cast<VulkanTexture>(src);
 
@@ -571,7 +571,7 @@ void VulkanTexture::Copy(std::shared_ptr<Texture> src, void* frame)
 	Transition(srcImageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
 	Transition(dstImageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-	Vk::device->CopyImageToImage(
+	Vk::GetVkDevice()->CopyImageToImage(
 		srcImageData.image,
 		srcImageData.m_Layout,
 		dstImageData.image,
@@ -589,7 +589,7 @@ void VulkanTexture::Transition(ImageData& imageData, VkImageLayout layout)
 	imageData.m_PreviousLayout = imageData.m_Layout;
 	imageData.m_Layout = layout;
 
-	device->TransitionImageLayout(
+	GetVkDevice()->TransitionImageLayout(
 		imageData.image,
 		ConvertFormat(m_Format),
 		ConvertAspectMask(m_AspectMask),

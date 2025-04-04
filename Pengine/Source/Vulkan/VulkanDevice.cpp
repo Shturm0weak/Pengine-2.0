@@ -4,6 +4,7 @@
 #include "../Core/Logger.h"
 
 #include "VulkanDescriptors.h"
+#include "VulkanSamplerManager.h"
 
 #define VMA_IMPLEMENTATION
 #include <vma/vk_mem_alloc.h>
@@ -188,10 +189,9 @@ void VulkanDevice::CreateLogicalDevice()
 	QueueFamilyIndices indices = FindQueueFamilies(m_PhysicalDevice);
 
 	m_GraphicsFamilyIndex = indices.graphicsFamily;
-	m_PresentFamilyIndex = indices.presentFamily;
 
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-	std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily, indices.presentFamily };
+	std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily };
 
 	float queuePriority = 1.0f;
 	for (uint32_t queueFamily : uniqueQueueFamilies)
@@ -238,11 +238,10 @@ void VulkanDevice::CreateLogicalDevice()
 
 	if (vkCreateDevice(m_PhysicalDevice, &createInfo, nullptr, &m_Device) != VK_SUCCESS)
 	{
-		FATAL_ERROR("Failed to create logical device!");
+		FATAL_ERROR("Device:<" + GetName() + "> Failed to create logical device!");
 	}
 
 	vkGetDeviceQueue(m_Device, indices.graphicsFamily, 0, &m_GraphicsQueue);
-	vkGetDeviceQueue(m_Device, indices.presentFamily, 0, &m_PresentQueue);
 }
 
 void VulkanDevice::CreateCommandPool()
@@ -256,7 +255,7 @@ void VulkanDevice::CreateCommandPool()
 
 	if (vkCreateCommandPool(m_Device, &poolInfo, nullptr, &m_CommandPool) != VK_SUCCESS)
 	{
-		FATAL_ERROR("Failed to create command pool!");
+		FATAL_ERROR("Device:<" + GetName() + "> Failed to create command pool!");
 	}
 }
 
@@ -272,16 +271,39 @@ void VulkanDevice::CreateVmaAllocator()
 	const VkResult result = vmaCreateAllocator(&allocatorInfo, &m_VmaAllocator);
 	if (result != VK_SUCCESS)
 	{
-		FATAL_ERROR("Failed to create Vma allocator!");
+		FATAL_ERROR("Device:<" + GetName() + "> Failed to create Vma allocator!");
 	}
 }
 
-void VulkanDevice::CreateSurface(GLFWwindow* window)
+VkSurfaceKHR VulkanDevice::CreateSurface(GLFWwindow* window)
 {
-	if (glfwCreateWindowSurface(m_Instance, window, nullptr, &m_Surface) != VK_SUCCESS)
+	VkSurfaceKHR surface;
+
+	if (glfwCreateWindowSurface(m_Instance, window, nullptr, &surface) != VK_SUCCESS)
 	{
-		FATAL_ERROR("Failed to create window surface!");
+		FATAL_ERROR("Device:<" + GetName() + "> Failed to create window surface!");
 	}
+
+	VkBool32 presentSupport = false;
+	vkGetPhysicalDeviceSurfaceSupportKHR(m_PhysicalDevice, m_GraphicsFamilyIndex, surface, &presentSupport);
+	if (!presentSupport)
+	{
+		vkDestroySurfaceKHR(m_Instance, surface, nullptr);
+		FATAL_ERROR("Device:<" + GetName() + "> Failed to create window surface, physical device doesn't support presenting to the surface!");
+	}
+
+	bool swapChainAdequate = false;
+	SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(m_PhysicalDevice, surface);
+	swapChainAdequate = !swapChainSupport.formats.empty() &&
+		!swapChainSupport.presentModes.empty();
+
+	if (!swapChainAdequate)
+	{
+		vkDestroySurfaceKHR(m_Instance, surface, nullptr);
+		FATAL_ERROR("Device:<" + GetName() + "> Failed to create window surface, physical device" + "doesn't support swapchain for the surface!");
+	}
+
+	return surface;
 }
 
 bool VulkanDevice::IsDeviceSuitable(const VkPhysicalDevice device)
@@ -290,18 +312,10 @@ bool VulkanDevice::IsDeviceSuitable(const VkPhysicalDevice device)
 
 	const bool extensionsSupported = CheckDeviceExtensionSupport(device);
 
-	bool swapChainAdequate = false;
-	if (extensionsSupported)
-	{
-		SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(device);
-		swapChainAdequate = !swapChainSupport.formats.empty() &&
-			!swapChainSupport.presentModes.empty();
-	}
-
 	VkPhysicalDeviceFeatures supportedFeatures;
 	vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
 	
-	return indices.IsComplete() && extensionsSupported && swapChainAdequate &&
+	return indices.IsComplete() && extensionsSupported &&
 			supportedFeatures.samplerAnisotropy;
 }
 
@@ -462,14 +476,7 @@ QueueFamilyIndices VulkanDevice::FindQueueFamilies(const VkPhysicalDevice device
 			indices.graphicsFamilyHasValue = true;
 		}
 
-		VkBool32 presentSupport = false;
-		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_Surface, &presentSupport);
-
-		if (queueFamily.queueCount > 0 && presentSupport)
-		{
-			indices.presentFamily = i;
-			indices.presentFamilyHasValue = true;
-		}
+		// TODO: Add compute queue family!
 
 		if (indices.IsComplete())
 		{
@@ -482,30 +489,30 @@ QueueFamilyIndices VulkanDevice::FindQueueFamilies(const VkPhysicalDevice device
 	return indices;
 }
 
-SwapChainSupportDetails VulkanDevice::QuerySwapChainSupport(const VkPhysicalDevice device) const
+SwapChainSupportDetails VulkanDevice::QuerySwapChainSupport(const VkPhysicalDevice device, const VkSurfaceKHR surface) const
 {
 	SwapChainSupportDetails details;
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_Surface, &details.capabilities);
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
 
 	uint32_t formatCount;
-	vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_Surface, &formatCount, nullptr);
+	vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
 
 	if (formatCount != 0)
 	{
 		details.formats.resize(formatCount);
-		vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_Surface, &formatCount,
+		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount,
 			details.formats.data());
 	}
 
 	uint32_t presentModeCount;
-	vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_Surface, &presentModeCount, nullptr);
+	vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
 
 	if (presentModeCount != 0)
 	{
 		details.presentModes.resize(presentModeCount);
 		vkGetPhysicalDeviceSurfacePresentModesKHR(
 			device,
-			m_Surface,
+			surface,
 			&presentModeCount,
 			details.presentModes.data());
 	}
@@ -533,25 +540,51 @@ VkFormat VulkanDevice::FindSupportedFormat(const std::vector<VkFormat> &candidat
 		}
 	}
 
-	FATAL_ERROR("Failed to find supported format!");
+	FATAL_ERROR("Device:<" + GetName() + "> Failed to find supported format!");
 	return VkFormat::VK_FORMAT_UNDEFINED;
 }
 
-VulkanDevice::VulkanDevice(GLFWwindow* window, const std::string& applicationName)
+VulkanDevice::VulkanDevice(const std::string& applicationName)
+	: Device()
 {
+	if (!glfwInit())
+	{
+		FATAL_ERROR("Failed to initialize GLFW!");
+	}
+
 	CreateInstance(applicationName);
 	SetupDebugMessenger();
 	SetupDebugUtilsLabel();
-	CreateSurface(window);
 	PickPhysicalDevice();
 	CreateLogicalDevice();
 	CreateVmaAllocator();
 	CreateCommandPool();
+
+	if (!m_DescriptorPool)
+	{
+		m_DescriptorPool = VulkanDescriptorPool::Builder()
+			.SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT)
+			.SetMaxSets(1000 * 2)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000)
+			.Build(m_Device);
+	}
 }
 
 VulkanDevice::~VulkanDevice()
 {
+}
+
+void VulkanDevice::ShutDown()
+{
 	WaitIdle();
+
+	VulkanSamplerManager::GetInstance().ShutDown();
+
+	FlushDeletionQueue(true);
+	m_DescriptorPool.reset();
 
 	if (enableValidationLayers)
 	{
@@ -565,6 +598,8 @@ VulkanDevice::~VulkanDevice()
 	vkDestroyCommandPool(m_Device, m_CommandPool, nullptr);
 	vkDestroyDevice(m_Device, nullptr);
 	vkDestroyInstance(m_Instance, nullptr);
+
+	glfwTerminate();
 }
 
 uint32_t VulkanDevice::FindMemoryType(const uint32_t typeFilter, const VkMemoryPropertyFlags properties) const
@@ -581,7 +616,7 @@ uint32_t VulkanDevice::FindMemoryType(const uint32_t typeFilter, const VkMemoryP
 		}
 	}
 
-	FATAL_ERROR("Failed to find suitable memory type!");
+	FATAL_ERROR("Device:<" + GetName() + "> Failed to find suitable memory type!");
 	return -1;
 }
 
@@ -612,7 +647,7 @@ void VulkanDevice::CreateBuffer(
 		&vmaAllocation,
 		&vmaAllocationInfo) != VK_SUCCESS)
 	{
-		FATAL_ERROR("Failed to create buffer!");
+		FATAL_ERROR("Device:<" + GetName() + "> Failed to create buffer!");
 	}
 }
 
@@ -763,7 +798,7 @@ void VulkanDevice::CreateImage(
 		&vmaAllocation,
 		&vmaAllocationInfo) != VK_SUCCESS)
 	{
-		FATAL_ERROR("Failed to create image!");
+		FATAL_ERROR("Device:<" + GetName() + "> Failed to create image!");
 	}
 }
 
@@ -1046,4 +1081,9 @@ VkCommandBuffer VulkanDevice::GetCommandBufferFromFrame(void* frame)
 	}
 
 	return VK_NULL_HANDLE;
+}
+
+std::shared_ptr<VulkanDevice> Pengine::Vk::GetVkDevice()
+{
+	return std::static_pointer_cast<VulkanDevice>(device);
 }

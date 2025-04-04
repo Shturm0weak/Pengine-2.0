@@ -19,6 +19,7 @@
 #include "../Components/Camera.h"
 #include "../Editor/Editor.h"
 #include "../EventSystem/EventSystem.h"
+#include "../Graphics/Device.h"
 #include "../Graphics/Renderer.h"
 #include "../Graphics/RenderTarget.h"
 
@@ -143,9 +144,14 @@ void CreateDefaultResources()
 
 void EntryPoint::Run() const
 {
+	auto gDevice = Device::Create("Pengine");
+
 	EventSystem& eventSystem = EventSystem::GetInstance();
-	const std::shared_ptr<Window> mainWindow = WindowManager::GetInstance().Create("Pengine",
+	std::shared_ptr<Window> mainWindow = WindowManager::GetInstance().Create("Pengine", "Main",
 		{ 800, 800 });
+
+	mainWindow->GetViewportManager().Create("Main", { 800, 800 });
+	mainWindow->SetEditor(true);
 
 	WindowManager::GetInstance().SetCurrentWindow(mainWindow);
 
@@ -159,10 +165,6 @@ void EntryPoint::Run() const
 
 	CreateDefaultResources();
 	LoadAllBaseMaterials(std::filesystem::path("Materials"));
-
-#ifndef NO_EDITOR
-	Editor editor;
-#endif
 
 	m_Application->OnPreStart();
 
@@ -184,7 +186,7 @@ void EntryPoint::Run() const
 			scene->Update(Time::GetDeltaTime());
 		}
 		
-		for (const std::shared_ptr<Window>& window : WindowManager::GetInstance().GetWindows())
+		for (const auto& [windowName, window] : WindowManager::GetInstance().GetWindows())
 		{
 			if (!window->IsRunning())
 			{
@@ -201,13 +203,13 @@ void EntryPoint::Run() const
 			}
 
 			window->ImGuiBegin();
-			for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
+			for (const auto& [viewportName, viewport] : window->GetViewportManager().GetViewports())
 			{
 				if (const std::shared_ptr<Entity> camera = viewport->GetCamera().lock();
 					camera && camera->HasComponent<Camera>())
 				{
 					Camera& cameraComponent = camera->GetComponent<Camera>();
-					const std::shared_ptr<RenderTarget> renderTarget = cameraComponent.GetRendererTarget(name);
+					const std::shared_ptr<RenderTarget> renderTarget = cameraComponent.GetRendererTarget(viewportName);
 					if (!renderTarget)
 					{
 						continue;
@@ -218,24 +220,24 @@ void EntryPoint::Run() const
 						const std::shared_ptr<FrameBuffer> frameBuffer = renderTarget->GetFrameBuffer(cameraComponent.GetPassName());
 						if (frameBuffer)
 						{
-							viewport->Update(frameBuffer->GetAttachment(cameraComponent.GetRenderTargetIndex()));
+							viewport->Update(frameBuffer->GetAttachment(cameraComponent.GetRenderTargetIndex()), window);
 							continue;
 						}
 
 						const std::shared_ptr<Texture> texture = renderTarget->GetStorageImage(cameraComponent.GetPassName());
 						if (texture)
 						{
-							viewport->Update(texture);
+							viewport->Update(texture, window);
 							continue;
 						}
 					}
 				}
 
-				viewport->Update(TextureManager::GetInstance().GetWhite());
+				viewport->Update(TextureManager::GetInstance().GetWhite(), window);
 			}
 
 #ifndef NO_EDITOR
-			editor.Update(SceneManager::GetInstance().GetSceneByTag("Main"));
+			window->EditorUpdate(SceneManager::GetInstance().GetSceneByTag("Main"));
 #endif
 			window->ImGuiEnd();
 
@@ -246,7 +248,7 @@ void EntryPoint::Run() const
 			{
 				std::map<std::shared_ptr<Scene>, std::vector<Renderer::RenderViewportInfo>> viewportsByScene;
 
-				for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
+				for (const auto& [viewportName, viewport] : window->GetViewportManager().GetViewports())
 				{
 					if (const std::shared_ptr<Entity> camera = viewport->GetCamera().lock())
 					{
@@ -254,7 +256,7 @@ void EntryPoint::Run() const
 						{
 							Renderer::RenderViewportInfo renderViewportInfo{};
 							renderViewportInfo.camera = camera;
-							renderViewportInfo.renderTarget = camera->GetComponent<Camera>().GetRendererTarget(name);
+							renderViewportInfo.renderTarget = camera->GetComponent<Camera>().GetRendererTarget(viewportName);
 							renderViewportInfo.projection = viewport->GetProjectionMat4();
 							renderViewportInfo.size = viewport->GetSize();
 
@@ -284,8 +286,6 @@ void EntryPoint::Run() const
 
 	eventSystem.ProcessEvents();
 
-	mainWindow->ShutDownPrepare();
-
 	ThreadPool::GetInstance().Shutdown();
 	SceneManager::GetInstance().ShutDown();
 	MaterialManager::GetInstance().ShutDown();
@@ -293,6 +293,8 @@ void EntryPoint::Run() const
 	FontManager::GetInstance().ShutDown();
 	TextureManager::GetInstance().ShutDown();
 	RenderPassManager::GetInstance().ShutDown();
-	ViewportManager::GetInstance().ShutDown();
 	WindowManager::GetInstance().ShutDown();
+
+	mainWindow = nullptr;
+	device->ShutDown();
 }

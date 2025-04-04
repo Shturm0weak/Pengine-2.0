@@ -8,15 +8,6 @@ Mat:
       Inactive:
         - GBuffer
   Pipelines:
-    - RenderPass: ZPrePass
-      Uniforms:
-        []
-    - RenderPass: CSM
-      Uniforms:
-        []
-    - RenderPass: Transparent
-      Uniforms:
-        []
     - RenderPass: GBuffer
       Uniforms:
         - Name: albedoTexture
@@ -57,3 +48,12 @@ Mat:
             - Name: material.useNormalMap
               Value: 0
               Type: int
+    - RenderPass: Transparent
+      Uniforms:
+        []
+    - RenderPass: CSM
+      Uniforms:
+        []
+    - RenderPass: ZPrePass
+      Uniforms:
+        []

@@ -22,7 +22,7 @@ namespace Pengine::Vk
 			SamplerInfo samplerInfo{};
 			samplerInfo.createInfo = createInfo;
 
-			if (vkCreateSampler(device->GetDevice(), &createInfo, nullptr, &samplerInfo.sampler) != VK_SUCCESS)
+			if (vkCreateSampler(GetVkDevice()->GetDevice(), &createInfo, nullptr, &samplerInfo.sampler) != VK_SUCCESS)
 			{
 				FATAL_ERROR("Failed to create texture sampler!");
 			}
@@ -39,9 +39,9 @@ namespace Pengine::Vk
 	{
 		for (auto& samplerInfo : m_SamplerInfos)
 		{
-			device->DeleteResource([sampler = samplerInfo.sampler]()
+			GetVkDevice()->DeleteResource([sampler = samplerInfo.sampler]()
 			{
-				vkDestroySampler(device->GetDevice(), sampler, nullptr);
+				vkDestroySampler(GetVkDevice()->GetDevice(), sampler, nullptr);
 			});
 		}
 	}

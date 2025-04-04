@@ -53,7 +53,7 @@ VulkanComputePipeline::VulkanComputePipeline(const CreateComputeInfo& createComp
 	pipelineLayoutCreateInfo.pSetLayouts = descriptorSetLayouts.data();
 	pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 
-	if (vkCreatePipelineLayout(device->GetDevice(), &pipelineLayoutCreateInfo,
+	if (vkCreatePipelineLayout(GetVkDevice()->GetDevice(), &pipelineLayoutCreateInfo,
 		nullptr, &m_PipelineLayout) != VK_SUCCESS)
 	{
 		FATAL_ERROR("Failed to create pipeline layout!");
@@ -67,21 +67,21 @@ VulkanComputePipeline::VulkanComputePipeline(const CreateComputeInfo& createComp
 	vkComputePipelineCreateInfo.basePipelineIndex = -1;
 	vkComputePipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-	if (vkCreateComputePipelines(device->GetDevice(), VK_NULL_HANDLE, 1,
+	if (vkCreateComputePipelines(GetVkDevice()->GetDevice(), VK_NULL_HANDLE, 1,
 		&vkComputePipelineCreateInfo, nullptr, &m_ComputePipeline) != VK_SUCCESS)
 	{
 		FATAL_ERROR("Failed to create graphics pipeline!");
 	}
 
-	vkDestroyShaderModule(device->GetDevice(), shaderModule, nullptr);
+	vkDestroyShaderModule(GetVkDevice()->GetDevice(), shaderModule, nullptr);
 }
 
 VulkanComputePipeline::~VulkanComputePipeline()
 {
-	device->DeleteResource([pipelineLayout = m_PipelineLayout, computePipeline = m_ComputePipeline]()
+	GetVkDevice()->DeleteResource([pipelineLayout = m_PipelineLayout, computePipeline = m_ComputePipeline]()
 	{
-		vkDestroyPipelineLayout(device->GetDevice(), pipelineLayout, nullptr);
-		vkDestroyPipeline(device->GetDevice(), computePipeline, nullptr);
+		vkDestroyPipelineLayout(GetVkDevice()->GetDevice(), pipelineLayout, nullptr);
+		vkDestroyPipeline(GetVkDevice()->GetDevice(), computePipeline, nullptr);
 	});
 }
 

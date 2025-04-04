@@ -26,7 +26,7 @@ VulkanUniformWriter::VulkanUniformWriter(
 
 	m_DescriptorSets.resize(m_Count);
 
-	if (!descriptorPool->AllocateDescriptorSets(
+	if (!GetVkDevice()->GetDescriptorPool()->AllocateDescriptorSets(
 		std::static_pointer_cast<VulkanUniformLayout>(m_UniformLayout)->GetDescriptorSetLayout(), m_DescriptorSets))
 	{
 		FATAL_ERROR("Failed to allocate descriptor set!");
@@ -35,9 +35,9 @@ VulkanUniformWriter::VulkanUniformWriter(
 
 VulkanUniformWriter::~VulkanUniformWriter()
 {
-	device->DeleteResource([descriptorSets = m_DescriptorSets]()
+	GetVkDevice()->DeleteResource([descriptorSets = m_DescriptorSets]()
 	{
-		descriptorPool->FreeDescriptors(descriptorSets);
+			GetVkDevice()->GetDescriptorPool()->FreeDescriptors(descriptorSets);
 	});
 }
 
@@ -169,7 +169,7 @@ void VulkanUniformWriter::Flush()
 		writes.emplace_back(write);
 	}
 
-	vkUpdateDescriptorSets(device->GetDevice(), writes.size(), writes.data(), 0, nullptr);
+	vkUpdateDescriptorSets(GetVkDevice()->GetDevice(), writes.size(), writes.data(), 0, nullptr);
 
 	descriptorSetWrites.m_ImageInfos.clear();
 	descriptorSetWrites.m_BufferInfos.clear();

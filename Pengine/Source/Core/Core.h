@@ -104,12 +104,10 @@ namespace Pengine
 	inline size_t vertexCount;
 	inline size_t currentFrame = 0;
 
+	inline std::shared_ptr<class Device> device = nullptr;
+
 	namespace Vk
 	{
-		class VulkanDevice;
-		class VulkanDescriptorPool;
-		inline std::shared_ptr<VulkanDevice> device = nullptr;
-		inline std::shared_ptr<VulkanDescriptorPool> descriptorPool = nullptr;
 		inline uint32_t swapChainImageCount = 0;
 		inline uint32_t swapChainImageIndex = 0;
 	}

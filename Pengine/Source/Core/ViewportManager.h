@@ -10,8 +10,6 @@ namespace Pengine
 	class PENGINE_API ViewportManager
 	{
 	public:
-		static ViewportManager& GetInstance();
-
 		ViewportManager(const ViewportManager&) = delete;
 		ViewportManager& operator=(const ViewportManager&) = delete;
 
@@ -25,10 +23,10 @@ namespace Pengine
 
 		void ShutDown();
 
-	private:
 		ViewportManager() = default;
 		~ViewportManager();
 
+	private:
 		std::unordered_map<std::string, std::shared_ptr<Viewport>> m_Viewports;
 	};
 

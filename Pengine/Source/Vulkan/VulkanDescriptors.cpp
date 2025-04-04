@@ -44,7 +44,7 @@ VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(
 	descriptorSetLayoutInfo.pBindings = setLayoutBindings.data();
 
 	if (vkCreateDescriptorSetLayout(
-		device->GetDevice(),
+		GetVkDevice()->GetDevice(),
 		&descriptorSetLayoutInfo,
 		nullptr,
 		&m_DescriptorSetLayout) != VK_SUCCESS)
@@ -55,9 +55,9 @@ VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(
 
 VulkanDescriptorSetLayout::~VulkanDescriptorSetLayout()
 {
-	device->DeleteResource([descriptorSetLayout = m_DescriptorSetLayout]()
+	GetVkDevice()->DeleteResource([descriptorSetLayout = m_DescriptorSetLayout]()
 	{
-		vkDestroyDescriptorSetLayout(device->GetDevice(), descriptorSetLayout, nullptr);
+		vkDestroyDescriptorSetLayout(GetVkDevice()->GetDevice(), descriptorSetLayout, nullptr);
 	});
 }
 
@@ -80,15 +80,16 @@ VulkanDescriptorPool::Builder & VulkanDescriptorPool::Builder::SetMaxSets(const 
 	return *this;
 }
 
-std::shared_ptr<VulkanDescriptorPool> VulkanDescriptorPool::Builder::Build() const
+std::shared_ptr<VulkanDescriptorPool> VulkanDescriptorPool::Builder::Build(const VkDevice device) const
 {
-	return std::make_unique<VulkanDescriptorPool>(m_MaxSets, m_PoolFlags, m_PoolSizes);
+	return std::make_unique<VulkanDescriptorPool>(m_MaxSets, m_PoolFlags, m_PoolSizes, device);
 }
 
 VulkanDescriptorPool::VulkanDescriptorPool(
 	const uint32_t maxSets,
 	const VkDescriptorPoolCreateFlags poolFlags,
-	const std::vector<VkDescriptorPoolSize> &poolSizes)
+	const std::vector<VkDescriptorPoolSize> &poolSizes,
+	const VkDevice device)
 {
 	VkDescriptorPoolCreateInfo descriptorPoolInfo{};
 	descriptorPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -97,7 +98,7 @@ VulkanDescriptorPool::VulkanDescriptorPool(
 	descriptorPoolInfo.maxSets = maxSets;
 	descriptorPoolInfo.flags = poolFlags;
 
-	if (vkCreateDescriptorPool(device->GetDevice(),
+	if (vkCreateDescriptorPool(device,
 		&descriptorPoolInfo,
 		nullptr,
 		&m_DescriptorPool) !=
@@ -109,7 +110,7 @@ VulkanDescriptorPool::VulkanDescriptorPool(
 
 VulkanDescriptorPool::~VulkanDescriptorPool()
 {
-	vkDestroyDescriptorPool(device->GetDevice(), m_DescriptorPool, nullptr);
+	vkDestroyDescriptorPool(GetVkDevice()->GetDevice(), m_DescriptorPool, nullptr);
 }
 
 bool VulkanDescriptorPool::AllocateDescriptorSet(
@@ -126,7 +127,7 @@ bool VulkanDescriptorPool::AllocateDescriptorSet(
 
 	// Might want to create a "DescriptorPoolManager" class that handles this case, and builds
 	// a new pool whenever an old pool fills up. But this is beyond our current scope
-	if (vkAllocateDescriptorSets(device->GetDevice(), &allocInfo, &descriptor) != VK_SUCCESS)
+	if (vkAllocateDescriptorSets(GetVkDevice()->GetDevice(), &allocInfo, &descriptor) != VK_SUCCESS)
 	{
 		return false;
 	}
@@ -154,7 +155,7 @@ bool VulkanDescriptorPool::AllocateDescriptorSets(
 
 	// Might want to create a "DescriptorPoolManager" class that handles this case, and builds
 	// a new pool whenever an old pool fills up. But this is beyond our current scope
-	if (vkAllocateDescriptorSets(device->GetDevice(), &allocInfo, descriptors.data()) != VK_SUCCESS)
+	if (vkAllocateDescriptorSets(GetVkDevice()->GetDevice(), &allocInfo, descriptors.data()) != VK_SUCCESS)
 	{
 		return false;
 	}
@@ -165,7 +166,7 @@ bool VulkanDescriptorPool::AllocateDescriptorSets(
 void VulkanDescriptorPool::FreeDescriptors(const std::vector<VkDescriptorSet>& descriptors) const
 {
 	vkFreeDescriptorSets(
-		device->GetDevice(),
+		GetVkDevice()->GetDevice(),
 		m_DescriptorPool,
 		static_cast<uint32_t>(descriptors.size()),
 		descriptors.data());
@@ -173,9 +174,9 @@ void VulkanDescriptorPool::FreeDescriptors(const std::vector<VkDescriptorSet>& d
 
 void VulkanDescriptorPool::ResetPool() const
 {
-	vkDeviceWaitIdle(device->GetDevice());
+	vkDeviceWaitIdle(GetVkDevice()->GetDevice());
 
-	vkResetDescriptorPool(device->GetDevice(), m_DescriptorPool, 0);
+	vkResetDescriptorPool(GetVkDevice()->GetDevice(), m_DescriptorPool, 0);
 }
 
 VulkanDescriptorWriter::VulkanDescriptorWriter(VulkanDescriptorSetLayout &setLayout, VulkanDescriptorPool &pool)
@@ -248,7 +249,7 @@ void VulkanDescriptorWriter::Overwrite(const VkDescriptorSet &set)
 	}
 
 	vkUpdateDescriptorSets(
-		device->GetDevice(),
+		GetVkDevice()->GetDevice(),
 		m_Writes.size(),
 		m_Writes.data(),
 		0,

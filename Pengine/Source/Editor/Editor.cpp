@@ -39,21 +39,23 @@ using namespace Pengine;
 Editor::Editor()
 {
 	SetDarkThemeColors();
-	ViewportManager::GetInstance().Create("Main", { 800, 800 });
+	//ViewportManager::GetInstance().Create("Main", { 800, 800 });
 
 	m_AssetBrowserFilterBuffer[0] = '\0';
 }
 
-void Editor::Update(const std::shared_ptr<Scene>& scene)
+void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
 {
-	if (Input::Mouse::IsMouseReleased(Keycode::MOUSE_BUTTON_2))
+	Input& input = Input::GetInstance(&window);
+
+	if (input.IsMouseReleased(Keycode::MOUSE_BUTTON_2))
 	{
 		m_MovingCamera = nullptr;
 	}
 
-	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
+	for (const auto& [name, viewport] : window.GetViewportManager().GetViewports())
 	{
-		if (viewport->IsHovered() && Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
+		if (viewport->IsHovered() && input.IsMouseDown(Keycode::MOUSE_BUTTON_2))
 		{
 			m_MovingCamera = viewport->GetCamera().lock();
 		}
@@ -61,7 +63,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 		if (m_MovingCamera)
 		{
 			WindowManager::GetInstance().GetCurrentWindow()->DisableCursor();
-			MoveCamera(m_MovingCamera);
+			MoveCamera(m_MovingCamera, window);
 			break;
 		}
 		else
@@ -70,7 +72,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 		}
 	}
 
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL) && Input::KeyBoard::IsKeyPressed(Keycode::KEY_F))
+	if (input.IsKeyDown(Keycode::KEY_LEFT_CONTROL) && input.IsKeyPressed(Keycode::KEY_F))
 	{
 		m_FullScreen = !m_FullScreen;
 	}
@@ -80,12 +82,12 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 		return;
 	}
 
-	Manipulate(scene);
+	Manipulate(scene, window);
 
 	MainMenuBar();
-	Hierarchy(scene);
+	Hierarchy(scene, window);
 	SceneInfo(scene);
-	Properties(scene);
+	Properties(scene, window);
 	AssetBrowser(scene);
 	AssetBrowserHierarchy();
 
@@ -94,7 +96,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	m_CreateFileMenu.Update();
 	m_DeleteFileMenu.Update();
 	m_CloneMaterialMenu.Update();
-	m_CreateViewportMenu.Update(*this);
+	m_CreateViewportMenu.Update(*this, window);
 	m_LoadIntermediateMenu.Update();
 	m_TextureMetaPropertiesMenu.Update();
 	m_ImportMenu.Update(*this);
@@ -642,11 +644,13 @@ bool Editor::ImageCheckBox(const void* id, ImTextureID textureOn, ImTextureID te
 	return clicked;
 }
 
-void Editor::Hierarchy(const std::shared_ptr<Scene>& scene)
+void Editor::Hierarchy(const std::shared_ptr<Scene>& scene, Window& window)
 {
 	if (ImGui::Begin("Scene Hierarchy"))
 	{
-		if (ImGui::IsWindowFocused() && Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL) && Input::KeyBoard::IsKeyPressed(Keycode::KEY_A))
+		Input& input = Input::GetInstance(&window);
+
+		if (ImGui::IsWindowFocused() && input.IsKeyDown(Keycode::KEY_LEFT_CONTROL) && input.IsKeyPressed(Keycode::KEY_A))
 		{
 			scene->GetSelectedEntities().clear();
 			for (const std::shared_ptr<Entity> entity : scene->GetEntities())
@@ -657,7 +661,7 @@ void Editor::Hierarchy(const std::shared_ptr<Scene>& scene)
 
 		if (scene)
 		{
-			DrawScene(scene);
+			DrawScene(scene, window);
 
 			GameObjectPopUpMenu(scene);
 		}
@@ -690,7 +694,7 @@ void Editor::SceneInfo(const std::shared_ptr<Scene>& scene)
 	}
 }
 
-void Editor::DrawScene(const std::shared_ptr<Scene>& scene)
+void Editor::DrawScene(const std::shared_ptr<Scene>& scene, Window& window)
 {
 	Indent indent;
 
@@ -736,12 +740,12 @@ void Editor::DrawScene(const std::shared_ptr<Scene>& scene)
 			flags |= scene->GetSelectedEntities().count(entity) ?
 				ImGuiTreeNodeFlags_Selected : 0;
 			
-			DrawNode(entity, flags);
+			DrawNode(entity, flags, window);
 		}
 	}
 }
 
-void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags flags)
+void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags flags, Window& window)
 {
 	flags |= entity->GetChilds().empty() ? ImGuiTreeNodeFlags_Leaf : 0;
 
@@ -812,7 +816,7 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 	if (ImGui::IsItemClicked() && (ImGui::GetMousePos().x - ImGui::GetItemRectMin().x) > ImGui::GetTreeNodeToLabelSpacing())
 	{
 		auto& selectedEntities = entity->GetScene()->GetSelectedEntities();
-		if (!Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL))
+		if (!Input::GetInstance(&window).IsKeyDown(Keycode::KEY_LEFT_CONTROL))
 		{
 			selectedEntities.clear();
 		}
@@ -830,11 +834,11 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 	if (opened)
 	{
 		ImGui::TreePop();
-		DrawChilds(entity);
+		DrawChilds(entity, window);
 	}
 }
 
-void Editor::DrawChilds(const std::shared_ptr<Entity>& entity)
+void Editor::DrawChilds(const std::shared_ptr<Entity>& entity, Window& window)
 {
 	for (const std::weak_ptr<Entity> weakChild : entity->GetChilds())
 	{
@@ -844,12 +848,12 @@ void Editor::DrawChilds(const std::shared_ptr<Entity>& entity)
 			flags |= entity->GetScene()->GetSelectedEntities().count(child) ?
 				ImGuiTreeNodeFlags_Selected : 0;
 
-			DrawNode(child, flags);
+			DrawNode(child, flags, window);
 		}
 	}
 }
 
-void Editor::Properties(const std::shared_ptr<Scene>& scene)
+void Editor::Properties(const std::shared_ptr<Scene>& scene, Window& window)
 {
 	if (ImGui::Begin("Properties", nullptr))
 	{
@@ -968,7 +972,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene)
 			ComponentsPopUpMenu(entity);
 
 			TransformComponent(entity);
-			CameraComponent(entity);
+			CameraComponent(entity, window);
 			Renderer3DComponent(entity);
 			PointLightComponent(entity);
 			DirectionalLightComponent(entity);
@@ -1180,7 +1184,7 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 	}
 }
 
-void Editor::CameraComponent(const std::shared_ptr<Entity>& entity)
+void Editor::CameraComponent(const std::shared_ptr<Entity>& entity, Window& window)
 {
 	if (!entity->HasComponent<Camera>())
 	{
@@ -1225,7 +1229,7 @@ void Editor::CameraComponent(const std::shared_ptr<Entity>& entity)
 
 		if (ImGui::BeginMenu("Viewports"))
 		{
-			for (const auto& viewport : ViewportManager::GetInstance().GetViewports())
+			for (const auto& viewport : window.GetViewportManager().GetViewports())
 			{
 				if (ImGui::MenuItem(viewport.first.c_str()))
 				{
@@ -1725,7 +1729,7 @@ void Editor::SetDarkThemeColors()
 	colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 }
 
-void Editor::Manipulate(const std::shared_ptr<Scene>& scene)
+void Editor::Manipulate(const std::shared_ptr<Scene>& scene, Window& window)
 {
 	if (!scene)
 	{
@@ -1737,14 +1741,14 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene)
 		return;
 	}
 
-	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
+	for (const auto& [name, viewport] : window.GetViewportManager().GetViewports())
 	{
 		if (!viewport || !viewport->GetCamera().lock())
 		{
 			continue;
 		}
 
-		auto callback = [this, viewport](
+		auto callback = [this, &window, viewport](
 			const glm::vec2& position,
 			const glm::ivec2 size,
 			const std::shared_ptr<Entity>& camera,
@@ -1755,25 +1759,27 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene)
 				return;
 			}
 
-			if (viewport->IsHovered() && !Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
+			Input& input = Input::GetInstance(&window);
+
+			if (viewport->IsHovered() && !input.IsMouseDown(Keycode::MOUSE_BUTTON_2))
 			{
-				if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_W))
+				if (input.IsKeyPressed(Keycode::KEY_W))
 				{
 					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::TRANSLATE;
 				}
-				else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_R))
+				else if (input.IsKeyPressed(Keycode::KEY_R))
 				{
 					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::ROTATE;
 				}
-				else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_S))
+				else if (input.IsKeyPressed(Keycode::KEY_S))
 				{
 					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::SCALE;
 				}
-				else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_U))
+				else if (input.IsKeyPressed(Keycode::KEY_U))
 				{
 					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::UNIVERSAL;
 				}
-				else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_Q))
+				else if (input.IsKeyPressed(Keycode::KEY_Q))
 				{
 					viewport->GetGizmoOperation() = -1;
 				}
@@ -1836,7 +1842,7 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene)
 	}
 }
 
-void Editor::MoveCamera(const std::shared_ptr<Entity>& camera)
+void Editor::MoveCamera(const std::shared_ptr<Entity>& camera, Window& window)
 {
 	if (!camera)
 	{
@@ -1859,7 +1865,9 @@ void Editor::MoveCamera(const std::shared_ptr<Entity>& camera)
 
 	constexpr double rotationSpeed = 90.0f;
 
-	const glm::vec2 delta = Input::Mouse::GetMousePositionDelta() * rotationSpeed * Time::GetDeltaTime();
+	Input& input = Input::GetInstance(&window);
+
+	const glm::vec2 delta = input.GetMousePositionDelta() * rotationSpeed * Time::GetDeltaTime();
 
 	transform.Rotate(glm::vec3(rotation.x - glm::radians(delta.y),
 		rotation.y - glm::radians(delta.x), 0));
@@ -1867,33 +1875,33 @@ void Editor::MoveCamera(const std::shared_ptr<Entity>& camera)
 	constexpr float defaultSpeed = 2.0f;
 	float speed = defaultSpeed;
 
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_SHIFT))
+	if (input.IsKeyDown(Keycode::KEY_LEFT_SHIFT))
 	{
 		speed *= 10.0f;
 	}
 
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_W))
+	if (input.IsKeyDown(Keycode::KEY_W))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetForward() * (float)Time::GetDeltaTime() * speed);
 	}
-	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_S))
+	else if (input.IsKeyDown(Keycode::KEY_S))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetForward() * -(float)Time::GetDeltaTime() * speed);
 	}
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_D))
+	if (input.IsKeyDown(Keycode::KEY_D))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetRight() * (float)Time::GetDeltaTime() * speed);
 	}
-	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_A))
+	else if (input.IsKeyDown(Keycode::KEY_A))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetRight() * -(float)Time::GetDeltaTime() * speed);
 	}
 
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_Q))
+	if (input.IsKeyDown(Keycode::KEY_Q))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetUp() * -(float)Time::GetDeltaTime() * speed);
 	}
-	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_E))
+	else if (input.IsKeyDown(Keycode::KEY_E))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetUp() * (float)Time::GetDeltaTime() * speed);
 	}
@@ -2573,7 +2581,7 @@ void Editor::DeleteFileMenu::Update()
 	}
 }
 
-void Editor::CreateViewportMenu::Update(const Editor& editor)
+void Editor::CreateViewportMenu::Update(const Editor& editor, Window& window)
 {
 	if (!opened)
 	{
@@ -2597,14 +2605,14 @@ void Editor::CreateViewportMenu::Update(const Editor& editor)
 		{
 			if (name[0] != '\0')
 			{
-				auto callback = [this]()
+				auto callback = [this, &window]()
 				{
-					if (const std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport(name))
+					if (const std::shared_ptr<Viewport> viewport = window.GetViewportManager().GetViewport(name))
 					{
 						return;
 					}
 
-					ViewportManager::GetInstance().Create(name, size);
+					window.GetViewportManager().Create(name, size);
 					opened = false;
 					size = { 1024, 1024 };
 					name[0] = '\0';

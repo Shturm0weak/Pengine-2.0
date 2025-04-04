@@ -49,7 +49,7 @@ namespace Pengine::Vk
 			Builder& AddPoolSize(VkDescriptorType descriptorType, uint32_t count);
 			Builder& SetPoolFlags(VkDescriptorPoolCreateFlags flags);
 			Builder& SetMaxSets(uint32_t count);
-			[[nodiscard]] std::shared_ptr<VulkanDescriptorPool> Build() const;
+			[[nodiscard]] std::shared_ptr<VulkanDescriptorPool> Build(VkDevice device) const;
 
 		private:
 			std::vector<VkDescriptorPoolSize> m_PoolSizes{};
@@ -60,7 +60,8 @@ namespace Pengine::Vk
 		VulkanDescriptorPool(
 			uint32_t maxSets,
 			VkDescriptorPoolCreateFlags poolFlags,
-			const std::vector<VkDescriptorPoolSize>& poolSizes);
+			const std::vector<VkDescriptorPoolSize>& poolSizes,
+			VkDevice device);
 		~VulkanDescriptorPool();
 		VulkanDescriptorPool(const VulkanDescriptorPool&) = delete;
 		VulkanDescriptorPool& operator=(const VulkanDescriptorPool&) = delete;

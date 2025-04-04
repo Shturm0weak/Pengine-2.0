@@ -44,11 +44,11 @@ void UISystem::OnUpdate(const float deltaTime, std::shared_ptr<Scene> scene)
 		if (canvas.drawInMainViewport)
 		{
 			// TODO: Maybe make a variable with a viewport name.
-			const std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport("Main");
+			/*const std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport("Main");
 			const glm::ivec2 viewportSize = viewport->GetSize();
-			if (viewportSize.x != canvas.size.x || viewportSize.y != canvas.size.y)
+			if (viewportSize.x != canvas.size.x || viewportSize.y != canvas.size.y)*/
 			{
-				canvas.size = viewportSize;
+				canvas.size = { 1024, 1024 };
 			}
 		}
 

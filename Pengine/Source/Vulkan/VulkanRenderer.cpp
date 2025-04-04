@@ -140,13 +140,13 @@ void VulkanRenderer::BeginCommandLabel(
 	void* frame)
 {
 	const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
-	Vk::device->CommandBeginLabel(name, vkFrame->CommandBuffer, color);
+	GetVkDevice()->CommandBeginLabel(name, vkFrame->CommandBuffer, color);
 }
 
 void VulkanRenderer::EndCommandLabel(void* frame)
 {
 	const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
-	Vk::device->CommandEndLabel(vkFrame->CommandBuffer);
+	GetVkDevice()->CommandEndLabel(vkFrame->CommandBuffer);
 }
 
 void VulkanRenderer::BeginRenderPass(

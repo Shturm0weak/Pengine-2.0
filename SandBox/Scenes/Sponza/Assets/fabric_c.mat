@@ -1,5 +1,5 @@
 Mat:
-  Basemat: Materials/MeshBase.basemat
+  Basemat: 29181c47-c273-47f2-b4dc-03daed0c8590
   Options:
     - Name: Transparency
       IsEnabled: false
@@ -25,10 +25,10 @@ Mat:
         - Name: GBufferMaterial
           Values:
             - Name: material.albedoColor
-              Value: [0.470400006, 0.470400006, 0.470400006, 1]
+              Value: [1, 1, 1, 1]
               Type: vec4
             - Name: material.emissiveColor
-              Value: [0, 0, 0, 1]
+              Value: [1, 0.277145743, 0.147679329, 1]
               Type: vec4
             - Name: material.uvTransform
               Value: [1, 1, 0, 0]
@@ -43,7 +43,7 @@ Mat:
               Value: 1
               Type: float
             - Name: material.emissiveFactor
-              Value: 0
+              Value: 1
               Type: float
             - Name: material.useNormalMap
               Value: 0

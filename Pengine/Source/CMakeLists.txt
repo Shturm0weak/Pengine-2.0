@@ -78,6 +78,7 @@ source_group("Editor" FILES ${EDITOR_SOURCES})
 set(GRAPHICS_SOURCES
 	Graphics/BaseMaterial.cpp Graphics/BaseMaterial.h
 	Graphics/Buffer.cpp Graphics/Buffer.h
+	Graphics/Device.cpp Graphics/Device.h
 	Graphics/Format.h
 	Graphics/FrameBuffer.cpp Graphics/FrameBuffer.h
 	Graphics/Mesh.cpp Graphics/Mesh.h

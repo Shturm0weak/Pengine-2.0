@@ -20,7 +20,7 @@ void VulkanPipelineUtils::CreateShaderModule(
 	shaderModuleCreateInfo.codeSize = code.size();
 	shaderModuleCreateInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
-	if (vkCreateShaderModule(device->GetDevice(), &shaderModuleCreateInfo, nullptr, shaderModule) != VK_SUCCESS)
+	if (vkCreateShaderModule(GetVkDevice()->GetDevice(), &shaderModuleCreateInfo, nullptr, shaderModule) != VK_SUCCESS)
 	{
 		FATAL_ERROR("Failed to create shader module!");
 	}

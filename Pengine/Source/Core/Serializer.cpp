@@ -11,6 +11,7 @@
 #include "ThreadPool.h"
 #include "ViewportManager.h"
 #include "Viewport.h"
+#include "WindowManager.h"
 
 #include "../Components/Camera.h"
 #include "../Components/DirectionalLight.h"
@@ -3547,13 +3548,17 @@ void Serializer::SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entit
 	out << YAML::Key << "RenderTargetIndex" << YAML::Value << camera.GetRenderTargetIndex();
 
 	// TODO: Maybe do it more optimal.
-	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
+	// TODO: Also take window into account, for now it is just viewports, but viewports can have the same names accross different windows.
+	for (const auto& [windowName, window] : WindowManager::GetInstance().GetWindows())
 	{
-		if (const std::shared_ptr<Entity> viewportCamera = viewport->GetCamera().lock())
+		for (const auto& [viewportName, viewport] : window->GetViewportManager().GetViewports())
 		{
-			if (viewportCamera->GetUUID() == entity->GetUUID())
+			if (const std::shared_ptr<Entity> viewportCamera = viewport->GetCamera().lock())
 			{
-				out << YAML::Key << "Viewport" << YAML::Value << name;
+				if (viewportCamera->GetUUID() == entity->GetUUID())
+				{
+					out << YAML::Key << "Viewport" << YAML::Value << viewportName;
+				}
 			}
 		}
 	}
@@ -3604,10 +3609,15 @@ void Serializer::DeserializeCamera(const YAML::Node& in, const std::shared_ptr<E
 
 		if (const auto& viewportData = cameraData["Viewport"])
 		{
-			const std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport(viewportData.as<std::string>());
-			if (viewport)
+			// TODO: Take window name into account
+			for (const auto& [name, window] : WindowManager::GetInstance().GetWindows())
 			{
-				viewport->SetCamera(entity);
+				const std::shared_ptr<Viewport> viewport = window->GetViewportManager().GetViewport(viewportData.as<std::string>());
+				if (viewport)
+				{
+					viewport->SetCamera(entity);
+					break;
+				}
 			}
 		}
 	}

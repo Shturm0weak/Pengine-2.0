@@ -2,6 +2,10 @@
 
 #include "../Core/Core.h"
 
+#include "../Graphics/Device.h"
+
+#include "VulkanDescriptors.h"
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -24,14 +28,14 @@ namespace Pengine::Vk
 	struct PENGINE_API QueueFamilyIndices
 	{
 		uint32_t graphicsFamily = 0;
-		uint32_t presentFamily = 0;
 		bool graphicsFamilyHasValue = false;
-		bool presentFamilyHasValue = false;
 
-		[[nodiscard]] bool IsComplete() const { return graphicsFamilyHasValue && presentFamilyHasValue; }
+		[[nodiscard]] bool IsComplete() const { return graphicsFamilyHasValue; }
 	};
 
-	class PENGINE_API VulkanDevice
+	[[nodiscard]] std::shared_ptr<class VulkanDevice> GetVkDevice();
+
+	class PENGINE_API VulkanDevice : public Device
 	{
 	public:
 #ifdef NDEBUG
@@ -39,30 +43,28 @@ namespace Pengine::Vk
 #else
 		const bool enableValidationLayers = true;
 #endif
-		VulkanDevice(GLFWwindow* window, const std::string& applicationName);
-		~VulkanDevice();
+		VulkanDevice(const std::string& applicationName);
+		virtual ~VulkanDevice() override;
 		VulkanDevice(const VulkanDevice&) = delete;
 		VulkanDevice& operator=(const VulkanDevice&) = delete;
+
+		virtual void ShutDown() override;
+
+		[[nodiscard]] virtual const std::string& GetName() const override { return m_PhysicalDeviceProperties.deviceName; };
 
 		[[nodiscard]] VkCommandPool GetCommandPool() const { return m_CommandPool; }
 
 		[[nodiscard]] VkDevice GetDevice() const { return m_Device; }
 
-		[[nodiscard]] VkSurfaceKHR GetSurface() const { return m_Surface; }
-
 		[[nodiscard]] VkInstance GetInstance() const { return m_Instance; }
 
 		[[nodiscard]] VkQueue GetGraphicsQueue() const { return m_GraphicsQueue; }
 
-		[[nodiscard]] VkQueue GetPresentQueue() const { return m_PresentQueue; }
-
 		[[nodiscard]] uint32_t GetGraphicsFamilyIndex() const { return m_GraphicsFamilyIndex; }
-
-		[[nodiscard]] uint32_t GetPresentFamilyIndex() const { return m_PresentFamilyIndex; }
 
 		[[nodiscard]] VkPhysicalDevice GetPhysicalDevice() const { return m_PhysicalDevice; }
 
-		[[nodiscard]] SwapChainSupportDetails GetSwapChainSupport() const { return QuerySwapChainSupport(m_PhysicalDevice); }
+		[[nodiscard]] SwapChainSupportDetails GetSwapChainSupport(VkSurfaceKHR surface) const { return QuerySwapChainSupport(m_PhysicalDevice, surface); }
 
 		[[nodiscard]] uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const;
 
@@ -74,6 +76,8 @@ namespace Pengine::Vk
 		[[nodiscard]] uint32_t GetVulkanApiVersion() const { return m_ApiVersion; }
 
 		[[nodiscard]] VmaAllocator GetVmaAllocator() const { return m_VmaAllocator; }
+
+		[[nodiscard]] std::shared_ptr<VulkanDescriptorPool> GetDescriptorPool() const { return m_DescriptorPool; }
 
 		void CreateBuffer(
 			VkDeviceSize size,
@@ -151,14 +155,15 @@ namespace Pengine::Vk
 		void FlushDeletionQueue(bool immediate = false);
 
 		VkCommandBuffer GetCommandBufferFromFrame(void* frame);
+
+		VkSurfaceKHR CreateSurface(GLFWwindow* window);
+
 	private:
 		void CreateInstance(const std::string& applicationName);
 
 		void SetupDebugMessenger();
 
 		void SetupDebugUtilsLabel();
-
-		void CreateSurface(GLFWwindow* window);
 
 		void PickPhysicalDevice();
 
@@ -182,24 +187,21 @@ namespace Pengine::Vk
 
 		bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
 
-		[[nodiscard]] SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device) const;
+		[[nodiscard]] SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface) const;
 
-		VkInstance m_Instance;
-		VkDebugUtilsMessengerEXT m_DebugMessenger;
+		VkInstance m_Instance = VK_NULL_HANDLE;
+		VkDebugUtilsMessengerEXT m_DebugMessenger{};
 		VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
-		VkPhysicalDeviceProperties m_PhysicalDeviceProperties;
-		VkCommandPool m_CommandPool;
+		VkPhysicalDeviceProperties m_PhysicalDeviceProperties{};
+		VkCommandPool m_CommandPool = VK_NULL_HANDLE;
 
-		VkDevice m_Device;
-		VkSurfaceKHR m_Surface;
-		VkQueue m_GraphicsQueue;
-		VkQueue m_PresentQueue;
-		uint32_t m_GraphicsFamilyIndex;
-		uint32_t m_PresentFamilyIndex;
+		VkDevice m_Device = VK_NULL_HANDLE;
+		VkQueue m_GraphicsQueue = VK_NULL_HANDLE;
+		uint32_t m_GraphicsFamilyIndex{};
 
 		uint32_t m_ApiVersion = VK_API_VERSION_1_3;
 
-		VmaAllocator m_VmaAllocator;
+		VmaAllocator m_VmaAllocator = VK_NULL_HANDLE;
 
 		PFN_vkCmdBeginDebugUtilsLabelEXT m_VkCmdBeginDebugUtilsLabelEXT;
 		PFN_vkCmdEndDebugUtilsLabelEXT m_VkCmdEndDebugUtilsLabelEXT;
@@ -211,18 +213,20 @@ namespace Pengine::Vk
 
 		std::unordered_map<size_t, std::deque<std::function<void()>>> m_DeletionQueue;
 
+		std::shared_ptr<VulkanDescriptorPool> m_DescriptorPool = nullptr;
+
 	public:
 		class Lock
 		{
 		public:
 			Lock()
 			{
-				device->m_Mutex.lock();
+				GetVkDevice()->m_Mutex.lock();
 			}
 
 			~Lock()
 			{
-				device->m_Mutex.unlock();
+				GetVkDevice()->m_Mutex.unlock();
 			}
 		};
 	};
