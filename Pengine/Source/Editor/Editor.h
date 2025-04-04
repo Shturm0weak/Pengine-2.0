@@ -203,6 +203,9 @@ namespace Pengine
 		bool m_FullScreen = false;
 
 		std::shared_ptr<Entity> m_MovingCamera;
+
+		std::shared_ptr<Scene> m_ThumbnailScene;
+		std::shared_ptr<class Renderer> m_ThumbnailRenderer;
 	};
 
 }

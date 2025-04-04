@@ -168,6 +168,13 @@ bool VulkanWindow::Resize(const glm::ivec2& size)
 
 	m_VulkanWindow.FrameIndex = 0;
 
+	for (size_t i = 0; i < imageCount; i++)
+	{
+		m_Frames[i].CommandBuffer = m_VulkanWindow.Frames[i].CommandBuffer;
+		m_Frames[i].CommandPool = m_VulkanWindow.Frames[i].CommandPool;
+		m_Frames[i].Fence = m_VulkanWindow.Frames[i].Fence;
+	}
+
 	return true;
 }
 
@@ -281,22 +288,21 @@ void* VulkanWindow::BeginFrame()
 		return nullptr;
 	}
 
-	ImGui_ImplVulkanH_Frame* frame =
-		&(m_VulkanWindow.Frames[m_VulkanWindow.FrameIndex]);
+	VulkanFrameInfo* vkFrame = &(m_Frames[swapChainImageIndex]);
 
-	if (vkWaitForFences(GetVkDevice()->GetDevice(), 1, &frame->Fence, VK_TRUE, UINT64_MAX))
+	if (vkWaitForFences(GetVkDevice()->GetDevice(), 1, &vkFrame->Fence, VK_TRUE, UINT64_MAX))
 	{
 		FATAL_ERROR("Failed to wait for fences!");
 		return nullptr;
 	}
 
-	if (vkResetFences(GetVkDevice()->GetDevice(), 1, &frame->Fence))
+	if (vkResetFences(GetVkDevice()->GetDevice(), 1, &vkFrame->Fence))
 	{
 		FATAL_ERROR("Failed to reset fences!");
 		return nullptr;
 	}
 
-	if (vkResetCommandPool(GetVkDevice()->GetDevice(), frame->CommandPool, 0))
+	if (vkResetCommandPool(GetVkDevice()->GetDevice(), vkFrame->CommandPool, 0))
 	{
 		FATAL_ERROR("Failed to reset command pool!");
 		return nullptr;
@@ -304,20 +310,20 @@ void* VulkanWindow::BeginFrame()
 
 	VkCommandBufferBeginInfo beginInfo{};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	if (vkBeginCommandBuffer(frame->CommandBuffer, &beginInfo) != VK_SUCCESS)
+	if (vkBeginCommandBuffer(vkFrame->CommandBuffer, &beginInfo) != VK_SUCCESS)
 	{
 		FATAL_ERROR("Failed to begin recording command buffer!");
 		return nullptr;
 	}
 
-	return frame;
+	return vkFrame;
 }
 
 void VulkanWindow::EndFrame(void* frame)
 {
-	const ImGui_ImplVulkanH_Frame* imGuiFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 
-	const VkCommandBuffer commandBuffer = imGuiFrame->CommandBuffer;
+	const VkCommandBuffer commandBuffer = vkFrame->CommandBuffer;
 
 	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
 	{
@@ -332,14 +338,14 @@ void VulkanWindow::EndFrame(void* frame)
 	submitInfo.pWaitSemaphores = &m_VulkanWindow.FrameSemaphores[m_VulkanWindow.SemaphoreIndex].ImageAcquiredSemaphore;
 	submitInfo.pWaitDstStageMask = waitStages;
 	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &imGuiFrame->CommandBuffer;
+	submitInfo.pCommandBuffers = &vkFrame->CommandBuffer;
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = &m_VulkanWindow.FrameSemaphores[m_VulkanWindow.SemaphoreIndex].RenderCompleteSemaphore;
 
 	VulkanDevice::Lock lock;
 
 	if (vkQueueSubmit(GetVkDevice()->GetGraphicsQueue(), 1, &submitInfo,
-		imGuiFrame->Fence) != VK_SUCCESS)
+		vkFrame->Fence) != VK_SUCCESS)
 	{
 		FATAL_ERROR("Failed to submit draw command buffer!");
 	}
@@ -367,23 +373,23 @@ void VulkanWindow::EndFrame(void* frame)
 	GetVkDevice()->FlushDeletionQueue();
 }
 
-void VulkanWindow::ImGuiRenderPass(void* frame)
+void VulkanWindow::ImGuiRenderPass()
 {
 	ImGui::SetCurrentContext(m_ImGuiContext);
 
-	const ImGui_ImplVulkanH_Frame* imGuiFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+	const ImGui_ImplVulkanH_Frame& imGuiFrame = m_VulkanWindow.Frames[m_VulkanWindow.FrameIndex];
 
-	Vk::GetVkDevice()->CommandBeginLabel("ImGui", imGuiFrame->CommandBuffer, topLevelRenderPassDebugColor);
+	GetVkDevice()->CommandBeginLabel("ImGui", imGuiFrame.CommandBuffer, topLevelRenderPassDebugColor);
 
 	VkRenderPassBeginInfo info{};
 	info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	info.renderPass = m_VulkanWindow.RenderPass;
-	info.framebuffer = imGuiFrame->Framebuffer;
+	info.framebuffer = imGuiFrame.Framebuffer;
 	info.renderArea.extent.width = m_VulkanWindow.Width;
 	info.renderArea.extent.height = m_VulkanWindow.Height;
 	info.clearValueCount = 1;
 	info.pClearValues = &m_VulkanWindow.ClearValue;
-	vkCmdBeginRenderPass(imGuiFrame->CommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(imGuiFrame.CommandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 
 	VkViewport viewport{};
 	viewport.x = 0;
@@ -393,15 +399,15 @@ void VulkanWindow::ImGuiRenderPass(void* frame)
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 	VkRect2D scissor{ { 0, 0}, { (uint32_t)m_VulkanWindow.Width, (uint32_t)m_VulkanWindow.Height } };
-	vkCmdSetViewport(imGuiFrame->CommandBuffer, 0, 1, &viewport);
-	vkCmdSetScissor(imGuiFrame->CommandBuffer, 0, 1, &scissor);
+	vkCmdSetViewport(imGuiFrame.CommandBuffer, 0, 1, &viewport);
+	vkCmdSetScissor(imGuiFrame.CommandBuffer, 0, 1, &scissor);
 
 	ImGui::Render();
 
 	ImDrawData* drawData = ImGui::GetDrawData();
 	if (drawData)
 	{
-		ImGui_ImplVulkan_RenderDrawData(drawData, imGuiFrame->CommandBuffer);
+		ImGui_ImplVulkan_RenderDrawData(drawData, imGuiFrame.CommandBuffer);
 	}
 
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -410,9 +416,9 @@ void VulkanWindow::ImGuiRenderPass(void* frame)
 		ImGui::RenderPlatformWindowsDefault();
 	}
 
-	vkCmdEndRenderPass(imGuiFrame->CommandBuffer);
+	vkCmdEndRenderPass(imGuiFrame.CommandBuffer);
 
-	Vk::GetVkDevice()->CommandEndLabel(imGuiFrame->CommandBuffer);
+	GetVkDevice()->CommandEndLabel(imGuiFrame.CommandBuffer);
 }
 
 void VulkanWindow::DisableCursor()
@@ -505,6 +511,7 @@ void VulkanWindow::InitializeImGui()
 		imageCount = swapChainSupport.capabilities.maxImageCount;
 	}
 
+	m_Frames.resize(imageCount);
 	swapChainImageCount = imageCount;
 
 	ImGui_ImplVulkanH_CreateOrResizeWindow(
@@ -541,6 +548,13 @@ void VulkanWindow::InitializeImGui()
 
 	ImGui_ImplVulkan_Init(&initializeInfo);
 	ImGui_ImplVulkan_SetMinImageCount(imageCount);
+
+	for (size_t i = 0; i < imageCount; i++)
+	{
+		m_Frames[i].CommandBuffer = m_VulkanWindow.Frames[i].CommandBuffer;
+		m_Frames[i].CommandPool = m_VulkanWindow.Frames[i].CommandPool;
+		m_Frames[i].Fence = m_VulkanWindow.Frames[i].Fence;
+	}
 
 	// Upload Fonts
 	{

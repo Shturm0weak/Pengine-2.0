@@ -39,7 +39,7 @@ namespace Pengine
 
 		virtual void EndFrame(void* frame) = 0;
 
-		virtual void ImGuiRenderPass(void* frame) = 0;
+		virtual void ImGuiRenderPass() = 0;
 
 		virtual void DisableCursor() = 0;
 

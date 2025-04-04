@@ -31,7 +31,7 @@ void VulkanRenderer::Render(
 	const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
 	void* frame)
 {
-	const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 
 	std::shared_ptr<VulkanGraphicsPipeline> vkPipeline;
 	if (pipeline)
@@ -76,7 +76,7 @@ void VulkanRenderer::Dispatch(
 	const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
 	void* frame)
 {
-	const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 
 	std::shared_ptr<VulkanComputePipeline> vkPipeline;
 	if (pipeline)
@@ -115,7 +115,7 @@ void VulkanRenderer::Dispatch(
 
 void VulkanRenderer::MemoryBarrierFragmentReadWrite(void* frame)
 {
-	const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 
 	VkMemoryBarrier memoryBarrier{};
 	memoryBarrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
@@ -139,13 +139,13 @@ void VulkanRenderer::BeginCommandLabel(
 	const glm::vec3& color,
 	void* frame)
 {
-	const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 	GetVkDevice()->CommandBeginLabel(name, vkFrame->CommandBuffer, color);
 }
 
 void VulkanRenderer::EndCommandLabel(void* frame)
 {
-	const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 	GetVkDevice()->CommandEndLabel(vkFrame->CommandBuffer);
 }
 
@@ -154,7 +154,7 @@ void VulkanRenderer::BeginRenderPass(
 	const std::string& debugName,
 	const glm::vec3& debugColor)
 {
-	const ImGui_ImplVulkanH_Frame* frame = static_cast<ImGui_ImplVulkanH_Frame*>(renderPassSubmitInfo.frame);
+	const VulkanFrameInfo* frame = static_cast<VulkanFrameInfo*>(renderPassSubmitInfo.frame);
  
 	if (!debugName.empty())
 	{
@@ -237,7 +237,7 @@ void VulkanRenderer::BeginRenderPass(
 
 void VulkanRenderer::EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo)
 {
-	const ImGui_ImplVulkanH_Frame* frame = static_cast<ImGui_ImplVulkanH_Frame*>(renderPassSubmitInfo.frame);
+	const VulkanFrameInfo* frame = static_cast<VulkanFrameInfo*>(renderPassSubmitInfo.frame);
 	vkCmdEndRenderPass(frame->CommandBuffer);
 	EndCommandLabel(renderPassSubmitInfo.frame);
 }
@@ -250,7 +250,7 @@ void VulkanRenderer::SetScissors(const RenderPass::Scissors& scissors, void* fra
 		{ scissors.size.x, scissors.size.y }
 	};
 
-	const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 	vkCmdSetScissor(vkFrame->CommandBuffer, 0, 1, &scissor);
 }
 
@@ -264,7 +264,7 @@ void VulkanRenderer::SetViewport(const RenderPass::Viewport& viewport, void* fra
 	vkViewport.minDepth = viewport.minMaxDepth.x;
 	vkViewport.maxDepth = viewport.minMaxDepth.y;
 
-	const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 	vkCmdSetViewport(vkFrame->CommandBuffer, 0, 1, &vkViewport);
 }
 

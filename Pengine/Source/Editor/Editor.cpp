@@ -26,6 +26,8 @@
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 
+#include "../Graphics/Renderer.h"
+
 #include <fstream>
 #include <format>
 
@@ -42,6 +44,21 @@ Editor::Editor()
 	//ViewportManager::GetInstance().Create("Main", { 800, 800 });
 
 	m_AssetBrowserFilterBuffer[0] = '\0';
+
+	m_ThumbnailRenderer = Renderer::Create();
+	m_ThumbnailScene = SceneManager::GetInstance().Create("ThumbnailScene", "ThumbnailScene");
+
+	{
+		auto entity = m_ThumbnailScene->CreateEntity("Sun");
+		entity->AddComponent<Transform>(entity);
+		entity->AddComponent<DirectionalLight>();
+	}
+
+	{
+		auto entity = m_ThumbnailScene->CreateEntity("Camera");
+		entity->AddComponent<Transform>(entity);
+		entity->AddComponent<Camera>(entity);
+	}
 }
 
 void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
@@ -1483,13 +1500,6 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 
 		const bool leftMouseButtonDoubleClicked = ImGui::IsMouseDoubleClicked(GLFW_MOUSE_BUTTON_1);
 
-		const std::filesystem::path editorImagesPath = std::filesystem::path("Editor") / "Images";
-		const ImTextureID folderIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FolderIcon.png")->GetId();
-		const ImTextureID fileIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FileIcon.png")->GetId();
-		const ImTextureID metaIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MetaIcon.png")->GetId();
-		const ImTextureID materialIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MaterialIcon.png")->GetId();
-		const ImTextureID meshIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MeshIcon.png")->GetId();
-
 		bool iconHovered = false;
 
 		if (ImGui::BeginPopupContextWindow())
@@ -1913,6 +1923,25 @@ ImTextureID Editor::GetFileIcon(const std::filesystem::path& filepath, const std
 
 	if (std::filesystem::is_directory(filepath))
 	{
+		//{
+		//	const auto uuid = Utils::FindUuid(filepath);
+		//	if (!uuid.empty())
+		//	{
+		//		std::filesystem::path thumbnailFilepath = "Thumbnails";
+		//		thumbnailFilepath /= filepath;
+		//		thumbnailFilepath.concat(FileFormats::Png());
+
+		//		if (std::filesystem::exists(thumbnailFilepath))
+		//		{
+		//			return (ImTextureID)TextureManager::GetInstance().GetTexture(thumbnailFilepath)->GetId();
+		//		}
+		//		else
+		//		{
+		//			// TODO: code for render.
+		//		}
+		//	}
+		//}
+
 		return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FolderIcon.png")->GetId();
 	}
 	else if (format == FileFormats::Mat())

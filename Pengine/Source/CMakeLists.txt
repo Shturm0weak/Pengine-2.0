@@ -114,6 +114,7 @@ set(VULKAN_SOURCES
 	Vulkan/VulkanDescriptors.cpp Vulkan/VulkanDescriptors.h
 	Vulkan/VulkanDevice.cpp Vulkan/VulkanDevice.h
 	Vulkan/VulkanFormat.h
+	Vulkan/VulkanFrameInfo.h
 	Vulkan/VulkanFrameBuffer.cpp Vulkan/VulkanFrameBuffer.h
 	Vulkan/VulkanRenderer.cpp Vulkan/VulkanRenderer.h
 	Vulkan/VulkanRenderPass.cpp Vulkan/VulkanRenderPass.h

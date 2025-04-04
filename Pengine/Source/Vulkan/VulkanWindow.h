@@ -3,6 +3,8 @@
 #include "../Core/Core.h"
 #include "../Core/Window.h"
 
+#include "VulkanFrameInfo.h"
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -39,7 +41,7 @@ namespace Pengine::Vk
 
 		virtual void EndFrame(void* frame) override;
 
-		virtual void ImGuiRenderPass(void* frame) override;
+		virtual void ImGuiRenderPass() override;
 
 		virtual void DisableCursor() override;
 
@@ -58,6 +60,8 @@ namespace Pengine::Vk
 
 		ImGui_ImplVulkanH_Window m_VulkanWindow{};
 		VkSurfaceKHR m_Surface{};
+
+		std::vector<VulkanFrameInfo> m_Frames;
 
 		VkDescriptorPool m_ImGuiDescriptorPool = VK_NULL_HANDLE;
 	};

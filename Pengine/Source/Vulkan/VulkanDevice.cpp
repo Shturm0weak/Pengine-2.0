@@ -3,6 +3,7 @@
 #include "../Core/Window.h"
 #include "../Core/Logger.h"
 
+#include "VulkanFrameInfo.h"
 #include "VulkanDescriptors.h"
 #include "VulkanSamplerManager.h"
 
@@ -1076,7 +1077,7 @@ VkCommandBuffer VulkanDevice::GetCommandBufferFromFrame(void* frame)
 {
 	if (frame)
 	{
-		const ImGui_ImplVulkanH_Frame* vkFrame = static_cast<ImGui_ImplVulkanH_Frame*>(frame);
+		const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 		return vkFrame->CommandBuffer;
 	}
 
