@@ -23,28 +23,56 @@ namespace Pengine
 		UniformWriter(const UniformWriter&) = delete;
 		UniformWriter& operator=(const UniformWriter&) = delete;
 
-		virtual void WriteBuffer(uint32_t location, const std::shared_ptr<Buffer>& buffer, size_t size = -1, size_t offset = 0) = 0;
-		virtual void WriteTexture(uint32_t location, const std::shared_ptr<Texture>& texture) = 0;
-		virtual void WriteTextures(uint32_t location, const std::vector<std::shared_ptr<Texture>>& textures) = 0;
-		virtual void WriteBuffer(const std::string& name, const std::shared_ptr<Buffer>& buffer, size_t size = -1, size_t offset = 0) = 0;
-		virtual void WriteTexture(const std::string& name, const std::shared_ptr<Texture>& texture) = 0;
-		virtual void WriteTextures(const std::string& name, const std::vector<std::shared_ptr<Texture>>& textures) = 0;
+		void WriteBuffer(uint32_t location, const std::shared_ptr<Buffer>& buffer, size_t size = -1, size_t offset = 0);
+		void WriteTexture(uint32_t location, const std::shared_ptr<Texture>& texture);
+		void WriteTextures(uint32_t location, const std::vector<std::shared_ptr<Texture>>& textures);
+		void WriteBuffer(const std::string& name, const std::shared_ptr<Buffer>& buffer, size_t size = -1, size_t offset = 0);
+		void WriteTexture(const std::string& name, const std::shared_ptr<Texture>& texture);
+		void WriteTextures(const std::string& name, const std::vector<std::shared_ptr<Texture>>& textures);
 		virtual void Flush() = 0;
 
-		const std::unordered_map<uint32_t, std::shared_ptr<Buffer>>& GetBuffersByLocation() const { return m_BuffersByLocation; }
+		const std::unordered_map<std::string, std::vector<std::shared_ptr<Buffer>>>& GetBuffersByName() const { return m_BuffersByName; }
 
-		std::shared_ptr<Texture> GetTexture(const std::string& name);
+		std::vector<std::shared_ptr<Buffer>> GetBuffer(const std::string& name);
 
-		const std::unordered_map<std::string, std::shared_ptr<Texture>>& GetTextures() const { return m_TexturesByName; }
+		const std::unordered_map<std::string, std::vector<std::shared_ptr<Texture>>>& GetTexturesByName() const { return m_TexturesByName; }
 
+		std::vector<std::shared_ptr<Texture>> GetTexture(const std::string& name);
+		
 		std::shared_ptr<UniformLayout> GetUniformLayout() const { return m_UniformLayout; }
 
-		[[nodiscard]] bool GetIsMultiBuffered() const { return m_IsMultiBuffered; }
+		[[nodiscard]] bool IsMultiBuffered() const { return m_IsMultiBuffered; }
 
 	protected:
 		std::shared_ptr<UniformLayout> m_UniformLayout;
-		std::unordered_map<uint32_t, std::shared_ptr<Buffer>> m_BuffersByLocation;
-		std::unordered_map<std::string, std::shared_ptr<Texture>> m_TexturesByName;
+
+		std::unordered_map<std::string, std::vector<std::shared_ptr<Buffer>>> m_BuffersByName;
+		std::unordered_map<std::string, std::vector<std::shared_ptr<Texture>>> m_TexturesByName;
+
+		std::unordered_map<uint32_t, std::string> m_BufferNameByLocation;
+		std::unordered_map<uint32_t, std::string> m_TextureNameByLocation;
+
+		struct BufferWrite
+		{
+			ShaderReflection::ReflectDescriptorSetBinding binding;
+			std::vector<std::shared_ptr<Buffer>> buffers;
+			size_t offset = 0;
+			size_t size = -1;
+		};
+
+		struct TextureWrite
+		{
+			ShaderReflection::ReflectDescriptorSetBinding binding;
+			std::vector<std::shared_ptr<Texture>> textures;
+		};
+
+		struct Write
+		{
+			std::unordered_map<uint32_t, BufferWrite> m_BufferWritesByLocation;
+			std::unordered_map<uint32_t, TextureWrite> m_TextureWritesByLocation;
+		};
+
+		std::vector<Write> m_Writes;
 
 		bool m_IsMultiBuffered = false;
 	};

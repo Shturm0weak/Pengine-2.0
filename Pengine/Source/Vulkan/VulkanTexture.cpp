@@ -159,7 +159,7 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 		binding.count = 1;
 		binding.type = ShaderReflection::Type::COMBINED_IMAGE_SAMPLER;
 
-		m_UniformWriter = UniformWriter::Create(UniformLayout::Create(bindings), false);
+		m_UniformWriter = UniformWriter::Create(UniformLayout::Create(bindings), IsMultiBuffered());
 		std::shared_ptr<VulkanUniformWriter> vkUniformWriter = std::dynamic_pointer_cast<VulkanUniformWriter>(m_UniformWriter);
 
 		std::vector<VkDescriptorImageInfo> vkDescriptorImageInfos(m_ImageDatas.size());
@@ -168,8 +168,8 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 			vkDescriptorImageInfos[i] = GetDescriptorInfo(i);
 		}
 
+		// No need to flush, because it is a special function in VulkanUniformWriter, it flushes itself.
 		vkUniformWriter->WriteTexture(0, vkDescriptorImageInfos);
-		vkUniformWriter->Flush();
 	}
 }
 

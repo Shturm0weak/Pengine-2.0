@@ -1262,7 +1262,7 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material, bo
 			if (binding.type == ShaderReflection::Type::COMBINED_IMAGE_SAMPLER)
 			{
 				out << YAML::Key << "Value" << YAML::Value << 
-				Utils::FindUuid(material->GetUniformWriter(passName)->GetTexture(binding.name)->GetFilepath());
+				Utils::FindUuid(material->GetUniformWriter(passName)->GetTexture(binding.name).back()->GetFilepath());
 			}
 			else if (binding.type == ShaderReflection::Type::UNIFORM_BUFFER)
 			{

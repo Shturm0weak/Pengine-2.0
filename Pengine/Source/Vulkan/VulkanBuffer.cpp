@@ -275,7 +275,7 @@ void VulkanBuffer::Flush()
 	m_IsChanged[imageIndex] = false;
 }
 
-VkDescriptorBufferInfo VulkanBuffer::DescriptorInfo(
+VkDescriptorBufferInfo VulkanBuffer::GetDescriptorInfo(
 	const uint32_t imageIndex,
 	const VkDeviceSize size,
 	const VkDeviceSize offset) const

@@ -16,15 +16,9 @@ VulkanUniformWriter::VulkanUniformWriter(
 	bool isMultiBuffered)
 	: UniformWriter(uniformLayout, isMultiBuffered)
 {
-	m_Count = isMultiBuffered ? swapChainImageCount : 1;
-	m_DescriptorSetWrites.resize(m_Count);
-	for (auto& descriptorSetWrite : m_DescriptorSetWrites)
-	{
-		descriptorSetWrite.m_BufferInfos.reserve(32);
-		descriptorSetWrite.m_ImageInfos.reserve(32);
-	}
+	const size_t count = IsMultiBuffered() ? swapChainImageCount : 1;
 
-	m_DescriptorSets.resize(m_Count);
+	m_DescriptorSets.resize(count);
 
 	if (!GetVkDevice()->GetDescriptorPool()->AllocateDescriptorSets(
 		std::static_pointer_cast<VulkanUniformLayout>(m_UniformLayout)->GetDescriptorSetLayout(), m_DescriptorSets))
@@ -41,143 +35,82 @@ VulkanUniformWriter::~VulkanUniformWriter()
 	});
 }
 
-void VulkanUniformWriter::WriteBuffer(
-	const uint32_t location,
-	const std::shared_ptr<Buffer>& buffer,
-	const size_t size,
-	const size_t offset)
+void VulkanUniformWriter::Flush()
 {
-	m_BuffersByLocation[location] = buffer;
+	const uint32_t index = IsMultiBuffered() ? swapChainImageIndex : 0;
+	const VkDescriptorSet set = m_DescriptorSets[index];
 
-	const auto binding = m_UniformLayout->GetBindingByLocation(location);
+	std::vector<VkWriteDescriptorSet> writes;
 
-	if (!binding)
+	size_t bufferInfoCount = 0;
+	for (const auto& [location, bufferWrite] : m_Writes[index].m_BufferWritesByLocation)
 	{
-		FATAL_ERROR("Layout does not contain specified binding!");
+		bufferInfoCount += bufferWrite.buffers.size();
 	}
 
-	for (size_t i = 0; i < m_Count; i++)
+	std::vector<VkDescriptorBufferInfo> bufferInfos;
+	bufferInfos.reserve(bufferInfoCount);
+	for (const auto& [location, bufferWrite] : m_Writes[index].m_BufferWritesByLocation)
 	{
-		m_DescriptorSetWrites[i].m_BufferInfos.emplace_back(std::static_pointer_cast<VulkanBuffer>(buffer)->DescriptorInfo(i, size, offset));
-
-		VkWriteDescriptorSet write{};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.descriptorType = VulkanUniformLayout::ConvertDescriptorType(binding->type);
-		write.dstBinding = location;
-		write.pBufferInfo = &m_DescriptorSetWrites[i].m_BufferInfos.back();
-		write.descriptorCount = binding->count;
-
-		m_DescriptorSetWrites[i].m_WritesByLocation[location] = write;
-	}
-}
-
-void VulkanUniformWriter::WriteTexture(
-	const uint32_t location,
-	const std::shared_ptr<Texture>& texture)
-{
-	const auto binding = m_UniformLayout->GetBindingByLocation(location);
-
-	if (!binding)
-	{
-		FATAL_ERROR("Layout does not contain specified binding!");
-	}
-
-	for (size_t i = 0; i < m_Count; i++)
-	{
-		m_DescriptorSetWrites[i].m_ImageInfos.emplace_back(std::static_pointer_cast<VulkanTexture>(texture)->GetDescriptorInfo(i));
-
-		VkWriteDescriptorSet write{};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.descriptorType = VulkanUniformLayout::ConvertDescriptorType(binding->type);
-		write.dstBinding = location;
-		write.pImageInfo = &m_DescriptorSetWrites[i].m_ImageInfos.back();
-		write.descriptorCount = binding->count;
-
-		m_DescriptorSetWrites[i].m_WritesByLocation[location] = write;
-	}
-}
-
-void VulkanUniformWriter::WriteTextures(
-	const uint32_t location,
-	const std::vector<std::shared_ptr<Texture>>& textures)
-{
-	const auto binding = m_UniformLayout->GetBindingByLocation(location);
-
-	if (!binding)
-	{
-		FATAL_ERROR("Layout does not contain specified binding!");
-	}
-
-	for (size_t i = 0; i < m_Count; i++)
-	{
-		const size_t index = m_DescriptorSetWrites[i].m_ImageInfos.size();
-		for (const auto& texture : textures)
+		for (const auto& buffer : bufferWrite.buffers)
 		{
-			m_DescriptorSetWrites[i].m_ImageInfos.emplace_back(std::static_pointer_cast<VulkanTexture>(texture)->GetDescriptorInfo(i));
+			assert(bufferInfoCount > 0);
+			bufferInfos.emplace_back(std::static_pointer_cast<VulkanBuffer>(buffer)->GetDescriptorInfo(index, bufferWrite.size, bufferWrite.offset));
 		}
 
 		VkWriteDescriptorSet write{};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.descriptorType = VulkanUniformLayout::ConvertDescriptorType(binding->type);
+		write.descriptorType = VulkanUniformLayout::ConvertDescriptorType(bufferWrite.binding.type);
 		write.dstBinding = location;
-		write.pImageInfo = &m_DescriptorSetWrites[i].m_ImageInfos[index];
-		write.descriptorCount = m_DescriptorSetWrites[i].m_ImageInfos.size();
+		write.pBufferInfo = &bufferInfos.back();
+		write.descriptorCount = bufferWrite.binding.count;
+		write.dstSet = set;
 
-		m_DescriptorSetWrites[i].m_WritesByLocation[location] = write;
+		writes.emplace_back(write);
 	}
-}
+	m_Writes[index].m_BufferWritesByLocation.clear();
 
-void VulkanUniformWriter::WriteBuffer(
-	const std::string& name,
-	const std::shared_ptr<Buffer>& buffer,
-	const size_t size,
-	const size_t offset)
-{
-	WriteBuffer(m_UniformLayout->GetBindingLocationByName(name), buffer, size, offset);
-}
+	size_t imageInfoCount = 0;
+	for (const auto& [location, textureWrite] : m_Writes[index].m_TextureWritesByLocation)
+	{
+		imageInfoCount += textureWrite.textures.size();
+	}
 
-void VulkanUniformWriter::WriteTexture(
-	const std::string& name,
-	const std::shared_ptr<Texture>& texture)
-{
-	m_TexturesByName[name] = texture;
-	WriteTexture(m_UniformLayout->GetBindingLocationByName(name), texture);
-}
+	std::vector<VkDescriptorImageInfo> imageInfos;
+	imageInfos.reserve(imageInfoCount);
+	for (const auto& [location, textureWrite] : m_Writes[index].m_TextureWritesByLocation)
+	{
+		for (const auto& texture : textureWrite.textures)
+		{
+			assert(imageInfoCount > 0);
+			imageInfos.emplace_back(std::static_pointer_cast<VulkanTexture>(texture)->GetDescriptorInfo(index));
+		}
 
-void VulkanUniformWriter::WriteTextures(
-	const std::string& name,
-	const std::vector<std::shared_ptr<Texture>>& textures)
-{
-	// TODO: Add the ability to contain multiple textures.
-	// m_TexturesByName[name] = textures;
-	WriteTextures(m_UniformLayout->GetBindingLocationByName(name), textures);
-}
+		VkWriteDescriptorSet write{};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.descriptorType = VulkanUniformLayout::ConvertDescriptorType(textureWrite.binding.type);
+		write.dstBinding = location;
+		write.pImageInfo = &imageInfos.back();
+		write.descriptorCount = textureWrite.binding.count;
+		write.dstSet = set;
 
-void VulkanUniformWriter::Flush()
-{
-	auto& descriptorSetWrites = m_DescriptorSetWrites[m_IsMultiBuffered ? swapChainImageIndex : 0];
-	if (descriptorSetWrites.m_WritesByLocation.empty())
+		writes.emplace_back(write);
+	}
+	m_Writes[index].m_TextureWritesByLocation.clear();
+
+	if (writes.empty())
 	{
 		return;
 	}
 
-	std::vector<VkWriteDescriptorSet> writes;
-	writes.reserve(descriptorSetWrites.m_WritesByLocation.size());
-	for (auto& [location, write] : descriptorSetWrites.m_WritesByLocation)
-	{
-		write.dstSet = m_DescriptorSets[m_IsMultiBuffered ? swapChainImageIndex : 0];
-		writes.emplace_back(write);
-	}
-
 	vkUpdateDescriptorSets(GetVkDevice()->GetDevice(), writes.size(), writes.data(), 0, nullptr);
-
-	descriptorSetWrites.m_ImageInfos.clear();
-	descriptorSetWrites.m_BufferInfos.clear();
-	descriptorSetWrites.m_WritesByLocation.clear();
 }
 
 void VulkanUniformWriter::WriteTexture(uint32_t location, const std::vector<VkDescriptorImageInfo>& vkDescriptorImageInfos)
 {
+	const size_t count = IsMultiBuffered() ? swapChainImageCount : 1;
+	assert(count == vkDescriptorImageInfos.size());
+
 	const auto binding = m_UniformLayout->GetBindingByLocation(location);
 
 	if (!binding)
@@ -185,22 +118,25 @@ void VulkanUniformWriter::WriteTexture(uint32_t location, const std::vector<VkDe
 		FATAL_ERROR("Layout does not contain specified binding!");
 	}
 
-	for (size_t i = 0; i < m_Count; i++)
+	std::vector<VkWriteDescriptorSet> writes;
+	writes.resize(count);
+	for (size_t i = 0; i < count; i++)
 	{
-		m_DescriptorSetWrites[i].m_ImageInfos.emplace_back(vkDescriptorImageInfos[i]);
-
 		VkWriteDescriptorSet write{};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.descriptorType = VulkanUniformLayout::ConvertDescriptorType(binding->type);
 		write.dstBinding = location;
-		write.pImageInfo = &m_DescriptorSetWrites[i].m_ImageInfos.back();
+		write.pImageInfo = &vkDescriptorImageInfos.back();
 		write.descriptorCount = binding->count;
+		write.dstSet = m_DescriptorSets[i];
 
-		m_DescriptorSetWrites[i].m_WritesByLocation[location] = write;
+		writes[i] = write;
 	}
+
+	vkUpdateDescriptorSets(GetVkDevice()->GetDevice(), writes.size(), writes.data(), 0, nullptr);
 }
 
 VkDescriptorSet VulkanUniformWriter::GetDescriptorSet() const
 {
-	return m_DescriptorSets[m_IsMultiBuffered ? swapChainImageIndex : 0];
+	return m_DescriptorSets[IsMultiBuffered() ? swapChainImageIndex : 0];
 }

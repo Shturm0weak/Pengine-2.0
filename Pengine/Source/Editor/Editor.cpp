@@ -2361,7 +2361,7 @@ void Editor::MaterialMenu::Update(Editor& editor)
 					{
 						if (binding.type == ShaderReflection::Type::COMBINED_IMAGE_SAMPLER)
 						{
-							if (const std::shared_ptr<Texture>& texture = uniformWriter->GetTexture(binding.name))
+							if (std::shared_ptr<Texture> texture = uniformWriter->GetTexture(binding.name).back())
 							{
 								ImGui::Text("%s", binding.name.c_str());
 								ImGui::SameLine();

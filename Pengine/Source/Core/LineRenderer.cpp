@@ -29,9 +29,12 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 		{
 			uniformWriter->Flush();
 
-			for (const auto& [location, buffer] : uniformWriter->GetBuffersByLocation())
+			for (const auto& [location, buffers] : uniformWriter->GetBuffersByName())
 			{
-				buffer->Flush();
+				for (const auto& buffer : buffers)
+				{
+					buffer->Flush();
+				}
 			}
 		}
 

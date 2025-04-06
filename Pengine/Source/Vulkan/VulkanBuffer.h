@@ -60,7 +60,7 @@ namespace Pengine::Vk
 
 		[[nodiscard]] virtual size_t GetInstanceSize() const override { return m_InstanceSize; }
 
-		[[nodiscard]] VkDescriptorBufferInfo DescriptorInfo(
+		[[nodiscard]] VkDescriptorBufferInfo GetDescriptorInfo(
 			const uint32_t imageIndex,
 			VkDeviceSize size = VK_WHOLE_SIZE,
 			VkDeviceSize offset = 0) const;

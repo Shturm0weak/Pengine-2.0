@@ -2476,9 +2476,12 @@ void RenderPassManager::FlushUniformWriters(const std::vector<std::shared_ptr<Un
 	{
 		uniformWriter->Flush();
 
-		for (const auto& [location, buffer] : uniformWriter->GetBuffersByLocation())
+		for (const auto& [name, buffers] : uniformWriter->GetBuffersByName())
 		{
-			buffer->Flush();
+			for (const auto& buffer : buffers)
+			{
+				buffer->Flush();
+			}
 		}
 	}
 }
