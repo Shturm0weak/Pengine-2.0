@@ -1,9 +1,9 @@
-Name: Sponza
+Name: sponza.obj
 IsEnabled: true
 Transform:
   Position: [0, 0, 0]
   Rotation: [0, -0, 0]
-  Scale: [0.0100000026, 0.0100000305, 0.0100000305]
+  Scale: [0.00999999978, 0.00999999978, 0.00999999978]
   FollowOwner: true
 Childs:
   - Name: sponza_378_sponza_378_Material__25
@@ -11,11 +11,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 4328b5a6-f8a9-4bb4-8afe-6b3d9c7fad45
-      Material: 7bf50aa1-14a4-459a-b89f-9e92223bda14
+      Mesh: 83aa1a15-c390-474b-818b-e723b4ca49b6
+      Material: 5d1ab9e5-a0cc-4b3b-b0de-e9f31bf65044
       RenderingOrder: 5
     Childs:
       []
@@ -24,11 +24,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 7c41ff9c-8fe2-4d00-9dbb-abe66ba33022
-      Material: 97adac20-6322-495c-a7d7-f208b9902c27
+      Mesh: 9a9794eb-feb1-4522-b40e-4fd7e39c47ac
+      Material: 67ea6dbd-4bd4-4da2-ae5f-3a58e1245213
       RenderingOrder: 5
     Childs:
       []
@@ -37,11 +37,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: c8d94bad-7fca-4e86-acac-86bc497fcf22
-      Material: 750f1338-bd52-4f27-97bf-3faeb5dbf049
+      Mesh: f441187a-7db9-4aa7-8c70-04be0649f4a1
+      Material: 5c5d1820-fac3-41f0-808b-e4331e5a1711
       RenderingOrder: 5
     Childs:
       []
@@ -50,11 +50,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 7c0e79f6-e0ad-4b45-873a-4abb5434c392
-      Material: 5433c9fc-0b47-42f6-9a9f-179eeddbfcb2
+      Mesh: 821348e2-8883-411b-80e9-b10555d458ea
+      Material: b0405b52-510d-4308-8bfd-a13533b876b5
       RenderingOrder: 5
     Childs:
       []
@@ -63,11 +63,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 33679ed2-d10b-4639-8a92-51023d460e7b
-      Material: 68dfc035-b8f5-4b59-9073-4a610f74c58f
+      Mesh: 5ffb2ecc-730e-4c36-ba5b-c0d7854f070e
+      Material: 7aa4e73e-0548-4db3-b9cb-e0e56cb45f32
       RenderingOrder: 5
     Childs:
       []
@@ -76,11 +76,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 48531aa1-87ff-43c4-9ac3-13ff2b01eb9b
-      Material: 94cb261d-624f-441f-a46f-c745b675df0c
+      Mesh: dc365105-bdb6-42f6-a7d5-5e813731f8f4
+      Material: 6a7ee198-2ad4-4eaf-bf75-81ca667ac856
       RenderingOrder: 5
     Childs:
       []
@@ -89,11 +89,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 5c64e905-96ff-4552-9903-6ad077e46429
-      Material: 72275ece-81d7-431b-9cb1-72220231f7fc
+      Mesh: d13522f0-65ff-43a9-99fa-c9d49bc7c898
+      Material: 3c7d6ee1-045c-4de4-9c93-1b8fbc659cbd
       RenderingOrder: 5
     Childs:
       []
@@ -102,11 +102,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 307b5a9d-88d1-42b1-98c1-49ec25b99b09
-      Material: e0656a6a-245b-4c61-a291-52dcef1eb89c
+      Mesh: 773111ef-6f80-4436-b0dd-99c535de6e26
+      Material: 684ed451-fa10-437e-ae50-b5868dd66e10
       RenderingOrder: 5
     Childs:
       []
@@ -115,11 +115,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 2a9ac447-8ab7-4f03-a5a7-350d4775fcfb
-      Material: 42544081-2f08-4ac2-8411-130705c7d70c
+      Mesh: 0173e1a9-3a75-4bbf-82b2-1b7a8c16df97
+      Material: ea5e115d-adb3-4a75-a3c4-c911df0d2957
       RenderingOrder: 5
     Childs:
       []
@@ -128,11 +128,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 2d626f71-12f4-413d-bde8-e4ab93b35eec
-      Material: 20b22e9d-0457-4b02-b0ef-b4b1600624a1
+      Mesh: f125f757-ee5b-4ea9-b9aa-edd3b0cb39c7
+      Material: 001971e9-ac32-40ab-b932-c1d58be42a48
       RenderingOrder: 5
     Childs:
       []
@@ -141,11 +141,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 39c2b4f3-bdd7-4a9b-a207-5e4f08942611
-      Material: f84f145d-32fa-4efb-8d9a-1bdc7d34cd24
+      Mesh: 5aa07aa8-42b8-473d-bf73-102f6cfe04c6
+      Material: 1923deab-465d-4786-beff-c16c22e31a08
       RenderingOrder: 5
     Childs:
       []
@@ -154,11 +154,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: e48e4176-a26f-421c-8ce4-ec452d0e974b
-      Material: c0650e53-7752-4fb7-b224-8f38af9d0397
+      Mesh: 7a03d084-a2ea-40f5-b38f-a0416c9e3add
+      Material: 91c79511-0f6e-4844-a434-51f1e708bc9d
       RenderingOrder: 5
     Childs:
       []
@@ -167,11 +167,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 2dc05a01-fdd0-4831-a31b-922ab06cd8f6
-      Material: 5e7e5bd2-dc14-4fcf-8491-d1aa11a93b49
+      Mesh: 00b9aa7d-f5c0-43e0-acf2-833b71db053c
+      Material: 655c59f7-791f-472b-865c-665fe8fbb22f
       RenderingOrder: 5
     Childs:
       []
@@ -180,11 +180,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 03220be9-a42e-4b09-8af6-75d3e3c4656d
-      Material: 1bef205b-f824-4e9a-87ea-48c795fb074d
+      Mesh: cd13f0d3-d173-464b-8d91-ff374066d162
+      Material: 7e6b4a00-f785-4973-a2f2-ad7e001295c7
       RenderingOrder: 5
     Childs:
       []
@@ -193,11 +193,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: b0304f3e-bfa4-4ce3-acf4-6444e3320409
-      Material: f3ad7db7-0c3a-4dc5-a9a9-bb32c9dd71db
+      Mesh: cc76eb14-e806-492c-a666-868b4e86cf59
+      Material: a0a1464a-246c-48f5-b76b-ac28ee7ff122
       RenderingOrder: 5
     Childs:
       []
@@ -206,11 +206,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 8382c499-34f7-4baf-8d3f-ae90e7779b95
-      Material: c003632d-7e25-4809-b737-e457d3a419b2
+      Mesh: e8e792eb-032a-44ae-924c-b56f6c10006b
+      Material: 97b53ba0-beb1-4dd6-be50-d5f34a95a7c9
       RenderingOrder: 5
     Childs:
       []
@@ -219,11 +219,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 8324df50-a4d7-4f86-85e6-530f9c18eae1
-      Material: aaf181cc-11be-4efc-8425-69478598b020
+      Mesh: 856d86fd-553a-4da6-bc23-097467cecb3b
+      Material: 2ed2e2a4-a90f-4656-bc9b-bca5a3a0afd6
       RenderingOrder: 5
     Childs:
       []
@@ -232,11 +232,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: f6ad70cf-dbed-4043-8725-8ec71eacf935
-      Material: 1c7605e5-d60b-4e7e-a773-aa3847c1c2fb
+      Mesh: 97b4836a-c18b-4656-b0fe-7bff1a948efa
+      Material: ee0a4552-2e4f-4c89-b8a4-a5aedef4c1c9
       RenderingOrder: 5
     Childs:
       []
@@ -245,11 +245,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: ed134bc2-f405-4462-87a1-ef4cf746a926
-      Material: bc1deadf-1324-424e-b27b-eb3cc1ad3afd
+      Mesh: 2e13db6a-f01e-45a9-bd6a-e21ad2c14636
+      Material: 2a6b84df-4ab4-46da-87d0-42d5bab1db33
       RenderingOrder: 5
     Childs:
       []
@@ -258,11 +258,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: a94d4443-f19b-4f10-b176-678f7c267f57
-      Material: f8a1ba76-8e9a-4130-bc85-4fe4217cf897
+      Mesh: 715c4939-1cca-4962-9ba7-8794cfae2e70
+      Material: 415cd3e7-4b62-425b-a90f-9df2a9d81bee
       RenderingOrder: 5
     Childs:
       []
@@ -271,11 +271,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: b703fccd-2cdf-4422-9c4f-0d4effffcab8
-      Material: 3fcb0967-7cbc-45c6-a39e-46bab9d66967
+      Mesh: 451a977e-9c10-4d9b-9870-d620d90d60a2
+      Material: d6832658-8fff-4f6f-8886-d77259c66054
       RenderingOrder: 5
     Childs:
       []
@@ -284,11 +284,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: ddc3361d-25f9-461d-a28a-23bab78a635f
-      Material: 3a1ba4db-6eac-48fa-abd6-2b42568a92e2
+      Mesh: c8e36eba-edf1-4abd-8ebe-4f74f412e086
+      Material: f5f0f5f6-6f81-4e15-9a21-c792d494b811
       RenderingOrder: 5
     Childs:
       []
@@ -297,11 +297,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 460b96e5-a495-479f-8c53-67d2b4e9b508
-      Material: 33e5c214-3546-4783-917d-fa942d4de043
+      Mesh: edaa8a29-f4c7-4c9d-8e52-131ad7e22559
+      Material: 02ef753b-995d-4b8d-af43-5038f1d1fe41
       RenderingOrder: 5
     Childs:
       []
@@ -310,11 +310,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 61dd102b-0be6-4ad1-9ca1-0de446561e2a
-      Material: 08c68b5f-09e3-48b6-93b9-c8126fa5cea2
+      Mesh: 1c1b9248-e899-4f1a-835f-713dd19cd604
+      Material: d2ac9856-020b-4f13-a679-350a0903d612
       RenderingOrder: 5
     Childs:
       []
@@ -323,11 +323,11 @@ Childs:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000016, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
     Renderer3D:
-      Mesh: 67bbb70e-53e1-42ec-bce0-b99cd0e51642
-      Material: 02eb5329-43b2-4f2b-8419-aa1aad413b40
+      Mesh: 400295d0-224d-4ecd-a39b-cb548167c150
+      Material: 49b7cf6d-6f5c-4f7c-a0d0-406d9bde0b29
       RenderingOrder: 5
     Childs:
       []

@@ -32,4 +32,9 @@ namespace Pengine::Utils
 		return glm::quat(quat.w, quat.x, quat.y, quat.z);
 	};
 
+	inline glm::vec4 AiColor4DToGlmVec4(const aiColor4D& color)
+	{
+		return glm::vec4(color.r, color.g, color.b, color.a);
+	};
+
 }

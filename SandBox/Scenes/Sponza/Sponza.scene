@@ -20,8 +20,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [-12.5685844, 18.3227406, 1.1376977]
-      Rotation: [-0.624570727, -1.40355527, 0]
+      Position: [-10.0542765, 2.26344371, 0.287985981]
+      Rotation: [-0.205382735, -1.48892212, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -34,10 +34,10 @@ Scene:
       Viewport: Main
     Childs:
       []
-  - PrefabFilepath: 6cee8a51-4fa3-4dcd-bbe1-22879f79ce71
-    UUID: effa57b6-b763-4633-a33a-63507a6b8712
+  - PrefabFilepath: 3528b191-7154-4491-9c5d-52320120aa28
+    UUID: ff84e33f-711f-4592-b2f1-6262b8319c15
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]
-      Scale: [0.0100000026, 0.0100000305, 0.0100000305]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true

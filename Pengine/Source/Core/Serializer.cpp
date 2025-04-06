@@ -2466,6 +2466,15 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 			vertex->uv.y = 0.0f;
 		}
 
+		if (aiMesh->HasVertexColors(0))
+		{
+			vertex->color = glm::packUnorm4x8(Utils::AiColor4DToGlmVec4(aiMesh->mColors[0][vertexIndex]));
+		}
+		else
+		{
+			vertex->color = 0xffffffff;
+		}
+
 		aiVector3D normal = aiMesh->mNormals[vertexIndex];
 		vertex->normal.x = normal.x;
 		vertex->normal.y = normal.y;
@@ -2520,7 +2529,8 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 	createInfo.vertexLayouts =
 	{
 		VertexLayout(sizeof(VertexPosition), "Position"),
-		VertexLayout(sizeof(VertexNormal), "Normal")
+		VertexLayout(sizeof(VertexNormal), "Normal"),
+		VertexLayout(sizeof(VertexColor), "Color")
 	};
 
 	std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(createInfo);
@@ -2570,6 +2580,15 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 		{
 			vertex->uv.x = 0.0f;
 			vertex->uv.y = 0.0f;
+		}
+
+		if (aiMesh->HasVertexColors(0))
+		{
+			vertex->color = glm::packUnorm4x8(Utils::AiColor4DToGlmVec4(aiMesh->mColors[0][vertexIndex]));
+		}
+		else
+		{
+			vertex->color = 0xffffffff;
 		}
 
 		aiVector3D normal = aiMesh->mNormals[vertexIndex];
@@ -2656,6 +2675,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 	{
 		VertexLayout(sizeof(VertexPosition), "Position"),
 		VertexLayout(sizeof(VertexNormal), "Normal"),
+		VertexLayout(sizeof(VertexColor), "Color"),
 		VertexLayout(sizeof(VertexSkinned), "Bones")
 	};
 
@@ -4289,7 +4309,14 @@ void Serializer::ParseUniformValues(
 				}
 				else
 				{
-					uniformsInfo.texturesByName.emplace(uniformName, TextureManager::GetInstance().GetPink()->GetName());
+					if (TextureManager::GetInstance().GetTexture(textureFilepathOrUUID))
+					{
+						uniformsInfo.texturesByName.emplace(uniformName, textureFilepathOrUUID);
+					}
+					else
+					{
+						uniformsInfo.texturesByName.emplace(uniformName, TextureManager::GetInstance().GetPink()->GetName());
+					}
 				}
 			}
 		}

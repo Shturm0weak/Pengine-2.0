@@ -6,8 +6,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [4.46390724, 10.0699797, 9.36820793]
-      Rotation: [-0.624600649, 0.383018553, 0]
+      Position: [4.30260229, 7.50179768, 11.6103811]
+      Rotation: [-0.638106287, 0.324374318, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -25,7 +25,7 @@ Scene:
     IsEnabled: true
     Transform:
       Position: [0, 0, 0]
-      Rotation: [1.48352981, 0, 0]
+      Rotation: [2.53072739, 0, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     DirectionalLight:

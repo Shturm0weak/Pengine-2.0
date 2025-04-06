@@ -4,6 +4,7 @@ layout(location = 0) in vec3 normalViewSpace;
 layout(location = 1) in vec3 tangentViewSpace;
 layout(location = 2) in vec3 bitangentViewSpace;
 layout(location = 3) in vec2 uv;
+layout(location = 4) in vec4 color;
 
 layout(location = 0) out vec4 outAlbedo;
 layout(location = 1) out vec4 outNormal;
@@ -33,7 +34,7 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 
 void main()
 {
-	vec4 albedoColor = texture(albedoTexture, uv) * material.albedoColor;
+	vec4 albedoColor = texture(albedoTexture, uv) * material.albedoColor * color;
 	if (albedoColor.a < 0.01f)
 	{
 		discard;

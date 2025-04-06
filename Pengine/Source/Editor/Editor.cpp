@@ -2309,6 +2309,8 @@ void Editor::MaterialMenu::Update(Editor& editor)
 		return;
 	}
 
+	const bool previousOpened = opened;
+
 	if (opened && ImGui::Begin("Material", &opened))
 	{
 		if (ImGui::Button("Reload"))
@@ -2509,6 +2511,11 @@ void Editor::MaterialMenu::Update(Editor& editor)
 		}
 
 		ImGui::End();
+	}
+
+	if (previousOpened && !opened)
+	{
+		MaterialManager::GetInstance().DeleteMaterial(material);
 	}
 }
 
@@ -2812,7 +2819,7 @@ void Editor::ImportMenu::Update(Editor& editor)
 		ImGui::End();
 	}
 }
-#include "../Core/Timer.h"
+
 void Editor::Thumbnails::Initialize()
 {
 	const std::string name = "Thumbnail";
@@ -2828,7 +2835,7 @@ void Editor::Thumbnails::Initialize()
 		auto& transform = entity->AddComponent<Transform>(entity);
 		transform.Rotate(glm::radians(glm::vec3(120.0f, -40.0f, 0.0f)));
 
-		entity->AddComponent<DirectionalLight>().intensity = 3.0f;
+		entity->AddComponent<DirectionalLight>().intensity = 5.0f;
 	}
 
 	auto camera = m_ThumbnailScene->CreateEntity("Camera");

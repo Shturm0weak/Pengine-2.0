@@ -34,11 +34,16 @@ Basemat:
             - bitangentA
         - Binding: 2
           InputRate: Vertex
+          Tag: Color
+          Names:
+            - colorA
+        - Binding: 3
+          InputRate: Vertex
           Tag: Bones
           Names:
             - weightsA
             - boneIdsA
-        - Binding: 3
+        - Binding: 4
           InputRate: Instance
           Names:
             - transformA
@@ -85,11 +90,16 @@ Basemat:
             - bitangentA
         - Binding: 2
           InputRate: Vertex
+          Tag: Color
+          Names:
+            - colorA
+        - Binding: 3
+          InputRate: Vertex
           Tag: Bones
           Names:
             - weightsA
             - boneIdsA
-        - Binding: 3
+        - Binding: 4
           InputRate: Instance
           Names:
             - transformA

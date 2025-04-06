@@ -6,6 +6,7 @@ layout(location = 2) in vec3 normalViewSpace;
 layout(location = 3) in vec3 tangentViewSpace;
 layout(location = 4) in vec3 bitangentViewSpace;
 layout(location = 5) in vec2 uv;
+layout(location = 6) in vec4 color;
 
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec4 outNormal;
@@ -61,7 +62,7 @@ layout(set = 2, binding = 6) uniform Lights
 
 void main()
 {
-	vec4 albedoColor = texture(albedoTexture, uv) * material.albedoColor;
+	vec4 albedoColor = texture(albedoTexture, uv) * material.albedoColor * color;
 
 	float metallic = texture(metalnessTexture, uv).r;
 	float roughness = texture(roughnessTexture, uv).r;

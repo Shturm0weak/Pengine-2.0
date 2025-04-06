@@ -31,6 +31,8 @@ UniformWriter::UniformWriter(
 
 UniformWriter::~UniformWriter()
 {
+	m_Writes.clear();
+
 	for (auto& [name, textures] : m_TexturesByName)
 	{
 		for (auto& texture : textures)
