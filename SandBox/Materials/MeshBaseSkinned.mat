@@ -1,5 +1,5 @@
 Mat:
-  Basemat: Materials/MeshBaseSkinned.basemat
+  Basemat: 9a63214b-1ffb-4016-8c58-b45205923d38
   Options:
     - Name: Transparency
       IsEnabled: false
@@ -25,7 +25,7 @@ Mat:
         - Name: GBufferMaterial
           Values:
             - Name: material.albedoColor
-              Value: [1, 1, 1, 0.588235319]
+              Value: [0.337254912, 0.337254912, 0.337254912, 1]
               Type: vec4
             - Name: material.emissiveColor
               Value: [1, 1, 1, 1]

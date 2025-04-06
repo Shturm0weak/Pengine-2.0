@@ -3,7 +3,26 @@
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/ResizeEvent.h"
 
+#include "../Vulkan/VulkanWindow.h"
+#include "../Vulkan/VulkanHeadlessWindow.h"
+
 using namespace Pengine;
+
+std::shared_ptr<Window> Window::Create(const std::string& title, const std::string& name, const glm::ivec2& size)
+{
+	if (graphicsAPI == GraphicsAPI::Vk)
+	{
+		return std::make_shared<Vk::VulkanWindow>(title, name, size);
+	}
+}
+
+std::shared_ptr<Window> Window::CreateHeadless(const std::string& title, const std::string& name, const glm::ivec2& size)
+{
+	if (graphicsAPI == GraphicsAPI::Vk)
+	{
+		return std::make_shared<Vk::VulkanHeadlessWindow>(title, name, size);
+	}
+}
 
 Window::Window(std::string title, std::string name, const glm::ivec2& size)
 	: m_Title(std::move(title))

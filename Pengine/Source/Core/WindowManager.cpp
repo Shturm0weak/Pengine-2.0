@@ -3,6 +3,7 @@
 #include "Logger.h"
 
 #include "../Vulkan/VulkanWindow.h"
+#include "../Vulkan/VulkanHeadlessWindow.h"
 
 using namespace Pengine;
 using namespace Vk;
@@ -22,13 +23,25 @@ std::shared_ptr<Window> WindowManager::Create(const std::string& title, const st
 		return window;
 	}
 
-	if (graphicsAPI == GraphicsAPI::Vk)
-	{
-		window = std::make_shared<VulkanWindow>(title, name, size);
-	}
+	window = Window::Create(title, name, size);
 
 	m_Windows.emplace(name, window);
 	m_WindowsByGLFW.emplace(window->GetGLFWWindow(), window);
+	return window;
+}
+
+std::shared_ptr<Window> WindowManager::CreateHeadless(const std::string& title, const std::string& name, const glm::ivec2& size)
+{
+	std::shared_ptr<Window> window = GetWindowByName(name);
+	if (window)
+	{
+		Logger::Warning("Window with name " + name + " already exists!");
+		return window;
+	}
+
+	window = Window::CreateHeadless(title, name, size);
+
+	m_Windows.emplace(name, window);
 	return window;
 }
 

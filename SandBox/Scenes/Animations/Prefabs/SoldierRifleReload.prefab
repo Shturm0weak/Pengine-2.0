@@ -21,7 +21,7 @@ Childs:
       Skeleton: dc33b6f5-3f7e-4576-8d01-26e03b92c132
       SkeletalAnimation: efd4d5ba-88cd-4238-b95f-0dfe71d22025
       Speed: 1
-      CurrentTime: 2312.3269
+      CurrentTime: 2495.72314
     Childs:
       []
   - Name: Head
@@ -39,6 +39,6 @@ Childs:
       Skeleton: d34b7711-d195-4ed7-b19c-d2ff73595c23
       SkeletalAnimation: efd4d5ba-88cd-4238-b95f-0dfe71d22025
       Speed: 1
-      CurrentTime: 2312.3269
+      CurrentTime: 2495.72314
     Childs:
       []

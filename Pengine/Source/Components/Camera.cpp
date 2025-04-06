@@ -171,7 +171,7 @@ std::shared_ptr<RenderTarget> Camera::GetRendererTarget(const std::string& name)
 	return Utils::Find(name, m_RenderTargetsByName);
 }
 
-void Camera::TakeScreenshot(const std::filesystem::path& filepath, const std::string& viewportName)
+void Camera::TakeScreenshot(const std::filesystem::path& filepath, const std::string& viewportName, bool* isLoaded)
 {
 	const std::shared_ptr<RenderTarget> renderTarget = GetRendererTarget(viewportName);
 	if (!renderTarget)
@@ -191,5 +191,5 @@ void Camera::TakeScreenshot(const std::filesystem::path& filepath, const std::st
 		return;
 	}
 
-	Serializer::SerializeTexture(filepath, texture);
+	Serializer::SerializeTexture(filepath, texture, isLoaded);
 }

@@ -2,6 +2,7 @@
 
 #include "../Core/Serializer.h"
 #include "../Core/TextureManager.h"
+#include "../Core/MaterialManager.h"
 #include "../Core/AsyncAssetLoader.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
@@ -138,16 +139,7 @@ Material::Material(
 
 Material::~Material()
 {
-	for (const auto& [renderPass, uniformWriter] : m_UniformWriterByPass)
-	{
-		for (const auto& [name, texture] : uniformWriter->GetTextures())
-		{
-			if (std::filesystem::exists(texture->GetFilepath()))
-			{
-				TextureManager::GetInstance().Delete(texture->GetFilepath());
-			}
-		}
-	}
+	MaterialManager::GetInstance().DeleteBaseMaterial(m_BaseMaterial);
 }
 
 std::shared_ptr<UniformWriter> Material::GetUniformWriter(const std::string& passName) const

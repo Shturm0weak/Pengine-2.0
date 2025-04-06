@@ -1,5 +1,5 @@
 Mat:
-  Basemat: Materials/MeshBaseDoubleSided.basemat
+  Basemat: 98ca6a17-7f30-423c-af6f-8fbb1668f193
   Options:
     - Name: Transparency
       IsEnabled: false
@@ -25,7 +25,7 @@ Mat:
         - Name: GBufferMaterial
           Values:
             - Name: material.albedoColor
-              Value: [1, 1, 1, 1]
+              Value: [0.337254912, 0.337254912, 0.337254912, 1]
               Type: vec4
             - Name: material.emissiveColor
               Value: [1, 1, 1, 1]
@@ -50,8 +50,10 @@ Mat:
               Type: int
     - RenderPass: Transparent
       Uniforms:
-        - RenderPass: CSM
-          Uniforms:
-            - RenderPass: ZPrePass
-              Uniforms:
-                []
+        []
+    - RenderPass: CSM
+      Uniforms:
+        []
+    - RenderPass: ZPrePass
+      Uniforms:
+        []

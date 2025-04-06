@@ -15,8 +15,7 @@ SceneManager& SceneManager::GetInstance()
 
 std::shared_ptr<Scene> SceneManager::Create(const std::string& name, const std::string& tag)
 {
-	std::shared_ptr<Scene> scene = std::make_shared<Scene>(name, none);
-	scene->SetTag(tag);
+	std::shared_ptr<Scene> scene = Scene::Create(name, tag);
 
 	for (const auto& [name, system] : m_ComponentSystemsByName)
 	{

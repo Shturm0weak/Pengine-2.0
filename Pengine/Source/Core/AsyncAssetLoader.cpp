@@ -13,7 +13,7 @@ AsyncAssetLoader& Pengine::AsyncAssetLoader::GetInstance()
 	return asyncAssetLoader;
 }
 
-void AsyncAssetLoader::AsyncLoadMaterial(const std::filesystem::path& filepath, std::function<void(std::shared_ptr<Material>)>&& callback)
+void AsyncAssetLoader::AsyncLoadMaterial(const std::filesystem::path& filepath, std::function<void(std::weak_ptr<Material>)>&& callback)
 {
 	std::lock_guard<std::mutex> lock(m_MaterialMutex);
 	if (!m_MaterialsLoading.count(filepath))
@@ -31,7 +31,7 @@ void AsyncAssetLoader::AsyncLoadMaterial(const std::filesystem::path& filepath, 
 	m_MaterialsToBeLoaded[filepath].emplace_back(std::move(callback));
 }
 
-void AsyncAssetLoader::AsyncLoadBaseMaterial(const std::filesystem::path& filepath, std::function<void(std::shared_ptr<BaseMaterial>)>&& callback)
+void AsyncAssetLoader::AsyncLoadBaseMaterial(const std::filesystem::path& filepath, std::function<void(std::weak_ptr<BaseMaterial>)>&& callback)
 {
 	std::lock_guard<std::mutex> lock(m_BaseMaterialMutex);
 	if (!m_BaseMaterialsLoading.count(filepath))
@@ -49,7 +49,7 @@ void AsyncAssetLoader::AsyncLoadBaseMaterial(const std::filesystem::path& filepa
 	m_BaseMaterialsToBeLoaded[filepath].emplace_back(std::move(callback));
 }
 
-void AsyncAssetLoader::AsyncLoadMesh(const std::filesystem::path& filepath, std::function<void(std::shared_ptr<Mesh>)>&& callback)
+void AsyncAssetLoader::AsyncLoadMesh(const std::filesystem::path& filepath, std::function<void(std::weak_ptr<Mesh>)>&& callback)
 {
 	std::lock_guard<std::mutex> lock(m_MeshMutex);
 	if (!m_MeshesLoading.count(filepath))
@@ -67,7 +67,7 @@ void AsyncAssetLoader::AsyncLoadMesh(const std::filesystem::path& filepath, std:
 	m_MeshesToBeLoaded[filepath].emplace_back(std::move(callback));
 }
 
-void AsyncAssetLoader::AsyncLoadTexture(const std::filesystem::path& filepath, std::function<void(std::shared_ptr<class Texture>)>&& callback)
+void AsyncAssetLoader::AsyncLoadTexture(const std::filesystem::path& filepath, std::function<void(std::weak_ptr<class Texture>)>&& callback)
 {
 	std::lock_guard<std::mutex> lock(m_TextureMutex);
 	if (!m_TexturesLoading.count(filepath))
@@ -246,14 +246,16 @@ std::shared_ptr<Texture> AsyncAssetLoader::SyncLoadTexture(const std::filesystem
 
 void AsyncAssetLoader::Update()
 {
+	std::lock_guard<std::mutex> lock(m_UpdateMutex);
+
 	MaterialManager& materialManager = MaterialManager::GetInstance();
 
 	{
 		std::lock_guard<std::mutex> lock(m_MaterialMutex);
 		for (auto& [filepath, callbacks] : m_MaterialsToBeLoaded)
 		{
-			const std::shared_ptr<Material> material = materialManager.GetMaterial(filepath);
-			if (!material)
+			const std::weak_ptr<Material> material = materialManager.GetMaterial(filepath);
+			if (!material.lock())
 			{
 				continue;
 			}
@@ -272,8 +274,8 @@ void AsyncAssetLoader::Update()
 		std::lock_guard<std::mutex> lock(m_BaseMaterialMutex);
 		for (auto& [filepath, callbacks] : m_BaseMaterialsToBeLoaded)
 		{
-			const std::shared_ptr<BaseMaterial> baseMaterial = materialManager.GetBaseMaterial(filepath);
-			if (!baseMaterial)
+			const std::weak_ptr<BaseMaterial> baseMaterial = materialManager.GetBaseMaterial(filepath);
+			if (!baseMaterial.lock())
 			{
 				continue;
 			}
@@ -292,8 +294,8 @@ void AsyncAssetLoader::Update()
 		std::lock_guard<std::mutex> lock(m_MeshMutex);
 		for (auto& [filepath, callbacks] : m_MeshesToBeLoaded)
 		{
-			const std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().GetMesh(filepath);
-			if (!mesh)
+			const std::weak_ptr<Mesh> mesh = MeshManager::GetInstance().GetMesh(filepath);
+			if (!mesh.lock())
 			{
 				continue;
 			}
@@ -307,4 +309,39 @@ void AsyncAssetLoader::Update()
 			break;
 		}
 	}
+
+	{
+		std::lock_guard<std::mutex> lock(m_TextureMutex);
+		for (auto& [filepath, callbacks] : m_TexturesToBeLoaded)
+		{
+			const std::weak_ptr<Texture> texture = TextureManager::GetInstance().GetTexture(filepath);
+			if (!texture.lock())
+			{
+				continue;
+			}
+
+			for (const auto& callback : callbacks)
+			{
+				callback(texture);
+			}
+
+			m_TexturesToBeLoaded.erase(filepath);
+			break;
+		}
+	}
+}
+
+void AsyncAssetLoader::WaitIdle()
+{
+	bool empty = false;
+	do
+	{
+		Update();
+
+		empty = 
+			m_MaterialsToBeLoaded.empty() &&
+			m_BaseMaterialsLoading.empty() &&
+			m_TexturesLoading.empty() &&
+			m_MeshesLoading.empty();
+	} while (!empty);
 }

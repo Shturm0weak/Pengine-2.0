@@ -15,6 +15,7 @@
 #include "../Components/Camera.h"
 #include "../Components/Transform.h"
 #include "../Components/Renderer3D.h"
+#include "../Components/SkeletalAnimator.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 #include "../EventSystem/ResizeEvent.h"
@@ -164,8 +165,18 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture, std::shar
 								const std::shared_ptr<Entity> entity = camera->GetScene()->CreateEntity(mesh->GetName());
 								entity->AddComponent<Transform>(entity).Translate(position);
 								Renderer3D& r3d = entity->AddComponent<Renderer3D>();
-								r3d.material = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "MeshBase.mat");
 								r3d.mesh = mesh;
+
+								if (mesh->GetType() == Mesh::Type::SKINNED)
+								{
+									r3d.material = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "MeshBaseSkinned.mat");
+
+									entity->AddComponent<SkeletalAnimator>();
+								}
+								else
+								{
+									r3d.material = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "MeshBaseDoubleSided.mat");
+								}
 							}
 						}
 					}
@@ -254,6 +265,8 @@ void Viewport::SetCamera(const std::shared_ptr<Entity>& camera)
 
 	Camera& cameraComponent = camera->GetComponent<Camera>();
 	cameraComponent.CreateRenderTarget(m_Name, m_Size);
+
+	UpdateProjectionMat4();
 }
 
 glm::vec3 Viewport::GetMouseRay(const glm::vec2& mousePosition) const

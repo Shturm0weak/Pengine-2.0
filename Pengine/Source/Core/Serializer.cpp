@@ -13,6 +13,8 @@
 #include "Viewport.h"
 #include "WindowManager.h"
 
+#include "../EventSystem/EventSystem.h"
+#include "../EventSystem/NextFrameEvent.h"
 #include "../Components/Camera.h"
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
@@ -478,7 +480,7 @@ void Serializer::GenerateFilesUUID(const std::filesystem::path& directory)
 	{
 		if (!entry.is_directory())
 		{
-			const std::filesystem::path filepath = entry.path();
+			const std::filesystem::path filepath = Utils::GetShortFilepath(entry.path());
 			std::filesystem::path metaFilepath = filepath;
 			metaFilepath.concat(FileFormats::Meta());
 
@@ -518,9 +520,7 @@ void Serializer::GenerateFilesUUID(const std::filesystem::path& directory)
 						uuid = uuidData.as<std::string>();
 					}
 
-					const std::filesystem::path shortFilepath = Utils::GetShortFilepath(filepath);
-
-					Utils::SetUUID(uuid, shortFilepath);
+					Utils::SetUUID(uuid, filepath);
 				}
 			}
 		}
@@ -639,7 +639,7 @@ void Serializer::DeserializeShaderFilepaths(
 	}
 }
 
-void Serializer::SerializeTexture(const std::filesystem::path& filepath, std::shared_ptr<Texture> texture)
+void Serializer::SerializeTexture(const std::filesystem::path& filepath, std::shared_ptr<Texture> texture, bool* isLoaded)
 {
 	Texture::CreateInfo createInfo{};
 	createInfo.aspectMask = texture->GetAspectMask();
@@ -660,7 +660,7 @@ void Serializer::SerializeTexture(const std::filesystem::path& filepath, std::sh
 
 	data += subresourceLayout.offset;
 
-	ThreadPool::GetInstance().EnqueueAsync([filepath, texture, data, subresourceLayout]()
+	ThreadPool::GetInstance().EnqueueAsync([filepath, screenshot, data, subresourceLayout, isLoaded]()
 	{
 		Texture::Meta meta{};
 		meta.uuid = UUID();
@@ -672,9 +672,14 @@ void Serializer::SerializeTexture(const std::filesystem::path& filepath, std::sh
 		Utils::SetUUID(meta.uuid, meta.filepath);
 		Serializer::SerializeTextureMeta(meta);
 
-		stbi_write_png(filepath.string().c_str(), texture->GetSize().x, texture->GetSize().y, texture->GetChannels(), (const void*)data, subresourceLayout.rowPitch);
+		stbi_write_png(filepath.string().c_str(), screenshot->GetSize().x, screenshot->GetSize().y, screenshot->GetChannels(), (const void*)data, subresourceLayout.rowPitch);
 		
 		Logger::Log("Screenshot:" + filepath.string() + " has been saved!", BOLDGREEN);
+
+		if (isLoaded)
+		{
+			*isLoaded = true;
+		}
 	});	
 }
 
@@ -3333,14 +3338,32 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 		if (const auto& meshData = renderer3DData["Mesh"])
 		{
 			const std::string uuid = meshData.as<std::string>();
-			AsyncAssetLoader::GetInstance().AsyncLoadMesh(Utils::FindFilepath(uuid), [wEntity = std::weak_ptr(entity)](std::shared_ptr<Mesh> mesh)
+			AsyncAssetLoader::GetInstance().AsyncLoadMesh(Utils::FindFilepath(uuid), [wEntity = std::weak_ptr(entity)](std::weak_ptr<Mesh> mesh)
 			{
+				std::shared_ptr<Mesh> sharedMesh = mesh.lock();
+				if (!sharedMesh)
+				{
+					return;
+				}
+
 				if (std::shared_ptr<Entity> entity = wEntity.lock())
 				{
 					if (entity->HasComponent<Renderer3D>())
 					{
-						entity->GetComponent<Renderer3D>().mesh = mesh;
+						entity->GetComponent<Renderer3D>().mesh = sharedMesh;
 					}
+				}
+				else
+				{
+					auto callback = [mesh]()
+					{
+						std::shared_ptr<Mesh> sharedMesh = mesh.lock();
+						MeshManager::GetInstance().DeleteMesh(sharedMesh);
+					};
+
+					std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, nullptr);
+					EventSystem::GetInstance().SendEvent(event);
+					
 				}
 			});
 		}
@@ -3349,14 +3372,31 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 		{
 			const std::string uuid = materialData.as<std::string>();
 
-			AsyncAssetLoader::GetInstance().AsyncLoadMaterial(Utils::FindFilepath(uuid), [wEntity = std::weak_ptr(entity)](std::shared_ptr<Material> material)
+			AsyncAssetLoader::GetInstance().AsyncLoadMaterial(Utils::FindFilepath(uuid), [wEntity = std::weak_ptr(entity)](std::weak_ptr<Material> material)
 			{
+				std::shared_ptr<Material> sharedMaterial = material.lock();
+				if (!material.lock())
+				{
+					return;
+				}
+
 				if (std::shared_ptr<Entity> entity = wEntity.lock())
 				{
 					if (entity->HasComponent<Renderer3D>())
 					{
-						entity->GetComponent<Renderer3D>().material = material;
+						entity->GetComponent<Renderer3D>().material = sharedMaterial;
 					}
+				}
+				else
+				{
+					auto callback = [material]()
+					{
+						std::shared_ptr<Material> sharedMaterial = material.lock();
+						MaterialManager::GetInstance().DeleteMaterial(sharedMaterial);
+					};
+
+					std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, nullptr);
+					EventSystem::GetInstance().SendEvent(event);
 				}
 			});
 		}
@@ -3658,6 +3698,11 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 
 	for (const auto& entity : scene->GetEntities())
 	{
+		if (entity->IsPrefab())
+		{
+			SerializePrefab(Utils::FindFilepath(entity->GetPrefabFilepathUUID()), entity);
+		}
+
 		if (!entity->HasParent())
 		{
 			SerializeEntity(out, entity, true, false);
@@ -4113,6 +4158,52 @@ std::filesystem::path Serializer::DeserializeFilepath(const std::string& uuidOrF
 	}
 
 	return filepath;
+}
+
+void Serializer::SerializeThumbnailMeta(const std::filesystem::path& filepath, const size_t lastWriteTime)
+{
+	if (filepath.empty())
+	{
+		Logger::Error("Failed to save thumbnail meta, filepath is empty!");
+	}
+
+	std::ofstream out(filepath, std::ifstream::binary);
+	out.write((char*)&lastWriteTime, static_cast<std::streamsize>(sizeof(lastWriteTime)));
+	out.close();
+}
+
+size_t Serializer::DeserializeThumbnailMeta(const std::filesystem::path& filepath)
+{
+	if (filepath.empty())
+	{
+		Logger::Error("Failed to load thumbnail meta, filepath is empty!");
+		return 0;
+	}
+
+	if (!std::filesystem::exists(filepath))
+	{
+		Logger::Error(filepath.string() + ":Failed to load thumbnail meta! The file doesn't exist");
+		return 0;
+	}
+
+	std::ifstream in(filepath, std::ifstream::binary);
+
+	in.seekg(0, std::ifstream::end);
+	const int size = in.tellg();
+	in.seekg(0, std::ifstream::beg);
+
+	struct ThumbnailMeta
+	{
+		size_t lastWriteTime = 0;
+	};
+
+	ThumbnailMeta meta{};
+
+	in.read((char*)&meta, size);
+
+	in.close();
+
+	return meta.lastWriteTime;
 }
 
 void Serializer::ParseUniformValues(

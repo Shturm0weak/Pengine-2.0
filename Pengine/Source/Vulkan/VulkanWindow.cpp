@@ -369,8 +369,6 @@ void VulkanWindow::EndFrame(void* frame)
 	}
 
 	m_VulkanWindow.SemaphoreIndex = (m_VulkanWindow.SemaphoreIndex + 1) % m_VulkanWindow.SemaphoreCount;
-
-	GetVkDevice()->FlushDeletionQueue();
 }
 
 void VulkanWindow::ImGuiRenderPass()

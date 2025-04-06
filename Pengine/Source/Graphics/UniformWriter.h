@@ -19,7 +19,7 @@ namespace Pengine
 		explicit UniformWriter(
 			std::shared_ptr<UniformLayout> uniformLayout,
 			bool isMultiBuffered);
-		virtual ~UniformWriter() = default;
+		virtual ~UniformWriter();
 		UniformWriter(const UniformWriter&) = delete;
 		UniformWriter& operator=(const UniformWriter&) = delete;
 

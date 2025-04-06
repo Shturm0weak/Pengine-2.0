@@ -87,22 +87,26 @@ std::shared_ptr<Material> MaterialManager::Clone(const std::string& name, const 
 	return clonedMaterial;
 }
 
-void MaterialManager::DeleteMaterial(std::shared_ptr<Material> material)
+void MaterialManager::DeleteMaterial(std::shared_ptr<Material>& material)
 {
 	std::lock_guard<std::mutex> lock(m_MutexMaterial);
-	if (std::filesystem::exists(material->GetFilepath()))
+	if (material.use_count() == 2)
 	{
 		m_MaterialsByFilepath.erase(material->GetFilepath());
 	}
+
+	material = nullptr;
 }
 
-void MaterialManager::DeleteBaseMaterial(std::shared_ptr<BaseMaterial> baseMaterial)
+void MaterialManager::DeleteBaseMaterial(std::shared_ptr<BaseMaterial>& baseMaterial)
 {
 	std::lock_guard<std::mutex> lock(m_MutexBaseMaterial);
-	if (std::filesystem::exists(baseMaterial->GetFilepath()))
+	if (baseMaterial.use_count() == 2)
 	{
 		m_BaseMaterialsByFilepath.erase(baseMaterial->GetFilepath());
 	}
+
+	baseMaterial = nullptr;
 }
 
 void MaterialManager::ReloadAll()

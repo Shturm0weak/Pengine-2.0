@@ -42,14 +42,16 @@ namespace Pengine
 
 		[[nodiscard]] bool IsFocused() const { return m_IsFocused; }
 
+		[[nodiscard]] const std::string& GetName() const { return m_Name; }
+
 		[[nodiscard]] uint32_t& GetGizmoOperation() { return m_GizmoOperation; }
 
 		void SetDrawGizmosCallback(const std::function<void(const glm::vec2&, glm::ivec2, std::shared_ptr<Entity>, bool&)>& drawGizmosCallback);
 
+		void UpdateProjectionMat4();
+
 	private:
 		void Resize(const glm::ivec2& size);
-
-		void UpdateProjectionMat4();
 
 		void SetOrthographic(const glm::ivec2& size, const float zFar, const float zNear);
 

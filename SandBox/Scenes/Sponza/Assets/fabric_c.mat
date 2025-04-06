@@ -25,10 +25,10 @@ Mat:
         - Name: GBufferMaterial
           Values:
             - Name: material.albedoColor
-              Value: [1, 1, 1, 1]
+              Value: [0.470400006, 0.470400006, 0.470400006, 1]
               Type: vec4
             - Name: material.emissiveColor
-              Value: [1, 0.277145743, 0.147679329, 1]
+              Value: [0, 0, 0, 1]
               Type: vec4
             - Name: material.uvTransform
               Value: [1, 1, 0, 0]
@@ -43,7 +43,7 @@ Mat:
               Value: 1
               Type: float
             - Name: material.emissiveFactor
-              Value: 1
+              Value: 0
               Type: float
             - Name: material.useNormalMap
               Value: 0

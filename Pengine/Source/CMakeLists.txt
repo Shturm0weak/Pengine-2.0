@@ -13,7 +13,7 @@ set(COMPONENTS_SOURCES
 	Components/DirectionalLight.h
 	Components/PointLight.h
 	Components/Transform.cpp Components/Transform.h
-	Components/Renderer3D.h
+	Components/Renderer3D.cpp Components/Renderer3D.h
 	Components/SkeletalAnimator.cpp Components/SkeletalAnimator.h
 	Components/Canvas.h
 )
@@ -123,6 +123,7 @@ set(VULKAN_SOURCES
 	Vulkan/VulkanUniformLayout.cpp Vulkan/VulkanUniformLayout.h
 	Vulkan/VulkanUniformWriter.cpp Vulkan/VulkanUniformWriter.h
 	Vulkan/VulkanWindow.cpp Vulkan/VulkanWindow.h
+	Vulkan/VulkanHeadlessWindow.cpp Vulkan/VulkanHeadlessWindow.h
 )
 source_group("Vulkan" FILES ${VULKAN_SOURCES})
 

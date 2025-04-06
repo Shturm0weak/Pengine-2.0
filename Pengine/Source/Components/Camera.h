@@ -65,7 +65,7 @@ namespace Pengine
 		/**
 		 * Take screenshot of the main viewport.
 		 */
-		void TakeScreenshot(const std::filesystem::path& filepath, const std::string& viewportName);
+		void TakeScreenshot(const std::filesystem::path& filepath, const std::string& viewportName, bool* isLoaded);
 
 	private:
 		glm::mat4 m_ViewMat4{};

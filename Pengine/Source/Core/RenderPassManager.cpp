@@ -385,7 +385,7 @@ void RenderPassManager::CreateZPrePass()
 		}
 
 		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderTarget->GetBuffer("InstanceBufferZPrePass");
-		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
+		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() < renderableCount))
 		{
 			instanceBuffer = Buffer::Create(
 				sizeof(glm::mat4),
@@ -591,7 +591,7 @@ void RenderPassManager::CreateGBuffer()
 		const entt::registry& registry = scene->GetRegistry();
 
 		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderTarget->GetBuffer("InstanceBuffer");
-		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
+		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() < renderableCount))
 		{
 			instanceBuffer = Buffer::Create(
 				sizeof(InstanceData),
@@ -1291,7 +1291,7 @@ void RenderPassManager::CreateTransparent()
 		}
 
 		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderTarget->GetBuffer("InstanceBufferTransparent");
-		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
+		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() < renderableCount))
 		{
 			instanceBuffer = Buffer::Create(
 				sizeof(InstanceData),
@@ -1382,7 +1382,7 @@ void RenderPassManager::CreateFinal()
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Format::B10G11R11_UFLOAT_PACK32;
+	color.format = Format::R8G8B8A8_SRGB;//B10G11R11_UFLOAT_PACK32;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	color.load = RenderPass::Load::LOAD;
 	color.store = RenderPass::Store::STORE;
@@ -1607,7 +1607,7 @@ void RenderPassManager::CreateCSM()
 		};
 
 		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderTarget->GetBuffer("InstanceBufferCSM");
-		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() != renderableCount))
+		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() < renderableCount))
 		{
 			instanceBuffer = Buffer::Create(
 				sizeof(InstanceDataCSM),

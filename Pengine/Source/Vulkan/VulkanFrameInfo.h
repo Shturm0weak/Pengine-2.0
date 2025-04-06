@@ -4,7 +4,7 @@
 
 struct VulkanFrameInfo
 {
-    VkCommandBuffer     CommandBuffer;
-    VkCommandPool       CommandPool;
-    VkFence             Fence;
+    VkCommandBuffer     CommandBuffer = VK_NULL_HANDLE;
+    VkCommandPool       CommandPool   = VK_NULL_HANDLE;
+    VkFence             Fence         = VK_NULL_HANDLE;
 };

@@ -37,7 +37,7 @@ VulkanUniformWriter::~VulkanUniformWriter()
 {
 	GetVkDevice()->DeleteResource([descriptorSets = m_DescriptorSets]()
 	{
-			GetVkDevice()->GetDescriptorPool()->FreeDescriptors(descriptorSets);
+		GetVkDevice()->GetDescriptorPool()->FreeDescriptors(descriptorSets);
 	});
 }
 

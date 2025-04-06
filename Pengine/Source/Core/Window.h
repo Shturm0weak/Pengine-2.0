@@ -14,6 +14,10 @@ namespace Pengine
 	class PENGINE_API Window
 	{
 	public:
+		static std::shared_ptr<Window> Create(const std::string& title, const std::string& name, const glm::ivec2& size);
+
+		static std::shared_ptr<Window> CreateHeadless(const std::string& title, const std::string& name, const glm::ivec2& size);
+
 		Window(std::string title, std::string name, const glm::ivec2& size);
 		virtual ~Window() = default;
 		Window(const Window&) = delete;
@@ -73,6 +77,8 @@ namespace Pengine
 		
 		[[nodiscard]] ViewportManager& GetViewportManager() { return m_ViewportManager; }
 
+		[[nodiscard]] bool IsHeadless() const { return m_IsHeadless; }
+
 	protected:
 		std::string m_Name;
 		std::string m_Title;
@@ -81,6 +87,7 @@ namespace Pengine
 		bool m_IsRunning = true;
 		bool m_IsMinimized = false;
 		bool m_HasEditor = false;
+		bool m_IsHeadless = false;
 
 		GLFWwindow* m_Window = nullptr;
 		ImGuiContext* m_ImGuiContext = nullptr;

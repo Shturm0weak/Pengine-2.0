@@ -103,6 +103,7 @@ namespace Pengine
 	inline int drawCallsCount;
 	inline size_t vertexCount;
 	inline size_t currentFrame = 0;
+	inline int64_t vramAllocated = 0;
 
 	inline std::shared_ptr<class Device> device = nullptr;
 

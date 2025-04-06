@@ -151,7 +151,8 @@ namespace Pengine::FileFormats
 			|| fileFormat == Prefab()
 			|| fileFormat == GraphicsSettings()
 			|| fileFormat == Anim()
-			|| fileFormat == Skeleton())
+			|| fileFormat == Skeleton()
+			|| fileFormat == Scene())
 		{
 			return true;
 		}

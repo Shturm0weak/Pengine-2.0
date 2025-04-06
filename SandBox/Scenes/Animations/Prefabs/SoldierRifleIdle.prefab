@@ -1,7 +1,7 @@
 Name: SoldierRifleIdle
 IsEnabled: true
 Transform:
-  Position: [7.29836321, -0.0250618458, -0.465987653]
+  Position: [2, 0, 0]
   Rotation: [1.57079649, -0, 0]
   Scale: [0.00999999978, 0.0100000007, 0.0100000007]
   FollowOwner: true
@@ -9,7 +9,7 @@ Childs:
   - Name: Body
     IsEnabled: true
     Transform:
-      Position: [7.29836321, -0.0250618458, -0.465987653]
+      Position: [2, 4.54747425e-15, -3.81469718e-08]
       Rotation: [1.57079649, -0, 0]
       Scale: [0.00999999978, 0.0100000007, 0.0100000007]
       FollowOwner: true
@@ -21,13 +21,13 @@ Childs:
       Skeleton: dc33b6f5-3f7e-4576-8d01-26e03b92c132
       SkeletalAnimation: 09461b32-4700-4a7d-aad3-3e1d228fdfcd
       Speed: 1
-      CurrentTime: 4334.05225
+      CurrentTime: 5.63052845
     Childs:
       []
   - Name: Head
     IsEnabled: true
     Transform:
-      Position: [7.29836321, -0.0250618458, -0.465987653]
+      Position: [2, 4.54747425e-15, -3.81469718e-08]
       Rotation: [1.57079649, -0, 0]
       Scale: [0.00999999978, 0.0100000007, 0.0100000007]
       FollowOwner: true
@@ -39,6 +39,6 @@ Childs:
       Skeleton: d34b7711-d195-4ed7-b19c-d2ff73595c23
       SkeletalAnimation: 09461b32-4700-4a7d-aad3-3e1d228fdfcd
       Speed: 1
-      CurrentTime: 4334.05225
+      CurrentTime: 5.63052845
     Childs:
       []

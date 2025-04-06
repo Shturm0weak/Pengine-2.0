@@ -245,7 +245,7 @@ void VulkanDevice::CreateLogicalDevice()
 	vkGetDeviceQueue(m_Device, indices.graphicsFamily, 0, &m_GraphicsQueue);
 }
 
-void VulkanDevice::CreateCommandPool()
+VkCommandPool VulkanDevice::CreateCommandPool()
 {
 	QueueFamilyIndices queueFamilyIndices = FindPhysicalQueueFamilies();
 
@@ -254,10 +254,50 @@ void VulkanDevice::CreateCommandPool()
 	poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily;
 	poolInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
-	if (vkCreateCommandPool(m_Device, &poolInfo, nullptr, &m_CommandPool) != VK_SUCCESS)
+	VkCommandPool commandPool;
+	if (vkCreateCommandPool(m_Device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS)
 	{
 		FATAL_ERROR("Device:<" + GetName() + "> Failed to create command pool!");
 	}
+
+	return commandPool;
+}
+
+VkCommandBuffer VulkanDevice::CreateCommandBuffer(VkCommandPool commandPool) const
+{
+	VkCommandBufferAllocateInfo allocInfo{};
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandPool = commandPool;
+	allocInfo.commandBufferCount = 1;
+
+	VkCommandBuffer commandBuffer;
+	if (vkAllocateCommandBuffers(m_Device, &allocInfo, &commandBuffer))
+	{
+		FATAL_ERROR("Device:<" + GetName() + "> Failed to create command buffer!");
+	}
+
+	return commandBuffer;
+}
+
+VkFence VulkanDevice::CreateFence() const
+{
+	VkFenceCreateInfo createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	createInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+	VkFence fence;
+	if (vkCreateFence(m_Device, &createInfo, nullptr, &fence))
+	{
+		FATAL_ERROR("Device:<" + GetName() + "> Failed to create fence!");
+	}
+
+	return fence;
+}
+
+void VulkanDevice::FreeCommandBuffer(VkCommandPool commandPool, VkCommandBuffer commandBuffer) const
+{
+	vkFreeCommandBuffers(m_Device, commandPool, 1, &commandBuffer);
 }
 
 void VulkanDevice::CreateVmaAllocator()
@@ -559,7 +599,7 @@ VulkanDevice::VulkanDevice(const std::string& applicationName)
 	PickPhysicalDevice();
 	CreateLogicalDevice();
 	CreateVmaAllocator();
-	CreateCommandPool();
+	m_CommandPool = CreateCommandPool();
 
 	if (!m_DescriptorPool)
 	{
@@ -650,19 +690,30 @@ void VulkanDevice::CreateBuffer(
 	{
 		FATAL_ERROR("Device:<" + GetName() + "> Failed to create buffer!");
 	}
+
+	vramAllocated += vmaAllocationInfo.size;
+}
+
+void VulkanDevice::DestroyBuffer(
+	VkBuffer buffer,
+	VmaAllocation vmaAllocation,
+	VmaAllocationInfo vmaAllocationInfo) const
+{
+	GetVkDevice()->DeleteResource([buffer, vmaAllocation, size = vmaAllocationInfo.size]()
+	{
+		vramAllocated -= size;
+		assert(vramAllocated >= 0);
+
+		vmaDestroyBuffer(GetVkDevice()->GetVmaAllocator(), buffer, vmaAllocation);
+	});
 }
 
 VkCommandBuffer VulkanDevice::BeginSingleTimeCommands() const
 {
 	m_Mutex.lock();
-	VkCommandBufferAllocateInfo allocInfo{};
-	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	allocInfo.commandPool = m_CommandPool;
-	allocInfo.commandBufferCount = 1;
-
-	VkCommandBuffer commandBuffer;
-	vkAllocateCommandBuffers(m_Device, &allocInfo, &commandBuffer);
+	m_SingleTimeCommandChecker = true;
+	
+	VkCommandBuffer commandBuffer = CreateCommandBuffer(GetCommandPool());
 
 	VkCommandBufferBeginInfo beginInfo{};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -675,6 +726,12 @@ VkCommandBuffer VulkanDevice::BeginSingleTimeCommands() const
 
 void VulkanDevice::EndSingleTimeCommands(const VkCommandBuffer commandBuffer) const
 {
+	if (!m_SingleTimeCommandChecker)
+	{
+		Logger::Error("Device:<" + GetName() + "> Failed to EndSingleTimeCommands. Forgot to call BeginSingleTimeCommands!?");
+		return;
+	}
+
 	vkEndCommandBuffer(commandBuffer);
 
 	VkSubmitInfo submitInfo{};
@@ -685,7 +742,9 @@ void VulkanDevice::EndSingleTimeCommands(const VkCommandBuffer commandBuffer) co
 	vkQueueSubmit(m_GraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
 	vkQueueWaitIdle(m_GraphicsQueue);
 
-	vkFreeCommandBuffers(m_Device, m_CommandPool, 1, &commandBuffer);
+	FreeCommandBuffer(GetCommandPool(), commandBuffer);
+
+	m_SingleTimeCommandChecker = false;
 	m_Mutex.unlock();
 }
 
@@ -801,6 +860,22 @@ void VulkanDevice::CreateImage(
 	{
 		FATAL_ERROR("Device:<" + GetName() + "> Failed to create image!");
 	}
+
+	vramAllocated += vmaAllocationInfo.size;
+}
+
+void VulkanDevice::DestroyImage(
+	VkImage image,
+	VmaAllocation allocation,
+	VmaAllocationInfo vmaAllocationInfo)
+{
+	GetVkDevice()->DeleteResource([image, allocation, size = vmaAllocationInfo.size]()
+	{
+		vramAllocated -= size;
+		assert(vramAllocated >= 0);
+
+		vmaDestroyImage(GetVkDevice()->GetVmaAllocator(), image, allocation);
+	});
 }
 
 void VulkanDevice::TransitionImageLayout(
@@ -1049,6 +1124,8 @@ void VulkanDevice::DeleteResource(std::function<void()>&& callback)
 
 void VulkanDevice::FlushDeletionQueue(bool immediate)
 {
+	Lock lock;
+
 	std::vector<size_t> queuesToDelete;
 	for (auto& [frame, queue] : m_DeletionQueue)
 	{

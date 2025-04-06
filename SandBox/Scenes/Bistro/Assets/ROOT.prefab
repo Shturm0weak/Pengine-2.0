@@ -1159,7 +1159,6 @@ Childs:
       FollowOwner: true
     Renderer3D:
       Mesh: 0bbf3e9f-13ba-4044-a275-e119a6b3445b
-      Material: 1f75dc88-db6e-43d2-9c4c-75166c7adb50
       RenderingOrder: 5
     Childs:
       []
@@ -1172,7 +1171,6 @@ Childs:
       FollowOwner: true
     Renderer3D:
       Mesh: 8b4c34d7-6d7e-4ed5-9510-dd931c125f76
-      Material: 66a3da65-f14c-4e5a-934f-8d542bc03faa
       RenderingOrder: 5
     Childs:
       []
@@ -1185,7 +1183,6 @@ Childs:
       FollowOwner: true
     Renderer3D:
       Mesh: 6c112856-bfc7-4e5d-a5f1-03ab571ce8d5
-      Material: 062c70ec-a3f6-4602-8fb8-7ca8a6213067
       RenderingOrder: 5
     Childs:
       []
@@ -1198,7 +1195,6 @@ Childs:
       FollowOwner: true
     Renderer3D:
       Mesh: 07b57f47-42c5-4309-ad21-c08b292a27c3
-      Material: b44fc33f-97bf-4816-be0b-7489eb117b6a
       RenderingOrder: 5
     Childs:
       []

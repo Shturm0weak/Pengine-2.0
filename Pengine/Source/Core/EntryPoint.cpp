@@ -47,7 +47,7 @@ void LoadAllBaseMaterials(const std::filesystem::path& filepath)
 	for (const auto& filepath : baseMaterialFilepaths)
 	{
 		AsyncAssetLoader::GetInstance().AsyncLoadBaseMaterial(filepath, [
-			&baseMaterialsLoadedCount](std::shared_ptr<BaseMaterial> baseMaterial)
+			&baseMaterialsLoadedCount](std::weak_ptr<BaseMaterial> baseMaterial)
 		{
 			baseMaterialsLoadedCount.store(baseMaterialsLoadedCount.load() + 1);
 		});
@@ -147,13 +147,6 @@ void EntryPoint::Run() const
 	auto gDevice = Device::Create("Pengine");
 
 	EventSystem& eventSystem = EventSystem::GetInstance();
-	std::shared_ptr<Window> mainWindow = WindowManager::GetInstance().Create("Pengine", "Main",
-		{ 800, 800 });
-
-	mainWindow->GetViewportManager().Create("Main", { 800, 800 });
-	mainWindow->SetEditor(true);
-
-	WindowManager::GetInstance().SetCurrentWindow(mainWindow);
 
 	Serializer::GenerateFilesUUID(std::filesystem::current_path());
 	RenderPassManager::GetInstance();
@@ -165,6 +158,14 @@ void EntryPoint::Run() const
 
 	CreateDefaultResources();
 	LoadAllBaseMaterials(std::filesystem::path("Materials"));
+
+	std::shared_ptr<Window> mainWindow = WindowManager::GetInstance().Create("Pengine", "Main",
+		{ 800, 800 });
+
+	mainWindow->GetViewportManager().Create("Main", { 800, 800 });
+	mainWindow->SetEditor(true);
+
+	WindowManager::GetInstance().SetCurrentWindow(mainWindow);
 
 	m_Application->OnPreStart();
 
@@ -209,14 +210,9 @@ void EntryPoint::Run() const
 					camera && camera->HasComponent<Camera>())
 				{
 					Camera& cameraComponent = camera->GetComponent<Camera>();
-					const std::shared_ptr<RenderTarget> renderTarget = cameraComponent.GetRendererTarget(viewportName);
-					if (!renderTarget)
-					{
-						continue;
-					}
-
 					if (!cameraComponent.GetPassName().empty())
 					{
+						const std::shared_ptr<RenderTarget> renderTarget = cameraComponent.GetRendererTarget(viewportName);
 						const std::shared_ptr<FrameBuffer> frameBuffer = renderTarget->GetFrameBuffer(cameraComponent.GetPassName());
 						if (frameBuffer)
 						{
@@ -275,6 +271,8 @@ void EntryPoint::Run() const
 				window->EndFrame(frame);
 			}
 		}
+
+		device->FlushDeletionQueue();
 
 		++currentFrame;
 	}

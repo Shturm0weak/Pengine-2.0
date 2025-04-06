@@ -177,14 +177,12 @@ VulkanTexture::~VulkanTexture()
 {
 	for (auto& imageData : m_ImageDatas)
 	{
-		GetVkDevice()->DeleteResource([
-			image = imageData.image,
-			view = imageData.view,
-			vmaAllocation = imageData.vmaAllocation]()
+		GetVkDevice()->DeleteResource([view = imageData.view]()
 		{
 			vkDestroyImageView(GetVkDevice()->GetDevice(), view, nullptr);
-			vmaDestroyImage(GetVkDevice()->GetVmaAllocator(), image, vmaAllocation);
 		});
+
+		GetVkDevice()->DestroyImage(imageData.image, imageData.vmaAllocation, imageData.vmaAllocationInfo);
 	}
 }
 

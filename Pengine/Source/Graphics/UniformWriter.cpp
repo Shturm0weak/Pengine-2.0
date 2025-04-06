@@ -1,6 +1,7 @@
 #include "UniformWriter.h"
 
 #include "../Core/Logger.h"
+#include "../Core/TextureManager.h"
 #include "../Utils/Utils.h"
 #include "../Vulkan/VulkanUniformWriter.h"
 
@@ -25,6 +26,14 @@ UniformWriter::UniformWriter(
 	: m_UniformLayout(uniformLayout)
 	, m_IsMultiBuffered(isMultiBuffered)
 {
+}
+
+UniformWriter::~UniformWriter()
+{
+	for (auto& [name, texture] : m_TexturesByName)
+	{
+		TextureManager::GetInstance().Delete(texture);
+	}
 }
 
 std::shared_ptr<Texture> UniformWriter::GetTexture(const std::string& name)

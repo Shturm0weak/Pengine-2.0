@@ -12,54 +12,6 @@
 
 using namespace Pengine;
 
-Scene::Resources Scene::CollectResources(std::vector<std::shared_ptr<Entity>> entities)
-{
-	Resources resources{};
-
-	for (auto entity : m_Entities)
-	{
-		if (entity->HasComponent<Renderer3D>())
-		{
-			const Renderer3D& r3d = entity->GetComponent<Renderer3D>();
-
-			if (r3d.mesh && std::filesystem::exists(r3d.mesh->GetFilepath()))
-			{
-				resources.meshes.emplace(r3d.mesh);
-			}
-
-			if (r3d.material)
-			{
-				resources.materials.emplace(r3d.material);
-			}
-
-			if (r3d.material && r3d.material->GetBaseMaterial())
-			{
-				resources.baseMaterials.emplace(r3d.material->GetBaseMaterial());
-			}
-		}
-	}
-
-	return resources;
-}
-
-void Scene::DeleteResources(const Resources& resources)
-{
-	for (auto material : resources.materials)
-	{
-		MaterialManager::GetInstance().DeleteMaterial(material);
-	}
-
-	for (auto baseMaterial : resources.baseMaterials)
-	{
-		MaterialManager::GetInstance().DeleteBaseMaterial(baseMaterial);
-	}
-
-	for (auto mesh : resources.meshes)
-	{
-		MeshManager::GetInstance().DeleteMesh(mesh);
-	}
-}
-
 void Scene::Copy(const Scene& scene)
 {
 	m_Name = scene.GetName();
@@ -74,6 +26,14 @@ void Scene::Copy(const Scene& scene)
 	//		createdGameObject->Copy(*gameObject);
 	//	}
 	//}
+}
+
+std::shared_ptr<Scene> Pengine::Scene::Create(const std::string& name, const std::string& tag)
+{
+	std::shared_ptr<Scene> scene = std::make_shared<Scene>(name, none);
+	scene->SetTag(tag);
+
+	return scene;
 }
 
 Scene::Scene(const std::string& name, const std::filesystem::path& filepath)
@@ -100,8 +60,6 @@ void Scene::Clear()
 {
 	m_Name = none;
 	m_Filepath = none;
-
-	DeleteResources(CollectResources(m_Entities));
 
 	m_Entities.clear();
 	m_Registry.clear();
@@ -202,15 +160,15 @@ void Scene::DeleteEntity(std::shared_ptr<Entity>& entity)
 		parent->RemoveChild(entity);
 	}
 
-	if (entity->GetHandle() != entt::tombstone)
-	{
-		m_Registry.destroy(entity->GetHandle());
-	}
-
 	if (const auto entityToErase = std::find(m_Entities.begin(), m_Entities.end(), entity);
 		entityToErase != m_Entities.end())
 	{
 		m_Entities.erase(entityToErase);
+	}
+
+	if (entity->GetHandle() != entt::tombstone)
+	{
+		m_Registry.destroy(entity->GetHandle());
 	}
 
 	entity = nullptr;

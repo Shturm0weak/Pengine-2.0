@@ -50,6 +50,8 @@ void Renderer::Update(
 		renderInfo.frame = frame;
 		renderInfo.viewportSize = { 0, 0 };
 
+		renderer->BeginCommandLabel("Scene: " + scene->GetName(), glm::vec3(1.0f, 0.75f, 0.0f), frame);
+
 		for (const auto& type : passPerSceneOrder)
 		{
 			const std::shared_ptr<Pass> pass = RenderPassManager::GetInstance().GetPass(type);
@@ -74,7 +76,7 @@ void Renderer::Update(
 
 			pass->Execute(renderInfo);
 		}
-		
+
 		for (const auto& viewport : viewports)
 		{
 			renderInfo.camera = viewport.camera;
@@ -83,6 +85,8 @@ void Renderer::Update(
 			renderInfo.renderTarget = viewport.renderTarget;
 
 			RenderPassManager::PrepareUniformsPerViewportBeforeDraw(renderInfo);
+
+			renderer->BeginCommandLabel("Camera: " + viewport.camera->GetName(), glm::vec3(1.0f, 0.75f, 0.0f), frame);
 
 			for (const auto& type : passPerViewportOrder)
 			{
@@ -108,6 +112,10 @@ void Renderer::Update(
 
 				pass->Execute(renderInfo);
 			}
+
+			renderer->EndCommandLabel(frame);
 		}
+
+		renderer->EndCommandLabel(frame);
 	}
 }

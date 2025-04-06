@@ -17,6 +17,10 @@ namespace Pengine
 
 		virtual void ShutDown() = 0;
 
+		virtual void WaitIdle() const = 0;
+
+		virtual void FlushDeletionQueue(bool immediate = false) = 0;
+
 	protected:
 		Device() = default;
 		virtual ~Device() = default;

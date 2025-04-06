@@ -16,6 +16,8 @@ namespace Pengine
 
 		std::shared_ptr<Window> Create(const std::string& title, const std::string& name, const glm::ivec2& size);
 
+		std::shared_ptr<Window> CreateHeadless(const std::string& title, const std::string& name, const glm::ivec2& size);
+
 		[[nodiscard]] std::shared_ptr<Window> GetWindowByName(const std::string& name) const;
 
 		[[nodiscard]] std::shared_ptr<Window> GetWindowByGLFW(GLFWwindow* glfwWindow) const;

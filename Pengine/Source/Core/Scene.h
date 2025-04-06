@@ -20,6 +20,8 @@ namespace Pengine
 			bool m_DrawBoundingBoxes = false;
 		};
 
+		static std::shared_ptr<Scene> Create(const std::string& name, const std::string& tag);
+
 		Scene(const std::string& name, const std::filesystem::path& filepath);
 		Scene(const Scene& scene);
 		~Scene();
@@ -71,10 +73,6 @@ namespace Pengine
 			std::set<std::shared_ptr<class BaseMaterial>> baseMaterials;
 			std::set<std::shared_ptr<class Material>> materials;
 		};
-
-		Resources CollectResources(std::vector<std::shared_ptr<Entity>> entities);
-
-		void DeleteResources(const Resources& resources);
 
 		std::unordered_map<std::string, std::shared_ptr<ComponentSystem>> m_ComponentSystemsByName;
 

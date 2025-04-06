@@ -88,6 +88,11 @@ namespace Pengine::Vk
 			VmaAllocation& vmaAllocation,
 			VmaAllocationInfo& vmaAllocationInfo) const;
 
+		void DestroyBuffer(
+			VkBuffer buffer,
+			VmaAllocation vmaAllocation,
+			VmaAllocationInfo vmaAllocationInfo) const;
+
 		[[nodiscard]] VkCommandBuffer BeginSingleTimeCommands() const;
 
 		void EndSingleTimeCommands(VkCommandBuffer commandBuffer) const;
@@ -122,6 +127,11 @@ namespace Pengine::Vk
 			VmaAllocation& vmaAllocation,
 			VmaAllocationInfo& vmaAllocationInfo) const;
 
+		void DestroyImage(
+			VkImage image,
+			VmaAllocation allocation,
+			VmaAllocationInfo vmaAllocationInfo);
+
 		void TransitionImageLayout(
 			VkImage image,
 			VkFormat format,
@@ -148,17 +158,25 @@ namespace Pengine::Vk
 
 		void CommandEndLabel(VkCommandBuffer commandBuffer) const;
 
-		void WaitIdle() const;
+		virtual void WaitIdle() const override;
 
 		void DeleteResource(std::function<void()>&& callback);
 
-		void FlushDeletionQueue(bool immediate = false);
+		virtual void FlushDeletionQueue(bool immediate = false) override;
 
 		VkCommandBuffer GetCommandBufferFromFrame(void* frame);
 
 		VkSurfaceKHR CreateSurface(GLFWwindow* window);
 
+		VkCommandPool CreateCommandPool();
+
+		VkCommandBuffer CreateCommandBuffer(VkCommandPool commandPool) const;
+
+		VkFence CreateFence() const;
+
+		void FreeCommandBuffer(VkCommandPool commandPool, VkCommandBuffer commandBuffer) const;
 	private:
+
 		void CreateInstance(const std::string& applicationName);
 
 		void SetupDebugMessenger();
@@ -168,8 +186,6 @@ namespace Pengine::Vk
 		void PickPhysicalDevice();
 
 		void CreateLogicalDevice();
-
-		void CreateCommandPool();
 
 		void CreateVmaAllocator();
 
@@ -214,6 +230,8 @@ namespace Pengine::Vk
 		std::unordered_map<size_t, std::deque<std::function<void()>>> m_DeletionQueue;
 
 		std::shared_ptr<VulkanDescriptorPool> m_DescriptorPool = nullptr;
+		
+		mutable bool m_SingleTimeCommandChecker = false;
 
 	public:
 		class Lock
