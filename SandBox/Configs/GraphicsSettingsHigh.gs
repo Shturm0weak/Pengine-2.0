@@ -30,7 +30,7 @@ Bloom:
 SSR:
   IsEnabled: true
   MaxDistance: 15
-  Resolution: 1
+  Resolution: 0.300000012
   ResolutionBlurScale: 0
   ResolutionScale: 1
   StepCount: 10

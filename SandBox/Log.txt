@@ -1,912 +1,676 @@
-[Sun Apr  6 22:23:24 2025] Engine config has been loaded!
-[Sun Apr  6 22:23:24 2025] Graphics API:2
-[Sun Apr  6 22:23:24 2025] Available extensions:
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_device_group_creation
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_display
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_external_fence_capabilities
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_external_memory_capabilities
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_external_semaphore_capabilities
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_get_display_properties2
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_get_physical_device_properties2
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_get_surface_capabilities2
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_surface
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_surface_protected_capabilities
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_win32_surface
-[Sun Apr  6 22:23:24 2025] 	VK_EXT_debug_report
-[Sun Apr  6 22:23:24 2025] 	VK_EXT_debug_utils
-[Sun Apr  6 22:23:24 2025] 	VK_EXT_direct_mode_display
-[Sun Apr  6 22:23:24 2025] 	VK_EXT_swapchain_colorspace
-[Sun Apr  6 22:23:24 2025] 	VK_NV_external_memory_capabilities
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_portability_enumeration
-[Sun Apr  6 22:23:24 2025] 	VK_LUNARG_direct_driver_loading
-[Sun Apr  6 22:23:24 2025] Required extensions:
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_surface
-[Sun Apr  6 22:23:24 2025] 	VK_KHR_win32_surface
-[Sun Apr  6 22:23:24 2025] Physical device count: 2
-[Sun Apr  6 22:23:24 2025] Physical devices:
-[Sun Apr  6 22:23:24 2025]  * NVIDIA GeForce RTX 3080 Ti Laptop GPU - Suitable
-[Sun Apr  6 22:23:24 2025]  * Intel(R) Iris(R) Xe Graphics - Suitable
-[Sun Apr  6 22:23:24 2025] Choosen physical device: NVIDIA GeForce RTX 3080 Ti Laptop GPU
-[Sun Apr  6 22:23:24 2025] Texture:Editor\Images\FileIcon.png has been loaded!
-[Sun Apr  6 22:23:24 2025] Texture:Editor\Images\FolderIcon.png has been loaded!
-[Sun Apr  6 22:23:24 2025] Texture:Editor\Images\HideIcon.png has been loaded!
-[Sun Apr  6 22:23:24 2025] Texture:Editor\Images\MaterialIcon.png has been loaded!
-[Sun Apr  6 22:23:24 2025] Texture:Editor\Images\MeshIcon.png has been loaded!
-[Sun Apr  6 22:23:24 2025] Texture:Editor\Images\MetaIcon.png has been loaded!
-[Sun Apr  6 22:23:24 2025] Texture:Editor\Images\PlayButton.png has been loaded!
-[Sun Apr  6 22:23:24 2025] Texture:Editor\Images\ShowIcon.png has been loaded!
-[Sun Apr  6 22:23:24 2025] Texture:Editor\Images\StopButton.png has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\DefaultReflection.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\Atmosphere.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\Deferred.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\RectangleUI.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\BloomUpSample.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\Final.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\BloomDownSample.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\Line.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/DefaultReflection.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Atmosphere.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\MeshBaseDoubleSided.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\MeshBaseSkinned.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Deferred.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/RectangleUI.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/BloomUpSample.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Final.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/BloomDownSample.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Line.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Atmosphere.geom has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/DefaultReflection.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/OpaqueSkinned.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/BloomUpSample.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/RectangleUI.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Deferred.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/BloomDownSample.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Final.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Atmosphere.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Line.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\SkyBox.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\SSAO.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\SSAOBlur.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/SkyBox.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/SSAO.comp has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/SSAOBlur.comp has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\SSRBlur.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] BaseMaterial:Materials\SSR.basemat has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/SkyBox.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/SSRBlur.comp has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/SSR.comp has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/TransparentSkinned.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/CSMSkinned.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/ZPrePassSkinned.vert has been loaded!
-[Sun Apr  6 22:23:24 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:24 2025] Mesh:Meshes\Sphere.mesh has been loaded!
-[Sun Apr  6 22:23:24 2025] Material:Materials\MeshBaseDoubleSided.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\arch.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_arch_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\bricks.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\spnza_bricks_a_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\ceiling.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_ceiling_a_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\chain.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\chain_texture.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\column_a.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_a_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\column_b.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_b_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\column_c.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_c_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\details.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_details_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\fabric_a.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\fabric_c.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\fabric_d.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_blue_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\fabric_e.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Screenshot:Thumbnails\7aa4e73e-0548-4db3-b9cb-e0e56cb45f32.png has been saved!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_green_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\fabric_f.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Screenshot:Thumbnails\6a7ee198-2ad4-4eaf-bf75-81ca667ac856.png has been saved!
-[Sun Apr  6 22:23:27 2025] Texture:Thumbnails\7aa4e73e-0548-4db3-b9cb-e0e56cb45f32.png has been loaded!
-[Sun Apr  6 22:23:27 2025] Screenshot:Thumbnails\3c7d6ee1-045c-4de4-9c93-1b8fbc659cbd.png has been saved!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_green_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Screenshot:Thumbnails\684ed451-fa10-437e-ae50-b5868dd66e10.png has been saved!
-[Sun Apr  6 22:23:27 2025] Texture:Thumbnails\6a7ee198-2ad4-4eaf-bf75-81ca667ac856.png has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\fabric_g.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Screenshot:Thumbnails\ea5e115d-adb3-4a75-a3c4-c911df0d2957.png has been saved!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_blue_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Thumbnails\3c7d6ee1-045c-4de4-9c93-1b8fbc659cbd.png has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\flagpole.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Screenshot:Thumbnails\001971e9-ac32-40ab-b932-c1d58be42a48.png has been saved!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_flagpole_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Thumbnails\684ed451-fa10-437e-ae50-b5868dd66e10.png has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\floor.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_floor_a_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Screenshot:Thumbnails\1923deab-465d-4786-beff-c16c22e31a08.png has been saved!
-[Sun Apr  6 22:23:27 2025] Texture:Thumbnails\ea5e115d-adb3-4a75-a3c4-c911df0d2957.png has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\leaf.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Screenshot:Thumbnails\91c79511-0f6e-4844-a434-51f1e708bc9d.png has been saved!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\sponza_thorn_diff.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Thumbnails\001971e9-ac32-40ab-b932-c1d58be42a48.png has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\Material__25.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\lion.tga has been loaded!
-[Sun Apr  6 22:23:27 2025] Screenshot:Thumbnails\655c59f7-791f-472b-865c-665fe8fbb22f.png has been saved!
-[Sun Apr  6 22:23:27 2025] Texture:Thumbnails\1923deab-465d-4786-beff-c16c22e31a08.png has been loaded!
-[Sun Apr  6 22:23:27 2025] Material:Scenes\Sponza\Assets\Material__298.mat has been loaded!
-[Sun Apr  6 22:23:27 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:27 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:27 2025] Texture:Scenes\Sponza\Assets\textures\background.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\91c79511-0f6e-4844-a434-51f1e708bc9d.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\Material__47.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\7e6b4a00-f785-4973-a2f2-ad7e001295c7.png has been saved!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\655c59f7-791f-472b-865c-665fe8fbb22f.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\Material__57.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\a0a1464a-246c-48f5-b76b-ac28ee7ff122.png has been saved!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\vase_plant.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\7e6b4a00-f785-4973-a2f2-ad7e001295c7.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\roof.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_roof_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\97b53ba0-beb1-4dd6-be50-d5f34a95a7c9.png has been saved!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\a0a1464a-246c-48f5-b76b-ac28ee7ff122.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__25.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Prefab:Scenes\Sponza\Assets\sponza.prefab has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\Material__25.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\lion.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__298.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\Material__298.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\background.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_257_sponza_257_Material__47.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\Material__47.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_Material__57.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\Material__57.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\2ed2e2a4-a90f-4656-bc9b-bca5a3a0afd6.png has been saved!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_39_sponza_39_arch.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\arch.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\vase_plant.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_382_sponza_382_bricks.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\bricks.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_arch_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_38_sponza_38_ceiling.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\ceiling.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\spnza_bricks_a_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_339_sponza_339_chain.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\chain.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\chain_texture.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_ceiling_a_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_10_sponza_10_column_a.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\column_a.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_141_sponza_141_column_b.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\column_b.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_a_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_b_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_83_sponza_83_column_c.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_72_sponza_72_details.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\column_c.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\details.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_column_c_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_details_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_288_sponza_288_fabric_a.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\fabric_a.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_325_sponza_325_fabric_c.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\ee0a4552-2e4f-4c89-b8a4-a5aedef4c1c9.png has been saved!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\fabric_c.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_289_sponza_289_fabric_d.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\fabric_d.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_285_sponza_285_fabric_e.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_blue_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\fabric_e.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_327_sponza_327_fabric_f.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\fabric_f.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_fabric_green_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_326_sponza_326_fabric_g.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\fabric_g.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_271_sponza_271_flagpole.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\flagpole.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_green_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_18_sponza_18_floor.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\2a6b84df-4ab4-46da-87d0-42d5bab1db33.png has been saved!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_flagpole_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_curtain_blue_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\floor.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_275_sponza_275_leaf.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\leaf.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_thorn_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\roof.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_381_sponza_381_roof.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_floor_a_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_373_sponza_373_vase.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\vase.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\vase_hanging.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_344_sponza_344_vase_hanging.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_vase_round.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\sponza_roof_diff.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\vase_dif.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\vase_hanging.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\vase_round.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\vase_round.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\415cd3e7-4b62-425b-a90f-9df2a9d81bee.png has been saved!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\d6832658-8fff-4f6f-8886-d77259c66054.png has been saved!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\97b53ba0-beb1-4dd6-be50-d5f34a95a7c9.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_10_sponza_10_column_a.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\2ed2e2a4-a90f-4656-bc9b-bca5a3a0afd6.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_141_sponza_141_column_b.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\ee0a4552-2e4f-4c89-b8a4-a5aedef4c1c9.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_18_sponza_18_floor.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\2a6b84df-4ab4-46da-87d0-42d5bab1db33.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_257_sponza_257_Material__47.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\5d1ab9e5-a0cc-4b3b-b0de-e9f31bf65044.png has been saved!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\67ea6dbd-4bd4-4da2-ae5f-3a58e1245213.png has been saved!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\415cd3e7-4b62-425b-a90f-9df2a9d81bee.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_271_sponza_271_flagpole.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\d6832658-8fff-4f6f-8886-d77259c66054.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_275_sponza_275_leaf.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\5c5d1820-fac3-41f0-808b-e4331e5a1711.png has been saved!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\5d1ab9e5-a0cc-4b3b-b0de-e9f31bf65044.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_285_sponza_285_fabric_e.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\67ea6dbd-4bd4-4da2-ae5f-3a58e1245213.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_288_sponza_288_fabric_a.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_289_sponza_289_fabric_d.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\b0405b52-510d-4308-8bfd-a13533b876b5.png has been saved!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_325_sponza_325_fabric_c.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\5c5d1820-fac3-41f0-808b-e4331e5a1711.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_326_sponza_326_fabric_g.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_327_sponza_327_fabric_f.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_339_sponza_339_chain.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\f5f0f5f6-6f81-4e15-9a21-c792d494b811.png has been saved!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_344_sponza_344_vase_hanging.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_Material__57.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_369_sponza_369_vase_round.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_373_sponza_373_vase.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__25.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_378_sponza_378_Material__298.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_381_sponza_381_roof.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_382_sponza_382_bricks.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_38_sponza_38_ceiling.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_39_sponza_39_arch.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\0173e1a9-3a75-4bbf-82b2-1b7a8c16df97.png has been saved!
-[Sun Apr  6 22:23:28 2025] Texture:Thumbnails\b0405b52-510d-4308-8bfd-a13533b876b5.png has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_72_sponza_72_details.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Mesh:Scenes\Sponza\Assets\sponza_83_sponza_83_column_c.mesh has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\f125f757-ee5b-4ea9-b9aa-edd3b0cb39c7.png has been saved!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\715c4939-1cca-4962-9ba7-8794cfae2e70.png has been saved!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\vase.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\3528b191-7154-4491-9c5d-52320120aa28.png has been saved!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\f441187a-7db9-4aa7-8c70-04be0649f4a1.png has been saved!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\vase_dif.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\vase_hanging.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\2e13db6a-f01e-45a9-bd6a-e21ad2c14636.png has been saved!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\451a977e-9c10-4d9b-9870-d620d90d60a2.png has been saved!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\vase_hanging.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\00b9aa7d-f5c0-43e0-acf2-833b71db053c.png has been saved!
-[Sun Apr  6 22:23:28 2025] Material:Scenes\Sponza\Assets\vase_round.mat has been loaded!
-[Sun Apr  6 22:23:28 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\e8e792eb-032a-44ae-924c-b56f6c10006b.png has been saved!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\cc76eb14-e806-492c-a666-868b4e86cf59.png has been saved!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Sun Apr  6 22:23:28 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Sun Apr  6 22:23:28 2025] Texture:Scenes\Sponza\Assets\textures\vase_round.tga has been loaded!
-[Sun Apr  6 22:23:28 2025] Screenshot:Thumbnails\cd13f0d3-d173-464b-8d91-ff374066d162.png has been saved!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\97b4836a-c18b-4656-b0fe-7bff1a948efa.png has been saved!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\856d86fd-553a-4da6-bc23-097467cecb3b.png has been saved!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\821348e2-8883-411b-80e9-b10555d458ea.png has been saved!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\400295d0-224d-4ecd-a39b-cb548167c150.png has been saved!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\f5f0f5f6-6f81-4e15-9a21-c792d494b811.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\773111ef-6f80-4436-b0dd-99c535de6e26.png has been saved!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\1c1b9248-e899-4f1a-835f-713dd19cd604.png has been saved!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\83aa1a15-c390-474b-818b-e723b4ca49b6.png has been saved!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\c8e36eba-edf1-4abd-8ebe-4f74f412e086.png has been saved!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\3528b191-7154-4491-9c5d-52320120aa28.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\0173e1a9-3a75-4bbf-82b2-1b7a8c16df97.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\edaa8a29-f4c7-4c9d-8e52-131ad7e22559.png has been saved!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\f125f757-ee5b-4ea9-b9aa-edd3b0cb39c7.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\715c4939-1cca-4962-9ba7-8794cfae2e70.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\9a9794eb-feb1-4522-b40e-4fd7e39c47ac.png has been saved!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\f441187a-7db9-4aa7-8c70-04be0649f4a1.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\2e13db6a-f01e-45a9-bd6a-e21ad2c14636.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\451a977e-9c10-4d9b-9870-d620d90d60a2.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\e8e792eb-032a-44ae-924c-b56f6c10006b.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\00b9aa7d-f5c0-43e0-acf2-833b71db053c.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\cc76eb14-e806-492c-a666-868b4e86cf59.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\cd13f0d3-d173-464b-8d91-ff374066d162.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\97b4836a-c18b-4656-b0fe-7bff1a948efa.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\856d86fd-553a-4da6-bc23-097467cecb3b.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\773111ef-6f80-4436-b0dd-99c535de6e26.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\1c1b9248-e899-4f1a-835f-713dd19cd604.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\dc365105-bdb6-42f6-a7d5-5e813731f8f4.png has been saved!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\821348e2-8883-411b-80e9-b10555d458ea.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\400295d0-224d-4ecd-a39b-cb548167c150.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\edaa8a29-f4c7-4c9d-8e52-131ad7e22559.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\83aa1a15-c390-474b-818b-e723b4ca49b6.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\9a9794eb-feb1-4522-b40e-4fd7e39c47ac.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\c8e36eba-edf1-4abd-8ebe-4f74f412e086.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\dc365105-bdb6-42f6-a7d5-5e813731f8f4.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\5ffb2ecc-730e-4c36-ba5b-c0d7854f070e.png has been saved!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\7a03d084-a2ea-40f5-b38f-a0416c9e3add.png has been saved!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\5ffb2ecc-730e-4c36-ba5b-c0d7854f070e.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\7a03d084-a2ea-40f5-b38f-a0416c9e3add.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\d13522f0-65ff-43a9-99fa-c9d49bc7c898.png has been saved!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\d13522f0-65ff-43a9-99fa-c9d49bc7c898.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\02ef753b-995d-4b8d-af43-5038f1d1fe41.png has been saved!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\5aa07aa8-42b8-473d-bf73-102f6cfe04c6.png has been saved!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\02ef753b-995d-4b8d-af43-5038f1d1fe41.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\5aa07aa8-42b8-473d-bf73-102f6cfe04c6.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\d2ac9856-020b-4f13-a679-350a0903d612.png has been saved!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\d2ac9856-020b-4f13-a679-350a0903d612.png has been loaded!
-[Sun Apr  6 22:23:29 2025] Screenshot:Thumbnails\49b7cf6d-6f5c-4f7c-a0d0-406d9bde0b29.png has been saved!
-[Sun Apr  6 22:23:29 2025] Texture:Thumbnails\49b7cf6d-6f5c-4f7c-a0d0-406d9bde0b29.png has been loaded!
-[Sun Apr  6 22:23:33 2025] Material:Scenes\Examples\AutumnHouse\Assets\House_part01_mat.mat has been loaded!
-[Sun Apr  6 22:23:33 2025] Texture:Scenes\Examples\AutumnHouse\Assets\textures\House_part01_mat_baseColor.png has been loaded!
-[Sun Apr  6 22:23:33 2025] Mesh:Scenes\Examples\AutumnHouse\Assets\House_veranda_lambert16_0.mesh has been loaded!
-[Sun Apr  6 22:23:33 2025] Mesh:Scenes\Examples\AutumnHouse\Assets\initialShadingGrouppolySurface116_polySurface3_lambert17_0.mesh has been loaded!
-[Sun Apr  6 22:23:33 2025] Material:Scenes\Examples\AutumnHouse\Assets\lambert14.mat has been loaded!
-[Sun Apr  6 22:23:33 2025] Texture:Scenes\Examples\AutumnHouse\Assets\textures\lambert14_baseColor.png has been loaded!
-[Sun Apr  6 22:23:33 2025] Material:Scenes\Examples\AutumnHouse\Assets\lambert15.mat has been loaded!
-[Sun Apr  6 22:23:33 2025] Texture:Scenes\Examples\AutumnHouse\Assets\textures\lambert15_baseColor.png has been loaded!
-[Sun Apr  6 22:23:33 2025] Material:Scenes\Examples\AutumnHouse\Assets\lambert16.mat has been loaded!
-[Sun Apr  6 22:23:33 2025] Texture:Scenes\Examples\AutumnHouse\Assets\textures\lambert16_baseColor.png has been loaded!
-[Sun Apr  6 22:23:33 2025] Material:Scenes\Examples\AutumnHouse\Assets\lambert17.mat has been loaded!
-[Sun Apr  6 22:23:33 2025] Texture:Scenes\Examples\AutumnHouse\Assets\textures\lambert17_baseColor.png has been loaded!
-[Sun Apr  6 22:23:33 2025] Material:Scenes\Examples\AutumnHouse\Assets\lambert18.mat has been loaded!
-[Sun Apr  6 22:23:33 2025] Mesh:Scenes\Examples\AutumnHouse\Assets\polySurface198_House_part01_mat_0.mesh has been loaded!
-[Sun Apr  6 22:23:33 2025] Mesh:Scenes\Examples\AutumnHouse\Assets\polySurface393_lambert14_0.mesh has been loaded!
-[Sun Apr  6 22:23:33 2025] Mesh:Scenes\Examples\AutumnHouse\Assets\polySurface637_lambert15_0.mesh has been loaded!
-[Sun Apr  6 22:23:33 2025] Mesh:Scenes\Examples\AutumnHouse\Assets\polySurface638_lambert18_0.mesh has been loaded!
-[Sun Apr  6 22:23:33 2025] Prefab:Scenes\Examples\AutumnHouse\Assets\Sketchfab_model.prefab has been loaded!
-[Sun Apr  6 22:23:33 2025] Screenshot:Thumbnails\1a670cef-649b-4011-90e5-9bd20595b708.png has been saved!
-[Sun Apr  6 22:23:33 2025] Screenshot:Thumbnails\b54a0a53-8664-4554-bf59-db91b699c46a.png has been saved!
-[Sun Apr  6 22:23:33 2025] Mesh:Scenes\Examples\AutumnHouse\Assets\House_veranda_lambert16_0.mesh has been loaded!
-[Sun Apr  6 22:23:33 2025] Material:Scenes\Examples\AutumnHouse\Assets\lambert16.mat has been loaded!
-[Sun Apr  6 22:23:33 2025] Screenshot:Thumbnails\25236c25-a6d4-4e1c-b903-8297f8330b2c.png has been saved!
-[Sun Apr  6 22:23:33 2025] Mesh:Scenes\Examples\AutumnHouse\Assets\polySurface198_House_part01_mat_0.mesh has been loaded!
-[Sun Apr  6 22:23:33 2025] Material:Scenes\Examples\AutumnHouse\Assets\House_part01_mat.mat has been loaded!
-[Sun Apr  6 22:23:33 2025] Texture:Scenes\Examples\AutumnHouse\Assets\textures\lambert16_baseColor.png has been loaded!
-[Sun Apr  6 22:23:33 2025] Mesh:Scenes\Examples\AutumnHouse\Assets\polySurface393_lambert14_0.mesh has been loaded!
-[Sun Apr  6 22:23:33 2025] Material:Scenes\Examples\AutumnHouse\Assets\lambert14.mat has been loaded!
-[Sun Apr  6 22:23:33 2025] Texture:Scenes\Examples\AutumnHouse\Assets\textures\House_part01_mat_baseColor.png has been loaded!
-[Sun Apr  6 22:23:33 2025] Mesh:Scenes\Examples\AutumnHouse\Assets\initialShadingGrouppolySurface116_polySurface3_lambert17_0.mesh has been loaded!
-[Sun Apr  6 22:23:33 2025] Material:Scenes\Examples\AutumnHouse\Assets\lambert17.mat has been loaded!
-[Sun Apr  6 22:23:33 2025] Texture:Scenes\Examples\AutumnHouse\Assets\textures\lambert17_baseColor.png has been loaded!
-[Sun Apr  6 22:23:33 2025] Mesh:Scenes\Examples\AutumnHouse\Assets\polySurface637_lambert15_0.mesh has been loaded!
-[Sun Apr  6 22:23:33 2025] Material:Scenes\Examples\AutumnHouse\Assets\lambert15.mat has been loaded!
-[Sun Apr  6 22:23:33 2025] Screenshot:Thumbnails\1ae7f999-34f0-4222-a1b7-c9931af4a3fd.png has been saved!
-[Sun Apr  6 22:23:33 2025] Mesh:Scenes\Examples\AutumnHouse\Assets\polySurface638_lambert18_0.mesh has been loaded!
-[Sun Apr  6 22:23:33 2025] Material:Scenes\Examples\AutumnHouse\Assets\lambert18.mat has been loaded!
-[Sun Apr  6 22:23:33 2025] Texture:Scenes\Examples\AutumnHouse\Assets\textures\lambert14_baseColor.png has been loaded!
-[Sun Apr  6 22:23:33 2025] Texture:Scenes\Examples\AutumnHouse\Assets\textures\lambert15_baseColor.png has been loaded!
-[Sun Apr  6 22:23:34 2025] Texture:Thumbnails\25236c25-a6d4-4e1c-b903-8297f8330b2c.png has been loaded!
-[Sun Apr  6 22:23:34 2025] Texture:Thumbnails\1a670cef-649b-4011-90e5-9bd20595b708.png has been loaded!
-[Sun Apr  6 22:23:34 2025] Screenshot:Thumbnails\ee9da867-0bfd-4ee0-b97d-c0d7aa310a4c.png has been saved!
-[Sun Apr  6 22:23:34 2025] Texture:Thumbnails\b54a0a53-8664-4554-bf59-db91b699c46a.png has been loaded!
-[Sun Apr  6 22:23:34 2025] Texture:Thumbnails\1ae7f999-34f0-4222-a1b7-c9931af4a3fd.png has been loaded!
-[Sun Apr  6 22:23:34 2025] Texture:Thumbnails\ee9da867-0bfd-4ee0-b97d-c0d7aa310a4c.png has been loaded!
-[Sun Apr  6 22:23:34 2025] Screenshot:Thumbnails\5aece62f-628f-4169-8ce4-384626958b12.png has been saved!
-[Sun Apr  6 22:23:34 2025] Texture:Thumbnails\5aece62f-628f-4169-8ce4-384626958b12.png has been loaded!
-[Sun Apr  6 22:23:34 2025] Screenshot:Thumbnails\4af61f1b-e51a-401a-9858-77c731f1c9e2.png has been saved!
-[Sun Apr  6 22:23:34 2025] Screenshot:Thumbnails\82137c91-1eee-4c59-83fa-b19f063469eb.png has been saved!
-[Sun Apr  6 22:23:34 2025] Texture:Thumbnails\4af61f1b-e51a-401a-9858-77c731f1c9e2.png has been loaded!
-[Sun Apr  6 22:23:34 2025] Screenshot:Thumbnails\19928159-512a-4ff8-a4c2-82c2e7148fc8.png has been saved!
-[Sun Apr  6 22:23:34 2025] Texture:Thumbnails\82137c91-1eee-4c59-83fa-b19f063469eb.png has been loaded!
-[Sun Apr  6 22:23:34 2025] Texture:Thumbnails\19928159-512a-4ff8-a4c2-82c2e7148fc8.png has been loaded!
-[Sun Apr  6 22:23:34 2025] Screenshot:Thumbnails\aec333a2-1d96-4839-9766-84ba0a26e0c0.png has been saved!
-[Sun Apr  6 22:23:34 2025] Screenshot:Thumbnails\70f71f3d-90a5-4c93-897a-9745fc9a06cf.png has been saved!
-[Sun Apr  6 22:23:34 2025] Texture:Thumbnails\70f71f3d-90a5-4c93-897a-9745fc9a06cf.png has been loaded!
-[Sun Apr  6 22:23:34 2025] Texture:Thumbnails\aec333a2-1d96-4839-9766-84ba0a26e0c0.png has been loaded!
-[Sun Apr  6 22:23:34 2025] Screenshot:Thumbnails\8b93622f-5566-41ce-9881-af42e2003d00.png has been saved!
-[Sun Apr  6 22:23:34 2025] Texture:Thumbnails\8b93622f-5566-41ce-9881-af42e2003d00.png has been loaded!
-[Sun Apr  6 22:23:34 2025] Screenshot:Thumbnails\9f48de82-5446-4eef-b5c6-7fc4b90ec984.png has been saved!
-[Sun Apr  6 22:23:34 2025] Texture:Thumbnails\9f48de82-5446-4eef-b5c6-7fc4b90ec984.png has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_0.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_1.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_10.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_11.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_12.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_13.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_14.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_15.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_16.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_17.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_18.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_19.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_2.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_20.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_21.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_22.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_23.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_24.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_25.mesh has been loaded!
-[Sun Apr  6 22:23:36 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_26.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_3.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_4.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_5.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_6.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_7.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_8.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_9.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Prefab:Scenes\Examples\MagicWell\Assets\Sketchfab_model.prefab has been loaded!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\1927322b-15d2-4583-a4a3-6e9eb72837f8.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\1103113e-7a05-4b7f-a20c-81975465f746.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\97b62fe6-4126-404e-9bc4-ae9c59c7569d.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\437d4ba3-ab24-4338-8df8-fb03422e0b24.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\66e891b7-0add-4ae7-aace-255fcf6ba5f2.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\a2fa8914-5a3a-4cea-b9ef-eebdd7afd478.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\542e198a-5b10-46d9-bc73-dbc1f6dc1789.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\ad3a18a1-e84e-49aa-93fe-dfd169860b3b.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\d27989a9-3263-43aa-89f7-3b4bde4529c4.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\6269ef3e-216d-45ef-9e8f-ef281ed7ada0.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\673e4847-382d-43bb-b6d8-d51c7058eb97.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\298a227a-2b48-45d0-ad1a-4c624b955281.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\21be0a0c-66eb-4bfc-8160-ff88bcda59ea.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\3011d8db-a52d-4d0b-bb64-64d120edd92e.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\def7870a-a2a1-4ec8-acfe-53f2827b0b6a.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\6992e7a7-e673-498e-8122-e6e843d098d2.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\43532a02-a695-4ae6-bb97-f8b03ba42d22.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\d0c19376-48f8-48c8-b5d6-f9e2b7447273.png has been saved!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_0.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Material:Scenes\Examples\MagicWell\Assets\Well.mat has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_1.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_2.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_3.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_4.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_5.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_6.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_7.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_8.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_9.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_11.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_10.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_12.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_13.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_14.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_15.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\070277e1-384e-41c1-b9ab-09f48952293e.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\ef7d651f-2f3b-4901-9a69-09fabf601661.png has been saved!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_16.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\4beac807-8f92-40a1-8afd-01ad8ae8c4f2.png has been saved!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_18.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_17.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_19.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_20.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_22.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_21.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_23.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_24.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_26.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_25.mesh has been loaded!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\9aa869f5-6f80-41f4-bcd8-3e26116f8782.png has been saved!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\1927322b-15d2-4583-a4a3-6e9eb72837f8.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Material:Scenes\Examples\MagicWell\Assets\Well.mat has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\1103113e-7a05-4b7f-a20c-81975465f746.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\437d4ba3-ab24-4338-8df8-fb03422e0b24.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\542e198a-5b10-46d9-bc73-dbc1f6dc1789.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\97b62fe6-4126-404e-9bc4-ae9c59c7569d.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\66e891b7-0add-4ae7-aace-255fcf6ba5f2.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\ad3a18a1-e84e-49aa-93fe-dfd169860b3b.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\a2fa8914-5a3a-4cea-b9ef-eebdd7afd478.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\6269ef3e-216d-45ef-9e8f-ef281ed7ada0.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\673e4847-382d-43bb-b6d8-d51c7058eb97.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\d27989a9-3263-43aa-89f7-3b4bde4529c4.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\298a227a-2b48-45d0-ad1a-4c624b955281.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\21be0a0c-66eb-4bfc-8160-ff88bcda59ea.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\def7870a-a2a1-4ec8-acfe-53f2827b0b6a.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\3011d8db-a52d-4d0b-bb64-64d120edd92e.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\43532a02-a695-4ae6-bb97-f8b03ba42d22.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\6992e7a7-e673-498e-8122-e6e843d098d2.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\ef7d651f-2f3b-4901-9a69-09fabf601661.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\d0c19376-48f8-48c8-b5d6-f9e2b7447273.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\070277e1-384e-41c1-b9ab-09f48952293e.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\4beac807-8f92-40a1-8afd-01ad8ae8c4f2.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\9aa869f5-6f80-41f4-bcd8-3e26116f8782.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\c93ab82d-9812-4f93-91f6-072cf2980101.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\7e75b128-b462-44c7-adc3-38e40248bb95.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\39d738b8-8fa0-4cba-adae-4c9ec2bd0e7d.png has been saved!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\c93ab82d-9812-4f93-91f6-072cf2980101.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\7e75b128-b462-44c7-adc3-38e40248bb95.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\39d738b8-8fa0-4cba-adae-4c9ec2bd0e7d.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\2a07e5e5-6759-4314-9f9a-d0d9eca3e4bf.png has been saved!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\d0798fc5-6f15-4a83-b1e7-eb355ff8213b.png has been saved!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\2a07e5e5-6759-4314-9f9a-d0d9eca3e4bf.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\d0798fc5-6f15-4a83-b1e7-eb355ff8213b.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\4eb41391-3fcb-4f77-8ad5-ae48ad777d59.png has been saved!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\4eb41391-3fcb-4f77-8ad5-ae48ad777d59.png has been loaded!
-[Sun Apr  6 22:23:37 2025] Screenshot:Thumbnails\26e1a2dc-90a9-452d-a0b7-7967ed372891.png has been saved!
-[Sun Apr  6 22:23:37 2025] Texture:Thumbnails\26e1a2dc-90a9-452d-a0b7-7967ed372891.png has been loaded!
-[Sun Apr  6 22:23:41 2025] Material:Scenes\Examples\RomanBaths\Assets\Arch_and_pillars.mat has been loaded!
-[Sun Apr  6 22:23:41 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Arch_and_pillars_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:41 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Arch_and_pillars_normal.png has been loaded!
-[Sun Apr  6 22:23:41 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Arch_and_pillars_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:41 2025] Material:Scenes\Examples\RomanBaths\Assets\Ballustrade.mat has been loaded!
-[Sun Apr  6 22:23:41 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ballustrade_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:41 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ballustrade_normal.png has been loaded!
-[Sun Apr  6 22:23:41 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ballustrade_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:41 2025] Material:Scenes\Examples\RomanBaths\Assets\Bath_tub.mat has been loaded!
-[Sun Apr  6 22:23:41 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Bath_tub_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:41 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Bath_tub_normal.png has been loaded!
-[Sun Apr  6 22:23:41 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Bath_tub_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Material:Scenes\Examples\RomanBaths\Assets\Changing_rooms.mat has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Changing_rooms_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\96149222-7d88-477a-afab-e0d012872f9c.png has been saved!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\ed5b70c8-c57b-4586-a954-f82f6808a35c.png has been saved!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Changing_rooms_normal.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Changing_rooms_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Thumbnails\96149222-7d88-477a-afab-e0d012872f9c.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Thumbnails\ed5b70c8-c57b-4586-a954-f82f6808a35c.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_0.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_1.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_2.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_3.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_4.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_5.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_6.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_7.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Material:Scenes\Examples\RomanBaths\Assets\Ground.mat has been loaded!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\6d0c0f7c-d0ae-4719-a455-981188d2b564.png has been saved!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ground_baseColor.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ground_normal.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\88e50dd0-0792-4392-8bfe-9dfa59ed660b.png has been saved!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\f988dcd7-4b93-47e6-add9-7f2b0d4860af.png has been saved!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\0fd0c088-3636-4fa6-beb4-503ef61c6a62.png has been saved!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\a4ed2aa0-475d-4c54-98c1-9f206d83d5fa.png has been saved!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\e9168beb-31a1-4b9f-a5f1-5524698adbd8.png has been saved!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\15783601-a800-4bd0-b750-9007ef0516c1.png has been saved!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\e1f9bb5f-ce5c-44d2-8066-170c60fe634f.png has been saved!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\48843e11-00b1-4116-8dfd-e1e4fef696b1.png has been saved!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ground_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\68a311fa-b989-478b-8bc9-d0471075233b.png has been saved!
-[Sun Apr  6 22:23:42 2025] Texture:Thumbnails\6d0c0f7c-d0ae-4719-a455-981188d2b564.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Material:Scenes\Examples\RomanBaths\Assets\Roofs.mat has been loaded!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\0d16fa47-df11-40f3-adee-30f9c9d62381.png has been saved!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Roofs_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Roofs_normal.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Roofs_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Thumbnails\0fd0c088-3636-4fa6-beb4-503ef61c6a62.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_0.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_1.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_3.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Prefab:Scenes\Examples\RomanBaths\Assets\Sketchfab_model.prefab has been loaded!
-[Sun Apr  6 22:23:42 2025] Material:Scenes\Examples\RomanBaths\Assets\Ground.mat has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_2.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Material:Scenes\Examples\RomanBaths\Assets\Ballustrade.mat has been loaded!
-[Sun Apr  6 22:23:42 2025] Material:Scenes\Examples\RomanBaths\Assets\Changing_rooms.mat has been loaded!
-[Sun Apr  6 22:23:42 2025] Material:Scenes\Examples\RomanBaths\Assets\Water.mat has been loaded!
-[Sun Apr  6 22:23:42 2025] Material:Scenes\Examples\RomanBaths\Assets\Bath_tub.mat has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_4.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_5.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Material:Scenes\Examples\RomanBaths\Assets\Roofs.mat has been loaded!
-[Sun Apr  6 22:23:42 2025] Material:Scenes\Examples\RomanBaths\Assets\Arch_and_pillars.mat has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_6.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Material:Scenes\Examples\RomanBaths\Assets\Statue_Young_man.mat has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Water_baseColor.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_7.mesh has been loaded!
-[Sun Apr  6 22:23:42 2025] Material:Scenes\Examples\RomanBaths\Assets\Statue_old_man.mat has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ballustrade_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Arch_and_pillars_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_Young_man_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_old_man_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Water_normal.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Roofs_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Water_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ballustrade_normal.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Changing_rooms_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Bath_tub_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_old_man_normal.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_Young_man_normal.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Arch_and_pillars_normal.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Arch_and_pillars_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ballustrade_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_old_man_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_Young_man_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ground_baseColor.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Roofs_normal.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\9fdbc230-c8bd-48e1-bf92-2add901c8409.png has been saved!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Bath_tub_normal.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Changing_rooms_normal.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Roofs_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ground_normal.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Bath_tub_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Changing_rooms_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ground_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:42 2025] Screenshot:Thumbnails\fa19b1b2-673a-4762-993d-4cc951605f22.png has been saved!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\88e50dd0-0792-4392-8bfe-9dfa59ed660b.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Material:Scenes\Examples\RomanBaths\Assets\Statue_old_man.mat has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_old_man_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_old_man_normal.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_old_man_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\f988dcd7-4b93-47e6-add9-7f2b0d4860af.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Material:Scenes\Examples\RomanBaths\Assets\Statue_Young_man.mat has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_Young_man_baseColor.jpeg has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_Young_man_normal.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_Young_man_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\a4ed2aa0-475d-4c54-98c1-9f206d83d5fa.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Material:Scenes\Examples\RomanBaths\Assets\Water.mat has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Water_baseColor.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Water_normal.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Water_metallicRoughness.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\e1f9bb5f-ce5c-44d2-8066-170c60fe634f.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\15783601-a800-4bd0-b750-9007ef0516c1.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\e9168beb-31a1-4b9f-a5f1-5524698adbd8.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\48843e11-00b1-4116-8dfd-e1e4fef696b1.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\68a311fa-b989-478b-8bc9-d0471075233b.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\0d16fa47-df11-40f3-adee-30f9c9d62381.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\9fdbc230-c8bd-48e1-bf92-2add901c8409.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\fa19b1b2-673a-4762-993d-4cc951605f22.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Screenshot:Thumbnails\aae55a0f-c4ef-4091-ac3f-d49a9e1d5b3e.png has been saved!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\aae55a0f-c4ef-4091-ac3f-d49a9e1d5b3e.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Screenshot:Thumbnails\e4de33a7-ec44-4418-be34-45ee4259cf1c.png has been saved!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\e4de33a7-ec44-4418-be34-45ee4259cf1c.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Screenshot:Thumbnails\51480d97-6e7e-4d56-be79-506a3e9b8988.png has been saved!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\51480d97-6e7e-4d56-be79-506a3e9b8988.png has been loaded!
-[Sun Apr  6 22:23:43 2025] Screenshot:Thumbnails\569c964f-126a-42a5-963f-6a0125f5ab17.png has been saved!
-[Sun Apr  6 22:23:43 2025] Texture:Thumbnails\569c964f-126a-42a5-963f-6a0125f5ab17.png has been loaded!
+[Mon Apr  7 22:59:41 2025] Engine config has been loaded!
+[Mon Apr  7 22:59:41 2025] Graphics API:2
+[Mon Apr  7 22:59:41 2025] Available extensions:
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_device_group_creation
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_display
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_external_fence_capabilities
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_external_memory_capabilities
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_external_semaphore_capabilities
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_get_display_properties2
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_get_physical_device_properties2
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_get_surface_capabilities2
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_surface
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_surface_protected_capabilities
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_win32_surface
+[Mon Apr  7 22:59:41 2025] 	VK_EXT_debug_report
+[Mon Apr  7 22:59:41 2025] 	VK_EXT_debug_utils
+[Mon Apr  7 22:59:41 2025] 	VK_EXT_direct_mode_display
+[Mon Apr  7 22:59:41 2025] 	VK_EXT_swapchain_colorspace
+[Mon Apr  7 22:59:41 2025] 	VK_NV_external_memory_capabilities
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_portability_enumeration
+[Mon Apr  7 22:59:41 2025] 	VK_LUNARG_direct_driver_loading
+[Mon Apr  7 22:59:41 2025] Required extensions:
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_surface
+[Mon Apr  7 22:59:41 2025] 	VK_KHR_win32_surface
+[Mon Apr  7 22:59:41 2025] Physical device count: 2
+[Mon Apr  7 22:59:41 2025] Physical devices:
+[Mon Apr  7 22:59:41 2025]  * NVIDIA GeForce RTX 3080 Ti Laptop GPU - Suitable
+[Mon Apr  7 22:59:41 2025]  * Intel(R) Iris(R) Xe Graphics - Suitable
+[Mon Apr  7 22:59:41 2025] Choosen physical device: NVIDIA GeForce RTX 3080 Ti Laptop GPU
+[Mon Apr  7 22:59:41 2025] Texture:Editor\Images\FileIcon.png has been loaded!
+[Mon Apr  7 22:59:41 2025] Texture:Editor\Images\FolderIcon.png has been loaded!
+[Mon Apr  7 22:59:41 2025] Texture:Editor\Images\HideIcon.png has been loaded!
+[Mon Apr  7 22:59:41 2025] Texture:Editor\Images\MaterialIcon.png has been loaded!
+[Mon Apr  7 22:59:41 2025] Texture:Editor\Images\MeshIcon.png has been loaded!
+[Mon Apr  7 22:59:41 2025] Texture:Editor\Images\MetaIcon.png has been loaded!
+[Mon Apr  7 22:59:41 2025] Texture:Editor\Images\PlayButton.png has been loaded!
+[Mon Apr  7 22:59:41 2025] Texture:Editor\Images\ShowIcon.png has been loaded!
+[Mon Apr  7 22:59:41 2025] Texture:Editor\Images\StopButton.png has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\RectangleUI.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\Final.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\BloomDownSample.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\Atmosphere.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\Deferred.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\DefaultReflection.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\BloomUpSample.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/RectangleUI.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\Line.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Final.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/BloomDownSample.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\MeshBaseDoubleSided.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Atmosphere.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Deferred.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/DefaultReflection.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/BloomUpSample.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\MeshBaseSkinned.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Line.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/RectangleUI.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Final.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/BloomDownSample.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Atmosphere.geom has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Deferred.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/BloomUpSample.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/OpaqueSkinned.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/DefaultReflection.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Line.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Atmosphere.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\SkyBox.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\SSR.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\SSAOBlur.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\SSAO.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/SkyBox.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] BaseMaterial:Materials\SSRBlur.basemat has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/SSR.comp has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/SSAOBlur.comp has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/SSAO.comp has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/SSRBlur.comp has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/SkyBox.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/TransparentSkinned.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/CSM.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/CSM.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/CSMSkinned.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/ZPrePassSkinned.vert has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Mon Apr  7 22:59:41 2025] Mesh:Meshes\Sphere.mesh has been loaded!
+[Mon Apr  7 22:59:41 2025] Material:Materials\MeshBaseDoubleSided.mat has been loaded!
+[Mon Apr  7 22:59:43 2025] Texture:Thumbnails\94734ee7-fc15-4e99-8211-670431872292.png has been loaded!
+[Mon Apr  7 22:59:45 2025] Texture:Thumbnails\a16c2447-ebb9-46c7-b38d-c88ef07ddd9d.png has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Square_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_Purple_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Tall_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\StonePath_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Cart_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Well_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Pile_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Material:Scenes\Examples\VillageTownAssets\Assets\Material.005.mat has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_Blue_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_Red_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Windmill_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Shroom_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_2Story_Purple_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Red_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fountain_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Plane.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Blue_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pond_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Picnic Table_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Carrot_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Texture:Scenes\Examples\VillageTownAssets\Assets\textures\Material.005_baseColor.png has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Potted_Bush_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barn_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Sphere.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Garland_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Arch_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Obelisk_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Coffin_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Cart.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tombstone_1.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Boulder.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tombstone_2.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Grave_1.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Grave_2.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tombstone_3.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tomb.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Chapel_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Carrot.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Carrot.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Carrot.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Carrot.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Carrot.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Carrot.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Carrot.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Carrot.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Prefab:Scenes\Examples\VillageTownAssets\Assets\Sketchfab_model.prefab has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.012_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.013_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.014_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.015_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.016_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.017_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Wheat.018_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.012_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.013_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.015_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Farm_Cabbage.014_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barn.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Sphere.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Pile.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Pile.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Cart.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Well.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Scene:Scenes\Examples\VillageTownAssets\VillageTownAssets.scene has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Boulder.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Windmill.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Windmill.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Windmill.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.012_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.013_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.014_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.016_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.018_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.020_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.024_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.025_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.026_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.027_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.028_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Bale.029_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Pile.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Pile.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Pile.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Pile.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Cart.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Cart.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_2Story_Purple.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_2Story_Purple.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_2Story_Purple.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_Red.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_Blue.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_2Story_Purple.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_2Story_Purple.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_2Story_Purple.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_Blue.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_2Story_Purple.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_2Story_Purple.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_Blue.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_2Story_Purple.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Red.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Square.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Square.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Square.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Square.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.012_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.013_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.014_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.015_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.016_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.017_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.018_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.019_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.020_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.039_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.042_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.043_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.044_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.045_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Plane.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fountain.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Red.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Red.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Red.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Blue.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Blue.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Blue.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Red.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Red.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Red.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Blue.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Market Stall Blue.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.021_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.046_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.047_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.048_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Garland.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Garland.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Garland.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Garland.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Garland.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.049_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.050_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.051_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.022_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.023_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.024_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.025_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.026_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.027_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.028_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.029_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.030_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.031_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.012_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.013_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.032_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.033_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.034_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Crate.035_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Barrell.014_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.052_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Cart.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pond.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.012_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.013_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Picnic Table.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.016_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.017_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.018_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.019_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.020_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.021_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.022_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.023_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.024_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.025_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.026_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.027_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.028_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.029_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.030_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.031_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.032_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.033_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.034_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.035_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.036_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Boulder.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Boulder.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Boulder.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Boulder.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.022_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.023_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.024_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.025_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.026_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.027_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.028_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.029_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Shroom.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Shroom.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Shroom.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Shroom.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Shroom.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Shroom.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.030_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.037_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.038_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.039_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.040_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.041_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.042_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.043_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.013_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.014_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.014_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.015_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Picnic Table.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.016_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.017_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Picnic Table.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.018_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.019_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.016_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.017_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.031_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.032_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.033_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.032_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.033_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.034_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.035_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.036_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.037_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.039_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.040_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.041_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.042_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.043_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.044_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.045_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.046_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.047_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.048_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.049_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.050_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.051_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.052_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.053_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.054_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.055_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.056_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cube.057_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cylinder.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cylinder.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cylinder.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cylinder.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cylinder.012_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Cylinder.013_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Plane.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tile.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeSquare.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeSquare.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeSquare.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeSquare.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.012_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.013_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.014_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:45 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.015_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.016_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.017_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\TreeTall.018_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Boulder_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tombstone_1_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tombstone_2_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Grave_1_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Grave_2_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tombstone_3_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tomb_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Obelisk.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\House_Purple.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Coffin.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Arch.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\StonePath.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Shroom.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tomb.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Potted_Bush.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Potted_Bush.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\StonePath.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\StonePath.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\StonePath.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\StonePath.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\StonePath.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\StonePath.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\StonePath.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Shroom.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Shroom.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Bench.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.012_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.013_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.014_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tomb.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Cart.001_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Grave_2.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Grave_1.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tombstone_2.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tombstone_3.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Hay_Cart.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tombstone_1.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Obelisk.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Coffin.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Coffin.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Coffin.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Coffin.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Boulder.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Boulder.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.012_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.013_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.014_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Boulder.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Boulder.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.015_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.016_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.002_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.012_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.012_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.013_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.013_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.014_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.014_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.015_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.016_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.015_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.016_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.017_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.017_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.018_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.018_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.019_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.019_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.020_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.020_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.021_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.021_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.022_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.022_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.023_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.023_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.024_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.026_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.027_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.028_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.028_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.029_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.029_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.030_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.030_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.031_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.031_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.032_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.032_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.033_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.033_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.034_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.034_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.035_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.024_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.025_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.025_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.035_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.026_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.036_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.027_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.037_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.036_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.038_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.037_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.040_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Fence.041_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Pillar.040_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.006_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.007_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.008_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.017_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Shroom.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Shroom.005_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tombstone_1.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tombstone_3.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tombstone_2.003_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tombstone_1.004_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Tree_Pine.015_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.010_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.011_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Streetlight.012_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\StonePath.009_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.018_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.019_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.020_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\Daisy.021_Material.005_0.mesh has been loaded!
+[Mon Apr  7 22:59:46 2025] Mesh:Scenes\Examples\VillageTownAssets\Assets\World_Material.005_0.mesh has been loaded!
+[Mon Apr  7 23:01:39 2025] Texture:Thumbnails\52d16ab1-53ca-4511-81f7-430fe4bd1963.png has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_0.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_7.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_2.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_3.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_5.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_6.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_1.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_4.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_8.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_9.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Material:Scenes\Examples\MagicWell\Assets\Well.mat has been loaded!
+[Mon Apr  7 23:01:40 2025] Prefab:Scenes\Examples\MagicWell\Assets\Sketchfab_model.prefab has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_10.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_11.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_12.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_13.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_14.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_15.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Scene:Scenes\Examples\MagicWell\MagicWell.scene has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_16.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_17.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_18.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_19.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_20.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_21.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_22.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_23.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_24.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_25.mesh has been loaded!
+[Mon Apr  7 23:01:40 2025] Mesh:Scenes\Examples\MagicWell\Assets\Object_26.mesh has been loaded!

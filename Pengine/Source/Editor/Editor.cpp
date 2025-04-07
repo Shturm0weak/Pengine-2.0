@@ -685,6 +685,9 @@ void Editor::SceneInfo(const std::shared_ptr<Scene>& scene)
 	{
 		if (scene)
 		{
+			// Generate thumbnail for the scene if there is no one.
+			m_Thumbnails.GetOrGenerateThumbnail(scene->GetFilepath(), scene, Thumbnails::Type::SCENE);
+
 			ImGui::Text("Name: %s", scene->GetName().c_str());
 			ImGui::Text("Filepath: %s", scene->GetFilepath().string().c_str());
 			ImGui::Text("Tag: %s", scene->GetTag().c_str());

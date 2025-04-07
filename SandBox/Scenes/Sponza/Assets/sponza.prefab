@@ -1,4 +1,4 @@
-Name: sponza.obj
+Name: Sponza
 IsEnabled: true
 Transform:
   Position: [0, 0, 0]
@@ -9,7 +9,7 @@ Childs:
   - Name: sponza_378_sponza_378_Material__25
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -22,7 +22,7 @@ Childs:
   - Name: sponza_378_sponza_378_Material__298
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -35,7 +35,7 @@ Childs:
   - Name: sponza_257_sponza_257_Material__47
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -48,7 +48,7 @@ Childs:
   - Name: sponza_369_sponza_369_Material__57
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -61,7 +61,7 @@ Childs:
   - Name: sponza_39_sponza_39_arch
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -74,7 +74,7 @@ Childs:
   - Name: sponza_382_sponza_382_bricks
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -87,7 +87,7 @@ Childs:
   - Name: sponza_38_sponza_38_ceiling
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -100,7 +100,7 @@ Childs:
   - Name: sponza_339_sponza_339_chain
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -113,7 +113,7 @@ Childs:
   - Name: sponza_10_sponza_10_column_a
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -126,7 +126,7 @@ Childs:
   - Name: sponza_141_sponza_141_column_b
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -139,7 +139,7 @@ Childs:
   - Name: sponza_83_sponza_83_column_c
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -152,7 +152,7 @@ Childs:
   - Name: sponza_72_sponza_72_details
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -165,7 +165,7 @@ Childs:
   - Name: sponza_288_sponza_288_fabric_a
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -178,7 +178,7 @@ Childs:
   - Name: sponza_325_sponza_325_fabric_c
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -191,7 +191,7 @@ Childs:
   - Name: sponza_289_sponza_289_fabric_d
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -204,7 +204,7 @@ Childs:
   - Name: sponza_285_sponza_285_fabric_e
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -217,7 +217,7 @@ Childs:
   - Name: sponza_327_sponza_327_fabric_f
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -230,7 +230,7 @@ Childs:
   - Name: sponza_326_sponza_326_fabric_g
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -243,7 +243,7 @@ Childs:
   - Name: sponza_271_sponza_271_flagpole
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -256,7 +256,7 @@ Childs:
   - Name: sponza_18_sponza_18_floor
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -269,7 +269,7 @@ Childs:
   - Name: sponza_275_sponza_275_leaf
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -282,7 +282,7 @@ Childs:
   - Name: sponza_381_sponza_381_roof
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -295,7 +295,7 @@ Childs:
   - Name: sponza_373_sponza_373_vase
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -308,7 +308,7 @@ Childs:
   - Name: sponza_344_sponza_344_vase_hanging
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
@@ -321,7 +321,7 @@ Childs:
   - Name: sponza_369_sponza_369_vase_round
     IsEnabled: true
     Transform:
-      Position: [0, 0, 0]
+      Position: [1.52587887e-07, 1.90734859e-08, 0]
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true

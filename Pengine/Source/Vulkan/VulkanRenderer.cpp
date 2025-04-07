@@ -46,6 +46,7 @@ void VulkanRenderer::Render(
 	vkPipeline->Bind(vkFrame->CommandBuffer);
 
 	std::vector<VkDescriptorSet> descriptorSets;
+	descriptorSets.reserve(uniformWriters.size());
 	for (const auto& uniformWriter : uniformWriters)
 	{
 		descriptorSets.emplace_back(std::static_pointer_cast<VulkanUniformWriter>(
@@ -91,6 +92,7 @@ void VulkanRenderer::Dispatch(
 	vkPipeline->Bind(vkFrame->CommandBuffer);
 
 	std::vector<VkDescriptorSet> descriptorSets;
+	descriptorSets.reserve(uniformWriters.size());
 	for (const auto& uniformWriter : uniformWriters)
 	{
 		descriptorSets.emplace_back(std::static_pointer_cast<VulkanUniformWriter>(
@@ -280,12 +282,14 @@ void VulkanRenderer::BindBuffers(
 	assert(vertexBuffers.size() == vertexBufferOffsets.size());
 
 	std::vector<VkBuffer> vkVertexBuffers;
+	vkVertexBuffers.reserve(vertexBuffers.size());
 	for (const std::shared_ptr<Buffer> vertexBuffer : vertexBuffers)
 	{
 		vkVertexBuffers.emplace_back(std::static_pointer_cast<VulkanBuffer>(vertexBuffer)->GetBuffer());
 	}
 
 	std::vector<VkDeviceSize> vkVertexOffsets;
+	vkVertexOffsets.reserve(vertexBufferOffsets.size());
 	for (const size_t vertexBufferOffset : vertexBufferOffsets)
 	{
 		vkVertexOffsets.emplace_back(vertexBufferOffset);

@@ -256,13 +256,15 @@ void RenderPassManager::GetVertexBuffers(
 {
 	if (pipeline->GetType() != Pipeline::Type::GRAPHICS)
 	{
-		FATAL_ERROR("Can't write render targets, pipeline has a type of compute pipeline!");
+		FATAL_ERROR("Can't get vertex buffers, pipeline type is not Pipeline::Type::GRAPHICS!");
 	}
 
-	std::shared_ptr<GraphicsPipeline> graphicsPipeline = std::dynamic_pointer_cast<GraphicsPipeline>(pipeline);
+	constexpr size_t arbitraryVertexBufferCount = 4;
+	vertexBuffers.reserve(arbitraryVertexBufferCount);
+	vertexBufferOffsets.reserve(arbitraryVertexBufferCount);
 
-	auto createGraphicsInfo = graphicsPipeline->GetCreateInfo();
-	const auto& bindingDescriptions = createGraphicsInfo.bindingDescriptions;
+	std::shared_ptr<GraphicsPipeline> graphicsPipeline = std::static_pointer_cast<GraphicsPipeline>(pipeline);
+	const auto& bindingDescriptions = graphicsPipeline->GetCreateInfo().bindingDescriptions;
 
 	// TODO: Optimize search.
 	for (const auto& bindingDescription : bindingDescriptions)
@@ -384,101 +386,102 @@ void RenderPassManager::CreateZPrePass()
 			renderableCount++;
 		}
 
-		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderTarget->GetBuffer("InstanceBufferZPrePass");
-		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() < renderableCount))
-		{
-			instanceBuffer = Buffer::Create(
-				sizeof(glm::mat4),
-				renderableCount,
-				Buffer::Usage::VERTEX_BUFFER,
-				MemoryType::CPU,
-				true);
+		// Commented for now, no really need ZPrePrass, because the engine uses Deferred over Forward renderer.
+		//std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderTarget->GetBuffer("InstanceBufferZPrePass");
+		//if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() < renderableCount))
+		//{
+		//	instanceBuffer = Buffer::Create(
+		//		sizeof(glm::mat4),
+		//		renderableCount,
+		//		Buffer::Usage::VERTEX_BUFFER,
+		//		MemoryType::CPU,
+		//		true);
 
-			renderInfo.renderTarget->SetBuffer("InstanceBufferZPrePass", instanceBuffer);
-		}
+		//	renderInfo.renderTarget->SetBuffer("InstanceBufferZPrePass", instanceBuffer);
+		//}
 
-		std::vector<glm::mat4> instanceDatas;
+		//std::vector<glm::mat4> instanceDatas;
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
+		//const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderPassName);
 
-		RenderPass::SubmitInfo submitInfo{};
-		submitInfo.frame = renderInfo.frame;
-		submitInfo.renderPass = renderInfo.renderPass;
-		submitInfo.frameBuffer = frameBuffer;
-		renderInfo.renderer->BeginRenderPass(submitInfo);
+		//RenderPass::SubmitInfo submitInfo{};
+		//submitInfo.frame = renderInfo.frame;
+		//submitInfo.renderPass = renderInfo.renderPass;
+		//submitInfo.frameBuffer = frameBuffer;
+		//renderInfo.renderer->BeginRenderPass(submitInfo);
 
-		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
-		for (const auto& [baseMaterial, meshesByMaterial] : renderableEntities)
-		{
-			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+		//// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
+		//for (const auto& [baseMaterial, meshesByMaterial] : renderableEntities)
+		//{
+		//	const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 
-			for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
-			{
-				const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
-				FlushUniformWriters(uniformWriters);
+		//	for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
+		//	{
+		//		const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
+		//		FlushUniformWriters(uniformWriters);
 
-				for (const auto& [mesh, entities] : gameObjectsByMeshes.instanced)
-				{
-					const size_t instanceDataOffset = instanceDatas.size();
+		//		for (const auto& [mesh, entities] : gameObjectsByMeshes.instanced)
+		//		{
+		//			const size_t instanceDataOffset = instanceDatas.size();
 
-					for (const entt::entity& entity : entities)
-					{
-						const Transform& transform = registry.get<Transform>(entity);
-						instanceDatas.emplace_back(transform.GetTransform());
-					}
+		//			for (const entt::entity& entity : entities)
+		//			{
+		//				const Transform& transform = registry.get<Transform>(entity);
+		//				instanceDatas.emplace_back(transform.GetTransform());
+		//			}
 
-					std::vector<std::shared_ptr<Buffer>> vertexBuffers;
-					std::vector<size_t> vertexBufferOffsets;
-					GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
+		//			std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+		//			std::vector<size_t> vertexBufferOffsets;
+		//			GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
 
-					renderInfo.renderer->Render(
-						vertexBuffers,
-						vertexBufferOffsets,
-						mesh->GetIndexBuffer(),
-						0,
-						mesh->GetIndexCount(),
-						pipeline,
-						instanceBuffer,
-						instanceDataOffset * instanceBuffer->GetInstanceSize(),
-						entities.size(),
-						uniformWriters,
-						renderInfo.frame);
-				}
+		//			renderInfo.renderer->Render(
+		//				vertexBuffers,
+		//				vertexBufferOffsets,
+		//				mesh->GetIndexBuffer(),
+		//				0,
+		//				mesh->GetIndexCount(),
+		//				pipeline,
+		//				instanceBuffer,
+		//				instanceDataOffset * instanceBuffer->GetInstanceSize(),
+		//				entities.size(),
+		//				uniformWriters,
+		//				renderInfo.frame);
+		//		}
 
-				for (const auto& [mesh, entity] : gameObjectsByMeshes.single)
-				{
-					const size_t instanceDataOffset = instanceDatas.size();
+		//		for (const auto& [mesh, entity] : gameObjectsByMeshes.single)
+		//		{
+		//			const size_t instanceDataOffset = instanceDatas.size();
 
-					const Transform& transform = registry.get<Transform>(entity);
-					instanceDatas.emplace_back(transform.GetTransform());
+		//			const Transform& transform = registry.get<Transform>(entity);
+		//			instanceDatas.emplace_back(transform.GetTransform());
 
-					const SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
-					if (skeletalAnimator)
-					{
-						std::vector<std::shared_ptr<UniformWriter>> newUniformWriters = uniformWriters;
-						newUniformWriters.emplace_back(skeletalAnimator->GetUniformWriter());
-						skeletalAnimator->GetUniformWriter()->Flush();
+		//			const SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
+		//			if (skeletalAnimator)
+		//			{
+		//				std::vector<std::shared_ptr<UniformWriter>> newUniformWriters = uniformWriters;
+		//				newUniformWriters.emplace_back(skeletalAnimator->GetUniformWriter());
+		//				skeletalAnimator->GetUniformWriter()->Flush();
 
-						std::vector<std::shared_ptr<Buffer>> vertexBuffers;
-						std::vector<size_t> vertexBufferOffsets;
-						GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
+		//				std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+		//				std::vector<size_t> vertexBufferOffsets;
+		//				GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
 
-						renderInfo.renderer->Render(
-							vertexBuffers,
-							vertexBufferOffsets,
-							mesh->GetIndexBuffer(),
-							0,
-							mesh->GetIndexCount(),
-							pipeline,
-							instanceBuffer,
-							instanceDataOffset * instanceBuffer->GetInstanceSize(),
-							1,
-							newUniformWriters,
-							renderInfo.frame);
-					}
-				}
-			}
-		}
+		//				renderInfo.renderer->Render(
+		//					vertexBuffers,
+		//					vertexBufferOffsets,
+		//					mesh->GetIndexBuffer(),
+		//					0,
+		//					mesh->GetIndexCount(),
+		//					pipeline,
+		//					instanceBuffer,
+		//					instanceDataOffset * instanceBuffer->GetInstanceSize(),
+		//					1,
+		//					newUniformWriters,
+		//					renderInfo.frame);
+		//			}
+		//		}
+		//	}
+		//}
 
 		RenderableData* renderableData = (RenderableData*)renderInfo.renderTarget->GetCustomData("RenderableData");
 		if (!renderableData)
@@ -491,13 +494,13 @@ void RenderPassManager::CreateZPrePass()
 
 		// Because these are all just commands and will be rendered later we can write the instance buffer
 		// just once when all instance data is collected.
-		if (instanceBuffer && !instanceDatas.empty())
+		/*if (instanceBuffer && !instanceDatas.empty())
 		{
 			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(glm::mat4));
 			instanceBuffer->Flush();
 		}
 
-		renderInfo.renderer->EndRenderPass(submitInfo);
+		renderInfo.renderer->EndRenderPass(submitInfo);*/
 	};
 
 	CreateRenderPass(createInfo);
@@ -548,7 +551,7 @@ void RenderPassManager::CreateGBuffer()
 	RenderPass::AttachmentDescription depth{};
 	depth.format = Format::D32_SFLOAT;
 	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	// TODO: Revert Changes to LOAD, NONE!
+	// TODO: Revert Changes to LOAD, NONE when ZPrePass is used!
 	depth.load = RenderPass::Load::CLEAR;
 	depth.store = RenderPass::Store::STORE;
 	depth.getFrameBufferCallback = [](RenderTarget* renderTarget, uint32_t& index)
@@ -622,7 +625,7 @@ void RenderPassManager::CreateGBuffer()
 			{
 				const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
 				// Already updated in ZPrePass.
-				//FlushUniformWriters(uniformWriters);
+				FlushUniformWriters(uniformWriters);
 
 				for (const auto& [mesh, entities] : gameObjectsByMeshes.instanced)
 				{
@@ -672,7 +675,7 @@ void RenderPassManager::CreateGBuffer()
 						std::vector<std::shared_ptr<UniformWriter>> newUniformWriters = uniformWriters;
 						newUniformWriters.emplace_back(skeletalAnimator->GetUniformWriter());
 						// Already updated in ZPrePass.
-						//skeletalAnimator->uniformWriter->Flush();
+						skeletalAnimator->GetUniformWriter()->Flush();
 
 						std::vector<std::shared_ptr<Buffer>> vertexBuffers;
 						std::vector<size_t> vertexBufferOffsets;
@@ -1563,6 +1566,21 @@ void RenderPassManager::CreateCSM()
 			lightDirection = transform.GetForward();
 		}
 
+		// TODO: Camera can be ortho, so need to make for ortho as well.
+		const glm::mat4 projection = glm::perspective(
+			camera.GetFov(),
+			(float)renderInfo.viewportSize.x / (float)renderInfo.viewportSize.y,
+			camera.GetZNear(),
+			shadowsSettings.maxDistance);
+
+		const bool recreateFrameBuffer = csmRenderer->GenerateLightSpaceMatrices(
+			projection * camera.GetViewMat4(),
+			lightDirection,
+			camera.GetZNear(),
+			shadowsSettings.maxDistance,
+			shadowsSettings.cascadeCount,
+			shadowsSettings.splitFactor);
+
 		for (const entt::entity& entity : r3dView)
 		{
 			const Renderer3D& r3d = registry.get<Renderer3D>(entity);
@@ -1595,6 +1613,17 @@ void RenderPassManager::CreateCSM()
 			}
 			else if (r3d.mesh->GetType() == Mesh::Type::STATIC)
 			{
+				//bool isInFrustum = FrustumCulling::CullBoundingBox(
+				//	csmRenderer->GetLightSpaceMatrices().front(),
+				//	transform.GetTransform(),
+				//	r3d.mesh->GetBoundingBox().min,
+				//	r3d.mesh->GetBoundingBox().max,
+				//	camera.GetZNear());
+				//if (!isInFrustum)
+				//{
+				//	continue;
+				//}
+
 				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh].emplace_back(entity);
 			}
 
@@ -1641,20 +1670,6 @@ void RenderPassManager::CreateCSM()
 			if (!updatedLightSpaceMatrices)
 			{
 				updatedLightSpaceMatrices = true;
-				// TODO: Camera can be ortho, so need to make for ortho as well.
-				const glm::mat4 projection = glm::perspective(
-					camera.GetFov(),
-					(float)renderInfo.viewportSize.x / (float)renderInfo.viewportSize.y,
-					camera.GetZNear(),
-					shadowsSettings.maxDistance);
-
-				const bool recreateFrameBuffer = csmRenderer->GenerateLightSpaceMatrices(
-					projection * camera.GetViewMat4(),
-					lightDirection,
-					camera.GetZNear(),
-					shadowsSettings.maxDistance,
-					shadowsSettings.cascadeCount,
-					shadowsSettings.splitFactor);
 
 				baseMaterial->WriteToBuffer(
 					lightSpaceMatricesBuffer,
