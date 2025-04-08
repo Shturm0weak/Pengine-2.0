@@ -10,18 +10,6 @@ Mat:
   Pipelines:
     - RenderPass: GBuffer
       Uniforms:
-        - Name: albedoTexture
-          Value: 31d8d1c2-7c3e-406a-b016-090fd3198587
-        - Name: normalTexture
-          Value: ""
-        - Name: metalnessTexture
-          Value: ""
-        - Name: roughnessTexture
-          Value: ""
-        - Name: aoTexture
-          Value: ""
-        - Name: emissiveTexture
-          Value: ""
         - Name: GBufferMaterial
           Values:
             - Name: material.albedoColor
@@ -48,6 +36,23 @@ Mat:
             - Name: material.useNormalMap
               Value: 0
               Type: int
+            - Name: material.useSingleShadingMap
+              Value: 0
+              Type: int
+        - Name: albedoTexture
+          Value: 31d8d1c2-7c3e-406a-b016-090fd3198587
+        - Name: normalTexture
+          Value: ""
+        - Name: metalnessTexture
+          Value: ""
+        - Name: roughnessTexture
+          Value: ""
+        - Name: aoTexture
+          Value: ""
+        - Name: emissiveTexture
+          Value: ""
+        - Name: shadingTexture
+          Value: ""
     - RenderPass: Transparent
       Uniforms:
         []

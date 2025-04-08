@@ -30,6 +30,9 @@ VulkanGraphicsPipeline::VulkanGraphicsPipeline(const CreateGraphicsInfo& createG
 		VkShaderModule shaderModule{};
 		VulkanPipelineUtils::CreateShaderModule(vertexSpv, &shaderModule);
 		shaderModulesByType[type] = shaderModule;
+		
+		// TODO: Maybe need to collect all bindings from all shader stages and then create layouts.
+		// For now it seems it is uses layouts from the last shdaer stage.
 		auto uniformLayoutsByDescriptorSets = VulkanPipelineUtils::CreateDescriptorSetLayouts(m_ReflectShaderModulesByType[type]);
 		for (const auto& [set, layout] : uniformLayoutsByDescriptorSets)
 		{

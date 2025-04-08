@@ -22,6 +22,8 @@ Mat:
           Value: White
         - Name: emissiveTexture
           Value: White
+        - Name: shadingTexture
+          Value: White
         - Name: GBufferMaterial
           Values:
             - Name: material.albedoColor
@@ -46,6 +48,9 @@ Mat:
               Value: 0
               Type: float
             - Name: material.useNormalMap
+              Value: 0
+              Type: int
+            - Name: material.useSingleShadingMap
               Value: 0
               Type: int
     - RenderPass: Transparent

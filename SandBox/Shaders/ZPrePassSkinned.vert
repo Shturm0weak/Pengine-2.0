@@ -9,15 +9,13 @@ layout(location = 4) in mat4 transformA;
 layout(location = 0) out vec2 uv;
 
 #include "Shaders/Includes/Camera.h"
-
 layout(set = 0, binding = 0) uniform GlobalBuffer
 {
 	Camera camera;
 };
 
 #include "Shaders/Includes/DefaultMaterial.h"
-
-layout(set = 1, binding = 6) uniform GBufferMaterial
+layout(set = 1, binding = 0) uniform GBufferMaterial
 {
 	DefaultMaterial material;
 };

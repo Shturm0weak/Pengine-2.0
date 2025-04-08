@@ -6,7 +6,6 @@ layout(location = 0) out vec2 uv;
 layout(location = 1) out vec2 viewRay;
 
 #include "Shaders/Includes/Camera.h"
-
 layout(set = 0, binding = 0) uniform GlobalBuffer
 {
 	Camera camera;

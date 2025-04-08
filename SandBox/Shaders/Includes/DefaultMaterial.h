@@ -8,4 +8,5 @@ struct DefaultMaterial
 	float aoFactor;
 	float emissiveFactor;
 	int useNormalMap;
+	int useSingleShadingMap;
 };

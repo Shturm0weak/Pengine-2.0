@@ -16,15 +16,13 @@ layout(location = 3) out vec2 uv;
 layout(location = 4) out vec4 color;
 
 #include "Shaders/Includes/Camera.h"
-
 layout(set = 0, binding = 0) uniform GlobalBuffer
 {
 	Camera camera;
 };
 
 #include "Shaders/Includes/DefaultMaterial.h"
-
-layout(set = 1, binding = 6) uniform GBufferMaterial
+layout(set = 1, binding = 0) uniform GBufferMaterial
 {
 	DefaultMaterial material;
 };
@@ -40,9 +38,4 @@ void main()
 	uv = uvA * material.uvTransform.xy + material.uvTransform.zw;
 
 	color = unpackUnorm4x8(colorA);
-	//color = vec4(
-	//	float(colorA & uint(0xFF000000) >> 24),
-	//	float(colorA & uint(0x00FF0000) >> 16),
-	//	float(colorA & uint(0x0000FF00) >> 8),
-	//	float(colorA & uint(0x000000FF) >> 0)) * 0.003921568627451f;
 }

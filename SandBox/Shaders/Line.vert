@@ -6,7 +6,6 @@ layout(location = 1) in vec3 colorA;
 layout(location = 0) out vec3 color;
 
 #include "Shaders/Includes/Camera.h"
-
 layout(set = 0, binding = 0) uniform GlobalBuffer
 {
 	Camera camera;

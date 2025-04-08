@@ -20,15 +20,13 @@ layout(location = 5) out vec2 uv;
 layout(location = 6) out vec4 color;
 
 #include "Shaders/Includes/Camera.h"
-
 layout(set = 0, binding = 0) uniform GlobalBuffer
 {
 	Camera camera;
 };
 
 #include "Shaders/Includes/DefaultMaterial.h"
-
-layout(set = 1, binding = 6) uniform GBufferMaterial
+layout(set = 1, binding = 0) uniform GBufferMaterial
 {
 	DefaultMaterial material;
 };
