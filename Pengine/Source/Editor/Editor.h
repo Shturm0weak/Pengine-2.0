@@ -222,7 +222,8 @@ namespace Pengine
 				MESH,
 				MAT,
 				SCENE,
-				PREFAB
+				PREFAB,
+				TEXTURE
 			};
 
 			struct ThumbnailLoadInfo
@@ -244,6 +245,8 @@ namespace Pengine
 			void UpdateMatMeshThumbnail(const ThumbnailLoadInfo& thumbnailLoadInfo);
 
 			void UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thumbnailLoadInfo);
+
+			void UpdateTextureThumbnail(const ThumbnailLoadInfo& thumbnailLoadInfo);
 
 			ImTextureID GetOrGenerateThumbnail(
 				const std::filesystem::path& filepath,

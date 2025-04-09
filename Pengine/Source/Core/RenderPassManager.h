@@ -41,6 +41,10 @@ namespace Pengine
 
 		static void PrepareUniformsPerViewportBeforeDraw(const RenderPass::RenderCallbackInfo& renderInfo);
 
+		std::shared_ptr<Texture> ScaleTexture(
+			std::shared_ptr<Texture> sourceTexture,
+			const glm::ivec2& dstSize);
+
 	private:
 		struct EntitiesByMesh
 		{

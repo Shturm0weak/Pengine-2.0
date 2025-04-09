@@ -5,6 +5,7 @@
 #include "Core/TextureManager.h"
 #include "Core/Serializer.h"
 #include "Core/ViewportManager.h"
+#include "Core/RenderPassManager.h"
 #include "Core/Viewport.h"
 #include "Core/SceneManager.h"
 #include "Core/Time.h"

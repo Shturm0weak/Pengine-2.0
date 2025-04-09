@@ -17,6 +17,7 @@
 #include "../Components/Renderer3D.h"
 #include "../Components/SkeletalAnimator.h"
 #include "../Components/Transform.h"
+#include "../Graphics/Device.h"
 #include "../Graphics/Renderer.h"
 #include "../Graphics/RenderTarget.h"
 #include "../Graphics/GraphicsPipeline.h"
@@ -228,6 +229,45 @@ void RenderPassManager::PrepareUniformsPerViewportBeforeDraw(const RenderPass::R
 		globalBufferName,
 		"camera.tanHalfFOV",
 		tanHalfFOV);
+}
+
+std::shared_ptr<Texture> RenderPassManager::ScaleTexture(
+	std::shared_ptr<Texture> sourceTexture,
+	const glm::ivec2& dstSize)
+{
+	const std::shared_ptr<Renderer> renderer = Renderer::Create();
+	const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/ScaleTexture.basemat");
+	const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline("ScaleTexture");
+	if (!renderer || !pipeline)
+	{
+		return nullptr;
+	}
+
+	Texture::CreateInfo createInfo{};
+	createInfo.aspectMask = Texture::AspectMask::COLOR;
+	createInfo.channels = 4;
+	createInfo.filepath = "dstScaleTexture";
+	createInfo.name = "dstScaleTexture";
+	createInfo.format = Format::R8G8B8A8_UNORM;
+	createInfo.size = dstSize;
+	createInfo.usage = { Texture::Usage::STORAGE, Texture::Usage::TRANSFER_SRC };
+	createInfo.isMultiBuffered = false;
+	std::shared_ptr<Texture> dstTexture = TextureManager::GetInstance().Create(createInfo);
+
+	void* frame = device->Begin();
+
+	renderer->Dispatch(
+		pipeline,
+		{ dstSize.x / 16, dstSize.y / 16, 1 },
+		{
+			dstTexture->GetUniformWriter(),
+			sourceTexture->GetUniformWriter()
+		},
+		frame);
+
+	device->End(frame);
+
+	return dstTexture;
 }
 
 RenderPassManager::RenderPassManager()
@@ -1378,10 +1418,6 @@ void RenderPassManager::CreateTransparent()
 
 void RenderPassManager::CreateFinal()
 {
-	RenderPass::ClearDepth clearDepth{};
-	clearDepth.clearDepth = 1.0f;
-	clearDepth.clearStencil = 0;
-
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	RenderPass::AttachmentDescription color{};
@@ -1394,7 +1430,6 @@ void RenderPassManager::CreateFinal()
 	createInfo.type = Pass::Type::GRAPHICS;
 	createInfo.name = Final;
 	createInfo.clearColors = { clearColor };
-	createInfo.clearDepths = { clearDepth };
 	createInfo.attachmentDescriptions = { color };
 	createInfo.resizeWithViewport = true;
 	createInfo.resizeViewportScale = { 1.0f, 1.0f };

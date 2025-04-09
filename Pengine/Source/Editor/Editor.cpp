@@ -1942,7 +1942,8 @@ ImTextureID Editor::GetFileIcon(const std::filesystem::path& filepath, const std
 	}
 	else if (FileFormats::IsTexture(format))
 	{
-		return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FileIcon.png")->GetId();
+		ImTextureID iconId = m_Thumbnails.GetOrGenerateThumbnail(filepath, nullptr, Thumbnails::Type::TEXTURE);
+		return iconId ? iconId : (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FileIcon.png")->GetId();
 	}
 
 	return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FileIcon.png")->GetId();
@@ -2926,6 +2927,10 @@ void Editor::Thumbnails::UpdateThumbnails()
 	{
 		UpdateScenePrefabThumbnail(thumbnailLoadInfo);
 	}
+	else if (thumbnailLoadInfo.type == Type::TEXTURE)
+	{
+		UpdateTextureThumbnail(thumbnailLoadInfo);
+	}
 }
 
 void Editor::Thumbnails::UpdateMatMeshThumbnail(const ThumbnailLoadInfo& thumbnailLoadInfo)
@@ -3187,6 +3192,14 @@ void Editor::Thumbnails::UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thu
 	{
 		scene->DeleteEntity(prefab);
 	}
+}
+
+void Editor::Thumbnails::UpdateTextureThumbnail(const ThumbnailLoadInfo& thumbnailLoadInfo)
+{
+	std::shared_ptr<Texture> srcTexture = TextureManager::GetInstance().Load(thumbnailLoadInfo.resourceFilepath);
+	std::shared_ptr<Texture> dstTexture = RenderPassManager::GetInstance().ScaleTexture(srcTexture, { 64, 64 });
+	Serializer::SerializeTexture(thumbnailLoadInfo.thumbnailFilepath, dstTexture, &m_GeneratingThumbnails.at(thumbnailLoadInfo.resourceFilepath));
+	TextureManager::GetInstance().Delete(srcTexture);
 }
 
 ImTextureID Editor::Thumbnails::GetOrGenerateThumbnail(

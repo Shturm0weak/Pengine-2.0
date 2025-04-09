@@ -1,0 +1,18 @@
+#version 450
+
+layout(set = 0, binding = 0, rgba8) uniform writeonly image2D outColor;
+layout(set = 1, binding = 0) uniform sampler2D sourceTexture;
+
+layout (local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+void main()
+{
+	ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
+	vec2 outColorSize = vec2(imageSize(outColor));
+    vec2 uv = (vec2(pixelCoord) + vec2(0.5f)) / outColorSize;
+    uv.y = 1.0f - uv.y;
+
+    vec4 color = texture(sourceTexture, uv);
+    vec3 gammaCorrectedColor = pow(color.xyz, vec3(1.0f / 2.2f));
+
+    imageStore(outColor, pixelCoord, vec4(gammaCorrectedColor, color.a));
+}
