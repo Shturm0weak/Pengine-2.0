@@ -19,7 +19,7 @@ VulkanUniformLayout::VulkanUniformLayout(const std::vector<ShaderReflection::Ref
 		layoutBinding.descriptorType = ConvertDescriptorType(binding.type);
 		layoutBinding.descriptorCount = binding.count;
 		layoutBinding.pImmutableSamplers = 0;
-		layoutBinding.stageFlags = VK_SHADER_STAGE_ALL;
+		layoutBinding.stageFlags = ConvertStage(binding.stage);
 		
 		setLayoutBindings.emplace_back(layoutBinding);
 	}
@@ -30,7 +30,7 @@ VulkanUniformLayout::VulkanUniformLayout(const std::vector<ShaderReflection::Ref
 	descriptorSetLayoutCreateInfo.pBindings = setLayoutBindings.data();
 
 	if (vkCreateDescriptorSetLayout(
-		device->GetDevice(),
+		GetVkDevice()->GetDevice(),
 		&descriptorSetLayoutCreateInfo,
 		nullptr,
 		&m_DescriptorSetLayout) != VK_SUCCESS)
@@ -41,9 +41,9 @@ VulkanUniformLayout::VulkanUniformLayout(const std::vector<ShaderReflection::Ref
 
 VulkanUniformLayout::~VulkanUniformLayout()
 {
-	device->DeleteResource([descriptorSetLayout = m_DescriptorSetLayout]()
+	GetVkDevice()->DeleteResource([descriptorSetLayout = m_DescriptorSetLayout]()
 	{
-		vkDestroyDescriptorSetLayout(device->GetDevice(), descriptorSetLayout, nullptr);
+		vkDestroyDescriptorSetLayout(GetVkDevice()->GetDevice(), descriptorSetLayout, nullptr);
 	});
 }
 
@@ -112,5 +112,57 @@ ShaderReflection::Type VulkanUniformLayout::ConvertDescriptorType(const VkDescri
 	}
 
 	FATAL_ERROR("Failed to convert descriptor type!");
+	return {};
+}
+
+VkShaderStageFlags VulkanUniformLayout::ConvertStage(ShaderReflection::Stage stage)
+{
+	switch (stage)
+	{
+		case ShaderReflection::Stage::VERTEX_BIT:
+			return VK_SHADER_STAGE_VERTEX_BIT;
+		case ShaderReflection::Stage::TESSELLATION_CONTROL_BIT:
+			return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+		case ShaderReflection::Stage::TESSELLATION_EVALUATION_BIT:
+			return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+		case ShaderReflection::Stage::GEOMETRY_BIT:
+			return VK_SHADER_STAGE_GEOMETRY_BIT;
+		case ShaderReflection::Stage::FRAGMENT_BIT:
+			return VK_SHADER_STAGE_FRAGMENT_BIT;
+		case ShaderReflection::Stage::COMPUTE_BIT:
+			return VK_SHADER_STAGE_COMPUTE_BIT;
+		case ShaderReflection::Stage::ALL_GRAPHICS:
+			return VK_SHADER_STAGE_ALL_GRAPHICS;
+		case ShaderReflection::Stage::ALL:
+			return VK_SHADER_STAGE_ALL;
+	}
+
+	FATAL_ERROR("Failed to convert shader stage!");
+	return {};
+}
+
+ShaderReflection::Stage VulkanUniformLayout::ConvertStage(VkShaderStageFlags stage)
+{
+	switch (stage)
+	{
+	case VK_SHADER_STAGE_VERTEX_BIT:
+		return ShaderReflection::Stage::VERTEX_BIT;
+	case VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT:
+		return ShaderReflection::Stage::TESSELLATION_CONTROL_BIT;
+	case VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT:
+		return ShaderReflection::Stage::TESSELLATION_EVALUATION_BIT;
+	case VK_SHADER_STAGE_GEOMETRY_BIT:
+		return ShaderReflection::Stage::GEOMETRY_BIT;
+	case VK_SHADER_STAGE_FRAGMENT_BIT:
+		return ShaderReflection::Stage::FRAGMENT_BIT;
+	case VK_SHADER_STAGE_COMPUTE_BIT:
+		return ShaderReflection::Stage::COMPUTE_BIT;
+	case VK_SHADER_STAGE_ALL_GRAPHICS:
+		return ShaderReflection::Stage::ALL_GRAPHICS;
+	case VK_SHADER_STAGE_ALL:
+		return ShaderReflection::Stage::ALL;
+	}
+
+	FATAL_ERROR("Failed to convert shader stage!");
 	return {};
 }

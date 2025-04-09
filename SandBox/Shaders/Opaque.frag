@@ -4,28 +4,28 @@ layout(location = 0) in vec3 normalViewSpace;
 layout(location = 1) in vec3 tangentViewSpace;
 layout(location = 2) in vec3 bitangentViewSpace;
 layout(location = 3) in vec2 uv;
+layout(location = 4) in vec4 color;
 
 layout(location = 0) out vec4 outAlbedo;
 layout(location = 1) out vec4 outNormal;
 layout(location = 2) out vec4 outShading;
 layout(location = 3) out vec4 outEmissive;
 
-layout(set = 1, binding = 0) uniform sampler2D albedoTexture;
-layout(set = 1, binding = 1) uniform sampler2D normalTexture;
-layout(set = 1, binding = 2) uniform sampler2D metalnessTexture;
-layout(set = 1, binding = 3) uniform sampler2D roughnessTexture;
-layout(set = 1, binding = 4) uniform sampler2D aoTexture;
-layout(set = 1, binding = 5) uniform sampler2D emissiveTexture;
+layout(set = 1, binding = 1) uniform sampler2D albedoTexture;
+layout(set = 1, binding = 2) uniform sampler2D normalTexture;
+layout(set = 1, binding = 3) uniform sampler2D metalnessTexture;
+layout(set = 1, binding = 4) uniform sampler2D roughnessTexture;
+layout(set = 1, binding = 5) uniform sampler2D aoTexture;
+layout(set = 1, binding = 6) uniform sampler2D emissiveTexture;
+layout(set = 1, binding = 7) uniform sampler2D shadingTexture;
 
 #include "Shaders/Includes/DefaultMaterial.h"
-
-layout(set = 1, binding = 6) uniform GBufferMaterial
+layout(set = 1, binding = 0) uniform GBufferMaterial
 {
 	DefaultMaterial material;
 };
 
 #include "Shaders/Includes/Camera.h"
-
 layout(set = 0, binding = 0) uniform GlobalBuffer
 {
 	Camera camera;
@@ -33,15 +33,26 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 
 void main()
 {
-	vec4 albedoColor = texture(albedoTexture, uv) * material.albedoColor;
+	vec4 albedoColor = texture(albedoTexture, uv) * material.albedoColor * color;
 	if (albedoColor.a < 0.01f)
 	{
 		discard;
 	}
 
-	float metallic = texture(metalnessTexture, uv).r;
-	float roughness = texture(roughnessTexture, uv).r;
 	float ao = texture(aoTexture, uv).r;
+	float metallic = 0.0f;
+	float roughness = 0.0f;
+	if (material.useSingleShadingMap > 0)
+	{
+		vec3 shading = texture(shadingTexture, uv).xyz;
+		metallic = shading.r;
+		roughness = shading.g;
+	}
+	else
+	{
+		metallic = texture(metalnessTexture, uv).r;
+		roughness = texture(roughnessTexture, uv).r;
+	}
 
 	outAlbedo = albedoColor;
 	outShading = vec4(

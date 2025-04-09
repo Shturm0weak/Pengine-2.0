@@ -1,16 +1,24 @@
 #pragma once
 
 #include "Core.h"
+#include "ViewportManager.h"
 
-#include "../Graphics/Texture.h"
+#include "../Editor/Editor.h"
+
+#include "GLFW/glfw3.h"
 
 namespace Pengine
 {
+	class Viewport;
 
 	class PENGINE_API Window
 	{
 	public:
-		Window(std::string name, const glm::ivec2& size);
+		static std::shared_ptr<Window> Create(const std::string& title, const std::string& name, const glm::ivec2& size);
+
+		static std::shared_ptr<Window> CreateHeadless(const std::string& title, const std::string& name, const glm::ivec2& size);
+
+		Window(std::string title, std::string name, const glm::ivec2& size);
 		virtual ~Window() = default;
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
@@ -27,8 +35,6 @@ namespace Pengine
 
 		virtual void Present(std::shared_ptr<Texture> texture) = 0;
 
-		virtual void ShutDownPrepare() = 0;
-
 		virtual void ImGuiBegin() = 0;
 
 		virtual void ImGuiEnd() = 0;
@@ -37,7 +43,7 @@ namespace Pengine
 
 		virtual void EndFrame(void* frame) = 0;
 
-		virtual void ImGuiRenderPass(void* frame) = 0;
+		virtual void ImGuiRenderPass() = 0;
 
 		virtual void DisableCursor() = 0;
 
@@ -45,7 +51,21 @@ namespace Pengine
 
 		virtual void HideCursor() = 0;
 
-		void SetIsRunning(const bool isRunning) { m_IsRunning = isRunning; };
+		virtual void SetTitle(const std::string& title) = 0;
+
+		void SetIsRunning(const bool isRunning) { m_IsRunning = isRunning; }
+
+		void SetEditor(bool hasEditor);
+
+		void EditorUpdate(const std::shared_ptr<Scene>& scene);
+
+		void SetContextCurrent();
+
+		[[nodiscard]] GLFWwindow* GetGLFWWindow() const { return m_Window; }
+
+		[[nodiscard]] const std::string& GetName() const { return m_Name; }
+
+		[[nodiscard]] const std::string& GetTitle() const { return m_Title; }
 
 		[[nodiscard]] bool IsRunning() const { return m_IsRunning; }
 
@@ -53,13 +73,27 @@ namespace Pengine
 
 		[[nodiscard]] glm::ivec2 GetSize() const { return m_Size; }
 
+		[[nodiscard]] ImGuiContext* GetImGuiContext() const { return m_ImGuiContext; }
+		
+		[[nodiscard]] ViewportManager& GetViewportManager() { return m_ViewportManager; }
+
+		[[nodiscard]] bool IsHeadless() const { return m_IsHeadless; }
+
 	protected:
 		std::string m_Name;
+		std::string m_Title;
 		glm::ivec2 m_Size = { 0, 0 };
 
-	private:
 		bool m_IsRunning = true;
 		bool m_IsMinimized = false;
+		bool m_HasEditor = false;
+		bool m_IsHeadless = false;
+
+		GLFWwindow* m_Window = nullptr;
+		ImGuiContext* m_ImGuiContext = nullptr;
+
+		std::unique_ptr<Editor> m_Editor;
+		ViewportManager m_ViewportManager;
 	};
 
 }

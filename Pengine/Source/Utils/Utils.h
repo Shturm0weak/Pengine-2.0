@@ -243,7 +243,7 @@ namespace Pengine::Utils
 
 	inline std::filesystem::path GetShortFilepath(const std::filesystem::path& filepath)
 	{
-		const std::filesystem::path directory = std::filesystem::current_path();
+		const std::filesystem::path directory = std::move(std::filesystem::current_path());
 
 		auto beginFilepath = filepath.begin();
 		auto beginDirectory = directory.begin();

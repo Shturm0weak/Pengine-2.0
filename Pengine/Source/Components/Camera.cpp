@@ -3,6 +3,8 @@
 #include "Transform.h"
 
 #include "../Core/RenderPassOrder.h"
+#include "../Core/Serializer.h"
+#include "../Core/FileFormatNames.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 #include "../Graphics/RenderTarget.h"
@@ -167,4 +169,27 @@ void Camera::SetZFar(const float zFar)
 std::shared_ptr<RenderTarget> Camera::GetRendererTarget(const std::string& name) const
 {
 	return Utils::Find(name, m_RenderTargetsByName);
+}
+
+void Camera::TakeScreenshot(const std::filesystem::path& filepath, const std::string& viewportName, bool* isLoaded)
+{
+	const std::shared_ptr<RenderTarget> renderTarget = GetRendererTarget(viewportName);
+	if (!renderTarget)
+	{
+		return;
+	}
+
+	const std::shared_ptr<FrameBuffer> frameBuffer = renderTarget->GetFrameBuffer(GetPassName());
+	if (!frameBuffer)
+	{
+		return;
+	}
+
+	const std::shared_ptr<Texture> texture = frameBuffer->GetAttachment(GetRenderTargetIndex());
+	if (!texture)
+	{
+		return;
+	}
+
+	Serializer::SerializeTexture(filepath, texture, isLoaded);
 }

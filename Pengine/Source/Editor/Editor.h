@@ -1,19 +1,25 @@
 #pragma once
 
 #include "../Core/Core.h"
-#include "../Core/Scene.h"
+#include "../Core/GraphicsSettings.h"
+#include "../Graphics/Texture.h"
 
 #include <filesystem>
+#include <deque>
 
 namespace Pengine
 {
+
+	class Scene;
+	class Entity;
+	class Window;
 
 	class Editor
 	{
 	public:
 		Editor();
 
-		void Update(const std::shared_ptr<Scene>& scene);
+		void Update(const std::shared_ptr<Scene>& scene, Window& window);
 
 	private:
 		class Indent
@@ -43,21 +49,21 @@ namespace Pengine
 
 		bool ImageCheckBox(const void* id, ImTextureID textureOn, ImTextureID textureOff, bool& enabled);
 
-		void Hierarchy(const std::shared_ptr<Scene>& scene);
+		void Hierarchy(const std::shared_ptr<Scene>& scene, Window& window);
 
 		void SceneInfo(const std::shared_ptr<Scene>& scene);
 
-		void DrawScene(const std::shared_ptr<Scene>& scene);
+		void DrawScene(const std::shared_ptr<Scene>& scene, Window& window);
 
-		void DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags flags);
+		void DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags flags, Window& window);
 
-		void DrawChilds(const std::shared_ptr<Entity>& entity);
+		void DrawChilds(const std::shared_ptr<Entity>& entity, Window& window);
 
-		void Properties(const std::shared_ptr<Scene>& scene);
+		void Properties(const std::shared_ptr<Scene>& scene, Window& window);
 
 		void GraphicsSettingsInfo(GraphicsSettings& graphicsSettings);
 
-		void CameraComponent(const std::shared_ptr<Entity>& entity);
+		void CameraComponent(const std::shared_ptr<Entity>& entity, Window& window);
 
 		void TransformComponent(const std::shared_ptr<Entity>& entity);
 
@@ -68,6 +74,8 @@ namespace Pengine
 		void DirectionalLightComponent(const std::shared_ptr<Entity>& entity);
 
 		void SkeletalAnimatorComponent(const std::shared_ptr<Entity>& entity);
+
+		void CanvasComponent(const std::shared_ptr<Entity>& entity);
 
 		void GameObjectPopUpMenu(const std::shared_ptr<Scene>& scene);
 
@@ -83,11 +91,13 @@ namespace Pengine
 
 		void SetDarkThemeColors();
 
-		void Manipulate(const std::shared_ptr<Scene>& scene);
+		void Manipulate(const std::shared_ptr<Scene>& scene, Window& window);
 
-		void MoveCamera(const std::shared_ptr<Entity>& camera);
+		void MoveCamera(const std::shared_ptr<Entity>& camera, Window& window);
 
 		ImTextureID GetFileIcon(const std::filesystem::path& filepath, const std::string& format);
+
+		void SaveScene(std::shared_ptr<Scene> scene);
 
 		struct MaterialMenu
 		{
@@ -146,7 +156,7 @@ namespace Pengine
 			char name[64];
 			glm::ivec2 size = { 1024, 1024 };
 
-			void Update(const Editor& editor);
+			void Update(const Editor& editor, Window& window);
 		} m_CreateViewportMenu;
 
 		struct LoadIntermediateMenu
@@ -187,7 +197,7 @@ namespace Pengine
 
 		char m_AssetBrowserFilterBuffer[64];
 
-		float m_ThumbnailScale = 0.8f;
+		float m_ThumbnailScale = 1.0f;
 
 		int m_TransformSystem = 0;
 
@@ -196,6 +206,52 @@ namespace Pengine
 		bool m_FullScreen = false;
 
 		std::shared_ptr<Entity> m_MovingCamera;
+
+		class Thumbnails
+		{
+		public:
+			std::shared_ptr<Scene> m_ThumbnailScene;
+			std::shared_ptr<Window> m_ThumbnailWindow;
+			std::shared_ptr<class Renderer> m_ThumbnailRenderer;
+			std::string m_CameraUUID;
+
+			std::atomic<bool> m_IsThumbnailLoading = false;
+
+			enum class Type
+			{
+				MESH,
+				MAT,
+				SCENE,
+				PREFAB
+			};
+
+			struct ThumbnailLoadInfo
+			{
+				std::filesystem::path thumbnailFilepath;
+				std::filesystem::path resourceFilepath;
+				std::shared_ptr<Scene> scene;
+				Type type;
+			};
+			std::deque<ThumbnailLoadInfo> m_ThumbnailQueue;
+			std::unordered_map<std::filesystem::path, bool> m_GeneratingThumbnails;
+			std::unordered_map<std::filesystem::path, std::weak_ptr<Texture>> m_CacheThumbnails;
+			std::unordered_map<std::filesystem::path, std::weak_ptr<Texture>>::iterator m_ThumbnailToCheck = m_CacheThumbnails.end();
+
+			void Initialize();
+
+			void UpdateThumbnails();
+
+			void UpdateMatMeshThumbnail(const ThumbnailLoadInfo& thumbnailLoadInfo);
+
+			void UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thumbnailLoadInfo);
+
+			ImTextureID GetOrGenerateThumbnail(
+				const std::filesystem::path& filepath,
+				std::shared_ptr<Scene> scene,
+				Type type);
+
+			ImTextureID TryGetThumbnail(const std::filesystem::path& filepath);
+		} m_Thumbnails;
 	};
 
 }

@@ -30,6 +30,9 @@ VulkanGraphicsPipeline::VulkanGraphicsPipeline(const CreateGraphicsInfo& createG
 		VkShaderModule shaderModule{};
 		VulkanPipelineUtils::CreateShaderModule(vertexSpv, &shaderModule);
 		shaderModulesByType[type] = shaderModule;
+		
+		// TODO: Maybe need to collect all bindings from all shader stages and then create layouts.
+		// For now it seems it is uses layouts from the last shdaer stage.
 		auto uniformLayoutsByDescriptorSets = VulkanPipelineUtils::CreateDescriptorSetLayouts(m_ReflectShaderModulesByType[type]);
 		for (const auto& [set, layout] : uniformLayoutsByDescriptorSets)
 		{
@@ -60,7 +63,7 @@ VulkanGraphicsPipeline::VulkanGraphicsPipeline(const CreateGraphicsInfo& createG
 	pipelineLayoutCreateInfo.pSetLayouts = descriptorSetLayouts.data();
 	pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 
-	if (vkCreatePipelineLayout(device->GetDevice(), &pipelineLayoutCreateInfo,
+	if (vkCreatePipelineLayout(GetVkDevice()->GetDevice(), &pipelineLayoutCreateInfo,
 		nullptr, &m_PipelineLayout) != VK_SUCCESS)
 	{
 		FATAL_ERROR("Failed to create pipeline layout!");
@@ -121,7 +124,7 @@ VulkanGraphicsPipeline::VulkanGraphicsPipeline(const CreateGraphicsInfo& createG
 	vkPipelineCreateInfo.basePipelineIndex = -1;
 	vkPipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-	if (vkCreateGraphicsPipelines(device->GetDevice(), VK_NULL_HANDLE, 1,
+	if (vkCreateGraphicsPipelines(GetVkDevice()->GetDevice(), VK_NULL_HANDLE, 1,
 		&vkPipelineCreateInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS)
 	{
 		FATAL_ERROR("Failed to create graphics pipeline!");
@@ -129,16 +132,16 @@ VulkanGraphicsPipeline::VulkanGraphicsPipeline(const CreateGraphicsInfo& createG
 
 	for (auto& [type, shaderModule] : shaderModulesByType)
 	{
-		vkDestroyShaderModule(device->GetDevice(), shaderModule, nullptr);
+		vkDestroyShaderModule(GetVkDevice()->GetDevice(), shaderModule, nullptr);
 	}
 }
 
 VulkanGraphicsPipeline::~VulkanGraphicsPipeline()
 {
-	device->DeleteResource([pipelineLayout = m_PipelineLayout, graphicsPipeline = m_GraphicsPipeline]()
+	GetVkDevice()->DeleteResource([pipelineLayout = m_PipelineLayout, graphicsPipeline = m_GraphicsPipeline]()
 	{
-		vkDestroyPipelineLayout(device->GetDevice(), pipelineLayout, nullptr);
-		vkDestroyPipeline(device->GetDevice(), graphicsPipeline, nullptr);
+		vkDestroyPipelineLayout(GetVkDevice()->GetDevice(), pipelineLayout, nullptr);
+		vkDestroyPipeline(GetVkDevice()->GetDevice(), graphicsPipeline, nullptr);
 	});
 }
 

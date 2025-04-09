@@ -25,7 +25,7 @@ void VulkanBuffer::WriteToVulkanBuffer(
 {
 	if (m_MemoryType == MemoryType::CPU)
 	{
-		vmaCopyMemoryToAllocation(device->GetVmaAllocator(), data, m_BufferDatas[imageIndex].m_VmaAllocation, offset, size);
+		vmaCopyMemoryToAllocation(GetVkDevice()->GetVmaAllocator(), data, m_BufferDatas[imageIndex].m_VmaAllocation, offset, size);
 	}
 	else if (m_MemoryType == MemoryType::GPU)
 	{
@@ -35,7 +35,7 @@ void VulkanBuffer::WriteToVulkanBuffer(
 
 		stagingBuffer->WriteToBuffer(data, size, offset);
 
-		device->CopyBuffer(
+		GetVkDevice()->CopyBuffer(
 			stagingBuffer->m_BufferDatas[imageIndex].m_Buffer,
 			m_BufferDatas[imageIndex].m_Buffer,
 			size,
@@ -151,7 +151,7 @@ VulkanBuffer::VulkanBuffer(
 	m_BufferDatas.resize(m_IsMultiBuffered ? swapChainImageCount : 1);
 	for (BufferData& bufferData : m_BufferDatas)
 	{
-		device->CreateBuffer(
+		GetVkDevice()->CreateBuffer(
 			m_BufferSize,
 			bufferUsageFlags,
 			memoryUsage,
@@ -164,12 +164,9 @@ VulkanBuffer::VulkanBuffer(
 
 VulkanBuffer::~VulkanBuffer()
 {
-	for (BufferData bufferData : m_BufferDatas)
+	for (const BufferData& bufferData : m_BufferDatas)
 	{
-		device->DeleteResource([bufferData]()
-		{
-			vmaDestroyBuffer(device->GetVmaAllocator(), bufferData.m_Buffer, bufferData.m_VmaAllocation);
-		});
+		GetVkDevice()->DestroyBuffer(bufferData.m_Buffer, bufferData.m_VmaAllocation, bufferData.m_VmaAllocationInfo);
 	}
 
 	if (m_Data)
@@ -227,7 +224,7 @@ void VulkanBuffer::Copy(
 	}
 	else
 	{
-		device->CopyBuffer(
+		GetVkDevice()->CopyBuffer(
 			vkBuffer->GetBuffer(),
 			m_BufferDatas.back().m_Buffer,
 			vkBuffer->GetSize(),
@@ -254,7 +251,7 @@ void VulkanBuffer::Flush()
 	if (m_MemoryType == MemoryType::CPU)
 	{
 		vmaCopyMemoryToAllocation(
-			device->GetVmaAllocator(),
+			GetVkDevice()->GetVmaAllocator(),
 			m_Data,
 			m_BufferDatas[imageIndex].m_VmaAllocation,
 			0,
@@ -268,7 +265,7 @@ void VulkanBuffer::Flush()
 
 		stagingBuffer->WriteToBuffer(m_Data, GetSize(), 0);
 
-		device->CopyBuffer(
+		GetVkDevice()->CopyBuffer(
 			stagingBuffer->m_BufferDatas.begin()->m_Buffer,
 			m_BufferDatas[imageIndex].m_Buffer,
 			GetSize(),
@@ -278,7 +275,7 @@ void VulkanBuffer::Flush()
 	m_IsChanged[imageIndex] = false;
 }
 
-VkDescriptorBufferInfo VulkanBuffer::DescriptorInfo(
+VkDescriptorBufferInfo VulkanBuffer::GetDescriptorInfo(
 	const uint32_t imageIndex,
 	const VkDeviceSize size,
 	const VkDeviceSize offset) const

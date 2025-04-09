@@ -3,6 +3,8 @@
 #include "../Core/Core.h"
 #include "../Core/Window.h"
 
+#include "VulkanFrameInfo.h"
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -14,7 +16,7 @@ namespace Pengine::Vk
 	class PENGINE_API VulkanWindow final : public Window
 	{
 	public:
-		VulkanWindow(const std::string& name, const glm::ivec2& size);
+		VulkanWindow(const std::string& title, const std::string& name, const glm::ivec2& size);
 		virtual ~VulkanWindow() override;
 		VulkanWindow(const VulkanWindow&) = delete;
 		VulkanWindow& operator=(const VulkanWindow&) = delete;
@@ -31,8 +33,6 @@ namespace Pengine::Vk
 
 		virtual void Present(std::shared_ptr<Texture> texture) override;
 
-		virtual void ShutDownPrepare() override;
-
 		virtual void ImGuiBegin() override;
 
 		virtual void ImGuiEnd() override;
@@ -41,7 +41,7 @@ namespace Pengine::Vk
 
 		virtual void EndFrame(void* frame) override;
 
-		virtual void ImGuiRenderPass(void* frame) override;
+		virtual void ImGuiRenderPass() override;
 
 		virtual void DisableCursor() override;
 
@@ -49,7 +49,7 @@ namespace Pengine::Vk
 
 		virtual void HideCursor() override;
 
-		[[nodiscard]] GLFWwindow* GetRawWindow() const { return m_Window; }
+		virtual void SetTitle(const std::string& title) override;
 
 		[[nodiscard]] ImGui_ImplVulkanH_Window& GetVulkanWindow() { return m_VulkanWindow; }
 
@@ -58,8 +58,11 @@ namespace Pengine::Vk
 	private:
 		void InitializeImGui();
 
-		GLFWwindow* m_Window = nullptr;
 		ImGui_ImplVulkanH_Window m_VulkanWindow{};
+		VkSurfaceKHR m_Surface{};
+
+		std::vector<VulkanFrameInfo> m_Frames;
+
 		VkDescriptorPool m_ImGuiDescriptorPool = VK_NULL_HANDLE;
 	};
 

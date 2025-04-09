@@ -3,6 +3,7 @@
 #include "MaterialManager.h"
 
 #include "../ComponentSystems/SkeletalAnimatorSystem.h"
+#include "../ComponentSystems/UISystem.h"
 
 using namespace Pengine;
 
@@ -14,8 +15,7 @@ SceneManager& SceneManager::GetInstance()
 
 std::shared_ptr<Scene> SceneManager::Create(const std::string& name, const std::string& tag)
 {
-	std::shared_ptr<Scene> scene = std::make_shared<Scene>(name, none);
-	scene->SetTag(tag);
+	std::shared_ptr<Scene> scene = Scene::Create(name, tag);
 
 	for (const auto& [name, system] : m_ComponentSystemsByName)
 	{
@@ -98,4 +98,5 @@ void SceneManager::ShutDown()
 SceneManager::SceneManager()
 {
 	SetComponentSystem("SkeletalAnimatorSystem", std::make_shared<SkeletalAnimatorSystem>());
+	SetComponentSystem("UISystem", std::make_shared<UISystem>());
 }

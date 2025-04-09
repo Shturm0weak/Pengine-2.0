@@ -46,12 +46,25 @@ namespace Pengine::ShaderReflection
 		std::vector<ReflectVariable> variables;
 	};
 
+	enum class Stage
+	{
+		VERTEX_BIT,
+		TESSELLATION_CONTROL_BIT,
+		TESSELLATION_EVALUATION_BIT,
+		GEOMETRY_BIT,
+		FRAGMENT_BIT,
+		COMPUTE_BIT,
+		ALL_GRAPHICS,
+		ALL,
+	};
+
 	struct ReflectDescriptorSetBinding
 	{
 		std::string name;
 		uint32_t binding = 0;
 		uint32_t count = 0;
 		Type type;
+		Stage stage = Stage::ALL;
 
 		std::optional<ReflectVariable> buffer;
 	};

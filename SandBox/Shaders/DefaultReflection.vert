@@ -3,7 +3,6 @@
 layout(location = 0) in vec3 positionA;
 
 #include "Shaders/Includes/Camera.h"
-
 layout(set = 0, binding = 0) uniform GlobalBuffer
 {
 	Camera camera;

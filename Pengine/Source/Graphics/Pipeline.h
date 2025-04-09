@@ -29,6 +29,7 @@ namespace Pengine
 		enum class DescriptorSetIndexType
 		{
 			RENDERER,
+			SCENE,
 			RENDERPASS,
 			BASE_MATERIAL,
 			MATERIAL,

@@ -16,11 +16,17 @@ namespace Pengine
 		Viewport(const Viewport&) = delete;
 		Viewport& operator=(const Viewport&) = delete;
 
-		void Update(const std::shared_ptr<Texture>& viewportTexture);
+		void Update(const std::shared_ptr<Texture>& viewportTexture, std::shared_ptr<class Window> window);
 
 		[[nodiscard]] std::weak_ptr<Entity> GetCamera() const { return m_Camera; }
 
 		void SetCamera(const std::shared_ptr<Entity>& camera);
+
+		void SetIsOpened(bool isOpened) { m_IsOpened = isOpened; }
+
+		void SetIsHeadLess(bool isHeadLess) { m_IsHeadLess = isHeadLess; }
+
+		bool IsHeadLess() const { return m_IsHeadLess; }
 
 		[[nodiscard]] glm::ivec2 GetSize() const { return m_Size; }
 
@@ -36,14 +42,16 @@ namespace Pengine
 
 		[[nodiscard]] bool IsFocused() const { return m_IsFocused; }
 
+		[[nodiscard]] const std::string& GetName() const { return m_Name; }
+
 		[[nodiscard]] uint32_t& GetGizmoOperation() { return m_GizmoOperation; }
 
 		void SetDrawGizmosCallback(const std::function<void(const glm::vec2&, glm::ivec2, std::shared_ptr<Entity>, bool&)>& drawGizmosCallback);
 
+		void UpdateProjectionMat4();
+
 	private:
 		void Resize(const glm::ivec2& size);
-
-		void UpdateProjectionMat4();
 
 		void SetOrthographic(const glm::ivec2& size, const float zFar, const float zNear);
 
@@ -67,6 +75,8 @@ namespace Pengine
 		bool m_IsFocused = false;
 		bool m_IsOpened = true;
 		bool m_ActiveGuizmo = false;
+
+		bool m_IsHeadLess = false;
 	};
 
 }

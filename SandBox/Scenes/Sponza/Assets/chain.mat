@@ -1,5 +1,5 @@
 Mat:
-  Basemat: Materials/MeshBase.basemat
+  Basemat: 29181c47-c273-47f2-b4dc-03daed0c8590
   Options:
     - Name: Transparency
       IsEnabled: false
@@ -10,18 +10,6 @@ Mat:
   Pipelines:
     - RenderPass: GBuffer
       Uniforms:
-        - Name: albedoTexture
-          Value: 763a4302-794d-42a0-b577-a99ae843b4dd
-        - Name: normalTexture
-          Value: ""
-        - Name: metalnessTexture
-          Value: ""
-        - Name: roughnessTexture
-          Value: ""
-        - Name: aoTexture
-          Value: ""
-        - Name: emissiveTexture
-          Value: ""
         - Name: GBufferMaterial
           Values:
             - Name: material.albedoColor
@@ -48,6 +36,23 @@ Mat:
             - Name: material.useNormalMap
               Value: 0
               Type: int
+            - Name: material.useSingleShadingMap
+              Value: 0
+              Type: int
+        - Name: albedoTexture
+          Value: 763a4302-794d-42a0-b577-a99ae843b4dd
+        - Name: normalTexture
+          Value: ""
+        - Name: metalnessTexture
+          Value: ""
+        - Name: roughnessTexture
+          Value: ""
+        - Name: aoTexture
+          Value: ""
+        - Name: emissiveTexture
+          Value: ""
+        - Name: shadingTexture
+          Value: ""
     - RenderPass: Transparent
       Uniforms:
         []

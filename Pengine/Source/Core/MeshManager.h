@@ -26,7 +26,7 @@ namespace Pengine
 
 		std::shared_ptr<Mesh> GetMesh(const std::filesystem::path& filepath);
 
-		void DeleteMesh(std::shared_ptr<Mesh> mesh);
+		void DeleteMesh(std::shared_ptr<Mesh>& mesh);
 
 		std::shared_ptr<SkeletalAnimation> CreateSkeletalAnimation(SkeletalAnimation::CreateInfo& createInfo);
 
@@ -34,7 +34,7 @@ namespace Pengine
 
 		std::shared_ptr<SkeletalAnimation> GetSkeletalAnimation(const std::filesystem::path& filepath);
 
-		void DeleteSkeletalAnimation(std::shared_ptr<SkeletalAnimation> skeletalAnimation);
+		void DeleteSkeletalAnimation(std::shared_ptr<SkeletalAnimation>& skeletalAnimation);
 
 		std::shared_ptr<Skeleton> CreateSkeleton(Skeleton::CreateInfo& createInfo);
 
@@ -42,7 +42,7 @@ namespace Pengine
 
 		std::shared_ptr<Skeleton> GetSkeleton(const std::filesystem::path& filepath);
 
-		void DeleteSkeleton(std::shared_ptr<Skeleton> skeleton);
+		void DeleteSkeleton(std::shared_ptr<Skeleton>& skeleton);
 
 		const std::unordered_map<std::filesystem::path, std::shared_ptr<Mesh>, path_hash>& GetMeshes() const { return m_MeshesByFilepath; }
 

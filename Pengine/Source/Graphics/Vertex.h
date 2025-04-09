@@ -12,6 +12,7 @@ namespace Pengine
 		glm::vec3 normal;
 		glm::vec3 tangent;
 		glm::vec3 bitangent;
+		uint32_t color;
 	};
 
 	struct PENGINE_API VertexDefaultSkinned
@@ -21,6 +22,7 @@ namespace Pengine
 		glm::vec3 normal;
 		glm::vec3 tangent;
 		glm::vec3 bitangent;
+		uint32_t color;
 		glm::vec4 weights;
 		glm::ivec4 boneIds;
 	};
@@ -42,6 +44,11 @@ namespace Pengine
 	{
 		glm::vec4 weights;
 		glm::ivec4 boneIds;
+	};
+
+	struct PENGINE_API VertexColor
+	{
+		uint32_t color;
 	};
 
 	struct PENGINE_API VertexLayout

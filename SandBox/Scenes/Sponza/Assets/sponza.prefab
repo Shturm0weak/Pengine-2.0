@@ -1,0 +1,333 @@
+Name: Sponza
+IsEnabled: true
+Transform:
+  Position: [0, 0, 0]
+  Rotation: [0, -0, 0]
+  Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+  FollowOwner: true
+Childs:
+  - Name: sponza_378_sponza_378_Material__25
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 67a3c615-82de-4fbc-a598-41a45cf06b5e
+      Material: ad639773-029d-436b-a216-d94f68a33a1c
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_378_sponza_378_Material__298
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 5f1d178b-f991-4bd5-a37b-a545d905cc9a
+      Material: 6057fe89-350e-4abe-95d2-f2c33d2d2892
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_257_sponza_257_Material__47
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 2f021725-c9ea-4925-817b-614db4837211
+      Material: 5a9f7752-6b28-4cf9-9717-d6cde7287269
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_369_sponza_369_Material__57
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: cb20f219-49c3-4d07-956a-106a5cab1ff6
+      Material: e791e48b-3817-4cf3-be2d-bc53ce644fa2
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_39_sponza_39_arch
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 87332666-504d-4918-9fcc-afd3ef260720
+      Material: ef1c45ac-c488-40e4-9222-3552baa9078d
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_382_sponza_382_bricks
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 51dd354d-345f-4dc2-b627-8677e0db4f08
+      Material: fd0b9687-a11d-4761-b21a-8b0bc5980280
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_38_sponza_38_ceiling
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d8351a09-536d-454f-971c-dcffae50086a
+      Material: fd6afd74-122c-4195-8b50-02df21145de0
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_339_sponza_339_chain
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: d5bf4f4a-b6e7-4f8a-a5a2-c1dc55de59cc
+      Material: 8364b48c-9d3b-4c45-9b3f-b1fa1cee0612
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_10_sponza_10_column_a
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 83b3d1f5-0ef2-4ef1-840c-82be96ea38ac
+      Material: 5d569cf9-3cff-40e9-a858-4bb736ddcf2f
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_141_sponza_141_column_b
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 561cfa97-563b-438d-b896-264dd9ba72d1
+      Material: c16e84ba-a5c7-4a84-b84a-858036b7231f
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_83_sponza_83_column_c
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 2b05c303-6612-4ce4-933c-2fd78776a385
+      Material: 51cd6bfa-7de3-4e6d-b1cb-2aa18c8876c8
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_72_sponza_72_details
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 83597c91-97af-4061-94b1-94ac75f098b7
+      Material: d0b1fa7e-39c4-45f9-a598-f3875f31055b
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_288_sponza_288_fabric_a
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0bc8cb57-5017-44a0-9c72-6356b2660e77
+      Material: 0d6d331a-12b3-4460-bdd3-3c8cf7cd8686
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_325_sponza_325_fabric_c
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9e67022d-7a21-4ad7-9746-4f8a5c7355e0
+      Material: 5bccb4b5-632f-4ec3-8af6-c0dc03d3dde5
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_289_sponza_289_fabric_d
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: b97d4d8f-6414-4cae-86b0-8602aecddf4a
+      Material: 166a6035-6fea-4d50-8eeb-47481c292305
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_285_sponza_285_fabric_e
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 12eeb519-0b00-475e-9944-d4f3305dade8
+      Material: c6f9d8ac-344e-403c-86c8-990af020ca7b
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_327_sponza_327_fabric_f
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 828a011d-00e3-4376-9bbe-ba6088bc41a1
+      Material: 148ad645-1353-463a-aa9f-42073bcda3fd
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_326_sponza_326_fabric_g
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 46ea39fc-4e02-4fb9-ae9f-a09bec93e350
+      Material: 026cde57-5171-4140-a76b-f6a4dc17923c
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_271_sponza_271_flagpole
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: adea34bc-c45a-4eac-9a0d-0ab3c1550ba2
+      Material: c98fa807-fba0-4b52-82c1-1d3aedf62971
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_18_sponza_18_floor
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 1b7a26de-8592-47f0-a4f9-84fd8aafbe26
+      Material: d4f73f99-0707-4bf6-a8b4-fbeb9c246d0c
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_275_sponza_275_leaf
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 82fb3939-69ec-4244-83db-97763c519f68
+      Material: dea504dd-2cac-4ebe-855f-eaa2259380f8
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_381_sponza_381_roof
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 9f7e2624-90c4-44ef-be48-02f8a011df7c
+      Material: 6d25e927-03b7-4b6b-8ba9-13990c8fe971
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_373_sponza_373_vase
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: a5020bb0-ee32-415a-91a4-f110e2fde9fd
+      Material: dfd42e11-eeb6-472d-b375-a43de5a5d52f
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_344_sponza_344_vase_hanging
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: e1c7b95e-856f-4e5e-8c73-00066c51d068
+      Material: 6d921937-8812-404f-828b-b634964da844
+      RenderingOrder: 5
+    Childs:
+      []
+  - Name: sponza_369_sponza_369_vase_round
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: cd207bc3-7ca7-4894-a3b4-7d2e0c619da3
+      Material: 3bff7cfe-f496-4e8e-9d84-65e2897dceeb
+      RenderingOrder: 5
+    Childs:
+      []

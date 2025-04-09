@@ -34,9 +34,9 @@ namespace Pengine
 		
 		const std::unordered_map<std::filesystem::path, std::shared_ptr<BaseMaterial>, path_hash>& GetBaseMaterials() const { return m_BaseMaterialsByFilepath; }
 
-		void DeleteMaterial(std::shared_ptr<Material> material);
+		void DeleteMaterial(std::shared_ptr<Material>& material);
 
-		void DeleteBaseMaterial(std::shared_ptr<BaseMaterial> baseMaterial);
+		void DeleteBaseMaterial(std::shared_ptr<BaseMaterial>& baseMaterial);
 
 		void ReloadAll();
 

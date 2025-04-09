@@ -169,6 +169,16 @@ void TextureManager::Delete(const std::filesystem::path& filepath)
 	m_TexturesByFilepath.erase(filepath);
 }
 
+void TextureManager::Delete(std::shared_ptr<Texture>& texture)
+{
+	if (texture.use_count() == 2)
+	{
+		Delete(texture->GetFilepath());
+	}
+
+	texture = nullptr;
+}
+
 void TextureManager::ShutDown()
 {
 	std::lock_guard<std::mutex> lock(m_MutexTexture);

@@ -6,6 +6,8 @@
 #include "../Components/Renderer3D.h"
 #include "../Components/SkeletalAnimator.h"
 #include "../Components/Transform.h"
+#include "../Components/Canvas.h"
+#include "../Core/AsyncAssetLoader.h"
 #include "../Core/FileFormatNames.h"
 #include "../Core/Input.h"
 #include "../Core/KeyCode.h"
@@ -25,6 +27,9 @@
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 
+#include "../Graphics/Device.h"
+#include "../Graphics/Renderer.h"
+
 #include <fstream>
 #include <format>
 
@@ -38,21 +43,25 @@ using namespace Pengine;
 Editor::Editor()
 {
 	SetDarkThemeColors();
-	ViewportManager::GetInstance().Create("Main", { 800, 800 });
+	//ViewportManager::GetInstance().Create("Main", { 800, 800 });
 
 	m_AssetBrowserFilterBuffer[0] = '\0';
+
+	m_Thumbnails.Initialize();
 }
 
-void Editor::Update(const std::shared_ptr<Scene>& scene)
+void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
 {
-	if (Input::Mouse::IsMouseReleased(Keycode::MOUSE_BUTTON_2))
+	Input& input = Input::GetInstance(&window);
+
+	if (input.IsMouseReleased(Keycode::MOUSE_BUTTON_2))
 	{
 		m_MovingCamera = nullptr;
 	}
 
-	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
+	for (const auto& [name, viewport] : window.GetViewportManager().GetViewports())
 	{
-		if (viewport->IsHovered() && Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
+		if (viewport->IsHovered() && input.IsMouseDown(Keycode::MOUSE_BUTTON_2))
 		{
 			m_MovingCamera = viewport->GetCamera().lock();
 		}
@@ -60,7 +69,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 		if (m_MovingCamera)
 		{
 			WindowManager::GetInstance().GetCurrentWindow()->DisableCursor();
-			MoveCamera(m_MovingCamera);
+			MoveCamera(m_MovingCamera, window);
 			break;
 		}
 		else
@@ -69,7 +78,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 		}
 	}
 
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL) && Input::KeyBoard::IsKeyPressed(Keycode::KEY_F))
+	if (input.IsKeyDown(Keycode::KEY_LEFT_CONTROL) && input.IsKeyPressed(Keycode::KEY_F))
 	{
 		m_FullScreen = !m_FullScreen;
 	}
@@ -79,12 +88,12 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 		return;
 	}
 
-	Manipulate(scene);
+	Manipulate(scene, window);
 
 	MainMenuBar();
-	Hierarchy(scene);
+	Hierarchy(scene, window);
 	SceneInfo(scene);
-	Properties(scene);
+	Properties(scene, window);
 	AssetBrowser(scene);
 	AssetBrowserHierarchy();
 
@@ -93,10 +102,12 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	m_CreateFileMenu.Update();
 	m_DeleteFileMenu.Update();
 	m_CloneMaterialMenu.Update();
-	m_CreateViewportMenu.Update(*this);
+	m_CreateViewportMenu.Update(*this, window);
 	m_LoadIntermediateMenu.Update();
 	m_TextureMetaPropertiesMenu.Update();
 	m_ImportMenu.Update(*this);
+
+	m_Thumbnails.UpdateThumbnails();
 
 	ImGui::Begin("Settings");
 	ImGui::Text("FPS: %.0f", 1.0f / static_cast<float>(Time::GetDeltaTime()));
@@ -106,6 +117,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene)
 	ImGui::Text("BaseMaterials: %d", static_cast<int>(MaterialManager::GetInstance().GetBaseMaterials().size()));
 	ImGui::Text("Materials: %d", static_cast<int>(MaterialManager::GetInstance().GetMaterials().size()));
 	ImGui::Text("Textures: %d", static_cast<int>(TextureManager::GetInstance().GetTextures().size()));
+	ImGui::Text("VRAM Allocated: %d", static_cast<int>(vramAllocated / 1024));
 
 	ImGui::End();
 }
@@ -641,11 +653,13 @@ bool Editor::ImageCheckBox(const void* id, ImTextureID textureOn, ImTextureID te
 	return clicked;
 }
 
-void Editor::Hierarchy(const std::shared_ptr<Scene>& scene)
+void Editor::Hierarchy(const std::shared_ptr<Scene>& scene, Window& window)
 {
 	if (ImGui::Begin("Scene Hierarchy"))
 	{
-		if (ImGui::IsWindowFocused() && Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL) && Input::KeyBoard::IsKeyPressed(Keycode::KEY_A))
+		Input& input = Input::GetInstance(&window);
+
+		if (ImGui::IsWindowFocused() && input.IsKeyDown(Keycode::KEY_LEFT_CONTROL) && input.IsKeyPressed(Keycode::KEY_A))
 		{
 			scene->GetSelectedEntities().clear();
 			for (const std::shared_ptr<Entity> entity : scene->GetEntities())
@@ -656,7 +670,7 @@ void Editor::Hierarchy(const std::shared_ptr<Scene>& scene)
 
 		if (scene)
 		{
-			DrawScene(scene);
+			DrawScene(scene, window);
 
 			GameObjectPopUpMenu(scene);
 		}
@@ -671,6 +685,9 @@ void Editor::SceneInfo(const std::shared_ptr<Scene>& scene)
 	{
 		if (scene)
 		{
+			// Generate thumbnail for the scene if there is no one.
+			m_Thumbnails.GetOrGenerateThumbnail(scene->GetFilepath(), scene, Thumbnails::Type::SCENE);
+
 			ImGui::Text("Name: %s", scene->GetName().c_str());
 			ImGui::Text("Filepath: %s", scene->GetFilepath().string().c_str());
 			ImGui::Text("Tag: %s", scene->GetTag().c_str());
@@ -689,7 +706,7 @@ void Editor::SceneInfo(const std::shared_ptr<Scene>& scene)
 	}
 }
 
-void Editor::DrawScene(const std::shared_ptr<Scene>& scene)
+void Editor::DrawScene(const std::shared_ptr<Scene>& scene, Window& window)
 {
 	Indent indent;
 
@@ -735,12 +752,12 @@ void Editor::DrawScene(const std::shared_ptr<Scene>& scene)
 			flags |= scene->GetSelectedEntities().count(entity) ?
 				ImGuiTreeNodeFlags_Selected : 0;
 			
-			DrawNode(entity, flags);
+			DrawNode(entity, flags, window);
 		}
 	}
 }
 
-void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags flags)
+void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags flags, Window& window)
 {
 	flags |= entity->GetChilds().empty() ? ImGuiTreeNodeFlags_Leaf : 0;
 
@@ -811,7 +828,7 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 	if (ImGui::IsItemClicked() && (ImGui::GetMousePos().x - ImGui::GetItemRectMin().x) > ImGui::GetTreeNodeToLabelSpacing())
 	{
 		auto& selectedEntities = entity->GetScene()->GetSelectedEntities();
-		if (!Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL))
+		if (!Input::GetInstance(&window).IsKeyDown(Keycode::KEY_LEFT_CONTROL))
 		{
 			selectedEntities.clear();
 		}
@@ -829,11 +846,11 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 	if (opened)
 	{
 		ImGui::TreePop();
-		DrawChilds(entity);
+		DrawChilds(entity, window);
 	}
 }
 
-void Editor::DrawChilds(const std::shared_ptr<Entity>& entity)
+void Editor::DrawChilds(const std::shared_ptr<Entity>& entity, Window& window)
 {
 	for (const std::weak_ptr<Entity> weakChild : entity->GetChilds())
 	{
@@ -843,12 +860,12 @@ void Editor::DrawChilds(const std::shared_ptr<Entity>& entity)
 			flags |= entity->GetScene()->GetSelectedEntities().count(child) ?
 				ImGuiTreeNodeFlags_Selected : 0;
 
-			DrawNode(child, flags);
+			DrawNode(child, flags, window);
 		}
 	}
 }
 
-void Editor::Properties(const std::shared_ptr<Scene>& scene)
+void Editor::Properties(const std::shared_ptr<Scene>& scene, Window& window)
 {
 	if (ImGui::Begin("Properties", nullptr))
 	{
@@ -902,8 +919,8 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene)
 						ImGui::PushID("Save Prefab");
 						if (ImGui::Button("Save"))
 						{
-							Serializer::SerializePrefab(Utils::FindFilepath(entity->GetPrefabFilepathUUID()), entity);
-
+							Serializer::SerializePrefab(prefabFilepath, entity);
+							
 							auto callback = [scene, entity]()
 							{
 								std::vector<std::shared_ptr<Entity>> entitiesToDelete;
@@ -957,21 +974,23 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene)
 					ImGui::PushID("Save Prefab");
 					if (ImGui::Button("Save as prefab"))
 					{
-						Serializer::SerializePrefab(Utils::GetShortFilepath(m_CurrentDirectory / (entity->GetName() + FileFormats::Prefab())), entity);
+						const std::filesystem::path prefabFilepath = Utils::GetShortFilepath(m_CurrentDirectory / (entity->GetName() + FileFormats::Prefab()));
+						entity->SetPrefabFilepathUUID(Serializer::GenerateFileUUID(prefabFilepath));
+						SaveScene(entity->GetScene());
 					}
 					ImGui::PopID();
-
 				}
 			}
 
 			ComponentsPopUpMenu(entity);
 
 			TransformComponent(entity);
-			CameraComponent(entity);
+			CameraComponent(entity, window);
 			Renderer3DComponent(entity);
 			PointLightComponent(entity);
 			DirectionalLightComponent(entity);
 			SkeletalAnimatorComponent(entity);
+			CanvasComponent(entity);
 
 			ImGui::NewLine();
 		}
@@ -1178,7 +1197,7 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 	}
 }
 
-void Editor::CameraComponent(const std::shared_ptr<Entity>& entity)
+void Editor::CameraComponent(const std::shared_ptr<Entity>& entity, Window& window)
 {
 	if (!entity->HasComponent<Camera>())
 	{
@@ -1223,7 +1242,7 @@ void Editor::CameraComponent(const std::shared_ptr<Entity>& entity)
 
 		if (ImGui::BeginMenu("Viewports"))
 		{
-			for (const auto& viewport : ViewportManager::GetInstance().GetViewports())
+			for (const auto& viewport : window.GetViewportManager().GetViewports())
 			{
 				if (ImGui::MenuItem(viewport.first.c_str()))
 				{
@@ -1396,12 +1415,7 @@ void Editor::GameObjectPopUpMenu(const std::shared_ptr<Scene>& scene)
 
 		if (ImGui::MenuItem("Save Scene"))
 		{
-			std::string sceneFilepath = scene->GetFilepath().string();
-			if (sceneFilepath == none)
-			{
-				sceneFilepath = "Scenes/" + scene->GetName() + FileFormats::Scene();
-			}
-			Serializer::SerializeScene(sceneFilepath, scene);
+			SaveScene(scene);
 		}
 		
 		ImGui::EndPopup();
@@ -1476,13 +1490,6 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 		ImGui::Columns(columns, 0, false);
 
 		const bool leftMouseButtonDoubleClicked = ImGui::IsMouseDoubleClicked(GLFW_MOUSE_BUTTON_1);
-
-		const std::filesystem::path editorImagesPath = std::filesystem::path("Editor") / "Images";
-		const ImTextureID folderIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FolderIcon.png")->GetId();
-		const ImTextureID fileIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FileIcon.png")->GetId();
-		const ImTextureID metaIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MetaIcon.png")->GetId();
-		const ImTextureID materialIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MaterialIcon.png")->GetId();
-		const ImTextureID meshIconId = (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MeshIcon.png")->GetId();
 
 		bool iconHovered = false;
 
@@ -1723,7 +1730,7 @@ void Editor::SetDarkThemeColors()
 	colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 }
 
-void Editor::Manipulate(const std::shared_ptr<Scene>& scene)
+void Editor::Manipulate(const std::shared_ptr<Scene>& scene, Window& window)
 {
 	if (!scene)
 	{
@@ -1735,14 +1742,14 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene)
 		return;
 	}
 
-	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
+	for (const auto& [name, viewport] : window.GetViewportManager().GetViewports())
 	{
 		if (!viewport || !viewport->GetCamera().lock())
 		{
 			continue;
 		}
 
-		auto callback = [this, viewport](
+		auto callback = [this, &window, viewport](
 			const glm::vec2& position,
 			const glm::ivec2 size,
 			const std::shared_ptr<Entity>& camera,
@@ -1753,25 +1760,27 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene)
 				return;
 			}
 
-			if (viewport->IsHovered() && !Input::Mouse::IsMouseDown(Keycode::MOUSE_BUTTON_2))
+			Input& input = Input::GetInstance(&window);
+
+			if (viewport->IsHovered() && !input.IsMouseDown(Keycode::MOUSE_BUTTON_2))
 			{
-				if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_W))
+				if (input.IsKeyPressed(Keycode::KEY_W))
 				{
 					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::TRANSLATE;
 				}
-				else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_R))
+				else if (input.IsKeyPressed(Keycode::KEY_R))
 				{
 					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::ROTATE;
 				}
-				else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_S))
+				else if (input.IsKeyPressed(Keycode::KEY_S))
 				{
 					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::SCALE;
 				}
-				else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_U))
+				else if (input.IsKeyPressed(Keycode::KEY_U))
 				{
 					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::UNIVERSAL;
 				}
-				else if (Input::KeyBoard::IsKeyPressed(Keycode::KEY_Q))
+				else if (input.IsKeyPressed(Keycode::KEY_Q))
 				{
 					viewport->GetGizmoOperation() = -1;
 				}
@@ -1834,7 +1843,7 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene)
 	}
 }
 
-void Editor::MoveCamera(const std::shared_ptr<Entity>& camera)
+void Editor::MoveCamera(const std::shared_ptr<Entity>& camera, Window& window)
 {
 	if (!camera)
 	{
@@ -1857,7 +1866,9 @@ void Editor::MoveCamera(const std::shared_ptr<Entity>& camera)
 
 	constexpr double rotationSpeed = 90.0f;
 
-	const glm::vec2 delta = Input::Mouse::GetMousePositionDelta() * rotationSpeed * Time::GetDeltaTime();
+	Input& input = Input::GetInstance(&window);
+
+	const glm::vec2 delta = input.GetMousePositionDelta() * rotationSpeed * Time::GetDeltaTime();
 
 	transform.Rotate(glm::vec3(rotation.x - glm::radians(delta.y),
 		rotation.y - glm::radians(delta.x), 0));
@@ -1865,33 +1876,33 @@ void Editor::MoveCamera(const std::shared_ptr<Entity>& camera)
 	constexpr float defaultSpeed = 2.0f;
 	float speed = defaultSpeed;
 
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_SHIFT))
+	if (input.IsKeyDown(Keycode::KEY_LEFT_SHIFT))
 	{
 		speed *= 10.0f;
 	}
 
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_W))
+	if (input.IsKeyDown(Keycode::KEY_W))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetForward() * (float)Time::GetDeltaTime() * speed);
 	}
-	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_S))
+	else if (input.IsKeyDown(Keycode::KEY_S))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetForward() * -(float)Time::GetDeltaTime() * speed);
 	}
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_D))
+	if (input.IsKeyDown(Keycode::KEY_D))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetRight() * (float)Time::GetDeltaTime() * speed);
 	}
-	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_A))
+	else if (input.IsKeyDown(Keycode::KEY_A))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetRight() * -(float)Time::GetDeltaTime() * speed);
 	}
 
-	if (Input::KeyBoard::IsKeyDown(Keycode::KEY_Q))
+	if (input.IsKeyDown(Keycode::KEY_Q))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetUp() * -(float)Time::GetDeltaTime() * speed);
 	}
-	else if (Input::KeyBoard::IsKeyDown(Keycode::KEY_E))
+	else if (input.IsKeyDown(Keycode::KEY_E))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetUp() * (float)Time::GetDeltaTime() * speed);
 	}
@@ -1905,17 +1916,29 @@ ImTextureID Editor::GetFileIcon(const std::filesystem::path& filepath, const std
 	{
 		return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FolderIcon.png")->GetId();
 	}
-	else if (format == FileFormats::Mat())
-	{
-		return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MaterialIcon.png")->GetId();
-	}
 	else if (format == FileFormats::Meta())
 	{
 		return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MetaIcon.png")->GetId();
 	}
+	else if (format == FileFormats::Mat())
+	{
+		ImTextureID iconId = m_Thumbnails.GetOrGenerateThumbnail(filepath, nullptr, Thumbnails::Type::MAT);
+		return iconId ? iconId : (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MaterialIcon.png")->GetId();
+	}
 	else if (format == FileFormats::Mesh())
 	{
-		return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MeshIcon.png")->GetId();
+		ImTextureID iconId = m_Thumbnails.GetOrGenerateThumbnail(filepath, nullptr, Thumbnails::Type::MESH);
+		return iconId ? iconId : (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "MeshIcon.png")->GetId();
+	}
+	else if (format == FileFormats::Scene())
+	{
+		ImTextureID iconId = m_Thumbnails.TryGetThumbnail(filepath);
+		return iconId ? iconId : (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FileIcon.png")->GetId();
+	}
+	else if (format == FileFormats::Prefab())
+	{
+		ImTextureID iconId = m_Thumbnails.GetOrGenerateThumbnail(filepath, nullptr, Thumbnails::Type::PREFAB);
+		return iconId ? iconId : (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FileIcon.png")->GetId();
 	}
 	else if (FileFormats::IsTexture(format))
 	{
@@ -1923,6 +1946,17 @@ ImTextureID Editor::GetFileIcon(const std::filesystem::path& filepath, const std
 	}
 
 	return (ImTextureID)TextureManager::GetInstance().GetTexture(editorImagesPath / "FileIcon.png")->GetId();
+}
+
+void Editor::SaveScene(std::shared_ptr<Scene> scene)
+{
+	std::string sceneFilepath = scene->GetFilepath().string();
+	if (sceneFilepath == none)
+	{
+		sceneFilepath = "Scenes/" + scene->GetName() + FileFormats::Scene();
+	}
+	Serializer::SerializeScene(sceneFilepath, scene);
+	m_Thumbnails.GetOrGenerateThumbnail(sceneFilepath, scene, Thumbnails::Type::SCENE);
 }
 
 void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
@@ -1951,6 +1985,10 @@ void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
 		else if (ImGui::MenuItem("SkeletalAnimator"))
 		{
 			entity->AddComponent<SkeletalAnimator>();
+		}
+		else if (ImGui::MenuItem("Canvas"))
+		{
+			entity->AddComponent<Canvas>();
 		}
 		ImGui::EndPopup();
 	}
@@ -2233,6 +2271,30 @@ void Editor::SkeletalAnimatorComponent(const std::shared_ptr<Entity>& entity)
 	}
 }
 
+void Editor::CanvasComponent(const std::shared_ptr<Entity>& entity)
+{
+	if (!entity->HasComponent<Canvas>())
+	{
+		return;
+	}
+
+	Canvas& canvas = entity->GetComponent<Canvas>();
+
+	ImGui::PushID("Canvas X");
+	if (ImGui::Button("X"))
+	{
+		entity->RemoveComponent<Canvas>();
+	}
+	ImGui::PopID();
+
+	ImGui::SameLine();
+
+	if (ImGui::CollapsingHeader("Canvas"))
+	{
+		Indent indent;
+	}
+}
+
 Editor::Indent::Indent()
 {
 	ImGui::Indent();
@@ -2249,6 +2311,8 @@ void Editor::MaterialMenu::Update(Editor& editor)
 	{
 		return;
 	}
+
+	const bool previousOpened = opened;
 
 	if (opened && ImGui::Begin("Material", &opened))
 	{
@@ -2302,7 +2366,7 @@ void Editor::MaterialMenu::Update(Editor& editor)
 					{
 						if (binding.type == ShaderReflection::Type::COMBINED_IMAGE_SAMPLER)
 						{
-							if (const std::shared_ptr<Texture>& texture = uniformWriter->GetTexture(binding.name))
+							if (std::shared_ptr<Texture> texture = uniformWriter->GetTexture(binding.name).back())
 							{
 								ImGui::Text("%s", binding.name.c_str());
 								ImGui::SameLine();
@@ -2451,6 +2515,11 @@ void Editor::MaterialMenu::Update(Editor& editor)
 
 		ImGui::End();
 	}
+
+	if (previousOpened && !opened)
+	{
+		MaterialManager::GetInstance().DeleteMaterial(material);
+	}
 }
 
 void Editor::CreateFileMenu::Update()
@@ -2543,7 +2612,7 @@ void Editor::DeleteFileMenu::Update()
 	}
 }
 
-void Editor::CreateViewportMenu::Update(const Editor& editor)
+void Editor::CreateViewportMenu::Update(const Editor& editor, Window& window)
 {
 	if (!opened)
 	{
@@ -2567,14 +2636,14 @@ void Editor::CreateViewportMenu::Update(const Editor& editor)
 		{
 			if (name[0] != '\0')
 			{
-				auto callback = [this]()
+				auto callback = [this, &window]()
 				{
-					if (const std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport(name))
+					if (const std::shared_ptr<Viewport> viewport = window.GetViewportManager().GetViewport(name))
 					{
 						return;
 					}
 
-					ViewportManager::GetInstance().Create(name, size);
+					window.GetViewportManager().Create(name, size);
 					opened = false;
 					size = { 1024, 1024 };
 					name[0] = '\0';
@@ -2736,8 +2805,9 @@ void Editor::ImportMenu::Update(Editor& editor)
 
 			ThreadPool::GetInstance().EnqueueAsync([&editor, this]()
 			{
+				filepath = Utils::Erase(filepath.string(), editor.m_RootDirectory.string() + "/");
 				Serializer::LoadIntermediate(
-					Utils::Erase(filepath.string(), editor.m_RootDirectory.string() + "/"),
+					filepath,
 					importMeshes,
 					importMaterials,
 					importSkeletons,
@@ -2751,4 +2821,520 @@ void Editor::ImportMenu::Update(Editor& editor)
 
 		ImGui::End();
 	}
+}
+
+void Editor::Thumbnails::Initialize()
+{
+	const std::string name = "Thumbnail";
+
+	m_ThumbnailRenderer = Renderer::Create();
+	m_ThumbnailScene = SceneManager::GetInstance().Create(name, name);
+	m_ThumbnailWindow = Window::CreateHeadless(name, name, { 256, 256 });
+
+	//m_ThumbnailScene->GetSettings().m_DrawBoundingBoxes = true;
+
+	{
+		auto entity = m_ThumbnailScene->CreateEntity("Sun");
+		auto& transform = entity->AddComponent<Transform>(entity);
+		transform.Rotate(glm::radians(glm::vec3(120.0f, -40.0f, 0.0f)));
+
+		entity->AddComponent<DirectionalLight>().intensity = 5.0f;
+	}
+
+	auto camera = m_ThumbnailScene->CreateEntity("Camera");
+	auto& cameraComponent =	camera->AddComponent<Camera>(camera);
+	{
+		m_CameraUUID = camera->GetUUID();
+		cameraComponent.CreateRenderTarget(name, m_ThumbnailWindow->GetSize());
+		camera->AddComponent<Transform>(camera);
+	}
+
+	{
+		auto entity = m_ThumbnailScene->CreateEntity("Entity");
+		entity->AddComponent<Transform>(entity);
+		auto& r3d = entity->AddComponent<Renderer3D>();
+		r3d.mesh = MeshManager::GetInstance().LoadMesh(std::filesystem::path("Meshes") / "Sphere.mesh");
+		r3d.material = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "MeshBaseDoubleSided.mat");
+	}
+
+	const uint32_t previousSwapChainImageIndex = Vk::swapChainImageIndex;
+
+	// Need to render n times to initialize every render target and etc.
+	for (size_t i = 0; i < Vk::swapChainImageCount; i++)
+	{
+		// SetCamera and other functions in Renderer::Update send callbacks to create render target
+		// and other resources on the next frame,
+		// but we need it now, so we explicitly process events now.
+		EventSystem::GetInstance().ProcessEvents();
+
+		std::map<std::shared_ptr<Scene>, std::vector<Renderer::RenderViewportInfo>> viewportsByScene;
+		const std::shared_ptr<Scene> scene = camera->GetScene();
+
+		Renderer::RenderViewportInfo renderViewportInfo{};
+		renderViewportInfo.camera = camera;
+		renderViewportInfo.renderTarget = cameraComponent.GetRendererTarget(name);
+		renderViewportInfo.size = m_ThumbnailWindow->GetSize();
+
+		const float aspect = (float)renderViewportInfo.size.x / (float)renderViewportInfo.size.y;
+		renderViewportInfo.projection = glm::perspective(cameraComponent.GetFov(), aspect, cameraComponent.GetZNear(), cameraComponent.GetZFar());
+
+		viewportsByScene[scene].emplace_back(renderViewportInfo);
+
+		void* frame = m_ThumbnailWindow->BeginFrame();
+
+		m_ThumbnailRenderer->Update(frame, m_ThumbnailWindow, m_ThumbnailRenderer, viewportsByScene);
+
+		m_ThumbnailWindow->EndFrame(frame);
+
+		Vk::swapChainImageIndex = ++Vk::swapChainImageIndex % Vk::swapChainImageCount;
+	}
+
+	device->WaitIdle();
+
+	Vk::swapChainImageIndex = previousSwapChainImageIndex;
+}
+
+void Editor::Thumbnails::UpdateThumbnails()
+{
+	if (m_ThumbnailToCheck == m_CacheThumbnails.end())
+	{
+		m_ThumbnailToCheck = m_CacheThumbnails.begin();
+	}
+	else
+	{
+		m_ThumbnailToCheck++;
+	}
+
+	if (m_ThumbnailQueue.empty())
+	{
+		return;
+	}
+
+	if (!std::filesystem::exists("Thumbnails"))
+	{
+		std::filesystem::create_directory("Thumbnails");
+	}
+
+	const ThumbnailLoadInfo thumbnailLoadInfo = m_ThumbnailQueue.front();
+	m_ThumbnailQueue.pop_front();
+
+	if (thumbnailLoadInfo.type == Type::MAT || thumbnailLoadInfo.type == Type::MESH)
+	{
+		UpdateMatMeshThumbnail(thumbnailLoadInfo);
+	}
+	else if(thumbnailLoadInfo.type == Type::SCENE || thumbnailLoadInfo.type == Type::PREFAB)
+	{
+		UpdateScenePrefabThumbnail(thumbnailLoadInfo);
+	}
+}
+
+void Editor::Thumbnails::UpdateMatMeshThumbnail(const ThumbnailLoadInfo& thumbnailLoadInfo)
+{
+	const std::string name = "Thumbnail";
+
+	std::map<std::shared_ptr<Scene>, std::vector<Renderer::RenderViewportInfo>> viewportsByScene;
+	const std::shared_ptr<Entity> camera = m_ThumbnailScene->FindEntityByUUID(m_CameraUUID);
+	Transform& cameraTransform = camera->GetComponent<Transform>();
+	Camera& cameraComponent = camera->GetComponent<Camera>();
+	const std::shared_ptr<Scene> scene = camera->GetScene();
+
+	std::shared_ptr<Material> material = nullptr;
+	std::shared_ptr<Mesh> mesh = nullptr;
+	if (thumbnailLoadInfo.type == Type::MAT)
+	{
+		material = MaterialManager::GetInstance().LoadMaterial(thumbnailLoadInfo.resourceFilepath);
+
+		// Check if material is skinned, then render default sphere, because no information about the mesh.
+		if (Utils::Contains(Utils::ToLower(material->GetBaseMaterial()->GetName()), "skinned"))
+		{
+			material = nullptr;
+		}
+
+		cameraTransform.Translate({ 0.0f, 0.0f, 2.0f });
+		cameraTransform.Rotate({});
+		cameraComponent.SetZNear(100.0f * 0.001f);
+		cameraComponent.SetZFar(100.0f);
+	}
+	else if (thumbnailLoadInfo.type == Type::MESH)
+	{
+		mesh = MeshManager::GetInstance().LoadMesh(thumbnailLoadInfo.resourceFilepath);
+
+		BoundingBox bb = mesh->GetBoundingBox();
+
+		glm::vec3 max = bb.max - bb.offset;
+		glm::vec3 min = bb.offset - bb.min;
+
+		float maxDistance = 0.0f;
+		for (size_t i = 0; i < 3; i++)
+		{
+			maxDistance = glm::max<float>(maxDistance, max[i]);
+			maxDistance = glm::max<float>(maxDistance, glm::abs<float>(min[i]));
+		}
+
+		const float distanceScale = 1.3f;
+		glm::vec3 cameraPosition = glm::vec3(maxDistance * distanceScale) + bb.offset;
+		const glm::mat4 transformMat4 = glm::inverse(glm::lookAt(cameraPosition, bb.offset, glm::vec3(0.0f, 1.0f, 0.0f)));
+		glm::vec3 cameraRotation;
+		Utils::DecomposeRotation(transformMat4, cameraRotation);
+
+		cameraTransform.Translate(cameraPosition);
+		cameraTransform.Rotate({ cameraRotation.x, cameraRotation.y, 0.0f });
+
+		cameraComponent.SetZNear(maxDistance * distanceScale * 3.0f * 0.001f);
+		cameraComponent.SetZFar(maxDistance * distanceScale * 3.0f);
+	}
+
+	if (scene != m_ThumbnailScene)
+	{
+		FATAL_ERROR("Scene for thumbnail is invalid, it is different from default editor thumbnail scene!");
+	}
+
+	const std::shared_ptr<Entity> entity = scene->FindEntityByName("Entity");
+	auto& r3d = entity->GetComponent<Renderer3D>();
+
+	r3d.mesh = mesh;
+	r3d.material = material;
+
+	if (!r3d.mesh)
+	{
+		r3d.mesh = MeshManager::GetInstance().LoadMesh(std::filesystem::path("Meshes") / "Sphere.mesh");
+	}
+
+	if (!r3d.material)
+	{
+		if (r3d.mesh && r3d.mesh->GetType() == Mesh::Type::SKINNED)
+		{
+			r3d.material = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "MeshBaseSkinned.mat");
+
+			entity->AddComponent<SkeletalAnimator>();
+		}
+		else
+		{
+			r3d.material = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "MeshBaseDoubleSided.mat");
+		}
+	}
+
+	Renderer::RenderViewportInfo renderViewportInfo{};
+	renderViewportInfo.camera = camera;
+	renderViewportInfo.renderTarget = cameraComponent.GetRendererTarget(name);
+	renderViewportInfo.size = m_ThumbnailWindow->GetSize();
+
+	const float aspect = (float)renderViewportInfo.size.x / (float)renderViewportInfo.size.y;
+	renderViewportInfo.projection = glm::perspective(cameraComponent.GetFov(), aspect, cameraComponent.GetZNear(), cameraComponent.GetZFar());
+
+	viewportsByScene[scene].emplace_back(renderViewportInfo);
+
+	void* frame = m_ThumbnailWindow->BeginFrame();
+
+	m_ThumbnailRenderer->Update(frame, m_ThumbnailWindow, m_ThumbnailRenderer, viewportsByScene);
+
+	m_ThumbnailWindow->EndFrame(frame);
+
+	device->WaitIdle();
+
+	cameraComponent.TakeScreenshot(thumbnailLoadInfo.thumbnailFilepath, name, &m_GeneratingThumbnails.at(thumbnailLoadInfo.resourceFilepath));
+
+	r3d.mesh = nullptr;
+	r3d.material = nullptr;
+
+	if (mesh)
+	{
+		if (mesh->GetType() == Mesh::Type::SKINNED)
+		{
+			entity->RemoveComponent<SkeletalAnimator>();
+		}
+
+		MeshManager::GetInstance().DeleteMesh(mesh);
+	}
+
+	if (material)
+	{
+		MaterialManager::GetInstance().DeleteMaterial(material);
+	}
+}
+
+void Editor::Thumbnails::UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thumbnailLoadInfo)
+{
+	const std::string name = "Thumbnail";
+
+	std::shared_ptr<Scene> scene = nullptr;
+	std::shared_ptr<Entity> prefab = nullptr;
+
+	if (thumbnailLoadInfo.type == Type::SCENE)
+	{
+		scene = thumbnailLoadInfo.scene;
+		if (!scene)
+		{
+			Logger::Error("Can't generate scene thumbnail. Scene " + thumbnailLoadInfo.resourceFilepath.string() + " is nullptr!");
+		}
+	}
+	else if (thumbnailLoadInfo.type == Type::PREFAB)
+	{
+		scene = m_ThumbnailScene;
+		prefab = Serializer::DeserializePrefab(thumbnailLoadInfo.resourceFilepath, scene);
+		prefab->GetComponent<Transform>().Translate({ 0.0f, 0.0f, 0.0f });
+	}
+
+	// Wait until all resources are loaded.
+	AsyncAssetLoader::GetInstance().WaitIdle();
+
+	auto camera = scene->CreateEntity("Camera");
+	auto& cameraTransform = camera->AddComponent<Transform>(camera);
+	auto& cameraComponent = camera->AddComponent<Camera>(camera);
+	cameraComponent.CreateRenderTarget(name, m_ThumbnailWindow->GetSize());
+
+	BoundingBox bb{};
+
+	for (const auto& entity : scene->GetEntities())
+	{
+		if (!entity->HasComponent<Renderer3D>())
+		{
+			continue;
+		}
+
+		auto& r3d = entity->GetComponent<Renderer3D>();
+		if (!r3d.mesh)
+		{
+			continue;
+		}
+
+		auto& transform = entity->GetComponent<Transform>();
+		const glm::mat4 transformMat4 = transform.GetTransform();
+
+		glm::vec3 max = transformMat4 * glm::vec4(r3d.mesh->GetBoundingBox().max, 1.0f);
+		glm::vec3 min = transformMat4 * glm::vec4(r3d.mesh->GetBoundingBox().min, 1.0f);
+
+		bb.max.x = glm::max(bb.max.x, max.x);
+		bb.max.y = glm::max(bb.max.y, max.y);
+		bb.max.z = glm::max(bb.max.z, max.z);
+
+		bb.min.x = glm::min(bb.min.x, min.x);
+		bb.min.y = glm::min(bb.min.y, min.y);
+		bb.min.z = glm::min(bb.min.z, min.z);
+	}
+
+	bb.offset = bb.max + (bb.min - bb.max) * 0.5f;
+
+	{
+		glm::vec3 max = bb.max - bb.offset;
+		glm::vec3 min = bb.offset - bb.min;
+
+		float maxDistance = 0.0f;
+		for (size_t i = 0; i < 3; i++)
+		{
+			maxDistance = glm::max<float>(maxDistance, max[i]);
+			maxDistance = glm::max<float>(maxDistance, glm::abs<float>(min[i]));
+		}
+
+		const float distanceScale = 1.3f;
+		glm::vec3 cameraPosition = glm::vec3(maxDistance * distanceScale) + bb.offset;
+		const glm::mat4 transformMat4 = glm::inverse(glm::lookAt(cameraPosition, bb.offset, glm::vec3(0.0f, 1.0f, 0.0f)));
+		glm::vec3 cameraRotation;
+		Utils::DecomposeRotation(transformMat4, cameraRotation);
+
+		cameraTransform.Translate(cameraPosition);
+		cameraTransform.Rotate({ cameraRotation.x, cameraRotation.y, 0.0f });
+
+		cameraComponent.SetZNear(maxDistance * distanceScale * 3.0f * 0.001f);
+		cameraComponent.SetZFar(maxDistance * distanceScale * 3.0f);
+	}
+
+	uint32_t previousSwapChainImageIndex = Vk::swapChainImageIndex;
+
+	// Need to render n times to initialize every render target and etc.
+	// Though this is a scene thumbnail generation, which happen only on save scene action
+	// and to this point everything should be already initialized,
+	// but still let's just render a couple more frames.
+	for (size_t i = 0; i < Vk::swapChainImageCount + 1; i++)
+	{
+		// SetCamera and other functions in Renderer::Update send callbacks to create render target
+		// and other resources on the next frame,
+		// but we need it now, so we explicitly process events now.
+		EventSystem::GetInstance().ProcessEvents();
+
+		std::map<std::shared_ptr<Scene>, std::vector<Renderer::RenderViewportInfo>> viewportsByScene;
+
+		Renderer::RenderViewportInfo renderViewportInfo{};
+		renderViewportInfo.camera = camera;
+		renderViewportInfo.renderTarget = cameraComponent.GetRendererTarget(name);
+		renderViewportInfo.size = m_ThumbnailWindow->GetSize();
+
+		const float aspect = (float)renderViewportInfo.size.x / (float)renderViewportInfo.size.y;
+		renderViewportInfo.projection = glm::perspective(cameraComponent.GetFov(), aspect, cameraComponent.GetZNear(), cameraComponent.GetZFar());
+
+		viewportsByScene[scene].emplace_back(renderViewportInfo);
+
+		void* frame = m_ThumbnailWindow->BeginFrame();
+
+		m_ThumbnailRenderer->Update(frame, m_ThumbnailWindow, m_ThumbnailRenderer, viewportsByScene);
+
+		m_ThumbnailWindow->EndFrame(frame);
+
+		Vk::swapChainImageIndex = ++Vk::swapChainImageIndex % Vk::swapChainImageCount;
+	}
+
+	device->WaitIdle();
+
+	Vk::swapChainImageIndex = previousSwapChainImageIndex;
+
+	cameraComponent.TakeScreenshot(thumbnailLoadInfo.thumbnailFilepath, name, &m_GeneratingThumbnails.at(thumbnailLoadInfo.resourceFilepath));
+
+	device->WaitIdle();
+
+	scene->DeleteEntity(camera);
+
+	if (prefab)
+	{
+		scene->DeleteEntity(prefab);
+	}
+}
+
+ImTextureID Editor::Thumbnails::GetOrGenerateThumbnail(
+	const std::filesystem::path& filepath,
+	std::shared_ptr<Scene> scene,
+	Type type)
+{
+	auto foundThumbnail = m_CacheThumbnails.find(filepath);
+	if (m_ThumbnailToCheck != foundThumbnail && foundThumbnail != m_CacheThumbnails.end())
+	{
+		if (auto thumbnail = foundThumbnail->second.lock())
+		{
+			return thumbnail->GetId();
+		}
+		else
+		{
+			m_CacheThumbnails.erase(foundThumbnail);
+			m_ThumbnailToCheck = m_CacheThumbnails.end();
+		}
+	}
+
+	auto shortFilepath = Utils::GetShortFilepath(filepath);
+	const auto uuid = Utils::FindUuid(shortFilepath);
+	if (!uuid.empty())
+	{
+		std::filesystem::path thumbnailFilepath = "Thumbnails";
+		thumbnailFilepath /= uuid;
+		thumbnailFilepath.concat(FileFormats::Png());
+
+		std::filesystem::path thumbnailMetaFilepath = "Thumbnails";
+		thumbnailMetaFilepath /= uuid;
+		thumbnailMetaFilepath.concat(FileFormats::Png());
+		thumbnailMetaFilepath.concat(".thumbnail");
+
+		size_t lastWriteTimeResourceCurrent = 0;
+		size_t lastWriteTimeResourceSaved = 1;
+
+		if (std::filesystem::exists(filepath))
+		{
+			lastWriteTimeResourceCurrent = std::filesystem::last_write_time(filepath).time_since_epoch().count();
+		}
+
+		if (std::filesystem::exists(thumbnailMetaFilepath))
+		{
+			lastWriteTimeResourceSaved = Serializer::DeserializeThumbnailMeta(thumbnailMetaFilepath);
+		}
+
+		auto found = m_GeneratingThumbnails.find(shortFilepath);
+		if (found != m_GeneratingThumbnails.end())
+		{
+			if (!found->second)
+			{
+				return nullptr;
+			}
+
+			TextureManager::GetInstance().Delete(thumbnailFilepath);
+			m_GeneratingThumbnails.erase(shortFilepath);
+		}
+
+		if (lastWriteTimeResourceSaved == lastWriteTimeResourceCurrent && std::filesystem::exists(thumbnailFilepath))
+		{
+			if (std::shared_ptr<Texture> thumbnail = TextureManager::GetInstance().GetTexture(thumbnailFilepath))
+			{
+				m_CacheThumbnails[filepath] = thumbnail;
+				return (ImTextureID)thumbnail->GetId();
+			}
+
+			if (!m_IsThumbnailLoading.load())
+			{
+				m_IsThumbnailLoading.store(true);
+				AsyncAssetLoader::GetInstance().AsyncLoadTexture(thumbnailFilepath, [this](std::weak_ptr<Texture> texture)
+				{
+					m_IsThumbnailLoading.store(false);
+				});
+			}
+		}
+		else if (!m_GeneratingThumbnails.contains(shortFilepath))
+		{
+			m_GeneratingThumbnails.emplace(shortFilepath, false);
+
+			ThumbnailLoadInfo thumbnailLoadInfo{};
+			thumbnailLoadInfo.type = type;
+			thumbnailLoadInfo.scene = scene;
+			thumbnailLoadInfo.resourceFilepath = shortFilepath;
+			thumbnailLoadInfo.thumbnailFilepath = thumbnailFilepath;
+			m_ThumbnailQueue.emplace_back(thumbnailLoadInfo);
+
+			Serializer::SerializeThumbnailMeta(thumbnailMetaFilepath, lastWriteTimeResourceCurrent);
+		}
+	}
+
+	return nullptr;
+}
+
+ImTextureID Editor::Thumbnails::TryGetThumbnail(const std::filesystem::path& filepath)
+{
+	auto foundThumbnail = m_CacheThumbnails.find(filepath);
+	if (m_ThumbnailToCheck != foundThumbnail && foundThumbnail != m_CacheThumbnails.end())
+	{
+		if (auto thumbnail = foundThumbnail->second.lock())
+		{
+			return thumbnail->GetId();
+		}
+		else
+		{
+			m_CacheThumbnails.erase(foundThumbnail);
+			m_ThumbnailToCheck = m_CacheThumbnails.end();
+		}
+	}
+
+	auto shortFilepath = Utils::GetShortFilepath(filepath);
+	const auto uuid = Utils::FindUuid(shortFilepath);
+	if (!uuid.empty())
+	{
+		std::filesystem::path thumbnailFilepath = "Thumbnails";
+		thumbnailFilepath /= uuid;
+		thumbnailFilepath.concat(FileFormats::Png());
+
+		auto found = m_GeneratingThumbnails.find(shortFilepath);
+		if (found != m_GeneratingThumbnails.end())
+		{
+			if (!found->second)
+			{
+				return nullptr;
+			}
+
+			TextureManager::GetInstance().Delete(thumbnailFilepath);
+			m_GeneratingThumbnails.erase(shortFilepath);
+		}
+
+		if (std::filesystem::exists(thumbnailFilepath))
+		{
+			if (std::shared_ptr<Texture> thumbnail = TextureManager::GetInstance().GetTexture(thumbnailFilepath))
+			{
+				m_CacheThumbnails[filepath] = thumbnail;
+				return (ImTextureID)thumbnail->GetId();
+			}
+
+			if (!m_IsThumbnailLoading.load())
+			{
+				m_IsThumbnailLoading.store(true);
+				AsyncAssetLoader::GetInstance().AsyncLoadTexture(thumbnailFilepath, [this](std::weak_ptr<Texture> texture)
+				{
+					m_IsThumbnailLoading.store(false);
+				});
+			}
+		}
+	}
+
+	return nullptr;
 }

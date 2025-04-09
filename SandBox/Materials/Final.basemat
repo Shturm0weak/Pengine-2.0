@@ -34,3 +34,5 @@ Basemat:
         - Name: bloomTexture
           TextureAttachment: "BloomFrameBuffers(0)[0]"
           TextureAttachmentDefault: "Black"
+        - Name: uiTexture
+          TextureAttachment: "UI[0]"

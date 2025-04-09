@@ -13,14 +13,16 @@ set(COMPONENTS_SOURCES
 	Components/DirectionalLight.h
 	Components/PointLight.h
 	Components/Transform.cpp Components/Transform.h
-	Components/Renderer3D.h
+	Components/Renderer3D.cpp Components/Renderer3D.h
 	Components/SkeletalAnimator.cpp Components/SkeletalAnimator.h
+	Components/Canvas.h
 )
 source_group("Components" FILES ${COMPONENTS_SOURCES})
 
 set(SYSTEMS_SOURCES
 	ComponentSystems/ComponentSystem.h
 	ComponentSystems/SkeletalAnimatorSystem.cpp ComponentSystems/SkeletalAnimatorSystem.h
+	ComponentSystems/UISystem.cpp ComponentSystems/UISystem.h
 )
 source_group("ComponentSystems" FILES ${SYSTEMS_SOURCES})
 
@@ -36,6 +38,7 @@ set(CORE_SOURCES
 	Core/Entity.cpp Core/Entity.h
 	Core/EntryPoint.cpp Core/EntryPoint.h
 	Core/FileFormatNames.h
+	Core/FontManager.cpp Core/FontManager.h
 	Core/FrustumCulling.cpp Core/FrustumCulling.h
 	Core/GraphicsSettings.h
 	Core/Input.cpp Core/Input.h
@@ -57,6 +60,7 @@ set(CORE_SOURCES
 	Core/Time.cpp Core/Time.h
 	Core/Timer.cpp Core/Timer.h
 	Core/UUID.cpp Core/UUID.h
+	Core/UIRenderer.cpp Core/UIRenderer.h
 	Core/Viewport.cpp Core/Viewport.h
 	Core/ViewportManager.cpp Core/ViewportManager.h
 	Core/Visualizer.cpp Core/Visualizer.h
@@ -74,6 +78,7 @@ source_group("Editor" FILES ${EDITOR_SOURCES})
 set(GRAPHICS_SOURCES
 	Graphics/BaseMaterial.cpp Graphics/BaseMaterial.h
 	Graphics/Buffer.cpp Graphics/Buffer.h
+	Graphics/Device.cpp Graphics/Device.h
 	Graphics/Format.h
 	Graphics/FrameBuffer.cpp Graphics/FrameBuffer.h
 	Graphics/Mesh.cpp Graphics/Mesh.h
@@ -91,6 +96,7 @@ set(GRAPHICS_SOURCES
 	Graphics/Skeleton.h
 	Graphics/Skin.h
 	Graphics/stb_image.h
+	Graphics/stb_image_write.h
 	Graphics/Texture.cpp Graphics/Texture.h
 	Graphics/UniformLayout.cpp Graphics/UniformLayout.h
 	Graphics/UniformWriter.cpp Graphics/UniformWriter.h
@@ -108,6 +114,7 @@ set(VULKAN_SOURCES
 	Vulkan/VulkanDescriptors.cpp Vulkan/VulkanDescriptors.h
 	Vulkan/VulkanDevice.cpp Vulkan/VulkanDevice.h
 	Vulkan/VulkanFormat.h
+	Vulkan/VulkanFrameInfo.h
 	Vulkan/VulkanFrameBuffer.cpp Vulkan/VulkanFrameBuffer.h
 	Vulkan/VulkanRenderer.cpp Vulkan/VulkanRenderer.h
 	Vulkan/VulkanRenderPass.cpp Vulkan/VulkanRenderPass.h
@@ -116,6 +123,7 @@ set(VULKAN_SOURCES
 	Vulkan/VulkanUniformLayout.cpp Vulkan/VulkanUniformLayout.h
 	Vulkan/VulkanUniformWriter.cpp Vulkan/VulkanUniformWriter.h
 	Vulkan/VulkanWindow.cpp Vulkan/VulkanWindow.h
+	Vulkan/VulkanHeadlessWindow.cpp Vulkan/VulkanHeadlessWindow.h
 )
 source_group("Vulkan" FILES ${VULKAN_SOURCES})
 
@@ -161,6 +169,7 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC PENGINE_ENGINE=1)
 target_link_libraries(${PROJECT_NAME} PRIVATE YAML)
 target_link_libraries(${PROJECT_NAME} PRIVATE ImGui)
 target_link_libraries(${PROJECT_NAME} PRIVATE assimp)
+target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
 
 if (WIN32)
 	if (MSVC)
@@ -231,6 +240,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE $ENV{VULKAN_SPIRV_REFLECT_PAT
 if (GENERATOR_IS_MULTI_CONFIG)
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_BINARY_DIR}/Vendor/freetype/Build/$<CONFIG>
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
+
+	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin/$<CONFIG>
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
 
@@ -239,6 +253,11 @@ if (GENERATOR_IS_MULTI_CONFIG)
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>
 		${CMAKE_BINARY_DIR}/${APP_NAME}/Build/$<CONFIG>)
 else ()
+	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_BINARY_DIR}/Vendor/freetype/Build
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
+
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin

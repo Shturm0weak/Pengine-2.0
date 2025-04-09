@@ -62,10 +62,16 @@ std::shared_ptr<Mesh> MeshManager::GetMesh(const std::filesystem::path& filepath
 	return nullptr;
 }
 
-void MeshManager::DeleteMesh(std::shared_ptr<Mesh> mesh)
+void MeshManager::DeleteMesh(std::shared_ptr<Mesh>& mesh)
 {
 	std::lock_guard<std::mutex> lock(m_MutexMesh);
-	m_MeshesByFilepath.erase(mesh->GetFilepath());
+
+	if (mesh.use_count() == 2)
+	{
+		m_MeshesByFilepath.erase(mesh->GetFilepath());
+	}
+
+	mesh = nullptr;
 }
 
 std::shared_ptr<SkeletalAnimation> MeshManager::CreateSkeletalAnimation(SkeletalAnimation::CreateInfo& createInfo)
@@ -117,10 +123,16 @@ std::shared_ptr<SkeletalAnimation> MeshManager::GetSkeletalAnimation(const std::
 	return nullptr;
 }
 
-void MeshManager::DeleteSkeletalAnimation(std::shared_ptr<SkeletalAnimation> skeletalAnimation)
+void MeshManager::DeleteSkeletalAnimation(std::shared_ptr<SkeletalAnimation>& skeletalAnimation)
 {
 	std::lock_guard<std::mutex> lock(m_MutexSkeletalAnimation);
-	m_SkeletalAnimationsByFilepath.erase(skeletalAnimation->GetFilepath());
+	
+	if (skeletalAnimation.use_count() == 2)
+	{
+		m_SkeletalAnimationsByFilepath.erase(skeletalAnimation->GetFilepath());
+	}
+
+	skeletalAnimation = nullptr;
 }
 
 std::shared_ptr<Skeleton> MeshManager::CreateSkeleton(Skeleton::CreateInfo& createInfo)
@@ -172,10 +184,16 @@ std::shared_ptr<Skeleton> MeshManager::GetSkeleton(const std::filesystem::path& 
 	return nullptr;
 }
 
-void MeshManager::DeleteSkeleton(std::shared_ptr<Skeleton> skeleton)
+void MeshManager::DeleteSkeleton(std::shared_ptr<Skeleton>& skeleton)
 {
 	std::lock_guard<std::mutex> lock(m_MutexSkeleton);
-	m_SkeletonsByFilepath.erase(skeleton->GetFilepath());
+
+	if (skeleton.use_count() == 2)
+	{
+		m_SkeletonsByFilepath.erase(skeleton->GetFilepath());
+	}
+
+	skeleton = nullptr;
 }
 
 void MeshManager::ShutDown()

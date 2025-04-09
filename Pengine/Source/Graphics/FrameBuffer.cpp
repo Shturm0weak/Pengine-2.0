@@ -31,7 +31,7 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 		attachmentCreateInfo.isCubeMap = attachment.isCubeMap;
 		attachmentCreateInfo.aspectMask = isColor ? Texture::AspectMask::COLOR :
 			Texture::AspectMask::DEPTH;
-		attachmentCreateInfo.usage = { Texture::Usage::SAMPLED,
+		attachmentCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC,
 			isColor ? Texture::Usage::COLOR_ATTACHMENT : Texture::Usage::DEPTH_STENCIL_ATTACHMENT };
 
 		for (const auto& usage : attachment.usage)

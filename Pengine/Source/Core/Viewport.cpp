@@ -10,10 +10,12 @@
 #include "Raycast.h"
 #include "MaterialManager.h"
 #include "MeshManager.h"
+#include "Window.h"
 
 #include "../Components/Camera.h"
 #include "../Components/Transform.h"
 #include "../Components/Renderer3D.h"
+#include "../Components/SkeletalAnimator.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 #include "../EventSystem/ResizeEvent.h"
@@ -28,9 +30,14 @@ Viewport::Viewport(std::string name, const glm::ivec2& size)
 	Resize(size);
 }
 
-void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
+void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture, std::shared_ptr<Window> window)
 {
 	UpdateProjectionMat4();
+
+	if (IsHeadLess())
+	{
+		return;
+	}
 
 	if (!viewportTexture)
 	{
@@ -39,7 +46,7 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 
 	if (!m_IsOpened)
 	{
-		ViewportManager::GetInstance().Destroy(shared_from_this());
+		window->GetViewportManager().Destroy(shared_from_this());
 		return;
 	}
 
@@ -158,8 +165,18 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 								const std::shared_ptr<Entity> entity = camera->GetScene()->CreateEntity(mesh->GetName());
 								entity->AddComponent<Transform>(entity).Translate(position);
 								Renderer3D& r3d = entity->AddComponent<Renderer3D>();
-								r3d.material = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "MeshBase.mat");
 								r3d.mesh = mesh;
+
+								if (mesh->GetType() == Mesh::Type::SKINNED)
+								{
+									r3d.material = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "MeshBaseSkinned.mat");
+
+									entity->AddComponent<SkeletalAnimator>();
+								}
+								else
+								{
+									r3d.material = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "MeshBaseDoubleSided.mat");
+								}
 							}
 						}
 					}
@@ -196,7 +213,8 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 		m_DrawGizmosCallback = {};
 	}
 
-	if (scene && IsFocused() && Input::KeyBoard::IsKeyDown(Keycode::KEY_LEFT_CONTROL) && Input::KeyBoard::IsKeyPressed(Keycode::KEY_A))
+	Input& input = Input::GetInstance(window.get());
+	if (scene && IsFocused() && input.IsKeyDown(Keycode::KEY_LEFT_CONTROL) && input.IsKeyPressed(Keycode::KEY_A))
 	{
 		scene->GetSelectedEntities().clear();
 		for (const std::shared_ptr<Entity> entity : scene->GetEntities())
@@ -205,7 +223,7 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture)
 		}
 	}
 
-	if (!m_ActiveGuizmo && m_IsHovered && Input::Mouse::IsMousePressed(Keycode::MOUSE_BUTTON_1))
+	if (!m_ActiveGuizmo && m_IsHovered && input.IsMousePressed(Keycode::MOUSE_BUTTON_1))
 	{
 		if (camera)
 		{
@@ -247,6 +265,8 @@ void Viewport::SetCamera(const std::shared_ptr<Entity>& camera)
 
 	Camera& cameraComponent = camera->GetComponent<Camera>();
 	cameraComponent.CreateRenderTarget(m_Name, m_Size);
+
+	UpdateProjectionMat4();
 }
 
 glm::vec3 Viewport::GetMouseRay(const glm::vec2& mousePosition) const

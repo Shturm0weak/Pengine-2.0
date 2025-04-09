@@ -11,7 +11,10 @@
 #include "ThreadPool.h"
 #include "ViewportManager.h"
 #include "Viewport.h"
+#include "WindowManager.h"
 
+#include "../EventSystem/EventSystem.h"
+#include "../EventSystem/NextFrameEvent.h"
 #include "../Components/Camera.h"
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
@@ -24,6 +27,9 @@
 #include "../Graphics/Vertex.h"
 
 #include "../Utils/AssimpHelpers.h"
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "../Graphics/stb_image_write.h"
 
 #include <filesystem>
 #include <fstream>
@@ -474,7 +480,7 @@ void Serializer::GenerateFilesUUID(const std::filesystem::path& directory)
 	{
 		if (!entry.is_directory())
 		{
-			const std::filesystem::path filepath = entry.path();
+			const std::filesystem::path filepath = Utils::GetShortFilepath(entry.path());
 			std::filesystem::path metaFilepath = filepath;
 			metaFilepath.concat(FileFormats::Meta());
 
@@ -514,9 +520,7 @@ void Serializer::GenerateFilesUUID(const std::filesystem::path& directory)
 						uuid = uuidData.as<std::string>();
 					}
 
-					const std::filesystem::path shortFilepath = Utils::GetShortFilepath(filepath);
-
-					Utils::SetUUID(uuid, shortFilepath);
+					Utils::SetUUID(uuid, filepath);
 				}
 			}
 		}
@@ -565,6 +569,10 @@ void Serializer::DeserializeDescriptorSets(
 			if (typeName == "Renderer")
 			{
 				type = Pipeline::DescriptorSetIndexType::RENDERER;
+			}
+			if (typeName == "Scene")
+			{
+				type = Pipeline::DescriptorSetIndexType::SCENE;
 			}
 			else if (typeName == "RenderPass")
 			{
@@ -629,6 +637,50 @@ void Serializer::DeserializeShaderFilepaths(
 	{
 		shaderFilepathsByType[Pipeline::ShaderType::COMPUTE] = getShaderFilepath(computeData);
 	}
+}
+
+void Serializer::SerializeTexture(const std::filesystem::path& filepath, std::shared_ptr<Texture> texture, bool* isLoaded)
+{
+	Texture::CreateInfo createInfo{};
+	createInfo.aspectMask = texture->GetAspectMask();
+	createInfo.channels = texture->GetChannels();
+	createInfo.filepath = "Screenshot";
+	createInfo.name = "Screenshot";
+	createInfo.format = texture->GetFormat();
+	createInfo.size = texture->GetSize();
+	createInfo.usage = { Texture::Usage::TRANSFER_DST, Texture::Usage::SAMPLED };
+	createInfo.memoryType = MemoryType::CPU;
+	auto screenshot = Texture::Create(createInfo);
+
+	screenshot->Copy(texture);
+
+	uint8_t* data = (uint8_t*)screenshot->GetData();
+
+	auto subresourceLayout = screenshot->GetSubresourceLayout();
+
+	data += subresourceLayout.offset;
+
+	ThreadPool::GetInstance().EnqueueAsync([filepath, screenshot, data, subresourceLayout, isLoaded]()
+	{
+		Texture::Meta meta{};
+		meta.uuid = UUID();
+		meta.createMipMaps = false;
+		meta.srgb = true;
+		meta.filepath = filepath;
+		meta.filepath.concat(FileFormats::Meta());
+
+		Utils::SetUUID(meta.uuid, meta.filepath);
+		Serializer::SerializeTextureMeta(meta);
+
+		stbi_write_png(filepath.string().c_str(), screenshot->GetSize().x, screenshot->GetSize().y, screenshot->GetChannels(), (const void*)data, subresourceLayout.rowPitch);
+		
+		Logger::Log("Screenshot:" + filepath.string() + " has been saved!", BOLDGREEN);
+
+		if (isLoaded)
+		{
+			*isLoaded = true;
+		}
+	});	
 }
 
 GraphicsPipeline::CreateGraphicsInfo Serializer::DeserializeGraphicsPipeline(const YAML::detail::iterator_value& pipelineData)
@@ -1058,15 +1110,14 @@ Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filep
 		const std::string filepathOrUUID = baseMaterialData.as<std::string>();
 		if (std::filesystem::exists(filepathOrUUID))
 		{
-			createInfo.baseMaterial = AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(filepathOrUUID);
+			createInfo.baseMaterial = filepathOrUUID;
 		}
 		else
 		{
-			const std::filesystem::path baseMaterialFilepath = Utils::FindFilepath(filepathOrUUID);
-			createInfo.baseMaterial = AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(baseMaterialFilepath);
+			createInfo.baseMaterial = Utils::FindFilepath(filepathOrUUID);
 		}
 
-		if (!createInfo.baseMaterial)
+		if (!std::filesystem::exists(createInfo.baseMaterial))
 		{
 			FATAL_ERROR(baseMaterialData.as<std::string>() + ":There is no such basemat!");
 		}
@@ -1211,7 +1262,7 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material, bo
 			if (binding.type == ShaderReflection::Type::COMBINED_IMAGE_SAMPLER)
 			{
 				out << YAML::Key << "Value" << YAML::Value << 
-				Utils::FindUuid(material->GetUniformWriter(passName)->GetTexture(binding.name)->GetFilepath());
+				Utils::FindUuid(material->GetUniformWriter(passName)->GetTexture(binding.name).back()->GetFilepath());
 			}
 			else if (binding.type == ShaderReflection::Type::UNIFORM_BUFFER)
 			{
@@ -2415,6 +2466,15 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 			vertex->uv.y = 0.0f;
 		}
 
+		if (aiMesh->HasVertexColors(0))
+		{
+			vertex->color = glm::packUnorm4x8(Utils::AiColor4DToGlmVec4(aiMesh->mColors[0][vertexIndex]));
+		}
+		else
+		{
+			vertex->color = 0xffffffff;
+		}
+
 		aiVector3D normal = aiMesh->mNormals[vertexIndex];
 		vertex->normal.x = normal.x;
 		vertex->normal.y = normal.y;
@@ -2469,7 +2529,8 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 	createInfo.vertexLayouts =
 	{
 		VertexLayout(sizeof(VertexPosition), "Position"),
-		VertexLayout(sizeof(VertexNormal), "Normal")
+		VertexLayout(sizeof(VertexNormal), "Normal"),
+		VertexLayout(sizeof(VertexColor), "Color")
 	};
 
 	std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(createInfo);
@@ -2519,6 +2580,15 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 		{
 			vertex->uv.x = 0.0f;
 			vertex->uv.y = 0.0f;
+		}
+
+		if (aiMesh->HasVertexColors(0))
+		{
+			vertex->color = glm::packUnorm4x8(Utils::AiColor4DToGlmVec4(aiMesh->mColors[0][vertexIndex]));
+		}
+		else
+		{
+			vertex->color = 0xffffffff;
 		}
 
 		aiVector3D normal = aiMesh->mNormals[vertexIndex];
@@ -2605,6 +2675,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 	{
 		VertexLayout(sizeof(VertexPosition), "Position"),
 		VertexLayout(sizeof(VertexNormal), "Normal"),
+		VertexLayout(sizeof(VertexColor), "Color"),
 		VertexLayout(sizeof(VertexSkinned), "Bones")
 	};
 
@@ -2875,42 +2946,55 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		material->WriteToBuffer("GBufferMaterial", "material.useNormalMap", useNormalMap);
 	}
 
-	numTextures = aiMaterial->GetTextureCount(aiTextureType_METALNESS);
-	if (numTextures > 0)
+	std::filesystem::path metalnessTextureFilepath;
 	{
-		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_METALNESS, 0), aiTextureName);
-		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
+		numTextures = aiMaterial->GetTextureCount(aiTextureType_METALNESS);
+		if (numTextures > 0)
+		{
+			aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_METALNESS, 0), aiTextureName);
+			metalnessTextureFilepath = directory / aiTextureName.C_Str();
+		}
 
-		uniformWriter->WriteTexture("metalnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
+		numTextures = aiMaterial->GetTextureCount(aiTextureType_SPECULAR);
+		if (numTextures > 0)
+		{
+			aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_SPECULAR, 0), aiTextureName);
+			metalnessTextureFilepath = directory / aiTextureName.C_Str();
+		}
 	}
 
-	numTextures = aiMaterial->GetTextureCount(aiTextureType_SPECULAR);
-	if (numTextures > 0)
+	std::filesystem::path roughnessTextureFilepath;
 	{
-		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_SPECULAR, 0), aiTextureName);
-		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
+		numTextures = aiMaterial->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS);
+		if (numTextures > 0)
+		{
+			aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE_ROUGHNESS, 0), aiTextureName);
+			roughnessTextureFilepath = directory / aiTextureName.C_Str();
+		}
 
-		uniformWriter->WriteTexture("metalnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
+		numTextures = aiMaterial->GetTextureCount(aiTextureType_SHININESS);
+		if (numTextures > 0)
+		{
+			aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_SHININESS, 0), aiTextureName);
+			roughnessTextureFilepath = directory / aiTextureName.C_Str();
+		}
 	}
 
-	numTextures = aiMaterial->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS);
-	if (numTextures > 0)
+	int useSingleShadingMap = 0;
+	if (metalnessTextureFilepath == roughnessTextureFilepath)
 	{
-		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE_ROUGHNESS, 0), aiTextureName);
-		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
-
-		uniformWriter->WriteTexture("roughnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
+		uniformWriter->WriteTexture("shadingTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(metalnessTextureFilepath));
+		useSingleShadingMap = 1;
+	}
+	else
+	{
+		uniformWriter->WriteTexture("metalnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(metalnessTextureFilepath));
+		uniformWriter->WriteTexture("roughnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(roughnessTextureFilepath));
+		useSingleShadingMap = 0;
 	}
 
-	numTextures = aiMaterial->GetTextureCount(aiTextureType_SHININESS);
-	if (numTextures > 0)
-	{
-		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_SHININESS, 0), aiTextureName);
-		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
-
-		uniformWriter->WriteTexture("roughnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
-	}
-
+	material->WriteToBuffer("GBufferMaterial", "material.useSingleShadingMap", useSingleShadingMap);
+	
 	numTextures = aiMaterial->GetTextureCount(aiTextureType_AMBIENT_OCCLUSION);
 	if (numTextures > 0)
 	{
@@ -3287,14 +3371,32 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 		if (const auto& meshData = renderer3DData["Mesh"])
 		{
 			const std::string uuid = meshData.as<std::string>();
-			AsyncAssetLoader::GetInstance().AsyncLoadMesh(Utils::FindFilepath(uuid), [wEntity = std::weak_ptr(entity)](std::shared_ptr<Mesh> mesh)
+			AsyncAssetLoader::GetInstance().AsyncLoadMesh(Utils::FindFilepath(uuid), [wEntity = std::weak_ptr(entity)](std::weak_ptr<Mesh> mesh)
 			{
+				std::shared_ptr<Mesh> sharedMesh = mesh.lock();
+				if (!sharedMesh)
+				{
+					return;
+				}
+
 				if (std::shared_ptr<Entity> entity = wEntity.lock())
 				{
 					if (entity->HasComponent<Renderer3D>())
 					{
-						entity->GetComponent<Renderer3D>().mesh = mesh;
+						entity->GetComponent<Renderer3D>().mesh = sharedMesh;
 					}
+				}
+				else
+				{
+					auto callback = [mesh]()
+					{
+						std::shared_ptr<Mesh> sharedMesh = mesh.lock();
+						MeshManager::GetInstance().DeleteMesh(sharedMesh);
+					};
+
+					std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, nullptr);
+					EventSystem::GetInstance().SendEvent(event);
+					
 				}
 			});
 		}
@@ -3303,14 +3405,31 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 		{
 			const std::string uuid = materialData.as<std::string>();
 
-			AsyncAssetLoader::GetInstance().AsyncLoadMaterial(Utils::FindFilepath(uuid), [wEntity = std::weak_ptr(entity)](std::shared_ptr<Material> material)
+			AsyncAssetLoader::GetInstance().AsyncLoadMaterial(Utils::FindFilepath(uuid), [wEntity = std::weak_ptr(entity)](std::weak_ptr<Material> material)
 			{
+				std::shared_ptr<Material> sharedMaterial = material.lock();
+				if (!material.lock())
+				{
+					return;
+				}
+
 				if (std::shared_ptr<Entity> entity = wEntity.lock())
 				{
 					if (entity->HasComponent<Renderer3D>())
 					{
-						entity->GetComponent<Renderer3D>().material = material;
+						entity->GetComponent<Renderer3D>().material = sharedMaterial;
 					}
+				}
+				else
+				{
+					auto callback = [material]()
+					{
+						std::shared_ptr<Material> sharedMaterial = material.lock();
+						MaterialManager::GetInstance().DeleteMaterial(sharedMaterial);
+					};
+
+					std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, nullptr);
+					EventSystem::GetInstance().SendEvent(event);
 				}
 			});
 		}
@@ -3502,13 +3621,17 @@ void Serializer::SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entit
 	out << YAML::Key << "RenderTargetIndex" << YAML::Value << camera.GetRenderTargetIndex();
 
 	// TODO: Maybe do it more optimal.
-	for (const auto& [name, viewport] : ViewportManager::GetInstance().GetViewports())
+	// TODO: Also take window into account, for now it is just viewports, but viewports can have the same names accross different windows.
+	for (const auto& [windowName, window] : WindowManager::GetInstance().GetWindows())
 	{
-		if (const std::shared_ptr<Entity> viewportCamera = viewport->GetCamera().lock())
+		for (const auto& [viewportName, viewport] : window->GetViewportManager().GetViewports())
 		{
-			if (viewportCamera->GetUUID() == entity->GetUUID())
+			if (const std::shared_ptr<Entity> viewportCamera = viewport->GetCamera().lock())
 			{
-				out << YAML::Key << "Viewport" << YAML::Value << name;
+				if (viewportCamera->GetUUID() == entity->GetUUID())
+				{
+					out << YAML::Key << "Viewport" << YAML::Value << viewportName;
+				}
 			}
 		}
 	}
@@ -3559,10 +3682,15 @@ void Serializer::DeserializeCamera(const YAML::Node& in, const std::shared_ptr<E
 
 		if (const auto& viewportData = cameraData["Viewport"])
 		{
-			const std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport(viewportData.as<std::string>());
-			if (viewport)
+			// TODO: Take window name into account
+			for (const auto& [name, window] : WindowManager::GetInstance().GetWindows())
 			{
-				viewport->SetCamera(entity);
+				const std::shared_ptr<Viewport> viewport = window->GetViewportManager().GetViewport(viewportData.as<std::string>());
+				if (viewport)
+				{
+					viewport->SetCamera(entity);
+					break;
+				}
 			}
 		}
 	}
@@ -3603,6 +3731,11 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 
 	for (const auto& entity : scene->GetEntities())
 	{
+		if (entity->IsPrefab())
+		{
+			SerializePrefab(Utils::FindFilepath(entity->GetPrefabFilepathUUID()), entity);
+		}
+
 		if (!entity->HasParent())
 		{
 			SerializeEntity(out, entity, true, false);
@@ -4060,6 +4193,52 @@ std::filesystem::path Serializer::DeserializeFilepath(const std::string& uuidOrF
 	return filepath;
 }
 
+void Serializer::SerializeThumbnailMeta(const std::filesystem::path& filepath, const size_t lastWriteTime)
+{
+	if (filepath.empty())
+	{
+		Logger::Error("Failed to save thumbnail meta, filepath is empty!");
+	}
+
+	std::ofstream out(filepath, std::ifstream::binary);
+	out.write((char*)&lastWriteTime, static_cast<std::streamsize>(sizeof(lastWriteTime)));
+	out.close();
+}
+
+size_t Serializer::DeserializeThumbnailMeta(const std::filesystem::path& filepath)
+{
+	if (filepath.empty())
+	{
+		Logger::Error("Failed to load thumbnail meta, filepath is empty!");
+		return 0;
+	}
+
+	if (!std::filesystem::exists(filepath))
+	{
+		Logger::Error(filepath.string() + ":Failed to load thumbnail meta! The file doesn't exist");
+		return 0;
+	}
+
+	std::ifstream in(filepath, std::ifstream::binary);
+
+	in.seekg(0, std::ifstream::end);
+	const int size = in.tellg();
+	in.seekg(0, std::ifstream::beg);
+
+	struct ThumbnailMeta
+	{
+		size_t lastWriteTime = 0;
+	};
+
+	ThumbnailMeta meta{};
+
+	in.read((char*)&meta, size);
+
+	in.close();
+
+	return meta.lastWriteTime;
+}
+
 void Serializer::ParseUniformValues(
 	const YAML::detail::iterator_value& data,
 	Pipeline::UniformInfo& uniformsInfo)
@@ -4143,7 +4322,14 @@ void Serializer::ParseUniformValues(
 				}
 				else
 				{
-					uniformsInfo.texturesByName.emplace(uniformName, TextureManager::GetInstance().GetPink()->GetName());
+					if (TextureManager::GetInstance().GetTexture(textureFilepathOrUUID))
+					{
+						uniformsInfo.texturesByName.emplace(uniformName, textureFilepathOrUUID);
+					}
+					else
+					{
+						uniformsInfo.texturesByName.emplace(uniformName, TextureManager::GetInstance().GetPink()->GetName());
+					}
 				}
 			}
 		}

@@ -14,8 +14,9 @@ layout(set = 0, binding = 1) uniform sampler2D bloomTexture;
 layout(set = 0, binding = 2) uniform sampler2D shadingTexture;
 layout(set = 0, binding = 3) uniform sampler2D rawSSRTexture;
 layout(set = 0, binding = 4) uniform sampler2D blurSSRTexture;
+layout(set = 0, binding = 5) uniform sampler2D uiTexture;
 
-layout(set = 0, binding = 5) uniform PostProcessBuffer
+layout(set = 0, binding = 6) uniform PostProcessBuffer
 {
 	int toneMapperIndex;
 	float gamma;
@@ -62,13 +63,18 @@ void main()
 	}
 
 	deferred = mix(deferred, reflectionColor.xyz, metallic * reflectionColor.a * isSSREnabled * alpha);
-	
+
+	vec4 uiColor = texture(uiTexture, uv);
+
+	vec3 toneMappedColor;
 	if (toneMapperIndex == 0)
 	{
-		outColor = vec4(pow(deferred + bloom, vec3(1.0f / gamma)), 1.0f);
+		toneMappedColor = pow(deferred + bloom, vec3(1.0f / gamma));
 	}
 	else if (toneMapperIndex == 1)
 	{
-		outColor = vec4(pow(ACES(deferred + bloom), vec3(1.0f / gamma)), 1.0f);
+		toneMappedColor = pow(ACES(deferred + bloom), vec3(1.0f / gamma));
 	}
+
+	outColor = vec4(mix(toneMappedColor, uiColor.xyz, uiColor.a), 1.0f);
 }

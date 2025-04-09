@@ -39,6 +39,8 @@ namespace Pengine
 
 		void Delete(const std::filesystem::path& filepath);
 
+		void Delete(std::shared_ptr<Texture>& texture);
+
 		void ShutDown();
 
 	private:

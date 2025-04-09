@@ -13,7 +13,8 @@ Basemat:
         - Type: Renderer
           RenderPass: DefaultReflection
           Set: 0
-        - Type: BaseMaterial
+        - Type: Scene
+          RenderPass: SkyBox
           Set: 1
       VertexInputBindingDescriptions:
         - Binding: 0

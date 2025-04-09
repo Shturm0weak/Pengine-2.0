@@ -6,14 +6,13 @@
 
 using namespace Pengine;
 
-ViewportManager& ViewportManager::GetInstance()
-{
-	static ViewportManager viewportManager;
-	return viewportManager;
-}
-
 std::shared_ptr<Viewport> ViewportManager::Create(const std::string& name, const glm::ivec2& size)
 {
+	if (const auto viewport = GetViewport(name))
+	{
+		return viewport;
+	}
+
 	std::shared_ptr<Viewport> viewport = std::make_shared<Viewport>(name, size);
 	m_Viewports[name] = viewport;
 

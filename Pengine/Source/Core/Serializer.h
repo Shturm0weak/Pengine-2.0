@@ -44,6 +44,8 @@ namespace Pengine
 			const YAML::detail::iterator_value& pipelineData,
 			std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType);
 
+		static void SerializeTexture(const std::filesystem::path& filepath, std::shared_ptr<Texture> texture, bool* isLoaded);
+
 		static GraphicsPipeline::CreateGraphicsInfo DeserializeGraphicsPipeline(const YAML::detail::iterator_value& pipelineData);
 
 		static ComputePipeline::CreateComputeInfo DeserializeComputePipeline(const YAML::detail::iterator_value& pipelineData);
@@ -146,6 +148,10 @@ namespace Pengine
 		static std::optional<Texture::Meta> DeserializeTextureMeta(const std::filesystem::path& filepath);
 
 		static std::filesystem::path DeserializeFilepath(const std::string& uuidOrFilepath);
+
+		static void SerializeThumbnailMeta(const std::filesystem::path& filepath, const size_t lastWriteTime);
+
+		static size_t DeserializeThumbnailMeta(const std::filesystem::path& filepath);
 	private:
 		static void ParseUniformValues(
 			const YAML::detail::iterator_value& data,
