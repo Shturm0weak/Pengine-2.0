@@ -1,282 +1,146 @@
-[Tue Apr  8 18:59:06 2025] Engine config has been loaded!
-[Tue Apr  8 18:59:06 2025] Graphics API:2
-[Tue Apr  8 18:59:06 2025] Available extensions:
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_device_group_creation
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_display
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_external_fence_capabilities
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_external_memory_capabilities
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_external_semaphore_capabilities
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_get_display_properties2
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_get_physical_device_properties2
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_get_surface_capabilities2
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_surface
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_surface_protected_capabilities
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_win32_surface
-[Tue Apr  8 18:59:06 2025] 	VK_EXT_debug_report
-[Tue Apr  8 18:59:06 2025] 	VK_EXT_debug_utils
-[Tue Apr  8 18:59:06 2025] 	VK_EXT_direct_mode_display
-[Tue Apr  8 18:59:06 2025] 	VK_EXT_swapchain_colorspace
-[Tue Apr  8 18:59:06 2025] 	VK_NV_external_memory_capabilities
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_portability_enumeration
-[Tue Apr  8 18:59:06 2025] 	VK_LUNARG_direct_driver_loading
-[Tue Apr  8 18:59:06 2025] Required extensions:
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_surface
-[Tue Apr  8 18:59:06 2025] 	VK_KHR_win32_surface
-[Tue Apr  8 18:59:06 2025] 	VK_EXT_debug_utils
-[Tue Apr  8 18:59:06 2025] Physical device count: 2
-[Tue Apr  8 18:59:06 2025] Physical devices:
-[Tue Apr  8 18:59:06 2025]  * NVIDIA GeForce RTX 3080 Ti Laptop GPU - Suitable
-[Tue Apr  8 18:59:06 2025]  * Intel(R) Iris(R) Xe Graphics - Suitable
-[Tue Apr  8 18:59:06 2025] Choosen physical device: NVIDIA GeForce RTX 3080 Ti Laptop GPU
-[Tue Apr  8 18:59:06 2025] Texture:Editor\Images\FileIcon.png has been loaded!
-[Tue Apr  8 18:59:06 2025] Texture:Editor\Images\FolderIcon.png has been loaded!
-[Tue Apr  8 18:59:06 2025] Texture:Editor\Images\HideIcon.png has been loaded!
-[Tue Apr  8 18:59:06 2025] Texture:Editor\Images\MaterialIcon.png has been loaded!
-[Tue Apr  8 18:59:06 2025] Texture:Editor\Images\MeshIcon.png has been loaded!
-[Tue Apr  8 18:59:06 2025] Texture:Editor\Images\MetaIcon.png has been loaded!
-[Tue Apr  8 18:59:06 2025] Texture:Editor\Images\PlayButton.png has been loaded!
-[Tue Apr  8 18:59:06 2025] Texture:Editor\Images\ShowIcon.png has been loaded!
-[Tue Apr  8 18:59:06 2025] Texture:Editor\Images\StopButton.png has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\BloomDownSample.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\DefaultReflection.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\Atmosphere.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\BloomUpSample.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\Line.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\RectangleUI.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\Final.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Atmosphere.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/DefaultReflection.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/BloomDownSample.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\Deferred.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Line.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/BloomUpSample.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Final.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/RectangleUI.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Deferred.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/BloomDownSample.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Atmosphere.geom has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/BloomUpSample.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/RectangleUI.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Atmosphere.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Final.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\MeshBaseDoubleSided.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\SSAO.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\MeshBaseSkinned.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/DefaultReflection.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/SSAO.comp has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\SkyBox.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Line.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Deferred.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/SkyBox.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/OpaqueSkinned.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\SSAOBlur.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\SSRBlur.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] BaseMaterial:Materials\SSR.basemat has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/SSAOBlur.comp has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/SSRBlur.comp has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/SSR.comp has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/SkyBox.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/TransparentSkinned.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/CSM.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/CSMSkinned.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/CSM.geom has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/CSM.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/ZPrePassSkinned.vert has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
-[Tue Apr  8 18:59:06 2025] Mesh:Meshes\Sphere.mesh has been loaded!
-[Tue Apr  8 18:59:06 2025] Material:Materials\MeshBaseDoubleSided.mat has been loaded!
-[Tue Apr  8 18:59:17 2025] Texture:Thumbnails\94734ee7-fc15-4e99-8211-670431872292.png has been loaded!
-[Tue Apr  8 18:59:19 2025] Texture:Thumbnails\98abe826-8105-44c2-9152-dad7b071f8ac.png has been loaded!
-[Tue Apr  8 18:59:22 2025] ERROR:9665e7b8-dd42-473b-b515-72e79fb89b24:Prefab doesn't exist!
-[Tue Apr  8 18:59:22 2025] Scene:Scenes\Examples\RomanBaths\RomanBaths.scene has been loaded!
-[Tue Apr  8 18:59:29 2025] Material:Materials\MeshBase.mat has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Water_baseColor.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Statue_Young_man_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Arch_and_pillars_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Ballustrade_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Statue_old_man_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Water_normal.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Water_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Material:Scenes\Examples\RomanBaths\Assets\Water.mat has been saved!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Roofs_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Statue_Young_man_normal.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Ballustrade_normal.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Statue_old_man_normal.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Changing_rooms_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Bath_tub_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Arch_and_pillars_normal.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Statue_Young_man_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Material:Scenes\Examples\RomanBaths\Assets\Statue_Young_man.mat has been saved!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Arch_and_pillars_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Material:Scenes\Examples\RomanBaths\Assets\Arch_and_pillars.mat has been saved!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Ground_baseColor.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Statue_old_man_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Ballustrade_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Material:Scenes\Examples\RomanBaths\Assets\Statue_old_man.mat has been saved!
-[Tue Apr  8 18:59:29 2025] Material:Scenes\Examples\RomanBaths\Assets\Ballustrade.mat has been saved!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Roofs_normal.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Screenshot:Thumbnails\62c8eb1c-0e4a-4dc5-967b-69b081a6ee30.png has been saved!
-[Tue Apr  8 18:59:29 2025] Texture:Thumbnails\62c8eb1c-0e4a-4dc5-967b-69b081a6ee30.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Bath_tub_normal.png has been loaded!
-[Tue Apr  8 18:59:29 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Changing_rooms_normal.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\27ea181f-271a-4d1c-afd9-93f7e6272344.png has been saved!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\2f2a47f7-c7d9-4126-87d5-6cd6c85b344d.png has been saved!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\2f2a47f7-c7d9-4126-87d5-6cd6c85b344d.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Roofs_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Material:Scenes\Examples\RomanBaths\Assets\Roofs.mat has been saved!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\27ea181f-271a-4d1c-afd9-93f7e6272344.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Ground_normal.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\d3dbccaf-99e3-4a15-bc00-ad5e7396bcef.png has been saved!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\0c2441ec-3bf8-43a0-80cb-8fca01f48092.png has been saved!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\0c2441ec-3bf8-43a0-80cb-8fca01f48092.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\d3dbccaf-99e3-4a15-bc00-ad5e7396bcef.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Bath_tub_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Material:Scenes\Examples\RomanBaths\Assets\Bath_tub.mat has been saved!
-[Tue Apr  8 18:59:30 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Changing_rooms_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Material:Scenes\Examples\RomanBaths\Assets\Changing_rooms.mat has been saved!
-[Tue Apr  8 18:59:30 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures/Ground_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Material:Scenes\Examples\RomanBaths\Assets\Ground.mat has been saved!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial.mesh has been saved!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_0.mesh has been saved!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_1.mesh has been saved!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_2.mesh has been saved!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_3.mesh has been saved!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_4.mesh has been saved!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_5.mesh has been saved!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_6.mesh has been saved!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_7.mesh has been saved!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\1c08b6a7-5e89-4a31-bd53-2324084e40c1.png has been saved!
-[Tue Apr  8 18:59:30 2025] Prefab:Scenes\Examples\RomanBaths\Assets\Sketchfab_model.prefab has been loaded!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\f52b0352-8a11-4688-a320-b47ca173f45f.png has been saved!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\1c08b6a7-5e89-4a31-bd53-2324084e40c1.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\fd7e4d69-da84-487b-91bb-1d38d7bc8297.png has been saved!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\9eb450d3-c40a-4496-bcc4-61d1431715ea.png has been saved!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_0.mesh has been loaded!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_1.mesh has been loaded!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_2.mesh has been loaded!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_3.mesh has been loaded!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_4.mesh has been loaded!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_5.mesh has been loaded!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_6.mesh has been loaded!
-[Tue Apr  8 18:59:30 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_7.mesh has been loaded!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\1d3eb43b-1dfb-4197-b6e7-ba36815edab1.png has been saved!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\28737c00-0895-4f4c-838a-f3df27dbd822.png has been saved!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\1f1ef550-e74f-459f-b5a0-689c2a495d9d.png has been saved!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\968fb66e-0c2f-4c44-9b0b-94a35b951ec3.png has been saved!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\f52b0352-8a11-4688-a320-b47ca173f45f.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\fd7e4d69-da84-487b-91bb-1d38d7bc8297.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\82368aad-d19c-40b3-ad08-d92397ac6719.png has been saved!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\9eb450d3-c40a-4496-bcc4-61d1431715ea.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\ca9c4aed-fa15-411a-b4f0-ee34046457c7.png has been saved!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\1d3eb43b-1dfb-4197-b6e7-ba36815edab1.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\1f1ef550-e74f-459f-b5a0-689c2a495d9d.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\c9f121fa-5e07-4d28-95c6-0f3273d7ee36.png has been saved!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\968fb66e-0c2f-4c44-9b0b-94a35b951ec3.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\f9dc9656-381c-405b-a6d6-5145fe002ed8.png has been saved!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\82368aad-d19c-40b3-ad08-d92397ac6719.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\ca9c4aed-fa15-411a-b4f0-ee34046457c7.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\c9f121fa-5e07-4d28-95c6-0f3273d7ee36.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\f9dc9656-381c-405b-a6d6-5145fe002ed8.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\28737c00-0895-4f4c-838a-f3df27dbd822.png has been loaded!
-[Tue Apr  8 18:59:30 2025] Screenshot:Thumbnails\ca9190aa-9134-4338-87be-be25f70804b2.png has been saved!
-[Tue Apr  8 18:59:30 2025] Texture:Thumbnails\ca9190aa-9134-4338-87be-be25f70804b2.png has been loaded!
-[Tue Apr  8 18:59:31 2025] Screenshot:Thumbnails\3f7188af-f766-49cb-9674-10c50a57d99e.png has been saved!
-[Tue Apr  8 18:59:31 2025] Texture:Thumbnails\3f7188af-f766-49cb-9674-10c50a57d99e.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial.mesh has been loaded!
-[Tue Apr  8 18:59:37 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_0.mesh has been loaded!
-[Tue Apr  8 18:59:37 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_1.mesh has been loaded!
-[Tue Apr  8 18:59:37 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_2.mesh has been loaded!
-[Tue Apr  8 18:59:37 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_3.mesh has been loaded!
-[Tue Apr  8 18:59:37 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_4.mesh has been loaded!
-[Tue Apr  8 18:59:37 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_5.mesh has been loaded!
-[Tue Apr  8 18:59:37 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_6.mesh has been loaded!
-[Tue Apr  8 18:59:37 2025] Mesh:Scenes\Examples\RomanBaths\Assets\defaultMaterial_7.mesh has been loaded!
-[Tue Apr  8 18:59:37 2025] Prefab:Scenes\Examples\RomanBaths\Assets\Sketchfab_model.prefab has been loaded!
-[Tue Apr  8 18:59:37 2025] Material:Scenes\Examples\RomanBaths\Assets\Ground.mat has been loaded!
-[Tue Apr  8 18:59:37 2025] Material:Scenes\Examples\RomanBaths\Assets\Ballustrade.mat has been loaded!
-[Tue Apr  8 18:59:37 2025] Material:Scenes\Examples\RomanBaths\Assets\Water.mat has been loaded!
-[Tue Apr  8 18:59:37 2025] Material:Scenes\Examples\RomanBaths\Assets\Changing_rooms.mat has been loaded!
-[Tue Apr  8 18:59:37 2025] Material:Scenes\Examples\RomanBaths\Assets\Bath_tub.mat has been loaded!
-[Tue Apr  8 18:59:37 2025] Material:Scenes\Examples\RomanBaths\Assets\Statue_Young_man.mat has been loaded!
-[Tue Apr  8 18:59:37 2025] Material:Scenes\Examples\RomanBaths\Assets\Roofs.mat has been loaded!
-[Tue Apr  8 18:59:37 2025] Material:Scenes\Examples\RomanBaths\Assets\Statue_old_man.mat has been loaded!
-[Tue Apr  8 18:59:37 2025] Material:Scenes\Examples\RomanBaths\Assets\Arch_and_pillars.mat has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Water_baseColor.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_Young_man_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ballustrade_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Arch_and_pillars_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_old_man_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Water_normal.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Water_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ballustrade_normal.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Roofs_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_old_man_normal.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_Young_man_normal.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Changing_rooms_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Arch_and_pillars_normal.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Bath_tub_baseColor.jpeg has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ground_baseColor.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Arch_and_pillars_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ballustrade_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_Young_man_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Statue_old_man_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Roofs_normal.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Bath_tub_normal.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Changing_rooms_normal.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ground_normal.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Roofs_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:37 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Bath_tub_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:38 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Changing_rooms_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:38 2025] Texture:Scenes\Examples\RomanBaths\Assets\textures\Ground_metallicRoughness.png has been loaded!
-[Tue Apr  8 18:59:59 2025] Screenshot:Thumbnails\f52b0352-8a11-4688-a320-b47ca173f45f.png has been saved!
-[Tue Apr  8 19:00:00 2025] Screenshot:Thumbnails\f52b0352-8a11-4688-a320-b47ca173f45f.png has been saved!
-[Tue Apr  8 19:00:00 2025] Texture:Thumbnails\f52b0352-8a11-4688-a320-b47ca173f45f.png has been loaded!
-[Tue Apr  8 19:00:02 2025] Screenshot:Thumbnails\f52b0352-8a11-4688-a320-b47ca173f45f.png has been saved!
-[Tue Apr  8 19:00:02 2025] Screenshot:Thumbnails\f52b0352-8a11-4688-a320-b47ca173f45f.png has been saved!
-[Tue Apr  8 19:00:03 2025] Screenshot:Thumbnails\f52b0352-8a11-4688-a320-b47ca173f45f.png has been saved!
-[Tue Apr  8 19:00:03 2025] Texture:Thumbnails\f52b0352-8a11-4688-a320-b47ca173f45f.png has been loaded!
-[Tue Apr  8 19:00:26 2025] Screenshot:Thumbnails\f52b0352-8a11-4688-a320-b47ca173f45f.png has been saved!
-[Tue Apr  8 19:00:27 2025] Texture:Thumbnails\f52b0352-8a11-4688-a320-b47ca173f45f.png has been loaded!
-[Tue Apr  8 19:00:34 2025] Screenshot:Thumbnails\f52b0352-8a11-4688-a320-b47ca173f45f.png has been saved!
-[Tue Apr  8 19:00:34 2025] Texture:Thumbnails\f52b0352-8a11-4688-a320-b47ca173f45f.png has been loaded!
-[Tue Apr  8 19:05:56 2025] BaseMaterial:Materials\BloomUpSample.basemat has been loaded!
-[Tue Apr  8 19:05:56 2025] Shader Cache:Shaders/BloomUpSample.vert has been loaded!
-[Tue Apr  8 19:05:56 2025] Shader Cache:Shaders/BloomUpSample.frag has been loaded!
-[Tue Apr  8 19:05:56 2025] BaseMaterial:Materials\SSAOBlur.basemat has been loaded!
-[Tue Apr  8 19:05:56 2025] Shader Cache:Shaders/SSAOBlur.comp has been loaded!
-[Tue Apr  8 19:05:56 2025] BaseMaterial:Materials\BloomDownSample.basemat has been loaded!
-[Tue Apr  8 19:05:56 2025] Shader Cache:Shaders/BloomDownSample.vert has been loaded!
-[Tue Apr  8 19:05:56 2025] Shader Cache:Shaders/BloomDownSample.frag has been loaded!
-[Tue Apr  8 19:05:56 2025] BaseMaterial:Materials\Final.basemat has been loaded!
-[Tue Apr  8 19:05:56 2025] Shader Cache:Shaders/Final.vert has been loaded!
-[Tue Apr  8 19:05:56 2025] Shader Cache:Shaders/Final.frag has been loaded!
-[Tue Apr  8 19:05:56 2025] BaseMaterial:Materials\DefaultReflection.basemat has been loaded!
-[Tue Apr  8 19:05:56 2025] Shader Cache:Shaders/DefaultReflection.vert has been loaded!
-[Tue Apr  8 19:05:56 2025] Shader Cache:Shaders/DefaultReflection.frag has been loaded!
-[Tue Apr  8 19:05:56 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
-[Tue Apr  8 19:05:56 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
-[Tue Apr  8 19:05:56 2025] ERROR:Shaders/Opaque.frag:42: error: 'ao' : undeclared identifier
-
-[Tue Apr  8 19:05:56 2025] ERROR:Shaders/Opaque.frag:42: error: 'ao' : undeclared identifier
-
-[Tue Apr  8 19:05:56 2025] FATAL_ERROR:Failed to get spirv reflection! At: C:\Repositories\Pengine-2.0\Pengine\Source\Vulkan\VulkanPipelineUtils.cpp 118
+[Wed Apr  9 20:40:46 2025] Engine config has been loaded!
+[Wed Apr  9 20:40:46 2025] Graphics API:2
+[Wed Apr  9 20:40:46 2025] Available extensions:
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_device_group_creation
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_display
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_external_fence_capabilities
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_external_memory_capabilities
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_external_semaphore_capabilities
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_get_display_properties2
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_get_physical_device_properties2
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_get_surface_capabilities2
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_surface
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_surface_protected_capabilities
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_win32_surface
+[Wed Apr  9 20:40:46 2025] 	VK_EXT_debug_report
+[Wed Apr  9 20:40:46 2025] 	VK_EXT_debug_utils
+[Wed Apr  9 20:40:46 2025] 	VK_EXT_direct_mode_display
+[Wed Apr  9 20:40:46 2025] 	VK_EXT_swapchain_colorspace
+[Wed Apr  9 20:40:46 2025] 	VK_NV_external_memory_capabilities
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_portability_enumeration
+[Wed Apr  9 20:40:46 2025] 	VK_LUNARG_direct_driver_loading
+[Wed Apr  9 20:40:46 2025] Required extensions:
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_surface
+[Wed Apr  9 20:40:46 2025] 	VK_KHR_win32_surface
+[Wed Apr  9 20:40:46 2025] 	VK_EXT_debug_utils
+[Wed Apr  9 20:40:46 2025] Physical device count: 2
+[Wed Apr  9 20:40:46 2025] Physical devices:
+[Wed Apr  9 20:40:46 2025]  * NVIDIA GeForce RTX 3080 Ti Laptop GPU - Suitable
+[Wed Apr  9 20:40:46 2025]  * Intel(R) Iris(R) Xe Graphics - Suitable
+[Wed Apr  9 20:40:46 2025] Choosen physical device: NVIDIA GeForce RTX 3080 Ti Laptop GPU
+[Wed Apr  9 20:40:46 2025] Texture:Editor\Images\FileIcon.png has been loaded!
+[Wed Apr  9 20:40:46 2025] Texture:Editor\Images\FolderIcon.png has been loaded!
+[Wed Apr  9 20:40:46 2025] Texture:Editor\Images\HideIcon.png has been loaded!
+[Wed Apr  9 20:40:46 2025] Texture:Editor\Images\MaterialIcon.png has been loaded!
+[Wed Apr  9 20:40:46 2025] Texture:Editor\Images\MeshIcon.png has been loaded!
+[Wed Apr  9 20:40:46 2025] Texture:Editor\Images\MetaIcon.png has been loaded!
+[Wed Apr  9 20:40:46 2025] Texture:Editor\Images\PlayButton.png has been loaded!
+[Wed Apr  9 20:40:46 2025] Texture:Editor\Images\ShowIcon.png has been loaded!
+[Wed Apr  9 20:40:46 2025] Texture:Editor\Images\StopButton.png has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\BloomDownSample.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\Atmosphere.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\DefaultReflection.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\BloomUpSample.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/BloomDownSample.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/DefaultReflection.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Atmosphere.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\Line.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/BloomUpSample.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\RectangleUI.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Line.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/BloomDownSample.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Atmosphere.geom has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/RectangleUI.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/BloomUpSample.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\Deferred.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\Final.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Atmosphere.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Deferred.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Final.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/RectangleUI.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Final.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\SSAO.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\SkyBox.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/SSAO.comp has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/SkyBox.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/DefaultReflection.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\SSAOBlur.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/SSAOBlur.comp has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\MeshBaseDoubleSided.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Deferred.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\MeshBase.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\SSR.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Line.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\SSRBlur.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/SSR.comp has been loaded!
+[Wed Apr  9 20:40:46 2025] BaseMaterial:Materials\MeshBaseSkinned.basemat has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/SSRBlur.comp has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Opaque.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/OpaqueSkinned.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/SkyBox.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Opaque.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Transparent.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/TransparentSkinned.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/Transparent.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/CSM.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/CSM.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/CSMSkinned.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/CSM.geom has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/CSM.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/ZPrePass.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/ZPrePassSkinned.vert has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Shader Cache:Shaders/ZPrePass.frag has been loaded!
+[Wed Apr  9 20:40:46 2025] Mesh:Meshes\Sphere.mesh has been loaded!
+[Wed Apr  9 20:40:46 2025] Material:Materials\MeshBaseDoubleSided.mat has been loaded!
+[Wed Apr  9 20:40:49 2025] Texture:Thumbnails\94734ee7-fc15-4e99-8211-670431872292.png has been loaded!
+[Wed Apr  9 20:40:49 2025] Texture:Thumbnails\12233e47-fa71-4ce2-9915-6079e5de00d0.png has been loaded!
+[Wed Apr  9 20:40:50 2025] Mesh:Meshes\Torus.mesh has been loaded!
+[Wed Apr  9 20:40:50 2025] Scene:Scenes\EmissiveMaterials\EmissiveMaterials.scene has been loaded!
+[Wed Apr  9 20:40:50 2025] Material:Scenes\EmissiveMaterials\Assets\EmissiveRed.mat has been loaded!
+[Wed Apr  9 20:40:50 2025] Material:Scenes\EmissiveMaterials\Assets\EmissiveBlue.mat has been loaded!
+[Wed Apr  9 20:40:50 2025] ERROR:Validation layer: vkCmdDrawIndexed(): the descriptor [VkDescriptorSet 0xdb20a0000000375, Set 1, Binding 7, Index 0, variable "shadingTexture"] is being used in draw but has never been updated via vkUpdateDescriptorSets() or a similar call.
+The Vulkan spec states: Descriptors in each bound descriptor set, specified via vkCmdBindDescriptorSets, must be valid as described by descriptor validity if they are statically used by the VkPipeline bound to the pipeline bind point used by this command and the bound VkPipeline was not created with VK_PIPELINE_CREATE_DESCRIPTOR_BUFFER_BIT_EXT (https://vulkan.lunarg.com/doc/view/1.4.309.0/windows/antora/spec/latest/chapters/drawing.html#VUID-vkCmdDrawIndexed-None-08114)
+[Wed Apr  9 20:40:50 2025] ERROR:Validation layer: vkCmdDrawIndexed(): the descriptor [VkDescriptorSet 0x6c9d670000000378, Set 1, Binding 7, Index 0, variable "shadingTexture"] is being used in draw but has never been updated via vkUpdateDescriptorSets() or a similar call.
+The Vulkan spec states: Descriptors in each bound descriptor set, specified via vkCmdBindDescriptorSets, must be valid as described by descriptor validity if they are statically used by the VkPipeline bound to the pipeline bind point used by this command and the bound VkPipeline was not created with VK_PIPELINE_CREATE_DESCRIPTOR_BUFFER_BIT_EXT (https://vulkan.lunarg.com/doc/view/1.4.309.0/windows/antora/spec/latest/chapters/drawing.html#VUID-vkCmdDrawIndexed-None-08114)
+[Wed Apr  9 20:40:50 2025] ERROR:Validation layer: vkCmdDrawIndexed(): the descriptor [VkDescriptorSet 0x7465f40000000373, Set 1, Binding 7, Index 0, variable "shadingTexture"] is being used in draw but has never been updated via vkUpdateDescriptorSets() or a similar call.
+The Vulkan spec states: Descriptors in each bound descriptor set, specified via vkCmdBindDescriptorSets, must be valid as described by descriptor validity if they are statically used by the VkPipeline bound to the pipeline bind point used by this command and the bound VkPipeline was not created with VK_PIPELINE_CREATE_DESCRIPTOR_BUFFER_BIT_EXT (https://vulkan.lunarg.com/doc/view/1.4.309.0/windows/antora/spec/latest/chapters/drawing.html#VUID-vkCmdDrawIndexed-None-08114)
+[Wed Apr  9 20:40:50 2025] ERROR:Validation layer: vkCmdDrawIndexed(): the descriptor [VkDescriptorSet 0x40218e0000000379, Set 1, Binding 7, Index 0, variable "shadingTexture"] is being used in draw but has never been updated via vkUpdateDescriptorSets() or a similar call.
+The Vulkan spec states: Descriptors in each bound descriptor set, specified via vkCmdBindDescriptorSets, must be valid as described by descriptor validity if they are statically used by the VkPipeline bound to the pipeline bind point used by this command and the bound VkPipeline was not created with VK_PIPELINE_CREATE_DESCRIPTOR_BUFFER_BIT_EXT (https://vulkan.lunarg.com/doc/view/1.4.309.0/windows/antora/spec/latest/chapters/drawing.html#VUID-vkCmdDrawIndexed-None-08114)
+[Wed Apr  9 20:40:50 2025] ERROR:Validation layer: vkCmdDrawIndexed(): the descriptor [VkDescriptorSet 0x63a92b0000000374, Set 1, Binding 7, Index 0, variable "shadingTexture"] is being used in draw but has never been updated via vkUpdateDescriptorSets() or a similar call.
+The Vulkan spec states: Descriptors in each bound descriptor set, specified via vkCmdBindDescriptorSets, must be valid as described by descriptor validity if they are statically used by the VkPipeline bound to the pipeline bind point used by this command and the bound VkPipeline was not created with VK_PIPELINE_CREATE_DESCRIPTOR_BUFFER_BIT_EXT (https://vulkan.lunarg.com/doc/view/1.4.309.0/windows/antora/spec/latest/chapters/drawing.html#VUID-vkCmdDrawIndexed-None-08114)
+[Wed Apr  9 20:40:50 2025] ERROR:Validation layer: vkCmdDrawIndexed(): the descriptor [VkDescriptorSet 0x952ae5000000037a, Set 1, Binding 7, Index 0, variable "shadingTexture"] is being used in draw but has never been updated via vkUpdateDescriptorSets() or a similar call.
+The Vulkan spec states: Descriptors in each bound descriptor set, specified via vkCmdBindDescriptorSets, must be valid as described by descriptor validity if they are statically used by the VkPipeline bound to the pipeline bind point used by this command and the bound VkPipeline was not created with VK_PIPELINE_CREATE_DESCRIPTOR_BUFFER_BIT_EXT (https://vulkan.lunarg.com/doc/view/1.4.309.0/windows/antora/spec/latest/chapters/drawing.html#VUID-vkCmdDrawIndexed-None-08114)
+[Wed Apr  9 20:40:50 2025] ERROR:Validation layer: vkCmdDrawIndexed(): the descriptor [VkDescriptorSet 0xdb20a0000000375, Set 1, Binding 7, Index 0, variable "shadingTexture"] is being used in draw but has never been updated via vkUpdateDescriptorSets() or a similar call.
+The Vulkan spec states: Descriptors in each bound descriptor set, specified via vkCmdBindDescriptorSets, must be valid as described by descriptor validity if they are statically used by the VkPipeline bound to the pipeline bind point used by this command and the bound VkPipeline was not created with VK_PIPELINE_CREATE_DESCRIPTOR_BUFFER_BIT_EXT (https://vulkan.lunarg.com/doc/view/1.4.309.0/windows/antora/spec/latest/chapters/drawing.html#VUID-vkCmdDrawIndexed-None-08114)
+[Wed Apr  9 20:40:50 2025] ERROR:Validation layer: vkCmdDrawIndexed(): the descriptor [VkDescriptorSet 0x6c9d670000000378, Set 1, Binding 7, Index 0, variable "shadingTexture"] is being used in draw but has never been updated via vkUpdateDescriptorSets() or a similar call.
+The Vulkan spec states: Descriptors in each bound descriptor set, specified via vkCmdBindDescriptorSets, must be valid as described by descriptor validity if they are statically used by the VkPipeline bound to the pipeline bind point used by this command and the bound VkPipeline was not created with VK_PIPELINE_CREATE_DESCRIPTOR_BUFFER_BIT_EXT (https://vulkan.lunarg.com/doc/view/1.4.309.0/windows/antora/spec/latest/chapters/drawing.html#VUID-vkCmdDrawIndexed-None-08114)
+[Wed Apr  9 20:40:50 2025] ERROR:Validation layer: vkCmdDrawIndexed(): the descriptor [VkDescriptorSet 0x7465f40000000373, Set 1, Binding 7, Index 0, variable "shadingTexture"] is being used in draw but has never been updated via vkUpdateDescriptorSets() or a similar call.
+The Vulkan spec states: Descriptors in each bound descriptor set, specified via vkCmdBindDescriptorSets, must be valid as described by descriptor validity if they are statically used by the VkPipeline bound to the pipeline bind point used by this command and the bound VkPipeline was not created with VK_PIPELINE_CREATE_DESCRIPTOR_BUFFER_BIT_EXT (https://vulkan.lunarg.com/doc/view/1.4.309.0/windows/antora/spec/latest/chapters/drawing.html#VUID-vkCmdDrawIndexed-None-08114)
+[Wed Apr  9 20:40:50 2025] ERROR:Validation layer: vkCmdDrawIndexed(): the descriptor [VkDescriptorSet 0x40218e0000000379, Set 1, Binding 7, Index 0, variable "shadingTexture"] is being used in draw but has never been updated via vkUpdateDescriptorSets() or a similar call.
+The Vulkan spec states: Descriptors in each bound descriptor set, specified via vkCmdBindDescriptorSets, must be valid as described by descriptor validity if they are statically used by the VkPipeline bound to the pipeline bind point used by this command and the bound VkPipeline was not created with VK_PIPELINE_CREATE_DESCRIPTOR_BUFFER_BIT_EXT (https://vulkan.lunarg.com/doc/view/1.4.309.0/windows/antora/spec/latest/chapters/drawing.html#VUID-vkCmdDrawIndexed-None-08114)
+[Wed Apr  9 20:40:57 2025] Scene:Scenes\EmissiveMaterials\EmissiveMaterials.scene has been saved!
+[Wed Apr  9 20:40:58 2025] Screenshot:Thumbnails\12233e47-fa71-4ce2-9915-6079e5de00d0.png has been saved!
+[Wed Apr  9 20:40:58 2025] Texture:Thumbnails\12233e47-fa71-4ce2-9915-6079e5de00d0.png has been loaded!
+[Wed Apr  9 20:41:36 2025] Scene:Scenes\EmissiveMaterials\EmissiveMaterials.scene has been saved!
+[Wed Apr  9 20:41:36 2025] Screenshot:Thumbnails\12233e47-fa71-4ce2-9915-6079e5de00d0.png has been saved!
+[Wed Apr  9 20:41:36 2025] Texture:Thumbnails\12233e47-fa71-4ce2-9915-6079e5de00d0.png has been loaded!
+[Wed Apr  9 20:41:37 2025] Texture:Thumbnails\fc774ca6-ad80-411c-aa4e-64977543b683.png has been loaded!
+[Wed Apr  9 20:41:37 2025] Texture:Thumbnails\1007aecf-2a1f-42c0-95f1-b81cabf4b5b2.png has been loaded!
+[Wed Apr  9 20:41:37 2025] Texture:Thumbnails\c20766fe-d1a2-4dc2-a1e8-39620295545f.png has been loaded!
+[Wed Apr  9 20:41:40 2025] Material:Scenes\EmissiveMaterials\Assets\EmissiveGreen.mat has been loaded!
+[Wed Apr  9 20:41:57 2025] Scene:Scenes\EmissiveMaterials\EmissiveMaterials.scene has been saved!
+[Wed Apr  9 20:41:57 2025] Screenshot:Thumbnails\12233e47-fa71-4ce2-9915-6079e5de00d0.png has been saved!
+[Wed Apr  9 20:41:57 2025] Texture:Thumbnails\12233e47-fa71-4ce2-9915-6079e5de00d0.png has been loaded!

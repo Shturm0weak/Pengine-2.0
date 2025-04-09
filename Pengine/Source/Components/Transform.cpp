@@ -33,201 +33,119 @@ void Transform::SetEntity(std::shared_ptr<Entity> entity)
 	Scale(GetScale());
 }
 
-glm::mat4 Transform::GetPositionMat4(const System system) const
+glm::mat4 Transform::GetPositionMat4(System system) const
 {
 	switch (system)
 	{
 	case System::LOCAL:
 	{
-		return m_PositionMat4;
+		return m_LocalTransformData.m_PositionMat4;
 	}
 	case System::GLOBAL:
 	{
-		glm::mat4 positionMat4 = m_PositionMat4;
-		if (m_Entity && m_Entity->HasParent())
-		{
-			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
-			positionMat4 *= parent.GetPositionMat4();
-		}
-		return positionMat4;
+		return m_GlobalTransformData.m_PositionMat4;
 	}
 	default:
 		return glm::mat4(1.0f);
 	}
 }
 
-glm::mat4 Transform::GetRotationMat4(const System system) const
+glm::mat4 Transform::GetRotationMat4(System system) const
 {
 	switch (system)
 	{
 	case System::LOCAL:
 	{
-		return m_RotationMat4;
+		return m_LocalTransformData.m_RotationMat4;
 	}
 	case System::GLOBAL:
 	{
-		glm::mat4 rotationMat4 = m_RotationMat4;
-		if (m_Entity && m_Entity->HasParent())
-		{
-			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
-			rotationMat4 *= parent.GetRotationMat4();
-		}
-		return rotationMat4;
+		return m_GlobalTransformData.m_RotationMat4;
 	}
 	default:
 		return glm::mat4(1.0f);
 	}
 }
 
-glm::mat4 Transform::GetScaleMat4(const System system) const
+glm::mat4 Transform::GetScaleMat4(System system) const
 {
 	switch (system)
 	{
 	case System::LOCAL:
 	{
-		return m_ScaleMat4;
+		return m_LocalTransformData.m_ScaleMat4;
 	}
 	case System::GLOBAL:
 	{
-		glm::mat4 scaleMat4 = m_ScaleMat4;
-		if (m_Entity && m_Entity->HasParent())
-		{
-			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
-			scaleMat4 *= parent.GetScaleMat4();
-		}
-		return scaleMat4;
+		return m_GlobalTransformData.m_ScaleMat4;
 	}
 	default:
 		return glm::mat4(1.0f);
 	}
 }
 
-glm::vec3 Transform::GetPreviousPosition(const System system) const
+glm::vec3 Transform::GetPosition(System system) const
 {
 	switch (system)
 	{
 	case System::LOCAL:
 	{
-		return m_PreviousPosition;
+		return Utils::GetPosition(m_LocalTransformData.m_PositionMat4);
 	}
 	case System::GLOBAL:
 	{
-		glm::vec3 previousPosition = m_PreviousPosition;
-		if (m_Entity && m_Entity->HasParent())
-		{
-			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
-			previousPosition = parent.GetTransform() * glm::vec4(previousPosition, 1.0f);
-		}
-		return previousPosition;
+		return Utils::GetPosition(m_GlobalTransformData.m_PositionMat4);
 	}
 	default:
-		return {};
+		return glm::vec3(0.0f);
 	}
 }
 
-glm::vec3 Transform::GetPositionDelta(const System system) const
+glm::vec3 Transform::GetRotation(System system) const
 {
 	switch (system)
 	{
 	case System::LOCAL:
 	{
-		return m_PositionDelta;
+		return m_LocalTransformData.m_Rotation;
 	}
 	case System::GLOBAL:
 	{
-		glm::vec3 positionDelta = m_PositionDelta;
-		if (m_Entity && m_Entity->HasParent())
-		{
-			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
-			positionDelta = parent.GetTransform() * glm::vec4(positionDelta, 1.0f);
-		}
-		return positionDelta;
+		return m_GlobalTransformData.m_Rotation;
 	}
 	default:
-		return {};
+		return glm::vec3(0.0f);
 	}
 }
 
-glm::vec3 Transform::GetPosition(const System system) const
+glm::vec3 Transform::GetScale(System system) const
 {
 	switch (system)
 	{
 	case System::LOCAL:
 	{
-		return Utils::GetPosition(m_PositionMat4);
+		return Utils::GetScale(m_LocalTransformData.m_ScaleMat4);
 	}
 	case System::GLOBAL:
 	{
-		return Utils::GetPosition(GetTransform(system));
+		return Utils::GetScale(m_GlobalTransformData.m_ScaleMat4);
 	}
 	default:
-		return {};
+		return glm::vec3(1.0f);
 	}
 }
 
-glm::vec3 Transform::GetRotation(const System system) const
+glm::mat4 Transform::GetTransform(System system) const
 {
 	switch (system)
 	{
 	case System::LOCAL:
 	{
-		return m_Rotation;
+		return m_LocalTransformData.m_TransformMat4;
 	}
 	case System::GLOBAL:
 	{
-		glm::vec3 rotation = m_Rotation;
-		if (m_Entity && m_Entity->HasParent())
-		{
-			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
-			rotation += parent.GetRotation();
-		}
-		return rotation;
-	}
-	default:
-		return {};
-	}
-}
-
-glm::vec3 Transform::GetScale(const System system) const
-{
-	switch (system)
-	{
-	case System::LOCAL:
-	{
-		return Utils::GetScale(m_ScaleMat4);
-	}
-	case System::GLOBAL:
-	{
-		glm::vec3 scale = Utils::GetScale(m_ScaleMat4);
-		if (m_Entity && m_Entity->HasParent())
-		{
-			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
-			scale *= parent.GetScale();
-		}
-		return scale;
-	}
-	default:
-		return {};
-	}
-}
-
-glm::mat4 Transform::GetTransform(const System system) const
-{
-	switch (system)
-	{
-	case System::LOCAL:
-	{
-		return m_TransformMat4;
-	}
-	case System::GLOBAL:
-	{
-		glm::mat4 transformMat4 = m_TransformMat4;
-		if (m_Entity && m_Entity->HasParent())
-		{
-			const Transform& parent = m_Entity->GetParent()->GetComponent<Transform>();
-			transformMat4 = parent.GetTransform() * transformMat4;
-		}
-		return transformMat4;
+		return m_GlobalTransformData.m_TransformMat4;
 	}
 	default:
 		return glm::mat4(1.0f);
@@ -242,11 +160,8 @@ glm::mat3 Transform::GetInverseTransform(const System system) const
 void Transform::Move(Transform&& transform) noexcept
 {
 	m_Entity = std::move(transform.m_Entity);
-	m_Rotation = std::move(transform.m_Rotation);
-	m_PositionMat4 = std::move(transform.m_PositionMat4);
-	m_ScaleMat4 = std::move(transform.m_ScaleMat4);
-	m_RotationMat4 = std::move(transform.m_RotationMat4);
-	m_TransformMat4 = std::move(transform.m_TransformMat4);
+	m_LocalTransformData = std::move(transform.m_LocalTransformData);
+	m_GlobalTransformData = std::move(transform.m_GlobalTransformData);
 	m_FollowOwner = std::move(transform.m_FollowOwner);
 
 	transform.m_Entity = nullptr;
@@ -254,10 +169,10 @@ void Transform::Move(Transform&& transform) noexcept
 
 void Transform::UpdateVectors()
 {
-	const float cosPitch = cos(m_Rotation.x);
-	m_Back.z = cos(m_Rotation.y) * cosPitch;
-	m_Back.x = sin(m_Rotation.y) * cosPitch;
-	m_Back.y = sin(m_Rotation.x);
+	const float cosPitch = cos(m_LocalTransformData.m_Rotation.x);
+	m_Back.z = cos(m_LocalTransformData.m_Rotation.y) * cosPitch;
+	m_Back.x = sin(m_LocalTransformData.m_Rotation.y) * cosPitch;
+	m_Back.y = sin(m_LocalTransformData.m_Rotation.x);
 	m_Back = glm::normalize(m_Back);
 
 	const glm::mat3 inverseTransformMat3 = GetInverseTransform(System::LOCAL);
@@ -267,7 +182,19 @@ void Transform::UpdateVectors()
 
 void Transform::UpdateTransforms()
 {
-	m_TransformMat4 = m_PositionMat4 * m_RotationMat4 * m_ScaleMat4;
+	m_LocalTransformData.m_TransformMat4 =
+		m_LocalTransformData.m_PositionMat4 * m_LocalTransformData.m_RotationMat4 * m_LocalTransformData.m_ScaleMat4;
+
+	m_GlobalTransformData = m_LocalTransformData;
+	if (m_Entity && m_Entity->HasParent())
+	{
+		Transform& parentTransform = m_Entity->GetParent()->GetComponent<Transform>();
+		m_GlobalTransformData.m_TransformMat4 = parentTransform.GetTransform() * m_GlobalTransformData.m_TransformMat4;
+		m_GlobalTransformData.m_PositionMat4 = parentTransform.GetPositionMat4() * m_GlobalTransformData.m_PositionMat4;
+		m_GlobalTransformData.m_RotationMat4 = parentTransform.GetRotationMat4() * m_GlobalTransformData.m_RotationMat4;
+		m_GlobalTransformData.m_ScaleMat4 = parentTransform.GetScaleMat4() * m_GlobalTransformData.m_ScaleMat4;
+		m_GlobalTransformData.m_Rotation = parentTransform.GetRotation() + m_GlobalTransformData.m_Rotation;
+	}
 }
 
 Transform& Transform::operator=(const Transform& transform)
@@ -336,9 +263,7 @@ void Transform::Translate(const glm::vec3& position)
 {
 	m_IsDirty = true;
 
-	m_PreviousPosition = GetPosition(System::LOCAL);
-	m_PositionDelta = position - m_PreviousPosition;
-	m_PositionMat4 = glm::translate(glm::mat4(1.0f), position);
+	m_LocalTransformData.m_PositionMat4 = glm::translate(glm::mat4(1.0f), position);
 
 	UpdateTransforms();
 
@@ -358,7 +283,11 @@ void Transform::Translate(const glm::vec3& position)
 		{
 			if (const std::shared_ptr<Entity> child = weakChild.lock())
 			{
-				translationCallbacks(child->GetComponent<Transform>());
+				Transform& childTransform = child->GetComponent<Transform>();
+				childTransform.m_GlobalTransformData.m_TransformMat4 = transform.GetTransform() * childTransform.m_LocalTransformData.m_TransformMat4;
+				childTransform.m_GlobalTransformData.m_PositionMat4 = transform.GetPositionMat4() * childTransform.m_LocalTransformData.m_PositionMat4;
+
+				translationCallbacks(childTransform);
 			}
 		}
 	};
@@ -370,10 +299,8 @@ void Transform::Rotate(const glm::vec3& rotation)
 {
 	m_IsDirty = true;
 
-	m_PreviousRotation = GetRotation(System::LOCAL);
-	m_Rotation = rotation;
-	m_RotationDelta = m_Rotation - m_PreviousRotation;
-	m_RotationMat4 = glm::toMat4(glm::quat(m_Rotation));
+	m_LocalTransformData.m_Rotation = rotation;
+	m_LocalTransformData.m_RotationMat4 = glm::toMat4(glm::quat(m_LocalTransformData.m_Rotation));
 
 	UpdateTransforms();
 	UpdateVectors();
@@ -394,7 +321,12 @@ void Transform::Rotate(const glm::vec3& rotation)
 		{
 			if (const std::shared_ptr<Entity> child = weakChild.lock())
 			{
-				rotationCallbacks(child->GetComponent<Transform>());
+				Transform& childTransform = child->GetComponent<Transform>();
+				childTransform.m_GlobalTransformData.m_TransformMat4 = transform.GetTransform() * childTransform.m_LocalTransformData.m_TransformMat4;
+				childTransform.m_GlobalTransformData.m_RotationMat4 = transform.GetRotationMat4() * childTransform.m_LocalTransformData.m_RotationMat4;
+				childTransform.m_GlobalTransformData.m_Rotation = transform.GetRotation() + childTransform.m_LocalTransformData.m_Rotation;
+
+				rotationCallbacks(childTransform);
 			}
 		}
 	};
@@ -406,9 +338,7 @@ void Transform::Scale(const glm::vec3& scale)
 {
 	m_IsDirty = true;
 
-	m_PreviousScale = GetScale(System::LOCAL);
-	m_ScaleDelta = scale - m_PreviousScale;
-	m_ScaleMat4 = glm::scale(glm::mat4(1.0f), scale);
+	m_LocalTransformData.m_ScaleMat4 = glm::scale(glm::mat4(1.0f), scale);
 
 	UpdateTransforms();
 
@@ -428,7 +358,11 @@ void Transform::Scale(const glm::vec3& scale)
 		{
 			if (const std::shared_ptr<Entity> child = weakChild.lock())
 			{
-				scaleCallbacks(child->GetComponent<Transform>());
+				Transform& childTransform = child->GetComponent<Transform>();
+				childTransform.m_GlobalTransformData.m_TransformMat4 = transform.GetTransform() * childTransform.m_LocalTransformData.m_TransformMat4;
+				childTransform.m_GlobalTransformData.m_ScaleMat4 = transform.GetRotationMat4() * childTransform.m_LocalTransformData.m_ScaleMat4;
+
+				scaleCallbacks(childTransform);
 			}
 		}
 	};

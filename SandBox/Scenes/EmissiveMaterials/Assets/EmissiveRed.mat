@@ -11,17 +11,19 @@ Mat:
     - RenderPass: GBuffer
       Uniforms:
         - Name: albedoTexture
-          Value: ""
+          Value: White
         - Name: normalTexture
-          Value: ""
+          Value: Black
         - Name: metalnessTexture
-          Value: ""
+          Value: Black
         - Name: roughnessTexture
-          Value: ""
+          Value: White
         - Name: aoTexture
-          Value: ""
+          Value: White
         - Name: emissiveTexture
-          Value: ""
+          Value: White
+        - Name: shadingTexture
+          Value: White
         - Name: GBufferMaterial
           Values:
             - Name: material.albedoColor
@@ -46,6 +48,9 @@ Mat:
               Value: 1
               Type: float
             - Name: material.useNormalMap
+              Value: 0
+              Type: int
+            - Name: material.useSingleShadingMap
               Value: 0
               Type: int
     - RenderPass: Transparent

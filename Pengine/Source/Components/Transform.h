@@ -17,17 +17,19 @@ namespace Pengine
 
 	private:
 
-		glm::mat4 m_TransformMat4{};
-		glm::mat4 m_PositionMat4{};
-		glm::mat4 m_RotationMat4{};
-		glm::mat4 m_ScaleMat4{};
-		glm::vec3 m_PreviousPosition{};
-		glm::vec3 m_PositionDelta{};
-		glm::vec3 m_PreviousScale{};
-		glm::vec3 m_ScaleDelta{};
-		glm::vec3 m_Rotation{};
-		glm::vec3 m_PreviousRotation{};
-		glm::vec3 m_RotationDelta{};
+		struct TransformData
+		{
+
+			glm::mat4 m_TransformMat4{};
+			glm::mat4 m_PositionMat4{};
+			glm::mat4 m_RotationMat4{};
+			glm::mat4 m_ScaleMat4{};
+			glm::vec3 m_Rotation{};
+		};
+
+		TransformData m_LocalTransformData{};
+		TransformData m_GlobalTransformData{};
+
 		glm::vec3 m_Back{};
 		glm::vec3 m_Up{};
 
@@ -70,10 +72,6 @@ namespace Pengine
 		[[nodiscard]] glm::mat4 GetRotationMat4(System system = System::GLOBAL) const;
 		
 		[[nodiscard]] glm::mat4 GetScaleMat4(System system = System::GLOBAL) const;
-		
-		[[nodiscard]] glm::vec3 GetPreviousPosition(System system = System::GLOBAL) const;
-		
-		[[nodiscard]] glm::vec3 GetPositionDelta(System system = System::GLOBAL) const;
 		
 		[[nodiscard]] glm::vec3 GetPosition(System system = System::GLOBAL) const;
 		
@@ -124,6 +122,9 @@ namespace Pengine
 		void Rotate(const glm::vec3& rotation);
 		
 		void Scale(const glm::vec3& scale);
+
+	private:
+		void UpdateTransformFromParent(const glm::mat4& transformMat4);
 	};
 
 }

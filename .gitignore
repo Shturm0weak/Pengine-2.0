@@ -1,6 +1,5 @@
 #Directories
-*Build*/
-*build*/
+Build/
 .vscode/
 .idea/
 SandBox/Scenes/Examples
