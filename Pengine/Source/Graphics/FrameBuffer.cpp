@@ -22,7 +22,7 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 		const bool isColor = attachment.layout == Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
 		Texture::CreateInfo attachmentCreateInfo{};
-		attachmentCreateInfo.isMultiBuffered = true;
+		attachmentCreateInfo.isMultiBuffered = attachment.isMultiBuffered;
 		attachmentCreateInfo.name = renderPass->GetName() + "FrameBuffer";
 		attachmentCreateInfo.filepath = renderPass->GetName() + "FrameBuffer";
 		attachmentCreateInfo.format = attachment.format;

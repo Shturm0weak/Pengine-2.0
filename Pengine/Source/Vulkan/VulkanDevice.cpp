@@ -708,6 +708,20 @@ void VulkanDevice::DestroyBuffer(
 	});
 }
 
+void* VulkanDevice::Begin()
+{
+	VulkanFrameInfo* vkFrameInfo = new VulkanFrameInfo();
+	vkFrameInfo->CommandBuffer = BeginSingleTimeCommands();
+	return vkFrameInfo;
+}
+
+void VulkanDevice::End(void* frame)
+{
+	VulkanFrameInfo* vkFrameInfo = static_cast<VulkanFrameInfo*>(frame);
+	EndSingleTimeCommands(vkFrameInfo->CommandBuffer);
+	delete vkFrameInfo;
+}
+
 VkCommandBuffer VulkanDevice::BeginSingleTimeCommands() const
 {
 	m_Mutex.lock();

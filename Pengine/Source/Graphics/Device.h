@@ -21,6 +21,10 @@ namespace Pengine
 
 		virtual void FlushDeletionQueue(bool immediate = false) = 0;
 
+		virtual void* Begin() = 0;
+
+		virtual void End(void* frame) = 0;
+
 	protected:
 		Device() = default;
 		virtual ~Device() = default;

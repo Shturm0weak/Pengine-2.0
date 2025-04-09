@@ -2947,16 +2947,17 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	}
 
 	std::filesystem::path metalnessTextureFilepath;
+	uint32_t numMetalnessTextures = 0;
 	{
-		numTextures = aiMaterial->GetTextureCount(aiTextureType_METALNESS);
-		if (numTextures > 0)
+		numMetalnessTextures = aiMaterial->GetTextureCount(aiTextureType_METALNESS);
+		if (numMetalnessTextures > 0)
 		{
 			aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_METALNESS, 0), aiTextureName);
 			metalnessTextureFilepath = directory / aiTextureName.C_Str();
 		}
 
-		numTextures = aiMaterial->GetTextureCount(aiTextureType_SPECULAR);
-		if (numTextures > 0)
+		numMetalnessTextures = aiMaterial->GetTextureCount(aiTextureType_SPECULAR);
+		if (numMetalnessTextures > 0)
 		{
 			aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_SPECULAR, 0), aiTextureName);
 			metalnessTextureFilepath = directory / aiTextureName.C_Str();
@@ -2964,16 +2965,17 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	}
 
 	std::filesystem::path roughnessTextureFilepath;
+	uint32_t numRoughnessTextures = 0;
 	{
-		numTextures = aiMaterial->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS);
-		if (numTextures > 0)
+		numRoughnessTextures = aiMaterial->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS);
+		if (numRoughnessTextures > 0)
 		{
 			aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE_ROUGHNESS, 0), aiTextureName);
 			roughnessTextureFilepath = directory / aiTextureName.C_Str();
 		}
 
-		numTextures = aiMaterial->GetTextureCount(aiTextureType_SHININESS);
-		if (numTextures > 0)
+		numRoughnessTextures = aiMaterial->GetTextureCount(aiTextureType_SHININESS);
+		if (numRoughnessTextures > 0)
 		{
 			aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_SHININESS, 0), aiTextureName);
 			roughnessTextureFilepath = directory / aiTextureName.C_Str();
@@ -2981,15 +2983,23 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	}
 
 	int useSingleShadingMap = 0;
-	if (metalnessTextureFilepath == roughnessTextureFilepath)
+	if (numMetalnessTextures > 0 && numRoughnessTextures > 0 && metalnessTextureFilepath == roughnessTextureFilepath)
 	{
 		uniformWriter->WriteTexture("shadingTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(metalnessTextureFilepath));
 		useSingleShadingMap = 1;
 	}
 	else
 	{
-		uniformWriter->WriteTexture("metalnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(metalnessTextureFilepath));
-		uniformWriter->WriteTexture("roughnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(roughnessTextureFilepath));
+		if (numMetalnessTextures > 0)
+		{
+			uniformWriter->WriteTexture("metalnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(metalnessTextureFilepath));
+		}
+		
+		if (numRoughnessTextures > 0)
+		{
+			uniformWriter->WriteTexture("roughnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(roughnessTextureFilepath));
+		}
+
 		useSingleShadingMap = 0;
 	}
 

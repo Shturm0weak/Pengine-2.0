@@ -64,6 +64,7 @@ namespace Pengine
 			Store store = Store::STORE;
 			std::optional<glm::ivec2> size;
 			bool isCubeMap = false;
+			bool isMultiBuffered = true;
 			uint32_t layerCount = 1;
 			std::function<std::shared_ptr<FrameBuffer>(RenderTarget*, uint32_t&)> getFrameBufferCallback;
 		};

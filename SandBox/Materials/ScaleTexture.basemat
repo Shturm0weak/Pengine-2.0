@@ -1,0 +1,9 @@
+Basemat:
+  Pipelines:
+    - RenderPass: ScaleTexture
+      Type: Compute
+      Compute: Shaders/ScaleTexture.comp
+      DescriptorSets:
+        - Type: Object
+          RenderPass: ScaleTexture
+          Set: 0

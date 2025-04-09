@@ -157,7 +157,20 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 		binding.name = "imageTexture";
 		binding.binding = 0;
 		binding.count = 1;
-		binding.type = ShaderReflection::Type::COMBINED_IMAGE_SAMPLER;
+
+		// STORAGE usage is the first priority.
+		if ((imageInfo.usage & VkImageUsageFlagBits::VK_IMAGE_USAGE_STORAGE_BIT) == VkImageUsageFlagBits::VK_IMAGE_USAGE_STORAGE_BIT)
+		{
+			binding.type = ShaderReflection::Type::STORAGE_IMAGE;
+		}
+		else if ((imageInfo.usage & VkImageUsageFlagBits::VK_IMAGE_USAGE_SAMPLED_BIT) == VkImageUsageFlagBits::VK_IMAGE_USAGE_SAMPLED_BIT)
+		{
+			binding.type = ShaderReflection::Type::COMBINED_IMAGE_SAMPLER;
+		}
+		else
+		{
+			Logger::Warning("Texture:" + GetFilepath().string() + " doesn't have any usage!");
+		}
 
 		m_UniformWriter = UniformWriter::Create(UniformLayout::Create(bindings), IsMultiBuffered());
 		std::shared_ptr<VulkanUniformWriter> vkUniformWriter = std::dynamic_pointer_cast<VulkanUniformWriter>(m_UniformWriter);

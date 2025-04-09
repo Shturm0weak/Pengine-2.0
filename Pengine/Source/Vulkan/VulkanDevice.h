@@ -93,6 +93,10 @@ namespace Pengine::Vk
 			VmaAllocation vmaAllocation,
 			VmaAllocationInfo vmaAllocationInfo) const;
 
+		virtual void* Begin() override;
+
+		virtual void End(void* frame) override;
+
 		[[nodiscard]] VkCommandBuffer BeginSingleTimeCommands() const;
 
 		void EndSingleTimeCommands(VkCommandBuffer commandBuffer) const;
