@@ -28,7 +28,14 @@ VulkanComputePipeline::VulkanComputePipeline(const CreateComputeInfo& createComp
 	m_ReflectShaderModulesByType[ShaderType::COMPUTE] = VulkanPipelineUtils::Reflect(filepath, ShaderType::COMPUTE);
 	VkShaderModule shaderModule{};
 	VulkanPipelineUtils::CreateShaderModule(vertexSpv, &shaderModule);
-	m_UniformLayoutsByDescriptorSet = VulkanPipelineUtils::CreateDescriptorSetLayouts(m_ReflectShaderModulesByType[ShaderType::COMPUTE]);
+
+	std::map<uint32_t, std::vector<ShaderReflection::ReflectDescriptorSetBinding>> bindingsByDescriptorSet;
+	for (const auto& [set, bindings] : m_ReflectShaderModulesByType[ShaderType::COMPUTE].setLayouts)
+	{
+		bindingsByDescriptorSet[set] = bindings;
+	}
+
+	m_UniformLayoutsByDescriptorSet = VulkanPipelineUtils::CreateDescriptorSetLayouts(bindingsByDescriptorSet);
 
 	VkPipelineShaderStageCreateInfo shaderStage{};
 

@@ -80,6 +80,11 @@ namespace Pengine::Vk
 
 		static InputRate ConvertVertexInputRate(VkVertexInputRate vertexInputRate);
 
+		static void CollectBindingsByDescriptorSet(
+			std::map<uint32_t, std::vector<ShaderReflection::ReflectDescriptorSetBinding>>& bindingsByDescriptorSet,
+			const std::vector<ShaderReflection::ReflectDescriptorSetLayout>& setLayouts,
+			const std::string& debugShaderFilepath);
+
 		VkPipeline m_GraphicsPipeline{};
 		VkPipelineLayout m_PipelineLayout{};
 	};

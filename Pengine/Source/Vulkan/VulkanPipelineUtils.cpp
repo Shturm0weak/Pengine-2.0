@@ -327,10 +327,11 @@ void VulkanPipelineUtils::ReflectInputVariables(
 	}
 }
 
-std::map<uint32_t, std::shared_ptr<UniformLayout>> VulkanPipelineUtils::CreateDescriptorSetLayouts(const ShaderReflection::ReflectShaderModule& reflectShaderModule)
+std::map<uint32_t, std::shared_ptr<UniformLayout>> VulkanPipelineUtils::CreateDescriptorSetLayouts(
+	const std::map<uint32_t, std::vector<ShaderReflection::ReflectDescriptorSetBinding>>& bindingsByDescriptorSet)
 {
 	std::map<uint32_t, std::shared_ptr<UniformLayout>> uniformLayoutsByDescriptorSets;
-	for (const auto& [set, bindings] : reflectShaderModule.setLayouts)
+	for (const auto& [set, bindings] : bindingsByDescriptorSet)
 	{
 		uniformLayoutsByDescriptorSets[set] = UniformLayout::Create(bindings);
 	}

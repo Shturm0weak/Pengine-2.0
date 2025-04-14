@@ -3631,7 +3631,7 @@ void Serializer::SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entit
 	out << YAML::Key << "RenderTargetIndex" << YAML::Value << camera.GetRenderTargetIndex();
 
 	// TODO: Maybe do it more optimal.
-	// TODO: Also take window into account, for now it is just viewports, but viewports can have the same names accross different windows.
+	// TODO: Also take window into account, for now it is just viewports, but viewports can have the same names across different windows.
 	for (const auto& [windowName, window] : WindowManager::GetInstance().GetWindows())
 	{
 		for (const auto& [viewportName, viewport] : window->GetViewportManager().GetViewports())
