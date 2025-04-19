@@ -360,7 +360,7 @@ void Transform::Scale(const glm::vec3& scale)
 			{
 				Transform& childTransform = child->GetComponent<Transform>();
 				childTransform.m_GlobalTransformData.m_TransformMat4 = transform.GetTransform() * childTransform.m_LocalTransformData.m_TransformMat4;
-				childTransform.m_GlobalTransformData.m_ScaleMat4 = transform.GetRotationMat4() * childTransform.m_LocalTransformData.m_ScaleMat4;
+				childTransform.m_GlobalTransformData.m_ScaleMat4 = transform.GetScaleMat4() * childTransform.m_LocalTransformData.m_ScaleMat4;
 
 				scaleCallbacks(childTransform);
 			}

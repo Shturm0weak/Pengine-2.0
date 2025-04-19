@@ -43,11 +43,11 @@ namespace Pengine
 
 		static Clay_Dimensions ClayMeasureText(Clay_StringSlice text, Clay_TextElementConfig *config, void* userData);
 
-		std::shared_ptr<Font> GetFont(const std::string& fontName, const uint16_t fontSize);
+		std::shared_ptr<Font> GetFont(const std::string& fontName, const uint16_t fontSize) const;
 
-		const std::string& GetFontName(const uint16_t fontId);
+		const std::string& GetFontName(const uint16_t fontId) const;
 
-		std::shared_ptr<Font> GetFont(const uint16_t fontId, const uint16_t fontSize)
+		std::shared_ptr<Font> GetFont(const uint16_t fontId, const uint16_t fontSize) const
 		{
 			return GetFont(GetFontName(fontId), fontSize);
 		}

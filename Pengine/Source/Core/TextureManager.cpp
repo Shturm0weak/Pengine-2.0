@@ -65,7 +65,7 @@ std::vector<std::shared_ptr<Texture>> TextureManager::LoadFromFolder(const std::
 	return textures;
 }
 
-std::shared_ptr<Texture> TextureManager::GetTexture(const std::filesystem::path& filepath)
+std::shared_ptr<Texture> TextureManager::GetTexture(const std::filesystem::path& filepath) const
 {
 	std::lock_guard<std::mutex> lock(m_MutexTexture);
 	if (const auto textureByFilepath = m_TexturesByFilepath.find(filepath);
@@ -77,22 +77,22 @@ std::shared_ptr<Texture> TextureManager::GetTexture(const std::filesystem::path&
 	return nullptr;
 }
 
-std::shared_ptr<Texture> TextureManager::GetWhite()
+std::shared_ptr<Texture> TextureManager::GetWhite() const
 {
 	return m_White;
 }
 
-std::shared_ptr<Texture> TextureManager::GetWhiteLayered()
+std::shared_ptr<Texture> TextureManager::GetWhiteLayered() const
 {
 	return m_WhiteLayered;
 }
 
-std::shared_ptr<Texture> TextureManager::GetBlack()
+std::shared_ptr<Texture> TextureManager::GetBlack() const
 {
 	return m_Black;
 }
 
-std::shared_ptr<Texture> TextureManager::GetPink()
+std::shared_ptr<Texture> TextureManager::GetPink() const
 {
 	return m_Pink;
 }

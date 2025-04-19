@@ -155,13 +155,13 @@ std::shared_ptr<FontManager::Font> FontManager::LoadFont(const std::filesystem::
 
 glm::ivec2 FontManager::MeasureText(const std::string& fontName, const uint16_t fontSize, const std::string& text)
 {
-	if (m_Fonts.count(fontName) == 0)
+	if (!m_Fonts.contains(fontName))
 	{
 		Logger::Error("There is no any font with the name " + fontName + "!");
 		return {};
 	}
 
-	if (m_Fonts[fontName].count(fontSize) == 0)
+	if (!m_Fonts[fontName].contains(fontSize))
 	{
 		Logger::Error("The font with the name " + fontName + " doesn't have such font size loaded " + std::to_string(fontSize) + "!");
 		return {};
@@ -197,32 +197,34 @@ Clay_Dimensions FontManager::ClayMeasureText(Clay_StringSlice text, Clay_TextEle
 	return dimensions;
 }
 
-std::shared_ptr<FontManager::Font> FontManager::GetFont(const std::string& fontName, const uint16_t fontSize)
+std::shared_ptr<FontManager::Font> FontManager::GetFont(
+	const std::string& fontName,
+	const uint16_t fontSize) const
 {
-	if (m_Fonts.count(fontName) == 0)
+	if (!m_Fonts.contains(fontName))
 	{
 		Logger::Error("There is no any font with the name " + fontName + "!");
 		return nullptr;
 	}
 
-	if (m_Fonts[fontName].count(fontSize) == 0)
+	if (!m_Fonts.at(fontName).contains(fontSize))
 	{
 		Logger::Error("The font with the name " + fontName + " doesn't have such font size loaded " + std::to_string(fontSize) + "!");
 		return nullptr;
 	}
 
-	return m_Fonts[fontName][fontSize];
+	return m_Fonts.at(fontName).at(fontSize);
 }
 
-const std::string& FontManager::GetFontName(const uint16_t fontId)
+const std::string& FontManager::GetFontName(const uint16_t fontId) const
 {
-	if (m_FontNamesById.count(fontId) == 0)
+	if (!m_FontNamesById.contains(fontId))
 	{
 		Logger::Error("There is no any font with the id " + std::to_string(fontId) + "!");
 		return {};
 	}
 
-	return m_FontNamesById[fontId];
+	return m_FontNamesById.at(fontId);
 }
 
 void FontManager::ShutDown()

@@ -21,9 +21,9 @@ namespace Pengine
 
 		std::shared_ptr<BaseMaterial> LoadBaseMaterial(const std::filesystem::path& filepath);
 
-		std::shared_ptr<Material> GetMaterial(const std::filesystem::path& filepath);
+		std::shared_ptr<Material> GetMaterial(const std::filesystem::path& filepath) const;
 
-		std::shared_ptr<BaseMaterial> GetBaseMaterial(const std::filesystem::path& filepath);
+		std::shared_ptr<BaseMaterial> GetBaseMaterial(const std::filesystem::path& filepath) const;
 
 		std::shared_ptr<Material> Clone(
 			const std::string& name,
@@ -53,8 +53,8 @@ namespace Pengine
 		std::unordered_map<std::filesystem::path, std::shared_ptr<Material>, path_hash> m_MaterialsByFilepath;
 		std::unordered_map<std::filesystem::path, std::shared_ptr<BaseMaterial>, path_hash> m_BaseMaterialsByFilepath;
 
-		std::mutex m_MutexMaterial;
-		std::mutex m_MutexBaseMaterial;
+		mutable std::mutex m_MutexMaterial;
+		mutable std::mutex m_MutexBaseMaterial;
 	};
 
 }

@@ -5,7 +5,6 @@
 #include "../Graphics/Mesh.h"
 #include "../Graphics/SkeletalAnimation.h"
 #include "../Graphics/Skeleton.h"
-#include "../Graphics/Skin.h"
 
 #include <mutex>
 
@@ -24,7 +23,7 @@ namespace Pengine
 
 		std::shared_ptr<Mesh> LoadMesh(const std::filesystem::path& filepath);
 
-		std::shared_ptr<Mesh> GetMesh(const std::filesystem::path& filepath);
+		std::shared_ptr<Mesh> GetMesh(const std::filesystem::path& filepath) const;
 
 		void DeleteMesh(std::shared_ptr<Mesh>& mesh);
 
@@ -32,7 +31,7 @@ namespace Pengine
 
 		std::shared_ptr<SkeletalAnimation> LoadSkeletalAnimation(const std::filesystem::path& filepath);
 
-		std::shared_ptr<SkeletalAnimation> GetSkeletalAnimation(const std::filesystem::path& filepath);
+		std::shared_ptr<SkeletalAnimation> GetSkeletalAnimation(const std::filesystem::path& filepath) const;
 
 		void DeleteSkeletalAnimation(std::shared_ptr<SkeletalAnimation>& skeletalAnimation);
 
@@ -40,7 +39,7 @@ namespace Pengine
 
 		std::shared_ptr<Skeleton> LoadSkeleton(const std::filesystem::path& filepath);
 
-		std::shared_ptr<Skeleton> GetSkeleton(const std::filesystem::path& filepath);
+		std::shared_ptr<Skeleton> GetSkeleton(const std::filesystem::path& filepath) const;
 
 		void DeleteSkeleton(std::shared_ptr<Skeleton>& skeleton);
 
@@ -60,9 +59,9 @@ namespace Pengine
 		std::unordered_map<std::filesystem::path, std::shared_ptr<Skeleton>, path_hash> m_SkeletonsByFilepath;
 		std::unordered_map<std::filesystem::path, std::shared_ptr<SkeletalAnimation>, path_hash> m_SkeletalAnimationsByFilepath;
 
-		std::mutex m_MutexMesh;
-		std::mutex m_MutexSkeleton;
-		std::mutex m_MutexSkeletalAnimation;
+		mutable std::mutex m_MutexMesh;
+		mutable std::mutex m_MutexSkeleton;
+		mutable std::mutex m_MutexSkeletalAnimation;
 	};
 
 }

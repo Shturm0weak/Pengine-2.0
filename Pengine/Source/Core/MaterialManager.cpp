@@ -54,7 +54,7 @@ std::shared_ptr<BaseMaterial> MaterialManager::LoadBaseMaterial(const std::files
 	}
 }
 
-std::shared_ptr<Material> MaterialManager::GetMaterial(const std::filesystem::path& filepath)
+std::shared_ptr<Material> MaterialManager::GetMaterial(const std::filesystem::path& filepath) const
 {
 	std::lock_guard<std::mutex> lock(m_MutexMaterial);
 	if (const auto materialByFilepath = m_MaterialsByFilepath.find(filepath);
@@ -66,7 +66,7 @@ std::shared_ptr<Material> MaterialManager::GetMaterial(const std::filesystem::pa
 	return nullptr;
 }
 
-std::shared_ptr<BaseMaterial> MaterialManager::GetBaseMaterial(const std::filesystem::path& filepath)
+std::shared_ptr<BaseMaterial> MaterialManager::GetBaseMaterial(const std::filesystem::path& filepath) const
 {
 	std::lock_guard<std::mutex> lock(m_MutexBaseMaterial);
 	if (const auto baseMaterialByFilepath = m_BaseMaterialsByFilepath.find(filepath);
@@ -78,7 +78,9 @@ std::shared_ptr<BaseMaterial> MaterialManager::GetBaseMaterial(const std::filesy
 	return nullptr;
 }
 
-std::shared_ptr<Material> MaterialManager::Clone(const std::string& name, const std::filesystem::path& filepath,
+std::shared_ptr<Material> MaterialManager::Clone(
+	const std::string& name,
+	const std::filesystem::path& filepath,
 	const std::shared_ptr<Material>& material)
 {
 	std::shared_ptr<Material> clonedMaterial = Material::Clone(name, filepath, material);

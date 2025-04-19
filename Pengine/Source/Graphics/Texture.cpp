@@ -1,11 +1,11 @@
 #include "Texture.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 #include "../Core/Logger.h"
 #include "../Vulkan/VulkanTexture.h"
 #include "../Utils/Utils.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stbi/stb_image.h>
 
 using namespace Pengine;
 

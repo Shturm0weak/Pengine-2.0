@@ -10,7 +10,6 @@
 #include "../Graphics/Mesh.h"
 #include "../Graphics/Pipeline.h"
 #include "../Graphics/Skeleton.h"
-#include "../Graphics/Skin.h"
 
 #include "yaml-cpp/yaml.h"
 

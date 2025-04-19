@@ -15,6 +15,7 @@
 
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
+
 #include "../Components/Camera.h"
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
@@ -29,7 +30,7 @@
 #include "../Utils/AssimpHelpers.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "../Graphics/stb_image_write.h"
+#include <stbi/stb_image_write.h>
 
 #include <filesystem>
 #include <fstream>

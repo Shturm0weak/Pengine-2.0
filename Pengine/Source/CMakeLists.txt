@@ -96,9 +96,6 @@ set(GRAPHICS_SOURCES
 	Graphics/ShaderReflection.h
 	Graphics/SkeletalAnimation.cpp Graphics/SkeletalAnimation.h
 	Graphics/Skeleton.h
-	Graphics/Skin.h
-	Graphics/stb_image.h
-	Graphics/stb_image_write.h
 	Graphics/Texture.cpp Graphics/Texture.h
 	Graphics/UniformLayout.cpp Graphics/UniformLayout.h
 	Graphics/UniformWriter.cpp Graphics/UniformWriter.h

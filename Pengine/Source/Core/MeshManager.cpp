@@ -50,7 +50,7 @@ std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::filesystem::path& filepat
 	}
 }
 
-std::shared_ptr<Mesh> MeshManager::GetMesh(const std::filesystem::path& filepath)
+std::shared_ptr<Mesh> MeshManager::GetMesh(const std::filesystem::path& filepath) const
 {
 	std::lock_guard<std::mutex> lock(m_MutexMesh);
 	auto meshByFilepath = m_MeshesByFilepath.find(filepath);
@@ -111,7 +111,7 @@ std::shared_ptr<SkeletalAnimation> MeshManager::LoadSkeletalAnimation(const std:
 	}
 }
 
-std::shared_ptr<SkeletalAnimation> MeshManager::GetSkeletalAnimation(const std::filesystem::path& filepath)
+std::shared_ptr<SkeletalAnimation> MeshManager::GetSkeletalAnimation(const std::filesystem::path& filepath) const
 {
 	std::lock_guard<std::mutex> lock(m_MutexSkeletalAnimation);
 	auto skeletalAnimationsByFilepath = m_SkeletalAnimationsByFilepath.find(filepath);
@@ -172,7 +172,7 @@ std::shared_ptr<Skeleton> MeshManager::LoadSkeleton(const std::filesystem::path&
 	}
 }
 
-std::shared_ptr<Skeleton> MeshManager::GetSkeleton(const std::filesystem::path& filepath)
+std::shared_ptr<Skeleton> MeshManager::GetSkeleton(const std::filesystem::path& filepath) const
 {
 	std::lock_guard<std::mutex> lock(m_MutexSkeleton);
 	auto skeletonsByFilepath = m_SkeletonsByFilepath.find(filepath);
