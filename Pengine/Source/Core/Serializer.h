@@ -42,7 +42,7 @@ namespace Pengine
 
 		static void DeserializeShaderFilepaths(
 			const YAML::detail::iterator_value& pipelineData,
-			std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType);
+			std::map<ShaderModule::Type, std::filesystem::path>& shaderFilepathsByType);
 
 		static void SerializeTexture(const std::filesystem::path& filepath, std::shared_ptr<Texture> texture, bool* isLoaded);
 

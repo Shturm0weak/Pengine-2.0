@@ -2,6 +2,8 @@
 
 #include "Logger.h"
 
+#include "../Graphics/ShaderModuleManager.h"
+
 using namespace Pengine;
 
 MaterialManager& MaterialManager::GetInstance()
@@ -132,6 +134,8 @@ void MaterialManager::SaveAll()
 
 void MaterialManager::ShutDown()
 {
+	ShaderModuleManager::GetInstance().ShutDown();
+
 	m_MaterialsByFilepath.clear();
 	m_BaseMaterialsByFilepath.clear();
 }

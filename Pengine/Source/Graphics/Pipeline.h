@@ -4,7 +4,7 @@
 
 #include "RenderPass.h"
 #include "UniformLayout.h"
-#include "ShaderReflection.h"
+#include "ShaderModule.h"
 
 namespace Pengine
 {
@@ -15,14 +15,6 @@ namespace Pengine
 		enum class Type
 		{
 			GRAPHICS,
-			COMPUTE
-		};
-
-		enum class ShaderType
-		{
-			VERTEX,
-			GEOMETRY,
-			FRAGMENT,
 			COMPUTE
 		};
 
@@ -72,10 +64,10 @@ namespace Pengine
 		{
 			std::map<DescriptorSetIndexType, std::map<std::string, uint32_t>> descriptorSetIndicesByType;
 			UniformInfo uniformInfo;
-			std::map<Pipeline::ShaderType, std::string> shaderFilepathsByType;
+			std::map<ShaderModule::Type, std::filesystem::path> shaderFilepathsByType;
 		};
 
-		static Type GetPipelineType(const std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType);
+		static Type GetPipelineType(const std::map<ShaderModule::Type, std::filesystem::path>& shaderFilepathsByType);
 
 		explicit Pipeline(Type type);
 		virtual ~Pipeline() = default;
@@ -102,7 +94,7 @@ namespace Pengine
 
 		Type m_Type;
 
-		std::map<ShaderType, ShaderReflection::ReflectShaderModule> m_ReflectShaderModulesByType;
+		std::map<ShaderModule::Type, std::shared_ptr<ShaderModule>> m_ShaderModulesByType;
 		std::map<uint32_t, std::shared_ptr<UniformLayout>> m_UniformLayoutsByDescriptorSet;
 		std::map<uint32_t, std::pair<DescriptorSetIndexType, std::string>> m_SortedDescriptorSets;
 	};

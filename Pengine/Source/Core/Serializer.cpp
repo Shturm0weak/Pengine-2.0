@@ -610,32 +610,32 @@ void Serializer::DeserializeDescriptorSets(
 
 void Serializer::DeserializeShaderFilepaths(
 	const YAML::detail::iterator_value& pipelineData,
-	std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType)
+	std::map<ShaderModule::Type, std::filesystem::path>& shaderFilepathsByType)
 {
 	auto getShaderFilepath = [](const YAML::Node& node)
 	{
-		const std::string filepathOrUUID = node.as<std::string>();
-		return std::filesystem::exists(filepathOrUUID) ? filepathOrUUID : Utils::FindFilepath(filepathOrUUID).string();
+		const std::filesystem::path filepathOrUUID = node.as<std::string>();
+		return std::filesystem::exists(filepathOrUUID) ? filepathOrUUID : Utils::FindFilepath(filepathOrUUID.string());
 	};
 
 	if (const auto& vertexData = pipelineData["Vertex"])
 	{
-		shaderFilepathsByType[Pipeline::ShaderType::VERTEX] = getShaderFilepath(vertexData);
+		shaderFilepathsByType[ShaderModule::Type::VERTEX] = getShaderFilepath(vertexData);
 	}
 
 	if (const auto& fragmentData = pipelineData["Fragment"])
 	{
-		shaderFilepathsByType[Pipeline::ShaderType::FRAGMENT] = getShaderFilepath(fragmentData);
+		shaderFilepathsByType[ShaderModule::Type::FRAGMENT] = getShaderFilepath(fragmentData);
 	}
 
 	if (const auto& geometryData = pipelineData["Geometry"])
 	{
-		shaderFilepathsByType[Pipeline::ShaderType::GEOMETRY] = getShaderFilepath(geometryData);
+		shaderFilepathsByType[ShaderModule::Type::GEOMETRY] = getShaderFilepath(geometryData);
 	}
 
 	if (const auto& computeData = pipelineData["Compute"])
 	{
-		shaderFilepathsByType[Pipeline::ShaderType::COMPUTE] = getShaderFilepath(computeData);
+		shaderFilepathsByType[ShaderModule::Type::COMPUTE] = getShaderFilepath(computeData);
 	}
 }
 
@@ -1038,14 +1038,14 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 		}
 
 		auto checkFilepaths = [](
-			const std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType,
-			const std::string& baseMaterialFilepath)
+			const std::map<ShaderModule::Type, std::filesystem::path>& shaderFilepathsByType,
+			const std::filesystem::path& debugBaseMaterialFilepath)
 		{
 			for (const auto& [type, shaderFilepath] : shaderFilepathsByType)
 			{
 				if (shaderFilepath.empty())
 				{
-					FATAL_ERROR("BaseMaterial: " + baseMaterialFilepath + " has empty shader filepath for type " + std::to_string((int)type) + "!");
+					FATAL_ERROR("BaseMaterial: " + debugBaseMaterialFilepath.string() + " has empty shader filepath for type " + std::to_string((int)type) + "!");
 				}
 			}
 		};
@@ -1057,7 +1057,7 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 
 			for (const auto& pipelineCreateGraphicsInfo : createInfo.pipelineCreateGraphicsInfos)
 			{
-				checkFilepaths(pipelineCreateGraphicsInfo.shaderFilepathsByType, filepath.string());
+				checkFilepaths(pipelineCreateGraphicsInfo.shaderFilepathsByType, filepath);
 			}
 		}
 		else if (type == Pipeline::Type::COMPUTE)
@@ -1067,7 +1067,7 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 
 			for (const auto& pipelineCreateGraphicsInfo : createInfo.pipelineCreateGraphicsInfos)
 			{
-				checkFilepaths(pipelineCreateGraphicsInfo.shaderFilepathsByType, filepath.string());
+				checkFilepaths(pipelineCreateGraphicsInfo.shaderFilepathsByType, filepath);
 			}
 		}
 	}

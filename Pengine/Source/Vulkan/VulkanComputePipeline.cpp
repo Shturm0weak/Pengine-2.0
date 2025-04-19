@@ -3,9 +3,10 @@
 #include "VulkanDevice.h"
 #include "VulkanPipelineUtils.h"
 #include "VulkanUniformLayout.h"
-#include "ShaderIncluder.h"
+#include "VulkanShaderModule.h"
 
 #include "../Core/Logger.h"
+#include "../Graphics/ShaderModuleManager.h"
 
 using namespace Pengine;
 using namespace Vk;
@@ -13,24 +14,18 @@ using namespace Vk;
 VulkanComputePipeline::VulkanComputePipeline(const CreateComputeInfo& createComputeInfo)
 	: ComputePipeline(createComputeInfo)
 {
-	const auto filepath = createComputeInfo.shaderFilepathsByType.at(ShaderType::COMPUTE);
+	const auto filepath = createComputeInfo.shaderFilepathsByType.at(ShaderModule::Type::COMPUTE);
 
 	if (filepath.empty())
 	{
 		FATAL_ERROR("Failed to create compute pipeline, compute shader filepath is empty!");
 	}
 
-	shaderc::CompileOptions options{};
-	options.SetOptimizationLevel(shaderc_optimization_level_zero);
-	options.SetIncluder(std::make_unique<ShaderIncluder>());
-
-	const std::string vertexSpv = VulkanPipelineUtils::CompileShaderModule(filepath, options, ShaderType::COMPUTE);
-	m_ReflectShaderModulesByType[ShaderType::COMPUTE] = VulkanPipelineUtils::Reflect(filepath, ShaderType::COMPUTE);
-	VkShaderModule shaderModule{};
-	VulkanPipelineUtils::CreateShaderModule(vertexSpv, &shaderModule);
+	const std::shared_ptr<ShaderModule> shaderModule = ShaderModuleManager::GetInstance().GetOrCreateShaderModule(filepath, ShaderModule::Type::COMPUTE);
+	m_ShaderModulesByType[ShaderModule::Type::COMPUTE] = shaderModule;
 
 	std::map<uint32_t, std::vector<ShaderReflection::ReflectDescriptorSetBinding>> bindingsByDescriptorSet;
-	for (const auto& [set, bindings] : m_ReflectShaderModulesByType[ShaderType::COMPUTE].setLayouts)
+	for (const auto& [set, bindings] : std::static_pointer_cast<VulkanShaderModule>(shaderModule)->GetReflection().setLayouts)
 	{
 		bindingsByDescriptorSet[set] = bindings;
 	}
@@ -40,8 +35,8 @@ VulkanComputePipeline::VulkanComputePipeline(const CreateComputeInfo& createComp
 	VkPipelineShaderStageCreateInfo shaderStage{};
 
 	shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-	shaderStage.stage = VulkanPipelineUtils::ConvertShaderStage(ShaderType::COMPUTE);
-	shaderStage.module = shaderModule;
+	shaderStage.stage = VulkanPipelineUtils::ConvertShaderStage(ShaderModule::Type::COMPUTE);
+	shaderStage.module = std::static_pointer_cast<VulkanShaderModule>(shaderModule)->GetShaderModule();
 	shaderStage.pName = "main";
 	shaderStage.flags = 0;
 	shaderStage.pNext = nullptr;
@@ -79,12 +74,16 @@ VulkanComputePipeline::VulkanComputePipeline(const CreateComputeInfo& createComp
 	{
 		FATAL_ERROR("Failed to create graphics pipeline!");
 	}
-
-	vkDestroyShaderModule(GetVkDevice()->GetDevice(), shaderModule, nullptr);
 }
 
 VulkanComputePipeline::~VulkanComputePipeline()
 {
+	for (auto& [type, shaderModule] : m_ShaderModulesByType)
+	{
+		ShaderModuleManager::GetInstance().DeleteShaderModule(shaderModule);
+	}
+	m_ShaderModulesByType.clear();
+
 	GetVkDevice()->DeleteResource([pipelineLayout = m_PipelineLayout, computePipeline = m_ComputePipeline]()
 	{
 		vkDestroyPipelineLayout(GetVkDevice()->GetDevice(), pipelineLayout, nullptr);

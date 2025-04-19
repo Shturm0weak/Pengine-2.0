@@ -17,13 +17,13 @@ namespace Pengine
 		static void CreateShaderModule(const std::string& code, VkShaderModule* shaderModule);
 
 		static std::string CompileShaderModule(
-			const std::string& filepath,
+			const std::filesystem::path& filepath,
 			shaderc::CompileOptions options,
-			Pipeline::ShaderType type,
+			ShaderModule::Type type,
 			bool useCache = true,
 			bool useLog = true);
 
-		static ShaderReflection::ReflectShaderModule Reflect(const std::string& filepath, Pipeline::ShaderType type);
+		static ShaderReflection::ReflectShaderModule Reflect(const std::filesystem::path& filepath, ShaderModule::Type type);
 
 		static void ReflectDescriptorSets(
 			SpvReflectShaderModule& reflectModule,
@@ -33,11 +33,12 @@ namespace Pengine
 			SpvReflectShaderModule& reflectModule,
 			ShaderReflection::ReflectShaderModule& reflectShaderModule);
 
-		static std::map<uint32_t, std::shared_ptr<UniformLayout>> CreateDescriptorSetLayouts(const std::map<uint32_t, std::vector<ShaderReflection::ReflectDescriptorSetBinding>>& bindingsByDescriptorSet);
+		static std::map<uint32_t, std::shared_ptr<UniformLayout>> CreateDescriptorSetLayouts(
+			const std::map<uint32_t, std::vector<ShaderReflection::ReflectDescriptorSetBinding>>& bindingsByDescriptorSet);
 
-		static VkShaderStageFlagBits ConvertShaderStage(Pipeline::ShaderType stage);
+		static VkShaderStageFlagBits ConvertShaderStage(ShaderModule::Type stage);
 
-		static Pipeline::ShaderType ConvertShaderStage(VkShaderStageFlagBits stage);
+		static ShaderModule::Type ConvertShaderStage(VkShaderStageFlagBits stage);
 	};
 
 }

@@ -15,7 +15,7 @@ namespace Pengine
 			Type type;
 			std::string passName;
 			std::map<DescriptorSetIndexType, std::map<std::string, uint32_t>> descriptorSetIndicesByType;
-			std::map<Pipeline::ShaderType, std::string> shaderFilepathsByType;
+			std::map<ShaderModule::Type, std::filesystem::path> shaderFilepathsByType;
 			UniformInfo uniformInfo;
 		};
 

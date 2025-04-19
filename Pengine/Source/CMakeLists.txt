@@ -91,6 +91,8 @@ set(GRAPHICS_SOURCES
 	Graphics/Renderer.cpp Graphics/Renderer.h
 	Graphics/RenderPass.cpp Graphics/RenderPass.h
 	Graphics/RenderTarget.cpp Graphics/RenderTarget.h
+	Graphics/ShaderModule.cpp Graphics/ShaderModule.h
+	Graphics/ShaderModuleManager.cpp Graphics/ShaderModuleManager.h
 	Graphics/ShaderReflection.h
 	Graphics/SkeletalAnimation.cpp Graphics/SkeletalAnimation.h
 	Graphics/Skeleton.h
@@ -119,6 +121,7 @@ set(VULKAN_SOURCES
 	Vulkan/VulkanRenderer.cpp Vulkan/VulkanRenderer.h
 	Vulkan/VulkanRenderPass.cpp Vulkan/VulkanRenderPass.h
 	Vulkan/VulkanSamplerManager.cpp Vulkan/VulkanSamplerManager.h
+	Vulkan/VulkanShaderModule.cpp Vulkan/VulkanShaderModule.h
 	Vulkan/VulkanTexture.cpp Vulkan/VulkanTexture.h
 	Vulkan/VulkanUniformLayout.cpp Vulkan/VulkanUniformLayout.h
 	Vulkan/VulkanUniformWriter.cpp Vulkan/VulkanUniformWriter.h
