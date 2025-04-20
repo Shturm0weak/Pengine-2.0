@@ -1,14 +1,14 @@
 Settings:
   DrawBoundingBoxes: false
-GraphicsSettings: d9afc1d9-1ca8-4529-805a-055fb67d6fe0
+GraphicsSettings: 0x84beaa5529d21a0d243484fff0af8349
 Scene:
-  - UUID: 737f2457-9848-4a95-a65b-bbd5748aa818
+  - UUID: 0x8c8679e07a5966d99a8fa33c8cdbb5f2
     Name: Sun
     IsEnabled: true
     Transform:
       Position: [0, 0, 0]
-      Rotation: [1.72199059, -0, 0]
-      Scale: [1, 0.999994397, 0.999994397]
+      Rotation: [1.48352981, 0, 0]
+      Scale: [1, 1, 1]
       FollowOwner: true
     DirectionalLight:
       Color: [1, 1, 1]
@@ -16,12 +16,12 @@ Scene:
       Ambient: 0.100000001
     Childs:
       []
-  - UUID: 5421a4ba-5a44-4fe9-ac50-0759acdbd6a0
+  - UUID: 0xd4d48e4feeea8b738856cc366ecb43b3
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [-6.58760309, 2.22394347, -0.796547771]
-      Rotation: [-0.160448685, -1.68386161, 0]
+      Position: [-11.7602558, 1.46617925, 0.0747564286]
+      Rotation: [-0.103288665, 4.93963957, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -34,8 +34,8 @@ Scene:
       Viewport: Main
     Childs:
       []
-  - PrefabFilepath: 0020420e-d770-478a-ac25-ea0de6ea4a31
-    UUID: 4303533b-6ba3-428c-b93d-df03cacf1ca9
+  - PrefabFilepath: 0x7b72f6cb8d40827d3aa06b524949ea7a
+    UUID: 0x619a72ca14a989c731c33926a64112b3
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, -0, 0]

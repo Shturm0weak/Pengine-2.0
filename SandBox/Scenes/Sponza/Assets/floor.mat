@@ -1,5 +1,5 @@
 Mat:
-  Basemat: 29181c47-c273-47f2-b4dc-03daed0c8590
+  Basemat: 0x5e24d711eb129f19fc9801b407c05618
   Options:
     - Name: Transparency
       IsEnabled: false
@@ -40,19 +40,19 @@ Mat:
               Value: 0
               Type: int
         - Name: albedoTexture
-          Value: 3ec6e0b3-79c8-4eee-b865-4db176ac7df8
+          Value: 0x2ab4f204309c03b644801906a89d58ca
         - Name: normalTexture
-          Value: ""
+          Value: Black
         - Name: metalnessTexture
-          Value: ""
+          Value: Black
         - Name: roughnessTexture
-          Value: ""
+          Value: White
         - Name: aoTexture
-          Value: ""
+          Value: White
         - Name: emissiveTexture
-          Value: ""
+          Value: White
         - Name: shadingTexture
-          Value: ""
+          Value: White
     - RenderPass: Transparent
       Uniforms:
         []

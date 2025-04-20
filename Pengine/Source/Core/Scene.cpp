@@ -137,6 +137,18 @@ std::shared_ptr<Entity> Scene::CloneEntity(std::shared_ptr<Entity> entity)
 
 	std::shared_ptr<Entity> newEntity = cloneEntity(entity);
 
+	// At the moment of move constructor transform is created,
+	// but at that moment entity of this transform is invalid,
+	// so passing global transform to its child entities will not happen,
+	// so here by copy we update the global transform of the whole hierarchy of entities.
+	{
+		Transform& transform = newEntity->GetComponent<Transform>();
+		bool copyable = transform.IsCopyable();
+		transform.SetCopyable(true);
+		transform = entity->GetComponent<Transform>();
+		transform.SetCopyable(copyable);
+	}
+
 	if (entity->HasParent())
 	{
 		entity->GetParent()->AddChild(newEntity, false);
@@ -174,11 +186,11 @@ void Scene::DeleteEntity(std::shared_ptr<Entity>& entity)
 	entity = nullptr;
 }
 
-std::shared_ptr<Entity> Scene::FindEntityByUUID(const std::string& uuid)
+std::shared_ptr<Entity> Scene::FindEntityByUUID(const UUID& uuid)
 {
 	for (std::shared_ptr<Entity> entity : m_Entities)
 	{
-		if (entity->GetUUID().Get() == uuid)
+		if (entity->GetUUID() == uuid)
 		{
 			return entity;
 		}

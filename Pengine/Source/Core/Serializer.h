@@ -28,7 +28,7 @@ namespace Pengine
 
 		static void GenerateFilesUUID(const std::filesystem::path& directory);
 
-		static std::string GenerateFileUUID(const std::filesystem::path& filepath);
+		static UUID GenerateFileUUID(const std::filesystem::path& filepath);
 
 		//static void SerializeUUID();
 

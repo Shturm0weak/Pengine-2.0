@@ -18,7 +18,7 @@ TEST(Entity, Create)
 			EXPECT_TRUE(entity->GetHandle() != entt::tombstone);
 			EXPECT_TRUE(entity->GetScene() == scene);
 			EXPECT_TRUE(entity->GetParent() == nullptr);
-			EXPECT_TRUE(!entity->GetUUID().Get().empty());
+			EXPECT_TRUE(entity->GetUUID().IsValid());
 		}
 
 		EXPECT_TRUE(!scene->GetEntities().empty());

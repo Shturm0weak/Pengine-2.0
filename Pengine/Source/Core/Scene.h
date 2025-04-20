@@ -35,7 +35,7 @@ namespace Pengine
 
 		void DeleteEntity(std::shared_ptr<Entity>& entity);
 
-		std::shared_ptr<Entity> FindEntityByUUID(const std::string& uuid);
+		std::shared_ptr<Entity> FindEntityByUUID(const UUID& uuid);
 
 		std::shared_ptr<Entity> FindEntityByName(const std::string& name);
 

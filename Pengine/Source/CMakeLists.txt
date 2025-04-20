@@ -47,6 +47,7 @@ set(CORE_SOURCES
 	Core/Logger.cpp Core/Logger.h
 	Core/MaterialManager.cpp Core/MaterialManager.h
 	Core/MeshManager.cpp Core/MeshManager.h
+	Core/RandomGenerator.h
 	Core/Raycast.cpp Core/Raycast.h
 	Core/ReflectionSystem.h
 	Core/RenderPassManager.cpp Core/RenderPassManager.h
