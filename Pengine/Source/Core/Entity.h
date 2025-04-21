@@ -88,7 +88,7 @@ namespace Pengine
 		
 		const UUID& GetPrefabFilepathUUID() const { return m_PrefabFilepathUUID; }
 
-		bool IsPrefab() const { return !m_PrefabFilepathUUID.Get().empty(); }
+		bool IsPrefab() const { return m_PrefabFilepathUUID.IsValid(); }
 
 	private:
 		void Copy(const Entity& entity);
@@ -104,7 +104,7 @@ namespace Pengine
 		std::string m_Name;
 		UUID m_UUID;
 
-		UUID m_PrefabFilepathUUID = UUID("");
+		UUID m_PrefabFilepathUUID = UUID(0, 0);
 
 		bool m_IsEnabled = true;
 

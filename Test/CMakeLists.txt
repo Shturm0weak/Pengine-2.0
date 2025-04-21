@@ -24,6 +24,7 @@ set(CORE_SOURCES
 	Entity.cpp
 	Transform.cpp
 	GetShortFilepath.cpp
+	UUID.cpp
 )
 source_group("Core" FILES ${CORE_SOURCES})
 

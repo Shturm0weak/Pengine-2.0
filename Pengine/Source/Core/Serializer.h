@@ -10,7 +10,6 @@
 #include "../Graphics/Mesh.h"
 #include "../Graphics/Pipeline.h"
 #include "../Graphics/Skeleton.h"
-#include "../Graphics/Skin.h"
 
 #include "yaml-cpp/yaml.h"
 
@@ -29,7 +28,7 @@ namespace Pengine
 
 		static void GenerateFilesUUID(const std::filesystem::path& directory);
 
-		static std::string GenerateFileUUID(const std::filesystem::path& filepath);
+		static UUID GenerateFileUUID(const std::filesystem::path& filepath);
 
 		//static void SerializeUUID();
 
@@ -42,7 +41,7 @@ namespace Pengine
 
 		static void DeserializeShaderFilepaths(
 			const YAML::detail::iterator_value& pipelineData,
-			std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType);
+			std::map<ShaderModule::Type, std::filesystem::path>& shaderFilepathsByType);
 
 		static void SerializeTexture(const std::filesystem::path& filepath, std::shared_ptr<Texture> texture, bool* isLoaded);
 

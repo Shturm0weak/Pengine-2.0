@@ -15,6 +15,7 @@
 
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
+
 #include "../Components/Camera.h"
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
@@ -29,7 +30,7 @@
 #include "../Utils/AssimpHelpers.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "../Graphics/stb_image_write.h"
+#include <stbi/stb_image_write.h>
 
 #include <filesystem>
 #include <fstream>
@@ -39,6 +40,23 @@ using namespace Pengine;
 
 namespace YAML
 {
+
+	template<>
+	struct convert<UUID>
+	{
+		static Node encode(const UUID& rhs)
+		{
+			// ? Maybe no need, don't use encode.
+		}
+
+		static bool decode(const Node& node, UUID& rhs)
+		{
+			const std::string uuidString = node.as<std::string>();
+			rhs = std::move(UUID::FromString(uuidString));
+
+			return true;
+		}
+	};
 
 	template<>
 	struct convert<glm::vec2>
@@ -350,6 +368,13 @@ namespace YAML
 	};
 }
 
+YAML::Emitter& operator<<(YAML::Emitter& out, const UUID& uuid)
+{
+	std::string uuidString = uuid.ToString();
+	out << uuidString;
+	return out;
+}
+
 YAML::Emitter& operator<<(YAML::Emitter& out, const std::filesystem::path &filepath)
 {
 	out << filepath.string();
@@ -484,7 +509,13 @@ void Serializer::GenerateFilesUUID(const std::filesystem::path& directory)
 			std::filesystem::path metaFilepath = filepath;
 			metaFilepath.concat(FileFormats::Meta());
 
-			if (!Utils::FindUuid(filepath).empty())
+			/*if (std::filesystem::exists(metaFilepath))
+			{
+				std::filesystem::remove(metaFilepath);
+				continue;
+			}*/
+
+			if (Utils::FindUuid(filepath).IsValid())
 			{
 				continue;
 			}
@@ -517,7 +548,7 @@ void Serializer::GenerateFilesUUID(const std::filesystem::path& directory)
 					}
 					else
 					{
-						uuid = uuidData.as<std::string>();
+						uuid = uuidData.as<UUID>();
 					}
 
 					Utils::SetUUID(uuid, filepath);
@@ -527,10 +558,10 @@ void Serializer::GenerateFilesUUID(const std::filesystem::path& directory)
 	}
 }
 
-std::string Serializer::GenerateFileUUID(const std::filesystem::path& filepath)
+UUID Serializer::GenerateFileUUID(const std::filesystem::path& filepath)
 {
 	UUID uuid = Utils::FindUuid(filepath);
-	if (!uuid.Get().empty())
+	if (uuid.IsValid())
 	{
 		return uuid;
 	}
@@ -539,7 +570,7 @@ std::string Serializer::GenerateFileUUID(const std::filesystem::path& filepath)
 
 	out << YAML::BeginMap;
 
-	uuid.Generate();
+	uuid = UUID();
 	out << YAML::Key << "UUID" << YAML::Value << uuid;
 
 	out << YAML::EndMap;
@@ -610,32 +641,39 @@ void Serializer::DeserializeDescriptorSets(
 
 void Serializer::DeserializeShaderFilepaths(
 	const YAML::detail::iterator_value& pipelineData,
-	std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType)
+	std::map<ShaderModule::Type, std::filesystem::path>& shaderFilepathsByType)
 {
 	auto getShaderFilepath = [](const YAML::Node& node)
 	{
-		const std::string filepathOrUUID = node.as<std::string>();
-		return std::filesystem::exists(filepathOrUUID) ? filepathOrUUID : Utils::FindFilepath(filepathOrUUID).string();
+		const std::filesystem::path filepathOrUUID = node.as<std::string>();
+		if (std::filesystem::exists(filepathOrUUID))
+		{
+			return filepathOrUUID;
+		}
+		else
+		{
+			return Utils::FindFilepath(node.as<UUID>());
+		}
 	};
 
 	if (const auto& vertexData = pipelineData["Vertex"])
 	{
-		shaderFilepathsByType[Pipeline::ShaderType::VERTEX] = getShaderFilepath(vertexData);
+		shaderFilepathsByType[ShaderModule::Type::VERTEX] = getShaderFilepath(vertexData);
 	}
 
 	if (const auto& fragmentData = pipelineData["Fragment"])
 	{
-		shaderFilepathsByType[Pipeline::ShaderType::FRAGMENT] = getShaderFilepath(fragmentData);
+		shaderFilepathsByType[ShaderModule::Type::FRAGMENT] = getShaderFilepath(fragmentData);
 	}
 
 	if (const auto& geometryData = pipelineData["Geometry"])
 	{
-		shaderFilepathsByType[Pipeline::ShaderType::GEOMETRY] = getShaderFilepath(geometryData);
+		shaderFilepathsByType[ShaderModule::Type::GEOMETRY] = getShaderFilepath(geometryData);
 	}
 
 	if (const auto& computeData = pipelineData["Compute"])
 	{
-		shaderFilepathsByType[Pipeline::ShaderType::COMPUTE] = getShaderFilepath(computeData);
+		shaderFilepathsByType[ShaderModule::Type::COMPUTE] = getShaderFilepath(computeData);
 	}
 }
 
@@ -1038,14 +1076,14 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 		}
 
 		auto checkFilepaths = [](
-			const std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType,
-			const std::string& baseMaterialFilepath)
+			const std::map<ShaderModule::Type, std::filesystem::path>& shaderFilepathsByType,
+			const std::filesystem::path& debugBaseMaterialFilepath)
 		{
 			for (const auto& [type, shaderFilepath] : shaderFilepathsByType)
 			{
 				if (shaderFilepath.empty())
 				{
-					FATAL_ERROR("BaseMaterial: " + baseMaterialFilepath + " has empty shader filepath for type " + std::to_string((int)type) + "!");
+					FATAL_ERROR("BaseMaterial: " + debugBaseMaterialFilepath.string() + " has empty shader filepath for type " + std::to_string((int)type) + "!");
 				}
 			}
 		};
@@ -1057,7 +1095,7 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 
 			for (const auto& pipelineCreateGraphicsInfo : createInfo.pipelineCreateGraphicsInfos)
 			{
-				checkFilepaths(pipelineCreateGraphicsInfo.shaderFilepathsByType, filepath.string());
+				checkFilepaths(pipelineCreateGraphicsInfo.shaderFilepathsByType, filepath);
 			}
 		}
 		else if (type == Pipeline::Type::COMPUTE)
@@ -1067,7 +1105,7 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 
 			for (const auto& pipelineCreateGraphicsInfo : createInfo.pipelineCreateGraphicsInfos)
 			{
-				checkFilepaths(pipelineCreateGraphicsInfo.shaderFilepathsByType, filepath.string());
+				checkFilepaths(pipelineCreateGraphicsInfo.shaderFilepathsByType, filepath);
 			}
 		}
 	}
@@ -1114,7 +1152,7 @@ Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filep
 		}
 		else
 		{
-			createInfo.baseMaterial = Utils::FindFilepath(filepathOrUUID);
+			createInfo.baseMaterial = Utils::FindFilepath(baseMaterialData.as<UUID>());
 		}
 
 		if (!std::filesystem::exists(createInfo.baseMaterial))
@@ -1261,8 +1299,19 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material, bo
 
 			if (binding.type == ShaderReflection::Type::COMBINED_IMAGE_SAMPLER)
 			{
-				out << YAML::Key << "Value" << YAML::Value << 
-				Utils::FindUuid(material->GetUniformWriter(passName)->GetTexture(binding.name).back()->GetFilepath());
+				const std::shared_ptr<Texture> texture = material->GetUniformWriter(passName)->GetTexture(binding.name).back();
+				if (texture)
+				{
+					const auto uuid = Utils::FindUuid(texture->GetFilepath());
+					if (uuid.IsValid())
+					{
+						out << YAML::Key << "Value" << YAML::Value << uuid;
+					}
+					else
+					{
+						out << YAML::Key << "Value" << YAML::Value << texture->GetFilepath();
+					}
+				}
 			}
 			else if (binding.type == ShaderReflection::Type::UNIFORM_BUFFER)
 			{
@@ -1897,14 +1946,14 @@ void Serializer::SerializeShaderCache(const std::filesystem::path& filepath, con
 		std::filesystem::create_directories(directory);
 	}
 
-	const std::string uuid = Utils::FindUuid(filepath);
-	if (uuid.empty())
+	const UUID uuid = Utils::FindUuid(filepath);
+	if (!uuid.IsValid())
 	{
 		Logger::Error(filepath.string() + ":Failed to save shader cache! No uuid was found for such filepath!");
 		return;
 	}
 
-	std::filesystem::path cacheFilepath = directory / uuid;
+	std::filesystem::path cacheFilepath = directory / uuid.ToString();
 	cacheFilepath.concat(FileFormats::Spv());
 	std::ofstream out(cacheFilepath, std::ostream::binary);
 
@@ -1923,15 +1972,15 @@ std::string Serializer::DeserializeShaderCache(const std::filesystem::path& file
 		return {};
 	}
 
-	const std::string uuid = Utils::FindUuid(filepath);
-	if (uuid.empty())
+	const UUID uuid = Utils::FindUuid(filepath);
+	if (!uuid.IsValid())
 	{
 		Logger::Error(filepath.string() + ":Failed to load shader cache! No uuid was found for such filepath!");
 		return {};
 	}
 
 	const std::filesystem::path directory = std::filesystem::path("Shaders") / "Cache";
-	std::filesystem::path cacheFilepath = directory / uuid;
+	std::filesystem::path cacheFilepath = directory / uuid.ToString();
 	cacheFilepath.concat(FileFormats::Spv());
 	if (std::filesystem::exists(cacheFilepath))
 	{
@@ -2000,14 +2049,14 @@ void Serializer::SerializeShaderModuleReflection(
 		std::filesystem::create_directories(directory);
 	}
 
-	const std::string uuid = Utils::FindUuid(filepath);
-	if (uuid.empty())
+	const UUID uuid = Utils::FindUuid(filepath);
+	if (!uuid.IsValid())
 	{
 		Logger::Error(filepath.string() + ":Failed to save shader reflection! No uuid was found for such filepath!");
 		return;
 	}
 
-	std::filesystem::path reflectShaderModuleFilepath = directory / uuid;
+	std::filesystem::path reflectShaderModuleFilepath = directory / uuid.ToString();
 	reflectShaderModuleFilepath.concat(FileFormats::Refl());
 
 	const size_t lastWriteTime = std::filesystem::last_write_time(filepath).time_since_epoch().count();
@@ -2108,15 +2157,15 @@ std::optional<ShaderReflection::ReflectShaderModule> Serializer::DeserializeShad
 		return {};
 	}
 
-	const std::string uuid = Utils::FindUuid(filepath);
-	if (uuid.empty())
+	const UUID uuid = Utils::FindUuid(filepath);
+	if (!uuid.IsValid())
 	{
 		Logger::Error(filepath.string() + ":Failed to load shader reflection! No uuid was found for such filepath!");
 		return {};
 	}
 
 	const std::filesystem::path directory = std::filesystem::path("Shaders") / "Cache";
-	std::filesystem::path reflectShaderModuleFilepath = directory / uuid;
+	std::filesystem::path reflectShaderModuleFilepath = directory / uuid.ToString();
 	reflectShaderModuleFilepath.concat(FileFormats::Refl());
 
 	std::ifstream stream(reflectShaderModuleFilepath);
@@ -3166,11 +3215,11 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 {
 	if (const auto& prefabFilepathData = in["PrefabFilepath"])
 	{
-		const std::string prefabUUID = prefabFilepathData.as<std::string>();
+		const UUID prefabUUID = prefabFilepathData.as<UUID>();
 		const std::filesystem::path prefabFilepath = Utils::FindFilepath(prefabUUID);
 		if (!std::filesystem::exists(prefabFilepath))
 		{
-			Logger::Error(prefabUUID + ":Prefab doesn't exist!");
+			Logger::Error(prefabUUID.ToString() + ":Prefab doesn't exist!");
 			return nullptr;
 		}
 
@@ -3179,7 +3228,7 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 
 		if (const auto& uuidData = in["UUID"])
 		{
-			prefab->SetUUID(uuidData.as<std::string>());
+			prefab->SetUUID(uuidData.as<UUID>());
 		}
 
 		return prefab;
@@ -3188,7 +3237,7 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 	UUID uuid;
 	if (const auto& uuidData = in["UUID"])
 	{
-		uuid = uuidData.as<std::string>();
+		uuid = uuidData.as<UUID>();
 	}
 
 	std::string name;
@@ -3197,7 +3246,7 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 		name = nameData.as<std::string>();
 	}
 
-	std::shared_ptr<Entity> entity = scene->CreateEntity(name, uuid.Get().empty() ? UUID() : uuid);
+	std::shared_ptr<Entity> entity = scene->CreateEntity(name, uuid.IsValid() ? uuid : UUID());
 
 	if (const auto& isEnabledData = in["IsEnabled"])
 	{
@@ -3380,7 +3429,7 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 
 		if (const auto& meshData = renderer3DData["Mesh"])
 		{
-			const std::string uuid = meshData.as<std::string>();
+			const UUID uuid = meshData.as<UUID>();
 			AsyncAssetLoader::GetInstance().AsyncLoadMesh(Utils::FindFilepath(uuid), [wEntity = std::weak_ptr(entity)](std::weak_ptr<Mesh> mesh)
 			{
 				std::shared_ptr<Mesh> sharedMesh = mesh.lock();
@@ -3413,7 +3462,7 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 
 		if (const auto& materialData = renderer3DData["Material"])
 		{
-			const std::string uuid = materialData.as<std::string>();
+			const UUID uuid = materialData.as<UUID>();
 
 			AsyncAssetLoader::GetInstance().AsyncLoadMaterial(Utils::FindFilepath(uuid), [wEntity = std::weak_ptr(entity)](std::weak_ptr<Material> material)
 			{
@@ -3631,7 +3680,7 @@ void Serializer::SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entit
 	out << YAML::Key << "RenderTargetIndex" << YAML::Value << camera.GetRenderTargetIndex();
 
 	// TODO: Maybe do it more optimal.
-	// TODO: Also take window into account, for now it is just viewports, but viewports can have the same names accross different windows.
+	// TODO: Also take window into account, for now it is just viewports, but viewports can have the same names across different windows.
 	for (const auto& [windowName, window] : WindowManager::GetInstance().GetWindows())
 	{
 		for (const auto& [viewportName, viewport] : window->GetViewportManager().GetViewports())
@@ -3728,8 +3777,8 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 	//
 
 	// Graphics Settings.
-	const std::string& graphicsSettingsUuid = Utils::FindUuid(scene->GetGraphicsSettings().GetFilepath());
-	if (!graphicsSettingsUuid.empty())
+	const UUID graphicsSettingsUuid = Utils::FindUuid(scene->GetGraphicsSettings().GetFilepath());
+	if (graphicsSettingsUuid.IsValid())
 	{
 		out << YAML::Key << "GraphicsSettings" << YAML::Value << graphicsSettingsUuid;
 	}
@@ -3805,7 +3854,7 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path&
 
 	if (const auto& graphicsSettingsUUIDData = data["GraphicsSettings"])
 	{
-		const std::filesystem::path& graphicsSettingsFilepath = Utils::Find(graphicsSettingsUUIDData.as<std::string>(), filepathByUuid);
+		const std::filesystem::path& graphicsSettingsFilepath = Utils::FindFilepath(graphicsSettingsUUIDData.as<UUID>());
 		if (!graphicsSettingsFilepath.empty())
 		{
 			scene->SetGraphicsSettings(DeserializeGraphicsSettings(graphicsSettingsFilepath));
@@ -4169,7 +4218,7 @@ std::optional<Texture::Meta> Serializer::DeserializeTextureMeta(const std::files
 	Texture::Meta meta{};
 	if (YAML::Node uuidData = data["UUID"])
 	{
-		meta.uuid = uuidData.as<std::string>();
+		meta.uuid = uuidData.as<UUID>();
 	}
 
 	if (YAML::Node srgbData = data["SRGB"])
@@ -4194,7 +4243,7 @@ std::filesystem::path Serializer::DeserializeFilepath(const std::string& uuidOrF
 		return uuidOrFilepath;
 	}
 
-	std::filesystem::path filepath = Utils::FindFilepath(uuidOrFilepath);
+	std::filesystem::path filepath = Utils::FindFilepath(UUID::FromString(uuidOrFilepath));
 	if (filepath.empty())
 	{
 		Logger::Error(uuidOrFilepath + ":Failed to deserialize filepath!");
@@ -4325,16 +4374,16 @@ void Serializer::ParseUniformValues(
 			}
 			else
 			{
-				const auto filepathByUUID = Utils::FindFilepath(textureFilepathOrUUID);
-				if (!filepathByUUID.empty())
+				if (TextureManager::GetInstance().GetTexture(textureFilepathOrUUID))
 				{
-					uniformsInfo.texturesByName.emplace(uniformName, filepathByUUID.string());
+					uniformsInfo.texturesByName.emplace(uniformName, textureFilepathOrUUID);
 				}
 				else
 				{
-					if (TextureManager::GetInstance().GetTexture(textureFilepathOrUUID))
+					const auto filepathByUUID = Utils::FindFilepath(UUID::FromString(textureFilepathOrUUID));
+					if (!filepathByUUID.empty())
 					{
-						uniformsInfo.texturesByName.emplace(uniformName, textureFilepathOrUUID);
+						uniformsInfo.texturesByName.emplace(uniformName, filepathByUUID.string());	
 					}
 					else
 					{

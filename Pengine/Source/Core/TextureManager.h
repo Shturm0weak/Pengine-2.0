@@ -23,17 +23,17 @@ namespace Pengine
 
 		std::vector<std::shared_ptr<Texture>> LoadFromFolder(const std::filesystem::path& directory);
 
-		std::shared_ptr<Texture> GetTexture(const std::filesystem::path& filepath);
+		std::shared_ptr<Texture> GetTexture(const std::filesystem::path& filepath) const;
 
 		const std::unordered_map<std::filesystem::path, std::shared_ptr<Texture>, path_hash>& GetTextures() const { return m_TexturesByFilepath; }
 
-		std::shared_ptr<Texture> GetWhite();
+		std::shared_ptr<Texture> GetWhite() const;
 
-		std::shared_ptr<Texture> GetWhiteLayered();
+		std::shared_ptr<Texture> GetWhiteLayered() const;
 
-		std::shared_ptr<Texture> GetBlack();
+		std::shared_ptr<Texture> GetBlack() const;
 
-		std::shared_ptr<Texture> GetPink();
+		std::shared_ptr<Texture> GetPink() const;
 
 		void CreateDefaultResources();
 
@@ -54,7 +54,7 @@ namespace Pengine
 		std::shared_ptr<Texture> m_Pink;
 		std::shared_ptr<Texture> m_WhiteLayered;
 
-		std::mutex m_MutexTexture;
+		mutable std::mutex m_MutexTexture;
 	};
 
 }

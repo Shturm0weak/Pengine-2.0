@@ -1,5 +1,7 @@
 #include "Timer.h"
 
+#include "Logger.h"
+
 #include <iomanip>
 
 using namespace Pengine;
@@ -26,8 +28,10 @@ void Timer::Stop() const
 
 	if (m_ShowTime)
 	{
+		const auto defaultPrecision = std::cout.precision();
 		std::setprecision(6);
-		std::cout << duration << "us (" << ms << "ms)\n";
+		Logger::Log(std::format("{} us ( {} ms)", duration, ms));
+		std::setprecision(defaultPrecision);
 	}
 
 	if (m_OutTime)

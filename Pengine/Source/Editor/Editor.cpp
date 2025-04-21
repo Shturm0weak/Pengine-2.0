@@ -716,9 +716,8 @@ void Editor::DrawScene(const std::shared_ptr<Scene>& scene, Window& window)
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GAMEOBJECT"))
 			{
-				std::string uuid((const char*)payload->Data);
-				uuid.resize(payload->DataSize);
-				auto callback = [weakScene = std::weak_ptr<Scene>(scene), uuid]()
+				UUID* uuidPtr = (UUID*)payload->Data;
+				auto callback = [weakScene = std::weak_ptr<Scene>(scene), uuid = *uuidPtr]()
 				{
 					if (const std::shared_ptr<Scene> currentScene = weakScene.lock())
 					{
@@ -786,7 +785,7 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 
 	if (ImGui::BeginDragDropSource())
 	{
-		ImGui::SetDragDropPayload("GAMEOBJECT", (const void*)entity->GetUUID().Get().c_str(), entity->GetUUID().Get().size());
+		ImGui::SetDragDropPayload("GAMEOBJECT", (const void*)&entity->GetUUID(), sizeof(UUID));
 		ImGui::EndDragDropSource();
 	}
 
@@ -794,9 +793,8 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GAMEOBJECT"))
 		{
-			std::string uuid((const char*)payload->Data);
-			uuid.resize(payload->DataSize);
-			auto callback = [weakEntity = std::weak_ptr<Entity>(entity), uuid]()
+			UUID* uuidPtr = (UUID*)payload->Data;
+			auto callback = [weakEntity = std::weak_ptr<Entity>(entity), uuid = *uuidPtr]()
 			{
 				if (const std::shared_ptr<Entity>& currentEntity = weakEntity.lock())
 				{
@@ -886,7 +884,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene, Window& window)
 				ImGui::Text("Owner: Null");
 			}
 
-			ImGui::Text("UUID: %s", entity->GetUUID().Get().c_str());
+			ImGui::Text("UUID: %zu%zu", entity->GetUUID().GetUpper(), entity->GetUUID().GetLower());
 
 			char name[256];
 			strcpy(name, entity->GetName().c_str());
@@ -903,7 +901,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene, Window& window)
 					ImGui::PushID("Deattach Prefab");
 					if (ImGui::Button("X"))
 					{
-						entity->SetPrefabFilepathUUID(UUID(""));
+						entity->SetPrefabFilepathUUID(UUID(0, 0));
 					}
 					ImGui::PopID();
 
@@ -3223,14 +3221,16 @@ ImTextureID Editor::Thumbnails::GetOrGenerateThumbnail(
 
 	auto shortFilepath = Utils::GetShortFilepath(filepath);
 	const auto uuid = Utils::FindUuid(shortFilepath);
-	if (!uuid.empty())
+	if (uuid.IsValid())
 	{
+		const std::string uuidString = uuid.ToString();
+
 		std::filesystem::path thumbnailFilepath = "Thumbnails";
-		thumbnailFilepath /= uuid;
+		thumbnailFilepath /= uuidString;
 		thumbnailFilepath.concat(FileFormats::Png());
 
 		std::filesystem::path thumbnailMetaFilepath = "Thumbnails";
-		thumbnailMetaFilepath /= uuid;
+		thumbnailMetaFilepath /= uuidString;
 		thumbnailMetaFilepath.concat(FileFormats::Png());
 		thumbnailMetaFilepath.concat(".thumbnail");
 
@@ -3312,10 +3312,12 @@ ImTextureID Editor::Thumbnails::TryGetThumbnail(const std::filesystem::path& fil
 
 	auto shortFilepath = Utils::GetShortFilepath(filepath);
 	const auto uuid = Utils::FindUuid(shortFilepath);
-	if (!uuid.empty())
+	if (uuid.IsValid())
 	{
+		const std::string uuidString = uuid.ToString();
+
 		std::filesystem::path thumbnailFilepath = "Thumbnails";
-		thumbnailFilepath /= uuid;
+		thumbnailFilepath /= uuidString;
 		thumbnailFilepath.concat(FileFormats::Png());
 
 		auto found = m_GeneratingThumbnails.find(shortFilepath);

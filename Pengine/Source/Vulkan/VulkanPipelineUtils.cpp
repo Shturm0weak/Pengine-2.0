@@ -27,25 +27,25 @@ void VulkanPipelineUtils::CreateShaderModule(
 }
 
 std::string VulkanPipelineUtils::CompileShaderModule(
-	const std::string& filepath,
+	const std::filesystem::path& filepath,
 	shaderc::CompileOptions options,
-	const Pipeline::ShaderType type,
+	const ShaderModule::Type type,
 	bool useCache,
 	bool useLog)
 {
 	shaderc_shader_kind kind;
 	switch (type)
 	{
-	case Pengine::Pipeline::ShaderType::VERTEX:
+	case Pengine::ShaderModule::Type::VERTEX:
 		kind = shaderc_shader_kind::shaderc_glsl_vertex_shader;
 		break;
-	case Pengine::Pipeline::ShaderType::FRAGMENT:
+	case Pengine::ShaderModule::Type::FRAGMENT:
 		kind = shaderc_shader_kind::shaderc_glsl_fragment_shader;
 		break;
-	case Pengine::Pipeline::ShaderType::GEOMETRY:
+	case Pengine::ShaderModule::Type::GEOMETRY:
 		kind = shaderc_shader_kind::shaderc_glsl_geometry_shader;
 		break;
-	case Pengine::Pipeline::ShaderType::COMPUTE:
+	case Pengine::ShaderModule::Type::COMPUTE:
 		kind = shaderc_shader_kind::shaderc_glsl_compute_shader;
 		break;
 	default:
@@ -64,7 +64,7 @@ std::string VulkanPipelineUtils::CompileShaderModule(
 		shaderc::Compiler compiler{};
 
 		shaderc::SpvCompilationResult module =
-			compiler.CompileGlslToSpv(Utils::ReadFile(filepath), kind, filepath.c_str(), options);
+			compiler.CompileGlslToSpv(Utils::ReadFile(filepath), kind, filepath.string().c_str(), options);
 
 		if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 		{
@@ -81,21 +81,21 @@ std::string VulkanPipelineUtils::CompileShaderModule(
 
 		if (useLog)
 		{
-			Logger::Log("Shader:" + filepath + " has been compiled!", BOLDGREEN);
+			Logger::Log("Shader:" + filepath.string() + " has been compiled!", BOLDGREEN);
 		}
 	}
 	else
 	{
 		if (useLog)
 		{
-			Logger::Log("Shader Cache:" + filepath + " has been loaded!", BOLDGREEN);
+			Logger::Log("Shader Cache:" + filepath.string() + " has been loaded!", BOLDGREEN);
 		}
 	}
 
 	return spv;
 }
 
-ShaderReflection::ReflectShaderModule VulkanPipelineUtils::Reflect(const std::string& filepath, Pipeline::ShaderType type)
+ShaderReflection::ReflectShaderModule VulkanPipelineUtils::Reflect(const std::filesystem::path& filepath, ShaderModule::Type type)
 {
 	std::optional<ShaderReflection::ReflectShaderModule> loadedReflectShaderModule = Serializer::DeserializeShaderModuleReflection(filepath);
 	if (loadedReflectShaderModule)
@@ -327,10 +327,11 @@ void VulkanPipelineUtils::ReflectInputVariables(
 	}
 }
 
-std::map<uint32_t, std::shared_ptr<UniformLayout>> VulkanPipelineUtils::CreateDescriptorSetLayouts(const ShaderReflection::ReflectShaderModule& reflectShaderModule)
+std::map<uint32_t, std::shared_ptr<UniformLayout>> VulkanPipelineUtils::CreateDescriptorSetLayouts(
+	const std::map<uint32_t, std::vector<ShaderReflection::ReflectDescriptorSetBinding>>& bindingsByDescriptorSet)
 {
 	std::map<uint32_t, std::shared_ptr<UniformLayout>> uniformLayoutsByDescriptorSets;
-	for (const auto& [set, bindings] : reflectShaderModule.setLayouts)
+	for (const auto& [set, bindings] : bindingsByDescriptorSet)
 	{
 		uniformLayoutsByDescriptorSets[set] = UniformLayout::Create(bindings);
 	}
@@ -338,17 +339,17 @@ std::map<uint32_t, std::shared_ptr<UniformLayout>> VulkanPipelineUtils::CreateDe
 	return uniformLayoutsByDescriptorSets;
 }
 
-VkShaderStageFlagBits VulkanPipelineUtils::ConvertShaderStage(Pipeline::ShaderType stage)
+VkShaderStageFlagBits VulkanPipelineUtils::ConvertShaderStage(ShaderModule::Type stage)
 {
 	switch (stage)
 	{
-	case Pengine::Pipeline::ShaderType::VERTEX:
+	case Pengine::ShaderModule::Type::VERTEX:
 		return VK_SHADER_STAGE_VERTEX_BIT;
-	case Pengine::Pipeline::ShaderType::FRAGMENT:
+	case Pengine::ShaderModule::Type::FRAGMENT:
 		return VK_SHADER_STAGE_FRAGMENT_BIT;
-	case Pengine::Pipeline::ShaderType::GEOMETRY:
+	case Pengine::ShaderModule::Type::GEOMETRY:
 		return VK_SHADER_STAGE_GEOMETRY_BIT;
-	case Pengine::Pipeline::ShaderType::COMPUTE:
+	case Pengine::ShaderModule::Type::COMPUTE:
 		return VK_SHADER_STAGE_COMPUTE_BIT;
 	}
 
@@ -356,18 +357,18 @@ VkShaderStageFlagBits VulkanPipelineUtils::ConvertShaderStage(Pipeline::ShaderTy
 	return {};
 }
 
-Pipeline::ShaderType VulkanPipelineUtils::ConvertShaderStage(VkShaderStageFlagBits stage)
+ShaderModule::Type VulkanPipelineUtils::ConvertShaderStage(VkShaderStageFlagBits stage)
 {
 	switch (stage)
 	{
 	case VK_SHADER_STAGE_VERTEX_BIT:
-		return Pengine::Pipeline::ShaderType::VERTEX;
+		return Pengine::ShaderModule::Type::VERTEX;
 	case VK_SHADER_STAGE_FRAGMENT_BIT:
-		return Pengine::Pipeline::ShaderType::FRAGMENT;
+		return Pengine::ShaderModule::Type::FRAGMENT;
 	case VK_SHADER_STAGE_GEOMETRY_BIT:
-		return Pengine::Pipeline::ShaderType::GEOMETRY;
+		return Pengine::ShaderModule::Type::GEOMETRY;
 	case VK_SHADER_STAGE_COMPUTE_BIT:
-		return Pengine::Pipeline::ShaderType::COMPUTE;
+		return Pengine::ShaderModule::Type::COMPUTE;
 	}
 
 	FATAL_ERROR("Failed to convert shader type!");

@@ -5,20 +5,20 @@
 
 using namespace Pengine;
 
-Pipeline::Type Pipeline::GetPipelineType(const std::map<Pipeline::ShaderType, std::string>& shaderFilepathsByType)
+Pipeline::Type Pipeline::GetPipelineType(const std::map<ShaderModule::Type, std::filesystem::path>& shaderFilepathsByType)
 {
 	bool isGraphicsPipeline = false;
 	bool isComputePipeline = false;
 	for (const auto& [type, filepath] : shaderFilepathsByType)
 	{
-		if (type == ShaderType::VERTEX ||
-			type == ShaderType::FRAGMENT ||
-			type == ShaderType::GEOMETRY)
+		if (type == ShaderModule::Type::VERTEX ||
+			type == ShaderModule::Type::FRAGMENT ||
+			type == ShaderModule::Type::GEOMETRY)
 		{
 			isGraphicsPipeline = true;
 		}
 
-		if (type == ShaderType::COMPUTE)
+		if (type == ShaderModule::Type::COMPUTE)
 		{
 			isComputePipeline = true;
 		}
@@ -49,7 +49,6 @@ Pipeline::Type Pipeline::GetPipelineType(const std::map<Pipeline::ShaderType, st
 Pipeline::Pipeline(Type type)
 	: m_Type(type)
 {
-
 }
 
 const std::optional<uint32_t> Pipeline::GetDescriptorSetIndexByType(const DescriptorSetIndexType type, const std::string& renderPassName) const

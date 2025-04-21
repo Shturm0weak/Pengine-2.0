@@ -3,11 +3,12 @@
 #include "VulkanDevice.h"
 #include "VulkanRenderPass.h"
 #include "VulkanUniformLayout.h"
+#include "VulkanShaderModule.h"
 #include "VulkanFormat.h"
-#include "ShaderIncluder.h"
 #include "VulkanPipelineUtils.h"
 
-#include "../Core/Serializer.h"
+#include "../Core/Logger.h"
+#include "../Graphics/ShaderModuleManager.h"
 
 using namespace Pengine;
 using namespace Vk;
@@ -15,40 +16,29 @@ using namespace Vk;
 VulkanGraphicsPipeline::VulkanGraphicsPipeline(const CreateGraphicsInfo& createGraphicsInfo)
 	: GraphicsPipeline(createGraphicsInfo)
 {
-	std::map<ShaderType, VkShaderModule> shaderModulesByType;
+	std::map<ShaderModule::Type, VkShaderModule> shaderModulesByType;
 	std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
 	shaderStages.reserve(createGraphicsInfo.shaderFilepathsByType.size());
 
-	shaderc::CompileOptions options{};
-	options.SetOptimizationLevel(shaderc_optimization_level_zero);
-	options.SetIncluder(std::make_unique<ShaderIncluder>());
-
+	std::map<uint32_t, std::vector<ShaderReflection::ReflectDescriptorSetBinding>> bindingsByDescriptorSet;
 	for (const auto& [type, filepath] : createGraphicsInfo.shaderFilepathsByType)
 	{
-		const std::string vertexSpv = VulkanPipelineUtils::CompileShaderModule(filepath, options, type);
-		m_ReflectShaderModulesByType[type] = VulkanPipelineUtils::Reflect(filepath, type);
-		VkShaderModule shaderModule{};
-		VulkanPipelineUtils::CreateShaderModule(vertexSpv, &shaderModule);
-		shaderModulesByType[type] = shaderModule;
-		
-		// TODO: Maybe need to collect all bindings from all shader stages and then create layouts.
-		// For now it seems it is uses layouts from the last shdaer stage.
-		auto uniformLayoutsByDescriptorSets = VulkanPipelineUtils::CreateDescriptorSetLayouts(m_ReflectShaderModulesByType[type]);
-		for (const auto& [set, layout] : uniformLayoutsByDescriptorSets)
-		{
-			m_UniformLayoutsByDescriptorSet[set] = layout;
-		}
+		const std::shared_ptr<ShaderModule> shaderModule = ShaderModuleManager::GetInstance().GetOrCreateShaderModule(filepath, type);
+		m_ShaderModulesByType[type] = shaderModule;
+
+		CollectBindingsByDescriptorSet(bindingsByDescriptorSet, shaderModule->GetReflection().setLayouts, filepath);
 
 		VkPipelineShaderStageCreateInfo& shaderStage = shaderStages.emplace_back();
-
 		shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		shaderStage.stage = VulkanPipelineUtils::ConvertShaderStage(type);
-		shaderStage.module = shaderModule;
+		shaderStage.module = std::static_pointer_cast<VulkanShaderModule>(shaderModule)->GetShaderModule();
 		shaderStage.pName = "main";
 		shaderStage.flags = 0;
 		shaderStage.pNext = nullptr;
 		shaderStage.pSpecializationInfo = nullptr;
 	}
+
+	m_UniformLayoutsByDescriptorSet = VulkanPipelineUtils::CreateDescriptorSetLayouts(bindingsByDescriptorSet);
 
 	std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
 	for (const auto& [set, uniformLayout] : m_UniformLayoutsByDescriptorSet)
@@ -95,8 +85,9 @@ VulkanGraphicsPipeline::VulkanGraphicsPipeline(const CreateGraphicsInfo& createG
 	pipelineConfigInfo.colorBlendInfo.attachmentCount = pipelineConfigInfo.colorBlendAttachments.size();
 	pipelineConfigInfo.colorBlendInfo.pAttachments = pipelineConfigInfo.colorBlendAttachments.data();
 
-	auto bindingDescriptions = CreateBindingDescriptions(m_ReflectShaderModulesByType[ShaderType::VERTEX], createGraphicsInfo.bindingDescriptions);
-	auto attributeDescriptions = CreateAttributeDescriptions(m_ReflectShaderModulesByType[ShaderType::VERTEX], createGraphicsInfo.bindingDescriptions);
+	const auto& vertexReflection = m_ShaderModulesByType[ShaderModule::Type::VERTEX]->GetReflection();
+	auto bindingDescriptions = CreateBindingDescriptions(vertexReflection, createGraphicsInfo.bindingDescriptions);
+	auto attributeDescriptions = CreateAttributeDescriptions(vertexReflection, createGraphicsInfo.bindingDescriptions);
 	VkPipelineVertexInputStateCreateInfo vertexInputCreateInfo{};
 	vertexInputCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vertexInputCreateInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
@@ -129,15 +120,16 @@ VulkanGraphicsPipeline::VulkanGraphicsPipeline(const CreateGraphicsInfo& createG
 	{
 		FATAL_ERROR("Failed to create graphics pipeline!");
 	}
-
-	for (auto& [type, shaderModule] : shaderModulesByType)
-	{
-		vkDestroyShaderModule(GetVkDevice()->GetDevice(), shaderModule, nullptr);
-	}
 }
 
 VulkanGraphicsPipeline::~VulkanGraphicsPipeline()
 {
+	for (auto& [type, shaderModule] : m_ShaderModulesByType)
+	{
+		ShaderModuleManager::GetInstance().DeleteShaderModule(shaderModule);
+	}
+	m_ShaderModulesByType.clear();
+
 	GetVkDevice()->DeleteResource([pipelineLayout = m_PipelineLayout, graphicsPipeline = m_GraphicsPipeline]()
 	{
 		vkDestroyPipelineLayout(GetVkDevice()->GetDevice(), pipelineLayout, nullptr);
@@ -518,6 +510,48 @@ VulkanGraphicsPipeline::InputRate VulkanGraphicsPipeline::ConvertVertexInputRate
 
 	FATAL_ERROR("Failed to convert vertex input rate!");
 	return {};
+}
+
+void VulkanGraphicsPipeline::CollectBindingsByDescriptorSet(
+	std::map<uint32_t, std::vector<ShaderReflection::ReflectDescriptorSetBinding>>& bindingsByDescriptorSet,
+	const std::vector<ShaderReflection::ReflectDescriptorSetLayout>& setLayouts,
+	const std::filesystem::path& debugShaderFilepath)
+{
+	for (const auto& [set, bindings] : setLayouts)
+	{
+		if (bindingsByDescriptorSet.contains(set))
+		{
+			for (const auto& reflectBinding : bindings)
+			{
+				bool foundBinding = false;
+				for (const auto& finalBinding : bindingsByDescriptorSet.at(set))
+				{
+					if (reflectBinding.binding == finalBinding.binding)
+					{
+						if (reflectBinding.name == finalBinding.name &&
+							reflectBinding.type == finalBinding.type)
+						{
+							foundBinding = true;
+							break;
+						}
+						else
+						{
+							FATAL_ERROR("Shader:" + debugShaderFilepath.string() + " bindings between stages are not the same!");
+						}
+					}
+				}
+
+				if (!foundBinding)
+				{
+					bindingsByDescriptorSet.at(set).emplace_back(reflectBinding);
+				}
+			}
+		}
+		else
+		{
+			bindingsByDescriptorSet[set] = bindings;
+		}
+	}
 }
 
 void VulkanGraphicsPipeline::Bind(const VkCommandBuffer commandBuffer) const

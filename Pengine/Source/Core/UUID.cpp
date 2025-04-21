@@ -1,64 +1,50 @@
 #include "UUID.h"
 
-#include <random>
-#include <sstream>
+#include "RandomGenerator.h"
+
+#include "../Utils/Utils.h"
 
 namespace Pengine
 {
-
-	static std::random_device s_RandomDevice;
-	static std::mt19937_64 s_Engine(s_RandomDevice());
-	static std::uniform_int_distribution<size_t> s_UniformDistributionUUID1(0, 15);
-	static std::uniform_int_distribution<size_t> s_UniformDistributionUUID2(8, 11);
-
-	std::string UUID::Generate()
+	uint64_t UUID::Generate()
 	{
-		std::stringstream uuid;
-		uuid << std::hex;
+		RandomGenerator& random = RandomGenerator::GetInstance();
+		NibblePacker packer;
 
-		for (size_t i = 0; i < 8; i++)
+		for (size_t i = 0; i < 16; i++)
 		{
-			uuid << s_UniformDistributionUUID1(s_Engine);
+			packer.Pack(random.Get<short>(0, 15));
 		}
 
-		uuid << "-";
+		return packer.Get();
+	}
 
-		for (size_t i = 0; i < 4; i++)
-		{
-			uuid << s_UniformDistributionUUID1(s_Engine);
-		}
+	UUID UUID::FromString(const std::string& string)
+	{
+		assert(string.size() == 34, "UUID string have to have two hex uint64_t, each one has 16 digits!");
 
-		uuid << "-4";
+		// The first characters are 0x
 
-		for (size_t i = 0; i < 3; i++)
-		{
-			uuid << s_UniformDistributionUUID1(s_Engine);
-		}
+		const std::string upperUUIDString = string.substr(2, 16);
+		const std::string lowerUUIDString = string.substr(18, 16);
+		const uint64_t upper = Utils::stringToUint64(upperUUIDString, 16);
+		const uint64_t lower = Utils::stringToUint64(lowerUUIDString, 16);
 
-		uuid << "-";
-		uuid << s_UniformDistributionUUID2(s_Engine);
+		return UUID(upper, lower);
+	}
 
-		for (size_t i = 0; i < 3; i++)
-		{
-			uuid << s_UniformDistributionUUID1(s_Engine);
-		}
-
-		uuid << "-";
-
-		for (size_t i = 0; i < 12; i++)
-		{
-			uuid << s_UniformDistributionUUID1(s_Engine);
-		}
-
-		m_UUID = uuid.str();
-		return m_UUID;
+	UUID::UUID()
+	{
+		m_Upper = Generate();
+		m_Lower = Generate();
 	}
 
 	UUID& UUID::operator=(const UUID& uuid)
 	{
 		if (this != &uuid)
 		{
-			m_UUID = uuid.m_UUID;
+			m_Upper = uuid.m_Upper;
+			m_Lower = uuid.m_Lower;
 		}
 
 		return *this;
@@ -66,9 +52,47 @@ namespace Pengine
 
 	UUID& UUID::operator=(UUID&& uuid) noexcept
 	{
-		m_UUID = std::move(uuid.m_UUID);
-		uuid.m_UUID.clear();
+		m_Upper = std::move(uuid.m_Upper);
+		m_Lower = std::move(uuid.m_Lower);
+		uuid.m_Upper = 0;
+		uuid.m_Lower = 0;
 		return *this;
+	}
+
+	std::string UUID::ToString() const
+	{
+		std::stringstream stringstream;
+		stringstream << "0x"
+			<< std::hex << std::setw(16) << std::setfill('0')
+			<< std::nouppercase
+			<< static_cast<unsigned long long>(GetUpper())
+			<< std::hex << std::setw(16) << std::setfill('0')
+			<< std::nouppercase
+			<< static_cast<unsigned long long>(GetLower());
+
+		std::string string = stringstream.str();
+
+		assert(string.size() == 34, "UUID string have to have two hex uint64_t, each one has 16 digits!");
+
+		return string;
+	}
+
+	void UUID::NibblePacker::Reset()
+	{
+		m_Packed = 0;
+		m_Position = 0;
+	}
+
+	void UUID::NibblePacker::Pack(uint8_t byte, BitsType bitsType)
+	{
+			if (m_Position >= 64) return;
+
+			uint8_t nibble = bitsType == BitsType::Upper ?
+				(byte >> 4) & 0x0F :  // Upper 4 bits
+				byte & 0x0F;          // Lower 4 bits
+
+			m_Packed |= static_cast<uint64_t>(nibble) << (60 - m_Position);
+			m_Position += 4;
 	}
 
 }

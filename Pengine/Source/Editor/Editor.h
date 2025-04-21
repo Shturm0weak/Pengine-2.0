@@ -213,7 +213,7 @@ namespace Pengine
 			std::shared_ptr<Scene> m_ThumbnailScene;
 			std::shared_ptr<Window> m_ThumbnailWindow;
 			std::shared_ptr<class Renderer> m_ThumbnailRenderer;
-			std::string m_CameraUUID;
+			UUID m_CameraUUID;
 
 			std::atomic<bool> m_IsThumbnailLoading = false;
 

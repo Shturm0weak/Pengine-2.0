@@ -190,7 +190,7 @@ namespace Pengine::Utils
 		return replacedString;
 	}
 
-	inline std::string FindUuid(const std::filesystem::path& filepath)
+	inline UUID FindUuid(const std::filesystem::path& filepath)
 	{
 		std::lock_guard<std::mutex> lock(uuidMutex);
 		auto foundItem = uuidByFilepath.find(filepath);
@@ -199,10 +199,10 @@ namespace Pengine::Utils
 			return foundItem->second;
 		}
 
-		return {};
+		return UUID(0, 0);
 	}
 
-	inline std::filesystem::path FindFilepath(const std::string& uuid)
+	inline std::filesystem::path FindFilepath(const UUID& uuid)
 	{
 		std::lock_guard<std::mutex> lock(uuidMutex);
 		auto foundItem = filepathByUuid.find(uuid);
@@ -214,8 +214,10 @@ namespace Pengine::Utils
 		return {};
 	}
 
-	inline void SetUUID(const std::string& uuid, const std::filesystem::path& filepath)
+	inline void SetUUID(const UUID& uuid, const std::filesystem::path& filepath)
 	{
+		assert(!filepathByUuid.contains(uuid), "UUID collision!");
+
 		std::lock_guard<std::mutex> lock(uuidMutex);
 		filepathByUuid[uuid] = filepath;
 		uuidByFilepath[filepath] = uuid;
@@ -423,4 +425,58 @@ namespace Pengine::Utils
 		return true;
 	}
 
+	inline uint64_t stringToUint64(const std::string& string, int base = 10)
+	{
+		uint64_t result = 0;
+		auto [ptr, errorCode] = std::from_chars(
+			string.data(),
+			string.data() + string.size(),
+			result,
+			base
+		);
+
+		if (errorCode == std::errc::invalid_argument)
+		{
+			throw std::runtime_error("Not a valid number");
+		}
+		else if (errorCode == std::errc::result_out_of_range)
+		{
+			throw std::runtime_error("Value exceeds uint64_t range");
+		}
+		else if (ptr != string.data() + string.size())
+		{
+			throw std::runtime_error("Extra characters after number");
+		}
+
+		return result;
+	}
+
+	inline uint64_t hexStringToUint64(const std::string& hexString)
+	{
+		const char* start = hexString.c_str();
+		const char* end = start + hexString.size();
+
+		// Skip "0x" or "0X" prefix
+		if (hexString.size() >= 2 && start[0] == '0' && (start[1] == 'x' || start[1] == 'X')) {
+			start += 2;
+		}
+
+		uint64_t result = 0;
+		auto [ptr, ec] = std::from_chars(start, end, result, 16);
+
+		if (ec == std::errc::invalid_argument)
+		{
+			throw std::invalid_argument("Invalid hexadecimal characters");
+		}
+		if (ec == std::errc::result_out_of_range)
+		{
+			throw std::runtime_error("Hexadecimal value exceeds uint64_t range");
+		}
+		if (ptr != end)
+		{
+			throw std::invalid_argument("Extra characters after hex value");
+		}
+
+		return result;
+	}
 }

@@ -15,6 +15,7 @@ layout(set = 0, binding = 6) uniform PostProcessBuffer
 	float gamma;
 	vec2 viewportSize;
 	int fxaa;
+	int isSSREnabled;
 };
 
 #include "Shaders/Includes/FXAAUV.h"
