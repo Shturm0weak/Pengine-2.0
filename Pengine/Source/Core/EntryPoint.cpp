@@ -21,7 +21,7 @@
 #include "../EventSystem/EventSystem.h"
 #include "../Graphics/Device.h"
 #include "../Graphics/Renderer.h"
-#include "../Graphics/RenderTarget.h"
+#include "../Graphics/RenderView.h"
 
 using namespace Pengine;
 
@@ -212,15 +212,15 @@ void EntryPoint::Run() const
 					Camera& cameraComponent = camera->GetComponent<Camera>();
 					if (!cameraComponent.GetPassName().empty())
 					{
-						const std::shared_ptr<RenderTarget> renderTarget = cameraComponent.GetRendererTarget(viewportName);
-						const std::shared_ptr<FrameBuffer> frameBuffer = renderTarget->GetFrameBuffer(cameraComponent.GetPassName());
+						const std::shared_ptr<RenderView> renderView = cameraComponent.GetRendererTarget(viewportName);
+						const std::shared_ptr<FrameBuffer> frameBuffer = renderView->GetFrameBuffer(cameraComponent.GetPassName());
 						if (frameBuffer)
 						{
 							viewport->Update(frameBuffer->GetAttachment(cameraComponent.GetRenderTargetIndex()), window);
 							continue;
 						}
 
-						const std::shared_ptr<Texture> texture = renderTarget->GetStorageImage(cameraComponent.GetPassName());
+						const std::shared_ptr<Texture> texture = renderView->GetStorageImage(cameraComponent.GetPassName());
 						if (texture)
 						{
 							viewport->Update(texture, window);
@@ -252,7 +252,7 @@ void EntryPoint::Run() const
 						{
 							Renderer::RenderViewportInfo renderViewportInfo{};
 							renderViewportInfo.camera = camera;
-							renderViewportInfo.renderTarget = camera->GetComponent<Camera>().GetRendererTarget(viewportName);
+							renderViewportInfo.renderView = camera->GetComponent<Camera>().GetRendererTarget(viewportName);
 							renderViewportInfo.projection = viewport->GetProjectionMat4();
 							renderViewportInfo.size = viewport->GetSize();
 

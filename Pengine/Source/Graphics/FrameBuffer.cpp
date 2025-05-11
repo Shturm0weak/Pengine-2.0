@@ -7,7 +7,7 @@ using namespace Pengine;
 
 std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 	std::shared_ptr<RenderPass> renderPass,
-	RenderTarget* renderTarget,
+	RenderView* renderView,
 	const glm::ivec2& size)
 {
 	if (!renderPass)
@@ -47,7 +47,7 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 
 	if (graphicsAPI == GraphicsAPI::Vk)
 	{
-		return std::make_shared<Vk::VulkanFrameBuffer>(attachments, renderPass, renderTarget);
+		return std::make_shared<Vk::VulkanFrameBuffer>(attachments, renderPass, renderView);
 	}
 
 	FATAL_ERROR("Failed to create the framebuffer, no graphics API implementation");
@@ -57,10 +57,10 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 FrameBuffer::FrameBuffer(
 	const std::vector<Texture::CreateInfo>& attachments,
 	std::shared_ptr<RenderPass> renderPass,
-	RenderTarget* renderTarget)
+	RenderView* renderView)
 	: m_RenderPass(std::move(renderPass))
 	, m_AttachmentCreateInfos(attachments)
-	, m_RenderTarget(renderTarget)
+	, m_RenderView(renderView)
 {
 	if (attachments.empty())
 	{

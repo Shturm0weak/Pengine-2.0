@@ -17,13 +17,13 @@ namespace Pengine
 		 */
 		static std::shared_ptr<FrameBuffer> Create(
 			std::shared_ptr<RenderPass> renderPass,
-			RenderTarget* renderTarget,
+			RenderView* renderView,
 			const glm::ivec2& size);
 
 		FrameBuffer(
 			const std::vector<Texture::CreateInfo>& attachments,
 			std::shared_ptr<RenderPass> renderPass,
-			RenderTarget* renderTarget);
+			RenderView* renderView);
 		virtual ~FrameBuffer() = default;
 		FrameBuffer(const FrameBuffer&) = delete;
 		FrameBuffer& operator=(const FrameBuffer&) = delete;
@@ -45,7 +45,7 @@ namespace Pengine
 	protected:
 		std::vector<Texture::CreateInfo> m_AttachmentCreateInfos;
 		std::shared_ptr<RenderPass> m_RenderPass;
-		RenderTarget* m_RenderTarget;
+		RenderView* m_RenderView;
 		glm::ivec2 m_Size{};
 	};
 

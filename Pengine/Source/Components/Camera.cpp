@@ -7,7 +7,7 @@
 #include "../Core/FileFormatNames.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
-#include "../Graphics/RenderTarget.h"
+#include "../Graphics/RenderView.h"
 #include "../Utils/Utils.h"
 
 using namespace Pengine;
@@ -99,26 +99,26 @@ void Camera::SetType(const Type type)
 	UpdateViewMat4();
 }
 
-void Camera::CreateRenderTarget(const std::string& name, const glm::ivec2& size)
+void Camera::CreateRenderView(const std::string& name, const glm::ivec2& size)
 {
 	auto callback = [this, name, size]()
 	{
-		m_RenderTargetsByName[name] = RenderTarget::Create(passPerViewportOrder, size);
+		m_RenderViewsByName[name] = RenderView::Create(passPerViewportOrder, size);
 	};
 
 	std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
 	EventSystem::GetInstance().SendEvent(event);
 }
 
-void Camera::ResizeRenderTarget(const std::string& name, const glm::ivec2& size)
+void Camera::ResizeRenderView(const std::string& name, const glm::ivec2& size)
 {
-	if (std::shared_ptr<RenderTarget> renderTarget = GetRendererTarget(name))
+	if (std::shared_ptr<RenderView> renderView = GetRendererTarget(name))
 	{
-		auto callback = [weakRenderTarget = std::weak_ptr<RenderTarget>(renderTarget), size]()
+		auto callback = [weakRenderView = std::weak_ptr<RenderView>(renderView), size]()
 		{
-			if (std::shared_ptr<RenderTarget> renderTarget = weakRenderTarget.lock())
+			if (std::shared_ptr<RenderView> renderView = weakRenderView.lock())
 			{
-				renderTarget->Resize(size);
+				renderView->Resize(size);
 			}
 		};
 
@@ -127,16 +127,16 @@ void Camera::ResizeRenderTarget(const std::string& name, const glm::ivec2& size)
 	}
 }
 
-void Camera::DeleteRenderTarget(const std::string& name)
+void Camera::DeleteRenderView(const std::string& name)
 {
-	if (std::shared_ptr<RenderTarget> renderTarget = GetRendererTarget(name))
+	if (std::shared_ptr<RenderView> renderView = GetRendererTarget(name))
 	{
-		auto callback = [weakrenderTarget = std::weak_ptr<RenderTarget>(renderTarget), name, this]()
+		auto callback = [weakrenderView = std::weak_ptr<RenderView>(renderView), name, this]()
 		{
-			if (std::shared_ptr<RenderTarget> renderTarget = weakrenderTarget.lock())
+			if (std::shared_ptr<RenderView> renderView = weakrenderView.lock())
 			{
-				renderTarget = nullptr;
-				m_RenderTargetsByName[name] = nullptr;
+				renderView = nullptr;
+				m_RenderViewsByName[name] = nullptr;
 			}
 		};
 
@@ -166,20 +166,20 @@ void Camera::SetZFar(const float zFar)
 	UpdateViewMat4();
 }
 
-std::shared_ptr<RenderTarget> Camera::GetRendererTarget(const std::string& name) const
+std::shared_ptr<RenderView> Camera::GetRendererTarget(const std::string& name) const
 {
-	return Utils::Find(name, m_RenderTargetsByName);
+	return Utils::Find(name, m_RenderViewsByName);
 }
 
 void Camera::TakeScreenshot(const std::filesystem::path& filepath, const std::string& viewportName, bool* isLoaded)
 {
-	const std::shared_ptr<RenderTarget> renderTarget = GetRendererTarget(viewportName);
-	if (!renderTarget)
+	const std::shared_ptr<RenderView> renderView = GetRendererTarget(viewportName);
+	if (!renderView)
 	{
 		return;
 	}
 
-	const std::shared_ptr<FrameBuffer> frameBuffer = renderTarget->GetFrameBuffer(GetPassName());
+	const std::shared_ptr<FrameBuffer> frameBuffer = renderView->GetFrameBuffer(GetPassName());
 	if (!frameBuffer)
 	{
 		return;

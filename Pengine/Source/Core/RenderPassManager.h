@@ -106,26 +106,26 @@ namespace Pengine
 
 		static void FlushUniformWriters(const std::vector<std::shared_ptr<class UniformWriter>>& uniformWriters);
 
-		static void WriteRenderTargets(
-			std::shared_ptr<class RenderTarget> cameraRenderTarget,
-			std::shared_ptr<class RenderTarget> sceneRenderTarget,
+		static void WriteRenderViews(
+			std::shared_ptr<class RenderView> cameraRenderView,
+			std::shared_ptr<class RenderView> sceneRenderView,
 			std::shared_ptr<class Pipeline> pipeline,
 			std::shared_ptr<class UniformWriter> uniformWriter);
 
-		static std::shared_ptr<class UniformWriter> GetOrCreateViewRenderTargetUniformWriter(
-			std::shared_ptr<class RenderTarget> renderTarget,
+		static std::shared_ptr<class UniformWriter> GetOrCreateRenderViewUniformWriter(
+			std::shared_ptr<class RenderView> renderView,
 			std::shared_ptr<class Pipeline> pipeline,
 			const std::string& passName,
 			const std::string& setUniformWriterName = {});
 
-		static std::shared_ptr<class UniformWriter> GetOrCreateSceneRenderTargetUniformWriter(
-			std::shared_ptr<class RenderTarget> renderTarget,
+		static std::shared_ptr<class UniformWriter> GetOrCreateSceneRenderViewUniformWriter(
+			std::shared_ptr<class RenderView> renderView,
 			std::shared_ptr<class Pipeline> pipeline,
 			const std::string& passName,
 			const std::string& setUniformWriterName = {});
 
 		static std::shared_ptr<class Buffer> GetOrCreateRenderBuffer(
-			std::shared_ptr<class RenderTarget> renderTarget,
+			std::shared_ptr<class RenderView> renderView,
 			std::shared_ptr<class UniformWriter> uniformWriter,
 			const std::string& bufferName,
 			const std::string& setBufferName = {});

@@ -8,21 +8,28 @@
 
 namespace Pengine
 {
-	class PENGINE_API RenderTarget
+
+	/**
+	 * RenderView is supposed to store GPU data like buffers, frame buffers, etc.
+	 * It's an abstraction that makes resource management a little easier.
+	 * For example, we want to have a collection of resources that belong to a camera or a scene,
+	 * so we can just add a RenderView to them and that's it, now we can use it there.
+	 */
+	class PENGINE_API RenderView
 	{
 	public:
-		static std::shared_ptr<RenderTarget> Create(
+		static std::shared_ptr<RenderView> Create(
 			const std::vector<std::string>& renderPassOrder,
 			const glm::ivec2& size);
 
-		explicit RenderTarget(
+		explicit RenderView(
 			const std::vector<std::string>& renderPassOrder,
 			const glm::ivec2& size);
-		virtual ~RenderTarget();
-		RenderTarget(const RenderTarget&) = delete;
-		RenderTarget(RenderTarget&&) = delete;
-		RenderTarget& operator=(const RenderTarget&) = delete;
-		RenderTarget& operator=(RenderTarget&&) = delete;
+		virtual ~RenderView();
+		RenderView(const RenderView&) = delete;
+		RenderView(RenderView&&) = delete;
+		RenderView& operator=(const RenderView&) = delete;
+		RenderView& operator=(RenderView&&) = delete;
 
 		std::shared_ptr<UniformWriter> GetUniformWriter(const std::string& name) const;
 

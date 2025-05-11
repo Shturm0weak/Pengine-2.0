@@ -253,7 +253,7 @@ void Viewport::SetCamera(const std::shared_ptr<Entity>& camera)
 	if (previousCamera && previousCamera->HasComponent<Camera>())
 	{
 		Camera& cameraComponent = m_Camera.lock()->GetComponent<Camera>();
-		cameraComponent.DeleteRenderTarget(m_Name);
+		cameraComponent.DeleteRenderView(m_Name);
 	}
 
 	m_Camera = camera;
@@ -264,7 +264,7 @@ void Viewport::SetCamera(const std::shared_ptr<Entity>& camera)
 	}
 
 	Camera& cameraComponent = camera->GetComponent<Camera>();
-	cameraComponent.CreateRenderTarget(m_Name, m_Size);
+	cameraComponent.CreateRenderView(m_Name, m_Size);
 
 	UpdateProjectionMat4();
 }
@@ -299,7 +299,7 @@ void Viewport::Resize(const glm::ivec2& size)
 
 	if (const std::shared_ptr<Entity> camera = m_Camera.lock())
 	{
-		camera->GetComponent<Camera>().ResizeRenderTarget(m_Name, m_Size);
+		camera->GetComponent<Camera>().ResizeRenderView(m_Name, m_Size);
 	}
 	
 	std::shared_ptr<ResizeEvent> event = std::make_shared<ResizeEvent>(size, m_Name, Event::Type::OnResize, this);

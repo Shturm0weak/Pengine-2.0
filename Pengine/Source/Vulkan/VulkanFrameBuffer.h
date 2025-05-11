@@ -14,7 +14,7 @@ namespace Pengine::Vk
 	public:
 		VulkanFrameBuffer(const std::vector<Texture::CreateInfo>& attachments,
 			std::shared_ptr<RenderPass> renderPass,
-			RenderTarget* renderTarget);
+			RenderView* renderView);
 		virtual ~VulkanFrameBuffer() override;
 		VulkanFrameBuffer(const VulkanFrameBuffer&) = delete;
 		VulkanFrameBuffer& operator=(const VulkanFrameBuffer&) = delete;

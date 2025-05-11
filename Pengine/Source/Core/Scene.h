@@ -6,7 +6,7 @@
 #include "Visualizer.h"
 #include "GraphicsSettings.h"
 
-#include "../Graphics/RenderTarget.h"
+#include "../Graphics/RenderView.h"
 #include "../ComponentSystems/ComponentSystem.h"
 
 namespace Pengine
@@ -61,9 +61,9 @@ namespace Pengine
 
 		std::set<std::shared_ptr<Entity>>& GetSelectedEntities() { return m_SelectedEntities; }
 
-		std::shared_ptr<RenderTarget> GetRenderTarget() const { return m_RenderTarget; }
+		std::shared_ptr<RenderView> GetRenderView() const { return m_RenderView; }
 
-		void SetRenderTarget(std::shared_ptr<RenderTarget> renderTarget) { m_RenderTarget = renderTarget; }
+		void SetRenderView(std::shared_ptr<RenderView> renderView) { m_RenderView = renderView; }
 
 		void SetComponentSystem(const std::string& name, std::shared_ptr<ComponentSystem> componentSystem) { m_ComponentSystemsByName[name] = componentSystem; }
 	private:
@@ -86,7 +86,7 @@ namespace Pengine
 
 		std::set<std::shared_ptr<Entity>> m_SelectedEntities;
 
-		std::shared_ptr<RenderTarget> m_RenderTarget;
+		std::shared_ptr<RenderView> m_RenderView;
 
 		void Copy(const Scene& scene);
 	};

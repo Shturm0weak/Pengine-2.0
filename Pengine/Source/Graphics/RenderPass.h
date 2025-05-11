@@ -27,7 +27,7 @@ namespace Pengine
 	class Window;
 	class Camera;
 	class Renderer;
-	class RenderTarget;
+	class RenderView;
 	class Scene;
 	class Entity;
 
@@ -66,7 +66,7 @@ namespace Pengine
 			bool isCubeMap = false;
 			bool isMultiBuffered = true;
 			uint32_t layerCount = 1;
-			std::function<std::shared_ptr<FrameBuffer>(RenderTarget*, uint32_t&)> getFrameBufferCallback;
+			std::function<std::shared_ptr<FrameBuffer>(RenderView*, uint32_t&)> getFrameBufferCallback;
 		};
 
 		struct Scissors
@@ -136,7 +136,7 @@ namespace Pengine
 		bool m_CreateFrameBuffer = true;
 		glm::vec2 m_ResizeViewportScale = { 1.0f, 1.0f };
 
-		friend class RenderTarget;
+		friend class RenderView;
 	};
 
 }

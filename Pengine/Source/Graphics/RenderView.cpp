@@ -1,4 +1,4 @@
-#include "RenderTarget.h"
+#include "RenderView.h"
 
 #include "../Core/Logger.h"
 #include "../Core/RenderPassManager.h"
@@ -9,14 +9,14 @@
 
 using namespace Pengine;
 
-std::shared_ptr<RenderTarget> RenderTarget::Create(
+std::shared_ptr<RenderView> RenderView::Create(
 	const std::vector<std::string>& renderPassOrder,
 	const glm::ivec2& size)
 {
-	return std::make_shared<RenderTarget>(renderPassOrder, size);
+	return std::make_shared<RenderView>(renderPassOrder, size);
 }
 
-RenderTarget::RenderTarget(
+RenderView::RenderView(
 	const std::vector<std::string>& renderPassOrder,
 	const glm::ivec2& size)
 	: m_RenderPassOrder(renderPassOrder)
@@ -44,7 +44,7 @@ RenderTarget::RenderTarget(
 	}
 }
 
-RenderTarget::~RenderTarget()
+RenderView::~RenderView()
 {
 	for (auto& [name, data] : m_CustomDataByName)
 	{
@@ -58,27 +58,27 @@ RenderTarget::~RenderTarget()
 	m_StorageImagesByName.clear();
 }
 
-std::shared_ptr<UniformWriter> RenderTarget::GetUniformWriter(const std::string& renderPassName) const
+std::shared_ptr<UniformWriter> RenderView::GetUniformWriter(const std::string& renderPassName) const
 {
 	return Utils::Find(renderPassName, m_UniformWriterByName);
 }
 
-void RenderTarget::SetUniformWriter(const std::string& renderPassName, std::shared_ptr<UniformWriter> uniformWriter)
+void RenderView::SetUniformWriter(const std::string& renderPassName, std::shared_ptr<UniformWriter> uniformWriter)
 {
 	m_UniformWriterByName[renderPassName] = uniformWriter;
 }
 
-std::shared_ptr<Buffer> RenderTarget::GetBuffer(const std::string& name) const
+std::shared_ptr<Buffer> RenderView::GetBuffer(const std::string& name) const
 {
 	return Utils::Find(name, m_BuffersByName);
 }
 
-void RenderTarget::SetBuffer(const std::string& name, std::shared_ptr<Buffer> buffer)
+void RenderView::SetBuffer(const std::string& name, std::shared_ptr<Buffer> buffer)
 {
 	m_BuffersByName[name] = buffer;
 }
 
-std::shared_ptr<FrameBuffer> RenderTarget::GetFrameBuffer(const std::string& name) const
+std::shared_ptr<FrameBuffer> RenderView::GetFrameBuffer(const std::string& name) const
 {
 	if (const auto frameBuffersByName = m_FrameBuffersByName.find(name);
 		frameBuffersByName != m_FrameBuffersByName.end())
@@ -89,7 +89,7 @@ std::shared_ptr<FrameBuffer> RenderTarget::GetFrameBuffer(const std::string& nam
 	return nullptr;
 }
 
-void RenderTarget::SetFrameBuffer(const std::string& name, const std::shared_ptr<FrameBuffer>& frameBuffer)
+void RenderView::SetFrameBuffer(const std::string& name, const std::shared_ptr<FrameBuffer>& frameBuffer)
 {
 	if (!frameBuffer)
 	{
@@ -99,7 +99,7 @@ void RenderTarget::SetFrameBuffer(const std::string& name, const std::shared_ptr
 	m_FrameBuffersByName[name] = frameBuffer;
 }
 
-void RenderTarget::DeleteFrameBuffer(const std::string& name)
+void RenderView::DeleteFrameBuffer(const std::string& name)
 {
 	if (const auto frameBuffersByName = m_FrameBuffersByName.find(name);
 		frameBuffersByName != m_FrameBuffersByName.end())
@@ -108,7 +108,7 @@ void RenderTarget::DeleteFrameBuffer(const std::string& name)
 	}
 }
 
-CustomData* RenderTarget::GetCustomData(const std::string& name)
+CustomData* RenderView::GetCustomData(const std::string& name)
 {
 	if (const auto customDataByName = m_CustomDataByName.find(name);
 		customDataByName != m_CustomDataByName.end())
@@ -119,7 +119,7 @@ CustomData* RenderTarget::GetCustomData(const std::string& name)
 	return nullptr;
 }
 
-void RenderTarget::SetCustomData(const std::string& name, CustomData* data)
+void RenderView::SetCustomData(const std::string& name, CustomData* data)
 {
 	if (!data)
 	{
@@ -129,7 +129,7 @@ void RenderTarget::SetCustomData(const std::string& name, CustomData* data)
 	m_CustomDataByName[name] = data;
 }
 
-void RenderTarget::DeleteCustomData(const std::string& name)
+void RenderView::DeleteCustomData(const std::string& name)
 {
 	auto customDataByName = m_CustomDataByName.find(name);
 	if (customDataByName != m_CustomDataByName.end())
@@ -140,7 +140,7 @@ void RenderTarget::DeleteCustomData(const std::string& name)
 	}
 }
 
-std::shared_ptr<Texture> RenderTarget::GetStorageImage(const std::string& name)
+std::shared_ptr<Texture> RenderView::GetStorageImage(const std::string& name)
 {
 	if (const auto storageImageByName = m_StorageImagesByName.find(name);
 		storageImageByName != m_StorageImagesByName.end())
@@ -151,13 +151,13 @@ std::shared_ptr<Texture> RenderTarget::GetStorageImage(const std::string& name)
 	return nullptr;
 }
 
-void RenderTarget::SetStorageImage(const std::string& name, std::shared_ptr<Texture> texture)
+void RenderView::SetStorageImage(const std::string& name, std::shared_ptr<Texture> texture)
 {
 	// TODO: Add usage storage image check!
 	m_StorageImagesByName[name] = texture;
 }
 
-void RenderTarget::Resize(const glm::ivec2& size) const
+void RenderView::Resize(const glm::ivec2& size) const
 {
 	for (const std::string& renderPassName : m_RenderPassOrder)
 	{

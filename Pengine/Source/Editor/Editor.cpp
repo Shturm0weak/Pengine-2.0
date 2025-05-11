@@ -2844,7 +2844,7 @@ void Editor::Thumbnails::Initialize()
 	auto& cameraComponent =	camera->AddComponent<Camera>(camera);
 	{
 		m_CameraUUID = camera->GetUUID();
-		cameraComponent.CreateRenderTarget(name, m_ThumbnailWindow->GetSize());
+		cameraComponent.CreateRenderView(name, m_ThumbnailWindow->GetSize());
 		camera->AddComponent<Transform>(camera);
 	}
 
@@ -2871,7 +2871,7 @@ void Editor::Thumbnails::Initialize()
 
 		Renderer::RenderViewportInfo renderViewportInfo{};
 		renderViewportInfo.camera = camera;
-		renderViewportInfo.renderTarget = cameraComponent.GetRendererTarget(name);
+		renderViewportInfo.renderView = cameraComponent.GetRendererTarget(name);
 		renderViewportInfo.size = m_ThumbnailWindow->GetSize();
 
 		const float aspect = (float)renderViewportInfo.size.x / (float)renderViewportInfo.size.y;
@@ -3019,7 +3019,7 @@ void Editor::Thumbnails::UpdateMatMeshThumbnail(const ThumbnailLoadInfo& thumbna
 
 	Renderer::RenderViewportInfo renderViewportInfo{};
 	renderViewportInfo.camera = camera;
-	renderViewportInfo.renderTarget = cameraComponent.GetRendererTarget(name);
+	renderViewportInfo.renderView = cameraComponent.GetRendererTarget(name);
 	renderViewportInfo.size = m_ThumbnailWindow->GetSize();
 
 	const float aspect = (float)renderViewportInfo.size.x / (float)renderViewportInfo.size.y;
@@ -3084,7 +3084,7 @@ void Editor::Thumbnails::UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thu
 	auto camera = scene->CreateEntity("Camera");
 	auto& cameraTransform = camera->AddComponent<Transform>(camera);
 	auto& cameraComponent = camera->AddComponent<Camera>(camera);
-	cameraComponent.CreateRenderTarget(name, m_ThumbnailWindow->GetSize());
+	cameraComponent.CreateRenderView(name, m_ThumbnailWindow->GetSize());
 
 	BoundingBox bb{};
 
@@ -3159,7 +3159,7 @@ void Editor::Thumbnails::UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thu
 
 		Renderer::RenderViewportInfo renderViewportInfo{};
 		renderViewportInfo.camera = camera;
-		renderViewportInfo.renderTarget = cameraComponent.GetRendererTarget(name);
+		renderViewportInfo.renderView = cameraComponent.GetRendererTarget(name);
 		renderViewportInfo.size = m_ThumbnailWindow->GetSize();
 
 		const float aspect = (float)renderViewportInfo.size.x / (float)renderViewportInfo.size.y;

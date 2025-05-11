@@ -36,9 +36,9 @@ void Renderer::Update(
 			return;
 		}
 
-		if (!scene->GetRenderTarget())
+		if (!scene->GetRenderView())
 		{
-			scene->SetRenderTarget(RenderTarget::Create(passPerSceneOrder, { 0, 0 }));
+			scene->SetRenderView(RenderView::Create(passPerSceneOrder, { 0, 0 }));
 		}
 
 		Pass::RenderCallbackInfo renderInfo{};
@@ -82,7 +82,7 @@ void Renderer::Update(
 			renderInfo.camera = viewport.camera;
 			renderInfo.projection = viewport.projection;
 			renderInfo.viewportSize = viewport.size;
-			renderInfo.renderTarget = viewport.renderTarget;
+			renderInfo.renderView = viewport.renderView;
 
 			RenderPassManager::PrepareUniformsPerViewportBeforeDraw(renderInfo);
 

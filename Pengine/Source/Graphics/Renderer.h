@@ -22,7 +22,7 @@ namespace Pengine
 		struct RenderViewportInfo
 		{
 			std::shared_ptr<Entity> camera;
-			std::shared_ptr<RenderTarget> renderTarget;
+			std::shared_ptr<RenderView> renderView;
 			glm::mat4 projection;
 			glm::ivec2 size;
 		};

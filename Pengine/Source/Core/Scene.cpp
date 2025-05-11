@@ -65,7 +65,7 @@ void Scene::Clear()
 	m_Registry.clear();
 	m_SelectedEntities.clear();
 
-	m_RenderTarget = nullptr;
+	m_RenderView = nullptr;
 }
 
 Scene& Scene::operator=(const Scene& scene)

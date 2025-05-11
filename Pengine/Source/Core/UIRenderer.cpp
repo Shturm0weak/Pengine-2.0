@@ -122,7 +122,7 @@ void UIRenderer::Render(
 	// TODO: Rework, for now just because we need to clear the ui framebuffer which will be passed to final render pass to compose.
 	if (entities.empty())
 	{
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderTarget->GetFrameBuffer(UI);
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(UI);
 
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
@@ -145,7 +145,7 @@ void UIRenderer::Render(
 
 		if (canvas.drawInMainViewport)
 		{
-			submitInfo.frameBuffer = renderInfo.renderTarget->GetFrameBuffer(renderInfo.renderPass->GetName());
+			submitInfo.frameBuffer = renderInfo.renderView->GetFrameBuffer(renderInfo.renderPass->GetName());
 		}
 		else
 		{

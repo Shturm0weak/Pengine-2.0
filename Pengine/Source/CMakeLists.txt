@@ -91,7 +91,7 @@ set(GRAPHICS_SOURCES
 	Graphics/Pipeline.cpp Graphics/Pipeline.h
 	Graphics/Renderer.cpp Graphics/Renderer.h
 	Graphics/RenderPass.cpp Graphics/RenderPass.h
-	Graphics/RenderTarget.cpp Graphics/RenderTarget.h
+	Graphics/RenderView.cpp Graphics/RenderView.h
 	Graphics/ShaderModule.cpp Graphics/ShaderModule.h
 	Graphics/ShaderModuleManager.cpp Graphics/ShaderModuleManager.h
 	Graphics/ShaderReflection.h
