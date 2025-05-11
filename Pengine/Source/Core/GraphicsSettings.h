@@ -63,7 +63,7 @@ namespace Pengine
 		struct Bloom
 		{
 			bool isEnabled = true;
-			int mipCount = 8;
+			int mipCount = 10;
 			float brightnessThreshold = 1.0f;
 			float intensity = 1.0f;
 
