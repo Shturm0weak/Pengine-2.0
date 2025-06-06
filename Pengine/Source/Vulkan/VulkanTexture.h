@@ -66,7 +66,7 @@ namespace Pengine::Vk
 
 		virtual void GenerateMipMaps(void* frame = nullptr) override;
 
-		virtual void Copy(std::shared_ptr<Texture> src, void* frame = nullptr) override;
+		virtual void Copy(std::shared_ptr<Texture> src, const Region& region, void* frame = nullptr) override;
 
 		[[nodiscard]] VkImageView GetImageView(const uint32_t index = Vk::swapChainImageIndex) const { return m_IsMultiBuffered ? m_ImageDatas[index].view : m_ImageDatas[0].view; }
 

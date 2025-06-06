@@ -570,7 +570,10 @@ void VulkanTexture::GenerateMipMaps(void* frame)
 	Logger::Error("Generate mipmaps is not implemented!");
 }
 
-void VulkanTexture::Copy(std::shared_ptr<Texture> src, void* frame)
+void VulkanTexture::Copy(
+	std::shared_ptr<Texture> src,
+	const Region& region,
+	void* frame)
 {
 	VkCommandBuffer commandBuffer = GetVkDevice()->GetCommandBufferFromFrame(frame);
 
@@ -587,8 +590,9 @@ void VulkanTexture::Copy(std::shared_ptr<Texture> src, void* frame)
 		srcImageData.m_Layout,
 		dstImageData.image,
 		dstImageData.m_Layout,
-		m_Size.x,
-		m_Size.y,
+		region.srcOffset,
+		region.dstOffset,
+		region.extent,
 		commandBuffer);
 
 	Transition(srcImageData, srcImageData.m_PreviousLayout);

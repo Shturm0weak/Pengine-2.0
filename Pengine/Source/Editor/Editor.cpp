@@ -686,7 +686,7 @@ void Editor::SceneInfo(const std::shared_ptr<Scene>& scene)
 		if (scene)
 		{
 			// Generate thumbnail for the scene if there is no one.
-			m_Thumbnails.GetOrGenerateThumbnail(scene->GetFilepath(), scene, Thumbnails::Type::SCENE);
+			m_Thumbnails.GetOrGenerateThumbnail(m_RootDirectory / scene->GetFilepath(), scene, Thumbnails::Type::SCENE);
 
 			ImGui::Text("Name: %s", scene->GetName().c_str());
 			ImGui::Text("Filepath: %s", scene->GetFilepath().string().c_str());
@@ -1532,11 +1532,15 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 				continue;
 			}
 
-			const ImTextureID currentIcon = GetFileIcon(directoryIter.path(), format);
+			ThumbnailAtlas::TileInfo fileIconInfo = GetFileIcon(directoryIter.path(), format);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 			ImGui::PushID(filename.c_str());
-			if (ImGui::ImageButton(currentIcon, { thumbnailSize, thumbnailSize }, ImVec2(0, 1), ImVec2(1, 0)))
+			if (ImGui::ImageButton(
+				fileIconInfo.atlasId,
+				{ thumbnailSize, thumbnailSize },
+				ImVec2(fileIconInfo.uvStart.x, fileIconInfo.uvStart.y),
+				ImVec2(fileIconInfo.uvEnd.x, fileIconInfo.uvEnd.y)))
 			{
 
 			}
@@ -1669,7 +1673,12 @@ void Editor::DrawAssetBrowserHierarchy(const std::filesystem::path& directory)
 			flags |= ImGuiTreeNodeFlags_Leaf;
 		}
 
-		ImGui::Image(GetFileIcon(path, Utils::GetFileFormat(path)), ImVec2(ImGui::GetFontSize(), ImGui::GetFontSize()));
+		ThumbnailAtlas::TileInfo fileIconInfo = GetFileIcon(path, Utils::GetFileFormat(path));
+		ImGui::Image(
+			fileIconInfo.atlasId,
+			ImVec2(ImGui::GetFontSize(), ImGui::GetFontSize()),
+			ImVec2(fileIconInfo.uvStart.x, fileIconInfo.uvStart.y),
+			ImVec2(fileIconInfo.uvEnd.x, fileIconInfo.uvEnd.y));
 		ImGui::SameLine();
 
 		const std::string filename = path.filename().string();
@@ -1906,45 +1915,69 @@ void Editor::MoveCamera(const std::shared_ptr<Entity>& camera, Window& window)
 	}
 }
 
-ImTextureID Editor::GetFileIcon(const std::filesystem::path& filepath, const std::string& format)
+ThumbnailAtlas::TileInfo Editor::GetFileIcon(const std::filesystem::path& filepath, const std::string& format)
 {
+	ThumbnailAtlas::TileInfo finalFileIconInfo{};
+	finalFileIconInfo.uvStart = { 0.0f, 1.0f };
+	finalFileIconInfo.uvEnd = { 1.0f, 0.0f };
+
 	const std::filesystem::path editorImagesPath = std::filesystem::path("Editor") / "Images";
+
+	auto getThumbnail = [&](Thumbnails::Type type, const std::filesystem::path& defaultFilepath)
+	{
+		ThumbnailAtlas::TileInfo fileIconInfo = m_Thumbnails.GetOrGenerateThumbnail(filepath, nullptr, type);
+		if (fileIconInfo.atlasId)
+		{
+			finalFileIconInfo = fileIconInfo;
+		}
+		else
+		{
+			finalFileIconInfo.atlasId = (ImTextureID)TextureManager::GetInstance().Load(defaultFilepath)->GetId();
+		}
+	};
 
 	if (std::filesystem::is_directory(filepath))
 	{
-		return (ImTextureID)TextureManager::GetInstance().Load(editorImagesPath / "FolderIcon.png")->GetId();
+		finalFileIconInfo.atlasId = (ImTextureID)TextureManager::GetInstance().Load(editorImagesPath / "FolderIcon.png")->GetId();
 	}
 	else if (format == FileFormats::Meta())
 	{
-		return (ImTextureID)TextureManager::GetInstance().Load(editorImagesPath / "MetaIcon.png")->GetId();
+		finalFileIconInfo.atlasId = (ImTextureID)TextureManager::GetInstance().Load(editorImagesPath / "MetaIcon.png")->GetId();
 	}
 	else if (format == FileFormats::Mat())
 	{
-		ImTextureID iconId = m_Thumbnails.GetOrGenerateThumbnail(filepath, nullptr, Thumbnails::Type::MAT);
-		return iconId ? iconId : (ImTextureID)TextureManager::GetInstance().Load(editorImagesPath / "MaterialIcon.png")->GetId();
+		getThumbnail(Thumbnails::Type::MAT, editorImagesPath / "MaterialIcon.png");
 	}
 	else if (format == FileFormats::Mesh())
 	{
-		ImTextureID iconId = m_Thumbnails.GetOrGenerateThumbnail(filepath, nullptr, Thumbnails::Type::MESH);
-		return iconId ? iconId : (ImTextureID)TextureManager::GetInstance().Load(editorImagesPath / "MeshIcon.png")->GetId();
+		getThumbnail(Thumbnails::Type::MESH, editorImagesPath / "MeshIcon.png");
 	}
 	else if (format == FileFormats::Scene())
 	{
-		ImTextureID iconId = m_Thumbnails.TryGetThumbnail(filepath);
-		return iconId ? iconId : (ImTextureID)TextureManager::GetInstance().Load(editorImagesPath / "FileIcon.png")->GetId();
+		ThumbnailAtlas::TileInfo fileIconInfo = m_Thumbnails.TryGetThumbnail(filepath);
+		if (fileIconInfo.atlasId)
+		{
+			finalFileIconInfo = fileIconInfo;
+		}
+		else
+		{
+			finalFileIconInfo.atlasId = (ImTextureID)TextureManager::GetInstance().Load(editorImagesPath / "FileIcon.png")->GetId();
+		}
 	}
 	else if (format == FileFormats::Prefab())
 	{
-		ImTextureID iconId = m_Thumbnails.GetOrGenerateThumbnail(filepath, nullptr, Thumbnails::Type::PREFAB);
-		return iconId ? iconId : (ImTextureID)TextureManager::GetInstance().Load(editorImagesPath / "FileIcon.png")->GetId();
+		getThumbnail(Thumbnails::Type::PREFAB, editorImagesPath / "FileIcon.png");
 	}
 	else if (FileFormats::IsTexture(format))
 	{
-		ImTextureID iconId = m_Thumbnails.GetOrGenerateThumbnail(filepath, nullptr, Thumbnails::Type::TEXTURE);
-		return iconId ? iconId : (ImTextureID)TextureManager::GetInstance().Load(editorImagesPath / "FileIcon.png")->GetId();
+		getThumbnail(Thumbnails::Type::TEXTURE, editorImagesPath / "FileIcon.png");
 	}
 
-	return (ImTextureID)TextureManager::GetInstance().Load(editorImagesPath / "FileIcon.png")->GetId();
+	if (!finalFileIconInfo.atlasId)
+	{
+		finalFileIconInfo.atlasId = (ImTextureID)TextureManager::GetInstance().Load(editorImagesPath / "FileIcon.png")->GetId();
+	}
+	return finalFileIconInfo;
 }
 
 void Editor::SaveScene(std::shared_ptr<Scene> scene)
@@ -1955,7 +1988,7 @@ void Editor::SaveScene(std::shared_ptr<Scene> scene)
 		sceneFilepath = "Scenes/" + scene->GetName() + FileFormats::Scene();
 	}
 	Serializer::SerializeScene(sceneFilepath, scene);
-	m_Thumbnails.GetOrGenerateThumbnail(sceneFilepath, scene, Thumbnails::Type::SCENE);
+	m_Thumbnails.GetOrGenerateThumbnail(m_RootDirectory / sceneFilepath, scene, Thumbnails::Type::SCENE);
 }
 
 void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
@@ -2895,6 +2928,13 @@ void Editor::Thumbnails::Initialize()
 
 void Editor::Thumbnails::UpdateThumbnails()
 {
+	//if (m_ThumbnailAtlas.GetAtlas(0))
+	//{
+	//	ImGui::Begin("Thumbnail Atlas");
+	//	ImGui::Image((ImTextureID)m_ThumbnailAtlas.GetAtlas(0)->GetId(), ImVec2(1024, 1024));
+	//	ImGui::End();
+	//}
+
 	if (m_ThumbnailToCheck == m_CacheThumbnails.end())
 	{
 		m_ThumbnailToCheck = m_CacheThumbnails.begin();
@@ -3036,7 +3076,7 @@ void Editor::Thumbnails::UpdateMatMeshThumbnail(const ThumbnailLoadInfo& thumbna
 	device->WaitIdle();
 
 	cameraComponent.TakeScreenshot(thumbnailLoadInfo.thumbnailFilepath, name, &m_GeneratingThumbnails.at(thumbnailLoadInfo.resourceFilepath));
-
+	
 	r3d.mesh = nullptr;
 	r3d.material = nullptr;
 
@@ -3200,7 +3240,7 @@ void Editor::Thumbnails::UpdateTextureThumbnail(const ThumbnailLoadInfo& thumbna
 	TextureManager::GetInstance().Delete(srcTexture);
 }
 
-ImTextureID Editor::Thumbnails::GetOrGenerateThumbnail(
+ThumbnailAtlas::TileInfo Editor::Thumbnails::GetOrGenerateThumbnail(
 	const std::filesystem::path& filepath,
 	std::shared_ptr<Scene> scene,
 	Type type)
@@ -3208,9 +3248,10 @@ ImTextureID Editor::Thumbnails::GetOrGenerateThumbnail(
 	auto foundThumbnail = m_CacheThumbnails.find(filepath);
 	if (m_ThumbnailToCheck != foundThumbnail && foundThumbnail != m_CacheThumbnails.end())
 	{
-		if (auto thumbnail = foundThumbnail->second.lock())
+		auto tileInfo = foundThumbnail->second;
+		if (tileInfo.atlasIndex >= 0 && tileInfo.tileIndex >= 0)
 		{
-			return thumbnail->GetId();
+			return tileInfo;
 		}
 		else
 		{
@@ -3252,7 +3293,7 @@ ImTextureID Editor::Thumbnails::GetOrGenerateThumbnail(
 		{
 			if (!found->second)
 			{
-				return nullptr;
+				return {};
 			}
 
 			TextureManager::GetInstance().Delete(thumbnailFilepath);
@@ -3261,23 +3302,38 @@ ImTextureID Editor::Thumbnails::GetOrGenerateThumbnail(
 
 		if (lastWriteTimeResourceSaved == lastWriteTimeResourceCurrent && std::filesystem::exists(thumbnailFilepath))
 		{
-			if (std::shared_ptr<Texture> thumbnail = TextureManager::GetInstance().GetTexture(thumbnailFilepath))
+			auto& tileInfo = m_CacheThumbnails[filepath];
+			if (tileInfo.atlasIndex >= 0 && tileInfo.tileIndex >= 0)
 			{
-				m_CacheThumbnails[filepath] = thumbnail;
-				return (ImTextureID)thumbnail->GetId();
+				return tileInfo;
 			}
 
 			if (!m_IsThumbnailLoading.load())
 			{
 				m_IsThumbnailLoading.store(true);
-				AsyncAssetLoader::GetInstance().AsyncLoadTexture(thumbnailFilepath, [this](std::weak_ptr<Texture> texture)
+				AsyncAssetLoader::GetInstance().AsyncLoadTexture(thumbnailFilepath, [this, filepath](std::weak_ptr<Texture> texture)
 				{
+					ThumbnailAtlas::TileInfo tileInfo{};
+					const auto atlas = m_ThumbnailAtlas.Push(texture.lock(), tileInfo);
+					m_CacheThumbnails[filepath] = tileInfo;
 					m_IsThumbnailLoading.store(false);
-				});
+
+					auto callback = [texture]()
+					{
+						TextureManager::GetInstance().Delete(texture.lock()->GetFilepath());
+					};
+
+					std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+					EventSystem::GetInstance().SendEvent(event);
+				}, false);
 			}
 		}
 		else if (!m_GeneratingThumbnails.contains(shortFilepath))
 		{
+			auto& tileInfo = m_CacheThumbnails[filepath];
+			m_ThumbnailAtlas.Free(tileInfo.atlasIndex, tileInfo.tileIndex);
+			tileInfo = {};
+
 			m_GeneratingThumbnails.emplace(shortFilepath, false);
 
 			ThumbnailLoadInfo thumbnailLoadInfo{};
@@ -3291,17 +3347,19 @@ ImTextureID Editor::Thumbnails::GetOrGenerateThumbnail(
 		}
 	}
 
-	return nullptr;
+	return {};
 }
 
-ImTextureID Editor::Thumbnails::TryGetThumbnail(const std::filesystem::path& filepath)
+ThumbnailAtlas::TileInfo Editor::Thumbnails::TryGetThumbnail(
+	const std::filesystem::path& filepath)
 {
 	auto foundThumbnail = m_CacheThumbnails.find(filepath);
 	if (m_ThumbnailToCheck != foundThumbnail && foundThumbnail != m_CacheThumbnails.end())
 	{
-		if (auto thumbnail = foundThumbnail->second.lock())
+		auto tileInfo = foundThumbnail->second;
+		if (tileInfo.atlasIndex >= 0 && tileInfo.tileIndex >= 0)
 		{
-			return thumbnail->GetId();
+			return tileInfo;
 		}
 		else
 		{
@@ -3325,7 +3383,7 @@ ImTextureID Editor::Thumbnails::TryGetThumbnail(const std::filesystem::path& fil
 		{
 			if (!found->second)
 			{
-				return nullptr;
+				return {};
 			}
 
 			TextureManager::GetInstance().Delete(thumbnailFilepath);
@@ -3334,22 +3392,33 @@ ImTextureID Editor::Thumbnails::TryGetThumbnail(const std::filesystem::path& fil
 
 		if (std::filesystem::exists(thumbnailFilepath))
 		{
-			if (std::shared_ptr<Texture> thumbnail = TextureManager::GetInstance().GetTexture(thumbnailFilepath))
+			auto& tileInfo = m_CacheThumbnails[filepath];
+			if (tileInfo.atlasIndex >= 0 && tileInfo.tileIndex >= 0)
 			{
-				m_CacheThumbnails[filepath] = thumbnail;
-				return (ImTextureID)thumbnail->GetId();
+				return tileInfo;
 			}
 
 			if (!m_IsThumbnailLoading.load())
 			{
 				m_IsThumbnailLoading.store(true);
-				AsyncAssetLoader::GetInstance().AsyncLoadTexture(thumbnailFilepath, [this](std::weak_ptr<Texture> texture)
+				AsyncAssetLoader::GetInstance().AsyncLoadTexture(thumbnailFilepath, [this, filepath](std::weak_ptr<Texture> texture)
 				{
+					ThumbnailAtlas::TileInfo tileInfo{};
+					const auto atlas = m_ThumbnailAtlas.Push(texture.lock(), tileInfo);
+					m_CacheThumbnails[filepath] = tileInfo;
 					m_IsThumbnailLoading.store(false);
-				});
+
+					auto callback = [texture]()
+					{
+						TextureManager::GetInstance().Delete(texture.lock()->GetFilepath());
+					};
+
+					std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+					EventSystem::GetInstance().SendEvent(event);
+				}, false);
 			}
 		}
 	}
 
-	return nullptr;
+	return {};
 }

@@ -19,9 +19,9 @@ namespace Pengine
 
 		std::shared_ptr<Texture> Create(const Texture::CreateInfo& createInfo);
 
-		std::shared_ptr<Texture> Load(const std::filesystem::path& filepath);
+		std::shared_ptr<Texture> Load(const std::filesystem::path& filepath, bool flip = true);
 
-		std::vector<std::shared_ptr<Texture>> LoadFromFolder(const std::filesystem::path& directory);
+		std::vector<std::shared_ptr<Texture>> LoadFromFolder(const std::filesystem::path& directory, bool flip = true);
 
 		std::shared_ptr<Texture> GetTexture(const std::filesystem::path& filepath) const;
 

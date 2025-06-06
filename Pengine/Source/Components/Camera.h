@@ -62,10 +62,7 @@ namespace Pengine
 
 		void SetRenderTargetIndex(int renderTargetIndex) { m_RenderTargetIndex = renderTargetIndex; }
 
-		/**
-		 * Take screenshot of the main viewport.
-		 */
-		void TakeScreenshot(const std::filesystem::path& filepath, const std::string& viewportName, bool* isLoaded);
+		std::shared_ptr<class Texture> TakeScreenshot(const std::filesystem::path& filepath, const std::string& viewportName, bool* isLoaded);
 
 	private:
 		glm::mat4 m_ViewMat4{};

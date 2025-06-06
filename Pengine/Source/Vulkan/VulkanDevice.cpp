@@ -817,8 +817,9 @@ void VulkanDevice::CopyImageToImage(
 	VkImageLayout srcImageLayout,
 	VkImage dst,
 	VkImageLayout dstImageLayout,
-	uint32_t width,
-	uint32_t height,
+	glm::ivec3 srcOffset,
+	glm::ivec3 dstOffset,
+	glm::uvec3 extent,
 	VkCommandBuffer commandBuffer)
 {
 	bool isCreatedSingleTimeCommands = false;
@@ -830,9 +831,9 @@ void VulkanDevice::CopyImageToImage(
 
 	VkImageCopy region{};
 
-	region.dstOffset = { 0, 0, 0 };
-	region.srcOffset = { 0, 0, 0 };
-	region.extent = { width, height, 1 };
+	region.srcOffset = { srcOffset.x, srcOffset.y, srcOffset.z };
+	region.dstOffset = { dstOffset.x, dstOffset.y, dstOffset.z };
+	region.extent = { extent.x, extent.y, extent.z };
 
 	region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	region.srcSubresource.baseArrayLayer = 0;

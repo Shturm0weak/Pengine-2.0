@@ -25,7 +25,7 @@ std::shared_ptr<Texture> TextureManager::Create(const Texture::CreateInfo& creat
 	return texture;
 }
 
-std::shared_ptr<Texture> TextureManager::Load(const std::filesystem::path& filepath)
+std::shared_ptr<Texture> TextureManager::Load(const std::filesystem::path& filepath, bool flip)
 {
 	if (std::shared_ptr<Texture> texture = GetTexture(filepath))
 	{
@@ -34,7 +34,7 @@ std::shared_ptr<Texture> TextureManager::Load(const std::filesystem::path& filep
 	else
 	{
 		auto meta = Serializer::DeserializeTextureMeta(filepath.string() + FileFormats::Meta());
-		texture = Texture::Load(filepath, *meta);
+		texture = Texture::Load(filepath, flip, *meta);
 		if (texture)
 		{
 			std::lock_guard<std::mutex> lock(m_MutexTexture);
@@ -47,7 +47,7 @@ std::shared_ptr<Texture> TextureManager::Load(const std::filesystem::path& filep
 	}
 }
 
-std::vector<std::shared_ptr<Texture>> TextureManager::LoadFromFolder(const std::filesystem::path& directory)
+std::vector<std::shared_ptr<Texture>> TextureManager::LoadFromFolder(const std::filesystem::path& directory, bool flip)
 {
 	std::vector<std::shared_ptr<Texture>> textures;
 

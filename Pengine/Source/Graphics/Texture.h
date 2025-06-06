@@ -76,6 +76,13 @@ namespace Pengine
 			BorderColor borderColor = BorderColor::FLOAT_OPAQUE_BLACK;
 		};
 
+		struct Region
+		{
+			glm::ivec3 srcOffset = { 0, 0, 0 };
+			glm::ivec3 dstOffset = { 0, 0, 0 };
+			glm::uvec3 extent = { 0, 0, 1 };
+		};
+
 		struct Meta
 		{
 			std::filesystem::path filepath;
@@ -124,7 +131,7 @@ namespace Pengine
 
 		static std::shared_ptr<Texture> Create(const CreateInfo& createInfo);
 
-		static std::shared_ptr<Texture> Load(const std::filesystem::path& filepath, const Texture::Meta& meta);
+		static std::shared_ptr<Texture> Load(const std::filesystem::path& filepath, bool flip, const Texture::Meta& meta);
 		
 		explicit Texture(const CreateInfo& createInfo);
 		virtual ~Texture() = default;
@@ -141,7 +148,7 @@ namespace Pengine
 
 		virtual void GenerateMipMaps(void* frame = nullptr) = 0;
 
-		virtual void Copy(std::shared_ptr<Texture> src, void* frame = nullptr) = 0;
+		virtual void Copy(std::shared_ptr<Texture> src, const Region& region, void* frame = nullptr) = 0;
 
 		[[nodiscard]] glm::ivec2 GetSize() const { return m_Size; }
 

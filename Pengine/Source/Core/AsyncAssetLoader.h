@@ -22,7 +22,7 @@ namespace Pengine
 
 		void AsyncLoadMesh(const std::filesystem::path& filepath, std::function<void(std::weak_ptr<class Mesh>)>&& callback);
 
-		void AsyncLoadTexture(const std::filesystem::path& filepath, std::function<void(std::weak_ptr<class Texture>)>&& callback);
+		void AsyncLoadTexture(const std::filesystem::path& filepath, std::function<void(std::weak_ptr<class Texture>)>&& callback, bool flip = true);
 
 		std::shared_ptr<class Material> SyncLoadMaterial(const std::filesystem::path& filepath);
 
@@ -30,7 +30,7 @@ namespace Pengine
 
 		std::shared_ptr<class Mesh> SyncLoadMesh(const std::filesystem::path& filepath);
 
-		std::shared_ptr<class Texture> SyncLoadTexture(const std::filesystem::path& filepath);
+		std::shared_ptr<class Texture> SyncLoadTexture(const std::filesystem::path& filepath, bool flip = true);
 
 		void Update();
 

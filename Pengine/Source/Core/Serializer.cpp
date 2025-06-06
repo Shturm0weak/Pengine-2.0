@@ -690,7 +690,9 @@ void Serializer::SerializeTexture(const std::filesystem::path& filepath, std::sh
 	createInfo.memoryType = MemoryType::CPU;
 	auto screenshot = Texture::Create(createInfo);
 
-	screenshot->Copy(texture);
+	Texture::Region region{};
+	region.extent = { texture->GetSize().x, texture->GetSize().y, 1 };
+	screenshot->Copy(texture, region);
 
 	uint8_t* data = (uint8_t*)screenshot->GetData();
 

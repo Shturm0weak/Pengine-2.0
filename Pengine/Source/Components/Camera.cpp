@@ -171,25 +171,27 @@ std::shared_ptr<RenderView> Camera::GetRendererTarget(const std::string& name) c
 	return Utils::Find(name, m_RenderViewsByName);
 }
 
-void Camera::TakeScreenshot(const std::filesystem::path& filepath, const std::string& viewportName, bool* isLoaded)
+std::shared_ptr<class Texture> Camera::TakeScreenshot(const std::filesystem::path& filepath, const std::string& viewportName, bool* isLoaded)
 {
 	const std::shared_ptr<RenderView> renderView = GetRendererTarget(viewportName);
 	if (!renderView)
 	{
-		return;
+		return nullptr;
 	}
 
 	const std::shared_ptr<FrameBuffer> frameBuffer = renderView->GetFrameBuffer(GetPassName());
 	if (!frameBuffer)
 	{
-		return;
+		return nullptr;
 	}
 
 	const std::shared_ptr<Texture> texture = frameBuffer->GetAttachment(GetRenderTargetIndex());
 	if (!texture)
 	{
-		return;
+		return nullptr;
 	}
 
 	Serializer::SerializeTexture(filepath, texture, isLoaded);
+
+	return texture;
 }

@@ -67,14 +67,14 @@ void AsyncAssetLoader::AsyncLoadMesh(const std::filesystem::path& filepath, std:
 	m_MeshesToBeLoaded[filepath].emplace_back(std::move(callback));
 }
 
-void AsyncAssetLoader::AsyncLoadTexture(const std::filesystem::path& filepath, std::function<void(std::weak_ptr<class Texture>)>&& callback)
+void AsyncAssetLoader::AsyncLoadTexture(const std::filesystem::path& filepath, std::function<void(std::weak_ptr<class Texture>)>&& callback, bool flip)
 {
 	std::lock_guard<std::mutex> lock(m_TextureMutex);
 	if (!m_TexturesLoading.count(filepath))
 	{
-		ThreadPool::GetInstance().EnqueueAsync([this, filepath]()
+		ThreadPool::GetInstance().EnqueueAsync([this, filepath, flip]()
 		{
-			TextureManager::GetInstance().Load(filepath);
+			TextureManager::GetInstance().Load(filepath, flip);
 
 			std::lock_guard<std::mutex> lock(m_TextureMutex);
 			m_TexturesLoading.erase(filepath);
@@ -203,7 +203,7 @@ std::shared_ptr<Mesh> AsyncAssetLoader::SyncLoadMesh(const std::filesystem::path
 	}).get();
 }
 
-std::shared_ptr<Texture> AsyncAssetLoader::SyncLoadTexture(const std::filesystem::path& filepath)
+std::shared_ptr<Texture> AsyncAssetLoader::SyncLoadTexture(const std::filesystem::path& filepath, bool flip)
 {
 	bool found = false;
 	{
@@ -233,9 +233,9 @@ std::shared_ptr<Texture> AsyncAssetLoader::SyncLoadTexture(const std::filesystem
 		m_TexturesLoading.emplace(filepath);
 	}
 
-	return ThreadPool::GetInstance().EnqueueSync([this, filepath]()
+	return ThreadPool::GetInstance().EnqueueSync([this, filepath, flip]()
 	{
-		std::shared_ptr<Texture> texture = TextureManager::GetInstance().Load(filepath);
+		std::shared_ptr<Texture> texture = TextureManager::GetInstance().Load(filepath, flip);
 
 		std::lock_guard<std::mutex> lock(m_TextureMutex);
 		m_TexturesLoading.erase(filepath);

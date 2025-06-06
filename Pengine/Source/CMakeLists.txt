@@ -73,6 +73,7 @@ source_group("Core" FILES ${CORE_SOURCES})
 set(EDITOR_SOURCES
 	Editor/Editor.cpp Editor/Editor.h
 	Editor/ImGuizmo.cpp Editor/ImGuizmo.h
+	Editor/ThumbnailAtlas.cpp Editor/ThumbnailAtlas.h
 )
 source_group("Editor" FILES ${EDITOR_SOURCES})
 

@@ -119,8 +119,9 @@ namespace Pengine::Vk
 			VkImageLayout srcImageLayout,
 			VkImage dst,
 			VkImageLayout dstImageLayout,
-			uint32_t width,
-			uint32_t height,
+			glm::ivec3 srcOffset,
+			glm::ivec3 dstOffset,
+			glm::uvec3 extent,
 			VkCommandBuffer commandBuffer);
 
 		void CreateImage(

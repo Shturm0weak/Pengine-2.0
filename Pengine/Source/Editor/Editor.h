@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ThumbnailAtlas.h"
+
 #include "../Core/Core.h"
 #include "../Core/GraphicsSettings.h"
 #include "../Graphics/Texture.h"
@@ -94,8 +96,6 @@ namespace Pengine
 		void Manipulate(const std::shared_ptr<Scene>& scene, Window& window);
 
 		void MoveCamera(const std::shared_ptr<Entity>& camera, Window& window);
-
-		ImTextureID GetFileIcon(const std::filesystem::path& filepath, const std::string& format);
 
 		void SaveScene(std::shared_ptr<Scene> scene);
 
@@ -217,6 +217,8 @@ namespace Pengine
 
 			std::atomic<bool> m_IsThumbnailLoading = false;
 
+			ThumbnailAtlas m_ThumbnailAtlas;
+
 			enum class Type
 			{
 				MESH,
@@ -235,8 +237,8 @@ namespace Pengine
 			};
 			std::deque<ThumbnailLoadInfo> m_ThumbnailQueue;
 			std::unordered_map<std::filesystem::path, bool> m_GeneratingThumbnails;
-			std::unordered_map<std::filesystem::path, std::weak_ptr<Texture>> m_CacheThumbnails;
-			std::unordered_map<std::filesystem::path, std::weak_ptr<Texture>>::iterator m_ThumbnailToCheck = m_CacheThumbnails.end();
+			std::unordered_map<std::filesystem::path, ThumbnailAtlas::TileInfo> m_CacheThumbnails;
+			std::unordered_map<std::filesystem::path, ThumbnailAtlas::TileInfo>::iterator m_ThumbnailToCheck = m_CacheThumbnails.end();
 
 			void Initialize();
 
@@ -248,13 +250,15 @@ namespace Pengine
 
 			void UpdateTextureThumbnail(const ThumbnailLoadInfo& thumbnailLoadInfo);
 
-			ImTextureID GetOrGenerateThumbnail(
+			ThumbnailAtlas::TileInfo GetOrGenerateThumbnail(
 				const std::filesystem::path& filepath,
 				std::shared_ptr<Scene> scene,
 				Type type);
 
-			ImTextureID TryGetThumbnail(const std::filesystem::path& filepath);
+			ThumbnailAtlas::TileInfo TryGetThumbnail(const std::filesystem::path& filepath);
 		} m_Thumbnails;
+
+		ThumbnailAtlas::TileInfo GetFileIcon(const std::filesystem::path& filepath, const std::string& format);
 	};
 
 }

@@ -20,9 +20,9 @@ std::shared_ptr<Texture> Texture::Create(const CreateInfo& createInfo)
 	return nullptr;
 }
 
-std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath, const Texture::Meta& meta)
+std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath, bool flip, const Texture::Meta& meta)
 {
-	stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(flip);
 
 	CreateInfo textureCreateInfo{};
 	textureCreateInfo.meta = meta;
