@@ -33,6 +33,13 @@ namespace Pengine
 			const glm::mat4& transform,
 			const float duration = 0.0f);
 
+		void DrawSphere(
+			const glm::vec3& position,
+			const float radius,
+			int segments,
+			const glm::vec3& color,
+			const float duration);
+
 		std::queue<Line>& GetLines() { return m_Lines; }
 
 	private:

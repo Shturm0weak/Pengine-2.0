@@ -54,3 +54,58 @@ void Visualizer::DrawBox(
 	DrawLine(point01, point11, color, duration);
 	DrawLine(point02, point12, color, duration);
 }
+
+void Visualizer::DrawSphere(
+	const glm::vec3& position,
+	const float radius,
+	int segments,
+	const glm::vec3& color,
+	const float duration)
+{
+	// Need at least 3 segments.
+	segments = std::max(3, segments);
+
+	std::vector<glm::vec3> currentRings(segments);
+	std::vector<glm::vec3> previousRings(segments);
+
+	// Generate and draw rings.
+	for (int ring = 0; ring <= segments; ring++)
+	{
+		float phi = glm::pi<float>() * float(ring) / float(segments);
+		float y = radius * cos(phi);
+		float ringRadius = radius * sin(phi);
+
+		// Generate points for current ring.
+		for (int i = 0; i < segments; i++)
+		{
+			float theta = 2.0f * glm::pi<float>() * float(i) / float(segments);
+			currentRings[i] = position + glm::vec3(
+				ringRadius * cos(theta),
+				y,
+				ringRadius * sin(theta)
+			);
+		}
+
+		// Connect points within current ring (skip for first and last point).
+		if (ring > 0 && ring < segments)
+		{
+			for (int i = 0; i < segments; i++)
+			{
+				int next = (i + 1) % segments;
+				DrawLine(currentRings[i], currentRings[next], color, duration);
+			}
+		}
+
+		// Connect to previous ring (if not first ring).
+		if (ring > 0)
+		{
+			for (int i = 0; i < segments; i++)
+			{
+				DrawLine(previousRings[i], currentRings[i], color, duration);
+			}
+		}
+
+		// Save current ring for next iteration.
+		previousRings = currentRings;
+	}
+}

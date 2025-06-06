@@ -2180,6 +2180,7 @@ void Editor::PointLightComponent(const std::shared_ptr<Entity>& entity)
 		ImGui::ColorEdit3("Color", &pointLight.color[0]);
 		ImGui::SliderFloat("Intensity", &pointLight.intensity, 0.0f, 10.0f);
 		ImGui::SliderFloat("Radius", &pointLight.radius, 0.0f, 10.0f);
+		ImGui::Checkbox("Draw Bounding Sphere", &pointLight.drawBoundingSphere);
 	}
 }
 

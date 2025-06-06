@@ -3513,6 +3513,7 @@ void Serializer::SerializePointLight(YAML::Emitter& out, const std::shared_ptr<E
 	out << YAML::Key << "Color" << YAML::Value << pointLight.color;
 	out << YAML::Key << "Intensity" << YAML::Value << pointLight.intensity;
 	out << YAML::Key << "Radius" << YAML::Value << pointLight.radius;
+	out << YAML::Key << "DrawBoundingSphere" << YAML::Value << pointLight.drawBoundingSphere;
 
 	out << YAML::EndMap;
 }
@@ -3541,6 +3542,11 @@ void Serializer::DeserializePointLight(const YAML::Node& in, const std::shared_p
 		if (const auto& radiusData = pointLightData["Radius"])
 		{
 			pointLight.radius = radiusData.as<float>();
+		}
+
+		if (const auto& drawBoundingSphereData = pointLightData["DrawBoundingSphere"])
+		{
+			pointLight.drawBoundingSphere = drawBoundingSphereData.as<bool>();
 		}
 	}
 }

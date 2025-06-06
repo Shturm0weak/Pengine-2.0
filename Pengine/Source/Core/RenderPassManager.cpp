@@ -871,6 +871,12 @@ void RenderPassManager::CreateDeferred()
 			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, valueNamePrefix + ".intensity", pl.intensity);
 			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, valueNamePrefix + ".radius", pl.radius);
 
+			if (pl.drawBoundingSphere)
+			{
+				constexpr glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
+				renderInfo.scene->GetVisualizer().DrawSphere(transform.GetPosition(), pl.radius, 10, color, 0.0f);
+			}
+
 			lightIndex++;
 		}
 
@@ -1267,8 +1273,7 @@ void RenderPassManager::CreateTransparent()
 
 			if (scene->GetSettings().m_DrawBoundingBoxes)
 			{
-				const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
-
+				constexpr glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
 				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
 			}
 
