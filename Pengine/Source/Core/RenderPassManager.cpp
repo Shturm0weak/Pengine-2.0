@@ -868,9 +868,8 @@ void RenderPassManager::CreateDeferred()
 			glm::vec3 lightPosition = camera.GetViewMat4() * glm::vec4(transform.GetPosition(), 1.0f);
 			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, valueNamePrefix + ".position", lightPosition);
 			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, valueNamePrefix + ".color", pl.color);
-			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, valueNamePrefix + ".linear", pl.linear);
-			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, valueNamePrefix + ".quadratic", pl.quadratic);
-			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, valueNamePrefix + ".constant", pl.constant);
+			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, valueNamePrefix + ".intensity", pl.intensity);
+			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, valueNamePrefix + ".radius", pl.radius);
 
 			lightIndex++;
 		}

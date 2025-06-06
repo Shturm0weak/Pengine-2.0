@@ -3511,9 +3511,8 @@ void Serializer::SerializePointLight(YAML::Emitter& out, const std::shared_ptr<E
 	out << YAML::BeginMap;
 
 	out << YAML::Key << "Color" << YAML::Value << pointLight.color;
-	out << YAML::Key << "Constant" << YAML::Value << pointLight.constant;
-	out << YAML::Key << "Quadratic" << YAML::Value << pointLight.quadratic;
-	out << YAML::Key << "Linear" << YAML::Value << pointLight.linear;
+	out << YAML::Key << "Intensity" << YAML::Value << pointLight.intensity;
+	out << YAML::Key << "Radius" << YAML::Value << pointLight.radius;
 
 	out << YAML::EndMap;
 }
@@ -3534,19 +3533,14 @@ void Serializer::DeserializePointLight(const YAML::Node& in, const std::shared_p
 			pointLight.color = colorData.as<glm::vec3>();
 		}
 
-		if (const auto& constantData = pointLightData["Constant"])
+		if (const auto& intensityData = pointLightData["Intensity"])
 		{
-			pointLight.constant = constantData.as<float>();
+			pointLight.intensity = intensityData.as<float>();
 		}
 
-		if (const auto& quadraticData = pointLightData["Quadratic"])
+		if (const auto& radiusData = pointLightData["Radius"])
 		{
-			pointLight.quadratic = quadraticData.as<float>();
-		}
-
-		if (const auto& linearData = pointLightData["Linear"])
-		{
-			pointLight.linear = linearData.as<float>();
+			pointLight.radius = radiusData.as<float>();
 		}
 	}
 }

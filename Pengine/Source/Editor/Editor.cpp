@@ -2178,9 +2178,8 @@ void Editor::PointLightComponent(const std::shared_ptr<Entity>& entity)
 		Indent indent;
 
 		ImGui::ColorEdit3("Color", &pointLight.color[0]);
-		ImGui::SliderFloat("Constant", &pointLight.constant, 0.0f, 1.0f);
-		ImGui::SliderFloat("Linear", &pointLight.linear, 0.0f, 1.0f);
-		ImGui::SliderFloat("Quadratic", &pointLight.quadratic, 0.0f, 1.0f);
+		ImGui::SliderFloat("Intensity", &pointLight.intensity, 0.0f, 10.0f);
+		ImGui::SliderFloat("Radius", &pointLight.radius, 0.0f, 10.0f);
 	}
 }
 

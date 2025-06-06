@@ -1,12 +1,10 @@
 struct PointLight
 {
 	vec3 color;
-	float constant;
+	float intensity;
 	
 	vec3 position;
-	float linear;
-	
-	float quadratic;
+	float radius;
 };
 
 vec3 CalculatePointLight(
@@ -15,13 +13,13 @@ vec3 CalculatePointLight(
 	in vec3 normal)
 {
 	vec3 direction = normalize(light.position - position);
-	float diff = max(dot(normal, direction), 0.0f);
-	vec3 diffuse = light.color * diff;
+	vec3 diffuse = light.color * light.intensity * max(dot(normal, direction), 0.0f);
 
 	float distance    = length(light.position - position);
-	float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+	float attenuation = max(0.0f,
+		(1.0f / (distance * distance)) - (1.0f / (light.radius * light.radius)));
 
-	diffuse   *= attenuation;
+	diffuse *= attenuation;
 
 	return diffuse;
 }
