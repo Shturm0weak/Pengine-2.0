@@ -1,5 +1,6 @@
 #include "Material.h"
 
+#include "../Core/Profiler.h"
 #include "../Core/Serializer.h"
 #include "../Core/TextureManager.h"
 #include "../Core/MaterialManager.h"
@@ -12,21 +13,29 @@ using namespace Pengine;
 std::shared_ptr<Material> Material::Create(const std::string& name, const std::filesystem::path& filepath,
 	const CreateInfo& createInfo)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	return std::make_shared<Material>(name, filepath, createInfo);
 }
 
 std::shared_ptr<Material> Material::Load(const std::filesystem::path& filepath)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	return Create(Utils::GetFilename(filepath), filepath, Serializer::LoadMaterial(filepath));
 }
 
 void Material::Save(const std::shared_ptr<Material>& material, bool useLog)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	Serializer::SerializeMaterial(material, useLog);
 }
 
 void Material::Reload(const std::shared_ptr<Material>& material, bool reloadBaseMaterial)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (reloadBaseMaterial)
 	{
 		BaseMaterial::Reload(material->m_BaseMaterial);
@@ -59,6 +68,8 @@ std::shared_ptr<Material> Material::Clone(
 	const std::filesystem::path& filepath,
 	const std::shared_ptr<Material>& material)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	CreateInfo createInfo{};
 	createInfo.baseMaterial = material->GetBaseMaterial()->GetFilepath();
 	createInfo.optionsByName = material->GetOptionsByName();

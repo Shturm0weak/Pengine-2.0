@@ -84,7 +84,7 @@ namespace Pengine
 
 		virtual std::map<std::string, uint32_t> GetDescriptorSetIndexByType(const DescriptorSetIndexType type) const = 0;
 
-		const std::optional<uint32_t> GetDescriptorSetIndexByType(const DescriptorSetIndexType type, const std::string& renderPassName) const;
+		const std::optional<uint32_t> GetDescriptorSetIndexByType(const DescriptorSetIndexType type, const std::string& name) const;
 
 		const std::map<uint32_t, std::pair<DescriptorSetIndexType, std::string>>& GetSortedDescriptorSets() const { return m_SortedDescriptorSets;  }
 

@@ -9,6 +9,8 @@
 #include "VulkanUniformWriter.h"
 #include "VulkanWindow.h"
 
+#include "../Core/Profiler.h"
+
 using namespace Pengine;
 using namespace Vk;
 
@@ -31,6 +33,8 @@ void VulkanRenderer::Render(
 	const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
 	void* frame)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 
 	std::shared_ptr<VulkanGraphicsPipeline> vkPipeline;
@@ -55,6 +59,8 @@ void VulkanRenderer::Render(
 
 	if (!descriptorSets.empty())
 	{
+		PROFILER_SCOPE("BindDescriptorSets");
+
 		vkCmdBindDescriptorSets(
 			vkFrame->CommandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -77,6 +83,8 @@ void VulkanRenderer::Dispatch(
 	const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
 	void* frame)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 
 	std::shared_ptr<VulkanComputePipeline> vkPipeline;
@@ -117,6 +125,8 @@ void VulkanRenderer::Dispatch(
 
 void VulkanRenderer::MemoryBarrierFragmentReadWrite(void* frame)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 
 	VkMemoryBarrier memoryBarrier{};
@@ -141,12 +151,14 @@ void VulkanRenderer::BeginCommandLabel(
 	const glm::vec3& color,
 	void* frame)
 {
+	PROFILER_SCOPE(__FUNCTION__);
 	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 	GetVkDevice()->CommandBeginLabel(name, vkFrame->CommandBuffer, color);
 }
 
 void VulkanRenderer::EndCommandLabel(void* frame)
 {
+	PROFILER_SCOPE(__FUNCTION__);
 	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 	GetVkDevice()->CommandEndLabel(vkFrame->CommandBuffer);
 }
@@ -156,6 +168,8 @@ void VulkanRenderer::BeginRenderPass(
 	const std::string& debugName,
 	const glm::vec3& debugColor)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	const VulkanFrameInfo* frame = static_cast<VulkanFrameInfo*>(renderPassSubmitInfo.frame);
  
 	if (!debugName.empty())
@@ -239,6 +253,8 @@ void VulkanRenderer::BeginRenderPass(
 
 void VulkanRenderer::EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmitInfo)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	const VulkanFrameInfo* frame = static_cast<VulkanFrameInfo*>(renderPassSubmitInfo.frame);
 	vkCmdEndRenderPass(frame->CommandBuffer);
 	EndCommandLabel(renderPassSubmitInfo.frame);
@@ -246,6 +262,8 @@ void VulkanRenderer::EndRenderPass(const RenderPass::SubmitInfo& renderPassSubmi
 
 void VulkanRenderer::SetScissors(const RenderPass::Scissors& scissors, void* frame)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	const VkRect2D scissor =
 	{
 		{ scissors.offset.x, scissors.offset.y },
@@ -258,6 +276,8 @@ void VulkanRenderer::SetScissors(const RenderPass::Scissors& scissors, void* fra
 
 void VulkanRenderer::SetViewport(const RenderPass::Viewport& viewport, void* frame)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	VkViewport vkViewport{};
 	vkViewport.x = viewport.position.x;
 	vkViewport.y = viewport.position.y;
@@ -279,6 +299,8 @@ void VulkanRenderer::BindBuffers(
 	const std::shared_ptr<Buffer>& indexBuffer,
 	const size_t indexBufferOffset)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	assert(vertexBuffers.size() == vertexBufferOffsets.size());
 
 	std::vector<VkBuffer> vkVertexBuffers;
@@ -307,6 +329,8 @@ void VulkanRenderer::BindBuffers(
 
 void VulkanRenderer::DrawIndexed(const VkCommandBuffer commandBuffer, const uint32_t indexCount, const uint32_t instanceCount)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	drawCallsCount++;
 	vkCmdDrawIndexed(commandBuffer, indexCount, instanceCount, 0, 0, 0);
 }

@@ -57,7 +57,7 @@ namespace Pengine
 
 		static void SerializeMesh(const std::filesystem::path& directory, const std::shared_ptr<Mesh>& mesh);
 
-		static std::shared_ptr<Mesh> DeserializeMesh(const std::filesystem::path& filepath);
+		static Mesh::CreateInfo DeserializeMesh(const std::filesystem::path& filepath);
 
 		static void SerializeSkeleton(const std::shared_ptr<Skeleton>& skeleton);
 

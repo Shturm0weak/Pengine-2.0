@@ -9,6 +9,7 @@
 #include "FrustumCulling.h"
 #include "Raycast.h"
 #include "UIRenderer.h"
+#include "Profiler.h"
 
 #include "../Components/Canvas.h"
 #include "../Components/Camera.h"
@@ -103,6 +104,8 @@ std::vector<std::shared_ptr<UniformWriter>> RenderPassManager::GetUniformWriters
 	std::shared_ptr<Material> material,
 	const RenderPass::RenderCallbackInfo& renderInfo)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
 	for (const auto& [set, location] : pipeline->GetSortedDescriptorSets())
 	{
@@ -133,6 +136,8 @@ std::vector<std::shared_ptr<UniformWriter>> RenderPassManager::GetUniformWriters
 
 void RenderPassManager::PrepareUniformsPerViewportBeforeDraw(const RenderPass::RenderCallbackInfo& renderInfo)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	const std::shared_ptr<BaseMaterial> reflectionBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 		std::filesystem::path("Materials") / "DefaultReflection.basemat");
 	const std::shared_ptr<Pipeline> pipeline = reflectionBaseMaterial->GetPipeline(DefaultReflection);
@@ -235,6 +240,8 @@ std::shared_ptr<Texture> RenderPassManager::ScaleTexture(
 	std::shared_ptr<Texture> sourceTexture,
 	const glm::ivec2& dstSize)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	const std::shared_ptr<Renderer> renderer = Renderer::Create();
 	const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/ScaleTexture.basemat");
 	const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline("ScaleTexture");
@@ -296,6 +303,8 @@ void RenderPassManager::GetVertexBuffers(
 	std::vector<std::shared_ptr<Buffer>>& vertexBuffers,
 	std::vector<size_t>& vertexBufferOffsets)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (pipeline->GetType() != Pipeline::Type::GRAPHICS)
 	{
 		FATAL_ERROR("Can't get vertex buffers, pipeline type is not Pipeline::Type::GRAPHICS!");
@@ -363,6 +372,8 @@ void RenderPassManager::CreateZPrePass()
 
 	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		PROFILER_SCOPE(ZPrePass);
+
 		const std::string renderPassName = renderInfo.renderPass->GetName();
 
 		RenderableEntities renderableEntities;
@@ -640,6 +651,8 @@ void RenderPassManager::CreateGBuffer()
 
 	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		PROFILER_SCOPE(GBuffer);
+		
 		const std::string renderPassName = renderInfo.renderPass->GetName();
 
 		RenderableData* renderableData = (RenderableData*)renderInfo.renderView->GetCustomData("RenderableData");
@@ -820,6 +833,8 @@ void RenderPassManager::CreateDeferred()
 
 	createInfo.executeCallback = [this, passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		PROFILER_SCOPE(Deferred);
+
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 			std::filesystem::path("Materials") / "Deferred.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(passName);
@@ -946,9 +961,12 @@ void RenderPassManager::CreateDeferred()
 		
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
 
+		// TODO: Maybe fix, very slow.
 		// Here we need Transition to flush uniform writers, because to update storage image the layout should be GENERAL.
 		// And before and after the dispatch we need Transition again, because this command buffer will be executed later, so we don't know what can happen before.
 		{
+			PROFILER_SCOPE("Deferred Color Output Transition Layout");
+
 			void* transitionFrame = device->CreateFrame();
 
 			device->BeginFrame(transitionFrame);
@@ -1046,6 +1064,8 @@ void RenderPassManager::CreateAtmosphere()
 
 	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		PROFILER_SCOPE(Atmosphere);
+
 		const std::string renderPassName = renderInfo.renderPass->GetName();
 		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.scene->GetRenderView()->GetFrameBuffer(Atmosphere);
 		auto directionalLightView = renderInfo.scene->GetRegistry().view<DirectionalLight>();
@@ -1222,6 +1242,8 @@ void RenderPassManager::CreateTransparent()
 
 	createInfo.executeCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		PROFILER_SCOPE(Transparent);
+
 		const std::string renderPassName = renderInfo.renderPass->GetName();
 
 		struct RenderData
@@ -1455,6 +1477,8 @@ void RenderPassManager::CreateFinal()
 
 	createInfo.executeCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		PROFILER_SCOPE(Final);
+
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 
 		const std::string renderPassName = renderInfo.renderPass->GetName();
@@ -1555,6 +1579,8 @@ void RenderPassManager::CreateCSM()
 
 	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		PROFILER_SCOPE(CSM);
+
 		const std::string renderPassName = renderInfo.renderPass->GetName();
 
 		const GraphicsSettings::Shadows& shadowsSettings = renderInfo.scene->GetGraphicsSettings().shadows;
@@ -1874,6 +1900,8 @@ void RenderPassManager::CreateBloom()
 
 	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		PROFILER_SCOPE(Bloom);
+
 		const std::string renderPassName = renderInfo.renderPass->GetName();
 		const GraphicsSettings::Bloom& bloomSettings = renderInfo.scene->GetGraphicsSettings().bloom;
 		const int mipCount = bloomSettings.mipCount;
@@ -1930,6 +1958,8 @@ void RenderPassManager::CreateBloom()
 		renderInfo.renderer->BeginCommandLabel("Bloom", topLevelRenderPassDebugColor, renderInfo.frame);
 		// Down Sample.
 		{
+			PROFILER_SCOPE("DownSample");
+
 			const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 				std::filesystem::path("Materials") / "BloomDownSample.basemat");
 			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
@@ -2040,6 +2070,8 @@ void RenderPassManager::CreateBloom()
 
 		// Up Sample.
 		{
+			PROFILER_SCOPE("UpSample");
+
 			const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 				std::filesystem::path("Materials") / "BloomUpSample.basemat");
 			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
@@ -2109,6 +2141,8 @@ void RenderPassManager::CreateSSR()
 
 	createInfo.executeCallback = [this, passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		PROFILER_SCOPE(SSR);
+
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 			std::filesystem::path("Materials") / "SSR.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(passName);
@@ -2203,6 +2237,8 @@ void RenderPassManager::CreateSSRBlur()
 
 	createInfo.executeCallback = [this, passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		PROFILER_SCOPE(SSRBlur);
+
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 			std::filesystem::path("Materials") / "SSRBlur.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(passName);
@@ -2293,6 +2329,8 @@ void RenderPassManager::CreateSSAO()
 
 	createInfo.executeCallback = [this, passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		PROFILER_SCOPE(SSAO);
+
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 			std::filesystem::path("Materials") / "SSAO.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(passName);
@@ -2407,6 +2445,8 @@ void RenderPassManager::CreateSSAOBlur()
 
 	createInfo.executeCallback = [this, passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		PROFILER_SCOPE(SSAOBlur);
+
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 			std::filesystem::path("Materials") / "SSAOBlur.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(passName);
@@ -2506,6 +2546,8 @@ void RenderPassManager::CreateUI()
 
 	createInfo.executeCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
+		PROFILER_SCOPE(UI);
+		
 		UIRenderer* uiRenderer = (UIRenderer*)renderInfo.renderView->GetCustomData("UIRenderer");
 		if (!uiRenderer)
 		{
@@ -2557,6 +2599,8 @@ void RenderPassManager::CreateUI()
 
 void RenderPassManager::FlushUniformWriters(const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	for (const auto& uniformWriter : uniformWriters)
 	{
 		uniformWriter->Flush();
@@ -2577,6 +2621,8 @@ void RenderPassManager::WriteRenderViews(
 	std::shared_ptr<Pipeline> pipeline,
 	std::shared_ptr<UniformWriter> uniformWriter)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	for (const auto& [name, textureAttachmentInfo] : pipeline->GetUniformInfo().textureAttachmentsByName)
 	{
 		if (cameraRenderView)
@@ -2630,6 +2676,8 @@ std::shared_ptr<UniformWriter> RenderPassManager::GetOrCreateUniformWriter(
 	const std::string& uniformWriterName,
 	const std::string& uniformWriterIndexByName)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	std::shared_ptr<UniformWriter> renderUniformWriter = renderView->GetUniformWriter(uniformWriterIndexByName.empty() ? uniformWriterName : uniformWriterIndexByName);
 	if (!renderUniformWriter)
 	{
@@ -2657,6 +2705,8 @@ std::shared_ptr<Buffer> RenderPassManager::GetOrCreateRenderBuffer(
 	const std::string& bufferName,
 	const std::string& setBufferName)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	std::shared_ptr<Buffer> buffer = renderView->GetBuffer(setBufferName.empty() ? bufferName : setBufferName);
 	if (buffer)
 	{
@@ -2687,6 +2737,8 @@ void RenderPassManager::UpdateSkeletalAnimator(
 	std::shared_ptr<BaseMaterial> baseMaterial,
 	std::shared_ptr<Pipeline> pipeline)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (!skeletalAnimator->GetUniformWriter())
 	{
 		const std::shared_ptr<UniformLayout> renderUniformLayout =

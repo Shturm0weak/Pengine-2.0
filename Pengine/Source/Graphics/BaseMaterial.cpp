@@ -1,6 +1,7 @@
 #include "BaseMaterial.h"
 
 #include "../Core/Logger.h"
+#include "../Core/Profiler.h"
 #include "../Core/Serializer.h"
 #include "../Core/TextureManager.h"
 #include "../EventSystem/EventSystem.h"
@@ -15,11 +16,15 @@ std::shared_ptr<BaseMaterial> BaseMaterial::Create(
 	const std::filesystem::path& filepath,
 	const CreateInfo& createInfo)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	return std::make_shared<BaseMaterial>(name, filepath, createInfo);
 }
 
 std::shared_ptr<BaseMaterial> BaseMaterial::Load(const std::filesystem::path& filepath)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	const CreateInfo createInfo = Serializer::LoadBaseMaterial(filepath);
 
 	return Create(Utils::GetFilename(filepath), filepath, createInfo);
@@ -27,6 +32,8 @@ std::shared_ptr<BaseMaterial> BaseMaterial::Load(const std::filesystem::path& fi
 
 void BaseMaterial::Reload(const std::shared_ptr<BaseMaterial>& baseMaterial)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	auto callback = [baseMaterial]()
 	{
 		baseMaterial->m_PipelinesByPass.clear();

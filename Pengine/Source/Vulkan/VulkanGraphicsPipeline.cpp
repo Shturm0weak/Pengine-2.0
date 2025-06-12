@@ -8,6 +8,7 @@
 #include "VulkanPipelineUtils.h"
 
 #include "../Core/Logger.h"
+#include "../Core/Profiler.h"
 #include "../Graphics/ShaderModuleManager.h"
 
 using namespace Pengine;
@@ -556,6 +557,7 @@ void VulkanGraphicsPipeline::CollectBindingsByDescriptorSet(
 
 void VulkanGraphicsPipeline::Bind(const VkCommandBuffer commandBuffer) const
 {
+	PROFILER_SCOPE(__FUNCTION__);
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline);
 }
 

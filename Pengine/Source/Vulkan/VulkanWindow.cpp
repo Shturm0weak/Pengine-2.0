@@ -3,6 +3,7 @@
 #include "../Core/Input.h"
 #include "../Core/Logger.h"
 #include "../Core/WindowManager.h"
+#include "../Core/Profiler.h"
 #include "../Utils/Utils.h"
 #include "../Vulkan/VulkanDevice.h"
 #include "../Vulkan/VulkanDescriptors.h"
@@ -18,6 +19,8 @@ using namespace Vk;
 VulkanWindow::VulkanWindow(const std::string& title, const std::string& name, const glm::ivec2& size)
 	: Window(title, name, size)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
@@ -118,6 +121,8 @@ VulkanWindow::VulkanWindow(const std::string& title, const std::string& name, co
 
 VulkanWindow::~VulkanWindow()
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	GetVkDevice()->WaitIdle();
 
 	Input::RemoveInstance(this);
@@ -141,6 +146,8 @@ void VulkanWindow::Update()
 
 bool VulkanWindow::Resize(const glm::ivec2& size)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (!Window::Resize(size))
 	{
 		return false;
@@ -180,6 +187,8 @@ bool VulkanWindow::Resize(const glm::ivec2& size)
 
 void VulkanWindow::NewFrame()
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	Input::GetInstance(this).ResetInput();
 
 	glfwMakeContextCurrent(m_Window);
@@ -190,6 +199,7 @@ void VulkanWindow::NewFrame()
 
 void VulkanWindow::EndFrame()
 {
+	PROFILER_SCOPE(__FUNCTION__);
 }
 
 void VulkanWindow::Clear(const glm::vec4& color)
@@ -202,6 +212,8 @@ void VulkanWindow::Present(std::shared_ptr<Texture> texture)
 
 void VulkanWindow::ImGuiBegin()
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	ImGui::SetCurrentContext(m_ImGuiContext);
 
 	ImGui_ImplVulkan_NewFrame();
@@ -258,12 +270,16 @@ void VulkanWindow::ImGuiBegin()
 
 void VulkanWindow::ImGuiEnd()
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	ImGui::PopStyleVar();
 	ImGui::End();
 }
 
 void* VulkanWindow::BeginFrame()
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	const VkSemaphore imageAcquiredSemaphore = m_VulkanWindow.FrameSemaphores[m_VulkanWindow.SemaphoreIndex].ImageAcquiredSemaphore;
 
 	const VkResult result = vkAcquireNextImageKHR(
@@ -321,6 +337,8 @@ void* VulkanWindow::BeginFrame()
 
 void VulkanWindow::EndFrame(void* frame)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 
 	const VkCommandBuffer commandBuffer = vkFrame->CommandBuffer;
@@ -373,6 +391,8 @@ void VulkanWindow::EndFrame(void* frame)
 
 void VulkanWindow::ImGuiRenderPass()
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	ImGui::SetCurrentContext(m_ImGuiContext);
 
 	const ImGui_ImplVulkanH_Frame& imGuiFrame = m_VulkanWindow.Frames[m_VulkanWindow.FrameIndex];

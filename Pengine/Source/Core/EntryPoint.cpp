@@ -15,6 +15,7 @@
 #include "Viewport.h"
 #include "WindowManager.h"
 #include "ThreadPool.h"
+#include "Profiler.h"
 
 #include "../Components/Camera.h"
 #include "../Editor/Editor.h"
@@ -175,15 +176,24 @@ void EntryPoint::Run() const
 
 	while (mainWindow->IsRunning())
 	{
+		PROFILER_SCOPE(__FUNCTION__);
+
 		Time::GetInstance().Update();
 		AsyncAssetLoader::GetInstance().Update();
 
-		eventSystem.ProcessEvents();
+		{
+			PROFILER_SCOPE("EventSystem::ProcessEvents");
+			eventSystem.ProcessEvents();
+		}
 
-		m_Application->OnUpdate();
+		{
+			PROFILER_SCOPE("Application::OnUpdate");
+			m_Application->OnUpdate();
+		}
 
 		if (const std::shared_ptr<Scene> scene = SceneManager::GetInstance().GetSceneByTag("Main"))
 		{
+			PROFILER_SCOPE("Scene::Update");
 			scene->Update(Time::GetDeltaTime());
 		}
 		

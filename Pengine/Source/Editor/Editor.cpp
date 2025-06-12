@@ -23,6 +23,7 @@
 #include "../Core/WindowManager.h"
 #include "../Core/RenderPassManager.h"
 #include "../Core/RenderPassOrder.h"
+#include "../Core/Profiler.h"
 #include "../Editor/ImGuizmo.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
@@ -52,6 +53,8 @@ Editor::Editor()
 
 void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	Input& input = Input::GetInstance(&window);
 
 	if (input.IsMouseReleased(Keycode::MOUSE_BUTTON_2))

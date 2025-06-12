@@ -5,6 +5,7 @@
 #include "../Core/RenderPassOrder.h"
 #include "../Core/Scene.h"
 #include "../Core/Serializer.h"
+#include "../Core/Profiler.h"
 #include "../Vulkan/VulkanRenderer.h"
 #include "../Vulkan/VulkanWindow.h"
 
@@ -29,6 +30,8 @@ void Renderer::Update(
 	const std::shared_ptr<Renderer>& renderer,
 	const std::map<std::shared_ptr<Scene>, std::vector<RenderViewportInfo>>& viewportsByScene)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	for (const auto& [scene, viewports] : viewportsByScene)
 	{
 		if (!scene)

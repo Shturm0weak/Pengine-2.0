@@ -51,11 +51,11 @@ Pipeline::Pipeline(Type type)
 {
 }
 
-const std::optional<uint32_t> Pipeline::GetDescriptorSetIndexByType(const DescriptorSetIndexType type, const std::string& renderPassName) const
+const std::optional<uint32_t> Pipeline::GetDescriptorSetIndexByType(const DescriptorSetIndexType type, const std::string& name) const
 {
 	std::map<std::string, uint32_t> descriptorSetsByRenderPass = GetDescriptorSetIndexByType(type);
 
-	auto foundSet = descriptorSetsByRenderPass.find(renderPassName);
+	auto foundSet = descriptorSetsByRenderPass.find(name);
 	if (foundSet != descriptorSetsByRenderPass.end())
 	{
 		return foundSet->second;

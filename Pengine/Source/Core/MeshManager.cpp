@@ -4,6 +4,7 @@
 #include "MaterialManager.h"
 #include "Logger.h"
 #include "Serializer.h"
+#include "Profiler.h"
 
 using namespace Pengine;
 
@@ -15,6 +16,8 @@ MeshManager& MeshManager::GetInstance()
 
 std::shared_ptr<Mesh> MeshManager::CreateMesh(Mesh::CreateInfo& createInfo)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (std::shared_ptr<Mesh> mesh = GetMesh(createInfo.filepath))
 	{
 		return mesh;
@@ -31,22 +34,21 @@ std::shared_ptr<Mesh> MeshManager::CreateMesh(Mesh::CreateInfo& createInfo)
 
 std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::filesystem::path& filepath)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (std::shared_ptr<Mesh> mesh = GetMesh(filepath))
 	{
 		return mesh;
 	}
 	else
 	{
-		mesh = Serializer::DeserializeMesh(filepath);
-		if (!mesh)
+		Mesh::CreateInfo createInfo(std::move(Serializer::DeserializeMesh(filepath)));
+		if (createInfo.filepath.empty())
 		{
 			FATAL_ERROR(filepath.string() + ":There is no such mesh!");
 		}
 
-		std::lock_guard<std::mutex> lock(m_MutexMesh);
-		m_MeshesByFilepath.emplace(filepath, mesh);
-
-		return mesh;
+		return CreateMesh(createInfo);
 	}
 }
 

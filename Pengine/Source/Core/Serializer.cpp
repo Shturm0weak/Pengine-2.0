@@ -12,6 +12,7 @@
 #include "ViewportManager.h"
 #include "Viewport.h"
 #include "WindowManager.h"
+#include "Profiler.h"
 
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
@@ -1035,6 +1036,8 @@ ComputePipeline::CreateComputeInfo Serializer::DeserializeComputePipeline(const 
 
 BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::path& filepath)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (!std::filesystem::exists(filepath))
 	{
 		FATAL_ERROR(filepath.string() + ":Failed to load! The file doesn't exist");
@@ -1119,6 +1122,8 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 
 Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filepath)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (!std::filesystem::exists(filepath))
 	{
 		FATAL_ERROR(filepath.string() + ":Failed to load! The file doesn't exist");
@@ -1505,18 +1510,20 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 	Logger::Log("Mesh:" + outMeshFilepath.string() + " has been saved!", BOLDGREEN);
 }
 
-std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& filepath)
+Mesh::CreateInfo Serializer::DeserializeMesh(const std::filesystem::path& filepath)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (!std::filesystem::exists(filepath))
 	{
 		Logger::Error(filepath.string() + ":Doesn't exist!");
-		return nullptr;
+		return {};
 	}
 
 	if (FileFormats::Mesh() != Utils::GetFileFormat(filepath))
 	{
 		Logger::Error(filepath.string() + ":Is not mesh asset!");
-		return nullptr;
+		return {};
 	}
 
 	std::ifstream in(filepath, std::ifstream::binary);
@@ -1617,7 +1624,7 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 	createInfo.vertexSize = vertexSize;
 	createInfo.vertexLayouts = vertexLayouts;
 
-	return std::make_shared<Mesh>(createInfo);
+	return std::move(createInfo);
 }
 
 void Serializer::SerializeSkeleton(const std::shared_ptr<Skeleton>& skeleton)
