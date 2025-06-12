@@ -66,6 +66,16 @@ namespace Pengine
 		void SetRenderView(std::shared_ptr<RenderView> renderView) { m_RenderView = renderView; }
 
 		void SetComponentSystem(const std::string& name, std::shared_ptr<ComponentSystem> componentSystem) { m_ComponentSystemsByName[name] = componentSystem; }
+
+		std::shared_ptr<Entity> CreateCamera();
+
+		std::shared_ptr<Entity> CreateDirectionalLight();
+
+		std::shared_ptr<Entity> CreatePointLight();
+
+		std::shared_ptr<Entity> CreateCube();
+
+		std::shared_ptr<Entity> CreateCanvas();
 	private:
 		struct Resources
 		{

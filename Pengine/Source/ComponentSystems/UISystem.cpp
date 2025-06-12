@@ -3,7 +3,7 @@
 #include "../Core/Scene.h"
 #include "../Core/Logger.h"
 #include "../Core/FontManager.h"
-#include "../Core/ViewportManager.h"
+#include "../Core/WindowManager.h"
 #include "../Core/Viewport.h"
 
 #include "../Components/Transform.h"
@@ -44,11 +44,11 @@ void UISystem::OnUpdate(const float deltaTime, std::shared_ptr<Scene> scene)
 		if (canvas.drawInMainViewport)
 		{
 			// TODO: Maybe make a variable with a viewport name.
-			/*const std::shared_ptr<Viewport> viewport = ViewportManager::GetInstance().GetViewport("Main");
+			const std::shared_ptr<Viewport> viewport = WindowManager::GetInstance().GetWindowByName("Main")->GetViewportManager().GetViewport("Main");
 			const glm::ivec2 viewportSize = viewport->GetSize();
-			if (viewportSize.x != canvas.size.x || viewportSize.y != canvas.size.y)*/
+			if (viewportSize.x != canvas.size.x || viewportSize.y != canvas.size.y)
 			{
-				canvas.size = { 1024, 1024 };
+				canvas.size = viewportSize;
 			}
 		}
 
@@ -59,9 +59,9 @@ void UISystem::OnUpdate(const float deltaTime, std::shared_ptr<Scene> scene)
 
 		if (canvas.script)
 		{
-			canvas.script(canvas, transform.GetEntity());
-		}
+			canvas.script(&canvas, transform.GetEntity());
 
-		canvas.commands = Clay_EndLayout();
+			canvas.commands = Clay_EndLayout();
+		}
 	}
 }

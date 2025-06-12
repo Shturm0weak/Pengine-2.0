@@ -2,10 +2,14 @@
 
 #include "Logger.h"
 #include "Viewport.h"
+#include "FileFormatNames.h"
 
 #include "../Components/Transform.h"
 #include "../Components/Renderer3D.h"
 #include "../Components/Camera.h"
+#include "../Components/DirectionalLight.h"
+#include "../Components/PointLight.h"
+#include "../Components/Canvas.h"
 
 #include "../Core/MaterialManager.h"
 #include "../Core/MeshManager.h"
@@ -28,7 +32,7 @@ void Scene::Copy(const Scene& scene)
 	//}
 }
 
-std::shared_ptr<Scene> Pengine::Scene::Create(const std::string& name, const std::string& tag)
+std::shared_ptr<Scene> Scene::Create(const std::string& name, const std::string& tag)
 {
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>(name, none);
 	scene->SetTag(tag);
@@ -66,6 +70,57 @@ void Scene::Clear()
 	m_SelectedEntities.clear();
 
 	m_RenderView = nullptr;
+}
+
+std::shared_ptr<Entity> Scene::CreateCamera()
+{
+	const auto entity = CreateEntity("Camera");
+	entity->AddComponent<Transform>(entity);
+	entity->AddComponent<Camera>(entity);
+	return entity;
+}
+
+std::shared_ptr<Entity> Scene::CreateDirectionalLight()
+{
+	const auto entity = CreateEntity("DirectionalLight");
+	entity->AddComponent<Transform>(entity);
+	entity->AddComponent<DirectionalLight>();
+	return entity;
+}
+
+std::shared_ptr<Entity> Scene::CreatePointLight()
+{
+	const auto entity = CreateEntity("PointLight");
+	entity->AddComponent<Transform>(entity);
+	entity->AddComponent<PointLight>();
+	return entity;
+}
+
+std::shared_ptr<Entity> Scene::CreateCube()
+{
+	const auto entity = CreateEntity("Cube");
+	entity->AddComponent<Transform>(entity);
+	auto& r3d = entity->AddComponent<Renderer3D>();
+	r3d.mesh = MeshManager::GetInstance().LoadMesh(std::filesystem::path("Meshes") / "Cube.mesh");
+	r3d.material = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "MeshBase.mat");
+	return entity;
+}
+
+std::shared_ptr<Entity> Scene::CreateCanvas()
+{
+	const auto entity = CreateEntity("Canvas");
+	entity->AddComponent<Transform>(entity);
+	entity->AddComponent<Canvas>();
+	auto& r3d = entity->AddComponent<Renderer3D>();
+	r3d.mesh = MeshManager::GetInstance().LoadMesh(std::filesystem::path("Meshes") / "Plane.mesh");
+
+	const std::shared_ptr<Material> defaultMaterial = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "UIBase.mat");
+	const std::string name = std::to_string(UUID::Generate());
+	std::filesystem::path filepath = defaultMaterial->GetFilepath().parent_path() / name;
+	filepath.replace_extension(FileFormats::Mat());
+
+	r3d.material = Material::Clone(name, filepath, defaultMaterial);
+	return entity;
 }
 
 Scene& Scene::operator=(const Scene& scene)

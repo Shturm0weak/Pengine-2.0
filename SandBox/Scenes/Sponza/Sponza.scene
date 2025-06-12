@@ -20,8 +20,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [-11.7602558, 1.46617925, 0.0747564286]
-      Rotation: [-0.103288665, 4.93963957, 0]
+      Position: [-13.7430372, 3.35896373, 0.023072822]
+      Rotation: [-0.0168935172, 1.31866252, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -41,3 +41,39 @@ Scene:
       Rotation: [0, -0, 0]
       Scale: [0.00999999978, 0.00999999978, 0.00999999978]
       FollowOwner: true
+  - UUID: 0x8b4d4f7e75d0783c4400c48d32a530dd
+    Name: Canvas Test UI
+    IsEnabled: true
+    Transform:
+      Position: [0, 1.20000005, 0]
+      Rotation: [0.802851439, 3.14159274, 3.14159274]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0x42bba5034e7a0a481a8bcef805ab0924
+      RenderingOrder: 5
+      IsEnabled: true
+    Canvas:
+      DrawInMainViewport: false
+      Size: [1024, 1024]
+      ScriptName: Test UI
+    Childs:
+      []
+  - UUID: 0x59ba383a8dc67c6236fbb54a0c1b0725
+    Name: Canvas FPS
+    IsEnabled: true
+    Transform:
+      Position: [-14.2299995, 3.42998052, -0.400000006]
+      Rotation: [-1.57079637, 1.57079637, 0]
+      Scale: [0.999920011, 0.99999553, 0.999919772]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0x42bba5034e7a0a481a8bcef805ab0924
+      RenderingOrder: 5
+      IsEnabled: true
+    Canvas:
+      DrawInMainViewport: false
+      Size: [1024, 1024]
+      ScriptName: FPS
+    Childs:
+      []

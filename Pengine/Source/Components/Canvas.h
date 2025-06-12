@@ -15,7 +15,8 @@ namespace Pengine
 		 * A function that contains clay functions for ui.
 		 * CANVAS_BEGIN macro has to be called firstly inside of this function.
 		 */
-		std::function<void(Canvas& canvas, std::shared_ptr<class Entity>)> script;
+		std::function<void(Canvas* canvas, std::shared_ptr<class Entity>)> script;
+		std::string scriptName;
 
 		Clay_Context* context{};
 		Clay_RenderCommandArray commands{};
@@ -29,9 +30,9 @@ namespace Pengine
 		std::shared_ptr<class FrameBuffer> frameBuffer;
 	};
 
-#define CANVAS_BEGIN                                         \
-	Clay_SetCurrentContext(canvas.context);                  \
-	Clay_SetMeasureTextFunction(canvas.measureText, nullptr);\
-	Clay_BeginLayout();                                      \
+#define CANVAS_BEGIN(canvas)                                          \
+	Clay_SetCurrentContext(canvas->context);                  \
+	Clay_SetMeasureTextFunction(canvas->measureText, nullptr);\
+	Clay_BeginLayout();                                       \
 
 }

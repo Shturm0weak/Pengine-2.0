@@ -12,6 +12,8 @@
 #include "ViewportManager.h"
 #include "Viewport.h"
 #include "WindowManager.h"
+#include "Profiler.h"
+#include "ClayScriptManager.h"
 
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
@@ -22,6 +24,7 @@
 #include "../Components/Renderer3D.h"
 #include "../Components/SkeletalAnimator.h"
 #include "../Components/Transform.h"
+#include "../Components/Canvas.h"
 
 #include "../Utils/Utils.h"
 
@@ -1035,6 +1038,8 @@ ComputePipeline::CreateComputeInfo Serializer::DeserializeComputePipeline(const 
 
 BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::path& filepath)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (!std::filesystem::exists(filepath))
 	{
 		FATAL_ERROR(filepath.string() + ":Failed to load! The file doesn't exist");
@@ -1119,6 +1124,8 @@ BaseMaterial::CreateInfo Serializer::LoadBaseMaterial(const std::filesystem::pat
 
 Material::CreateInfo Serializer::LoadMaterial(const std::filesystem::path& filepath)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (!std::filesystem::exists(filepath))
 	{
 		FATAL_ERROR(filepath.string() + ":Failed to load! The file doesn't exist");
@@ -1505,18 +1512,20 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 	Logger::Log("Mesh:" + outMeshFilepath.string() + " has been saved!", BOLDGREEN);
 }
 
-std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& filepath)
+Mesh::CreateInfo Serializer::DeserializeMesh(const std::filesystem::path& filepath)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (!std::filesystem::exists(filepath))
 	{
 		Logger::Error(filepath.string() + ":Doesn't exist!");
-		return nullptr;
+		return {};
 	}
 
 	if (FileFormats::Mesh() != Utils::GetFileFormat(filepath))
 	{
 		Logger::Error(filepath.string() + ":Is not mesh asset!");
-		return nullptr;
+		return {};
 	}
 
 	std::ifstream in(filepath, std::ifstream::binary);
@@ -1617,7 +1626,7 @@ std::shared_ptr<Mesh> Serializer::DeserializeMesh(const std::filesystem::path& f
 	createInfo.vertexSize = vertexSize;
 	createInfo.vertexLayouts = vertexLayouts;
 
-	return std::make_shared<Mesh>(createInfo);
+	return std::move(createInfo);
 }
 
 void Serializer::SerializeSkeleton(const std::shared_ptr<Skeleton>& skeleton)
@@ -3192,6 +3201,7 @@ void Serializer::SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entit
 	SerializePointLight(out, entity);
 	SerializeDirectionalLight(out, entity);
 	SerializeSkeletalAnimator(out, entity);
+	SerializeCanvas(out, entity);
 
 	// Childs.
 	out << YAML::Key << "Childs";
@@ -3261,6 +3271,7 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 	DeserializePointLight(in, entity);
 	DeserializeDirectionalLight(in, entity);
 	DeserializeSkeletalAnimator(in, entity);
+	DeserializeCanvas(in, entity);
 
 	for (const auto& childData : in["Childs"])
 	{
@@ -3400,15 +3411,24 @@ void Serializer::SerializeRenderer3D(YAML::Emitter& out, const std::shared_ptr<E
 
 	if (r3d.mesh)
 	{
-		out << YAML::Key << "Mesh" << YAML::Value << Utils::FindUuid(r3d.mesh->GetFilepath());
+		UUID uuid = Utils::FindUuid(r3d.mesh->GetFilepath());
+		if (uuid.IsValid())
+		{
+			out << YAML::Key << "Mesh" << YAML::Value << Utils::FindUuid(r3d.mesh->GetFilepath());
+		}
 	}
 
 	if (r3d.material)
 	{
-		out << YAML::Key << "Material" << YAML::Value << Utils::FindUuid(r3d.material->GetFilepath());
+		UUID uuid = Utils::FindUuid(r3d.material->GetFilepath());
+		if (uuid.IsValid())
+		{
+			out << YAML::Key << "Material" << YAML::Value << uuid;
+		}
 	}
 
 	out << YAML::Key << "RenderingOrder" << YAML::Value << r3d.renderingOrder;
+	out << YAML::Key << "IsEnabled" << YAML::Value << r3d.isEnabled;
 
 	out << YAML::EndMap;
 }
@@ -3427,6 +3447,11 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 		if (const auto& renderingOrderData = renderer3DData["RenderingOrder"])
 		{
 			r3d.renderingOrder = glm::clamp(renderingOrderData.as<int>(), 0, 10);
+		}
+
+		if (const auto& isEnabledData = renderer3DData["IsEnabled"])
+		{
+			r3d.isEnabled = isEnabledData.as<bool>();
 		}
 
 		if (const auto& meshData = renderer3DData["Mesh"])
@@ -3752,6 +3777,72 @@ void Serializer::DeserializeCamera(const YAML::Node& in, const std::shared_ptr<E
 					viewport->SetCamera(entity);
 					break;
 				}
+			}
+		}
+	}
+}
+
+void Serializer::SerializeCanvas(YAML::Emitter& out, const std::shared_ptr<Entity>& entity)
+{
+	if (!entity->HasComponent<Canvas>())
+	{
+		return;
+	}
+
+	const Canvas& canvas = entity->GetComponent<Canvas>();
+
+	out << YAML::Key << "Canvas";
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "DrawInMainViewport" << YAML::Value << canvas.drawInMainViewport;
+	out << YAML::Key << "Size" << YAML::Value << canvas.size;
+	out << YAML::Key << "ScriptName" << YAML::Value << canvas.scriptName;
+
+	out << YAML::EndMap;
+}
+
+void Serializer::DeserializeCanvas(const YAML::Node& in, const std::shared_ptr<Entity>& entity)
+{
+	if (const auto& canvasData = in["Canvas"])
+	{
+		if (!entity->HasComponent<Canvas>())
+		{
+			entity->AddComponent<Canvas>();
+		}
+
+		if (!entity->HasComponent<Renderer3D>())
+		{
+			entity->AddComponent<Renderer3D>();
+		}
+
+		auto& r3d = entity->GetComponent<Renderer3D>();
+		const std::shared_ptr<Material> defaultMaterial = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "UIBase.mat");
+		const std::string name = std::to_string(UUID::Generate());
+		std::filesystem::path filepath = defaultMaterial->GetFilepath().parent_path() / name;
+		filepath.replace_extension(FileFormats::Mat());
+
+		r3d.material = Material::Clone(name, filepath, defaultMaterial);
+
+		Canvas& canvas = entity->GetComponent<Canvas>();
+
+		if (const auto& drawInMainViewportData = canvasData["DrawInMainViewport"])
+		{
+			canvas.drawInMainViewport = drawInMainViewportData.as<bool>();
+		}
+
+		if (const auto& sizeData = canvasData["Size"])
+		{
+			canvas.size = sizeData.as<glm::ivec2>();
+		}
+
+		if (const auto& scriptNameData = canvasData["ScriptName"])
+		{
+			const std::string scriptName = scriptNameData.as<std::string>();
+			if (ClayScriptManager::GetInstance().scriptsByName.contains(scriptName))
+			{
+				canvas.scriptName = scriptName;
+				canvas.script = ClayScriptManager::GetInstance().scriptsByName.at(scriptName);
 			}
 		}
 	}

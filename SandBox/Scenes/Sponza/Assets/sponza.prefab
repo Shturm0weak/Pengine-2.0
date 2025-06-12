@@ -17,6 +17,7 @@ Childs:
       Mesh: 0x4decf45c79378007503887a01c355248
       Material: 0xc54e75aa14432fce4d22d39d9eb42837
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_378_sponza_378_Material__298
@@ -30,6 +31,7 @@ Childs:
       Mesh: 0xf6ed7114481fa52030cba98c59d04b69
       Material: 0x285800a82995b1e5ce17446c2d780116
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_257_sponza_257_Material__47
@@ -43,6 +45,7 @@ Childs:
       Mesh: 0x4fc49d95e4301c976f615138832f30cf
       Material: 0xf76b66b59ed5fc330037901e9dd28262
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_369_sponza_369_Material__57
@@ -56,6 +59,7 @@ Childs:
       Mesh: 0xc8620bf0b8e9fbe9e237136dd58441d7
       Material: 0xe1116796c1f8953952e68fdd139d1d69
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_39_sponza_39_arch
@@ -69,6 +73,7 @@ Childs:
       Mesh: 0x0d7e57c0afd062860061639e0213bb2a
       Material: 0x779783d978c0df0c77ff6c5149e523b7
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_382_sponza_382_bricks
@@ -82,6 +87,7 @@ Childs:
       Mesh: 0x00569216fa01133cba72b1344140c456
       Material: 0xf67c0a1f376c8b2b20cc3e427f3ccc64
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_38_sponza_38_ceiling
@@ -95,6 +101,7 @@ Childs:
       Mesh: 0x4ca7013d3933b6cf114503a129b4f8e7
       Material: 0x885a465e7efc40f5f80ad4ed653d9398
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_339_sponza_339_chain
@@ -108,6 +115,7 @@ Childs:
       Mesh: 0xa3eb6921654c9be0cbacea25079295be
       Material: 0xf06fb8473e58d5ee317991d526b9b90e
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_10_sponza_10_column_a
@@ -121,6 +129,7 @@ Childs:
       Mesh: 0x292bb9c998b81714be8520e51d9a7093
       Material: 0x8390ff17e3dde3067acd10151a991a65
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_141_sponza_141_column_b
@@ -134,6 +143,7 @@ Childs:
       Mesh: 0x6e5086f67e3aa3f795fac10cbfbf17c8
       Material: 0xaa6a739f9465013108a10a7afa1adbbb
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_83_sponza_83_column_c
@@ -147,6 +157,7 @@ Childs:
       Mesh: 0xa0f5626b87218713d101d447e415152a
       Material: 0x8835b03aaa870b3f420ad3368e073496
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_72_sponza_72_details
@@ -160,6 +171,7 @@ Childs:
       Mesh: 0x27a30b07be6923e02b020a68eacc220f
       Material: 0xf3d6ae5241bfcbca9b59d17c20074286
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_288_sponza_288_fabric_a
@@ -173,6 +185,7 @@ Childs:
       Mesh: 0x179f986cf874f22577a70fd9792b2438
       Material: 0xb560467f1e5a72f83b3d7d11877d5c48
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_325_sponza_325_fabric_c
@@ -186,6 +199,7 @@ Childs:
       Mesh: 0xe9e6d67630b229dd47571205931a1a92
       Material: 0x180b04f177670db2bb8dbe41fde153cb
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_289_sponza_289_fabric_d
@@ -199,6 +213,7 @@ Childs:
       Mesh: 0x12040e3e0f726ce96ebd1cf79f789db2
       Material: 0xc161c4d078053e971fcb159778ac4bfd
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_285_sponza_285_fabric_e
@@ -212,6 +227,7 @@ Childs:
       Mesh: 0x4d948ac4f357a2e13fef47e6ffa7b9f3
       Material: 0x162fff811cf2fed9839976cc720dd3b5
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_327_sponza_327_fabric_f
@@ -225,6 +241,7 @@ Childs:
       Mesh: 0xe458452dcf32845363dea82c859eecae
       Material: 0x98007972c08e95ceb152c495356804cf
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_326_sponza_326_fabric_g
@@ -238,6 +255,7 @@ Childs:
       Mesh: 0x562d805ce450defb669ceea97a2e16bd
       Material: 0xdc4f39277559b6e5f8fccd41d99cdd55
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_271_sponza_271_flagpole
@@ -251,6 +269,7 @@ Childs:
       Mesh: 0x6979eea9036e32a9305f9419b3dcecb1
       Material: 0x828c839d40e929b53fae5cf9a0279a4f
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_18_sponza_18_floor
@@ -264,6 +283,7 @@ Childs:
       Mesh: 0xe74e11b7ef140f6a4f007229ac4b7599
       Material: 0x89eb5e9ac9b34993ccdac26fc03f3e36
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_275_sponza_275_leaf
@@ -277,6 +297,7 @@ Childs:
       Mesh: 0xa51c9a3a0437ce24f7de63230f8f8a73
       Material: 0x248ed7f8a91b88d5c896ad411e686aa4
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_381_sponza_381_roof
@@ -290,6 +311,7 @@ Childs:
       Mesh: 0xa6ac8070a7bf155c10e795283fe35d67
       Material: 0x9420959789afd5beb94c045344505b1e
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_373_sponza_373_vase
@@ -303,6 +325,7 @@ Childs:
       Mesh: 0x2d2274745be3f040a2b8e8c032eec28e
       Material: 0x279ac73a029e4aa132f7c69d2b7a4b4d
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_344_sponza_344_vase_hanging
@@ -316,6 +339,7 @@ Childs:
       Mesh: 0x7742f31bff6a60c5d70bd0ddb86f3d88
       Material: 0x18b33fc4204384811e9bc865952b0494
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []
   - Name: sponza_369_sponza_369_vase_round
@@ -329,5 +353,6 @@ Childs:
       Mesh: 0xd09caa4e8aadb7756f892644812c3c5a
       Material: 0x73637fc5d0fdb5b2537b3ef131de5ef6
       RenderingOrder: 5
+      IsEnabled: true
     Childs:
       []

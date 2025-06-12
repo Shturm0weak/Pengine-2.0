@@ -2,6 +2,7 @@
 
 #include "FileFormatNames.h"
 #include "Serializer.h"
+#include "Profiler.h"
 
 #include "../Utils/Utils.h"
 
@@ -17,6 +18,8 @@ TextureManager& TextureManager::GetInstance()
 
 std::shared_ptr<Texture> TextureManager::Create(const Texture::CreateInfo& createInfo)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	std::shared_ptr<Texture> texture = Texture::Create(createInfo);
 
 	std::lock_guard<std::mutex> lock(m_MutexTexture);
@@ -27,6 +30,8 @@ std::shared_ptr<Texture> TextureManager::Create(const Texture::CreateInfo& creat
 
 std::shared_ptr<Texture> TextureManager::Load(const std::filesystem::path& filepath, bool flip)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (std::shared_ptr<Texture> texture = GetTexture(filepath))
 	{
 		return texture;
@@ -49,6 +54,8 @@ std::shared_ptr<Texture> TextureManager::Load(const std::filesystem::path& filep
 
 std::vector<std::shared_ptr<Texture>> TextureManager::LoadFromFolder(const std::filesystem::path& directory, bool flip)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	std::vector<std::shared_ptr<Texture>> textures;
 
 	for (const auto& entry : std::filesystem::recursive_directory_iterator(directory))
@@ -99,6 +106,8 @@ std::shared_ptr<Texture> TextureManager::GetPink() const
 
 void TextureManager::CreateDefaultResources()
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	Texture::CreateInfo whiteTextureCreateInfo{};
 	whiteTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
 	whiteTextureCreateInfo.channels = 4;

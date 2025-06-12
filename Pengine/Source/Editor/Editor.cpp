@@ -23,6 +23,8 @@
 #include "../Core/WindowManager.h"
 #include "../Core/RenderPassManager.h"
 #include "../Core/RenderPassOrder.h"
+#include "../Core/ClayScriptManager.h"
+#include "../Core/Profiler.h"
 #include "../Editor/ImGuizmo.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
@@ -52,6 +54,8 @@ Editor::Editor()
 
 void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	Input& input = Input::GetInstance(&window);
 
 	if (input.IsMouseReleased(Keycode::MOUSE_BUTTON_2))
@@ -90,7 +94,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
 
 	Manipulate(scene, window);
 
-	MainMenuBar();
+	MainMenuBar(scene);
 	Hierarchy(scene, window);
 	SceneInfo(scene);
 	Properties(scene, window);
@@ -2026,7 +2030,7 @@ void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
 	}
 }
 
-void Editor::MainMenuBar()
+void Editor::MainMenuBar(const std::shared_ptr<Scene>& scene)
 {
 	ImGuiWindowClass windowClass;
 	windowClass.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
@@ -2062,6 +2066,35 @@ void Editor::MainMenuBar()
 			filepathByUuid.clear();
 			uuidByFilepath.clear();
 			Serializer::GenerateFilesUUID(std::filesystem::current_path());
+		}
+		ImGui::EndMenu();
+	}
+	if (ImGui::BeginMenu("Create"))
+	{
+		if (ImGui::MenuItem("Create Gameobject"))
+		{
+			const std::shared_ptr<Entity> entity = scene->CreateEntity();
+			entity->AddComponent<Transform>(entity);
+		}
+		if (ImGui::MenuItem("Cube"))
+		{
+			scene->CreateCube();
+		}
+		if (ImGui::MenuItem("Camera"))
+		{
+			scene->CreateCamera();
+		}
+		if (ImGui::MenuItem("Directional Light"))
+		{
+			scene->CreateDirectionalLight();
+		}
+		if (ImGui::MenuItem("Point Light"))
+		{
+			scene->CreatePointLight();
+		}
+		if (ImGui::MenuItem("Canvas"))
+		{
+			scene->CreateCanvas();
 		}
 		ImGui::EndMenu();
 	}
@@ -2147,6 +2180,10 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 
 			ImGui::EndDragDropTarget();
 		}
+
+		ImGui::PushID("R3D Is Enabled");
+		ImGui::Checkbox("Is Enabled", &r3d.isEnabled);
+		ImGui::PopID();
 
 		const char* const renderingOrder[] = { "-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3", "4", "5", };
 		ImGui::PushID("R3D Rendering Order");
@@ -2324,6 +2361,23 @@ void Editor::CanvasComponent(const std::shared_ptr<Entity>& entity)
 	if (ImGui::CollapsingHeader("Canvas"))
 	{
 		Indent indent;
+
+		ImGui::Checkbox("Draw In Main Viewport", &canvas.drawInMainViewport);
+		DrawIVec2Control("Size", canvas.size, 0.0f, { 0, 1024 });
+
+		if (ImGui::BeginMenu("Scripts"))
+		{
+			for (const auto& [name, script] : ClayScriptManager::GetInstance().scriptsByName)
+			{
+				if (ImGui::MenuItem(name.c_str()))
+				{
+					canvas.script = script;
+					canvas.scriptName = name;
+				}
+			}
+
+			ImGui::EndMenu();
+		}
 	}
 }
 

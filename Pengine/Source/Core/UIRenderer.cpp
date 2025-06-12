@@ -119,25 +119,13 @@ void UIRenderer::Render(
 		return;
 	}
 
-	// TODO: Rework, for now just because we need to clear the ui framebuffer which will be passed to final render pass to compose.
-	if (entities.empty())
-	{
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(UI);
-
-		RenderPass::SubmitInfo submitInfo{};
-		submitInfo.frame = renderInfo.frame;
-		submitInfo.renderPass = renderInfo.renderPass;
-		submitInfo.frameBuffer = frameBuffer;
-		renderInfo.renderer->BeginRenderPass(submitInfo);
-		renderInfo.renderer->EndRenderPass(submitInfo);
-	}
-
+	uint64_t drawInMainViewportCount = 0;
 	uint32_t batchIndex = 0;
 	for (const entt::entity entity : entities)
 	{
 		Canvas& canvas = renderInfo.scene->GetRegistry().get<Canvas>(entity);
-
-		glm::mat4 projectionMat4 = glm::ortho(0.0f, (float)canvas.size.x, (float)canvas.size.y, 0.0f);
+		
+		drawInMainViewportCount += canvas.drawInMainViewport;
 
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
@@ -152,10 +140,17 @@ void UIRenderer::Render(
 			submitInfo.frameBuffer = canvas.frameBuffer;
 		}
 
+		if (!submitInfo.frameBuffer)
+		{
+			continue;
+		}
+
 		if (canvas.commands.length > 0)
 		{
 			renderInfo.renderer->BeginRenderPass(submitInfo);
 		}
+
+		glm::mat4 projectionMat4 = glm::ortho(0.0f, (float)canvas.size.x, (float)canvas.size.y, 0.0f);
 
 		for (int i = 0; i < canvas.commands.length; i++)
 		{
@@ -306,6 +301,18 @@ void UIRenderer::Render(
 		{
 			renderInfo.renderer->EndRenderPass(submitInfo);
 		}
+	}
+
+	if (drawInMainViewportCount == 0)
+	{
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(UI);
+
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
+		renderInfo.renderer->EndRenderPass(submitInfo);
 	}
 }
 

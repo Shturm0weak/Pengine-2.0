@@ -31,6 +31,7 @@ set(CORE_SOURCES
 	Core/Asset.h
 	Core/AsyncAssetLoader.cpp Core/AsyncAssetLoader.h
 	Core/BoundingBox.h
+	Core/ClayScriptManager.cpp Core/ClayScriptManager.h
 	Core/ColoredOutput.h
 	Core/Core.h
 	Core/CustomData.h
@@ -47,6 +48,7 @@ set(CORE_SOURCES
 	Core/Logger.cpp Core/Logger.h
 	Core/MaterialManager.cpp Core/MaterialManager.h
 	Core/MeshManager.cpp Core/MeshManager.h
+	Core/Profiler.h
 	Core/RandomGenerator.h
 	Core/Raycast.cpp Core/Raycast.h
 	Core/ReflectionSystem.h

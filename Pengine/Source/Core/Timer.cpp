@@ -6,9 +6,10 @@
 
 using namespace Pengine;
 
-Timer::Timer(const bool showTime, double* outTime)
+Timer::Timer(const std::string& name, const bool showTime, double* outTime)
 	: m_OutTime(outTime)
 	, m_ShowTime(showTime)
+	, m_Name(name)
 {
 	m_StartTimePoint = std::chrono::high_resolution_clock::now();
 }
@@ -30,7 +31,7 @@ void Timer::Stop() const
 	{
 		const auto defaultPrecision = std::cout.precision();
 		std::setprecision(6);
-		Logger::Log(std::format("{} us ( {} ms)", duration, ms));
+		Logger::Log(std::format("{}: {} us ( {} ms)", m_Name, duration, ms));
 		std::setprecision(defaultPrecision);
 	}
 

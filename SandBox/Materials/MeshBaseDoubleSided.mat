@@ -10,24 +10,10 @@ Mat:
   Pipelines:
     - RenderPass: GBuffer
       Uniforms:
-        - Name: albedoTexture
-          Value: White
-        - Name: normalTexture
-          Value: Black
-        - Name: metalnessTexture
-          Value: Black
-        - Name: roughnessTexture
-          Value: White
-        - Name: aoTexture
-          Value: White
-        - Name: emissiveTexture
-          Value: White
-        - Name: shadingTexture
-          Value: White
         - Name: GBufferMaterial
           Values:
             - Name: material.albedoColor
-              Value: [0.337254912, 0.337254912, 0.337254912, 0.337254912]
+              Value: [0.337254912, 0.337254912, 0.337254912, 1]
               Type: vec4
             - Name: material.emissiveColor
               Value: [1, 1, 1, 1]
@@ -53,6 +39,20 @@ Mat:
             - Name: material.useSingleShadingMap
               Value: 0
               Type: int
+        - Name: albedoTexture
+          Value: White
+        - Name: normalTexture
+          Value: Black
+        - Name: metalnessTexture
+          Value: Black
+        - Name: roughnessTexture
+          Value: White
+        - Name: aoTexture
+          Value: White
+        - Name: emissiveTexture
+          Value: White
+        - Name: shadingTexture
+          Value: White
     - RenderPass: Transparent
       Uniforms:
         []

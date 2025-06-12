@@ -83,7 +83,7 @@ namespace Pengine
 
 		void ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity);
 
-		void MainMenuBar();
+		void MainMenuBar(const std::shared_ptr<Scene>& scene);
 
 		void AssetBrowser(const std::shared_ptr<Scene>& scene);
 

@@ -5,6 +5,7 @@ Build/
 SandBox/Scenes/Examples
 SandBox/Thumbnails
 SandBox/Log.txt
+SandBox/Trace.json
 
 # Shader Cache
 *.spv

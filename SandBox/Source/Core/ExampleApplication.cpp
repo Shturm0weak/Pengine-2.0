@@ -16,6 +16,7 @@
 #include "Components/Canvas.h"
 
 #include "Core/FontManager.h"
+#include "Core/ClayScriptManager.h"
 
 using namespace Pengine;
 
@@ -25,19 +26,74 @@ void ExampleApplication::OnPreStart()
 
 void ExampleApplication::OnStart()
 {
-	return;
-
-	//ViewportManager::GetInstance().Create("Main", { 800, 600 });
-	const auto scene = Serializer::DeserializeScene("Scenes/Sponza/Sponza.scene");
-
-	auto entity = scene->CreateEntity("Canvas");
-	entity->AddComponent<Transform>(entity);
-	auto& canvas = entity->AddComponent<Canvas>();
-	canvas.size = { 1024, 1024 };
-	canvas.drawInMainViewport = false;
-	canvas.script = [this](Canvas& canvas, std::shared_ptr<Entity> entity)
+	ClayScriptManager::GetInstance().scriptsByName["FPS"] = [this](Canvas* canvas, std::shared_ptr<Entity> entity)
 	{
-		CANVAS_BEGIN
+		CANVAS_BEGIN(canvas)
+
+		auto font = FontManager::GetInstance().GetFont("Calibri", 72);
+
+		const int scale = 2;
+
+		fps = "FPS: " + std::to_string(1.0f / Time::GetDeltaTime());
+
+		CLAY(
+			{
+				.layout =
+					{
+						.sizing = {.width = CLAY_SIZING_FIXED(1024), .height = CLAY_SIZING_FIXED(1024) },
+						.childAlignment =
+							{
+								.x = Clay_LayoutAlignmentX::CLAY_ALIGN_X_CENTER,
+								.y = Clay_LayoutAlignmentY::CLAY_ALIGN_Y_CENTER,
+							},
+					}
+			}
+		)
+		{
+			CLAY(
+				{
+					.id = CLAY_ID("OuterContainer"),
+					.layout =
+						{
+							.sizing = {.width = CLAY_SIZING_FIXED(1024), .height = CLAY_SIZING_FIXED(150) },
+							.padding = { 8 * scale, 8 * scale, 8 * scale, 8 * scale },
+							.childGap = 8 * scale,
+							.childAlignment =
+							{
+								.x = Clay_LayoutAlignmentX::CLAY_ALIGN_X_CENTER,
+								.y = Clay_LayoutAlignmentY::CLAY_ALIGN_Y_CENTER,
+							},
+							.layoutDirection = Clay_LayoutDirection::CLAY_TOP_TO_BOTTOM,
+						},
+					.backgroundColor = { 0.9f, 0.695f, 0.726f, 1.0f },
+					.cornerRadius = { 8 * scale, 8 * scale, 8 * scale, 8 * scale },
+				}
+				)
+				{
+					Clay_String fpsClayString{};
+					fpsClayString.length = fps.size();
+					fpsClayString.chars = fps.c_str();
+
+					CLAY_TEXT(
+						fpsClayString,
+						CLAY_TEXT_CONFIG(
+							{
+								.textColor = { 1.0f, 0.965f, 1.0f, 0.953f },
+								.fontId = font->id,
+								.fontSize = font->size,
+								.textAlignment = Clay_TextAlignment::CLAY_TEXT_ALIGN_CENTER,
+								//.letterSpacing = 12,
+								//.lineHeight = 12 * scale,
+							}
+						)
+					);
+				}
+		}
+	};
+
+	ClayScriptManager::GetInstance().scriptsByName["Test UI"] = [this](Canvas* canvas, std::shared_ptr<Entity> entity)
+	{
+		CANVAS_BEGIN(canvas)
 
 		auto font = FontManager::GetInstance().GetFont("Calibri", 72);
 
@@ -85,23 +141,6 @@ void ExampleApplication::OnStart()
 			}
 		)
 		{
-			Clay_String fpsClayString{};
-			fpsClayString.length = fps.size();
-			fpsClayString.chars = fps.c_str();
-
-			CLAY_TEXT(
-				fpsClayString,
-				CLAY_TEXT_CONFIG(
-					{
-						.textColor = { 1.0f, 0.965f, 1.0f, 0.953f },
-						.fontId = font->id,
-						.fontSize = font->size,
-						//.letterSpacing = 12,
-						//.lineHeight = 12 * scale,
-					}
-				)
-			);
-
 			for (const auto& item : items)
 			{
 				CLAY(

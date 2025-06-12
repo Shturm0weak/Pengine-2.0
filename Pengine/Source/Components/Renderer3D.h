@@ -19,6 +19,8 @@ namespace Pengine
 		 */
 		int renderingOrder = 5;
 
+		bool isEnabled = true;
+
 		~Renderer3D();
 	};
 

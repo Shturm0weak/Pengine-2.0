@@ -1,6 +1,7 @@
 #include "Texture.h"
 
 #include "../Core/Logger.h"
+#include "../Core/Profiler.h"
 #include "../Vulkan/VulkanTexture.h"
 #include "../Utils/Utils.h"
 
@@ -11,6 +12,8 @@ using namespace Pengine;
 
 std::shared_ptr<Texture> Texture::Create(const CreateInfo& createInfo)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (graphicsAPI == GraphicsAPI::Vk)
 	{
 		return std::make_shared<Vk::VulkanTexture>(createInfo);
@@ -22,6 +25,8 @@ std::shared_ptr<Texture> Texture::Create(const CreateInfo& createInfo)
 
 std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath, bool flip, const Texture::Meta& meta)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	stbi_set_flip_vertically_on_load(flip);
 
 	CreateInfo textureCreateInfo{};

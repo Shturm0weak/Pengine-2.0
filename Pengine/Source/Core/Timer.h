@@ -10,7 +10,7 @@ namespace Pengine
 	class PENGINE_API Timer 
 	{
 	public:
-		explicit Timer(bool showTime = true, double* outTime = nullptr);
+		explicit Timer(const std::string& name = "Timer", bool showTime = true, double* outTime = nullptr);
 
 		~Timer();
 
@@ -22,6 +22,8 @@ namespace Pengine
 		std::chrono::time_point<std::chrono::high_resolution_clock> m_StartTimePoint;
 
 		bool m_ShowTime = false;
+
+		std::string m_Name;
 	};
 
 }

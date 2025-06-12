@@ -57,7 +57,7 @@ namespace Pengine
 
 		static void SerializeMesh(const std::filesystem::path& directory, const std::shared_ptr<Mesh>& mesh);
 
-		static std::shared_ptr<Mesh> DeserializeMesh(const std::filesystem::path& filepath);
+		static Mesh::CreateInfo DeserializeMesh(const std::filesystem::path& filepath);
 
 		static void SerializeSkeleton(const std::shared_ptr<Skeleton>& skeleton);
 
@@ -133,6 +133,10 @@ namespace Pengine
 		static void SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entity>& entity);
 
 		static void DeserializeCamera(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
+
+		static void SerializeCanvas(YAML::Emitter& out, const std::shared_ptr<Entity>& entity);
+
+		static void DeserializeCanvas(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
 
 		static void SerializeScene(const std::filesystem::path& filepath, const std::shared_ptr<Scene>& scene);
 
