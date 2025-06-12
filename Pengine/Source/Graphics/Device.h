@@ -25,6 +25,14 @@ namespace Pengine
 
 		virtual void End(void* frame) = 0;
 
+		virtual void* CreateFrame() = 0;
+
+		virtual void BeginFrame(void* frame) = 0;
+
+		virtual void EndFrame(void* frame) = 0;
+		
+		virtual void DestroyFrame(void* frame) = 0;
+
 	protected:
 		Device() = default;
 		virtual ~Device() = default;

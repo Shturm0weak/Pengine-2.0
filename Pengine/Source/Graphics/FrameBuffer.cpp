@@ -19,30 +19,9 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 	std::vector<Texture::CreateInfo> attachments;
 	for (const auto& attachment : renderPass->GetAttachmentDescriptions())
 	{
-		const bool isColor = attachment.layout == Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-
-		Texture::CreateInfo attachmentCreateInfo{};
-		attachmentCreateInfo.isMultiBuffered = attachment.isMultiBuffered;
-		attachmentCreateInfo.name = renderPass->GetName() + "FrameBuffer";
-		attachmentCreateInfo.filepath = renderPass->GetName() + "FrameBuffer";
-		attachmentCreateInfo.format = attachment.format;
-		attachmentCreateInfo.channels = 4;
-		attachmentCreateInfo.layerCount = attachment.layerCount;
-		attachmentCreateInfo.isCubeMap = attachment.isCubeMap;
-		attachmentCreateInfo.aspectMask = isColor ? Texture::AspectMask::COLOR :
-			Texture::AspectMask::DEPTH;
-		attachmentCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC,
-			isColor ? Texture::Usage::COLOR_ATTACHMENT : Texture::Usage::DEPTH_STENCIL_ATTACHMENT };
-
-		for (const auto& usage : attachment.usage)
-		{
-			attachmentCreateInfo.usage.emplace_back(usage);
-		}
-
-		attachmentCreateInfo.size = attachment.size ? *attachment.size : glm::ivec2((glm::vec2)size * renderPass->GetResizeViewportScale());
-		attachmentCreateInfo.samplerCreateInfo = attachment.samplerCreateInfo;
-
-		attachments.emplace_back(attachmentCreateInfo);
+		Texture::CreateInfo& attachmentCreateInfo = attachments.emplace_back(attachment.textureCreateInfo);
+		attachmentCreateInfo.size = attachmentCreateInfo.size.x == 0 &&
+			attachmentCreateInfo.size.y == 0 ? glm::ivec2((glm::vec2)size * renderPass->GetResizeViewportScale()) : attachmentCreateInfo.size;
 	}
 
 	if (graphicsAPI == GraphicsAPI::Vk)

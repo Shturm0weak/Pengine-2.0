@@ -20,7 +20,7 @@ VulkanRenderPass::VulkanRenderPass(const CreateInfo& createInfo)
 	for (auto const& attachmentDescription : createInfo.attachmentDescriptions)
 	{
 		VkAttachmentDescription attachment{};
-		attachment.format = ConvertFormat(attachmentDescription.format);
+		attachment.format = ConvertFormat(attachmentDescription.textureCreateInfo.format);
 		attachment.samples = VK_SAMPLE_COUNT_1_BIT;
 		attachment.loadOp = (VkAttachmentLoadOp)attachmentDescription.load;
 		attachment.storeOp = (VkAttachmentStoreOp)attachmentDescription.store;

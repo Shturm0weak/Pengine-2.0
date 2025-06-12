@@ -7,6 +7,7 @@
 
 #include "../Graphics/ComputePass.h"
 #include "../Graphics/RenderPass.h"
+#include "../Graphics/Pipeline.h"
 
 namespace Pengine
 {
@@ -112,17 +113,18 @@ namespace Pengine
 			std::shared_ptr<class Pipeline> pipeline,
 			std::shared_ptr<class UniformWriter> uniformWriter);
 
-		static std::shared_ptr<class UniformWriter> GetOrCreateRenderViewUniformWriter(
+		static std::shared_ptr<class UniformWriter> GetOrCreateUniformWriter(
 			std::shared_ptr<class RenderView> renderView,
 			std::shared_ptr<class Pipeline> pipeline,
-			const std::string& passName,
-			const std::string& setUniformWriterName = {});
+			Pipeline::DescriptorSetIndexType descriptorSetIndexType,
+			const std::string& uniformWriterName,
+			const std::string& uniformWriterIndexByName = {});
 
-		static std::shared_ptr<class UniformWriter> GetOrCreateSceneRenderViewUniformWriter(
+		static std::shared_ptr<class UniformWriter> GetOrCreateRendererUniformWriter(
 			std::shared_ptr<class RenderView> renderView,
 			std::shared_ptr<class Pipeline> pipeline,
-			const std::string& passName,
-			const std::string& setUniformWriterName = {});
+			const std::string& uniformWriterName,
+			const std::string& uniformWriterIndexByName = {});
 
 		static std::shared_ptr<class Buffer> GetOrCreateRenderBuffer(
 			std::shared_ptr<class RenderView> renderView,

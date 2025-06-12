@@ -56,17 +56,11 @@ namespace Pengine
 
 		struct AttachmentDescription
 		{
-			Texture::SamplerCreateInfo samplerCreateInfo{};
+			Texture::CreateInfo textureCreateInfo;
 			Texture::Layout layout;
-			std::vector<Texture::Usage> usage;
-			Format format;
 			Load load = Load::CLEAR;
 			Store store = Store::STORE;
-			std::optional<glm::ivec2> size;
-			bool isCubeMap = false;
-			bool isMultiBuffered = true;
-			uint32_t layerCount = 1;
-			std::function<std::shared_ptr<FrameBuffer>(RenderView*, uint32_t&)> getFrameBufferCallback;
+			std::function<std::shared_ptr<Texture>(RenderView*)> getFrameBufferCallback;
 		};
 
 		struct Scissors

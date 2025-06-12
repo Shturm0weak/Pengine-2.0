@@ -1,8 +1,13 @@
 Basemat:
   Pipelines:
     - RenderPass: Deferred
-      Type: Compute
-      Compute: Shaders/Deferred.comp
+      DepthTest: false
+      DepthWrite: false
+      CullMode: None
+      PolygonMode: Fill
+      TopologyMode: TriangleList
+      Vertex: Shaders/Deferred.vert
+      Fragment: Shaders/Deferred.frag
       DescriptorSets:
         - Type: Renderer
           RenderPass: DefaultReflection
@@ -10,12 +15,18 @@ Basemat:
         - Type: Renderer
           RenderPass: Deferred
           Set: 1
-        - Type: Renderer
-          RenderPass: Lights
-          Set: 2
-        - Type: Renderer
-          RenderPass: DeferredOutput
-          Set: 3
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Tag: Position
+          Names:
+            - positionA
+      ColorBlendStates:
+        - BlendEnabled: false
+        - BlendEnabled: true
+          ColorBlendOp: max
+          SrcColorBlendFactor: src color
+          DstColorBlendFactor: dst color
       Uniforms:
         - Name: albedoTexture
           TextureAttachment: "GBuffer[0]"

@@ -722,6 +722,56 @@ void VulkanDevice::End(void* frame)
 	delete vkFrameInfo;
 }
 
+void* VulkanDevice::CreateFrame()
+{
+	VulkanFrameInfo* vkFrameInfo = new VulkanFrameInfo();
+	vkFrameInfo->CommandBuffer = CreateCommandBuffer(GetCommandPool());
+	return vkFrameInfo;
+}
+
+void VulkanDevice::BeginFrame(void* frame)
+{
+	m_Mutex.lock();
+	m_SingleTimeCommandChecker = true;
+
+	VkCommandBuffer commandBuffer = GetCommandBufferFromFrame(frame);
+
+	VkCommandBufferBeginInfo beginInfo{};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+}
+
+void VulkanDevice::EndFrame(void* frame)
+{
+	if (!m_SingleTimeCommandChecker)
+	{
+		Logger::Error("Device:<" + GetName() + "> Failed to EndSingleTimeCommands. Forgot to call BeginSingleTimeCommands!?");
+		return;
+	}
+
+	VkCommandBuffer commandBuffer = GetCommandBufferFromFrame(frame);
+	vkEndCommandBuffer(commandBuffer);
+
+	VkSubmitInfo submitInfo{};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffer;
+
+	vkQueueSubmit(m_GraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(m_GraphicsQueue);
+
+	m_SingleTimeCommandChecker = false;
+	m_Mutex.unlock();
+}
+
+void VulkanDevice::DestroyFrame(void* frame)
+{
+	VkCommandBuffer commandBuffer = GetCommandBufferFromFrame(frame);
+	FreeCommandBuffer(GetCommandPool(), commandBuffer);
+}
+
 VkCommandBuffer VulkanDevice::BeginSingleTimeCommands() const
 {
 	m_Mutex.lock();

@@ -32,7 +32,7 @@ layout(set = 1, binding = 0) uniform GBufferMaterial
 };
 
 #include "Shaders/Includes/Bones.h"
-layout(set = 3, binding = 0) uniform BonesMatrices
+layout(set = 4, binding = 0) uniform BonesMatrices
 {
 	mat4 bonesMatrices[MAX_BONES];
 };

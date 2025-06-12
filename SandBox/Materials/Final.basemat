@@ -22,7 +22,7 @@ Basemat:
         - BlendEnabled: false
       Uniforms:
         - Name: deferredTexture
-          TextureAttachment: "Deferred[0]"
+          TextureAttachment: "Transparent[0]"
         - Name: shadingTexture
           TextureAttachment: "GBuffer[2]"
         - Name: rawSSRTexture

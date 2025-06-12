@@ -60,6 +60,9 @@ Basemat:
         - Type: Renderer
           RenderPass: Deferred
           Set: 2
+        - Type: Renderer
+          RenderPass: Lights
+          Set: 3
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex

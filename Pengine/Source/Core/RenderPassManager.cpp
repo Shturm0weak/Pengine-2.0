@@ -141,7 +141,7 @@ void RenderPassManager::PrepareUniformsPerViewportBeforeDraw(const RenderPass::R
 		FATAL_ERROR("DefaultReflection base material is broken! No pipeline found!");
 	}
 
-	const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, DefaultReflection);
+	const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateUniformWriter(renderInfo.renderView, pipeline, Pipeline::DescriptorSetIndexType::RENDERER, DefaultReflection);
 	const std::string globalBufferName = "GlobalBuffer";
 	const std::shared_ptr<Buffer> globalBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, globalBufferName);
 
@@ -337,14 +337,20 @@ void RenderPassManager::CreateZPrePass()
 	clearDepth.clearStencil = 0;
 
 	RenderPass::AttachmentDescription depth{};
-	depth.format = Format::D32_SFLOAT;
+	depth.textureCreateInfo.format = Format::D32_SFLOAT;
+	depth.textureCreateInfo.aspectMask = Texture::AspectMask::DEPTH;
+	depth.textureCreateInfo.channels = 1;
+	depth.textureCreateInfo.isMultiBuffered = true;
+	depth.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::DEPTH_STENCIL_ATTACHMENT };
+	depth.textureCreateInfo.name = "ZPrePassDepth";
+	depth.textureCreateInfo.filepath = depth.textureCreateInfo.name;
 	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 	Texture::SamplerCreateInfo depthSamplerCreateInfo{};
 	depthSamplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
 	depthSamplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_WHITE;
 
-	depth.samplerCreateInfo = depthSamplerCreateInfo;
+	depth.textureCreateInfo.samplerCreateInfo = depthSamplerCreateInfo;
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = Pass::Type::GRAPHICS;
@@ -560,25 +566,49 @@ void RenderPassManager::CreateGBuffer()
 	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Format::B10G11R11_UFLOAT_PACK32;
+	color.textureCreateInfo.format = Format::B10G11R11_UFLOAT_PACK32;
+	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	color.textureCreateInfo.channels = 3;
+	color.textureCreateInfo.isMultiBuffered = true;
+	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
+	color.textureCreateInfo.name = "GBufferColor";
+	color.textureCreateInfo.filepath = color.textureCreateInfo.name;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	color.load = RenderPass::Load::CLEAR;
 	color.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription normal{};
-	normal.format = Format::R16G16B16A16_SFLOAT;
+	normal.textureCreateInfo.format = Format::R16G16B16A16_SFLOAT;
+	normal.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	normal.textureCreateInfo.channels = 4;
+	normal.textureCreateInfo.isMultiBuffered = true;
+	normal.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
+	normal.textureCreateInfo.name = "GBufferNormal";
+	normal.textureCreateInfo.filepath = normal.textureCreateInfo.name;
 	normal.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	normal.load = RenderPass::Load::CLEAR;
 	normal.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription shading{};
-	shading.format = Format::R8G8B8A8_SRGB;
+	shading.textureCreateInfo.format = Format::R8G8B8A8_SRGB;
+	shading.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	shading.textureCreateInfo.channels = 4;
+	shading.textureCreateInfo.isMultiBuffered = true;
+	shading.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
+	shading.textureCreateInfo.name = "GBufferShading";
+	shading.textureCreateInfo.filepath = shading.textureCreateInfo.name;
 	shading.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	shading.load = RenderPass::Load::CLEAR;
 	shading.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription emissive{};
-	emissive.format = Format::R16G16B16A16_SFLOAT;
+	emissive.textureCreateInfo.format = Format::R16G16B16A16_SFLOAT;
+	emissive.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	emissive.textureCreateInfo.channels = 4;
+	emissive.textureCreateInfo.isMultiBuffered = true;
+	emissive.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::STORAGE, Texture::Usage::COLOR_ATTACHMENT };
+	emissive.textureCreateInfo.name = "GBufferEmissive";
+	emissive.textureCreateInfo.filepath = emissive.textureCreateInfo.name;
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	emissive.load = RenderPass::Load::CLEAR;
 	emissive.store = RenderPass::Store::STORE;
@@ -588,25 +618,16 @@ void RenderPassManager::CreateGBuffer()
 	emissiveSamplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK;
 	emissiveSamplerCreateInfo.maxAnisotropy = 1.0f;
 
-	emissive.samplerCreateInfo = emissiveSamplerCreateInfo;
+	emissive.textureCreateInfo.samplerCreateInfo = emissiveSamplerCreateInfo;
 
-	RenderPass::AttachmentDescription depth{};
-	depth.format = Format::D32_SFLOAT;
-	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	RenderPass::AttachmentDescription depth = GetRenderPass(ZPrePass)->GetAttachmentDescriptions()[0];
 	// TODO: Revert Changes to LOAD, NONE when ZPrePass is used!
 	depth.load = RenderPass::Load::CLEAR;
 	depth.store = RenderPass::Store::STORE;
-	depth.getFrameBufferCallback = [](RenderView* renderView, uint32_t& index)
+	depth.getFrameBufferCallback = [](RenderView* renderView)
 	{
-		index = 0;
-		return renderView->GetFrameBuffer(ZPrePass);
+		return renderView->GetFrameBuffer(ZPrePass)->GetAttachment(0);
 	};
-
-	Texture::SamplerCreateInfo depthSamplerCreateInfo{};
-	depthSamplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
-	depthSamplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_WHITE;
-
-	depth.samplerCreateInfo = depthSamplerCreateInfo;
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = Pass::Type::GRAPHICS;
@@ -793,60 +814,23 @@ void RenderPassManager::CreateGBuffer()
 
 void RenderPassManager::CreateDeferred()
 {
-	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 0.0f };
-
-	RenderPass::AttachmentDescription color{};
-	color.format = Format::B10G11R11_UFLOAT_PACK32;
-	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::LOAD;
-	color.store = RenderPass::Store::STORE;
-
-	RenderPass::AttachmentDescription emissive{};
-	emissive.format = Format::R16G16B16A16_SFLOAT;
-	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	emissive.load = RenderPass::Load::LOAD;
-	emissive.store = RenderPass::Store::STORE;
-	emissive.getFrameBufferCallback = [](RenderView* renderView, uint32_t& index)
-	{
-		index = 3;
-		return renderView->GetFrameBuffer(GBuffer);
-	};
-
-	Texture::SamplerCreateInfo samplerCreateInfo{};
-	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
-	samplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK;
-	samplerCreateInfo.maxAnisotropy = 1.0f;
-
-	emissive.samplerCreateInfo = samplerCreateInfo;
-
-	RenderPass::CreateInfo createInfo{};
-	createInfo.type = Pass::Type::GRAPHICS;
+	ComputePass::CreateInfo createInfo{};
+	createInfo.type = Pass::Type::COMPUTE;
 	createInfo.name = Deferred;
-	createInfo.clearColors = { clearColor, clearEmissive };
-	createInfo.attachmentDescriptions = { color, emissive };
-	createInfo.resizeWithViewport = true;
-	createInfo.resizeViewportScale = { 1.0f, 1.0f };
 
-	const std::shared_ptr<Mesh> planeMesh = nullptr;
-
-	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
+	createInfo.executeCallback = [this, passName = createInfo.name](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
-
-		const std::string renderPassName = renderInfo.renderPass->GetName();
-
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 			std::filesystem::path("Materials") / "Deferred.basemat");
-		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(passName);
 		if (!pipeline)
 		{
 			return;
 		}
 
-		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, renderPassName);
 		const std::string lightsBufferName = "Lights";
-		const std::shared_ptr<Buffer> lightsBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, lightsBufferName);
+		const std::shared_ptr<UniformWriter> lightsUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, lightsBufferName);
+		const std::shared_ptr<Buffer> lightsBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, lightsUniformWriter, lightsBufferName);
 
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 
@@ -950,39 +934,59 @@ void RenderPassManager::CreateDeferred()
 			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "csm.cascadeCount", hasDirectionalLight);
 		}
 
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName);
 		WriteRenderViews(renderInfo.renderView, renderInfo.scene->GetRenderView(), pipeline, renderUniformWriter);
 
-		const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-		FlushUniformWriters(uniformWriters);
+		const std::shared_ptr<Texture> colorTexture = renderInfo.renderView->GetFrameBuffer(Transparent)->GetAttachment(0);
+		const std::shared_ptr<Texture> emissiveTexture = renderInfo.renderView->GetFrameBuffer(GBuffer)->GetAttachment(3);
 
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
-		RenderPass::SubmitInfo submitInfo{};
-		submitInfo.frame = renderInfo.frame;
-		submitInfo.renderPass = renderInfo.renderPass;
-		submitInfo.frameBuffer = frameBuffer;
-		renderInfo.renderer->BeginRenderPass(submitInfo);
+		const std::shared_ptr<UniformWriter> outputUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, "DeferredOutput");
+		outputUniformWriter->WriteTexture("outColor", colorTexture);
+		outputUniformWriter->WriteTexture("outEmissive", emissiveTexture);
+		
+		std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
 
-		std::vector<std::shared_ptr<Buffer>> vertexBuffers;
-		std::vector<size_t> vertexBufferOffsets;
-		GetVertexBuffers(pipeline, plane, vertexBuffers, vertexBufferOffsets);
+		// Here we need Transition to flush uniform writers, because to update storage image the layout should be GENERAL.
+		// And before and after the dispatch we need Transition again, because this command buffer will be executed later, so we don't know what can happen before.
+		{
+			void* transitionFrame = device->CreateFrame();
 
-		renderInfo.renderer->Render(
-			vertexBuffers,
-			vertexBufferOffsets,
-			plane->GetIndexBuffer(),
-			0,
-			plane->GetIndexCount(),
-			pipeline,
-			nullptr,
-			0,
-			1,
-			uniformWriters,
-			renderInfo.frame);
+			device->BeginFrame(transitionFrame);
+			renderInfo.renderer->BeginCommandLabel("Layout Transition", topLevelRenderPassDebugColor, transitionFrame);
+			colorTexture->Transition(Texture::Layout::GENERAL, transitionFrame);
+			emissiveTexture->Transition(Texture::Layout::GENERAL, transitionFrame);
+			renderInfo.renderer->EndCommandLabel(transitionFrame);
+			device->EndFrame(transitionFrame);
 
-		renderInfo.renderer->EndRenderPass(submitInfo);
+			uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
+			FlushUniformWriters(uniformWriters);
+
+			device->BeginFrame(transitionFrame);
+			renderInfo.renderer->BeginCommandLabel("Layout Transition", topLevelRenderPassDebugColor, transitionFrame);
+			colorTexture->Transition(Texture::Layout::SHADER_READ_ONLY_OPTIMAL, transitionFrame);
+			emissiveTexture->Transition(Texture::Layout::SHADER_READ_ONLY_OPTIMAL, transitionFrame);
+			renderInfo.renderer->EndCommandLabel(transitionFrame);
+			device->EndFrame(transitionFrame);
+
+			device->DestroyFrame(transitionFrame);
+		}
+
+		renderInfo.renderer->BeginCommandLabel(passName, topLevelRenderPassDebugColor, renderInfo.frame);
+
+		colorTexture->Transition(Texture::Layout::GENERAL, renderInfo.frame);
+		emissiveTexture->Transition(Texture::Layout::GENERAL, renderInfo.frame);
+
+		glm::uvec2 groupCount = renderInfo.viewportSize / glm::ivec2(16, 16);
+		groupCount += glm::uvec2(1, 1);
+		renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
+
+		colorTexture->Transition(Texture::Layout::SHADER_READ_ONLY_OPTIMAL, renderInfo.frame);
+		emissiveTexture->Transition(Texture::Layout::SHADER_READ_ONLY_OPTIMAL, renderInfo.frame);
+
+		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 	};
 
-	CreateRenderPass(createInfo);
+	CreateComputePass(createInfo);
 }
 
 void RenderPassManager::CreateDefaultReflection()
@@ -994,7 +998,13 @@ void RenderPassManager::CreateDefaultReflection()
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Format::R8G8B8A8_SRGB;
+	color.textureCreateInfo.format = Format::R8G8B8A8_SRGB;
+	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	color.textureCreateInfo.channels = 4;
+	color.textureCreateInfo.isMultiBuffered = true;
+	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
+	color.textureCreateInfo.name = "DefaultReflectionColor";
+	color.textureCreateInfo.filepath = color.textureCreateInfo.name;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 
 	RenderPass::CreateInfo createInfo{};
@@ -1013,12 +1023,19 @@ void RenderPassManager::CreateAtmosphere()
 	glm::vec4 clearColor = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Format::B10G11R11_UFLOAT_PACK32;
+
+	color.textureCreateInfo.format = Format::B10G11R11_UFLOAT_PACK32;
+	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	color.textureCreateInfo.channels = 3;
+	color.textureCreateInfo.isMultiBuffered = true;
+	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
+	color.textureCreateInfo.name = "AtmosphereColor";
+	color.textureCreateInfo.filepath = color.textureCreateInfo.name;
+	color.textureCreateInfo.size = { 256, 256 };
+	color.textureCreateInfo.isCubeMap = true;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	color.load = RenderPass::Load::LOAD;
 	color.store = RenderPass::Store::STORE;
-	color.size = { 256, 256 };
-	color.isCubeMap = true;
 	
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = Pass::Type::GRAPHICS;
@@ -1059,7 +1076,8 @@ void RenderPassManager::CreateAtmosphere()
 			return;
 		}
 
-		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateSceneRenderViewUniformWriter(renderInfo.scene->GetRenderView(), pipeline, renderPassName);
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateUniformWriter(
+			renderInfo.scene->GetRenderView(), pipeline, Pipeline::DescriptorSetIndexType::SCENE, renderPassName);
 		const std::string atmosphereBufferName = "AtmosphereBuffer";
 		const std::shared_ptr<Buffer> atmosphereBuffer = GetOrCreateRenderBuffer(renderInfo.scene->GetRenderView(), renderUniformWriter, atmosphereBufferName);
 
@@ -1124,7 +1142,8 @@ void RenderPassManager::CreateAtmosphere()
 			const std::shared_ptr<Pipeline> pipeline = skyBoxBaseMaterial->GetPipeline(GBuffer);
 			if (pipeline)
 			{
-				const std::shared_ptr<UniformWriter> skyBoxUniformWriter = GetOrCreateSceneRenderViewUniformWriter(renderInfo.scene->GetRenderView(), pipeline, "SkyBox");
+				const std::shared_ptr<UniformWriter> skyBoxUniformWriter = GetOrCreateUniformWriter(
+					renderInfo.scene->GetRenderView(), pipeline, Pipeline::DescriptorSetIndexType::SCENE, "SkyBox");
 				skyBoxUniformWriter->WriteTexture("SkyBox", frameBuffer->GetAttachment(0));
 				skyBoxUniformWriter->Flush();
 			}
@@ -1146,65 +1165,51 @@ void RenderPassManager::CreateTransparent()
 	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Format::B10G11R11_UFLOAT_PACK32;
+	color.textureCreateInfo.format = Format::B10G11R11_UFLOAT_PACK32;
+	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	color.textureCreateInfo.channels = 3;
+	color.textureCreateInfo.isMultiBuffered = true;
+	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::STORAGE, Texture::Usage::COLOR_ATTACHMENT };
+	color.textureCreateInfo.name = "DeferredColor";
+	color.textureCreateInfo.filepath = color.textureCreateInfo.name;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	color.load = RenderPass::Load::LOAD;
 	color.store = RenderPass::Store::STORE;
-	color.getFrameBufferCallback = [](RenderView* renderView, uint32_t& index)
-	{
-		index = 0;
-		return renderView->GetFrameBuffer(Deferred);
-	};
 
-	RenderPass::AttachmentDescription normal{};
-	normal.format = Format::R16G16B16A16_SFLOAT;
+	RenderPass::AttachmentDescription normal = GetRenderPass(GBuffer)->GetAttachmentDescriptions()[1];
 	normal.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	normal.load = RenderPass::Load::LOAD;
 	normal.store = RenderPass::Store::STORE;
-	normal.getFrameBufferCallback = [](RenderView* renderView, uint32_t& index)
+	normal.getFrameBufferCallback = [](RenderView* renderView)
 	{
-		index = 1;
-		return renderView->GetFrameBuffer(GBuffer);
+		return renderView->GetFrameBuffer(GBuffer)->GetAttachment(1);
 	};
 
-	RenderPass::AttachmentDescription shading{};
-	shading.format = Format::R8G8B8A8_SRGB;
+	RenderPass::AttachmentDescription shading = GetRenderPass(GBuffer)->GetAttachmentDescriptions()[2];
 	shading.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	shading.load = RenderPass::Load::LOAD;
 	shading.store = RenderPass::Store::STORE;
-	shading.getFrameBufferCallback = [](RenderView* renderView, uint32_t& index)
+	shading.getFrameBufferCallback = [](RenderView* renderView)
 	{
-		index = 2;
-		return renderView->GetFrameBuffer(GBuffer);
+		return renderView->GetFrameBuffer(GBuffer)->GetAttachment(2);
 	};
 
-	RenderPass::AttachmentDescription emissive{};
-	emissive.format = Format::R16G16B16A16_SFLOAT;
+	RenderPass::AttachmentDescription emissive = GetRenderPass(GBuffer)->GetAttachmentDescriptions()[3];
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	emissive.load = RenderPass::Load::LOAD;
 	emissive.store = RenderPass::Store::STORE;
-	emissive.getFrameBufferCallback = [](RenderView* renderView, uint32_t& index)
+	emissive.getFrameBufferCallback = [](RenderView* renderView)
 	{
-		index = 3;
-		return renderView->GetFrameBuffer(GBuffer);
+		return renderView->GetFrameBuffer(GBuffer)->GetAttachment(3);
 	};
 
-	Texture::SamplerCreateInfo samplerCreateInfo{};
-	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
-	samplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK;
-	samplerCreateInfo.maxAnisotropy = 1.0f;
-
-	emissive.samplerCreateInfo = samplerCreateInfo;
-
-	RenderPass::AttachmentDescription depth{};
-	depth.format = Format::D32_SFLOAT;
+	RenderPass::AttachmentDescription depth = GetRenderPass(ZPrePass)->GetAttachmentDescriptions()[0];
 	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 	depth.load = RenderPass::Load::LOAD;
 	depth.store = RenderPass::Store::STORE;
-	depth.getFrameBufferCallback = [](RenderView* renderView, uint32_t& index)
+	depth.getFrameBufferCallback = [](RenderView* renderView)
 	{
-		index = 0;
-		return renderView->GetFrameBuffer(ZPrePass);
+		return renderView->GetFrameBuffer(ZPrePass)->GetAttachment(0);
 	};
 
 	RenderPass::CreateInfo createInfo{};
@@ -1427,7 +1432,13 @@ void RenderPassManager::CreateFinal()
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Format::R8G8B8A8_SRGB;//B10G11R11_UFLOAT_PACK32;
+	color.textureCreateInfo.format = Format::R8G8B8A8_SRGB;
+	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	color.textureCreateInfo.channels = 4;
+	color.textureCreateInfo.isMultiBuffered = true;
+	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
+	color.textureCreateInfo.name = "FinalColor";
+	color.textureCreateInfo.filepath = color.textureCreateInfo.name;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	color.load = RenderPass::Load::LOAD;
 	color.store = RenderPass::Store::STORE;
@@ -1457,7 +1468,7 @@ void RenderPassManager::CreateFinal()
 
 		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
 
-		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, renderPassName);
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, renderPassName);
 		const std::string postProcessBufferName = "PostProcessBuffer";
 		const std::shared_ptr<Buffer> postProcessBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, postProcessBufferName);
 
@@ -1515,7 +1526,13 @@ void RenderPassManager::CreateCSM()
 	clearDepth.clearStencil = 0;
 
 	RenderPass::AttachmentDescription depth{};
-	depth.format = Format::D32_SFLOAT;
+	depth.textureCreateInfo.format = Format::D32_SFLOAT;
+	depth.textureCreateInfo.aspectMask = Texture::AspectMask::DEPTH;
+	depth.textureCreateInfo.channels = 1;
+	depth.textureCreateInfo.isMultiBuffered = true;
+	depth.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::DEPTH_STENCIL_ATTACHMENT };
+	depth.textureCreateInfo.name = "CSM";
+	depth.textureCreateInfo.filepath = depth.textureCreateInfo.name;
 	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 	Texture::SamplerCreateInfo samplerCreateInfo{};
@@ -1524,7 +1541,7 @@ void RenderPassManager::CreateCSM()
 	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_EDGE;
 	samplerCreateInfo.maxAnisotropy = 1.0f;
 
-	depth.samplerCreateInfo = samplerCreateInfo;
+	depth.textureCreateInfo.samplerCreateInfo = samplerCreateInfo;
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = Pass::Type::GRAPHICS;
@@ -1567,7 +1584,7 @@ void RenderPassManager::CreateCSM()
 		{
 			// NOTE: Maybe should be send as the next frame event, because creating a frame buffer here may cause some problems.
 			const std::string renderPassName = renderInfo.renderPass->GetName();
-			renderInfo.renderPass->GetAttachmentDescriptions().back().layerCount = renderInfo.scene->GetGraphicsSettings().shadows.cascadeCount;
+			renderInfo.renderPass->GetAttachmentDescriptions().back().textureCreateInfo.layerCount = renderInfo.scene->GetGraphicsSettings().shadows.cascadeCount;
 			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderView.get(), resolutions[shadowsSettings.quality]);
 
 			renderInfo.renderView->SetFrameBuffer(renderPassName, frameBuffer);
@@ -1704,7 +1721,7 @@ void RenderPassManager::CreateCSM()
 		{
 			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 
-			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, renderPassName);
+			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, renderPassName);
 			const std::string lightSpaceMatricesBufferName = "LightSpaceMatrices";
 			const std::shared_ptr<Buffer> lightSpaceMatricesBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, lightSpaceMatricesBufferName);
 
@@ -1827,7 +1844,13 @@ void RenderPassManager::CreateBloom()
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Format::B10G11R11_UFLOAT_PACK32;
+	color.textureCreateInfo.format = Format::B10G11R11_UFLOAT_PACK32;
+	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	color.textureCreateInfo.channels = 3;
+	color.textureCreateInfo.isMultiBuffered = true;
+	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
+	color.textureCreateInfo.name = "BloomColor";
+	color.textureCreateInfo.filepath = color.textureCreateInfo.name;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	color.load = RenderPass::Load::LOAD;
 	color.store = RenderPass::Store::STORE;
@@ -1837,7 +1860,7 @@ void RenderPassManager::CreateBloom()
 	samplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK;
 	samplerCreateInfo.maxAnisotropy = 1.0f;
 
-	color.samplerCreateInfo = samplerCreateInfo;
+	color.textureCreateInfo.samplerCreateInfo = samplerCreateInfo;
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = Pass::Type::GRAPHICS;
@@ -1941,7 +1964,7 @@ void RenderPassManager::CreateBloom()
 				{
 					const std::string mipLevelString = std::to_string(mipLevel);
 
-					const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderViewUniformWriter(
+					const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(
 						renderInfo.renderView, pipeline, renderPassName, "BloomDownUniformWriters[" + mipLevelString + "]");
 					GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, "MipBuffer", "BloomBuffers[" + mipLevelString + "]");
 				}
@@ -1963,7 +1986,7 @@ void RenderPassManager::CreateBloom()
 				}
 			}
 
-			std::shared_ptr<Texture> sourceTexture = renderInfo.renderView->GetFrameBuffer(Deferred)->GetAttachment(1);
+			std::shared_ptr<Texture> sourceTexture = renderInfo.renderView->GetFrameBuffer(GBuffer)->GetAttachment(3);
 			for (int mipLevel = 0; mipLevel < mipCount; mipLevel++)
 			{
 				const std::string mipLevelString = std::to_string(mipLevel);
@@ -2030,7 +2053,7 @@ void RenderPassManager::CreateBloom()
 			{
 				for (int mipLevel = 0; mipLevel < mipCount - 1; mipLevel++)
 				{
-					GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, renderPassName, "BloomUpUniformWriters[" + std::to_string(mipLevel) + "]");
+					GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, renderPassName, "BloomUpUniformWriters[" + std::to_string(mipLevel) + "]");
 				}
 			}
 
@@ -2117,7 +2140,7 @@ void RenderPassManager::CreateSSR()
 			{
 				ssrTexture = Texture::Create(createInfo);
 				renderInfo.renderView->SetStorageImage(passName, ssrTexture);
-				GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, passName)->WriteTexture("outColor", ssrTexture);
+				GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName)->WriteTexture("outColor", ssrTexture);
 			}
 		}
 		else
@@ -2131,7 +2154,7 @@ void RenderPassManager::CreateSSR()
 
 		if (currentViewportSize != ssrTexture->GetSize())
 		{
-			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, passName);
+			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName);
 			auto callback = [renderUniformWriter, passName, createInfo, renderInfo]()
 			{
 				const std::shared_ptr<Texture> ssrTexture = Texture::Create(createInfo);
@@ -2143,7 +2166,7 @@ void RenderPassManager::CreateSSR()
 			EventSystem::GetInstance().SendEvent(resizeEvent);
 		}
 
-		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, passName);
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName);
 
 		WriteRenderViews(renderInfo.renderView, renderInfo.scene->GetRenderView(), pipeline, renderUniformWriter);
 
@@ -2211,7 +2234,7 @@ void RenderPassManager::CreateSSRBlur()
 			{
 				ssrBlurTexture = Texture::Create(createInfo);
 				renderInfo.renderView->SetStorageImage(passName, ssrBlurTexture);
-				GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, passName)->WriteTexture("outColor", ssrBlurTexture);
+				GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName)->WriteTexture("outColor", ssrBlurTexture);
 			}
 		}
 		else
@@ -2225,7 +2248,7 @@ void RenderPassManager::CreateSSRBlur()
 
 		if (currentViewportSize != ssrBlurTexture->GetSize())
 		{
-			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, passName);
+			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName);
 			auto callback = [renderUniformWriter, passName, createInfo, renderInfo]()
 			{
 				const std::shared_ptr<Texture> ssrBlurTexture = Texture::Create(createInfo);
@@ -2237,7 +2260,7 @@ void RenderPassManager::CreateSSRBlur()
 			EventSystem::GetInstance().SendEvent(resizeEvent);
 		}
 
-		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, passName);
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName);
 
 		const std::shared_ptr<Buffer> ssrBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, ssrBufferName);
 		baseMaterial->WriteToBuffer(ssrBuffer, ssrBufferName, "blurRange", ssrSettings.blurRange);
@@ -2317,13 +2340,13 @@ void RenderPassManager::CreateSSAO()
 			{
 				ssaoTexture = Texture::Create(createInfo);
 				renderInfo.renderView->SetStorageImage(passName, ssaoTexture);
-				GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, passName)->WriteTexture("outColor", ssaoTexture);
+				GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName)->WriteTexture("outColor", ssaoTexture);
 			}
 		}
 
 		if (currentViewportSize != ssaoTexture->GetSize())
 		{
-			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, passName);
+			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName);
 			auto callback = [renderUniformWriter, passName, createInfo, renderInfo]()
 			{
 				const std::shared_ptr<Texture> ssaoTexture = Texture::Create(createInfo);
@@ -2344,7 +2367,7 @@ void RenderPassManager::CreateSSAO()
 			ssaoRenderer->GenerateNoiseTexture(ssaoSettings.noiseSize);
 		}
 
-		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, passName);
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName);
 		const std::shared_ptr<Buffer> ssaoBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, ssaoBufferName);
 
 		WriteRenderViews(renderInfo.renderView, renderInfo.scene->GetRenderView(), pipeline, renderUniformWriter);
@@ -2420,11 +2443,11 @@ void RenderPassManager::CreateSSAOBlur()
 			{
 				ssaoBlurTexture = Texture::Create(createInfo);
 				renderInfo.renderView->SetStorageImage(passName, ssaoBlurTexture);
-				GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, passName)->WriteTexture("outColor", ssaoBlurTexture);
+				GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName)->WriteTexture("outColor", ssaoBlurTexture);
 			}
 		}
 
-		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRenderViewUniformWriter(renderInfo.renderView, pipeline, passName);
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName);
 		if (currentViewportSize != ssaoBlurTexture->GetSize())
 		{
 			auto callback = [renderUniformWriter, passName, createInfo, renderInfo]()
@@ -2462,7 +2485,13 @@ void RenderPassManager::CreateUI()
 	glm::vec4 clearColor = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	RenderPass::AttachmentDescription color{};
-	color.format = Format::R8G8B8A8_UNORM;
+	color.textureCreateInfo.format = Format::R8G8B8A8_UNORM;
+	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	color.textureCreateInfo.channels = 4;
+	color.textureCreateInfo.isMultiBuffered = true;
+	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
+	color.textureCreateInfo.name = "UIColor";
+	color.textureCreateInfo.filepath = color.textureCreateInfo.name;
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	color.load = RenderPass::Load::CLEAR;
 	color.store = RenderPass::Store::STORE;
@@ -2594,40 +2623,32 @@ void RenderPassManager::WriteRenderViews(
 	}
 }
 
-std::shared_ptr<UniformWriter> RenderPassManager::GetOrCreateRenderViewUniformWriter(
+std::shared_ptr<UniformWriter> RenderPassManager::GetOrCreateUniformWriter(
 	std::shared_ptr<RenderView> renderView,
 	std::shared_ptr<Pipeline> pipeline,
-	const std::string& passName,
-	const std::string& setUniformWriterName)
+	Pipeline::DescriptorSetIndexType descriptorSetIndexType,
+	const std::string& uniformWriterName,
+	const std::string& uniformWriterIndexByName)
 {
-	std::shared_ptr<UniformWriter> renderUniformWriter = renderView->GetUniformWriter(passName);
+	std::shared_ptr<UniformWriter> renderUniformWriter = renderView->GetUniformWriter(uniformWriterIndexByName.empty() ? uniformWriterName : uniformWriterIndexByName);
 	if (!renderUniformWriter)
 	{
 		const std::shared_ptr<UniformLayout> renderUniformLayout =
-			pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::RENDERER, passName));
+			pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(descriptorSetIndexType, uniformWriterName));
 		renderUniformWriter = UniformWriter::Create(renderUniformLayout);
-		renderView->SetUniformWriter(setUniformWriterName.empty() ? passName : setUniformWriterName, renderUniformWriter);
+		renderView->SetUniformWriter(uniformWriterIndexByName.empty() ? uniformWriterName : uniformWriterIndexByName, renderUniformWriter);
 	}
 
 	return renderUniformWriter;
 }
 
-std::shared_ptr<UniformWriter> RenderPassManager::GetOrCreateSceneRenderViewUniformWriter(
+std::shared_ptr<UniformWriter> RenderPassManager::GetOrCreateRendererUniformWriter(
 	std::shared_ptr<RenderView> renderView,
 	std::shared_ptr<Pipeline> pipeline,
-	const std::string& passName,
-	const std::string& setUniformWriterName)
+	const std::string& uniformWriterName,
+	const std::string& uniformWriterIndexByName)
 {
-	std::shared_ptr<UniformWriter> renderUniformWriter = renderView->GetUniformWriter(passName);
-	if (!renderUniformWriter)
-	{
-		const std::shared_ptr<UniformLayout> renderUniformLayout =
-			pipeline->GetUniformLayout(*pipeline->GetDescriptorSetIndexByType(Pipeline::DescriptorSetIndexType::SCENE, passName));
-		renderUniformWriter = UniformWriter::Create(renderUniformLayout);
-		renderView->SetUniformWriter(setUniformWriterName.empty() ? passName : setUniformWriterName, renderUniformWriter);
-	}
-
-	return renderUniformWriter;
+	return GetOrCreateUniformWriter(renderView, pipeline, Pipeline::DescriptorSetIndexType::RENDERER, uniformWriterName, uniformWriterIndexByName);
 }
 
 std::shared_ptr<Buffer> RenderPassManager::GetOrCreateRenderBuffer(
@@ -2636,7 +2657,7 @@ std::shared_ptr<Buffer> RenderPassManager::GetOrCreateRenderBuffer(
 	const std::string& bufferName,
 	const std::string& setBufferName)
 {
-	std::shared_ptr<Buffer> buffer = renderView->GetBuffer(bufferName);
+	std::shared_ptr<Buffer> buffer = renderView->GetBuffer(setBufferName.empty() ? bufferName : setBufferName);
 	if (buffer)
 	{
 		return buffer;

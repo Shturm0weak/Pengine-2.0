@@ -84,7 +84,7 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 
 		for (auto& imageData : m_ImageDatas)
 		{
-			Transition(imageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+			TransitionInternal(imageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 			GetVkDevice()->CopyBufferToImage(
 				stagingBuffer->GetBuffer(),
@@ -92,11 +92,11 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 				static_cast<uint32_t>(m_Size.x),
 				static_cast<uint32_t>(m_Size.y));
 
-			Transition(imageData, VkImageLayout::VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+			TransitionInternal(imageData, VkImageLayout::VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 			if (m_MipLevels > 1)
 			{
-				Transition(imageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+				TransitionInternal(imageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 				GetVkDevice()->GenerateMipMaps(
 					imageData.image,
@@ -116,14 +116,14 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 	{
 		for (auto& imageData : m_ImageDatas)
 		{
-			Transition(imageData, VkImageLayout::VK_IMAGE_LAYOUT_GENERAL);
+			TransitionInternal(imageData, VkImageLayout::VK_IMAGE_LAYOUT_GENERAL);
 		}
 	}
 	else
 	{
 		for (auto& imageData : m_ImageDatas)
 		{
-			Transition(imageData, VkImageLayout::VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+			TransitionInternal(imageData, VkImageLayout::VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		}
 	}
 
@@ -290,42 +290,12 @@ Texture::AspectMask VulkanTexture::ConvertAspectMask(const VkImageAspectFlagBits
 
 VkImageLayout VulkanTexture::ConvertLayout(const Layout layout)
 {
-	switch (layout)
-	{
-	case Pengine::Texture::Layout::UNDEFINED:
-		return VK_IMAGE_LAYOUT_UNDEFINED;
-	case Pengine::Texture::Layout::SHADER_READ_ONLY_OPTIMAL:
-		return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	case Pengine::Texture::Layout::COLOR_ATTACHMENT_OPTIMAL:
-		return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-	case Pengine::Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
-		return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	case Pengine::Texture::Layout::DEPTH_STENCIL_READ_ONLY_OPTIMAL:
-		return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-	}
-
-	FATAL_ERROR("Failed to convert texture layout!");
-	return VK_IMAGE_LAYOUT_UNDEFINED;
+	return static_cast<VkImageLayout>(layout);
 }
 
 Texture::Layout VulkanTexture::ConvertLayout(const VkImageLayout layout)
 {
-	switch (layout)
-	{
-	case VK_IMAGE_LAYOUT_UNDEFINED:
-		return Pengine::Texture::Layout::UNDEFINED;
-	case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
-		return Pengine::Texture::Layout::SHADER_READ_ONLY_OPTIMAL;
-	case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
-		return Pengine::Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
-		return Pengine::Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
-		return Pengine::Texture::Layout::DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-	}
-
-	FATAL_ERROR("Failed to convert texture layout!");
-	return Texture::Layout::UNDEFINED;
+	return static_cast<Layout>(layout);
 }
 
 VkImageUsageFlagBits VulkanTexture::ConvertUsage(Usage usage)
@@ -582,8 +552,8 @@ void VulkanTexture::Copy(
 	ImageData& srcImageData = vkSrc->GetImageData();
 	ImageData& dstImageData = GetImageData();
 
-	Transition(srcImageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-	Transition(dstImageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	TransitionInternal(srcImageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+	TransitionInternal(dstImageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 	Vk::GetVkDevice()->CopyImageToImage(
 		srcImageData.image,
@@ -595,11 +565,18 @@ void VulkanTexture::Copy(
 		region.extent,
 		commandBuffer);
 
-	Transition(srcImageData, srcImageData.m_PreviousLayout);
-	Transition(dstImageData, dstImageData.m_PreviousLayout);
+	TransitionInternal(srcImageData, srcImageData.m_PreviousLayout);
+	TransitionInternal(dstImageData, dstImageData.m_PreviousLayout);
 }
 
-void VulkanTexture::Transition(ImageData& imageData, VkImageLayout layout)
+void VulkanTexture::Transition(Layout layout, void* frame)
+{
+	VkCommandBuffer commandBuffer = GetVkDevice()->GetCommandBufferFromFrame(frame);
+
+	TransitionInternal(GetImageData(), ConvertLayout(layout), commandBuffer);
+}
+
+void VulkanTexture::TransitionInternal(ImageData& imageData, VkImageLayout layout, VkCommandBuffer commandBuffer)
 {
 	imageData.m_PreviousLayout = imageData.m_Layout;
 	imageData.m_Layout = layout;
@@ -612,7 +589,7 @@ void VulkanTexture::Transition(ImageData& imageData, VkImageLayout layout)
 		m_LayerCount,
 		imageData.m_PreviousLayout,
 		imageData.m_Layout,
-		VK_NULL_HANDLE);
+		commandBuffer);
 }
 
 VulkanTexture::ImageData& VulkanTexture::GetImageData()

@@ -68,6 +68,8 @@ namespace Pengine::Vk
 
 		virtual void Copy(std::shared_ptr<Texture> src, const Region& region, void* frame = nullptr) override;
 
+		virtual void Transition(Layout layout, void* frame = nullptr) override;
+
 		[[nodiscard]] VkImageView GetImageView(const uint32_t index = Vk::swapChainImageIndex) const { return m_IsMultiBuffered ? m_ImageDatas[index].view : m_ImageDatas[0].view; }
 
 		[[nodiscard]] VkImage GetImage(const uint32_t index = Vk::swapChainImageIndex) const { return m_IsMultiBuffered ? m_ImageDatas[index].image : m_ImageDatas[0].image; }
@@ -87,7 +89,7 @@ namespace Pengine::Vk
 			VkImageLayout m_PreviousLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		};
 
-		void Transition(ImageData& imageData, VkImageLayout layout);
+		void TransitionInternal(ImageData& imageData, VkImageLayout layout, VkCommandBuffer commandBuffer = VK_NULL_HANDLE);
 
 		ImageData& GetImageData();
 

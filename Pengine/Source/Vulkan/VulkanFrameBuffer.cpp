@@ -46,9 +46,7 @@ void VulkanFrameBuffer::Resize(const glm::ivec2& size)
 		std::shared_ptr<Texture> texture;
 		if (renderPassAttachments[textureIndex].getFrameBufferCallback && m_RenderView)
 		{
-			uint32_t attachmentIndex;
-			const std::shared_ptr<FrameBuffer> frameBuffer = renderPassAttachments[textureIndex].getFrameBufferCallback(m_RenderView, attachmentIndex);
-			texture = frameBuffer->GetAttachment(attachmentIndex);
+			texture = renderPassAttachments[textureIndex].getFrameBufferCallback(m_RenderView);
 		}
 		else
 		{

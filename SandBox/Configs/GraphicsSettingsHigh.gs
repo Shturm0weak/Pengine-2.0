@@ -22,7 +22,7 @@ CSM:
     - 0.150000006
     - 0.400000006
 Bloom:
-  IsEnabled: false
+  IsEnabled: true
   MipCount: 10
   BrightnessThreshold: 1
   Intensity: 1

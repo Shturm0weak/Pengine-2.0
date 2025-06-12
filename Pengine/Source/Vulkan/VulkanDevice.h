@@ -97,6 +97,14 @@ namespace Pengine::Vk
 
 		virtual void End(void* frame) override;
 
+		virtual void* CreateFrame() override;
+
+		virtual void BeginFrame(void* frame) override;
+
+		virtual void EndFrame(void* frame) override;
+
+		virtual void DestroyFrame(void* frame) override;
+
 		[[nodiscard]] VkCommandBuffer BeginSingleTimeCommands() const;
 
 		void EndSingleTimeCommands(VkCommandBuffer commandBuffer) const;
