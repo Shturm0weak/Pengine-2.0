@@ -23,7 +23,7 @@
 #include "../Core/WindowManager.h"
 #include "../Core/RenderPassManager.h"
 #include "../Core/RenderPassOrder.h"
-#include "../Core/ClayScriptManager.h"
+#include "../Core/ClayManager.h"
 #include "../Core/Profiler.h"
 #include "../Editor/ImGuizmo.h"
 #include "../EventSystem/EventSystem.h"
@@ -36,9 +36,6 @@
 #include <format>
 
 #include <assimp/postprocess.h>
-
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
 
 using namespace Pengine;
 
@@ -1491,7 +1488,7 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 
 		ImGui::Columns(columns, 0, false);
 
-		const bool leftMouseButtonDoubleClicked = ImGui::IsMouseDoubleClicked(GLFW_MOUSE_BUTTON_1);
+		const bool leftMouseButtonDoubleClicked = ImGui::IsMouseDoubleClicked(0);
 
 		bool iconHovered = false;
 
@@ -2367,7 +2364,7 @@ void Editor::CanvasComponent(const std::shared_ptr<Entity>& entity)
 
 		if (ImGui::BeginMenu("Scripts"))
 		{
-			for (const auto& [name, script] : ClayScriptManager::GetInstance().scriptsByName)
+			for (const auto& [name, script] : ClayManager::GetInstance().scriptsByName)
 			{
 				if (ImGui::MenuItem(name.c_str()))
 				{

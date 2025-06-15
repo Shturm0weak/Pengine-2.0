@@ -19,6 +19,7 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC PENGINE_ENGINE=0)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Pengine)
 
+target_include_directories(${PROJECT_NAME} PRIVATE $ENV{GLFW_INCLUDE_PATH})
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Pengine/Source)
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor)
 

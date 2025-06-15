@@ -4,12 +4,12 @@
 
 #include "../Graphics/Device.h"
 
-#include "VulkanDescriptors.h"
-
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 #include <vma/vk_mem_alloc.h>
+
+#include "VulkanDescriptors.h"
 
 #include <deque>
 #include <mutex>

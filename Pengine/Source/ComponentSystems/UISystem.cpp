@@ -5,6 +5,7 @@
 #include "../Core/FontManager.h"
 #include "../Core/WindowManager.h"
 #include "../Core/Viewport.h"
+#include "../Core/ClayManager.h"
 
 #include "../Components/Transform.h"
 
@@ -38,7 +39,6 @@ void UISystem::OnUpdate(const float deltaTime, std::shared_ptr<Scene> scene)
 
 			canvas.context = Clay_Initialize(arena, Clay_Dimensions{ (float)canvas.size.x, (float)canvas.size.y }, Clay_ErrorHandler{ HandleClayErrors });
 			canvas.measureText = FontManager::GetInstance().ClayMeasureText;
-			Clay_SetMeasureTextFunction(canvas.measureText, nullptr);
 		}
 
 		if (canvas.drawInMainViewport)
@@ -52,16 +52,10 @@ void UISystem::OnUpdate(const float deltaTime, std::shared_ptr<Scene> scene)
 			}
 		}
 
-		Clay_SetCurrentContext(canvas.context);
-		Clay_SetLayoutDimensions({ (float)canvas.size.x, (float)canvas.size.y });
-
-		// Clay_BeginLayout is supposed to be called inside the script function by calling CANVAS_BEGIN macro.
-
 		if (canvas.script)
 		{
-			canvas.script(&canvas, transform.GetEntity());
-
-			canvas.commands = Clay_EndLayout();
+			ClayManager::Init(&canvas);
+			canvas.commands = canvas.script(&canvas, transform.GetEntity());
 		}
 	}
 }

@@ -20,8 +20,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [-13.7430372, 3.35896373, 0.023072822]
-      Rotation: [-0.0168935172, 1.31866252, 0]
+      Position: [-2.0644896, 2.80344129, 1.12155724]
+      Rotation: [-1.01787829, -0.607124686, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -75,5 +75,23 @@ Scene:
       DrawInMainViewport: false
       Size: [1024, 1024]
       ScriptName: FPS
+    Childs:
+      []
+  - UUID: 0x0ca0e9acf2d69ff21d8126767efef8a0
+    Name: Canvas
+    IsEnabled: true
+    Transform:
+      Position: [-1.53005791, 1.11208475, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0x42bba5034e7a0a481a8bcef805ab0924
+      RenderingOrder: 5
+      IsEnabled: true
+    Canvas:
+      DrawInMainViewport: false
+      Size: [2056, 2056]
+      ScriptName: Grid
     Childs:
       []

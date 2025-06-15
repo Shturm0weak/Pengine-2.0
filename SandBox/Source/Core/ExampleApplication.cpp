@@ -1,6 +1,6 @@
-#include "Core/Core.h"
 #include "ExampleApplication.h"
 
+#include "Core/Core.h"
 #include "Core/MeshManager.h"
 #include "Core/TextureManager.h"
 #include "Core/Serializer.h"
@@ -9,14 +9,14 @@
 #include "Core/Viewport.h"
 #include "Core/SceneManager.h"
 #include "Core/Time.h"
-
-#include "Components/Transform.h"
+#include "Core/Input.h"
+#include "Core/Keycode.h"
+#include "Core/FontManager.h"
+#include "Core/ClayManager.h"
+#include "Core/WindowManager.h"
 
 #define CLAY_IMPLEMENTATION
 #include "Components/Canvas.h"
-
-#include "Core/FontManager.h"
-#include "Core/ClayScriptManager.h"
 
 using namespace Pengine;
 
@@ -26,9 +26,9 @@ void ExampleApplication::OnPreStart()
 
 void ExampleApplication::OnStart()
 {
-	ClayScriptManager::GetInstance().scriptsByName["FPS"] = [this](Canvas* canvas, std::shared_ptr<Entity> entity)
+	ClayManager::GetInstance().scriptsByName["FPS"] = [this](Canvas* canvas, std::shared_ptr<Entity> entity)
 	{
-		CANVAS_BEGIN(canvas)
+		ClayManager::BeginLayout();
 
 		auto font = FontManager::GetInstance().GetFont("Calibri", 72);
 
@@ -36,11 +36,12 @@ void ExampleApplication::OnStart()
 
 		fps = "FPS: " + std::to_string(1.0f / Time::GetDeltaTime());
 
-		CLAY(
+		ClayManager::OpenElement();
+		ClayManager::ConfigureOpenElement(
 			{
 				.layout =
 					{
-						.sizing = {.width = CLAY_SIZING_FIXED(1024), .height = CLAY_SIZING_FIXED(1024) },
+						.sizing = { .width = CLAY_SIZING_FIXED(1024), .height = CLAY_SIZING_FIXED(1024) },
 						.childAlignment =
 							{
 								.x = Clay_LayoutAlignmentX::CLAY_ALIGN_X_CENTER,
@@ -48,14 +49,15 @@ void ExampleApplication::OnStart()
 							},
 					}
 			}
-		)
+		);
 		{
-			CLAY(
+			ClayManager::OpenElement();
+			ClayManager::ConfigureOpenElement(
 				{
 					.id = CLAY_ID("OuterContainer"),
 					.layout =
 						{
-							.sizing = {.width = CLAY_SIZING_FIXED(1024), .height = CLAY_SIZING_FIXED(150) },
+							.sizing = { .width = CLAY_SIZING_FIXED(1024), .height = CLAY_SIZING_FIXED(150) },
 							.padding = { 8 * scale, 8 * scale, 8 * scale, 8 * scale },
 							.childGap = 8 * scale,
 							.childAlignment =
@@ -68,32 +70,34 @@ void ExampleApplication::OnStart()
 					.backgroundColor = { 0.9f, 0.695f, 0.726f, 1.0f },
 					.cornerRadius = { 8 * scale, 8 * scale, 8 * scale, 8 * scale },
 				}
-				)
-				{
-					Clay_String fpsClayString{};
-					fpsClayString.length = fps.size();
-					fpsClayString.chars = fps.c_str();
+			);
+			{
+				Clay_String fpsClayString{};
+				fpsClayString.length = fps.size();
+				fpsClayString.chars = fps.c_str();
 
-					CLAY_TEXT(
-						fpsClayString,
-						CLAY_TEXT_CONFIG(
-							{
-								.textColor = { 1.0f, 0.965f, 1.0f, 0.953f },
-								.fontId = font->id,
-								.fontSize = font->size,
-								.textAlignment = Clay_TextAlignment::CLAY_TEXT_ALIGN_CENTER,
-								//.letterSpacing = 12,
-								//.lineHeight = 12 * scale,
-							}
-						)
-					);
-				}
+				ClayManager::OpenTextElement(
+					fpsClayString,
+					{
+						.textColor = { 1.0f, 0.965f, 1.0f, 0.953f },
+						.fontId = font->id,
+						.fontSize = font->size,
+						.textAlignment = Clay_TextAlignment::CLAY_TEXT_ALIGN_CENTER,
+					}
+				);
+			}
+
+			ClayManager::CloseElement();
 		}
+
+		ClayManager::CloseElement();
+
+		return ClayManager::EndLayout();
 	};
 
-	ClayScriptManager::GetInstance().scriptsByName["Test UI"] = [this](Canvas* canvas, std::shared_ptr<Entity> entity)
+	ClayManager::GetInstance().scriptsByName["Test UI"] = [this](Canvas* canvas, std::shared_ptr<Entity> entity)
 	{
-		CANVAS_BEGIN(canvas)
+		ClayManager::BeginLayout();
 
 		auto font = FontManager::GetInstance().GetFont("Calibri", 72);
 
@@ -112,7 +116,8 @@ void ExampleApplication::OnStart()
 
 		fps = "FPS: " + std::to_string(1.0f / Time::GetDeltaTime());
 
-		CLAY(
+		ClayManager::OpenElement();
+		ClayManager::ConfigureOpenElement(
 			{
 				.layout =
 					{
@@ -124,67 +129,155 @@ void ExampleApplication::OnStart()
 							},
 					}
 			}
-		)
+		);
 		{
-		CLAY(
-			{
-				.id = CLAY_ID("OuterContainer"),
-				.layout =
-					{
-						.sizing = { .width = CLAY_SIZING_FIT(), .height = CLAY_SIZING_FIT() },
-						.padding = { 8 * scale, 8 * scale, 8 * scale, 8 * scale },
-						.childGap = 8 * scale,
-						.layoutDirection = Clay_LayoutDirection::CLAY_TOP_TO_BOTTOM,
-					},
-				.backgroundColor = { 0.9f, 0.695f, 0.726f, 1.0f },
-				.cornerRadius = { 8 * scale, 8 * scale, 8 * scale, 8 * scale },
-			}
-		)
-		{
-			for (const auto& item : items)
-			{
-				CLAY(
-					{
-						.layout =
-							{
-								.sizing = { .width = CLAY_SIZING_GROW(), .height = CLAY_SIZING_GROW() },
-								.padding = { 16 * scale, 12 * scale, 12 * scale, 12 * scale },
-								.childAlignment = { .x = Clay_LayoutAlignmentX::CLAY_ALIGN_X_LEFT, .y = Clay_LayoutAlignmentY::CLAY_ALIGN_Y_CENTER },
-							},
-						.backgroundColor = { 0.976f, 0.8125f, 0.765625f, 1.0f },
-						.cornerRadius = { 8 * scale, 8 * scale, 8 * scale, 8 * scale },
-					}
-				)
+			ClayManager::OpenElement();
+			ClayManager::ConfigureOpenElement(
 				{
-					CLAY_TEXT(
-						item.name,
-						CLAY_TEXT_CONFIG(
+					.id = CLAY_ID("OuterContainer"),
+					.layout =
+						{
+							.sizing = { .width = CLAY_SIZING_FIT(), .height = CLAY_SIZING_FIT() },
+							.padding = { 8 * scale, 8 * scale, 8 * scale, 8 * scale },
+							.childGap = 8 * scale,
+							.layoutDirection = Clay_LayoutDirection::CLAY_TOP_TO_BOTTOM,
+						},
+					.backgroundColor = { 0.9f, 0.695f, 0.726f, 1.0f },
+					.cornerRadius = { 8 * scale, 8 * scale, 8 * scale, 8 * scale },
+				}
+			);
+			{
+				for (const auto& item : items)
+				{
+					ClayManager::OpenElement();
+					ClayManager::ConfigureOpenElement(
+						{
+							.layout =
+								{
+									.sizing = { .width = CLAY_SIZING_GROW(), .height = CLAY_SIZING_GROW() },
+									.padding = { 16 * scale, 12 * scale, 12 * scale, 12 * scale },
+									.childAlignment = { .x = Clay_LayoutAlignmentX::CLAY_ALIGN_X_LEFT, .y = Clay_LayoutAlignmentY::CLAY_ALIGN_Y_CENTER },
+								},
+							.backgroundColor = { 0.976f, 0.8125f, 0.765625f, 1.0f },
+							.cornerRadius = { 8 * scale, 8 * scale, 8 * scale, 8 * scale },
+						}
+					);
+					{
+						ClayManager::OpenTextElement(
+							item.name,
 							{
 								.textColor = { 1.0f, 1.0f, 0.0f, 1.0f },//{ 1.0f, 0.965f, 1.0f, 0.953f },
 								.fontId = font->id,
 								.fontSize = font->size,
 							}
-						)
-					);
-					CLAY({ .layout = { .sizing = { .width = CLAY_SIZING_GROW(), .height  = CLAY_SIZING_GROW() } } });
-					CLAY(
-						{
-							.layout =
-								{
-									.sizing = { .width = CLAY_SIZING_FIXED(32 * scale), .height = CLAY_SIZING_FIXED(32 * scale) },
-								},
-							.backgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f },
-							.image =
-								{
-									.imageData = item.texture.get(),
-									.sourceDimensions = { .width = (float)item.texture->GetSize().x, .height = (float)item.texture->GetSize().y },
-								},
-						}
-					);
+						);
+						ClayManager::OpenElement();
+						ClayManager::ConfigureOpenElement({ .layout = { .sizing = { .width = CLAY_SIZING_GROW(), .height  = CLAY_SIZING_GROW() } } });
+						ClayManager::CloseElement();
+
+						ClayManager::OpenElement();
+						ClayManager::ConfigureOpenElement(
+							{
+								.layout =
+									{
+										.sizing = { .width = CLAY_SIZING_FIXED(32 * scale), .height = CLAY_SIZING_FIXED(32 * scale) },
+									},
+								.backgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f },
+								.image =
+									{
+										.imageData = item.texture.get(),
+									},
+							}
+						);
+						ClayManager::CloseElement();
+					}
+
+					ClayManager::CloseElement();
 				}
 			}
+
+			ClayManager::CloseElement();
 		}
+
+		ClayManager::CloseElement();
+
+		return ClayManager::EndLayout();
+	};
+
+	ClayManager::GetInstance().scriptsByName["Grid"] = [this](Canvas* canvas, std::shared_ptr<Entity> entity)
+	{
+		auto font = FontManager::GetInstance().GetFont("Calibri", 72);
+		auto mousePosition = WindowManager::GetInstance().GetWindowByName("Main")->GetViewportManager().GetViewport("Main")->GetMousePosition();
+		auto& input = Input::GetInstance(WindowManager::GetInstance().GetWindowByName("Main").get());
+		ClayManager::SetPointerState({ mousePosition.x, mousePosition.y }, input.IsMouseDown(Keycode::MOUSE_BUTTON_1));
+
+		ClayManager::BeginLayout();
+
+		ClayManager::OpenElement();
+		ClayManager::ConfigureOpenElement(
+			{
+				.id = CLAY_ID("OuterContainer"),
+				.layout =
+					{
+						.sizing = { .width = CLAY_SIZING_FIXED((float)canvas->size.x), .height = CLAY_SIZING_FIXED((float)canvas->size.y) },
+						.padding = { 16, 16, 16, 16 },
+						.childGap = 16,
+						.layoutDirection = CLAY_TOP_TO_BOTTOM,
+					}
+			}
+		);
+		{
+			for (size_t i = 0; i < 8; i++)
+			{
+				ClayManager::OpenElement();
+				ClayManager::ConfigureOpenElement(
+					{
+						.layout =
+							{
+								.sizing = { .width = CLAY_SIZING_GROW((float)canvas->size.x), .height = CLAY_SIZING_GROW(64) },
+								.childGap = 16,
+								.layoutDirection = CLAY_LEFT_TO_RIGHT,
+							},
+					}
+				);
+				{
+					for (size_t j = 0; j < 8; j++)
+					{
+						ClayManager::OpenElement();
+						ClayManager::ConfigureOpenElement(
+							{
+								.layout =
+									{
+										.sizing = { .width = CLAY_SIZING_GROW(64), .height = CLAY_SIZING_GROW(64) },
+										.childAlignment = { { CLAY_ALIGN_X_CENTER }, { CLAY_ALIGN_Y_CENTER } },
+									},
+								.backgroundColor = ClayManager::IsHovered() ? Clay_Color{ 1.0f, 0.0f, 0.0f, 1.0f } : Clay_Color{ 0.5f, 0.5f, 0.5f, 1.0f },
+								.cornerRadius = { 16, 16, 16, 16 },
+							}
+						);
+						{
+							ClayManager::OpenTextElement(
+								CLAY_STRING("O"),
+								{
+									.textColor = { 1.0f, 1.0f, 1.0f, 1.0f },
+									.fontId = font->id,
+									.fontSize = font->size,
+									.textAlignment = Clay_TextAlignment::CLAY_TEXT_ALIGN_CENTER,
+								}
+							);
+						}
+
+						ClayManager::CloseElement();
+					}
+				}
+
+				ClayManager::CloseElement();
+			}
 		}
+
+		ClayManager::CloseElement();
+
+		return ClayManager::EndLayout();
 	};
 }
 

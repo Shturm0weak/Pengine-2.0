@@ -31,7 +31,7 @@ set(CORE_SOURCES
 	Core/Asset.h
 	Core/AsyncAssetLoader.cpp Core/AsyncAssetLoader.h
 	Core/BoundingBox.h
-	Core/ClayScriptManager.cpp Core/ClayScriptManager.h
+	Core/ClayManager.cpp Core/ClayManager.h
 	Core/ColoredOutput.h
 	Core/Core.h
 	Core/CustomData.h

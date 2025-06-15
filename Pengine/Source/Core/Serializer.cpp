@@ -13,7 +13,7 @@
 #include "Viewport.h"
 #include "WindowManager.h"
 #include "Profiler.h"
-#include "ClayScriptManager.h"
+#include "ClayManager.h"
 
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
@@ -3839,10 +3839,10 @@ void Serializer::DeserializeCanvas(const YAML::Node& in, const std::shared_ptr<E
 		if (const auto& scriptNameData = canvasData["ScriptName"])
 		{
 			const std::string scriptName = scriptNameData.as<std::string>();
-			if (ClayScriptManager::GetInstance().scriptsByName.contains(scriptName))
+			if (ClayManager::GetInstance().scriptsByName.contains(scriptName))
 			{
 				canvas.scriptName = scriptName;
-				canvas.script = ClayScriptManager::GetInstance().scriptsByName.at(scriptName);
+				canvas.script = ClayManager::GetInstance().scriptsByName.at(scriptName);
 			}
 		}
 	}
