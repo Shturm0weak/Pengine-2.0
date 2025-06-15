@@ -90,6 +90,8 @@ namespace Pengine
 		[[nodiscard]] glm::mat4 GetTransform(System system = System::GLOBAL) const;
 
 		[[nodiscard]] glm::mat3 GetInverseTransform(System system = System::GLOBAL) const;
+
+		[[nodiscard]] glm::mat4 GetInverseTransformMat4(System system = System::GLOBAL) const;
 		
 		[[nodiscard]] bool GetFollorOwner() const { return m_FollowOwner; }
 		

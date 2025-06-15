@@ -112,41 +112,42 @@ Mesh::Mesh(
 			const glm::vec3& start,
 			const glm::vec3& direction,
 			const float length,
-			const glm::mat4& transform,
-			const void* vertices,
-			const uint32_t vertexCount,
-			std::vector<uint32_t> indices,
-			float& distance,
+			std::shared_ptr<MeshBVH> bvh,
+			Raycast::Hit& hit,
 			Visualizer& visualizer) -> bool
 		{
-			const VertexDefault* vertex = (const VertexDefault*)vertices;
-			for (size_t i = 0; i < indices.size(); i += 3)
-			{
-				const glm::vec3& vertex0 = vertex[indices[i + 0]].position;
-				const glm::vec3& vertex1 = vertex[indices[i + 1]].position;
-				const glm::vec3& vertex2 = vertex[indices[i + 2]].position;
+			//const VertexDefault* vertex = (const VertexDefault*)vertices;
+			//for (size_t i = 0; i < indices.size(); i += 3)
+			//{
+			//	const glm::vec3& vertex0 = vertex[indices[i + 0]].position;
+			//	const glm::vec3& vertex1 = vertex[indices[i + 1]].position;
+			//	const glm::vec3& vertex2 = vertex[indices[i + 2]].position;
 
-				const glm::vec3 a = transform * glm::vec4(vertex0, 1.0f);
-				const glm::vec3 b = transform * glm::vec4(vertex1, 1.0f);
-				const glm::vec3 c = transform * glm::vec4(vertex2, 1.0f);
+			//	const glm::vec3 a = transform * glm::vec4(vertex0, 1.0f);
+			//	const glm::vec3 b = transform * glm::vec4(vertex1, 1.0f);
+			//	const glm::vec3 c = transform * glm::vec4(vertex2, 1.0f);
 
-				const glm::vec3 normal = glm::normalize(glm::cross((b - a), (c - a)));
+			//	const glm::vec3 normal = glm::normalize(glm::cross((b - a), (c - a)));
 
-				Raycast::Hit hit{};
-				if (Raycast::IntersectTriangle(start, direction, a, b, c, normal, length, hit))
-				{
-					/*visualizer.DrawLine(a, b, { 1.0f, 0.0f, 1.0f }, 5.0f);
-					visualizer.DrawLine(a, c, { 1.0f, 0.0f, 1.0f }, 5.0f);
-					visualizer.DrawLine(c, b, { 1.0f, 0.0f, 1.0f }, 5.0f);*/
+			//	Raycast::Hit hit{};
+			//	if (Raycast::IntersectTriangle(start, direction, a, b, c, normal, length, hit))
+			//	{
+			//		/*visualizer.DrawLine(a, b, { 1.0f, 0.0f, 1.0f }, 5.0f);
+			//		visualizer.DrawLine(a, c, { 1.0f, 0.0f, 1.0f }, 5.0f);
+			//		visualizer.DrawLine(c, b, { 1.0f, 0.0f, 1.0f }, 5.0f);*/
 
-					distance = hit.distance;
-					return true;
-				}
-			}
+			//		distance = hit.distance;
+			//		return true;
+			//	}
+			//}
 
-			return false;
+			//return false;
+
+			return bvh->Raycast(start, direction, length, hit, visualizer);
 		};
 	}
+
+	m_BVH = std::make_shared<MeshBVH>(m_RawVertices, m_RawIndices, m_VertexSize);
 }
 
 Mesh::~Mesh()
@@ -173,18 +174,14 @@ bool Mesh::Raycast(
 	const glm::vec3& start,
 	const glm::vec3& direction,
 	const float length,
-	const glm::mat4& transform,
-	float& distance,
+	Raycast::Hit& hit,
 	Visualizer& visualizer) const
 {
 	return m_RaycastCallback(
 		start,
 		direction,
 		length,
-		transform,
-		m_RawVertices,
-		m_VertexCount,
-		m_RawIndices,
-		distance,
+		m_BVH,
+		hit,
 		visualizer);
 }

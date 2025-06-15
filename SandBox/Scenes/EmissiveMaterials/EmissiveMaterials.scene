@@ -54,6 +54,7 @@ Scene:
           Mesh: 0x961da7328a362c95bb6dd655f7ade430
           Material: 0xa2002aee5f7cea0d6e79557a5d297f42
           RenderingOrder: 5
+          IsEnabled: true
         Childs:
           []
       - UUID: 0x6ec6a19e2ec05ea4063e12b0c7ff47bf
@@ -68,6 +69,7 @@ Scene:
           Mesh: 0x961da7328a362c95bb6dd655f7ade430
           Material: 0xeea3bb58c6e188564bed7b2eff325476
           RenderingOrder: 5
+          IsEnabled: true
         Childs:
           []
       - UUID: 0x32378aa2df3abf48442ef797704ec00c
@@ -82,6 +84,7 @@ Scene:
           Mesh: 0x961da7328a362c95bb6dd655f7ade430
           Material: 0x664913723b4426fa8af46718163cb0f9
           RenderingOrder: 5
+          IsEnabled: true
         Childs:
           []
   - UUID: 0x4b1008232af287af2771ad7522fde5a9
@@ -105,6 +108,7 @@ Scene:
           Mesh: 0xfa9a7adc8ccac029e85074154299369a
           Material: 0x664913723b4426fa8af46718163cb0f9
           RenderingOrder: 5
+          IsEnabled: true
         Childs:
           []
       - UUID: 0x3de7f8cfd3183a054beb9c2ccc6863ef
@@ -119,6 +123,7 @@ Scene:
           Mesh: 0xfa9a7adc8ccac029e85074154299369a
           Material: 0xeea3bb58c6e188564bed7b2eff325476
           RenderingOrder: 5
+          IsEnabled: true
         Childs:
           []
       - UUID: 0xaf13da4e24754ecb2d6aeacba845959b
@@ -133,5 +138,6 @@ Scene:
           Mesh: 0xfa9a7adc8ccac029e85074154299369a
           Material: 0xa2002aee5f7cea0d6e79557a5d297f42
           RenderingOrder: 5
+          IsEnabled: true
         Childs:
           []

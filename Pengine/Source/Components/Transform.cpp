@@ -157,6 +157,11 @@ glm::mat3 Transform::GetInverseTransform(const System system) const
 	return glm::inverse(GetTransform(system));
 }
 
+glm::mat4 Transform::GetInverseTransformMat4(System system) const
+{
+	return glm::inverse(GetTransform(system));
+}
+
 void Transform::Move(Transform&& transform) noexcept
 {
 	m_Entity = std::move(transform.m_Entity);

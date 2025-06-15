@@ -222,6 +222,12 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture, std::shar
 			scene->GetSelectedEntities().emplace(entity);
 		}
 	}
+	
+	if (camera)
+	{
+		const glm::vec3 ray = GetMouseRay(m_MousePosition);
+		const auto hits = Raycast::RaycastScene(scene, camera->GetComponent<Transform>().GetPosition(), ray, camera->GetComponent<Camera>().GetZFar());
+	}
 
 	if (!m_ActiveGuizmo && m_IsHovered && input.IsMousePressed(Keycode::MOUSE_BUTTON_1))
 	{

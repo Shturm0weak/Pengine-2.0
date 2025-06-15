@@ -106,6 +106,32 @@ bool Raycast::IntersectBoxOBB(
 	return hit.distance < length;
 }
 
+bool Raycast::IntersectBoxAABB(
+	const glm::vec3& start,
+	const glm::vec3& direction,
+	const glm::vec3& min,
+	const glm::vec3& max,
+	const float length,
+	Hit& hit)
+{
+	float tMin = 0.001f;
+	float tMax = length;
+
+	for (int i = 0; i < 3; i++) {
+		float invDir = 1.0f / direction[i];
+		float t1 = (min[i] - start[i]) * invDir;
+		float t2 = (max[i] - start[i]) * invDir;
+
+		if (invDir < 0.0f) std::swap(t1, t2);
+
+		tMin = t1 > tMin ? t1 : tMin;
+		tMax = t2 < tMax ? t2 : tMax;
+
+		if (tMax < tMin) return false;
+	}
+	return true;
+}
+
 std::map<float, std::shared_ptr<Entity>> Raycast::RaycastScene(
 	std::shared_ptr<Scene> scene,
 	const glm::vec3& start,
@@ -141,11 +167,19 @@ std::map<float, std::shared_ptr<Entity>> Raycast::RaycastScene(
 			length,
 			hitOBB))
 		{
-			Hit hitMesh{};
+			Hit localHitMesh{};
 
-			if (r3d.mesh->Raycast(start, direction, length, transform.GetTransform(), hitMesh.distance, scene->GetVisualizer()))
+			glm::vec3 localStart = transform.GetInverseTransformMat4() * glm::vec4(start, 1.0f);
+			glm::vec3 localDirection = transform.GetInverseTransform() * direction;
+			if (r3d.mesh->Raycast(localStart, localDirection, length, localHitMesh, scene->GetVisualizer()))
 			{
-				hits.emplace(hitMesh.distance, transform.GetEntity());
+				Hit worldHitMesh;
+				worldHitMesh.distance = localHitMesh.distance;
+				worldHitMesh.point = transform.GetTransform() * glm::vec4(localHitMesh.point, 1.0f);
+
+				scene->GetVisualizer().DrawSphere(worldHitMesh.point, 0.1f, 8, { 1.0f, 1.0f, 1.0f });
+
+				hits.emplace(worldHitMesh.distance, transform.GetEntity());
 			}
 		}
 	}

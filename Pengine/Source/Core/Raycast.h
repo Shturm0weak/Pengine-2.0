@@ -11,7 +11,7 @@ namespace Pengine
 		struct Hit
 		{
 			glm::vec3 point{};
-			float distance = 0.0f;
+			float distance = std::numeric_limits<float>::max();
 		};
 
 		static bool IntersectTriangle(
@@ -32,6 +32,14 @@ namespace Pengine
 			const glm::vec3& position,
 			const glm::vec3& scale,
 			const glm::mat4& rotation,
+			const float length,
+			Hit& hit);
+
+		static bool IntersectBoxAABB(
+			const glm::vec3& start,
+			const glm::vec3& direction,
+			const glm::vec3& min,
+			const glm::vec3& max,
 			const float length,
 			Hit& hit);
 

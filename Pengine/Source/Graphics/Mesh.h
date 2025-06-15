@@ -7,6 +7,7 @@
 
 #include "Buffer.h"
 #include "Vertex.h"
+#include "MeshBVH.h"
 
 namespace Pengine
 {
@@ -36,11 +37,8 @@ namespace Pengine
 				const glm::vec3& start,
 				const glm::vec3& direction,
 				const float length,
-				const glm::mat4& transform,
-				const void* vertices,
-				const uint32_t vertexCount,
-				std::vector<uint32_t> indices,
-				float& distance,
+				std::shared_ptr<MeshBVH> bvh,
+				Raycast::Hit& hit,
 				Visualizer& visualizer)> raycastCallback;
 		};
 
@@ -71,15 +69,17 @@ namespace Pengine
 
 		[[nodiscard]] Type GetType() const { return m_Type; }
 
+		[[nodiscard]] std::shared_ptr<MeshBVH> GetBVH() const { return m_BVH; }
+
 		[[nodiscard]] bool Raycast(
 			const glm::vec3& start,
 			const glm::vec3& direction,
 			const float length,
-			const glm::mat4& transform,
-			float& distance,
+			Raycast::Hit& hit,
 			Visualizer& visualizer) const;
 
 	protected:
+		std::shared_ptr<MeshBVH> m_BVH;
 		std::vector<std::shared_ptr<Buffer>> m_Vertices;
 		std::shared_ptr<Buffer> m_Indices;
 		void* m_RawVertices;
@@ -94,11 +94,8 @@ namespace Pengine
 			const glm::vec3& start,
 			const glm::vec3& direction,
 			const float length,
-			const glm::mat4& transform,
-			const void* vertices,
-			const uint32_t vertexCount,
-			std::vector<uint32_t> indices,
-			float& distance,
+			std::shared_ptr<MeshBVH> bvh,
+			Raycast::Hit& hit,
 			Visualizer& visualizer)> m_RaycastCallback;
 	};
 

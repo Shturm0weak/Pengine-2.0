@@ -86,6 +86,7 @@ set(GRAPHICS_SOURCES
 	Graphics/Format.h
 	Graphics/FrameBuffer.cpp Graphics/FrameBuffer.h
 	Graphics/Mesh.cpp Graphics/Mesh.h
+	Graphics/MeshBVH.cpp Graphics/MeshBVH.h
 	Graphics/Material.cpp Graphics/Material.h
 	Graphics/ComputePass.cpp Graphics/ComputePass.h
 	Graphics/ComputePipeline.cpp Graphics/ComputePipeline.h

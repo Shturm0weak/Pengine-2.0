@@ -38,7 +38,7 @@ namespace Pengine
 			const float radius,
 			int segments,
 			const glm::vec3& color,
-			const float duration);
+			const float duration = 0.0f);
 
 		std::queue<Line>& GetLines() { return m_Lines; }
 

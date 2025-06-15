@@ -436,6 +436,12 @@ void RenderPassManager::CreateZPrePass()
 				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
 			}
 
+			/*r3d.mesh->GetBVH()->Traverse([scene, transformMat4](BVHNode* node)
+				{
+					scene->GetVisualizer().DrawBox(node->bbox.min, node->bbox.max, { 1.0f, 1.0f, 0.0f }, transformMat4);
+				}
+			);*/
+
 			renderableCount++;
 		}
 
