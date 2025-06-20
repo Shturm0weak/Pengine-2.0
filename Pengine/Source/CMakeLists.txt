@@ -55,6 +55,7 @@ set(CORE_SOURCES
 	Core/RenderPassManager.cpp Core/RenderPassManager.h
 	Core/RenderPassOrder.h
 	Core/Scene.cpp Core/Scene.h
+	Core/SceneBVH.cpp Core/SceneBVH.h
 	Core/SceneManager.cpp Core/SceneManager.h
 	Core/Serializer.cpp Core/Serializer.h
 	Core/SSAORenderer.cpp Core/SSAORenderer.h
