@@ -18,4 +18,4 @@ Basemat:
         - Name: depthTexture
           TextureAttachment: "GBuffer[4]"
         - Name: colorTexture
-          TextureAttachment: "Deferred[0]"
+          TextureAttachment: "Transparent[0]"
