@@ -20,8 +20,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [-2.0644896, 2.80344129, 1.12155724]
-      Rotation: [-1.01787829, -0.607124686, 0]
+      Position: [-1.77810144, 1.55768621, 1.14380419]
+      Rotation: [-0.281408042, -0.329311311, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -38,8 +38,8 @@ Scene:
     UUID: 0x619a72ca14a989c731c33926a64112b3
     Transform:
       Position: [0, 0, 0]
-      Rotation: [0, -0, 0]
-      Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+      Rotation: [0, 0, 0]
+      Scale: [0.0100000091, 0.0100000026, 0.0100000091]
       FollowOwner: true
   - UUID: 0x8b4d4f7e75d0783c4400c48d32a530dd
     Name: Canvas Test UI
@@ -78,7 +78,7 @@ Scene:
     Childs:
       []
   - UUID: 0x0ca0e9acf2d69ff21d8126767efef8a0
-    Name: Canvas
+    Name: Grid
     IsEnabled: true
     Transform:
       Position: [-1.53005791, 1.11208475, 0]

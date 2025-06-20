@@ -78,7 +78,6 @@ bool MeshBVH::Raycast(
 
 				const glm::vec3 normal = glm::normalize(glm::cross((v1.position - v0.position), (v2.position - v0.position)));
 
-				float t;
 				Raycast::Hit currentHitTriangle;
 				if (Raycast::IntersectTriangle(start, direction, v0.position, v1.position, v2.position, normal, length, currentHitTriangle))
 				{

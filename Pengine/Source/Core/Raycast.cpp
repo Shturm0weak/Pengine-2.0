@@ -177,7 +177,7 @@ std::map<Raycast::Hit, std::shared_ptr<Entity>> Raycast::RaycastScene(
 			worldHitMesh.distance = localHitMesh.distance;
 			worldHitMesh.uv = localHitMesh.uv;
 			worldHitMesh.point = transform.GetTransform() * glm::vec4(localHitMesh.point, 1.0f);
-			worldHitMesh.normal = glm::normalize(transform.GetRotationMat4() * glm::vec4(localHitMesh.normal, 0.0f));
+			worldHitMesh.normal = glm::normalize(transform.GetInverseTransform() * glm::vec4(localHitMesh.normal, 0.0f));
 
 			hits.emplace(worldHitMesh, transform.GetEntity());
 		}
