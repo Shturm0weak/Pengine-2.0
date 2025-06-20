@@ -15,6 +15,8 @@
 #include "Core/ClayManager.h"
 #include "Core/WindowManager.h"
 
+#include "Components/Transform.h"
+
 #define CLAY_IMPLEMENTATION
 #include "Components/Canvas.h"
 
@@ -206,10 +208,24 @@ void ExampleApplication::OnStart()
 
 	ClayManager::GetInstance().scriptsByName["Grid"] = [this](Canvas* canvas, std::shared_ptr<Entity> entity)
 	{
-		auto font = FontManager::GetInstance().GetFont("Calibri", 72);
-		auto mousePosition = WindowManager::GetInstance().GetWindowByName("Main")->GetViewportManager().GetViewport("Main")->GetMousePosition();
+		const auto font = FontManager::GetInstance().GetFont("Calibri", 72);
+		const auto viewport = WindowManager::GetInstance().GetWindowByName("Main")->GetViewportManager().GetViewport("Main");
+		const auto mouseRay = viewport->GetMouseRay(viewport->GetMousePosition());
 		auto& input = Input::GetInstance(WindowManager::GetInstance().GetWindowByName("Main").get());
-		ClayManager::SetPointerState({ mousePosition.x, mousePosition.y }, input.IsMouseDown(Keycode::MOUSE_BUTTON_1));
+
+		ClayManager::SetPointerState({ std::numeric_limits<float>().max(), std::numeric_limits<float>().max() }, input.IsMouseDown(Keycode::MOUSE_BUTTON_1));
+
+		Raycast::Hit hit{};
+		if (const auto camera = viewport->GetCamera().lock())
+		{
+			if (viewport->IsHovered())
+			{
+				if (Raycast::RaycastEntity(entity, camera->GetComponent<Transform>().GetPosition(), mouseRay, 100.0f, hit))
+				{
+					ClayManager::SetPointerState({ hit.uv.x * canvas->size.x, hit.uv.y * canvas->size.y }, input.IsMouseDown(Keycode::MOUSE_BUTTON_1));
+				}
+			}
+		}
 
 		ClayManager::BeginLayout();
 

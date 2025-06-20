@@ -86,7 +86,7 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture, std::shar
 								const auto hits = Raycast::RaycastScene(camera->GetScene(), start, ray, camera->GetComponent<Camera>().GetZFar());
 								if (!hits.empty())
 								{
-									entity->GetComponent<Transform>().Translate(start + ray * hits.begin()->first);
+									entity->GetComponent<Transform>().Translate(hits.begin()->first.point);
 								}
 							}
 						}
@@ -156,7 +156,7 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture, std::shar
 							glm::vec3 position{};
 							if (!hits.empty())
 							{
-								position = start + ray * hits.begin()->first;
+								position = hits.begin()->first.point;
 							}
 
 							std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().LoadMesh(path);
@@ -221,12 +221,6 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture, std::shar
 		{
 			scene->GetSelectedEntities().emplace(entity);
 		}
-	}
-	
-	if (camera)
-	{
-		const glm::vec3 ray = GetMouseRay(m_MousePosition);
-		const auto hits = Raycast::RaycastScene(scene, camera->GetComponent<Transform>().GetPosition(), ray, camera->GetComponent<Camera>().GetZFar());
 	}
 
 	if (!m_ActiveGuizmo && m_IsHovered && input.IsMousePressed(Keycode::MOUSE_BUTTON_1))

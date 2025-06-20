@@ -11,7 +11,19 @@ namespace Pengine
 		struct Hit
 		{
 			glm::vec3 point{};
+			glm::vec3 normal{};
+			glm::vec2 uv{};
 			float distance = std::numeric_limits<float>::max();
+
+			std::size_t operator()(const Hit& hit) const
+			{
+				return std::hash<float>{}(hit.distance);
+			}
+
+			bool operator<(const Hit& hit) const
+			{
+				return distance < hit.distance;
+			}
 		};
 
 		static bool IntersectTriangle(
@@ -43,11 +55,18 @@ namespace Pengine
 			const float length,
 			Hit& hit);
 
-		static std::map<float, std::shared_ptr<class Entity>> RaycastScene(
+		static std::map<Hit, std::shared_ptr<class Entity>> RaycastScene(
 			std::shared_ptr<class Scene> scene,
 			const glm::vec3& start,
 			const glm::vec3& direction,
 			const float length);
+
+		static bool RaycastEntity(
+			std::shared_ptr<class Entity> entity,
+			const glm::vec3& start,
+			const glm::vec3& direction,
+			const float length,
+			Hit& hit);
 
 		typedef int OutCode;
 

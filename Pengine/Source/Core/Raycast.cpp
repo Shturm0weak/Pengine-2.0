@@ -1,6 +1,7 @@
 #include "Raycast.h"
 
 #include "SceneManager.h"
+#include "Profiler.h"
 
 #include "../Graphics/Mesh.h"
 #include "../Graphics/Vertex.h"
@@ -33,6 +34,7 @@ bool Raycast::IntersectTriangle(
 	const float wp = glm::dot(distanceToPlane, planeNormal);
 	const float t = wp / vp;
 	const glm::vec3 point = distance * t + start;
+	hit.normal = planeNormal;
 	hit.point = point;
 	hit.distance = glm::distance(start, point);
 	const glm::vec3 edge0 = b - a;
@@ -117,7 +119,8 @@ bool Raycast::IntersectBoxAABB(
 	float tMin = 0.001f;
 	float tMax = length;
 
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++)
+	{
 		float invDir = 1.0f / direction[i];
 		float t1 = (min[i] - start[i]) * invDir;
 		float t2 = (max[i] - start[i]) * invDir;
@@ -129,62 +132,107 @@ bool Raycast::IntersectBoxAABB(
 
 		if (tMax < tMin) return false;
 	}
+
+	hit.distance = (tMin <= tMax) ? tMin : std::numeric_limits<float>::infinity();
+	hit.point = start + direction * hit.distance;
+
 	return true;
 }
 
-std::map<float, std::shared_ptr<Entity>> Raycast::RaycastScene(
+std::map<Raycast::Hit, std::shared_ptr<Entity>> Raycast::RaycastScene(
 	std::shared_ptr<Scene> scene,
 	const glm::vec3& start,
 	const glm::vec3& direction,
 	const float length)
 {
-	std::map<float, std::shared_ptr<Entity>> hits;
+	PROFILER_SCOPE(__FUNCTION__);
 
-	const auto r3dView = scene->GetRegistry().view<Renderer3D>();
-	for (const entt::entity& entity : r3dView)
+	const auto sceneBvhHits = scene->GetBVH()->Raycast(start, direction, length);
+
+	std::map<Hit, std::shared_ptr<Entity>> hits;
+
+	for (const auto& [hit, entity] : sceneBvhHits)
 	{
-		const Renderer3D& r3d = scene->GetRegistry().get<Renderer3D>(entity);
-		const Transform& transform = scene->GetRegistry().get<Transform>(entity);
+		const Transform& transform = scene->GetRegistry().get<Transform>(entity->GetHandle());
 		if (!transform.GetEntity()->IsEnabled())
 		{
 			continue;
 		}
 
-		if (!r3d.mesh)
+		const Renderer3D& r3d = scene->GetRegistry().get<Renderer3D>(entity->GetHandle());
+		if (!r3d.isEnabled || !r3d.mesh)
 		{
 			continue;
 		}
 
-		Hit hitOBB{};
-		if (IntersectBoxOBB(
-			start,
-			direction,
-			r3d.mesh->GetBoundingBox().min,
-			r3d.mesh->GetBoundingBox().max,
-			transform.GetPosition(),
-			transform.GetScale(),
-			transform.GetRotationMat4(),
-			length,
-			hitOBB))
+		Hit localHitMesh{};
+
+		const glm::vec4 localStartHomogeneous = transform.GetInverseTransformMat4() * glm::vec4(start, 1.0f);
+		const glm::vec3 localStart = glm::vec3(localStartHomogeneous) / localStartHomogeneous.w;
+		const glm::vec3 localDirection = transform.GetInverseTransform() * direction;
+
+		if (r3d.mesh->Raycast(localStart, localDirection, length, localHitMesh, scene->GetVisualizer()))
 		{
-			Hit localHitMesh{};
+			Hit worldHitMesh{};
+			worldHitMesh.distance = localHitMesh.distance;
+			worldHitMesh.uv = localHitMesh.uv;
+			worldHitMesh.point = transform.GetTransform() * glm::vec4(localHitMesh.point, 1.0f);
+			worldHitMesh.normal = glm::normalize(transform.GetRotationMat4() * glm::vec4(localHitMesh.normal, 0.0f));
 
-			glm::vec3 localStart = transform.GetInverseTransformMat4() * glm::vec4(start, 1.0f);
-			glm::vec3 localDirection = transform.GetInverseTransform() * direction;
-			if (r3d.mesh->Raycast(localStart, localDirection, length, localHitMesh, scene->GetVisualizer()))
-			{
-				Hit worldHitMesh;
-				worldHitMesh.distance = localHitMesh.distance;
-				worldHitMesh.point = transform.GetTransform() * glm::vec4(localHitMesh.point, 1.0f);
-
-				scene->GetVisualizer().DrawSphere(worldHitMesh.point, 0.1f, 8, { 1.0f, 1.0f, 1.0f });
-
-				hits.emplace(worldHitMesh.distance, transform.GetEntity());
-			}
+			hits.emplace(worldHitMesh, transform.GetEntity());
 		}
 	}
 
+	/*if (!hits.empty())
+	{
+		scene->GetVisualizer().DrawSphere(hits.begin()->first.point, 0.1f, 8, {1.0f, 1.0f, 1.0f});
+		scene->GetVisualizer().DrawLine(hits.begin()->first.point, hits.begin()->first.point + hits.begin()->first.normal, { 1.0f, 0.0f, 1.0f });
+	}*/
+
 	return hits;
+}
+
+bool Raycast::RaycastEntity(
+	std::shared_ptr<Entity> entity,
+	const glm::vec3& start,
+	const glm::vec3& direction,
+	const float length,
+	Hit& hit)
+{
+	if (!entity || !entity->IsEnabled())
+	{
+		return false;
+	}
+
+	const std::shared_ptr<Scene> scene = entity->GetScene();
+	const Renderer3D& r3d = scene->GetRegistry().get<Renderer3D>(entity->GetHandle());
+	const Transform& transform = scene->GetRegistry().get<Transform>(entity->GetHandle());
+	if (!r3d.isEnabled || !r3d.mesh)
+	{
+		return false;
+	}
+
+	Hit hitOBB{};
+	if (IntersectBoxOBB(
+		start,
+		direction,
+		r3d.mesh->GetBoundingBox().min,
+		r3d.mesh->GetBoundingBox().max,
+		transform.GetPosition(),
+		transform.GetScale(),
+		transform.GetRotationMat4(),
+		length,
+		hitOBB))
+	{
+		const auto hits = RaycastScene(scene, start, direction, length);
+		if (!hits.empty() && hits.begin()->second == entity)
+		{
+			hit = hits.begin()->first;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 Raycast::OutCode Raycast::ComputeOutCode(
