@@ -7,7 +7,7 @@
 
 #include "../Graphics/Renderer.h"
 
-#define MAX_BATCH_LINE_COUNT 10000
+#define MAX_BATCH_LINE_COUNT 30000
 #define LINE_VERTEX_COUNT 2
 #define MAX_BATCH_LINE_VERTEX_COUNT MAX_BATCH_LINE_COUNT * LINE_VERTEX_COUNT
 
@@ -51,13 +51,15 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 					sizeof(glm::vec3) * 2,
 					MAX_BATCH_LINE_COUNT * 2,
 					Buffer::Usage::VERTEX_BUFFER,
-					MemoryType::CPU);
+					MemoryType::CPU,
+					true);
 
 				batch.indexBuffer = Buffer::Create(
 					sizeof(uint32_t),
 					MAX_BATCH_LINE_COUNT * 2,
 					Buffer::Usage::INDEX_BUFFER,
-					MemoryType::CPU);
+					MemoryType::CPU,
+					true);
 
 				m_Batches.emplace_back(batch);
 			}
@@ -65,7 +67,9 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 			Batch& batch = m_Batches[batchIndex];
 
 			batch.vertexBuffer->WriteToBuffer(lineVertices.data(), lineVertices.size() * sizeof(glm::vec3));
+			batch.vertexBuffer->Flush();
 			batch.indexBuffer->WriteToBuffer(lineIndices.data(), lineIndices.size() * sizeof(uint32_t));
+			batch.indexBuffer->Flush();
 
 			renderInfo.renderer->Render(
 				{ batch.vertexBuffer },
