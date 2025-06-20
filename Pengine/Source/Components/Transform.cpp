@@ -154,7 +154,7 @@ glm::mat4 Transform::GetTransform(System system) const
 
 glm::mat3 Transform::GetInverseTransform(const System system) const
 {
-	return glm::inverse(GetTransform(system));
+	return GetInverseTransformMat4(system);
 }
 
 glm::mat4 Transform::GetInverseTransformMat4(System system) const
@@ -194,11 +194,11 @@ void Transform::UpdateTransforms()
 	if (m_Entity && m_Entity->HasParent())
 	{
 		Transform& parentTransform = m_Entity->GetParent()->GetComponent<Transform>();
-		m_GlobalTransformData.m_TransformMat4 = parentTransform.GetTransform() * m_GlobalTransformData.m_TransformMat4;
-		m_GlobalTransformData.m_PositionMat4 = parentTransform.GetPositionMat4() * m_GlobalTransformData.m_PositionMat4;
-		m_GlobalTransformData.m_RotationMat4 = parentTransform.GetRotationMat4() * m_GlobalTransformData.m_RotationMat4;
-		m_GlobalTransformData.m_ScaleMat4 = parentTransform.GetScaleMat4() * m_GlobalTransformData.m_ScaleMat4;
-		m_GlobalTransformData.m_Rotation = parentTransform.GetRotation() + m_GlobalTransformData.m_Rotation;
+		m_GlobalTransformData.m_TransformMat4 = parentTransform.GetTransform() * m_LocalTransformData.m_TransformMat4;
+		m_GlobalTransformData.m_PositionMat4 = parentTransform.GetTransform() * m_LocalTransformData.m_PositionMat4;
+		m_GlobalTransformData.m_RotationMat4 = parentTransform.GetRotationMat4() * m_LocalTransformData.m_RotationMat4;
+		m_GlobalTransformData.m_ScaleMat4 = parentTransform.GetScaleMat4() * m_LocalTransformData.m_ScaleMat4;
+		m_GlobalTransformData.m_Rotation = parentTransform.GetRotation() + m_LocalTransformData.m_Rotation;
 	}
 }
 
@@ -290,7 +290,7 @@ void Transform::Translate(const glm::vec3& position)
 			{
 				Transform& childTransform = child->GetComponent<Transform>();
 				childTransform.m_GlobalTransformData.m_TransformMat4 = transform.GetTransform() * childTransform.m_LocalTransformData.m_TransformMat4;
-				childTransform.m_GlobalTransformData.m_PositionMat4 = transform.GetPositionMat4() * childTransform.m_LocalTransformData.m_PositionMat4;
+				childTransform.m_GlobalTransformData.m_PositionMat4 = transform.GetTransform() * childTransform.m_LocalTransformData.m_PositionMat4;
 
 				translationCallbacks(childTransform);
 			}
