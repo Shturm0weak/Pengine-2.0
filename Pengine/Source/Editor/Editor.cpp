@@ -3178,35 +3178,8 @@ void Editor::Thumbnails::UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thu
 	cameraComponent.CreateRenderView(name, m_ThumbnailWindow->GetSize());
 
 	BoundingBox bb{};
-
-	for (const auto& entity : scene->GetEntities())
-	{
-		if (!entity->HasComponent<Renderer3D>())
-		{
-			continue;
-		}
-
-		auto& r3d = entity->GetComponent<Renderer3D>();
-		if (!r3d.mesh)
-		{
-			continue;
-		}
-
-		auto& transform = entity->GetComponent<Transform>();
-		const glm::mat4 transformMat4 = transform.GetTransform();
-
-		glm::vec3 max = transformMat4 * glm::vec4(r3d.mesh->GetBoundingBox().max, 1.0f);
-		glm::vec3 min = transformMat4 * glm::vec4(r3d.mesh->GetBoundingBox().min, 1.0f);
-
-		bb.max.x = glm::max(bb.max.x, max.x);
-		bb.max.y = glm::max(bb.max.y, max.y);
-		bb.max.z = glm::max(bb.max.z, max.z);
-
-		bb.min.x = glm::min(bb.min.x, min.x);
-		bb.min.y = glm::min(bb.min.y, min.y);
-		bb.min.z = glm::min(bb.min.z, min.z);
-	}
-
+	bb.max = scene->GetBVH()->GetRoot()->aabb.max;
+	bb.min = scene->GetBVH()->GetRoot()->aabb.min;
 	bb.offset = bb.max + (bb.min - bb.max) * 0.5f;
 
 	{
