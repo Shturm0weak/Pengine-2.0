@@ -384,6 +384,13 @@ void RenderPassManager::CreateZPrePass()
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 		const glm::mat4 viewProjectionMat4 = renderInfo.projection * camera.GetViewMat4();
 		const auto r3dView = registry.view<Renderer3D>();
+
+		/*scene->GetBVH()->Traverse([scene](SceneBVH::BVHNode* node)
+			{
+				scene->GetVisualizer().DrawBox(node->aabb.min, node->aabb.max, { 1.0f, 0.5f, 0.0f }, glm::mat4(1.0f));
+			}
+		);*/
+
 		for (const entt::entity& entity : r3dView)
 		{
 			const Renderer3D& r3d = registry.get<Renderer3D>(entity);
@@ -434,13 +441,13 @@ void RenderPassManager::CreateZPrePass()
 				const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
 
 				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
+			
+				/*r3d.mesh->GetBVH()->Traverse([scene, transformMat4](MeshBVH::BVHNode* node)
+					{
+						scene->GetVisualizer().DrawBox(node->aabb.min, node->aabb.max, { 1.0f, 1.0f, 0.0f }, transformMat4);
+					}
+				);*/
 			}
-
-			/*r3d.mesh->GetBVH()->Traverse([scene, transformMat4](BVHNode* node)
-				{
-					scene->GetVisualizer().DrawBox(node->bbox.min, node->bbox.max, { 1.0f, 1.0f, 0.0f }, transformMat4);
-				}
-			);*/
 
 			renderableCount++;
 		}
@@ -911,10 +918,13 @@ void RenderPassManager::CreateDeferred()
 			CSMRenderer* csmRenderer = (CSMRenderer*)renderInfo.renderView->GetCustomData("CSMRenderer");
 			if (shadowSettings.isEnabled && !csmRenderer->GetLightSpaceMatrices().empty())
 			{
-				std::vector<glm::vec4> shadowCascadeLevels;
-				for (const float& distance : csmRenderer->GetDistances())
+				// Also in Shaders/Includes/CSM.h
+				constexpr size_t maxCascadeCount = 10;
+
+				std::vector<glm::vec4> shadowCascadeLevels(maxCascadeCount, {});
+				for (size_t i = 0; i < csmRenderer->GetDistances().size(); i++)
 				{
-					shadowCascadeLevels.emplace_back(glm::vec4(distance));
+					shadowCascadeLevels[i] = glm::vec4(csmRenderer->GetDistances()[i]);
 				}
 
 				baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "csm.lightSpaceMatrices", *csmRenderer->GetLightSpaceMatrices().data());
@@ -934,10 +944,10 @@ void RenderPassManager::CreateDeferred()
 				const int visualize = shadowSettings.visualize;
 				baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "csm.visualize", visualize);
 
-				std::vector<glm::vec4> biases;
-				for (const float& bias : shadowSettings.biases)
+				std::vector<glm::vec4> biases(maxCascadeCount);
+				for (size_t i = 0; i < shadowSettings.biases.size(); i++)
 				{
-					biases.emplace_back(glm::vec4(bias));
+					biases[i] = glm::vec4(shadowSettings.biases[i]);
 				}
 				baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "csm.biases", *biases.data());
 			}
@@ -985,7 +995,7 @@ void RenderPassManager::CreateDeferred()
 			emissiveTexture->Transition(Texture::Layout::SHADER_READ_ONLY_OPTIMAL, transitionFrame);
 			renderInfo.renderer->EndCommandLabel(transitionFrame);
 			device->EndFrame(transitionFrame);
-
+			
 			device->DestroyFrame(transitionFrame);
 		}
 
