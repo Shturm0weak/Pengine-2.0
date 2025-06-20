@@ -90,6 +90,12 @@ namespace Pengine
 
 		bool IsPrefab() const { return m_PrefabFilepathUUID.IsValid(); }
 
+		bool IsValid() const { return IsDeleted(); }
+		
+		bool IsDeleted() const { return m_IsDeleted; }
+		
+		bool SetDeleted(const bool isDeleted) { return m_IsDeleted = isDeleted; }
+
 	private:
 		void Copy(const Entity& entity);
 
@@ -107,6 +113,7 @@ namespace Pengine
 		UUID m_PrefabFilepathUUID = UUID(0, 0);
 
 		bool m_IsEnabled = true;
+		bool m_IsDeleted = false;
 
 		friend class Scene;
 	};

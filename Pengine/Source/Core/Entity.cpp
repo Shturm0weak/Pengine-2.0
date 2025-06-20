@@ -187,7 +187,7 @@ bool Entity::IsEnabled() const
 	std::shared_ptr<const Entity> entity = shared_from_this();
 	while (entity)
 	{
-		enabled *= entity->m_IsEnabled;
+		enabled *= entity->m_IsEnabled && !entity->IsValid();
 		entity = entity->GetParent();
 	}
 

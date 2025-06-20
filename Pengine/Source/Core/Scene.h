@@ -5,6 +5,7 @@
 #include "Entity.h"
 #include "Visualizer.h"
 #include "GraphicsSettings.h"
+#include "SceneBVH.h"
 
 #include "../Graphics/RenderView.h"
 #include "../ComponentSystems/ComponentSystem.h"
@@ -33,6 +34,8 @@ namespace Pengine
 
 		std::shared_ptr<Entity> CloneEntity(std::shared_ptr<Entity> entity);
 
+		// Delete the entity in the next frame, the entity will be marked deleted,
+		// which can be checked by calling entity->IsEnabled() or entity->IsDeleted() or entity->IsValid().
 		void DeleteEntity(std::shared_ptr<Entity>& entity);
 
 		std::shared_ptr<Entity> FindEntityByUUID(const UUID& uuid);
@@ -63,6 +66,8 @@ namespace Pengine
 
 		std::shared_ptr<RenderView> GetRenderView() const { return m_RenderView; }
 
+		std::shared_ptr<SceneBVH> GetBVH() const { return m_CurrentBVH; }
+
 		void SetRenderView(std::shared_ptr<RenderView> renderView) { m_RenderView = renderView; }
 
 		void SetComponentSystem(const std::string& name, std::shared_ptr<ComponentSystem> componentSystem) { m_ComponentSystemsByName[name] = componentSystem; }
@@ -87,6 +92,7 @@ namespace Pengine
 		std::unordered_map<std::string, std::shared_ptr<ComponentSystem>> m_ComponentSystemsByName;
 
 		std::vector<std::shared_ptr<Entity>> m_Entities;
+		std::queue<std::shared_ptr<Entity>> m_EntityDeletionQueue;
 		entt::registry m_Registry;
 		Visualizer m_Visualizer;
 		Settings m_Settings;
@@ -97,8 +103,16 @@ namespace Pengine
 		std::set<std::shared_ptr<Entity>> m_SelectedEntities;
 
 		std::shared_ptr<RenderView> m_RenderView;
+		
+		std::shared_ptr<SceneBVH> m_BuildingBVH;
+		std::shared_ptr<SceneBVH> m_CurrentBVH;
+		bool m_IsBuildingBVH = false;
+		std::mutex m_LockBVH;
+		std::condition_variable m_BVHConditionalVariable;
 
 		void Copy(const Scene& scene);
+
+		void FlushDeletionQueue();
 	};
 
 }

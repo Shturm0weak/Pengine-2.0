@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "Viewport.h"
 #include "FileFormatNames.h"
+#include "ThreadPool.h"
 
 #include "../Components/Transform.h"
 #include "../Components/Renderer3D.h"
@@ -32,6 +33,28 @@ void Scene::Copy(const Scene& scene)
 	//}
 }
 
+void Scene::FlushDeletionQueue()
+{
+	while (!m_EntityDeletionQueue.empty())
+	{
+		const auto entity = m_EntityDeletionQueue.front();
+		m_EntityDeletionQueue.pop();
+
+		while (!entity->GetChilds().empty())
+		{
+			if (std::shared_ptr<Entity> child = entity->GetChilds().back().lock())
+			{
+				DeleteEntity(child);
+			}
+		}
+
+		if (entity->GetHandle() != entt::tombstone)
+		{
+			m_Registry.destroy(entity->GetHandle());
+		}
+	}
+}
+
 std::shared_ptr<Scene> Scene::Create(const std::string& name, const std::string& tag)
 {
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>(name, none);
@@ -44,7 +67,8 @@ Scene::Scene(const std::string& name, const std::filesystem::path& filepath)
 	: Asset(name, filepath)
 	, m_GraphicsSettings("Default", "Default")
 {
-
+	m_CurrentBVH = std::make_shared<SceneBVH>(this);
+	m_BuildingBVH = std::make_shared<SceneBVH>(this);
 }
 
 Scene::~Scene()
@@ -139,6 +163,28 @@ void Scene::Update(const float deltaTime)
 	{
 		system->OnUpdate(deltaTime, shared_from_this());
 	}
+
+	{
+		std::unique_lock<std::mutex> lock(m_LockBVH);
+		m_BVHConditionalVariable.wait(lock, [this]
+		{
+			return !m_IsBuildingBVH;
+		});
+
+		std::swap(m_CurrentBVH, m_BuildingBVH);
+	}
+
+	FlushDeletionQueue();
+
+	// TODO: Potential big problem, during rebuilding BVH entities can be added to the scene from other thread!
+	ThreadPool::GetInstance().EnqueueAsync([this]()
+	{
+		std::lock_guard<std::mutex> lock(m_LockBVH);
+		m_IsBuildingBVH = true;
+		m_BuildingBVH->Update();
+		m_IsBuildingBVH = false;
+		m_BVHConditionalVariable.notify_all();
+	});
 }
 
 std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name, const UUID& uuid)
@@ -214,13 +260,9 @@ std::shared_ptr<Entity> Scene::CloneEntity(std::shared_ptr<Entity> entity)
 
 void Scene::DeleteEntity(std::shared_ptr<Entity>& entity)
 {
-	while (!entity->GetChilds().empty())
-	{
-		if (std::shared_ptr<Entity> child = entity->GetChilds().back().lock())
-		{
-			DeleteEntity(child);
-		}
-	}
+	entity->SetDeleted(true);
+
+	m_EntityDeletionQueue.emplace(entity);
 
 	if (const std::shared_ptr<Entity> parent = entity->GetParent())
 	{
@@ -231,11 +273,6 @@ void Scene::DeleteEntity(std::shared_ptr<Entity>& entity)
 		entityToErase != m_Entities.end())
 	{
 		m_Entities.erase(entityToErase);
-	}
-
-	if (entity->GetHandle() != entt::tombstone)
-	{
-		m_Registry.destroy(entity->GetHandle());
 	}
 
 	entity = nullptr;
