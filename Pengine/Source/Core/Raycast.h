@@ -26,6 +26,25 @@ namespace Pengine
 			}
 		};
 
+		struct RayPacket
+		{
+			__m256 origin[3];
+			__m256 dir[3];
+		};
+
+		// Origin and Direction are the same for all rays.
+		// If you need unique rays change this code.
+		static void prepare_ray_packet(const glm::vec3& origin, const glm::vec3& direction, RayPacket& packet);
+
+		static __m256 ray_triangle_intersect_avx2(
+			const __m256 ray_origin[3],
+			const __m256 ray_dir[3],
+			const __m256 tri_v0[3],
+			const __m256 tri_v1[3],
+			const __m256 tri_v2[3],
+			__m256* out_u,
+			__m256* out_v);
+
 		static bool IntersectTriangle(
 			const glm::vec3& start,
 			const glm::vec3& direction,

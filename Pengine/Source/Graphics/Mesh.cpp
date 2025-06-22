@@ -113,8 +113,7 @@ Mesh::Mesh(
 			const glm::vec3& direction,
 			const float length,
 			std::shared_ptr<MeshBVH> bvh,
-			Raycast::Hit& hit,
-			Visualizer& visualizer) -> bool
+			Visualizer& visualizer) -> std::set<Raycast::Hit>
 		{
 			//const VertexDefault* vertex = (const VertexDefault*)vertices;
 			//for (size_t i = 0; i < indices.size(); i += 3)
@@ -143,7 +142,7 @@ Mesh::Mesh(
 
 			//return false;
 
-			return bvh->Raycast(start, direction, length, hit, visualizer);
+			return bvh->Raycast(start, direction, length, visualizer);
 		};
 	}
 
@@ -170,11 +169,10 @@ std::shared_ptr<Buffer> Mesh::GetVertexBuffer(const size_t index) const
 	return m_Vertices[index];
 }
 
-bool Mesh::Raycast(
+std::set<Raycast::Hit> Mesh::Raycast(
 	const glm::vec3& start,
 	const glm::vec3& direction,
 	const float length,
-	Raycast::Hit& hit,
 	Visualizer& visualizer) const
 {
 	return m_RaycastCallback(
@@ -182,6 +180,5 @@ bool Mesh::Raycast(
 		direction,
 		length,
 		m_BVH,
-		hit,
 		visualizer);
 }

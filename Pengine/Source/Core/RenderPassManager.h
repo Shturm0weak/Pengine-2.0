@@ -47,6 +47,9 @@ namespace Pengine
 			const glm::ivec2& dstSize);
 
 	private:
+
+		bool m_IsRayTracingEnabled = false;
+
 		struct EntitiesByMesh
 		{
 			std::unordered_map<std::shared_ptr<class Mesh>, std::vector<entt::entity>> instanced;
@@ -76,6 +79,8 @@ namespace Pengine
 			std::shared_ptr<class Mesh> mesh,
 			std::vector<std::shared_ptr<class Buffer>>& vertexBuffers,
 			std::vector<size_t>& vertexBufferOffsets);
+
+		void CreateRayTracing();
 
 		void CreateZPrePass();
 

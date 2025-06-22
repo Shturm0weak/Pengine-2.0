@@ -282,9 +282,9 @@ glm::vec3 Viewport::GetMouseRay(const glm::vec2& mousePosition) const
 	ndc -= 1.0f;
 	ndc = glm::clamp(ndc, glm::vec2(-1.0, -1.0), glm::vec2(1.0, 1.0));
 	const glm::vec4 rayClip = { ndc.x, -ndc.y, 0.0f, 1.0f };
-	glm::vec4 rayEye = glm::inverse(m_Projection) * rayClip;
+	glm::vec4 rayEye = m_InverseProjection * rayClip;
 	rayEye.z = -1.0f; rayEye.w = 0.0f;
-	glm::vec3 ray = (glm::vec3)(glm::inverse(camera->GetComponent<Camera>().GetViewMat4()) * rayEye);
+	glm::vec3 ray = (glm::vec3)(camera->GetComponent<Transform>().GetTransform() * rayEye);
 	return glm::normalize(ray);
 }
 
@@ -346,6 +346,7 @@ void Viewport::SetOrthographic(const glm::ivec2& size, const float zFar, const f
 	const float ratio = static_cast<float>(size.x) / static_cast<float>(size.y);
 	m_Projection = glm::ortho(-ratio * 10.0f, ratio * 10.0f, -1.0f * 10.0f,
 		1.0f * 10.0f, zFar, zNear);
+	m_InverseProjection = glm::inverse(m_Projection);
 }
 
 void Viewport::SetPerspective(const glm::ivec2& size, const float zFar, const float zNear, const float fov)
@@ -361,4 +362,5 @@ void Viewport::SetPerspective(const glm::ivec2& size, const float zFar, const fl
 
 	const float ratio = static_cast<float>(size.x) / static_cast<float>(size.y);
 	m_Projection = glm::perspective(fov, ratio, zNear, zFar);
+	m_InverseProjection = glm::inverse(m_Projection);
 }

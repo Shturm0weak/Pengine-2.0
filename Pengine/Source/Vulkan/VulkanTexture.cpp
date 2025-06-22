@@ -15,7 +15,7 @@
 using namespace Pengine;
 using namespace Vk;
 
-VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
+VulkanTexture::VulkanTexture(CreateInfo createInfo)
 	: Texture(createInfo)
 {
 	VkFormat format = ConvertFormat(m_Format);

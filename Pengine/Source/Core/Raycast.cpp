@@ -12,6 +12,87 @@
 
 using namespace Pengine;
 
+void Raycast::prepare_ray_packet(const glm::vec3& origin, const glm::vec3& direction, RayPacket& packet)
+{
+	for (int i = 0; i < 3; i++)
+	{
+		packet.origin[i] = _mm256_set_ps(
+			origin[i], origin[i], origin[i], origin[i],
+			origin[i], origin[i], origin[i], origin[i]
+		);
+		packet.dir[i] = _mm256_set_ps(
+			direction[i], direction[i], direction[i], direction[i],
+			direction[i], direction[i], direction[i], direction[i]
+		);
+	}
+}
+
+// AVX2-accelerated Moeller-Trumbore for 8 rays vs 8 triangles
+__m256 Raycast::ray_triangle_intersect_avx2(
+	const __m256 ray_origin[3],
+	const __m256 ray_dir[3],
+	const __m256 tri_v0[3],
+	const __m256 tri_v1[3],
+	const __m256 tri_v2[3],
+	__m256* out_u,
+	__m256* out_v)
+{
+	__m256 edge1[3], edge2[3], h[3], s[3], q[3];
+	__m256 a, f, u, v;
+
+	// Vector edges
+	for (int i = 0; i < 3; i++) {
+		edge1[i] = _mm256_sub_ps(tri_v1[i], tri_v0[i]);
+		edge2[i] = _mm256_sub_ps(tri_v2[i], tri_v0[i]);
+	}
+
+	// Cross product: h = ray_dir x edge2
+	h[0] = _mm256_fmsub_ps(ray_dir[1], edge2[2], _mm256_mul_ps(ray_dir[2], edge2[1]));
+	h[1] = _mm256_fmsub_ps(ray_dir[2], edge2[0], _mm256_mul_ps(ray_dir[0], edge2[2]));
+	h[2] = _mm256_fmsub_ps(ray_dir[0], edge2[1], _mm256_mul_ps(ray_dir[1], edge2[0]));
+
+	// Dot product: a = edge1 • h
+	a = _mm256_fmadd_ps(edge1[0], h[0], _mm256_fmadd_ps(edge1[1], h[1], _mm256_mul_ps(edge1[2], h[2])));
+	const __m256 epsilon = _mm256_set1_ps(1e-6f);
+
+	const __m256 sign_mask = _mm256_set1_ps(-0.0f);
+	__m256 abs_a = _mm256_andnot_ps(sign_mask, a);
+	__m256 mask = _mm256_cmp_ps(abs_a, epsilon, _CMP_LT_OS);
+
+	// Early exit for parallel rays
+	if (_mm256_testz_ps(mask, mask)) return _mm256_set1_ps(INFINITY);
+
+	f = _mm256_div_ps(_mm256_set1_ps(1.0f), a);
+	for (int i = 0; i < 3; i++) {
+		s[i] = _mm256_sub_ps(ray_origin[i], tri_v0[i]);
+	}
+
+	// Barycentric u
+	u = _mm256_mul_ps(f, _mm256_fmadd_ps(s[0], h[0], _mm256_fmadd_ps(s[1], h[1], _mm256_mul_ps(s[2], h[2]))));
+	mask = _mm256_or_ps(mask, _mm256_cmp_ps(u, _mm256_setzero_ps(), _CMP_LT_OS));
+	mask = _mm256_or_ps(mask, _mm256_cmp_ps(_mm256_sub_ps(_mm256_set1_ps(1.0f), u), _mm256_setzero_ps(), _CMP_LT_OS));
+
+	// Cross product: q = s x edge1
+	q[0] = _mm256_fmsub_ps(s[1], edge1[2], _mm256_mul_ps(s[2], edge1[1]));
+	q[1] = _mm256_fmsub_ps(s[2], edge1[0], _mm256_mul_ps(s[0], edge1[2]));
+	q[2] = _mm256_fmsub_ps(s[0], edge1[1], _mm256_mul_ps(s[1], edge1[0]));
+
+	// Barycentric v
+	v = _mm256_mul_ps(f, _mm256_fmadd_ps(ray_dir[0], q[0], _mm256_fmadd_ps(ray_dir[1], q[1], _mm256_mul_ps(ray_dir[2], q[2]))));
+	mask = _mm256_or_ps(mask, _mm256_cmp_ps(v, _mm256_setzero_ps(), _CMP_LT_OS));
+	mask = _mm256_or_ps(mask, _mm256_cmp_ps(_mm256_sub_ps(_mm256_set1_ps(1.0f), _mm256_add_ps(u, v)), _mm256_setzero_ps(), _CMP_LT_OS));
+
+	// Ray distance t
+	__m256 t = _mm256_mul_ps(f, _mm256_fmadd_ps(edge2[0], q[0], _mm256_fmadd_ps(edge2[1], q[1], _mm256_mul_ps(edge2[2], q[2]))));
+	mask = _mm256_or_ps(mask, _mm256_cmp_ps(t, _mm256_set1_ps(1e-6f), _CMP_LT_OS));
+
+	*out_u = u;
+	*out_v = v;
+
+	// Output results (mask invalid intersections)
+	return _mm256_blendv_ps(t, _mm256_set1_ps(INFINITY), mask);
+}
+
 bool Raycast::IntersectTriangle(
 	const glm::vec3& start,
 	const glm::vec3& direction,
@@ -165,19 +246,18 @@ std::map<Raycast::Hit, std::shared_ptr<Entity>> Raycast::RaycastScene(
 			continue;
 		}
 
-		Hit localHitMesh{};
-
 		const glm::vec4 localStartHomogeneous = transform.GetInverseTransformMat4() * glm::vec4(start, 1.0f);
 		const glm::vec3 localStart = glm::vec3(localStartHomogeneous) / localStartHomogeneous.w;
 		const glm::vec3 localDirection = transform.GetInverseTransform() * direction;
 
-		if (r3d.mesh->Raycast(localStart, localDirection, length, localHitMesh, scene->GetVisualizer()))
+		const std::set<Raycast::Hit> localHitsMesh = r3d.mesh->Raycast(localStart, localDirection, length, scene->GetVisualizer());
+		for (const auto& localHitMesh : localHitsMesh)
 		{
 			Hit worldHitMesh{};
 			worldHitMesh.distance = localHitMesh.distance;
 			worldHitMesh.uv = localHitMesh.uv;
 			worldHitMesh.point = transform.GetTransform() * glm::vec4(localHitMesh.point, 1.0f);
-			worldHitMesh.normal = glm::normalize(transform.GetRotationMat4() * glm::vec4(localHitMesh.normal, 0.0f));
+			worldHitMesh.normal = glm::normalize(transform.GetInverseTransform() * localHitMesh.normal);
 
 			hits.emplace(worldHitMesh, transform.GetEntity());
 		}

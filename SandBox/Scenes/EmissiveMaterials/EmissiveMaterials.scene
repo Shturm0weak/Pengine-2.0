@@ -12,15 +12,15 @@ Scene:
     DirectionalLight:
       Color: [1, 1, 1]
       Intensity: 1
-      Ambient: 0.100000001
+      Ambient: 0.5
     Childs:
       []
   - UUID: 0x82017b67e6c1045645f9c2e5e4027693
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [8.18906403, 12.4971657, 14.2718925]
-      Rotation: [-0.833321929, 0.578880966, 0]
+      Position: [-4.73026562, -0.99390763, 9.47533321]
+      Rotation: [0.803198755, -3.5159781, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -28,7 +28,7 @@ Scene:
       Type: 1
       ZNear: 0.100000001
       ZFar: 1000
-      PassName: Final
+      PassName: RayTracing
       RenderTargetIndex: 0
       Viewport: Main
     Childs:
@@ -141,3 +141,18 @@ Scene:
           IsEnabled: true
         Childs:
           []
+  - UUID: 0x49858c033e5f78e339468c225ea9cd2c
+    Name: Sphere
+    IsEnabled: true
+    Transform:
+      Position: [1.75935173, -19.243391, 10.8493118]
+      Rotation: [0, -0, 0]
+      Scale: [37.3739128, 4.42000055, 18.8414936]
+      FollowOwner: true
+    Renderer3D:
+      Mesh: 0x961da7328a362c95bb6dd655f7ade430
+      Material: 0xa2002aee5f7cea0d6e79557a5d297f42
+      RenderingOrder: 5
+      IsEnabled: true
+    Childs:
+      []

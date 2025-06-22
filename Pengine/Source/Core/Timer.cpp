@@ -19,7 +19,7 @@ Timer::~Timer()
 	Stop();
 }
 
-void Timer::Stop() const
+float Timer::Stop() const
 {
 	const auto endTimePoint = std::chrono::high_resolution_clock::now();
 	const auto start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimePoint).time_since_epoch().count();
@@ -39,4 +39,6 @@ void Timer::Stop() const
 	{
 		*m_OutTime = ms;
 	}
+
+	return ms;
 }

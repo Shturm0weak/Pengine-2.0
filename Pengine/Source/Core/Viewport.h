@@ -58,6 +58,7 @@ namespace Pengine
 		void SetPerspective(const glm::ivec2& size, const float zFar, const float zNear, const float fov);
 
 		glm::mat4 m_Projection{};
+		glm::mat4 m_InverseProjection{};
 
 		std::function<void(const glm::vec2&, glm::ivec2, std::shared_ptr<Entity>, bool&)> m_DrawGizmosCallback;
 

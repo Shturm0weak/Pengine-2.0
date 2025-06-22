@@ -50,11 +50,10 @@ namespace Pengine
 
 		void Traverse(const std::function<void(BVHNode* node)>& callback) const;
 
-		bool Raycast(
+		std::set<Raycast::Hit> Raycast(
 			const glm::vec3& start,
 			const glm::vec3& direction,
 			const float length,
-			Raycast::Hit& hit,
 			Visualizer& visualizer);
 
 	private:

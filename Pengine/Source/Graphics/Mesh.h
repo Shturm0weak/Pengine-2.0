@@ -33,12 +33,11 @@ namespace Pengine
 			std::optional<BoundingBox> boundingBox;
 			Type type = Type::STATIC;
 
-			std::function<bool(
+			std::function<std::set<Raycast::Hit>(
 				const glm::vec3& start,
 				const glm::vec3& direction,
 				const float length,
 				std::shared_ptr<MeshBVH> bvh,
-				Raycast::Hit& hit,
 				Visualizer& visualizer)> raycastCallback;
 		};
 
@@ -71,11 +70,10 @@ namespace Pengine
 
 		[[nodiscard]] std::shared_ptr<MeshBVH> GetBVH() const { return m_BVH; }
 
-		[[nodiscard]] bool Raycast(
+		[[nodiscard]] std::set<Raycast::Hit> Raycast(
 			const glm::vec3& start,
 			const glm::vec3& direction,
 			const float length,
-			Raycast::Hit& hit,
 			Visualizer& visualizer) const;
 
 	protected:
@@ -90,12 +88,11 @@ namespace Pengine
 		uint32_t m_VertexSize = 0;
 		std::vector<VertexLayout> m_VertexLayouts;
 		Type m_Type = Type::STATIC;
-		std::function<bool(
+		std::function<std::set<Raycast::Hit>(
 			const glm::vec3& start,
 			const glm::vec3& direction,
 			const float length,
 			std::shared_ptr<MeshBVH> bvh,
-			Raycast::Hit& hit,
 			Visualizer& visualizer)> m_RaycastCallback;
 	};
 

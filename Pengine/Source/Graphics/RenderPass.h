@@ -22,6 +22,7 @@ namespace Pengine
 	const std::string SSR = "SSR";
 	const std::string SSRBlur = "SSRBlur";
 	const std::string UI = "UI";
+	const std::string RayTracing = "RayTracing";
 
 	class FrameBuffer;
 	class Window;

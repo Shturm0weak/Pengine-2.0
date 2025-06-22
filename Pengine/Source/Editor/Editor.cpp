@@ -108,7 +108,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
 	m_TextureMetaPropertiesMenu.Update();
 	m_ImportMenu.Update(*this);
 
-	m_Thumbnails.UpdateThumbnails();
+	//m_Thumbnails.UpdateThumbnails();
 
 	ImGui::Begin("Settings");
 	ImGui::Text("FPS: %.0f", 1.0f / static_cast<float>(Time::GetDeltaTime()));

@@ -77,9 +77,13 @@ std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath, bo
 	return texture;
 }
 
-Texture::Texture(const CreateInfo& createInfo)
+Texture::Texture(CreateInfo& createInfo)
 	: Asset(createInfo.name, createInfo.filepath)
 {
+	createInfo.memoryType = MemoryType::CPU;
+	createInfo.mipLevels = 1;
+	createInfo.layerCount = 1;
+
 	m_Meta = createInfo.meta;
 	m_Size = createInfo.size;
 	m_Channels = createInfo.channels;

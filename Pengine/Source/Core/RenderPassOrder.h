@@ -8,23 +8,28 @@ namespace Pengine
 
 	const std::vector<std::string> passPerSceneOrder =
 	{
-		Atmosphere
+		//Atmosphere
 	};
+
+	//const std::vector<std::string> passPerViewportOrder =
+	//{
+	//	UI,
+	//	ZPrePass,
+	//	GBuffer,
+	//	CSM,
+	//	SSAO,
+	//	SSAOBlur,
+	//	Deferred,
+	//	Transparent,
+	//	SSR,
+	//	SSRBlur,
+	//	Bloom,
+	//	Final
+	//};
 
 	const std::vector<std::string> passPerViewportOrder =
 	{
-		UI,
-		ZPrePass,
-		GBuffer,
-		CSM,
-		SSAO,
-		SSAOBlur,
-		Deferred,
-		Transparent,
-		SSR,
-		SSRBlur,
-		Bloom,
-		Final
+		RayTracing,
 	};
 
 }

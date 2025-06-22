@@ -170,7 +170,7 @@ namespace Pengine
 
 		static std::shared_ptr<Texture> Load(const std::filesystem::path& filepath, bool flip, const Texture::Meta& meta);
 		
-		explicit Texture(const CreateInfo& createInfo);
+		explicit Texture(CreateInfo& createInfo);
 		virtual ~Texture() = default;
 		Texture(const Texture&) = delete;
 		Texture(Texture&&) = delete;

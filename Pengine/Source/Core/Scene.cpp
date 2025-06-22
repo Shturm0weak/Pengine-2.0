@@ -165,26 +165,27 @@ void Scene::Update(const float deltaTime)
 	}
 
 	{
-		std::unique_lock<std::mutex> lock(m_LockBVH);
-		m_BVHConditionalVariable.wait(lock, [this]
-		{
-			return !m_IsBuildingBVH;
-		});
-
-		std::swap(m_CurrentBVH, m_BuildingBVH);
+		//std::unique_lock<std::mutex> lock(m_LockBVH);
+		//m_BVHConditionalVariable.wait(lock, [this]
+		//{
+		//	return !m_IsBuildingBVH;
+		//});
+		//
+		//std::swap(m_CurrentBVH, m_BuildingBVH);
 	}
 
 	FlushDeletionQueue();
 
+	m_CurrentBVH->Update();
 	// TODO: Potential big problem, during rebuilding BVH entities can be added to the scene from other thread!
-	ThreadPool::GetInstance().EnqueueAsync([this]()
-	{
-		std::lock_guard<std::mutex> lock(m_LockBVH);
-		m_IsBuildingBVH = true;
-		m_BuildingBVH->Update();
-		m_IsBuildingBVH = false;
-		m_BVHConditionalVariable.notify_all();
-	});
+	//ThreadPool::GetInstance().EnqueueAsync([this]()
+	//{
+		//std::lock_guard<std::mutex> lock(m_LockBVH);
+		//m_IsBuildingBVH = true;
+		//m_BuildingBVH->Update();
+		//m_IsBuildingBVH = false;
+		//m_BVHConditionalVariable.notify_all();
+	//});
 }
 
 std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name, const UUID& uuid)

@@ -295,6 +295,7 @@ RenderPassManager::RenderPassManager()
 	CreateSSR();
 	CreateSSRBlur();
 	CreateUI();
+	CreateRayTracing();
 }
 
 void RenderPassManager::GetVertexBuffers(
@@ -337,6 +338,586 @@ void RenderPassManager::GetVertexBuffers(
 			vertexLayoutIndex++;
 		}
 	}
+}
+
+#include "Window.h"
+#include "Input.h"
+#include "Keycode.h"
+#include "ThreadPool.h"
+#include "Serializer.h"
+#include "Timer.h"
+#include "RandomGenerator.h"
+
+void RenderPassManager::CreateRayTracing()
+{
+	glm::vec4 clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
+
+	RenderPass::AttachmentDescription color{};
+	color.textureCreateInfo.format = Format::R8G8B8A8_SRGB;
+	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	color.textureCreateInfo.channels = 4;
+	color.textureCreateInfo.isMultiBuffered = true;
+	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
+	color.textureCreateInfo.name = "RayTracingColor";
+	color.textureCreateInfo.filepath = color.textureCreateInfo.name;
+	color.textureCreateInfo.memoryType = MemoryType::CPU;
+	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::CLEAR;
+	color.store = RenderPass::Store::STORE;
+
+	RenderPass::CreateInfo createInfo{};
+	createInfo.type = Pass::Type::GRAPHICS;
+	createInfo.name = RayTracing;
+	createInfo.clearColors = { clearColor };
+	createInfo.attachmentDescriptions = { color };
+	createInfo.resizeWithViewport = true;
+	//createInfo.resizeViewportScale = { 0.1f, 0.1f };
+	createInfo.resizeViewportScale = { 1.0f, 1.0f };
+
+	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
+	{
+		PROFILER_SCOPE(RayTracing);
+
+		const std::shared_ptr<Viewport> viewport = renderInfo.window->GetViewportManager().GetViewport("Main");
+		if (!viewport || !viewport->GetCamera().lock())
+		{
+			return;
+		}
+
+		if (Input::GetInstance(renderInfo.window.get()).IsKeyReleased(Keycode::KEY_J))
+		{
+			m_IsRayTracingEnabled = !m_IsRayTracingEnabled;
+		}
+
+		if (!m_IsRayTracingEnabled)
+		{
+			return;
+		}
+
+		Timer timer("Timer", false);
+
+		struct DefaultMaterial
+		{
+			glm::vec4 albedoColor;
+			glm::vec4 emissiveColor;
+			glm::vec4 uvTransform;
+			float metallicFactor;
+			float roughnessFactor;
+			float aoFactor;
+			float emissiveFactor;
+			int useNormalMap;
+			int useSingleShadingMap;
+		};
+
+		std::mutex readyLock;
+		std::atomic<size_t> tileFinishedCount;
+		std::condition_variable readyConditionalVariable;
+
+		tileFinishedCount.store(0);
+
+		const std::shared_ptr<Entity> camera = viewport->GetCamera().lock();
+		Camera& cameraComponent = camera->GetComponent<Camera>();
+		Transform& cameraTransform = camera->GetComponent<Transform>();
+
+		const glm::vec3 cameraPosition = cameraTransform.GetPosition();
+
+		auto vec4ToR8G8B8A8 = [](const glm::vec4& color) -> uint32_t
+		{
+			uint8_t r = static_cast<uint8_t>(color[0] * 255.0f);
+			uint8_t g = static_cast<uint8_t>(color[1] * 255.0f);
+			uint8_t b = static_cast<uint8_t>(color[2] * 255.0f);
+			uint8_t a = static_cast<uint8_t>(color[3] * 255.0f);
+
+			return (a << 24) | (b << 16) | (g << 8) | r;
+		};
+
+		auto sampleTexture = [](const std::shared_ptr<Texture>& texture,
+			const glm::vec2& uv,
+			bool repeat = true) -> glm::vec4
+		{
+			// Handle texture coordinate wrapping
+			glm::vec2 coord = uv;
+			if (repeat)
+			{
+				coord.x = glm::fract(coord.x);
+				coord.y = glm::fract(coord.y);
+			}
+			else
+			{
+				// Clamp to edge
+				coord.x = glm::clamp(coord.x, 0.0f, 1.0f);
+				coord.y = glm::clamp(coord.y, 0.0f, 1.0f);
+			}
+
+			const glm::ivec3 size = { texture->GetSize().x, texture->GetSize().y, texture->GetChannels() };
+
+			// Convert UV to pixel coordinates
+			float x = coord.x * (size.x - 1);
+			float y = coord.y * (size.y - 1);
+
+			// Nearest neighbor sampling
+			int xi = static_cast<int>(glm::round(x));
+			int yi = static_cast<int>(glm::round(y));
+
+			// Ensure coordinates are within bounds
+			xi = glm::clamp(xi, 0, size.x - 1);
+			yi = glm::clamp(yi, 0, size.y - 1);
+
+			auto subresourceLayout = texture->GetSubresourceLayout();
+			uint8_t* data = (uint8_t*)texture->GetData();
+			data += subresourceLayout.offset;
+
+			// Calculate index in 1D array
+			int index = (yi * size.x + xi) * size.z;
+
+			glm::vec4 color =
+			{
+				(float)data[index + 0] / 255.0f,
+				(float)data[index + 1] / 255.0f,
+				(float)data[index + 2] / 255.0f,
+				(float)data[index + 3] / 255.0f,
+			};
+
+			return color;
+		};
+
+		auto fresnelSchlick = [](float HdotV, const glm::vec3& basicReflectivity) -> glm::vec3
+		{
+			return basicReflectivity + (1.0f - basicReflectivity) * glm::pow<float>(glm::clamp<float>(1.0f - HdotV, 0.0f, 1.0f), 5.0f);
+		};
+
+		auto distributionGGX = [](float NdotH, float roughness) -> float
+		{
+			float a = roughness * roughness;
+			float a2 = a * a;
+			float denom = NdotH * NdotH * (a2 - 1.0) + 1.0;
+			denom = glm::pi<float>() * denom * denom;
+			return a2 / glm::max(denom, 0.0000001f);
+		};
+
+		auto geometrySmith = [](float NdotV, float NdotL, float roughness) -> float
+		{
+			float r = roughness + 1.0;
+			float k = (r * r) / 8.0;
+			float ggx1 = NdotV / (NdotV * (1.0 - k) + k);
+			float ggx2 = NdotL / (NdotL * (1.0 - k) + k);
+
+			return ggx1 * ggx2;
+		};
+
+		auto calculatePointLight = [&distributionGGX, &geometrySmith, &fresnelSchlick](
+			const PointLight& light,
+			const glm::vec3& directionNotNormalized,
+			const glm::vec3& viewDirection,
+			const glm::vec3& normal,
+			const glm::vec3& basicReflectivity,
+			const glm::vec3& albedo,
+			float metallic,
+			float roughness,
+			float shadow) -> glm::vec3
+		{
+			glm::vec3 direction = glm::normalize(directionNotNormalized);
+			glm::vec3 H = glm::normalize(viewDirection + direction);
+
+			glm::vec3 radiance = light.color * light.intensity;
+
+			float NdotV = glm::max(glm::dot(normal, viewDirection), 0.0000001f);
+			float NdotL = glm::max(glm::dot(normal, direction), 0.0000001f);
+			float HdotV = glm::max(glm::dot(H, viewDirection), 0.0f);
+			float NdotH = glm::max(glm::dot(normal, H), 0.0f);
+
+			float D = distributionGGX(NdotH, roughness);
+			float G = geometrySmith(NdotV, NdotL, roughness);
+			glm::vec3 F = fresnelSchlick(HdotV, basicReflectivity);
+
+			glm::vec3 specular = D * G * F;
+			specular /= 4.0 * NdotV * NdotL;// + 0.0001;
+
+			glm::vec3 kS = F;
+			glm::vec3 kD = glm::vec3(1.0f) - kS;
+
+			kD *= 1.0f - metallic;
+
+			float distance = length(directionNotNormalized);
+			float attenuation = glm::max(0.0f,
+				(1.0f / (distance * distance)) - (1.0f / (light.radius * light.radius)));
+
+			return /*ambient * albedo + */(glm::vec3(1.0f) - shadow) * (kD * albedo / glm::pi<float>() + specular) * radiance * NdotL * attenuation;
+		};
+
+		auto calculateDirectionalLight = [&fresnelSchlick, &distributionGGX, &geometrySmith](
+			const DirectionalLight& light,
+			const glm::vec3& direction,
+			const glm::vec3& viewDirection,
+			const glm::vec3& normal,
+			const glm::vec3& basicReflectivity,
+			const glm::vec3& albedo,
+			float metallic,
+			float roughness,
+			float shadow) -> glm::vec3
+		{
+			glm::vec3 H = glm::normalize(viewDirection + direction);
+
+			glm::vec3 radiance = light.color * light.intensity;
+			glm::vec3 ambient = light.ambient * radiance;
+
+			float NdotV = glm::max(glm::dot(normal, viewDirection), 0.0000001f);
+			float NdotL = glm::max(glm::dot(normal, direction), 0.0000001f);
+			float HdotV = glm::max(glm::dot(H, viewDirection), 0.0f);
+			float NdotH = glm::max(glm::dot(normal, H), 0.0f);
+
+			float D = distributionGGX(NdotH, roughness);
+			float G = geometrySmith(NdotV, NdotL, roughness);
+			glm::vec3 F = fresnelSchlick(HdotV, basicReflectivity);
+
+			glm::vec3 specular = D * G * F;
+			specular /= 4.0 * NdotV * NdotL;// + 0.0001;
+
+			glm::vec3 kS = F;
+			glm::vec3 kD = glm::vec3(1.0f) - kS;
+
+			kD *= 1.0f - metallic;
+
+			return /*ambient * albedo + */(glm::vec3(1.0f) - shadow) * (kD * albedo / glm::pi<float>() + specular) * radiance * NdotL;
+		};
+
+		auto calculateShadow = [&sampleTexture](
+			const glm::vec3 hitPoint,
+			const glm::vec3 direction,
+			const float length,
+			const std::shared_ptr<Scene>& scene) -> float
+		{
+			const glm::vec3 start = hitPoint + (direction * 0.001f);
+			auto hits = Raycast::RaycastScene(scene, start, direction, length);
+			for (const auto& [hit, entity] : hits)
+			{
+				const Renderer3D& shadowR3d = entity->GetComponent<Renderer3D>();
+				if (!shadowR3d.material)
+				{
+					continue;
+				}
+
+				const std::vector<std::shared_ptr<Texture>> shadowAlbedoTexture = shadowR3d.material->GetUniformWriter(GBuffer)->GetTexture("albedoTexture");
+
+				if (!shadowAlbedoTexture.empty())
+				{
+					const glm::vec4 albedoTextureColor = sampleTexture(shadowAlbedoTexture.front(), hit.uv);
+					if (albedoTextureColor.a < 1.0f)
+					{
+						continue;
+					}
+				}
+
+				return 1.0f;
+			}
+
+			return 0.0f;
+		};
+
+		const auto& directionalLightView = renderInfo.scene->GetRegistry().view<DirectionalLight>();
+		const auto& pointLightView = renderInfo.scene->GetRegistry().view<PointLight>();
+
+		std::function<glm::vec3(
+			const glm::vec3&,
+			const glm::vec3&,
+			const std::shared_ptr<Scene>&,
+			int&,
+			int,
+			int,
+			int)> calculateFinalColor;
+
+		std::function<glm::vec3(
+			const Raycast::Hit&,
+			const std::shared_ptr<Scene>&,
+			const glm::vec3&,
+			int,
+			int)> calculateIndirectLighting;
+
+		calculateFinalColor = [&calculateFinalColor, &calculateShadow, &calculateDirectionalLight, &calculatePointLight,
+			&cameraPosition, &directionalLightView, &sampleTexture, &calculateIndirectLighting, &pointLightView](
+			const glm::vec3& start,
+			const glm::vec3& direction,
+			const std::shared_ptr<Scene>& scene,
+			int& bounceIndex,
+			int maxBounceCount = 1,
+			int inderectDepth = 1,
+			int indirectRayCount = 1) -> glm::vec3
+		{
+			auto hits = Raycast::RaycastScene(scene, start, direction, 100.0f);
+			for (auto& [hit, entity] : hits)
+			{
+				const Renderer3D& r3d = entity->GetComponent<Renderer3D>();
+				if (!r3d.material)
+				{
+					continue;
+				}
+
+				DefaultMaterial& materialData = *(DefaultMaterial*)r3d.material->GetBuffer("GBufferMaterial")->GetData();
+
+				glm::vec3 albedoColor = glm::vec3(materialData.albedoColor);
+
+				const std::vector<std::shared_ptr<Texture>> albedoTexture = r3d.material->GetUniformWriter(GBuffer)->GetTexture("albedoTexture");
+				if (!albedoTexture.empty())
+				{
+					const glm::vec4 albedoTextureColor = sampleTexture(albedoTexture.front(), hit.uv);
+					if (albedoTextureColor.a < 1.0f)
+					{
+						continue;
+					}
+					albedoColor *= (glm::vec3)albedoTextureColor;
+				}
+
+				glm::vec3 finalColor{};
+
+				if (materialData.emissiveFactor > 0.0f)
+				{
+					glm::vec3 emissiveColor = materialData.emissiveColor * materialData.emissiveFactor * 2.0f;
+					const std::vector<std::shared_ptr<Texture>> emissiveTexture = r3d.material->GetUniformWriter(GBuffer)->GetTexture("emissiveTexture");
+					if (!emissiveTexture.empty())
+					{
+						const glm::vec4 emissiveTextureColor = sampleTexture(emissiveTexture.front(), hit.uv);
+						if (emissiveTextureColor.a < 1.0f)
+						{
+							continue;
+						}
+						emissiveColor *= (glm::vec3)emissiveTextureColor;
+					}
+
+					return emissiveColor;
+				}
+
+				if (materialData.roughnessFactor == 0.0f)
+				{
+					if (bounceIndex < maxBounceCount)
+					{
+						bounceIndex++;
+						const glm::vec3 newDirection = glm::reflect(direction, hit.normal);
+						finalColor = calculateFinalColor(
+							hit.point + newDirection * 0.001f, newDirection,
+							scene, bounceIndex, maxBounceCount, inderectDepth, indirectRayCount);
+
+						return glm::clamp(finalColor, 0.0f, 1.0f);
+					}
+				}
+
+				for (auto handle : pointLightView)
+				{
+					PointLight& light = scene->GetRegistry().get<PointLight>(handle);
+					Transform& lightTransform = scene->GetRegistry().get<Transform>(handle);
+
+					if (glm::distance(hit.point, lightTransform.GetPosition()) > light.radius)
+					{
+						continue;
+					}
+
+					albedoColor *= light.color;
+
+					const glm::vec3 directionNotNormalized = lightTransform.GetPosition() - hit.point;
+					const float distance = glm::length(directionNotNormalized) * 0.9f;
+					const float shadow = calculateShadow(hit.point, glm::normalize(directionNotNormalized), distance, scene);
+					const glm::vec3 basicReflectivity = glm::mix(glm::vec3(0.05f), albedoColor, materialData.metallicFactor);
+					finalColor += calculatePointLight(light, directionNotNormalized, glm::normalize(cameraPosition - hit.point), hit.normal, basicReflectivity,
+						albedoColor, materialData.metallicFactor, materialData.roughnessFactor, shadow);
+				}
+
+				for (auto handle : directionalLightView)
+				{
+					DirectionalLight& light = scene->GetRegistry().get<DirectionalLight>(handle);
+					Transform& lightTransform = scene->GetRegistry().get<Transform>(handle);
+
+					albedoColor *= light.color;
+
+					const float shadow = calculateShadow(hit.point, lightTransform.GetForward(), 1000.0f, scene);
+					const glm::vec3 basicReflectivity = glm::mix(glm::vec3(0.05f), albedoColor, materialData.metallicFactor);
+					finalColor += calculateDirectionalLight(light, lightTransform.GetForward(), glm::normalize(cameraPosition - hit.point), hit.normal, basicReflectivity,
+						albedoColor, materialData.metallicFactor, materialData.roughnessFactor, shadow);
+				}
+				
+				glm::vec3 indirect{};
+
+				if (indirectRayCount > 0)
+				{
+					for (size_t i = 0; i < indirectRayCount; i++)
+					{
+						indirect += calculateIndirectLighting(hit, scene, albedoColor, inderectDepth, indirectRayCount);
+					}
+
+					indirect /= indirectRayCount;
+				}
+
+				return glm::clamp(indirect + finalColor, 0.0f, 1.0f);
+			}
+
+			return {};/*{ 1.0f, 1.0f, 1.0f };*/// { 0.5f, 0.7f, 0.7f };
+		};
+
+		auto randomHemisphereDirection = [](const glm::vec3& normal) -> glm::vec3
+		{
+			static std::mt19937 generator;
+			std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+
+			// Create orthogonal coordinate system
+			glm::vec3 tangent = glm::normalize(glm::cross(
+				normal,
+				glm::abs(normal.x) > 0.9f ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0)
+			));
+			glm::vec3 bitangent = glm::cross(normal, tangent);
+
+			// Cosine-weighted hemisphere sampling
+			float r1 = distribution(generator);
+			float r2 = distribution(generator);
+			float sinTheta = sqrtf(1.0f - r1);
+			float phi = 2.0f * glm::pi<float>() * r2;
+
+			glm::vec3 localDir(
+				sinTheta * cosf(phi),
+				sqrtf(r1), // cos(theta)
+				sinTheta * sinf(phi)
+			);
+
+			// Transform to world space
+			return localDir.x * tangent + localDir.y * normal + localDir.z * bitangent;
+		};
+
+		calculateIndirectLighting = [&randomHemisphereDirection, &calculateFinalColor](
+			const Raycast::Hit& hit,
+			const std::shared_ptr<Scene>& scene,
+			const glm::vec3& albedo,
+			int depth,
+			int indirectRayCount) -> glm::vec3
+		{
+			if (depth <= 0) return glm::vec3(0.0f);
+
+			// Russian Roulette for termination
+			const float continueProbability = 0.8f;
+			if (RandomGenerator::GetInstance().Get<float>(0.0f, 1.0f) > continueProbability)
+			{
+				return glm::vec3(0.0f);
+			}
+
+			// Generate random direction on hemisphere
+			glm::vec3 randomDirection = randomHemisphereDirection(hit.normal);
+
+			// Offset origin to prevent self-intersection
+			glm::vec3 start = hit.point + hit.normal * 0.01f;
+			
+			// Recursive ray cast
+			int bounceIndex = 0;
+			const glm::vec3 incomingRadiance = calculateFinalColor(
+				start, randomDirection, scene, bounceIndex, 0, depth - 1, indirectRayCount);
+
+			float cosTheta = glm::dot(hit.normal, randomDirection);
+			glm::vec3 brdf = albedo / glm::pi<float>();
+
+			return (brdf * incomingRadiance * cosTheta) / ((1.0f / glm::pi<float>()) * continueProbability);
+		};
+
+		const std::string renderPassName = renderInfo.renderPass->GetName();
+
+		const std::shared_ptr<Texture> outColor = renderInfo.renderView->GetFrameBuffer(renderPassName)->GetAttachment(0);
+		auto subresourceLayout = outColor->GetSubresourceLayout();
+		uint8_t* data = (uint8_t*)outColor->GetData();
+		data += subresourceLayout.offset;
+
+		const glm::ivec3 size = { outColor->GetSize().x, outColor->GetSize().y, outColor->GetChannels() };
+		const size_t threadCount = ThreadPool::GetInstance().GetThreadsAmount();
+		const size_t tileSize = 64;
+		const size_t tileCount = glm::ceil((float)size.y / (float)tileSize) * glm::ceil((float)size.x / (float)tileSize);
+		for (size_t y = 0; y < size.y; y+=tileSize)
+		{
+			for (size_t x = 0; x < size.x; x+=tileSize)
+			{
+				ThreadPool::GetInstance().EnqueueAsync([
+					xStart = x, yStart = y, tileSize, data, size, subresourceLayout,
+					viewport, cameraPosition, &directionalLightView, &renderInfo, &tileCount,
+					&tileFinishedCount, &readyConditionalVariable,
+					&vec4ToR8G8B8A8, &sampleTexture, &calculateDirectionalLight,
+					&calculateShadow, &calculateFinalColor, &timer]()
+				{
+					for (int y = yStart; y < yStart + tileSize && y < size.y; y++)
+					{
+						uint32_t* row = reinterpret_cast<uint32_t*>(data + y * subresourceLayout.rowPitch);
+						for (int x = xStart; x < xStart + tileSize && x < size.x; x++)
+						{
+							const glm::vec2 normalizedPixelPosition = { (float)x / (float)size.x, (float)y / (float)size.y };
+							const glm::vec3 mouseRay = viewport->GetMouseRay(normalizedPixelPosition * (glm::vec2)renderInfo.viewportSize);
+
+							int bounceIndex = 0;
+							const glm::vec3 finalColor = calculateFinalColor(
+								cameraPosition, mouseRay, renderInfo.scene, bounceIndex, 10, 2, 24);
+
+							row[x] = vec4ToR8G8B8A8({ glm::clamp(finalColor, 0.0f, 1.0f), 1.0f });
+						}
+					}
+
+					Logger::Log(std::format("{:.3f}% {:.3f} sec", (((float)tileFinishedCount.load() + 1.0f) / tileCount) * 100, timer.Stop() / 1000.0f));
+					tileFinishedCount.fetch_add(1);
+
+					//readyConditionalVariable.notify_one();
+				});
+			}
+		}
+
+		/*for (uint32_t t = 0; t < threadCount; ++t)
+		{
+			const uint32_t startY = t * rowsPerThread;
+			const uint32_t endY = (t == threadCount - 1) ? size.y : (t + 1) * rowsPerThread;
+
+			ThreadPool::GetInstance().EnqueueAsync([
+				startY, endY, data, size, t, subresourceLayout,
+				viewport, cameraPosition, &directionalLightView, &renderInfo,
+				&threadFinishedCount, &readyConditionalVariable,
+				&vec4ToR8G8B8A8, &sampleTexture, &calculateDirectionalLight,
+				&calculateShadow, &calculateFinalColor]()
+			{
+				for (uint32_t y = startY; y < endY; ++y)
+				{
+					uint32_t* row = reinterpret_cast<uint32_t*>(data + y * subresourceLayout.rowPitch);
+					for (uint32_t x = 0; x < size.x; ++x)
+					{
+						const glm::vec2 normalizedPixelPosition = { (float)x / (float)size.x, (float)y / (float)size.y };
+						const glm::vec3 mouseRay = viewport->GetMouseRay(normalizedPixelPosition * (glm::vec2)renderInfo.viewportSize);
+						
+						int bounceIndex = 0;
+						const glm::vec3 finalColor = calculateFinalColor(
+							cameraPosition, mouseRay, renderInfo.scene, bounceIndex, 10, 5, 2);
+
+						row[x] = vec4ToR8G8B8A8({ finalColor, 1.0f });
+					}
+
+					Logger::Log(std::format("{} {}", t, (float)(y - startY) / (float)(endY - startY)));
+				}
+
+				threadFinishedCount.fetch_add(1);
+				readyConditionalVariable.notify_one();
+			});
+		}*/
+
+		volatile size_t i = 0;
+		while (tileFinishedCount.load() != tileCount)
+		{
+			i++;
+		}
+
+		Logger::Warning("Finished");
+
+		bool isLoaded = false;
+		Serializer::SerializeTexture("RayTracing.png", outColor, &isLoaded);
+		
+		i = 0;
+		while (isLoaded == false)
+		{
+			i++;
+		}
+
+		//std::unique_lock<std::mutex> lock(readyLock);
+		//readyConditionalVariable.wait(lock, [&threadFinishedCount, threadCount]()
+		//{
+		//	return threadFinishedCount.load() == threadCount;
+		//});
+	};
+
+	CreateRenderPass(createInfo);
 }
 
 void RenderPassManager::CreateZPrePass()

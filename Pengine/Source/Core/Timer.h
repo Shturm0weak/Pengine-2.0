@@ -14,7 +14,7 @@ namespace Pengine
 
 		~Timer();
 
-		void Stop() const;
+		float Stop() const;
 	private:
 
 		double* m_OutTime = nullptr;

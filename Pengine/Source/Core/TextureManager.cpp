@@ -166,7 +166,7 @@ void TextureManager::CreateDefaultResources()
 	whiteLayeredTextureCreateInfo.name = "WhiteLayered";
 	whiteLayeredTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
 	whiteLayeredTextureCreateInfo.size = { 1, 1 };
-	whiteLayeredTextureCreateInfo.layerCount = 2;;
+	whiteLayeredTextureCreateInfo.layerCount = 2;
 	whiteLayeredTextureCreateInfo.data = nullptr;
 	whiteLayeredTextureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::COLOR_ATTACHMENT, Texture::Usage::TRANSFER_DST };
 	m_WhiteLayered = TextureManager::GetInstance().Create(whiteLayeredTextureCreateInfo);
