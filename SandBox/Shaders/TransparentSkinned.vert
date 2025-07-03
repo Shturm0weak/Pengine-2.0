@@ -43,7 +43,7 @@ void main()
 	vec3 totalNormal = vec3(0.0f);
 	vec3 totalTangent = vec3(0.0f);
 	vec3 totalBitangent = vec3(0.0f);
-	for(int i = 0 ; i < MAX_BONE_INFLUENCE ; i++)
+	for(int i = 0; i < MAX_BONE_INFLUENCE; i++)
 	{
 		if(boneIdsA[i] == -1)
 			continue;
@@ -55,7 +55,7 @@ void main()
 			totalBitangent = bitangentA;
 			break;
 		}
-		vec4 localPosition = bonesMatrices[boneIdsA[i]] * vec4(positionA,1.0f);
+		vec4 localPosition = bonesMatrices[boneIdsA[i]] * vec4(positionA, 1.0f);
 		totalPosition += localPosition * weightsA[i];
 
 		vec3 localNormal = mat3(bonesMatrices[boneIdsA[i]]) * normalA;

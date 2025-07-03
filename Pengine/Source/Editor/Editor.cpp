@@ -3178,10 +3178,13 @@ void Editor::Thumbnails::UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thu
 	cameraComponent.CreateRenderView(name, m_ThumbnailWindow->GetSize());
 
 	BoundingBox bb{};
-	bb.max = scene->GetBVH()->GetRoot()->aabb.max;
-	bb.min = scene->GetBVH()->GetRoot()->aabb.min;
-	bb.offset = bb.max + (bb.min - bb.max) * 0.5f;
-
+	if (const SceneBVH::BVHNode* root = scene->GetBVH()->GetRoot())
+	{
+		bb.max = root->aabb.max;
+		bb.min = root->aabb.min;
+		bb.offset = bb.max + (bb.min - bb.max) * 0.5f;
+	}
+	
 	{
 		glm::vec3 max = bb.max - bb.offset;
 		glm::vec3 min = bb.offset - bb.min;
