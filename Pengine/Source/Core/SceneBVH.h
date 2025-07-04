@@ -4,9 +4,6 @@
 #include "Raycast.h"
 #include "BoundingBox.h"
 
-#include <stack>
-#include <limits>
-
 namespace Pengine
 {
 	class Scene;
@@ -24,7 +21,7 @@ namespace Pengine
 			std::shared_ptr<Entity> entity = nullptr;
 			int subtreeSize = 0;
 
-			bool IsLeaf() const { return left == nullptr && right == nullptr; }
+			[[nodiscard]] bool IsLeaf() const { return left == nullptr && right == nullptr; }
 
 			~BVHNode()
 			{
@@ -36,7 +33,7 @@ namespace Pengine
 			}
 		};
 
-		SceneBVH(Scene* scene) : m_Scene(scene) {}
+		explicit SceneBVH(Scene* scene) : m_Scene(scene) {}
 
 		~SceneBVH() { Clear(); }
 
@@ -48,8 +45,8 @@ namespace Pengine
 
 		std::multimap<Raycast::Hit, std::shared_ptr<Entity>> Raycast(
 			const glm::vec3& start,
-			const glm::vec3 direction,
-			float length) const;
+			const glm::vec3& direction,
+			const float length) const;
 
 		[[nodiscard]] BVHNode* GetRoot() const { return m_Root; }
 
@@ -74,7 +71,7 @@ namespace Pengine
 
 		BVHNode* FindParent(BVHNode* root, BVHNode* target) const;
 
-		AABB LocalToWorldAABB(const AABB& localAABB, const glm::mat4 transformMat4);
+		AABB LocalToWorldAABB(const AABB& localAABB, const glm::mat4& transformMat4);
 	};
 
 }

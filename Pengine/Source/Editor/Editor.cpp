@@ -55,14 +55,14 @@ void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
 
 	Input& input = Input::GetInstance(&window);
 
-	if (input.IsMouseReleased(Keycode::MOUSE_BUTTON_2))
+	if (input.IsMouseReleased(KeyCode::MOUSE_BUTTON_2))
 	{
 		m_MovingCamera = nullptr;
 	}
 
 	for (const auto& [name, viewport] : window.GetViewportManager().GetViewports())
 	{
-		if (viewport->IsHovered() && input.IsMouseDown(Keycode::MOUSE_BUTTON_2))
+		if (viewport->IsHovered() && input.IsMouseDown(KeyCode::MOUSE_BUTTON_2))
 		{
 			m_MovingCamera = viewport->GetCamera().lock();
 		}
@@ -79,7 +79,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
 		}
 	}
 
-	if (input.IsKeyDown(Keycode::KEY_LEFT_CONTROL) && input.IsKeyPressed(Keycode::KEY_F))
+	if (input.IsKeyDown(KeyCode::KEY_LEFT_CONTROL) && input.IsKeyPressed(KeyCode::KEY_F))
 	{
 		m_FullScreen = !m_FullScreen;
 	}
@@ -660,7 +660,7 @@ void Editor::Hierarchy(const std::shared_ptr<Scene>& scene, Window& window)
 	{
 		Input& input = Input::GetInstance(&window);
 
-		if (ImGui::IsWindowFocused() && input.IsKeyDown(Keycode::KEY_LEFT_CONTROL) && input.IsKeyPressed(Keycode::KEY_A))
+		if (ImGui::IsWindowFocused() && input.IsKeyDown(KeyCode::KEY_LEFT_CONTROL) && input.IsKeyPressed(KeyCode::KEY_A))
 		{
 			scene->GetSelectedEntities().clear();
 			for (const std::shared_ptr<Entity> entity : scene->GetEntities())
@@ -692,7 +692,7 @@ void Editor::SceneInfo(const std::shared_ptr<Scene>& scene)
 			ImGui::Text("Name: %s", scene->GetName().c_str());
 			ImGui::Text("Filepath: %s", scene->GetFilepath().string().c_str());
 			ImGui::Text("Tag: %s", scene->GetTag().c_str());
-			ImGui::Text("Entities Count: %u", scene->GetEntities().size());
+			ImGui::Text("Entities Count: %zu", scene->GetEntities().size());
 
 			bool drawBoundingBoxes = scene->GetSettings().m_DrawBoundingBoxes;
 			if (ImGui::Checkbox("Draw Bounding Boxes", &drawBoundingBoxes))
@@ -827,7 +827,7 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 	if (ImGui::IsItemClicked() && (ImGui::GetMousePos().x - ImGui::GetItemRectMin().x) > ImGui::GetTreeNodeToLabelSpacing())
 	{
 		auto& selectedEntities = entity->GetScene()->GetSelectedEntities();
-		if (!Input::GetInstance(&window).IsKeyDown(Keycode::KEY_LEFT_CONTROL))
+		if (!Input::GetInstance(&window).IsKeyDown(KeyCode::KEY_LEFT_CONTROL))
 		{
 			selectedEntities.clear();
 		}
@@ -1770,25 +1770,25 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene, Window& window)
 
 			Input& input = Input::GetInstance(&window);
 
-			if (viewport->IsHovered() && !input.IsMouseDown(Keycode::MOUSE_BUTTON_2))
+			if (viewport->IsHovered() && !input.IsMouseDown(KeyCode::MOUSE_BUTTON_2))
 			{
-				if (input.IsKeyPressed(Keycode::KEY_W))
+				if (input.IsKeyPressed(KeyCode::KEY_W))
 				{
 					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::TRANSLATE;
 				}
-				else if (input.IsKeyPressed(Keycode::KEY_R))
+				else if (input.IsKeyPressed(KeyCode::KEY_R))
 				{
 					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::ROTATE;
 				}
-				else if (input.IsKeyPressed(Keycode::KEY_S))
+				else if (input.IsKeyPressed(KeyCode::KEY_S))
 				{
 					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::SCALE;
 				}
-				else if (input.IsKeyPressed(Keycode::KEY_U))
+				else if (input.IsKeyPressed(KeyCode::KEY_U))
 				{
 					viewport->GetGizmoOperation() = ImGuizmo::OPERATION::UNIVERSAL;
 				}
-				else if (input.IsKeyPressed(Keycode::KEY_Q))
+				else if (input.IsKeyPressed(KeyCode::KEY_Q))
 				{
 					viewport->GetGizmoOperation() = -1;
 				}
@@ -1884,33 +1884,33 @@ void Editor::MoveCamera(const std::shared_ptr<Entity>& camera, Window& window)
 	constexpr float defaultSpeed = 2.0f;
 	float speed = defaultSpeed;
 
-	if (input.IsKeyDown(Keycode::KEY_LEFT_SHIFT))
+	if (input.IsKeyDown(KeyCode::KEY_LEFT_SHIFT))
 	{
 		speed *= 10.0f;
 	}
 
-	if (input.IsKeyDown(Keycode::KEY_W))
+	if (input.IsKeyDown(KeyCode::KEY_W))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetForward() * (float)Time::GetDeltaTime() * speed);
 	}
-	else if (input.IsKeyDown(Keycode::KEY_S))
+	else if (input.IsKeyDown(KeyCode::KEY_S))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetForward() * -(float)Time::GetDeltaTime() * speed);
 	}
-	if (input.IsKeyDown(Keycode::KEY_D))
+	if (input.IsKeyDown(KeyCode::KEY_D))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetRight() * (float)Time::GetDeltaTime() * speed);
 	}
-	else if (input.IsKeyDown(Keycode::KEY_A))
+	else if (input.IsKeyDown(KeyCode::KEY_A))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetRight() * -(float)Time::GetDeltaTime() * speed);
 	}
 
-	if (input.IsKeyDown(Keycode::KEY_Q))
+	if (input.IsKeyDown(KeyCode::KEY_Q))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetUp() * -(float)Time::GetDeltaTime() * speed);
 	}
-	else if (input.IsKeyDown(Keycode::KEY_E))
+	else if (input.IsKeyDown(KeyCode::KEY_E))
 	{
 		transform.Translate(transform.GetPosition() + transform.GetUp() * (float)Time::GetDeltaTime() * speed);
 	}
@@ -3178,10 +3178,13 @@ void Editor::Thumbnails::UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thu
 	cameraComponent.CreateRenderView(name, m_ThumbnailWindow->GetSize());
 
 	BoundingBox bb{};
-	bb.max = scene->GetBVH()->GetRoot()->aabb.max;
-	bb.min = scene->GetBVH()->GetRoot()->aabb.min;
-	bb.offset = bb.max + (bb.min - bb.max) * 0.5f;
-
+	if (const SceneBVH::BVHNode* root = scene->GetBVH()->GetRoot())
+	{
+		bb.max = root->aabb.max;
+		bb.min = root->aabb.min;
+		bb.offset = bb.max + (bb.min - bb.max) * 0.5f;
+	}
+	
 	{
 		glm::vec3 max = bb.max - bb.offset;
 		glm::vec3 min = bb.offset - bb.min;

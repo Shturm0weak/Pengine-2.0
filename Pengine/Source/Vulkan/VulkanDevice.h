@@ -50,7 +50,7 @@ namespace Pengine::Vk
 
 		virtual void ShutDown() override;
 
-		[[nodiscard]] virtual const std::string& GetName() const override { return m_PhysicalDeviceProperties.deviceName; };
+		[[nodiscard]] virtual const std::string GetName() const override { return m_PhysicalDeviceProperties.deviceName; }
 
 		[[nodiscard]] VkCommandPool GetCommandPool() const { return m_CommandPool; }
 

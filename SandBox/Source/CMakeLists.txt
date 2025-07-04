@@ -5,7 +5,7 @@ project(${APP_NAME} VERSION 1.0)
 message("Building SandBox")
 
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP -Wno-changes-meaning")
 
 set(CORE_SOURCES
 	Core/ExampleApplication.cpp Core/ExampleApplication.h

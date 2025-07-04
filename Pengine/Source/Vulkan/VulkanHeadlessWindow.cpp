@@ -33,10 +33,7 @@ void VulkanHeadlessWindow::Update()
 
 bool VulkanHeadlessWindow::Resize(const glm::ivec2& size)
 {
-	if (!Window::Resize(size))
-	{
-		return false;
-	}
+	return Window::Resize(size);
 }
 
 void VulkanHeadlessWindow::NewFrame()

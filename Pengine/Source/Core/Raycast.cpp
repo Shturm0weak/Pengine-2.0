@@ -22,7 +22,6 @@ bool Raycast::IntersectTriangle(
 	const float length,
 	Hit& hit)
 {
-	const glm::vec3 end = start + direction * length;
 	const glm::vec3 distance = direction * length;
 	const glm::vec3 distanceToPlane = a - start;
 	const float vp = glm::dot(distance, planeNormal);
@@ -55,10 +54,8 @@ bool Raycast::IntersectTriangle(
 	{
 		return true;
 	}
-	else
-	{
-		return false;
-	}
+
+	return false;
 }
 
 bool Raycast::IntersectBoxOBB(

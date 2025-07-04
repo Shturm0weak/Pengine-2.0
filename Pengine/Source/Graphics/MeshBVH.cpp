@@ -60,7 +60,7 @@ bool MeshBVH::Raycast(
 		BVHNode* node = nodeStack.top();
 		nodeStack.pop();
 
-		Raycast::Hit currentHitAABB;
+		Raycast::Hit currentHitAABB{};
 		if (!Raycast::IntersectBoxAABB(start, direction, node->aabb.min, node->aabb.max, length, currentHitAABB))
 		{
 			continue;
@@ -78,7 +78,7 @@ bool MeshBVH::Raycast(
 
 				const glm::vec3 normal = glm::normalize(glm::cross((v1.position - v0.position), (v2.position - v0.position)));
 
-				Raycast::Hit currentHitTriangle;
+				Raycast::Hit currentHitTriangle{};
 				if (Raycast::IntersectTriangle(start, direction, v0.position, v1.position, v2.position, normal, length, currentHitTriangle))
 				{
 					if (currentHitTriangle.distance < closestHit.distance)

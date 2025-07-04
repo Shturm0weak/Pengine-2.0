@@ -10,7 +10,7 @@
 #include "Core/SceneManager.h"
 #include "Core/Time.h"
 #include "Core/Input.h"
-#include "Core/Keycode.h"
+#include "Core/KeyCode.h"
 #include "Core/FontManager.h"
 #include "Core/ClayManager.h"
 #include "Core/WindowManager.h"
@@ -213,7 +213,7 @@ void ExampleApplication::OnStart()
 		const auto mouseRay = viewport->GetMouseRay(viewport->GetMousePosition());
 		auto& input = Input::GetInstance(WindowManager::GetInstance().GetWindowByName("Main").get());
 
-		ClayManager::SetPointerState({ std::numeric_limits<float>().max(), std::numeric_limits<float>().max() }, input.IsMouseDown(Keycode::MOUSE_BUTTON_1));
+		ClayManager::SetPointerState({ std::numeric_limits<float>().max(), std::numeric_limits<float>().max() }, input.IsMouseDown(KeyCode::MOUSE_BUTTON_1));
 
 		Raycast::Hit hit{};
 		if (const auto camera = viewport->GetCamera().lock())
@@ -222,7 +222,7 @@ void ExampleApplication::OnStart()
 			{
 				if (Raycast::RaycastEntity(entity, camera->GetComponent<Transform>().GetPosition(), mouseRay, 100.0f, hit))
 				{
-					ClayManager::SetPointerState({ hit.uv.x * canvas->size.x, hit.uv.y * canvas->size.y }, input.IsMouseDown(Keycode::MOUSE_BUTTON_1));
+					ClayManager::SetPointerState({ hit.uv.x * canvas->size.x, hit.uv.y * canvas->size.y }, input.IsMouseDown(KeyCode::MOUSE_BUTTON_1));
 				}
 			}
 		}

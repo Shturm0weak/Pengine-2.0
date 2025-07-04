@@ -360,7 +360,7 @@ bool VulkanDevice::IsDeviceSuitable(const VkPhysicalDevice device)
 			supportedFeatures.samplerAnisotropy;
 }
 
-void VulkanDevice::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo)
+void VulkanDevice::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
 {
 	createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
@@ -370,7 +370,7 @@ void VulkanDevice::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateI
 		VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
 		VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
 	createInfo.pfnUserCallback = DebugCallback;
-	createInfo.pUserData = nullptr;  // Optional
+	createInfo.pUserData = nullptr;
 }
 
 void VulkanDevice::SetupDebugMessenger()

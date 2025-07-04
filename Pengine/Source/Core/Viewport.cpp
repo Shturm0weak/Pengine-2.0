@@ -214,7 +214,7 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture, std::shar
 	}
 
 	Input& input = Input::GetInstance(window.get());
-	if (scene && IsFocused() && input.IsKeyDown(Keycode::KEY_LEFT_CONTROL) && input.IsKeyPressed(Keycode::KEY_A))
+	if (scene && IsFocused() && input.IsKeyDown(KeyCode::KEY_LEFT_CONTROL) && input.IsKeyPressed(KeyCode::KEY_A))
 	{
 		scene->GetSelectedEntities().clear();
 		for (const std::shared_ptr<Entity> entity : scene->GetEntities())
@@ -223,7 +223,7 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture, std::shar
 		}
 	}
 
-	if (!m_ActiveGuizmo && m_IsHovered && input.IsMousePressed(Keycode::MOUSE_BUTTON_1))
+	if (!m_ActiveGuizmo && m_IsHovered && input.IsMousePressed(KeyCode::MOUSE_BUTTON_1))
 	{
 		if (camera)
 		{

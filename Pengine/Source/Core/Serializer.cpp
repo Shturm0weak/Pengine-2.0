@@ -50,6 +50,7 @@ namespace YAML
 		static Node encode(const UUID& rhs)
 		{
 			// ? Maybe no need, don't use encode.
+			return {};
 		}
 
 		static bool decode(const Node& node, UUID& rhs)
@@ -2548,7 +2549,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 			vertex->tangent.y = tangent.y;
 			vertex->tangent.z = tangent.z;
 
-			// Bitngent.
+			// Bitangent.
 			aiVector3D bitangent = aiMesh->mBitangents[vertexIndex];
 			vertex->bitangent.x = bitangent.x;
 			vertex->bitangent.y = bitangent.y;
@@ -2556,14 +2557,12 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 		}
 		else
 		{
-			Logger::Error(meshFilepath.string() + ":No tangents and bitangents!");
-
 			// Tangent.
 			vertex->tangent.x = 0.0f;
 			vertex->tangent.y = 0.0f;
 			vertex->tangent.z = 0.0f;
 
-			// Bitngent.
+			// Bitangent.
 			vertex->bitangent.x = 0.0f;
 			vertex->bitangent.y = 0.0f;
 			vertex->bitangent.z = 0.0f;
@@ -2664,7 +2663,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 			vertex->tangent.y = tangent.y;
 			vertex->tangent.z = tangent.z;
 
-			// Bitngent.
+			// Bitangent.
 			aiVector3D bitangent = aiMesh->mBitangents[vertexIndex];
 			vertex->bitangent.x = bitangent.x;
 			vertex->bitangent.y = bitangent.y;
@@ -2672,14 +2671,12 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 		}
 		else
 		{
-			Logger::Error(meshFilepath.string() + ":No tangents and bitangents!");
-
 			// Tangent.
 			vertex->tangent.x = 0.0f;
 			vertex->tangent.y = 0.0f;
 			vertex->tangent.z = 0.0f;
 
-			// Bitngent.
+			// Bitangent.
 			vertex->bitangent.x = 0.0f;
 			vertex->bitangent.y = 0.0f;
 			vertex->bitangent.z = 0.0f;
@@ -2712,7 +2709,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 
 			if (vertexInfluenceCount[aiWeight.mVertexId] == 4)
 			{
-				// Can't store more than for weights for one vertex.
+				// Can't store more than 4 weights for one vertex.
 				continue;
 			}
 

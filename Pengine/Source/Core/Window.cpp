@@ -1,5 +1,7 @@
 #include "Window.h"
 
+#include "Logger.h"
+
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/ResizeEvent.h"
 
@@ -14,6 +16,9 @@ std::shared_ptr<Window> Window::Create(const std::string& title, const std::stri
 	{
 		return std::make_shared<Vk::VulkanWindow>(title, name, size);
 	}
+
+	FATAL_ERROR("Failed to create the window, no graphics API implementation");
+	return nullptr;
 }
 
 std::shared_ptr<Window> Window::CreateHeadless(const std::string& title, const std::string& name, const glm::ivec2& size)
@@ -22,6 +27,9 @@ std::shared_ptr<Window> Window::CreateHeadless(const std::string& title, const s
 	{
 		return std::make_shared<Vk::VulkanHeadlessWindow>(title, name, size);
 	}
+
+	FATAL_ERROR("Failed to create the window, no graphics API implementation");
+	return nullptr;
 }
 
 Window::Window(std::string title, std::string name, const glm::ivec2& size)

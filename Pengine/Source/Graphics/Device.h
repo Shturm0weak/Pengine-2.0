@@ -13,7 +13,7 @@ namespace Pengine
 		Device(const Device&) = delete;
 		Device& operator=(const Device&) = delete;
 
-		virtual const std::string& GetName() const = 0;
+		virtual const std::string GetName() const = 0;
 
 		virtual void ShutDown() = 0;
 

@@ -6,7 +6,7 @@ message("Building Test")
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP -Wno-changes-meaning")
 
 include(FetchContent)
 FetchContent_Declare(

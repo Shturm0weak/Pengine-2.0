@@ -34,7 +34,7 @@ namespace Pengine
 
 		mutable std::mutex m_ShaderModuleMutex;
 		mutable std::mutex m_CreatingShaderModuleMutex;
-		mutable std::condition_variable m_CreatingShaderModuleConditionVariable;
+		mutable std::condition_variable m_CreatingShaderModuleConditionVariable{};
 		std::set<std::filesystem::path> m_CreatingShaderModules;
 
 		ShaderModuleManager() = default;

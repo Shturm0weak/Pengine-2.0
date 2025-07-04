@@ -64,8 +64,8 @@ void SceneBVH::Traverse(const std::function<void(BVHNode*)>& callback) const
 
 std::multimap<Raycast::Hit, std::shared_ptr<Entity>> SceneBVH::Raycast(
 	const glm::vec3& start,
-	const glm::vec3 direction,
-	float length) const
+	const glm::vec3& direction,
+	const float length) const
 {
 	std::multimap<Raycast::Hit, std::shared_ptr<Entity>> hits;
 	if (!m_Root) return hits;
@@ -278,7 +278,7 @@ SceneBVH::BVHNode* SceneBVH::FindParent(BVHNode* root, BVHNode* target) const
 	return FindParent(root->right, target);
 }
 
-AABB SceneBVH::LocalToWorldAABB(const AABB& localAABB, const glm::mat4 transformMat4)
+AABB SceneBVH::LocalToWorldAABB(const AABB& localAABB, const glm::mat4& transformMat4)
 {
 	const glm::vec3& min = localAABB.min;
 	const glm::vec3& max = localAABB.max;

@@ -21,7 +21,8 @@ namespace Pengine
 
 	UUID UUID::FromString(const std::string& string)
 	{
-		assert(string.size() == 34, "UUID string have to have two hex uint64_t, each one has 16 digits!");
+		// UUID string have to have two hex uint64_t, each one has 16 digits!
+		assert(string.size() == 34);
 
 		// The first characters are 0x
 
@@ -72,7 +73,8 @@ namespace Pengine
 
 		std::string string = stringstream.str();
 
-		assert(string.size() == 34, "UUID string have to have two hex uint64_t, each one has 16 digits!");
+		// UUID string have to have two hex uint64_t, each one has 16 digits!
+		assert(string.size() == 34);
 
 		return string;
 	}

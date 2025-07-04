@@ -45,7 +45,7 @@ namespace Pengine
 
 		std::shared_ptr<Font> GetFont(const std::string& fontName, const uint16_t fontSize) const;
 
-		const std::string& GetFontName(const uint16_t fontId) const;
+		const std::string GetFontName(const uint16_t fontId) const;
 
 		std::shared_ptr<Font> GetFont(const uint16_t fontId, const uint16_t fontSize) const
 		{

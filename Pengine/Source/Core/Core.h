@@ -6,7 +6,6 @@
 #pragma warning(disable : 4244)
 #pragma warning(disable : 26812)
 #pragma warning(disable : 26451)
-#pragma warning(disable : 26495)
 #define CRT_OBSOLETE_NO_WARNINGS
 
 #ifdef _WIN32
@@ -24,8 +23,11 @@
 #endif
 #include <algorithm>
 #include <array>
+#include <atomic>
+#include <condition_variable>
 #include <functional>
 #include <filesystem>
+#include <format>
 #include <iostream>
 #include <map>
 #include <memory>

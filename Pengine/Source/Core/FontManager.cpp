@@ -216,7 +216,7 @@ std::shared_ptr<FontManager::Font> FontManager::GetFont(
 	return m_Fonts.at(fontName).at(fontSize);
 }
 
-const std::string& FontManager::GetFontName(const uint16_t fontId) const
+const std::string FontManager::GetFontName(const uint16_t fontId) const
 {
 	if (!m_FontNamesById.contains(fontId))
 	{

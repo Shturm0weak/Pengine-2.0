@@ -921,7 +921,7 @@ void RenderPassManager::CreateDeferred()
 				// Also in Shaders/Includes/CSM.h
 				constexpr size_t maxCascadeCount = 10;
 
-				std::vector<glm::vec4> shadowCascadeLevels(maxCascadeCount, {});
+				std::vector<glm::vec4> shadowCascadeLevels(maxCascadeCount, glm::vec4{});
 				for (size_t i = 0; i < csmRenderer->GetDistances().size(); i++)
 				{
 					shadowCascadeLevels[i] = glm::vec4(csmRenderer->GetDistances()[i]);

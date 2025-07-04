@@ -6,7 +6,6 @@
 #include "../Core/GraphicsSettings.h"
 #include "../Graphics/Texture.h"
 
-#include <filesystem>
 #include <deque>
 
 namespace Pengine

@@ -8,6 +8,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <charconv>
 
 namespace Pengine::Utils
 {
@@ -216,7 +217,7 @@ namespace Pengine::Utils
 
 	inline void SetUUID(const UUID& uuid, const std::filesystem::path& filepath)
 	{
-		assert(!filepathByUuid.contains(uuid), "UUID collision!");
+		assert(!filepathByUuid.contains(uuid));
 
 		std::lock_guard<std::mutex> lock(uuidMutex);
 		filepathByUuid[uuid] = filepath;
