@@ -13,10 +13,8 @@
 
 #include "yaml-cpp/yaml.h"
 
-class aiMesh;
-class aiNode;
-class aiMaterial;
-class aiAnimation;
+#include <fastgltf/core.hpp>
+#include <fastgltf/types.hpp>
 
 namespace Pengine
 {
@@ -84,18 +82,28 @@ namespace Pengine
 			std::string& workName,
 			float& workStatus);
 
-		static std::shared_ptr<Mesh> GenerateMesh(aiMesh* aiMesh, const std::filesystem::path& directory);
+		static std::shared_ptr<Texture> LoadGltfTexture(
+			const fastgltf::Asset& gltfAsset,
+			const fastgltf::Texture& gltfTexture,
+			const std::filesystem::path& directory,
+			std::optional<Texture::Meta> meta = std::nullopt);
 
-		static std::shared_ptr<Mesh> GenerateMeshSkinned(const std::shared_ptr<Skeleton>& skeleton, aiMesh* aiMesh, const std::filesystem::path& directory);
+		static std::shared_ptr<Mesh> GenerateMesh(
+			const fastgltf::Asset& gltfAsset,
+			const fastgltf::Mesh& gltfMesh,
+			const std::filesystem::path& directory);
 
-		static std::shared_ptr<Skeleton> GenerateSkeleton(const aiNode* aiRootNode, aiMesh* aiMesh, const std::filesystem::path& directory);
+		// static std::shared_ptr<Mesh> GenerateMeshSkinned(const std::shared_ptr<Skeleton>& skeleton, aiMesh* aiMesh, const std::filesystem::path& directory);
+		//
+		// static std::shared_ptr<Skeleton> GenerateSkeleton(const aiNode* aiRootNode, aiMesh* aiMesh, const std::filesystem::path& directory);
+		//
+		// static std::shared_ptr<SkeletalAnimation> GenerateAnimation(aiAnimation* aiAnimation, const std::filesystem::path& directory);
 
-		static std::shared_ptr<SkeletalAnimation> GenerateAnimation(aiAnimation* aiAnimation, const std::filesystem::path& directory);
-
-		static std::shared_ptr<Material> GenerateMaterial(const aiMaterial* aiMaterial, const std::filesystem::path& directory);
+		static std::shared_ptr<Material> GenerateMaterial(const fastgltf::Asset& gltfAsset, const fastgltf::Material& gltfMaterial, const std::filesystem::path& directory);
 
 		static std::shared_ptr<Entity> GenerateEntity(
-			const aiNode* aiNode,
+			const fastgltf::Asset& gltfAsset,
+			const fastgltf::Node& gltfNode,
 			const std::shared_ptr<Scene>& scene,
 			const std::vector<std::shared_ptr<Mesh>>& meshesByIndex,
 			const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes);

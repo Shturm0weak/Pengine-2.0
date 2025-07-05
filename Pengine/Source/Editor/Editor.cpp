@@ -35,8 +35,6 @@
 #include <fstream>
 #include <format>
 
-#include <assimp/postprocess.h>
-
 using namespace Pengine;
 
 Editor::Editor()
@@ -2858,23 +2856,23 @@ void Editor::ImportMenu::Update(Editor& editor)
 	{
 		ImGui::Checkbox("Meshes", &importMeshes);
 
-		bool preTransformVertices = importFlags & aiProcess_PreTransformVertices;
-		if (importMeshes && ImGui::Checkbox("PreTransform Vertices", &preTransformVertices))
-		{
-			importFlags = preTransformVertices ? importFlags | aiProcess_PreTransformVertices : importFlags & ~aiProcess_PreTransformVertices;
-			importFlags = importFlags & ~aiProcess_PopulateArmatureData;
-		}
+		// bool preTransformVertices = importFlags & aiProcess_PreTransformVertices;
+		// if (importMeshes && ImGui::Checkbox("PreTransform Vertices", &preTransformVertices))
+		// {
+		// 	importFlags = preTransformVertices ? importFlags | aiProcess_PreTransformVertices : importFlags & ~aiProcess_PreTransformVertices;
+		// 	importFlags = importFlags & ~aiProcess_PopulateArmatureData;
+		// }
+		//
+		// bool animations = importFlags & aiProcess_PopulateArmatureData;
+		// if (importMeshes && !preTransformVertices && ImGui::Checkbox("Animations", &animations))
+		// {
+		// 	importFlags = animations ? importFlags | aiProcess_PopulateArmatureData : importFlags & ~aiProcess_PopulateArmatureData;
+		// }
 
-		bool animations = importFlags & aiProcess_PopulateArmatureData;
-		if (importMeshes && !preTransformVertices && ImGui::Checkbox("Animations", &animations))
-		{
-			importFlags = animations ? importFlags | aiProcess_PopulateArmatureData : importFlags & ~aiProcess_PopulateArmatureData;
-		}
-
-		if (importMeshes && !preTransformVertices)
-		{
-			ImGui::Checkbox("Skeletons", &importSkeletons);
-		}
+		// if (importMeshes && !preTransformVertices)
+		// {
+		// 	ImGui::Checkbox("Skeletons", &importSkeletons);
+		// }
 
 		ImGui::Checkbox("Materials", &importMaterials);
 

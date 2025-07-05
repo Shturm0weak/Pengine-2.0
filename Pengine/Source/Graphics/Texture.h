@@ -168,7 +168,7 @@ namespace Pengine
 
 		static std::shared_ptr<Texture> Create(const CreateInfo& createInfo);
 
-		static std::shared_ptr<Texture> Load(const std::filesystem::path& filepath, bool flip, const Texture::Meta& meta);
+		static std::shared_ptr<Texture> Load(const std::filesystem::path& filepath, bool flip, const Meta& meta);
 		
 		explicit Texture(const CreateInfo& createInfo);
 		virtual ~Texture() = default;
@@ -208,7 +208,6 @@ namespace Pengine
 		[[nodiscard]] bool IsMultiBuffered() const { return m_IsMultiBuffered; }
 
 		[[nodiscard]] std::shared_ptr<class UniformWriter> GetUniformWriter() const { return m_UniformWriter; }
-
 	protected:
 		glm::ivec2 m_Size = { 0, 0 };
 

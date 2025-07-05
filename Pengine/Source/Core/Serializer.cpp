@@ -30,7 +30,7 @@
 
 #include "../Graphics/Vertex.h"
 
-#include "../Utils/AssimpHelpers.h"
+#include <stbi/stb_image.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stbi/stb_image_write.h>
@@ -38,6 +38,8 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+
+#include "fastgltf/tools.hpp"
 
 using namespace Pengine;
 
@@ -686,25 +688,23 @@ void Serializer::SerializeTexture(const std::filesystem::path& filepath, std::sh
 	Texture::CreateInfo createInfo{};
 	createInfo.aspectMask = texture->GetAspectMask();
 	createInfo.channels = texture->GetChannels();
-	createInfo.filepath = "Screenshot";
-	createInfo.name = "Screenshot";
+	createInfo.filepath = "Copy";
+	createInfo.name = "Copy";
 	createInfo.format = texture->GetFormat();
 	createInfo.size = texture->GetSize();
 	createInfo.usage = { Texture::Usage::TRANSFER_DST, Texture::Usage::SAMPLED };
 	createInfo.memoryType = MemoryType::CPU;
-	auto screenshot = Texture::Create(createInfo);
+	auto copy = Texture::Create(createInfo);
 
 	Texture::Region region{};
 	region.extent = { texture->GetSize().x, texture->GetSize().y, 1 };
-	screenshot->Copy(texture, region);
+	copy->Copy(texture, region);
 
-	uint8_t* data = (uint8_t*)screenshot->GetData();
-
-	auto subresourceLayout = screenshot->GetSubresourceLayout();
-
+	uint8_t* data = (uint8_t*)copy->GetData();
+	const auto subresourceLayout = copy->GetSubresourceLayout();
 	data += subresourceLayout.offset;
 
-	ThreadPool::GetInstance().EnqueueAsync([filepath, screenshot, data, subresourceLayout, isLoaded]()
+	ThreadPool::GetInstance().EnqueueAsync([filepath, copy, data, subresourceLayout, isLoaded]()
 	{
 		Texture::Meta meta{};
 		meta.uuid = UUID();
@@ -714,9 +714,9 @@ void Serializer::SerializeTexture(const std::filesystem::path& filepath, std::sh
 		meta.filepath.concat(FileFormats::Meta());
 
 		Utils::SetUUID(meta.uuid, meta.filepath);
-		Serializer::SerializeTextureMeta(meta);
+		SerializeTextureMeta(meta);
 
-		stbi_write_png(filepath.string().c_str(), screenshot->GetSize().x, screenshot->GetSize().y, screenshot->GetChannels(), (const void*)data, subresourceLayout.rowPitch);
+		stbi_write_png(filepath.string().c_str(), copy->GetSize().x, copy->GetSize().y, copy->GetChannels(), data, subresourceLayout.rowPitch);
 		
 		Logger::Log("Screenshot:" + filepath.string() + " has been saved!", BOLDGREEN);
 
@@ -2374,19 +2374,25 @@ Serializer::LoadIntermediate(
 
 	const std::filesystem::path directory = filepath.parent_path();
 
-	Assimp::Importer import;
-	const auto importFlags = flags | aiProcess_Triangulate | aiProcess_GenSmoothNormals |
-		aiProcess_OptimizeMeshes | aiProcess_RemoveRedundantMaterials | aiProcess_ImproveCacheLocality |
-		aiProcess_JoinIdenticalVertices | aiProcess_GenUVCoords | aiProcess_CalcTangentSpace | aiProcess_SortByPType |
-		aiProcess_ValidateDataStructure | aiProcess_FindDegenerates | aiProcess_FindInvalidData;
-	const aiScene* scene = import.ReadFile(filepath.string(), importFlags);
-
-	if (!scene)
+	auto data = fastgltf::GltfDataBuffer::FromPath(filepath);
+	if (data.error() != fastgltf::Error::None)
 	{
-		FATAL_ERROR(std::string("ASSIMP::" + std::string(import.GetErrorString())).c_str());
+		Logger::Error(std::format("Failed to load intermediate {}!", filepath.string()));
+		return {};
 	}
 
-	const float maxWorkStatus = scene->mNumMaterials + scene->mNumMeshes + scene->mNumAnimations;
+	fastgltf::Parser parser{};
+	auto asset = parser.loadGltf(data.get(), filepath, fastgltf::Options::GenerateMeshIndices);
+
+	if (asset.error() != fastgltf::Error::None)
+	{
+		Logger::Error(std::format("Failed to load intermediate {}!", filepath.string()));
+		return {};
+	}
+
+	fastgltf::Asset& gltfAsset = asset.get();
+
+	const float maxWorkStatus = gltfAsset.materials.size() + gltfAsset.meshes.size() + gltfAsset.animations.size();
 	float currentWorkStatus = 0.0f;
 
 	std::unordered_map<size_t, std::shared_ptr<Material>> materialsByIndex;
@@ -2396,13 +2402,14 @@ Serializer::LoadIntermediate(
 		std::mutex futureMaterialMutex;
 		std::condition_variable futureMaterialCondVar;
 		std::atomic<int> materialCount = 0;
-		for (size_t materialIndex = 0; materialIndex < scene->mNumMaterials; materialIndex++)
+		for (size_t materialIndex = 0; materialIndex < gltfAsset.materials.size(); materialIndex++)
 		{
 			ThreadPool::GetInstance().EnqueueAsync([
-				aiMaterial = scene->mMaterials[materialIndex],
+					&gltfMaterial = gltfAsset.materials[materialIndex],
 					directory,
 					materialIndex,
 					maxWorkStatus,
+					&gltfAsset,
 					&materialCount,
 					&futureMaterialMutex,
 					&futureMaterialCondVar,
@@ -2410,7 +2417,7 @@ Serializer::LoadIntermediate(
 					&workStatus,
 					&currentWorkStatus]()
 				{
-					std::shared_ptr<Material> material = GenerateMaterial(aiMaterial, directory);
+					std::shared_ptr<Material> material = GenerateMaterial(gltfAsset, gltfAsset.materials[materialIndex], directory);
 
 					std::lock_guard<std::mutex> lock(futureMaterialMutex);
 
@@ -2426,73 +2433,167 @@ Serializer::LoadIntermediate(
 
 		std::mutex futureMaterialCondVarMutex;
 		std::unique_lock<std::mutex> lock(futureMaterialCondVarMutex);
-		futureMaterialCondVar.wait(lock, [&materialCount, scene]
-			{
-				return materialCount.load() == scene->mNumMaterials;
-			});
+		futureMaterialCondVar.wait(lock, [&materialCount, &gltfAsset]
+		{
+			return materialCount.load() == gltfAsset.materials.size();
+		});
 	}
 
-	std::vector<std::shared_ptr<Mesh>> meshesByIndex(importMeshes ? scene->mNumMeshes : 0);
+	std::vector<std::shared_ptr<Mesh>> meshesByIndex(importMeshes ? gltfAsset.meshes.size() : 0);
 	std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>> materialsByMeshes;
 	if (importMeshes)
 	{
 		workName = "Generating Meshes";
-		for (size_t meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++)
+		for (size_t meshIndex = 0; meshIndex < gltfAsset.meshes.size(); meshIndex++)
 		{
-			aiMesh* aiMesh = scene->mMeshes[meshIndex];
-			const std::shared_ptr<Skeleton> skeleton = importSkeletons ? GenerateSkeleton(scene->mRootNode, aiMesh, directory) : nullptr;
+			//aiMesh* aiMesh = scene->mMeshes[meshIndex];
+			//const std::shared_ptr<Skeleton> skeleton = importSkeletons ? GenerateSkeleton(scene->mRootNode, aiMesh, directory) : nullptr;
 
 			std::shared_ptr<Mesh> mesh;
-			if (skeleton)
+			//if (skeleton)
 			{
-				mesh = GenerateMeshSkinned(skeleton, aiMesh, directory);
+				//mesh = GenerateMeshSkinned(skeleton, aiMesh, directory);
 			}
-			else
+			//else
 			{
-				mesh = GenerateMesh(aiMesh, directory);
+				mesh = GenerateMesh(gltfAsset, gltfAsset.meshes[meshIndex], directory);
 			}
 			meshesByIndex[meshIndex] = mesh;
-			materialsByMeshes[mesh] = materialsByIndex[aiMesh->mMaterialIndex];
+			materialsByMeshes[mesh] = materialsByIndex[*gltfAsset.meshes[meshIndex].primitives[0].materialIndex];
 
 			workStatus = currentWorkStatus++ / maxWorkStatus;
 		}
 	}
-	
-	if (importFlags & aiProcess_PopulateArmatureData)
+
+	// if (importFlags & aiProcess_PopulateArmatureData)
+	// {
+	// 	workName = "Generating Animations";
+	// 	for (size_t animIndex = 0; animIndex < scene->mNumAnimations; animIndex++)
+	// 	{
+	// 		GenerateAnimation(scene->mAnimations[animIndex], directory);
+	//
+	// 		workStatus = currentWorkStatus++ / maxWorkStatus;
+	// 	}
+	// }
+	//
+
+	for (size_t sceneIndex = 0; sceneIndex < gltfAsset.scenes.size(); sceneIndex++)
 	{
-		workName = "Generating Animations";
-		for (size_t animIndex = 0; animIndex < scene->mNumAnimations; animIndex++)
+		for (size_t nodeIndex = 0; nodeIndex < gltfAsset.scenes[sceneIndex].nodeIndices.size(); nodeIndex++)
 		{
-			GenerateAnimation(scene->mAnimations[animIndex], directory);
+			workName = "Generating Prefab " + gltfAsset.scenes[sceneIndex].name;
 
-			workStatus = currentWorkStatus++ / maxWorkStatus;
+			std::shared_ptr<Scene> GenerateGameObjectScene = SceneManager::GetInstance().Create("GenerateGameObject", "GenerateGameObject");
+			std::shared_ptr<Entity> root = GenerateEntity(gltfAsset, gltfAsset.nodes[nodeIndex], GenerateGameObjectScene, meshesByIndex, materialsByMeshes);
+
+			std::filesystem::path prefabFilepath = directory / root->GetName();
+			prefabFilepath.replace_extension(FileFormats::Prefab());
+			SerializePrefab(prefabFilepath, root);
+
+			SceneManager::GetInstance().Delete(GenerateGameObjectScene);
 		}
-	}
-
-	if (!meshesByIndex.empty() && scene->mRootNode && scene->mNumMeshes > 1)
-	{
-		workName = "Generating Prefab";
-
-		std::shared_ptr<Scene> GenerateGameObjectScene = SceneManager::GetInstance().Create("GenerateGameObject", "GenerateGameObject");
-		std::shared_ptr<Entity> root = GenerateEntity(scene->mRootNode, GenerateGameObjectScene, meshesByIndex, materialsByMeshes);
-		
-		std::filesystem::path prefabFilepath = directory / root->GetName();
-		prefabFilepath.replace_extension(FileFormats::Prefab());
-		SerializePrefab(prefabFilepath, root);
-
-		SceneManager::GetInstance().Delete(GenerateGameObjectScene);
 	}
 	
 	// TODO: Remove or put here something, now the result is unused.
 	return {};
 }
 
-std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesystem::path& directory)
+std::shared_ptr<Texture> Serializer::LoadGltfTexture(
+	const fastgltf::Asset& gltfAsset,
+	const fastgltf::Texture& gltfTexture,
+	const std::filesystem::path& directory,
+	std::optional<Texture::Meta> meta)
 {
-	VertexDefault* vertices = new VertexDefault[aiMesh->mNumVertices];
-	std::vector<uint32_t> indices;
+	if (!gltfTexture.imageIndex.has_value())
+	{
+		return nullptr;
+	}
 
-	std::string defaultMeshName = aiMesh->mName.C_Str();
+	const auto& image = gltfAsset.images[*gltfTexture.imageIndex];
+
+	if (const auto* filepath = std::get_if<fastgltf::sources::URI>(&image.data))
+	{
+		if (meta)
+		{
+			if (!meta->uuid.IsValid())
+			{
+				meta->uuid = UUID();
+			}
+
+			meta->filepath = filepath->uri.fspath().concat(FileFormats::Meta());
+
+			SerializeTextureMeta(*meta);
+		}
+		const std::shared_ptr<Texture> texture = AsyncAssetLoader::GetInstance().SyncLoadTexture(filepath->uri.fspath());
+	}
+    if (const auto* view = std::get_if<fastgltf::sources::BufferView>(&image.data))
+    {
+    	const auto& bufferView = gltfAsset.bufferViews[view->bufferViewIndex];
+        const auto& buffer = gltfAsset.buffers[bufferView.bufferIndex];
+
+        if (const auto* array = std::get_if<fastgltf::sources::Array>(&buffer.data))
+        {
+	        Texture::CreateInfo createInfo{};
+        	createInfo.name = bufferView.name;
+        	createInfo.filepath = directory / createInfo.name;
+        	createInfo.data = stbi_load_from_memory(
+				reinterpret_cast<const stbi_uc*>(array->bytes.data() + bufferView.byteOffset),
+				static_cast<int>(bufferView.byteLength),
+				&createInfo.size.x,
+				&createInfo.size.y,
+				&createInfo.channels,
+				4);
+
+        	createInfo.channels = 4;
+
+        	if (!createInfo.data)
+        	{
+        		Logger::Error(std::format("{}:Failed to load embedded texture!", createInfo.name));
+        		return nullptr;
+        	}
+
+        	stbi_write_png(
+				(createInfo.filepath).c_str(),
+				createInfo.size.x,
+				createInfo.size.y,
+				createInfo.channels,
+				createInfo.data,
+				createInfo.size.x * createInfo.channels);
+
+        	if (!meta)
+        	{
+        		meta = Texture::Meta();
+        		meta->createMipMaps = true;
+        		meta->srgb = true;
+        	}
+
+        	if (!meta->uuid.IsValid())
+        	{
+				meta->uuid = UUID();
+        	}
+
+        	meta->filepath = createInfo.filepath;
+        	meta->filepath.concat(FileFormats::Meta());
+
+			SerializeTextureMeta(*meta);
+
+        	createInfo.aspectMask = Texture::AspectMask::COLOR;
+        	createInfo.format = meta->srgb ? Format::R8G8B8A8_SRGB : Format::R8G8B8A8_UNORM;
+        	createInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_DST };
+
+			return TextureManager::GetInstance().Create(createInfo);
+		}
+    }
+
+	return nullptr;
+}
+
+std::shared_ptr<Mesh> Serializer::GenerateMesh(
+	const fastgltf::Asset& gltfAsset,
+	const fastgltf::Mesh& gltfMesh,
+	const std::filesystem::path& directory)
+{
+	std::string defaultMeshName = gltfMesh.name.c_str();
 	std::string meshName = defaultMeshName;
 	meshName.erase(std::remove(meshName.begin(), meshName.end(), ':'), meshName.end());
 	meshName.erase(std::remove(meshName.begin(), meshName.end(), '|'), meshName.end());
@@ -2507,73 +2608,153 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 		containIndex++;
 	}
 
-	VertexDefault* vertex = vertices;
-	for (size_t vertexIndex = 0; vertexIndex < aiMesh->mNumVertices; vertexIndex++, vertex++)
+	const auto& primitive = gltfMesh.primitives[0];
+
+	if (primitive.type != fastgltf::PrimitiveType::Triangles)
 	{
-		aiVector3D position = aiMesh->mVertices[vertexIndex];
-		vertex->position.x = position.x;
-		vertex->position.y = position.y;
-		vertex->position.z = position.z;
+		Logger::Error(std::format("{}: Primitive type is not supported!", meshName));
+		return nullptr;
+	}
 
-		if (aiMesh->HasTextureCoords(0))
+	auto positionAttribute = primitive.findAttribute("POSITION");
+	auto uvAttribute = primitive.findAttribute("TEXCOORD_0");
+	auto normalAttribute = primitive.findAttribute("NORMAL");
+	auto colorAttribute = primitive.findAttribute("COLOR_0");
+	auto tangentAttribute = primitive.findAttribute("TANGENT");
+
+	const auto& positionAccessor = positionAttribute != primitive.attributes.end()
+		? &gltfAsset.accessors[positionAttribute->accessorIndex] : nullptr;
+	const auto& uvAccessor = uvAttribute != primitive.attributes.end()
+		? &gltfAsset.accessors[uvAttribute->accessorIndex] : nullptr;
+	const auto& normalAccessor = normalAttribute != primitive.attributes.end()
+		? &gltfAsset.accessors[normalAttribute->accessorIndex] : nullptr;
+	const auto& tangentAccessor = tangentAttribute != primitive.attributes.end()
+		? &gltfAsset.accessors[tangentAttribute->accessorIndex] : nullptr;
+	const auto& colorAccessor = colorAttribute != primitive.attributes.end()
+		? &gltfAsset.accessors[colorAttribute->accessorIndex] : nullptr;
+
+	if (positionAttribute == primitive.attributes.end())
+	{
+		Logger::Error(std::format("{}: Mesh doesn't have POSITION attribute!", gltfMesh.name));
+		return nullptr;
+	}
+
+	const size_t vertexCount = positionAccessor->count;
+
+	VertexDefault* vertices = new VertexDefault[vertexCount];
+	std::vector<uint32_t> indices;
+
+	fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(
+		gltfAsset,
+		*positionAccessor,
+		[&](fastgltf::math::fvec3 position, std::size_t index)
+	{
+		vertices[index].position = { position.x(), position.y(), position.z() };
+		vertices[index].uv = { 0.0f, 0.0f };
+		vertices[index].normal = { 0.0f, 0.0f, 0.0f };
+		vertices[index].tangent = { 0.0f, 0.0f, 0.0f };
+		vertices[index].bitangent = { 0.0f, 0.0f, 0.0f };
+		vertices[index].color = 0xffffffff;
+	});
+
+	if (uvAccessor)
+	{
+		fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec2>(
+			gltfAsset,
+			*uvAccessor,
+		[&](fastgltf::math::fvec2 uv, std::size_t index)
 		{
-			aiVector3D uv = aiMesh->mTextureCoords[0][vertexIndex];
-			vertex->uv.x = uv.x;
-			vertex->uv.y = uv.y;
+			vertices[index].uv = { uv.x(), uv.y() };
+		});
+	}
+
+	if (normalAccessor)
+	{
+		fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(
+			gltfAsset,
+			*normalAccessor,
+		[&](fastgltf::math::fvec3 normal, std::size_t index)
+		{
+			vertices[index].normal = { normal.x(), normal.y(), normal.z() };
+		});
+	}
+
+	if (primitive.indicesAccessor)
+	{
+		const auto& indexAccessor = gltfAsset.accessors[*primitive.indicesAccessor];
+		if (indexAccessor.componentType == fastgltf::ComponentType::UnsignedInt)
+		{
+			indices.resize(indexAccessor.count);
+			fastgltf::iterateAccessorWithIndex<uint32_t>(
+				gltfAsset,
+				indexAccessor,
+			[&](uint32_t idx, std::size_t index)
+			{
+				indices[index] = idx;
+			});
 		}
 		else
 		{
-			vertex->uv.x = 0.0f;
-			vertex->uv.y = 0.0f;
+			Logger::Error(std::format("{}: Index type is not supported!", meshName));
 		}
-
-		if (aiMesh->HasVertexColors(0))
+	}
+	else
+	{
+		indices.resize(vertexCount);
+		for (size_t i = 0; i < vertexCount; ++i)
 		{
-			vertex->color = glm::packUnorm4x8(Utils::AiColor4DToGlmVec4(aiMesh->mColors[0][vertexIndex]));
-		}
-		else
-		{
-			vertex->color = 0xffffffff;
-		}
-
-		aiVector3D normal = aiMesh->mNormals[vertexIndex];
-		vertex->normal.x = normal.x;
-		vertex->normal.y = normal.y;
-		vertex->normal.z = normal.z;
-
-		if (aiMesh->HasTangentsAndBitangents())
-		{
-			// Tangent.
-			aiVector3D tangent = aiMesh->mTangents[vertexIndex];
-			vertex->tangent.x = tangent.x;
-			vertex->tangent.y = tangent.y;
-			vertex->tangent.z = tangent.z;
-
-			// Bitangent.
-			aiVector3D bitangent = aiMesh->mBitangents[vertexIndex];
-			vertex->bitangent.x = bitangent.x;
-			vertex->bitangent.y = bitangent.y;
-			vertex->bitangent.z = bitangent.z;
-		}
-		else
-		{
-			// Tangent.
-			vertex->tangent.x = 0.0f;
-			vertex->tangent.y = 0.0f;
-			vertex->tangent.z = 0.0f;
-
-			// Bitangent.
-			vertex->bitangent.x = 0.0f;
-			vertex->bitangent.y = 0.0f;
-			vertex->bitangent.z = 0.0f;
+			indices[i] = static_cast<uint32_t>(i);
 		}
 	}
 
-	for (size_t faceIndex = 0; faceIndex < aiMesh->mNumFaces; faceIndex++)
+	if (tangentAccessor)
 	{
-		for (size_t i = 0; i < aiMesh->mFaces[faceIndex].mNumIndices; i++)
+		fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec4>(
+			gltfAsset,
+			*tangentAccessor,
+		[&](fastgltf::math::fvec4 tangent, std::size_t index)
 		{
-			indices.emplace_back(aiMesh->mFaces[faceIndex].mIndices[i]);
+			vertices[index].tangent = { tangent.x(), tangent.y(), tangent.z() };
+			vertices[index].bitangent = glm::cross(vertices[index].normal, vertices[index].tangent) * tangent.w();
+		});
+	}
+	else
+	{
+		for (size_t i = 0; i < indices.size(); i += 3)
+		{
+			uint32_t i0 = indices[i];
+			uint32_t i1 = indices[i+1];
+			uint32_t i2 = indices[i+2];
+
+			glm::vec3 pos0 = vertices[i0].position;
+			glm::vec3 pos1 = vertices[i1].position;
+			glm::vec3 pos2 = vertices[i2].position;
+
+			glm::vec2 uv0 = vertices[i0].uv;
+			glm::vec2 uv1 = vertices[i1].uv;
+			glm::vec2 uv2 = vertices[i2].uv;
+
+			glm::vec3 edge1 = pos1 - pos0;
+			glm::vec3 edge2 = pos2 - pos0;
+
+			glm::vec2 deltaUV1 = uv1 - uv0;
+			glm::vec2 deltaUV2 = uv2 - uv0;
+
+			float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+			glm::vec3 tangent = f * (deltaUV2.y * edge1 - deltaUV1.y * edge2);
+			tangent = glm::normalize(tangent);
+
+			glm::vec3 bitangent = (edge2 * deltaUV1.x - edge1 * deltaUV2.x) * f;
+			bitangent = glm::normalize(bitangent);
+
+			vertices[i0].tangent = tangent;
+			vertices[i1].tangent = tangent;
+			vertices[i2].tangent = tangent;
+
+			vertices[i0].bitangent = bitangent;
+			vertices[i1].bitangent = bitangent;
+			vertices[i2].bitangent = bitangent;
 		}
 	}
 
@@ -2583,7 +2764,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 	createInfo.type = Mesh::Type::STATIC;
 	createInfo.indices = std::move(indices);
 	createInfo.vertices = vertices;
-	createInfo.vertexCount = aiMesh->mNumVertices;
+	createInfo.vertexCount = vertexCount;
 	createInfo.vertexSize = sizeof(VertexDefault);
 	createInfo.vertexLayouts =
 	{
@@ -2597,7 +2778,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(aiMesh* aiMesh, const std::filesy
 
 	return mesh;
 }
-
+/*
 std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 	const std::shared_ptr<Skeleton>& skeleton,
 	aiMesh* aiMesh,
@@ -2881,14 +3062,14 @@ std::shared_ptr<SkeletalAnimation> Serializer::GenerateAnimation(aiAnimation* ai
 	SerializeSkeletalAnimation(skeletalAnimation);
 
 	return skeletalAnimation;
-}
+}*/
 
-std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMaterial, const std::filesystem::path& directory)
+std::shared_ptr<Material> Serializer::GenerateMaterial(
+	const fastgltf::Asset& gltfAsset,
+	const fastgltf::Material& gltfMaterial,
+	const std::filesystem::path& directory)
 {
-	aiString aiMaterialName;
-	aiMaterial->Get(AI_MATKEY_NAME, aiMaterialName);
-
-	const std::string materialName = std::string(aiMaterialName.C_Str());
+	const std::string materialName = gltfMaterial.name.c_str();
 	if (materialName == "DefaultMaterial")
 	{
 		return AsyncAssetLoader::GetInstance().SyncLoadMaterial(
@@ -2903,8 +3084,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 	const std::shared_ptr<Material> meshBaseDoubleSidedMaterial = AsyncAssetLoader::GetInstance().SyncLoadMaterial(
 		std::filesystem::path("Materials") / "MeshBaseDoubleSided.mat");
 
-	bool doubleSided = false;
-	aiMaterial->Get(AI_MATKEY_TWOSIDED, doubleSided);
+	bool doubleSided = gltfMaterial.doubleSided;
 
 	const std::shared_ptr<Material> material = MaterialManager::GetInstance().Clone(
 		materialName,
@@ -2912,172 +3092,94 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 		doubleSided ? meshBaseDoubleSidedMaterial : meshBaseMaterial);
 
 	const std::shared_ptr<UniformWriter> uniformWriter = material->GetUniformWriter(GBuffer);
-	
-	aiColor3D aiBaseColor(1.0f, 1.0f, 1.0f);
-	if (aiMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, aiBaseColor) == aiReturn_SUCCESS)
-	{
-		glm::vec4 color = { aiBaseColor.r, aiBaseColor.g, aiBaseColor.b, 1.0f };
-		material->WriteToBuffer("GBufferMaterial", "material.albedoColor", color);
-	}
-	
-	aiColor3D aiEmissiveColor(1.0f, 1.0f, 1.0f);
-	if (aiMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, aiEmissiveColor) == aiReturn_SUCCESS)
-	{
-		glm::vec4 color = { aiEmissiveColor.r, aiEmissiveColor.g, aiEmissiveColor.b, 1.0f };
-		material->WriteToBuffer("GBufferMaterial", "material.emissiveColor", color);
-	}
 
-	float metallic = 0.0f;
-	if (aiMaterial->Get(AI_MATKEY_METALLIC_FACTOR, metallic) == aiReturn_SUCCESS)
+	const glm::vec4 baseColor =
 	{
-		material->WriteToBuffer("GBufferMaterial", "material.metallicFactor", metallic);
-	}
-
-	float specular = 0.0f;
-	if (aiMaterial->Get(AI_MATKEY_SPECULAR_FACTOR, specular) == aiReturn_SUCCESS)
-	{
-		material->WriteToBuffer("GBufferMaterial", "material.metallicFactor", specular);
-	}
+		gltfMaterial.pbrData.baseColorFactor.x(),
+		gltfMaterial.pbrData.baseColorFactor.y(),
+		gltfMaterial.pbrData.baseColorFactor.z(),
+		gltfMaterial.pbrData.baseColorFactor.w(),
+	};
+	material->WriteToBuffer("GBufferMaterial", "material.albedoColor", baseColor);
 	
-	float roughness = 1.0f;
-	if (aiMaterial->Get(AI_MATKEY_ROUGHNESS_FACTOR, roughness) == aiReturn_SUCCESS)
+	const glm::vec4 emissiveColor =
 	{
-		material->WriteToBuffer("GBufferMaterial", "material.roughnessFactor", roughness);
-	}
+		gltfMaterial.emissiveFactor.x(),
+		gltfMaterial.emissiveFactor.y(),
+		gltfMaterial.emissiveFactor.z(),
+		1.0f,
+	};
+	material->WriteToBuffer("GBufferMaterial", "material.emissiveColor", emissiveColor);
 
-	float glossines = 0.0f;
-	if (aiMaterial->Get(AI_MATKEY_GLOSSINESS_FACTOR, glossines) == aiReturn_SUCCESS)
-	{
-		roughness = 1.0f - glossines;
-		material->WriteToBuffer("GBufferMaterial", "material.roughnessFactor", roughness);
-	}
+	material->WriteToBuffer("GBufferMaterial", "material.metallicFactor", gltfMaterial.pbrData.metallicFactor);
+	material->WriteToBuffer("GBufferMaterial", "material.roughnessFactor", gltfMaterial.pbrData.roughnessFactor);
+	material->WriteToBuffer("GBufferMaterial", "material.emissiveFactor", gltfMaterial.emissiveStrength);
 
 	float ao = 1.0f;
 	material->WriteToBuffer("GBufferMaterial", "material.aoFactor", ao);
 
-	// If has no emissive intensity, just use r channel from emissive color.
-	float emissiveFactor = 1.0f;
-	if (aiMaterial->Get(AI_MATKEY_EMISSIVE_INTENSITY, emissiveFactor) == aiReturn_SUCCESS)
+	if (gltfMaterial.pbrData.baseColorTexture.has_value())
 	{
-		material->WriteToBuffer("GBufferMaterial", "material.emissiveFactor", emissiveFactor);
-	}
-	else
-	{
-		material->WriteToBuffer("GBufferMaterial", "material.emissiveFactor", aiEmissiveColor.r);
-	}
-
-	uint32_t numTextures = aiMaterial->GetTextureCount(aiTextureType_DIFFUSE);
-	aiString aiTextureName;
-	if (numTextures > 0)
-	{
-		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0), aiTextureName);
-		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
-
-		uniformWriter->WriteTexture("albedoTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
-	}
-
-	numTextures = aiMaterial->GetTextureCount(aiTextureType_BASE_COLOR);
-	if (numTextures > 0)
-	{
-		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_BASE_COLOR, 0), aiTextureName);
-		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
-
-		uniformWriter->WriteTexture("albedoTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
-	}
-
-	numTextures = aiMaterial->GetTextureCount(aiTextureType_NORMALS);
-	if (numTextures > 0)
-	{
-		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_NORMALS, 0), aiTextureName);
-		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
-
-		if (auto meta = DeserializeTextureMeta(textureFilepath.string() + FileFormats::Meta()))
+		if (const std::shared_ptr<Texture> albedoTexture = LoadGltfTexture(
+			gltfAsset,
+			gltfAsset.textures[gltfMaterial.pbrData.baseColorTexture->textureIndex],
+			directory))
 		{
-			meta->srgb = false;
-			SerializeTextureMeta(*meta);
-		}
-
-		uniformWriter->WriteTexture("normalTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
-
-		constexpr int useNormalMap = 1;
-		material->WriteToBuffer("GBufferMaterial", "material.useNormalMap", useNormalMap);
-	}
-
-	std::filesystem::path metalnessTextureFilepath;
-	uint32_t numMetalnessTextures = 0;
-	{
-		numMetalnessTextures = aiMaterial->GetTextureCount(aiTextureType_METALNESS);
-		if (numMetalnessTextures > 0)
-		{
-			aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_METALNESS, 0), aiTextureName);
-			metalnessTextureFilepath = directory / aiTextureName.C_Str();
-		}
-
-		numMetalnessTextures = aiMaterial->GetTextureCount(aiTextureType_SPECULAR);
-		if (numMetalnessTextures > 0)
-		{
-			aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_SPECULAR, 0), aiTextureName);
-			metalnessTextureFilepath = directory / aiTextureName.C_Str();
+			uniformWriter->WriteTexture("albedoTexture", albedoTexture);
 		}
 	}
 
-	std::filesystem::path roughnessTextureFilepath;
-	uint32_t numRoughnessTextures = 0;
+	if (gltfMaterial.normalTexture.has_value())
 	{
-		numRoughnessTextures = aiMaterial->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS);
-		if (numRoughnessTextures > 0)
+		Texture::Meta meta{};
+		meta.uuid = UUID();
+		meta.createMipMaps = false;
+		meta.srgb = false;
+		if (const std::shared_ptr<Texture> normalTexture = LoadGltfTexture(
+		gltfAsset,
+		gltfAsset.textures[gltfMaterial.normalTexture->textureIndex],
+		directory,
+		meta))
 		{
-			aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE_ROUGHNESS, 0), aiTextureName);
-			roughnessTextureFilepath = directory / aiTextureName.C_Str();
-		}
-
-		numRoughnessTextures = aiMaterial->GetTextureCount(aiTextureType_SHININESS);
-		if (numRoughnessTextures > 0)
-		{
-			aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_SHININESS, 0), aiTextureName);
-			roughnessTextureFilepath = directory / aiTextureName.C_Str();
+			uniformWriter->WriteTexture("normalTexture", normalTexture);
+			constexpr int useNormalMap = 1;
+			material->WriteToBuffer("GBufferMaterial", "material.useNormalMap", useNormalMap);
 		}
 	}
 
-	int useSingleShadingMap = 0;
-	if (numMetalnessTextures > 0 && numRoughnessTextures > 0 && metalnessTextureFilepath == roughnessTextureFilepath)
+	if (gltfMaterial.pbrData.metallicRoughnessTexture.has_value())
 	{
-		uniformWriter->WriteTexture("shadingTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(metalnessTextureFilepath));
-		useSingleShadingMap = 1;
-	}
-	else
-	{
-		if (numMetalnessTextures > 0)
+		if (const std::shared_ptr<Texture> metallicRoughnessTexture = LoadGltfTexture(
+			gltfAsset,
+			gltfAsset.textures[gltfMaterial.pbrData.metallicRoughnessTexture->textureIndex],
+			directory))
 		{
-			uniformWriter->WriteTexture("metalnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(metalnessTextureFilepath));
+			uniformWriter->WriteTexture("shadingTexture", metallicRoughnessTexture);
+			constexpr int useSingleShadingMap = 1;
+			material->WriteToBuffer("GBufferMaterial", "material.useSingleShadingMap", useSingleShadingMap);
 		}
-		
-		if (numRoughnessTextures > 0)
+	}
+
+	if (gltfMaterial.occlusionTexture.has_value())
+	{
+		if (const std::shared_ptr<Texture> aoTexture = LoadGltfTexture(
+			gltfAsset,
+			gltfAsset.textures[gltfMaterial.occlusionTexture->textureIndex],
+			directory))
 		{
-			uniformWriter->WriteTexture("roughnessTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(roughnessTextureFilepath));
+			uniformWriter->WriteTexture("aoTexture", aoTexture);
 		}
-
-		useSingleShadingMap = 0;
 	}
 
-	material->WriteToBuffer("GBufferMaterial", "material.useSingleShadingMap", useSingleShadingMap);
-	
-	numTextures = aiMaterial->GetTextureCount(aiTextureType_AMBIENT_OCCLUSION);
-	if (numTextures > 0)
+	if (gltfMaterial.emissiveTexture.has_value())
 	{
-		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_AMBIENT_OCCLUSION, 0), aiTextureName);
-		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
-
-		uniformWriter->WriteTexture("aoTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
-	}
-
-	numTextures = aiMaterial->GetTextureCount(aiTextureType_EMISSIVE);
-	if (numTextures > 0)
-	{
-		aiMaterial->Get(AI_MATKEY_TEXTURE(aiTextureType_EMISSIVE, 0), aiTextureName);
-		std::filesystem::path textureFilepath = directory / aiTextureName.C_Str();
-
-		uniformWriter->WriteTexture("emissiveTexture", AsyncAssetLoader::GetInstance().SyncLoadTexture(textureFilepath));
+		if (const std::shared_ptr<Texture> emissiveTexture = LoadGltfTexture(
+			gltfAsset,
+			gltfAsset.textures[gltfMaterial.emissiveTexture->textureIndex],
+			directory))
+		{
+			uniformWriter->WriteTexture("emissiveTexture", emissiveTexture);
+		}
 	}
 
 	material->GetBuffer("GBufferMaterial")->Flush();
@@ -3089,71 +3191,60 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(const aiMaterial* aiMater
 }
 
 std::shared_ptr<Entity> Serializer::GenerateEntity(
-	const aiNode* assimpNode,
+	const fastgltf::Asset& gltfAsset,
+	const fastgltf::Node& gltfNode,
 	const std::shared_ptr<Scene>& scene,
 	const std::vector<std::shared_ptr<Mesh>>& meshesByIndex,
 	const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes)
 {
-	if (!assimpNode)
-	{
-		return nullptr;
-	}
-
-	std::shared_ptr<Entity> node = scene->CreateEntity(assimpNode->mName.C_Str());
+	std::shared_ptr<Entity> node = scene->CreateEntity(gltfNode.name.c_str());
 	Transform& nodeTransform = node->AddComponent<Transform>(node);
 
-	Renderer3D* r3d = nullptr;
-	if (assimpNode->mNumMeshes > 0)
-	{
-		r3d = &node->AddComponent<Renderer3D>();
-	}
-
-	for (size_t meshIndex = 0; meshIndex < assimpNode->mNumMeshes; meshIndex++)
-	{
-		const std::shared_ptr<Mesh> mesh = meshesByIndex[assimpNode->mMeshes[meshIndex]];
-		r3d->mesh = mesh;
+	if (gltfNode.meshIndex) {
+		Renderer3D& r3d = node->AddComponent<Renderer3D>();
+		const std::shared_ptr<Mesh> mesh = meshesByIndex[*gltfNode.meshIndex];
+		r3d.mesh = mesh;
 
 		const std::shared_ptr<Material> material = materialsByMeshes.find(mesh)->second;
 		if (material)
 		{
-			r3d->material = material;
+			r3d.material = material;
 		}
 		else
 		{
-			if (r3d->mesh->GetType() == Mesh::Type::STATIC)
+			if (r3d.mesh->GetType() == Mesh::Type::STATIC)
 			{
-				r3d->material = AsyncAssetLoader::GetInstance().SyncLoadMaterial(
+				r3d.material = AsyncAssetLoader::GetInstance().SyncLoadMaterial(
 					std::filesystem::path("Materials") / "MeshBase.mat");
 			}
-			else if (r3d->mesh->GetType() == Mesh::Type::SKINNED)
+			else if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
 			{
-				r3d->material = AsyncAssetLoader::GetInstance().SyncLoadMaterial(
+				r3d.material = AsyncAssetLoader::GetInstance().SyncLoadMaterial(
 					std::filesystem::path("Materials") / "MeshBaseSkinned.mat");
 			}
 		}
 
-		if (r3d->mesh->GetType() == Mesh::Type::SKINNED)
+		if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
 		{
-			r3d->material->SetBaseMaterial(AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(
+			r3d.material->SetBaseMaterial(AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(
 				std::filesystem::path("Materials") / "MeshBaseSkinned.basemat"));
-			Material::Save(r3d->material, false);
+			Material::Save(r3d.material, false);
 		}
 	}
 
-	for (size_t childIndex = 0; childIndex < assimpNode->mNumChildren; childIndex++)
+	for (size_t childIndex = 0; childIndex < gltfNode.children.size(); childIndex++)
 	{
-		const aiNode* child = assimpNode->mChildren[childIndex];
-		node->AddChild(GenerateEntity(child, scene, meshesByIndex, materialsByMeshes));
+		const auto child = gltfNode.children[childIndex];
+		node->AddChild(GenerateEntity(gltfAsset, gltfAsset.nodes[child], scene, meshesByIndex, materialsByMeshes));
 	}
 
-	aiVector3D aiPosition;
-	aiVector3D aiRotation;
-	aiVector3D aiScale;
-	assimpNode->mTransformation.Decompose(aiScale, aiRotation, aiPosition);
+	const auto gltfTransformMat4 = fastgltf::getTransformMatrix(gltfNode);
+	const glm::mat4 transformMat4 = glm::make_mat4(gltfTransformMat4.data());
 
-	const glm::vec3 position = { aiPosition.x, aiPosition.y, aiPosition.z };
-	const glm::vec3 rotation = { aiRotation.x, aiRotation.y, aiRotation.z };
-	const glm::vec3 scale = { aiScale.x, aiScale.y, aiScale.z };
+	glm::vec3 position;
+	glm::vec3 rotation;
+	glm::vec3 scale;
+	Utils::DecomposeTransform(transformMat4, position, rotation, scale);
 
 	nodeTransform.Translate(position);
 	nodeTransform.Rotate(rotation);
