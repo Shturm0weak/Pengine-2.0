@@ -35,8 +35,6 @@
 #include <fstream>
 #include <format>
 
-#include <assimp/postprocess.h>
-
 using namespace Pengine;
 
 Editor::Editor()
@@ -2856,27 +2854,16 @@ void Editor::ImportMenu::Update(Editor& editor)
 
 	if (opened && ImGui::Begin("Import Properties", &opened))
 	{
-		ImGui::Checkbox("Meshes", &importMeshes);
+		ImGui::Checkbox("Meshes", &options.importMeshes);
 
-		bool preTransformVertices = importFlags & aiProcess_PreTransformVertices;
-		if (importMeshes && ImGui::Checkbox("PreTransform Vertices", &preTransformVertices))
+		if (options.importMeshes)
 		{
-			importFlags = preTransformVertices ? importFlags | aiProcess_PreTransformVertices : importFlags & ~aiProcess_PreTransformVertices;
-			importFlags = importFlags & ~aiProcess_PopulateArmatureData;
+			ImGui::Checkbox("Skeletons", &options.importSkeletons);
 		}
 
-		bool animations = importFlags & aiProcess_PopulateArmatureData;
-		if (importMeshes && !preTransformVertices && ImGui::Checkbox("Animations", &animations))
-		{
-			importFlags = animations ? importFlags | aiProcess_PopulateArmatureData : importFlags & ~aiProcess_PopulateArmatureData;
-		}
+		ImGui::Checkbox("Materials", &options.importMaterials);
 
-		if (importMeshes && !preTransformVertices)
-		{
-			ImGui::Checkbox("Skeletons", &importSkeletons);
-		}
-
-		ImGui::Checkbox("Materials", &importMaterials);
+		ImGui::Checkbox("Animations", &options.importAnimations);
 
 		if (ImGui::Button("Import"))
 		{
@@ -2891,15 +2878,17 @@ void Editor::ImportMenu::Update(Editor& editor)
 				filepath = Utils::Erase(filepath.string(), editor.m_RootDirectory.string() + "/");
 				Serializer::LoadIntermediate(
 					filepath,
-					importMeshes,
-					importMaterials,
-					importSkeletons,
-					importFlags,
+					options.importMeshes,
+					options.importMaterials,
+					options.importSkeletons,
+					options.importAnimations,
 					editor.m_LoadIntermediateMenu.workName,
 					editor.m_LoadIntermediateMenu.workStatus);
 
 				editor.m_LoadIntermediateMenu.opened = false;
 			});
+
+			options = {};
 		}
 
 		ImGui::End();
@@ -3167,6 +3156,7 @@ void Editor::Thumbnails::UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thu
 		scene = m_ThumbnailScene;
 		prefab = Serializer::DeserializePrefab(thumbnailLoadInfo.resourceFilepath, scene);
 		prefab->GetComponent<Transform>().Translate({ 0.0f, 0.0f, 0.0f });
+		scene->FindEntityByName("Entity")->SetEnabled(false);
 	}
 
 	// Wait until all resources are loaded.
@@ -3177,14 +3167,19 @@ void Editor::Thumbnails::UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thu
 	auto& cameraComponent = camera->AddComponent<Camera>(camera);
 	cameraComponent.CreateRenderView(name, m_ThumbnailWindow->GetSize());
 
+	// Update BVH just in case.
+	scene->GetBVH()->Update();
+	
+	const SceneBVH::BVHNode* root = scene->GetBVH()->GetRoot();
+	
 	BoundingBox bb{};
-	if (const SceneBVH::BVHNode* root = scene->GetBVH()->GetRoot())
+	if (root)
 	{
 		bb.max = root->aabb.max;
 		bb.min = root->aabb.min;
 		bb.offset = bb.max + (bb.min - bb.max) * 0.5f;
 	}
-	
+
 	{
 		glm::vec3 max = bb.max - bb.offset;
 		glm::vec3 min = bb.offset - bb.min;
@@ -3256,6 +3251,7 @@ void Editor::Thumbnails::UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thu
 	if (prefab)
 	{
 		scene->DeleteEntity(prefab);
+		scene->FindEntityByName("Entity")->SetEnabled(true);
 	}
 }
 

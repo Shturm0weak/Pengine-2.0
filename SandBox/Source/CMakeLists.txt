@@ -5,7 +5,7 @@ project(${APP_NAME} VERSION 1.0)
 message("Building SandBox")
 
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP -Wno-changes-meaning")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP")
 
 set(CORE_SOURCES
 	Core/ExampleApplication.cpp Core/ExampleApplication.h
@@ -22,6 +22,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Pengine)
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{GLFW_INCLUDE_PATH})
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Pengine/Source)
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor)
+target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/fastgltf/include)
 
 if (MSVC)
 	set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}")

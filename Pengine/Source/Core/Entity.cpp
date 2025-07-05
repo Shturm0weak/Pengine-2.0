@@ -65,6 +65,40 @@ Entity& Entity::operator=(Entity&& entity) noexcept
 	return *this;
 }
 
+std::shared_ptr<Entity> Entity::GetTopEntity()
+{
+	if (const auto parent = GetParent())
+	{
+		return parent->GetTopEntity();
+	}
+
+	return shared_from_this();
+}
+
+std::shared_ptr<Entity> Entity::FindEntityInHierarchy(const std::string& name)
+{
+	if (GetName() == name)
+	{
+		return shared_from_this();
+	}
+
+	for (const std::weak_ptr<Entity>& weakChild : m_Childs)
+	{
+		std::shared_ptr<Entity> child = weakChild.lock();
+		if (child->GetName() == name)
+		{
+			return child;
+		}
+		
+		if (child = child->FindEntityInHierarchy(name))
+		{
+			return child;
+		}
+	}
+
+	return nullptr;
+}
+
 void Entity::AddChild(const std::shared_ptr<Entity>& child, const bool saveTransform)
 {
 	if (HasComponent<Transform>() && child->HasComponent<Transform>())

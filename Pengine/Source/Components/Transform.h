@@ -124,6 +124,8 @@ namespace Pengine
 		void Rotate(const glm::vec3& rotation);
 		
 		void Scale(const glm::vec3& scale);
+
+		void SetTransform(const glm::mat4& transformMat4);
 	};
 
 }

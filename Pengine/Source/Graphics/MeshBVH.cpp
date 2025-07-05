@@ -11,11 +11,13 @@ MeshBVH::MeshBVH(
 	const std::vector<uint32_t>& indices,
 	const uint32_t vertexSize,
 	int leafSize)
-	: m_Vertices(vertices), m_Indices(indices), m_VertexSize(vertexSize), m_LeafSize(leafSize)
+	: m_Vertices(vertices)
+	, m_Indices(indices)
+	, m_VertexSize(vertexSize)
+	, m_LeafSize(leafSize)
 {
 	if (indices.empty() || indices.size() % 3 != 0) return;
 
-	// Create triangle indices list (each index represents a triangle).
 	std::vector<uint32_t> triangleIndices(indices.size() / 3);
 	std::iota(triangleIndices.begin(), triangleIndices.end(), 0);
 
@@ -83,7 +85,7 @@ bool MeshBVH::Raycast(
 				{
 					if (currentHitTriangle.distance < closestHit.distance)
 					{
-						glm::vec3 bary = Utils::ComputeBarycentric(v0.position, v1.position, v2.position, currentHitTriangle.point);
+						const glm::vec3 bary = Utils::ComputeBarycentric(v0.position, v1.position, v2.position, currentHitTriangle.point);
 						float u = bary.x, v = bary.y, w = bary.z;
 
 						const float epsilon = 1e-5f;

@@ -9,6 +9,7 @@ namespace Pengine
 	class SkeletalAnimation;
 	class UniformWriter;
 	class Buffer;
+	class Entity;
 
 	class PENGINE_API SkeletalAnimator
 	{
@@ -16,7 +17,7 @@ namespace Pengine
 		SkeletalAnimator();
 		SkeletalAnimator(const SkeletalAnimator& skeletalAnimator);
 
-		void UpdateAnimation(const float deltaTime, const glm::mat4& parentTransform);
+		void UpdateAnimation(std::shared_ptr<Entity> entity, const float deltaTime, const glm::mat4& parentTransform);
 
 		[[nodiscard]] float GetSpeed() const { return m_Speed; }
 
@@ -45,7 +46,7 @@ namespace Pengine
 		void SetSkeletalAnimation(std::shared_ptr<SkeletalAnimation> skeletalAnimation) { m_SkeletalAnimation = skeletalAnimation; }
 
 	private:
-		void CalculateBoneTransform(const uint32_t boneId, const glm::mat4& parentTransform);
+		void CalculateBoneTransform(std::shared_ptr<Entity> entity, const uint32_t boneId, const glm::mat4& parentTransform);
 
 		std::vector<glm::mat4> m_FinalBoneMatrices;
 

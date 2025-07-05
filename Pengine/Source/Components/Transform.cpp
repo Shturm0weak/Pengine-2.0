@@ -374,3 +374,15 @@ void Transform::Scale(const glm::vec3& scale)
 
 	scaleCallbacks(*this);
 }
+
+void Transform::SetTransform(const glm::mat4& transformMat4)
+{
+	glm::vec3 position;
+	glm::vec3 rotation;
+	glm::vec3 scale;
+	Utils::DecomposeTransform(transformMat4, position, rotation, scale);
+
+	Translate(position);
+	Rotate(rotation);
+	Scale(scale);
+}

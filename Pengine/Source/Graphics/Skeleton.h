@@ -35,20 +35,6 @@ namespace Pengine
 		{
 		}
 
-		[[nodiscard]] int FindBoneIdByName(const std::string& name) const 
-		{
-			// TODO: Make this search faster.
-			for (const Bone& bone : m_Bones)
-			{
-				if (name == bone.name)
-				{
-					return bone.id;
-				}
-			}
-
-			return -1;
-		}
-
 		[[nodiscard]] uint32_t GetRootBoneId() const { return m_RootBoneId; }
 
 		[[nodiscard]] const std::vector<Bone>& GetBones() const { return m_Bones; }
