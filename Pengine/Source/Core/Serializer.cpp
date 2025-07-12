@@ -2543,12 +2543,18 @@ std::shared_ptr<Texture> Serializer::LoadGltfTexture(
 	{
 		if (meta)
 		{
+			meta->filepath = directory / filepath->uri.fspath().concat(FileFormats::Meta());
+			
+			const auto existingMeta = DeserializeTextureMeta(meta->filepath);
+			if (existingMeta)
+			{
+				meta->uuid = existingMeta->uuid;
+			}
+
 			if (!meta->uuid.IsValid())
 			{
 				meta->uuid = UUID();
 			}
-
-			meta->filepath = directory / filepath->uri.fspath().concat(FileFormats::Meta());
 
 			SerializeTextureMeta(*meta);
 		}
@@ -3375,6 +3381,29 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 		materialName,
 		materialFilepath,
 		doubleSided ? meshBaseDoubleSidedMaterial : meshBaseMaterial);
+
+	material->WriteToBuffer("GBufferMaterial", "material.alphaCutoff", gltfMaterial.alphaCutoff);
+
+	switch (gltfMaterial.alphaMode)
+	{
+	case fastgltf::AlphaMode::Opaque:
+	{
+		constexpr int useAlphaCutoff = false;
+		material->WriteToBuffer("GBufferMaterial", "material.useAlphaCutoff", useAlphaCutoff);
+		break;
+	}
+	case fastgltf::AlphaMode::Mask:
+	{
+		constexpr int useAlphaCutoff = true;
+		material->WriteToBuffer("GBufferMaterial", "material.useAlphaCutoff", useAlphaCutoff);
+		break;
+	}
+	case fastgltf::AlphaMode::Blend:
+	{
+		material->SetOption("Transparency", true);
+		break;
+	}
+	}
 
 	const std::shared_ptr<UniformWriter> uniformWriter = material->GetUniformWriter(GBuffer);
 

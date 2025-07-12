@@ -18,8 +18,11 @@ layout(set = 1, binding = 0) uniform GBufferMaterial
 
 void main()
 {
-	if (texture(albedoTexture, uv).a < 0.01f)
+	if (material.useAlphaCutoff > 0)
 	{
-		discard;
+		if (texture(albedoTexture, uv).a < material.alphaCutoff)
+		{
+			discard;
+		}
 	}
 }

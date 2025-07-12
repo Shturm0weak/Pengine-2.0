@@ -7,6 +7,8 @@ struct DefaultMaterial
 	float roughnessFactor;
 	float aoFactor;
 	float emissiveFactor;
+	float alphaCutoff;
 	int useNormalMap;
 	int useSingleShadingMap;
+	int useAlphaCutoff;
 };

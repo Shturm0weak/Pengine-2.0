@@ -33,11 +33,17 @@ Mat:
             - Name: material.emissiveFactor
               Value: 0
               Type: float
+            - Name: material.alphaCutoff
+              Value: 0.01
+              Type: float
             - Name: material.useNormalMap
               Value: 0
               Type: int
             - Name: material.useSingleShadingMap
               Value: 0
+              Type: int
+            - Name: material.useAlphaCutoff
+              Value: 1
               Type: int
         - Name: albedoTexture
           Value: White
