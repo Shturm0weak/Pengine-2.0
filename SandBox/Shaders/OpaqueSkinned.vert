@@ -30,9 +30,9 @@ layout(set = 1, binding = 0) uniform GBufferMaterial
 };
 
 #include "Shaders/Includes/Bones.h"
-layout(set = 2, binding = 0) uniform BonesMatrices
+layout(set = 2, binding = 0) uniform BoneMatrices
 {
-	mat4 bonesMatrices[MAX_BONES];
+	mat4 boneMatrices[MAX_BONES];
 };
 
 void main()
@@ -53,16 +53,16 @@ void main()
 			totalBitangent = bitangentA;
 			break;
 		}
-		vec4 localPosition = bonesMatrices[boneIdsA[i]] * vec4(positionA, 1.0f);
+		vec4 localPosition = boneMatrices[boneIdsA[i]] * vec4(positionA, 1.0f);
 		totalPosition += localPosition * weightsA[i];
 
-		vec3 localNormal = mat3(bonesMatrices[boneIdsA[i]]) * normalA;
+		vec3 localNormal = mat3(boneMatrices[boneIdsA[i]]) * normalA;
 		totalNormal += localNormal * weightsA[i];
 
-		vec3 localTangent = mat3(bonesMatrices[boneIdsA[i]]) * tangentA;
+		vec3 localTangent = mat3(boneMatrices[boneIdsA[i]]) * tangentA;
 		totalTangent += localTangent * weightsA[i];
 
-		vec3 localBitangent = mat3(bonesMatrices[boneIdsA[i]]) * bitangentA;
+		vec3 localBitangent = mat3(boneMatrices[boneIdsA[i]]) * bitangentA;
 		totalBitangent += localBitangent * weightsA[i];
 	}
 

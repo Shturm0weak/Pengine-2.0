@@ -51,7 +51,7 @@ glm::mat4 Transform::GetPositionMat4(System system) const
 			if (GetEntity() && GetEntity()->HasParent())
 			{
 				m_GlobalTransformData.m_PositionMat4 =
-					GetEntity()->GetParent()->GetComponent<Transform>().GetPositionMat4() * m_GlobalTransformData.m_PositionMat4;
+					GetEntity()->GetParent()->GetComponent<Transform>().GetTransform(system) * m_GlobalTransformData.m_PositionMat4;
 			}
 
 			SetIsDirty(IsDirty() & ~DirtyFlagBits::TranslateMat4);
@@ -84,7 +84,7 @@ glm::mat4 Transform::GetRotationMat4(System system) const
 			if (GetEntity() && GetEntity()->HasParent())
 			{
 				m_GlobalTransformData.m_RotationMat4 =
-					GetEntity()->GetParent()->GetComponent<Transform>().GetRotationMat4() * m_GlobalTransformData.m_RotationMat4;
+					GetEntity()->GetParent()->GetComponent<Transform>().GetRotationMat4(system) * m_GlobalTransformData.m_RotationMat4;
 			}
 
 			SetIsDirty(IsDirty() & ~DirtyFlagBits::RotationMat4);
@@ -117,7 +117,7 @@ glm::mat4 Transform::GetScaleMat4(System system) const
 			if (GetEntity() && GetEntity()->HasParent())
 			{
 				m_GlobalTransformData.m_ScaleMat4 =
-					GetEntity()->GetParent()->GetComponent<Transform>().GetScaleMat4() * m_GlobalTransformData.m_ScaleMat4;
+					GetEntity()->GetParent()->GetComponent<Transform>().GetScaleMat4(system) * m_GlobalTransformData.m_ScaleMat4;
 			}
 
 			SetIsDirty(IsDirty() & ~DirtyFlagBits::ScaleMat4);
@@ -155,7 +155,7 @@ glm::vec3 Transform::GetRotation(System system) const
 			if (GetEntity() && GetEntity()->HasParent())
 			{
 				m_GlobalTransformData.m_Rotation =
-					GetEntity()->GetParent()->GetComponent<Transform>().GetRotation() + m_GlobalTransformData.m_Rotation;
+					GetEntity()->GetParent()->GetComponent<Transform>().GetRotation(system) + m_GlobalTransformData.m_Rotation;
 			}
 
 			SetIsDirty(IsDirty() & ~DirtyFlagBits::RotationVec3);
@@ -193,7 +193,7 @@ glm::mat4 Transform::GetTransform(System system) const
 			if (GetEntity() && GetEntity()->HasParent())
 			{
 				m_GlobalTransformData.m_TransformMat4 =
-					GetEntity()->GetParent()->GetComponent<Transform>().GetTransform() * m_GlobalTransformData.m_TransformMat4;
+					GetEntity()->GetParent()->GetComponent<Transform>().GetTransform(system) * m_GlobalTransformData.m_TransformMat4;
 			}
 
 			SetIsDirty(IsDirty() & ~DirtyFlagBits::TransformMat4);

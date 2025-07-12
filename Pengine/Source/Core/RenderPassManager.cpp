@@ -2767,7 +2767,7 @@ void RenderPassManager::UpdateSkeletalAnimator(
 
 	if (!skeletalAnimator->GetBuffer())
 	{
-		auto binding = skeletalAnimator->GetUniformWriter()->GetUniformLayout()->GetBindingByName("BonesMatrices");
+		auto binding = skeletalAnimator->GetUniformWriter()->GetUniformLayout()->GetBindingByName("BoneMatrices");
 		if (binding && binding->buffer)
 		{
 			skeletalAnimator->SetBuffer(Buffer::Create(
@@ -2781,6 +2781,6 @@ void RenderPassManager::UpdateSkeletalAnimator(
 		}
 	}
 
-	baseMaterial->WriteToBuffer(skeletalAnimator->GetBuffer(), "BonesMatrices", "bonesMatrices", *skeletalAnimator->GetFinalBoneMatrices().data());
+	baseMaterial->WriteToBuffer(skeletalAnimator->GetBuffer(), "BoneMatrices", "boneMatrices", *skeletalAnimator->GetFinalBoneMatrices().data());
 	skeletalAnimator->GetBuffer()->Flush();
 }

@@ -3,7 +3,7 @@ IsEnabled: true
 Transform:
   Position: [0, 0, 0]
   Rotation: [0, 0, 0]
-  Scale: [0.0100000091, 0.0100000026, 0.0100000091]
+  Scale: [1, 1, 1]
   FollowOwner: true
 Childs:
   - Name: sponza_378_sponza_378_Material__25

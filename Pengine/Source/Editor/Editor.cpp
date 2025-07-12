@@ -2880,15 +2880,15 @@ void Editor::ImportMenu::Update(Editor& editor)
 					filepath,
 					options.importMeshes,
 					options.importMaterials,
-					options.importSkeletons,
+					options.importSkeletons * options.importMeshes,
 					options.importAnimations,
 					editor.m_LoadIntermediateMenu.workName,
 					editor.m_LoadIntermediateMenu.workStatus);
 
 				editor.m_LoadIntermediateMenu.opened = false;
-			});
 
-			options = {};
+				options = {};
+			});
 		}
 
 		ImGui::End();

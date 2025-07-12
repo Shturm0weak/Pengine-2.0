@@ -2459,7 +2459,7 @@ Serializer::LoadIntermediate(
 				const std::string& meshName = std::format("{}{}", gltfAsset.meshes[meshIndex].name.c_str(), primitiveIndex++);
 
 				std::shared_ptr<Mesh> mesh;
-				if (importSkeletons)
+				if (!skeletonsByIndex.empty())
 				{
 					mesh = GenerateMeshSkinned(gltfAsset, primitive, meshName, directory);
 				}
@@ -2487,26 +2487,29 @@ Serializer::LoadIntermediate(
 		}
 	}
 
-	for (const auto& scene : gltfAsset.scenes)
+	if (importMeshes)
 	{
-		for (const auto& nodeIndex : scene.nodeIndices)
+		for (const auto& scene : gltfAsset.scenes)
 		{
-			workName = "Generating Prefab " + scene.name;
+			for (const auto& nodeIndex : scene.nodeIndices)
+			{
+				workName = "Generating Prefab " + scene.name;
 
-			std::shared_ptr<Scene> GenerateGameObjectScene = SceneManager::GetInstance().Create("GenerateGameObject", "GenerateGameObject");
-			std::shared_ptr<Entity> root = GenerateEntity(
-				gltfAsset,
-				gltfAsset.nodes[nodeIndex],
-				GenerateGameObjectScene,
-				meshesByIndex,
-				skeletonsByIndex,
-				materialsByMeshes);
+				std::shared_ptr<Scene> GenerateGameObjectScene = SceneManager::GetInstance().Create("GenerateGameObject", "GenerateGameObject");
+				std::shared_ptr<Entity> root = GenerateEntity(
+					gltfAsset,
+					gltfAsset.nodes[nodeIndex],
+					GenerateGameObjectScene,
+					meshesByIndex,
+					skeletonsByIndex,
+					materialsByMeshes);
 
-			std::filesystem::path prefabFilepath = directory / root->GetName();
-			prefabFilepath.replace_extension(FileFormats::Prefab());
-			SerializePrefab(prefabFilepath, root);
+				std::filesystem::path prefabFilepath = directory / root->GetName();
+				prefabFilepath.replace_extension(FileFormats::Prefab());
+				SerializePrefab(prefabFilepath, root);
 
-			SceneManager::GetInstance().Delete(GenerateGameObjectScene);
+				SceneManager::GetInstance().Delete(GenerateGameObjectScene);
+			}
 		}
 	}
 	
@@ -3486,7 +3489,7 @@ std::shared_ptr<Entity> Serializer::GenerateEntity(
 	const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes)
 {
 	std::vector<std::shared_ptr<Entity>> nodes;
-	if (gltfNode.meshIndex)
+	if (gltfNode.meshIndex && !meshesByIndex.empty())
 	{
 		for (const std::shared_ptr<Mesh> mesh : meshesByIndex[*gltfNode.meshIndex])
 		{
@@ -3684,7 +3687,7 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 	{
 		if (const std::shared_ptr<Entity> child = DeserializeEntity(childData, scene))
 		{
-			entity->AddChild(child);
+			entity->AddChild(child, false);
 		}
 	}
 
@@ -3762,9 +3765,9 @@ void Serializer::SerializeTransform(YAML::Emitter& out, const std::shared_ptr<En
 
 	out << YAML::BeginMap;
 
-	out << YAML::Key << "Position" << YAML::Value << transform.GetPosition();
-	out << YAML::Key << "Rotation" << YAML::Value << transform.GetRotation();
-	out << YAML::Key << "Scale" << YAML::Value << transform.GetScale();
+	out << YAML::Key << "Position" << YAML::Value << transform.GetPosition(Transform::System::LOCAL);
+	out << YAML::Key << "Rotation" << YAML::Value << transform.GetRotation(Transform::System::LOCAL);
+	out << YAML::Key << "Scale" << YAML::Value << transform.GetScale(Transform::System::LOCAL);
 	out << YAML::Key << "FollowOwner" << YAML::Value << transform.GetFollorOwner();
 
 	out << YAML::EndMap;
@@ -4290,10 +4293,10 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 
 	for (const auto& entity : scene->GetEntities())
 	{
-		if (entity->IsPrefab())
-		{
-			SerializePrefab(Utils::FindFilepath(entity->GetPrefabFilepathUUID()), entity);
-		}
+		//if (entity->IsPrefab())
+		//{
+		//	SerializePrefab(Utils::FindFilepath(entity->GetPrefabFilepathUUID()), entity);
+		//}
 
 		if (!entity->HasParent())
 		{

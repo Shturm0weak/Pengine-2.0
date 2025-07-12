@@ -20,8 +20,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [-1.77810144, 1.55768621, 1.14380419]
-      Rotation: [-0.281408042, -0.329311311, 0]
+      Position: [9.02032566, 1.72170401, -1.46460342]
+      Rotation: [-0.0906906649, 1.8431071, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -39,7 +39,7 @@ Scene:
     Transform:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [0.0100000091, 0.0100000026, 0.0100000091]
+      Scale: [1, 1, 1]
       FollowOwner: true
   - UUID: 0x8b4d4f7e75d0783c4400c48d32a530dd
     Name: Canvas Test UI
