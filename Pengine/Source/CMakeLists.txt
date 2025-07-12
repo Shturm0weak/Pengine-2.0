@@ -6,7 +6,7 @@ message("Building Pengine")
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP -Wno-changes-meaning")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP")
 
 set(COMPONENTS_SOURCES
 	Components/Camera.cpp Components/Camera.h
@@ -141,7 +141,6 @@ source_group("SpirvReflect" FILES ${SPIRV_REFLECT_SOURCES})
 
 set(UTILS_SOURCES
 	Utils/Utils.h
-	Utils/AssimpHelpers.h
 )
 source_group("Utils" FILES ${UTILS_SOURCES})
 
@@ -174,8 +173,8 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC PENGINE_ENGINE=1)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE YAML)
 target_link_libraries(${PROJECT_NAME} PRIVATE ImGui)
-target_link_libraries(${PROJECT_NAME} PRIVATE assimp)
 target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
+target_link_libraries(${PROJECT_NAME} PRIVATE fastgltf)
 
 if (WIN32)
 	if (MSVC)
@@ -237,7 +236,7 @@ endif ()
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor)
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/yaml-cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/imgui)
-target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/assimp/include)
+target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/fastgltf/include)
 
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{GLFW_INCLUDE_PATH})
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{VULKAN_INCLUDE_PATH})
@@ -251,7 +250,7 @@ if (GENERATOR_IS_MULTI_CONFIG)
 
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin/$<CONFIG>
+		${CMAKE_BINARY_DIR}/Vendor/fastgltf/Build/$<CONFIG>
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
 
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -266,7 +265,7 @@ else ()
 
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin
+		${CMAKE_BINARY_DIR}/Vendor/fastgltf/Build
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
 
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD

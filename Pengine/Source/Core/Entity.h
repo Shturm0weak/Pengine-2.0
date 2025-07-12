@@ -60,7 +60,15 @@ namespace Pengine
 
 		void SetParent(const std::shared_ptr<Entity>& parent) { m_Parent = parent; }
 
+		/**
+		 * Get the root parent of the hierarchy.
+		 * If there is no parent then return itself.
+		 */
+		std::shared_ptr<Entity> GetTopEntity();
+
 		std::shared_ptr<Entity> GetParent() const { return m_Parent.lock(); }
+
+		std::shared_ptr<Entity> FindEntityInHierarchy(const std::string& name);
 
 		void AddChild(const std::shared_ptr<Entity>& child, const bool saveTransform = true);
 

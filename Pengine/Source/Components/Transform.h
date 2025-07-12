@@ -15,11 +15,22 @@ namespace Pengine
 			GLOBAL
 		};
 
+		enum DirtyFlagBits : uint32_t
+		{
+			TranslateMat4 = 1 << 0,
+			RotationMat4 = 1 << 1,
+			RotationVec3 = 1 << 2,
+			ScaleMat4 = 1 << 3,
+			TransformMat4 = 1 << 4,
+			AllTransform = TranslateMat4 | RotationMat4 | RotationVec3 | ScaleMat4 | TransformMat4
+		};
+
+		using DirtyFlags = uint32_t;
+
 	private:
 
 		struct TransformData
 		{
-
 			glm::mat4 m_TransformMat4{};
 			glm::mat4 m_PositionMat4{};
 			glm::mat4 m_RotationMat4{};
@@ -27,8 +38,8 @@ namespace Pengine
 			glm::vec3 m_Rotation{};
 		};
 
-		TransformData m_LocalTransformData{};
-		TransformData m_GlobalTransformData{};
+		mutable TransformData m_LocalTransformData{};
+		mutable TransformData m_GlobalTransformData{};
 
 		glm::vec3 m_Back{};
 		glm::vec3 m_Up{};
@@ -41,7 +52,7 @@ namespace Pengine
 
 		bool m_FollowOwner = true;
 		bool m_Copyable = true;
-		bool m_IsDirty = true;
+		mutable DirtyFlags m_IsDirty = 0;
 
 		void Move(Transform&& transform) noexcept;
 		void UpdateVectors();
@@ -95,6 +106,10 @@ namespace Pengine
 		
 		[[nodiscard]] bool GetFollorOwner() const { return m_FollowOwner; }
 		
+		[[nodiscard]] DirtyFlags IsDirty() const { return m_IsDirty; }
+
+		[[nodiscard]] void SetIsDirty(DirtyFlags isDirty) const { m_IsDirty = isDirty; }
+		
 		void SetFollowOwner(const bool followOwner) { m_FollowOwner = followOwner; }
 
 		[[nodiscard]] bool IsCopyable() const { return m_Copyable; }
@@ -124,6 +139,8 @@ namespace Pengine
 		void Rotate(const glm::vec3& rotation);
 		
 		void Scale(const glm::vec3& scale);
+
+		void SetTransform(const glm::mat4& transformMat4);
 	};
 
 }

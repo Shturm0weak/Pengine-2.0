@@ -47,6 +47,11 @@ namespace Pengine::FileFormats
 		return ".gltf";
 	}
 
+	inline const char* Glb()
+	{
+		return ".glb";
+	}
+
 	inline const char* Fbx()
 	{
 		return ".fbx";
@@ -138,6 +143,7 @@ namespace Pengine::FileFormats
 	{
 		return fileFormat == Obj()
 			|| fileFormat == Gltf()
+			|| fileFormat == Glb()
 			|| fileFormat == Fbx();
 	}
 

@@ -69,7 +69,7 @@ void main()
 	if (material.useSingleShadingMap > 0)
 	{
 		vec3 shading = texture(shadingTexture, uv).xyz;
-		metallic = shading.r;
+		metallic = shading.b;
 		roughness = shading.g;
 	}
 	else

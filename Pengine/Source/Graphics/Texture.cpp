@@ -23,7 +23,7 @@ std::shared_ptr<Texture> Texture::Create(const CreateInfo& createInfo)
 	return nullptr;
 }
 
-std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath, bool flip, const Texture::Meta& meta)
+std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath, bool flip, const Meta& meta)
 {
 	PROFILER_SCOPE(__FUNCTION__);
 

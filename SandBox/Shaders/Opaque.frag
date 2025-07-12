@@ -34,9 +34,12 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 void main()
 {
 	vec4 albedoColor = texture(albedoTexture, uv) * material.albedoColor * color;
-	if (albedoColor.a < 0.01f)
+	if (material.useAlphaCutoff > 0)
 	{
-		discard;
+		if (albedoColor.a < material.alphaCutoff)
+		{
+			discard;
+		}
 	}
 
 	float ao = texture(aoTexture, uv).r;
@@ -45,7 +48,7 @@ void main()
 	if (material.useSingleShadingMap > 0)
 	{
 		vec3 shading = texture(shadingTexture, uv).xyz;
-		metallic = shading.r;
+		metallic = shading.b;
 		roughness = shading.g;
 	}
 	else

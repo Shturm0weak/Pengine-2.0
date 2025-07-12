@@ -233,9 +233,10 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture, std::shar
 			if (!hits.empty())
 			{
 				std::shared_ptr<Entity> entity = hits.begin()->second;
-				if (entity->GetParent() && !scene->GetSelectedEntities().count(entity->GetParent()))
+				std::shared_ptr<Entity> parent = entity->GetTopEntity();
+				if (entity != parent && !scene->GetSelectedEntities().count(parent))
 				{
-					entity = entity->GetParent();
+					entity = parent;
 				}
 
 				scene->GetSelectedEntities().clear();

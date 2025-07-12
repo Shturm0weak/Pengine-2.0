@@ -252,11 +252,15 @@ void AsyncAssetLoader::Update()
 
 	{
 		std::lock_guard<std::mutex> lock(m_MaterialMutex);
-		for (auto& [filepath, callbacks] : m_MaterialsToBeLoaded)
+		for (auto materialToBeLoaded = m_MaterialsToBeLoaded.begin(); materialToBeLoaded != m_MaterialsToBeLoaded.end(); )
 		{
+			const auto& filepath = materialToBeLoaded->first;
+			const auto& callbacks = materialToBeLoaded->second;
+
 			const std::weak_ptr<Material> material = materialManager.GetMaterial(filepath);
 			if (!material.lock())
 			{
+				++materialToBeLoaded;
 				continue;
 			}
 
@@ -265,18 +269,21 @@ void AsyncAssetLoader::Update()
 				callback(material);
 			}
 
-			m_MaterialsToBeLoaded.erase(filepath);
-			break;
+			materialToBeLoaded = m_MaterialsToBeLoaded.erase(materialToBeLoaded);
 		}
 	}
 
 	{
 		std::lock_guard<std::mutex> lock(m_BaseMaterialMutex);
-		for (auto& [filepath, callbacks] : m_BaseMaterialsToBeLoaded)
+		for (auto baseMaterialToBeLoaded = m_BaseMaterialsToBeLoaded.begin(); baseMaterialToBeLoaded != m_BaseMaterialsToBeLoaded.end(); )
 		{
+			const auto& filepath = baseMaterialToBeLoaded->first;
+			const auto& callbacks = baseMaterialToBeLoaded->second;
+
 			const std::weak_ptr<BaseMaterial> baseMaterial = materialManager.GetBaseMaterial(filepath);
 			if (!baseMaterial.lock())
 			{
+				++baseMaterialToBeLoaded;
 				continue;
 			}
 
@@ -285,18 +292,21 @@ void AsyncAssetLoader::Update()
 				callback(baseMaterial);
 			}
 
-			m_BaseMaterialsToBeLoaded.erase(filepath);
-			break;
+			baseMaterialToBeLoaded = m_BaseMaterialsToBeLoaded.erase(baseMaterialToBeLoaded);
 		}
 	}
 
 	{
 		std::lock_guard<std::mutex> lock(m_MeshMutex);
-		for (auto& [filepath, callbacks] : m_MeshesToBeLoaded)
+		for (auto mesheToBeLoaded = m_MeshesToBeLoaded.begin(); mesheToBeLoaded != m_MeshesToBeLoaded.end(); )
 		{
+			const auto& filepath = mesheToBeLoaded->first;
+			const auto& callbacks = mesheToBeLoaded->second;
+
 			const std::weak_ptr<Mesh> mesh = MeshManager::GetInstance().GetMesh(filepath);
 			if (!mesh.lock())
 			{
+				++mesheToBeLoaded;
 				continue;
 			}
 
@@ -305,18 +315,21 @@ void AsyncAssetLoader::Update()
 				callback(mesh);
 			}
 
-			m_MeshesToBeLoaded.erase(filepath);
-			break;
+			mesheToBeLoaded = m_MeshesToBeLoaded.erase(mesheToBeLoaded);
 		}
 	}
 
 	{
 		std::lock_guard<std::mutex> lock(m_TextureMutex);
-		for (auto& [filepath, callbacks] : m_TexturesToBeLoaded)
+		for (auto textureToBeLoaded = m_TexturesToBeLoaded.begin(); textureToBeLoaded != m_TexturesToBeLoaded.end(); )
 		{
+			const auto& filepath = textureToBeLoaded->first;
+			const auto& callbacks = textureToBeLoaded->second;
+
 			const std::weak_ptr<Texture> texture = TextureManager::GetInstance().GetTexture(filepath);
 			if (!texture.lock())
 			{
+				++textureToBeLoaded;
 				continue;
 			}
 
@@ -325,8 +338,7 @@ void AsyncAssetLoader::Update()
 				callback(texture);
 			}
 
-			m_TexturesToBeLoaded.erase(filepath);
-			break;
+			textureToBeLoaded = m_TexturesToBeLoaded.erase(textureToBeLoaded);
 		}
 	}
 }

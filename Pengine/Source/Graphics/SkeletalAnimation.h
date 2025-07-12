@@ -51,27 +51,22 @@ namespace Pengine
 			std::string name;
 			std::filesystem::path filepath;
 			double duration;
-			double ticksPerSecond;
 			std::unordered_map<std::string, Bone> bonesByName;
 		};
 
 		SkeletalAnimation(const CreateInfo& createInfo)
 			: Asset(createInfo.name, createInfo.filepath)
 			, m_Duration(createInfo.duration)
-			, m_TicksPerSecond(createInfo.ticksPerSecond)
 			, m_BonesByName(createInfo.bonesByName)
 		{
 		}
 
 		[[nodiscard]] double GetDuration() const { return m_Duration; }
-		
-		[[nodiscard]] double GetTicksPerSecond() const { return m_TicksPerSecond; }
 
 		[[nodiscard]] const std::unordered_map<std::string, Bone>& GetBonesByName() const { return m_BonesByName; }
 
 	private:
 		double m_Duration;
-		double m_TicksPerSecond;
 
 		std::unordered_map<std::string, Bone> m_BonesByName;
 	};

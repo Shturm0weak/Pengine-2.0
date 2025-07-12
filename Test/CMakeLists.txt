@@ -6,7 +6,7 @@ message("Building Test")
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP -Wno-changes-meaning")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP")
 
 include(FetchContent)
 FetchContent_Declare(
@@ -55,11 +55,6 @@ if (GENERATOR_IS_MULTI_CONFIG)
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/Pengine/Build/$<CONFIG>
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
-
-	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
-		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_BINARY_DIR}/Vendor/assimp/Build/bin/$<CONFIG>
-		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
 else ()
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -69,11 +64,6 @@ else ()
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/Pengine/Build
-		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
-
-	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
-		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_BINARY_DIR}/Vendor/assimp/Build
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
 endif ()
 

@@ -9,9 +9,9 @@ layout(location = 4) in mat4 transformA;
 layout(location = 0) out vec2 uv;
 
 #include "Shaders/Includes/Bones.h"
-layout(set = 2, binding = 0) uniform BonesMatrices
+layout(set = 2, binding = 0) uniform BoneMatrices
 {
-	mat4 bonesMatrices[MAX_BONES];
+	mat4 boneMatrices[MAX_BONES];
 };
 
 void main()
@@ -28,7 +28,7 @@ void main()
 			totalPosition = vec4(positionA, 1.0f);
 			break;
 		}
-		vec4 localPosition = bonesMatrices[boneIdsA[i]] * vec4(positionA,1.0f);
+		vec4 localPosition = boneMatrices[boneIdsA[i]] * vec4(positionA,1.0f);
 		totalPosition += localPosition * weightsA[i];
 	}
 

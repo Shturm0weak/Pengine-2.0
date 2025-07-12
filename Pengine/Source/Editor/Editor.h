@@ -182,11 +182,15 @@ namespace Pengine
 			bool opened = false;
 
 			std::filesystem::path filepath;
-			int importFlags = 0;
 
-			bool importMeshes = true;
-			bool importSkeletons = true;
-			bool importMaterials = true;
+			struct Options
+			{
+				bool importMeshes = true;
+				bool importSkeletons = true;
+				bool importMaterials = true;
+				bool importAnimations = true;
+				bool importPrefabs = true;
+			} options;
 
 			void Update(Editor& editor);
 		} m_ImportMenu;

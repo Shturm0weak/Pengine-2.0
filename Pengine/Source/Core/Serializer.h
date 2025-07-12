@@ -13,10 +13,8 @@
 
 #include "yaml-cpp/yaml.h"
 
-class aiMesh;
-class aiNode;
-class aiMaterial;
-class aiAnimation;
+#include <fastgltf/core.hpp>
+#include <fastgltf/types.hpp>
 
 namespace Pengine
 {
@@ -80,24 +78,57 @@ namespace Pengine
 			const bool importMeshes,
 			const bool importMaterials,
 			const bool importSkeletons,
-			const int flags,
+			const bool importAnimations,
+			const bool importPrefabs,
 			std::string& workName,
 			float& workStatus);
 
-		static std::shared_ptr<Mesh> GenerateMesh(aiMesh* aiMesh, const std::filesystem::path& directory);
+		static std::shared_ptr<Texture> LoadGltfTexture(
+			const fastgltf::Asset& gltfAsset,
+			const fastgltf::Texture& gltfTexture,
+			const std::filesystem::path& directory,
+			const std::string& debugName,
+			std::optional<Texture::Meta> meta = std::nullopt);
 
-		static std::shared_ptr<Mesh> GenerateMeshSkinned(const std::shared_ptr<Skeleton>& skeleton, aiMesh* aiMesh, const std::filesystem::path& directory);
+		static std::shared_ptr<Mesh> GenerateMesh(
+			const fastgltf::Asset& gltfAsset,
+			const fastgltf::Primitive& gltfPrimitive,
+			const std::string& name,
+			const std::filesystem::path& directory);
 
-		static std::shared_ptr<Skeleton> GenerateSkeleton(const aiNode* aiRootNode, aiMesh* aiMesh, const std::filesystem::path& directory);
+		static std::shared_ptr<Mesh> GenerateMeshSkinned(
+			const fastgltf::Asset& gltfAsset,
+			const fastgltf::Primitive& gltfPrimitive,
+			const std::string& name,
+			const std::filesystem::path& directory);
 
-		static std::shared_ptr<SkeletalAnimation> GenerateAnimation(aiAnimation* aiAnimation, const std::filesystem::path& directory);
+		static void ProcessColors(
+			const fastgltf::Asset& gltfAsset,
+			const fastgltf::Accessor* colorAccessor,
+			void* vertices,
+			const size_t vertexSize,
+			const size_t colorOffset);
 
-		static std::shared_ptr<Material> GenerateMaterial(const aiMaterial* aiMaterial, const std::filesystem::path& directory);
+		// static std::shared_ptr<Mesh> GenerateMeshSkinned(const std::shared_ptr<Skeleton>& skeleton, aiMesh* aiMesh, const std::filesystem::path& directory);
+
+		static std::shared_ptr<Skeleton> GenerateSkeleton(
+			const fastgltf::Asset& gltfAsset,
+			const fastgltf::Skin gltfSkin,
+			const std::filesystem::path& directory);
+
+		static std::shared_ptr<SkeletalAnimation> GenerateAnimation(
+			const fastgltf::Asset& gltfAsset,
+			const fastgltf::Animation& animation,
+			const std::filesystem::path& directory);
+
+		static std::shared_ptr<Material> GenerateMaterial(const fastgltf::Asset& gltfAsset, const fastgltf::Material& gltfMaterial, const std::filesystem::path& directory);
 
 		static std::shared_ptr<Entity> GenerateEntity(
-			const aiNode* aiNode,
+			const fastgltf::Asset& gltfAsset,
+			const fastgltf::Node& gltfNode,
 			const std::shared_ptr<Scene>& scene,
-			const std::vector<std::shared_ptr<Mesh>>& meshesByIndex,
+			const std::vector<std::vector<std::shared_ptr<Mesh>>>& meshesByIndex,
+			const std::vector<std::shared_ptr<Skeleton>>& skeletonsByIndex,
 			const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes);
 
 		static void SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entity>& entity, bool rootEntity = false, bool isSerializingPrefab = false);
