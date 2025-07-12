@@ -189,6 +189,7 @@ namespace Pengine
 				bool importSkeletons = true;
 				bool importMaterials = true;
 				bool importAnimations = true;
+				bool importPrefabs = true;
 			} options;
 
 			void Update(Editor& editor);

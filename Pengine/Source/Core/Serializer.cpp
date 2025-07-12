@@ -1412,6 +1412,8 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material, bo
 
 void Serializer::SerializeMesh(const std::filesystem::path& directory,  const std::shared_ptr<Mesh>& mesh)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	const std::string meshName = mesh->GetName();
 
 	size_t vertexLayoutsSize = 0;
@@ -1628,7 +1630,7 @@ Mesh::CreateInfo Serializer::DeserializeMesh(const std::filesystem::path& filepa
 	createInfo.vertexSize = vertexSize;
 	createInfo.vertexLayouts = vertexLayouts;
 
-	return std::move(createInfo);
+	return createInfo;
 }
 
 void Serializer::SerializeSkeleton(const std::shared_ptr<Skeleton>& skeleton)
@@ -2362,6 +2364,7 @@ Serializer::LoadIntermediate(
 	const bool importMaterials,
 	const bool importSkeletons,
 	const bool importAnimations,
+	const bool importPrefabs,
 	std::string& workName,
 	float& workStatus)
 {
@@ -2456,7 +2459,12 @@ Serializer::LoadIntermediate(
 			auto& primitivesByIndex = meshesByIndex.emplace_back();
 			for (const auto& primitive : gltfAsset.meshes[meshIndex].primitives)
 			{
-				const std::string& meshName = std::format("{}{}", gltfAsset.meshes[meshIndex].name.c_str(), primitiveIndex++);
+				std::string meshName = gltfAsset.meshes[meshIndex].name.c_str();
+				
+				if (gltfAsset.meshes[meshIndex].primitives.size() > 1)
+				{
+					meshName += std::format("{}", primitiveIndex++);
+				}
 
 				std::shared_ptr<Mesh> mesh;
 				if (!skeletonsByIndex.empty())
@@ -2487,7 +2495,7 @@ Serializer::LoadIntermediate(
 		}
 	}
 
-	if (importMeshes)
+	if (importPrefabs)
 	{
 		for (const auto& scene : gltfAsset.scenes)
 		{
@@ -2675,8 +2683,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(
 		vertices[index].position = { position.x(), position.y(), position.z() };
 		vertices[index].uv = { 0.0f, 0.0f };
 		vertices[index].normal = { 0.0f, 0.0f, 0.0f };
-		vertices[index].tangent = { 0.0f, 0.0f, 0.0f };
-		vertices[index].bitangent = { 0.0f, 0.0f, 0.0f };
+		vertices[index].tangent = { 0.0f, 0.0f, 0.0f, 0.0f };
 		vertices[index].color = 0xffffffff;
 	});
 
@@ -2764,8 +2771,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(
 			*tangentAccessor,
 		[&](fastgltf::math::fvec4 tangent, std::size_t index)
 		{
-			vertices[index].tangent = { tangent.x(), tangent.y(), tangent.z() };
-			vertices[index].bitangent = glm::cross(vertices[index].normal, vertices[index].tangent) * tangent.w();
+			vertices[index].tangent = { tangent.x(), tangent.y(), tangent.z(), tangent.w() };
 		});
 	}
 	else
@@ -2798,13 +2804,11 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(
 			glm::vec3 bitangent = (edge2 * deltaUV1.x - edge1 * deltaUV2.x) * f;
 			bitangent = glm::normalize(bitangent);
 
-			vertices[i0].tangent = tangent;
-			vertices[i1].tangent = tangent;
-			vertices[i2].tangent = tangent;
+			const float handedness = (glm::dot(glm::cross(vertices[i0].normal, tangent), bitangent) < 0.0f) ? -1.0f : 1.0f;
 
-			vertices[i0].bitangent = bitangent;
-			vertices[i1].bitangent = bitangent;
-			vertices[i2].bitangent = bitangent;
+			vertices[i0].tangent = glm::vec4(tangent, handedness);
+			vertices[i1].tangent = glm::vec4(tangent, handedness);
+			vertices[i2].tangent = glm::vec4(tangent, handedness);
 		}
 	}
 
@@ -2900,8 +2904,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 			vertices[index].position = { position.x(), position.y(), position.z() };
 			vertices[index].uv = { 0.0f, 0.0f };
 			vertices[index].normal = { 0.0f, 0.0f, 0.0f };
-			vertices[index].tangent = { 0.0f, 0.0f, 0.0f };
-			vertices[index].bitangent = { 0.0f, 0.0f, 0.0f };
+			vertices[index].tangent = { 0.0f, 0.0f, 0.0f, 0.0f };
 			vertices[index].color = 0xffffffff;
 		});
 
@@ -2989,8 +2992,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 			*tangentAccessor,
 			[&](fastgltf::math::fvec4 tangent, std::size_t index)
 			{
-				vertices[index].tangent = { tangent.x(), tangent.y(), tangent.z() };
-				vertices[index].bitangent = glm::cross(vertices[index].normal, vertices[index].tangent) * tangent.w();
+				vertices[index].tangent = { tangent.x(), tangent.y(), tangent.z(), tangent.w() };
 			});
 	}
 	else
@@ -3023,13 +3025,11 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 			glm::vec3 bitangent = (edge2 * deltaUV1.x - edge1 * deltaUV2.x) * f;
 			bitangent = glm::normalize(bitangent);
 
-			vertices[i0].tangent = tangent;
-			vertices[i1].tangent = tangent;
-			vertices[i2].tangent = tangent;
+			const float handedness = (glm::dot(glm::cross(vertices[i0].normal, tangent), bitangent) < 0.0f) ? -1.0f : 1.0f;
 
-			vertices[i0].bitangent = bitangent;
-			vertices[i1].bitangent = bitangent;
-			vertices[i2].bitangent = bitangent;
+			vertices[i0].tangent = glm::vec4(tangent, handedness);
+			vertices[i1].tangent = glm::vec4(tangent, handedness);
+			vertices[i2].tangent = glm::vec4(tangent, handedness);
 		}
 	}
 

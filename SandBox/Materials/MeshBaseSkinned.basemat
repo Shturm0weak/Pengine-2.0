@@ -31,7 +31,6 @@ Basemat:
           Names:
             - normalA
             - tangentA
-            - bitangentA
         - Binding: 2
           InputRate: Vertex
           Tag: Color
@@ -90,7 +89,6 @@ Basemat:
           Names:
             - normalA
             - tangentA
-            - bitangentA
         - Binding: 2
           InputRate: Vertex
           Tag: Color

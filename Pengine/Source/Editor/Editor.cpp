@@ -2865,6 +2865,8 @@ void Editor::ImportMenu::Update(Editor& editor)
 
 		ImGui::Checkbox("Animations", &options.importAnimations);
 
+		ImGui::Checkbox("Prefabs", &options.importPrefabs);
+
 		if (ImGui::Button("Import"))
 		{
 			opened = false;
@@ -2882,6 +2884,7 @@ void Editor::ImportMenu::Update(Editor& editor)
 					options.importMaterials,
 					options.importSkeletons * options.importMeshes,
 					options.importAnimations,
+					options.importPrefabs,
 					editor.m_LoadIntermediateMenu.workName,
 					editor.m_LoadIntermediateMenu.workStatus);
 

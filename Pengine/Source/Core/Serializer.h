@@ -79,6 +79,7 @@ namespace Pengine
 			const bool importMaterials,
 			const bool importSkeletons,
 			const bool importAnimations,
+			const bool importPrefabs,
 			std::string& workName,
 			float& workStatus);
 
