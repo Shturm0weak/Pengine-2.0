@@ -3640,6 +3640,7 @@ void Serializer::SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entit
 	SerializePointLight(out, entity);
 	SerializeDirectionalLight(out, entity);
 	SerializeSkeletalAnimator(out, entity);
+	SerializeEntityAnimator(out, entity);
 	SerializeCanvas(out, entity);
 
 	// Childs.
@@ -3710,6 +3711,7 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 	DeserializePointLight(in, entity);
 	DeserializeDirectionalLight(in, entity);
 	DeserializeSkeletalAnimator(in, entity);
+	DeserializeEntityAnimator(in, entity);
 	DeserializeCanvas(in, entity);
 
 	for (const auto& childData : in["Childs"])
@@ -4121,6 +4123,70 @@ void Serializer::DeserializeSkeletalAnimator(const YAML::Node& in, const std::sh
 		if (const auto& currentTimeData = skeletalAnimatorData["CurrentTime"])
 		{
 			skeletalAnimator.SetCurrentTime(currentTimeData.as<float>());
+		}
+	}
+}
+
+void Serializer::SerializeEntityAnimator(YAML::Emitter& out, const std::shared_ptr<Entity>& entity)
+{
+	if (!entity->HasComponent<EntityAnimator>())
+	{
+		return;
+	}
+
+	const EntityAnimator& entityAnimator = entity->GetComponent<EntityAnimator>();
+
+	out << YAML::Key << "EntityAnimator";
+
+	out << YAML::BeginMap;
+
+	if (entityAnimator.animationTrack)
+	{
+		out << YAML::Key << "AnimationTrack" << YAML::Value << Utils::FindUuid(entityAnimator.animationTrack->GetFilepath());
+	}
+
+	out << YAML::Key << "Time" << YAML::Value << entityAnimator.time;
+	out << YAML::Key << "Speed" << YAML::Value << entityAnimator.speed;
+	out << YAML::Key << "IsPlaying" << YAML::Value << entityAnimator.isPlaying;
+	out << YAML::Key << "IsLoop" << YAML::Value << entityAnimator.isLoop;
+
+	out << YAML::EndMap;
+}
+
+void Serializer::DeserializeEntityAnimator(const YAML::Node& in, const std::shared_ptr<Entity>& entity)
+{
+	if (const auto& entityAnimatorData = in["EntityAnimator"])
+	{
+		if (!entity->HasComponent<EntityAnimator>())
+		{
+			entity->AddComponent<EntityAnimator>();
+		}
+
+		EntityAnimator& entityAnimator = entity->GetComponent<EntityAnimator>();
+
+		if (const auto& animationTrackData = entityAnimatorData["AnimationTrack"])
+		{
+			entityAnimator.animationTrack = DeserializeAnimationTrack(DeserializeFilepath(animationTrackData.as<std::string>()));
+		}
+
+		if (const auto& speedData = entityAnimatorData["Speed"])
+		{
+			entityAnimator.speed = speedData.as<float>();
+		}
+
+		if (const auto& timeData = entityAnimatorData["Time"])
+		{
+			entityAnimator.time = timeData.as<float>();
+		}
+
+		if (const auto& isPlayingData = entityAnimatorData["IsPlaying"])
+		{
+			entityAnimator.isPlaying = isPlayingData.as<bool>();
+		}
+
+		if (const auto& isLoopData = entityAnimatorData["IsLoop"])
+		{
+			entityAnimator.isLoop = isLoopData.as<bool>();
 		}
 	}
 }
@@ -4828,6 +4894,65 @@ size_t Serializer::DeserializeThumbnailMeta(const std::filesystem::path& filepat
 	in.close();
 
 	return meta.lastWriteTime;
+}
+
+void Serializer::SerializeAnimationTrack(
+	const std::filesystem::path& filepath,
+	const EntityAnimator::AnimationTrack& animationTrack)
+{
+	if (filepath.empty())
+	{
+		Logger::Error("Failed to save animation track, filepath is empty!");
+		return;
+	}
+
+	std::ofstream out(filepath, std::ios::binary);
+
+	size_t keyframeCount = animationTrack.keyframes.size();
+	out.write(reinterpret_cast<const char*>(&keyframeCount), sizeof(size_t));
+
+	for (const auto& keyframe : animationTrack.keyframes)
+	{
+		out.write(reinterpret_cast<const char*>(&keyframe.time), sizeof(float));
+		out.write(reinterpret_cast<const char*>(&keyframe.translation), sizeof(glm::vec3));
+		out.write(reinterpret_cast<const char*>(&keyframe.rotation), sizeof(glm::vec3));
+		out.write(reinterpret_cast<const char*>(&keyframe.scale), sizeof(glm::vec3));
+		out.write(reinterpret_cast<const char*>(&keyframe.interpType), sizeof(EntityAnimator::Keyframe::InterpolationType));
+	}
+
+	out.close();
+}
+
+std::optional<EntityAnimator::AnimationTrack> Serializer::DeserializeAnimationTrack(const std::filesystem::path& filepath)
+{
+	if (filepath.empty())
+	{
+		Logger::Error("Failed to load animation track, filepath is empty!");
+		return std::nullopt;
+	}
+
+	std::ifstream in(filepath, std::ios::binary);
+
+	EntityAnimator::AnimationTrack animationTrack(Utils::GetFilename(filepath), filepath);
+
+	size_t keyframeCount = 0;
+	in.read(reinterpret_cast<char*>(&keyframeCount), sizeof(size_t));
+
+	animationTrack.keyframes.resize(keyframeCount);
+	for (size_t i = 0; i < keyframeCount; i++)
+	{
+		auto& keyframe = animationTrack.keyframes[i];
+
+		in.read(reinterpret_cast<char*>(&keyframe.time), sizeof(float));
+		in.read(reinterpret_cast<char*>(&keyframe.translation), sizeof(glm::vec3));
+		in.read(reinterpret_cast<char*>(&keyframe.rotation), sizeof(glm::vec3));
+		in.read(reinterpret_cast<char*>(&keyframe.scale), sizeof(glm::vec3));
+		in.read(reinterpret_cast<char*>(&keyframe.interpType), sizeof(EntityAnimator::Keyframe::InterpolationType));
+	}
+
+	in.close();
+
+	return animationTrack;
 }
 
 void Serializer::ParseUniformValues(

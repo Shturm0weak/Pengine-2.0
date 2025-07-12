@@ -5,6 +5,7 @@
 #include "../Components/PointLight.h"
 #include "../Components/Renderer3D.h"
 #include "../Components/SkeletalAnimator.h"
+#include "../Components/EntityAnimator.h"
 #include "../Components/Transform.h"
 #include "../Components/Canvas.h"
 #include "../Core/AsyncAssetLoader.h"
@@ -105,6 +106,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
 	m_LoadIntermediateMenu.Update();
 	m_TextureMetaPropertiesMenu.Update();
 	m_ImportMenu.Update(*this);
+	m_EntityAnimatorEditor.Update(this);
 
 	m_Thumbnails.UpdateThumbnails();
 
@@ -987,6 +989,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene, Window& window)
 			PointLightComponent(entity);
 			DirectionalLightComponent(entity);
 			SkeletalAnimatorComponent(entity);
+			EntityAnimatorComponent(entity);
 			CanvasComponent(entity);
 
 			ImGui::NewLine();
@@ -1357,6 +1360,22 @@ void Editor::TransformComponent(const std::shared_ptr<Entity>& entity)
 		if (parent)
 		{
 			parent->AddChild(entity);
+		}
+
+		if (ImGui::Button("Copy"))
+		{
+			m_CopyTransform.position = position;
+			m_CopyTransform.rotation = glm::radians(rotation);
+			m_CopyTransform.scale = scale;
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Paste"))
+		{
+			transform.Translate(m_CopyTransform.position);
+			transform.Rotate(m_CopyTransform.rotation);
+			transform.Scale(m_CopyTransform.scale);
 		}
 	}
 }
@@ -2017,6 +2036,10 @@ void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
 		{
 			entity->AddComponent<SkeletalAnimator>();
 		}
+		else if (ImGui::MenuItem("EntityAnimator"))
+		{
+			entity->AddComponent<EntityAnimator>();
+		}
 		else if (ImGui::MenuItem("Canvas"))
 		{
 			entity->AddComponent<Canvas>();
@@ -2090,6 +2113,14 @@ void Editor::MainMenuBar(const std::shared_ptr<Scene>& scene)
 		if (ImGui::MenuItem("Canvas"))
 		{
 			scene->CreateCanvas();
+		}
+		ImGui::EndMenu();
+	}
+	if (ImGui::BeginMenu("Windows"))
+	{
+		if (ImGui::MenuItem("Entity Animator"))
+		{
+			m_EntityAnimatorEditorOpened = true;
 		}
 		ImGui::EndMenu();
 	}
@@ -2331,6 +2362,64 @@ void Editor::SkeletalAnimatorComponent(const std::shared_ptr<Entity>& entity)
 			{
 				skeletalAnimator.SetCurrentTime(currentTime);
 			}
+		}
+	}
+}
+
+void Editor::EntityAnimatorComponent(const std::shared_ptr<Entity>& entity)
+{
+	if (!entity->HasComponent<EntityAnimator>())
+	{
+		return;
+	}
+
+	EntityAnimator& entityAnimator = entity->GetComponent<EntityAnimator>();
+
+	ImGui::PushID("EntityAnimator X");
+	if (ImGui::Button("X"))
+	{
+		entity->RemoveComponent<EntityAnimator>();
+	}
+	ImGui::PopID();
+
+	ImGui::SameLine();
+
+	if (ImGui::CollapsingHeader("EntityAnimator"))
+	{
+		Indent indent;
+
+		ImGui::Checkbox("IsPlaying", &entityAnimator.isPlaying);
+		ImGui::Checkbox("IsLoop", &entityAnimator.isLoop);
+		ImGui::SliderFloat("Speed", &entityAnimator.speed, 0.0f, 10.0f);
+
+		if (entityAnimator.animationTrack && !entityAnimator.animationTrack->keyframes.empty())
+		{
+			ImGui::SliderFloat("Time", &entityAnimator.time, 0.0f, entityAnimator.animationTrack->keyframes.back().time);
+		}
+
+		if (entityAnimator.animationTrack)
+		{
+			ImGui::Text("Animation Track: %s", entityAnimator.animationTrack->GetName().c_str());
+		}
+		else
+		{
+			ImGui::Text("Animation Track: %s", none);
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+			{
+				std::wstring filepath((const wchar_t*)payload->Data);
+				filepath.resize(payload->DataSize / sizeof(wchar_t));
+
+				if (Utils::GetFileFormat(filepath) == FileFormats::Track())
+				{
+					entityAnimator.animationTrack = Serializer::DeserializeAnimationTrack(filepath);
+				}
+			}
+
+			ImGui::EndDragDropTarget();
 		}
 	}
 }

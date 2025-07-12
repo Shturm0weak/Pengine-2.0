@@ -10,6 +10,7 @@
 #include "../Graphics/Mesh.h"
 #include "../Graphics/Pipeline.h"
 #include "../Graphics/Skeleton.h"
+#include "../Components/EntityAnimator.h"
 
 #include "yaml-cpp/yaml.h"
 
@@ -161,6 +162,10 @@ namespace Pengine
 
 		static void DeserializeSkeletalAnimator(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
 
+		static void SerializeEntityAnimator(YAML::Emitter& out, const std::shared_ptr<Entity>& entity);
+
+		static void DeserializeEntityAnimator(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
+
 		static void SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entity>& entity);
 
 		static void DeserializeCamera(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
@@ -186,6 +191,11 @@ namespace Pengine
 		static void SerializeThumbnailMeta(const std::filesystem::path& filepath, const size_t lastWriteTime);
 
 		static size_t DeserializeThumbnailMeta(const std::filesystem::path& filepath);
+
+		static void SerializeAnimationTrack(const std::filesystem::path& filepath, const EntityAnimator::AnimationTrack& animationTrack);
+
+		static std::optional<EntityAnimator::AnimationTrack> DeserializeAnimationTrack(const std::filesystem::path& filepath);
+
 	private:
 		static void ParseUniformValues(
 			const YAML::detail::iterator_value& data,

@@ -6,6 +6,8 @@
 #include "../Core/GraphicsSettings.h"
 #include "../Graphics/Texture.h"
 
+#include "EntityAnimatorEditor.h"
+
 #include <deque>
 
 namespace Pengine
@@ -75,6 +77,8 @@ namespace Pengine
 		void DirectionalLightComponent(const std::shared_ptr<Entity>& entity);
 
 		void SkeletalAnimatorComponent(const std::shared_ptr<Entity>& entity);
+
+		void EntityAnimatorComponent(const std::shared_ptr<Entity>& entity);
 
 		void CanvasComponent(const std::shared_ptr<Entity>& entity);
 
@@ -262,6 +266,18 @@ namespace Pengine
 		} m_Thumbnails;
 
 		ThumbnailAtlas::TileInfo GetFileIcon(const std::filesystem::path& filepath, const std::string& format);
+
+		EntityAnimatorEditor m_EntityAnimatorEditor;
+		bool m_EntityAnimatorEditorOpened = false;
+
+		struct CopyTransform
+		{
+			glm::vec3 position{ 0.0f, 0.0f, 0.0f };
+			glm::vec3 rotation{ 0.0f, 0.0f, 0.0f };
+			glm::vec3 scale{ 1.0f, 1.0f, 1.0f };
+		} m_CopyTransform;
+
+		friend class EntityAnimatorEditor;
 	};
 
 }

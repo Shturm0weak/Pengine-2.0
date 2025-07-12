@@ -8,9 +8,14 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP")
 
+if(MSVC)
+	add_compile_options(/bigobj)
+endif()
+
 set(COMPONENTS_SOURCES
 	Components/Camera.cpp Components/Camera.h
 	Components/DirectionalLight.h
+	Components/EntityAnimator.h
 	Components/PointLight.h
 	Components/Transform.cpp Components/Transform.h
 	Components/Renderer3D.cpp Components/Renderer3D.h
@@ -21,6 +26,7 @@ source_group("Components" FILES ${COMPONENTS_SOURCES})
 
 set(SYSTEMS_SOURCES
 	ComponentSystems/ComponentSystem.h
+	ComponentSystems/EntityAnimatorSystem.cpp ComponentSystems/EntityAnimatorSystem.h
 	ComponentSystems/SkeletalAnimatorSystem.cpp ComponentSystems/SkeletalAnimatorSystem.h
 	ComponentSystems/UISystem.cpp ComponentSystems/UISystem.h
 )
@@ -75,6 +81,7 @@ source_group("Core" FILES ${CORE_SOURCES})
 
 set(EDITOR_SOURCES
 	Editor/Editor.cpp Editor/Editor.h
+	Editor/EntityAnimatorEditor.cpp Editor/EntityAnimatorEditor.h
 	Editor/ImGuizmo.cpp Editor/ImGuizmo.h
 	Editor/ThumbnailAtlas.cpp Editor/ThumbnailAtlas.h
 )

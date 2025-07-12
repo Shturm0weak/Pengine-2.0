@@ -122,6 +122,11 @@ namespace Pengine::FileFormats
 		return ".skeleton";
 	}
 
+	inline const char* Track()
+	{
+		return ".track";
+	}
+
 	inline bool IsTexture(const std::string& fileFormat)
 	{
 		return fileFormat == Png()
@@ -158,7 +163,8 @@ namespace Pengine::FileFormats
 			|| fileFormat == GraphicsSettings()
 			|| fileFormat == Anim()
 			|| fileFormat == Skeleton()
-			|| fileFormat == Scene())
+			|| fileFormat == Scene()
+			|| fileFormat == Track())
 		{
 			return true;
 		}
