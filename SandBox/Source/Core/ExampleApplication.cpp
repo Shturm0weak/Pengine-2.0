@@ -28,6 +28,7 @@ void ExampleApplication::OnPreStart()
 
 void ExampleApplication::OnStart()
 {
+	return;
 	ClayManager::GetInstance().scriptsByName["FPS"] = [this](Canvas* canvas, std::shared_ptr<Entity> entity)
 	{
 		ClayManager::BeginLayout();
@@ -36,7 +37,7 @@ void ExampleApplication::OnStart()
 
 		const int scale = 2;
 
-		fps = "FPS: " + std::to_string(1.0f / Time::GetDeltaTime());
+		const std::string fps = "FPS: " + std::to_string(1.0f / Time::GetDeltaTime());
 
 		ClayManager::OpenElement();
 		ClayManager::ConfigureOpenElement(
@@ -116,7 +117,7 @@ void ExampleApplication::OnStart()
 
 		const int scale = 2;
 
-		fps = "FPS: " + std::to_string(1.0f / Time::GetDeltaTime());
+		const std::string fps = "FPS: " + std::to_string(1.0f / Time::GetDeltaTime());
 
 		ClayManager::OpenElement();
 		ClayManager::ConfigureOpenElement(
@@ -295,12 +296,67 @@ void ExampleApplication::OnStart()
 
 		return ClayManager::EndLayout();
 	};
+
+	scene = Serializer::DeserializeScene("Scenes/Examples/Turret/Turret.scene");
 }
 
 void ExampleApplication::OnUpdate()
 {
+	return;
+	const auto viewport = WindowManager::GetInstance().GetWindowByName("Main")->GetViewportManager().GetViewport("Main");
+	const auto mouseRay = viewport->GetMouseRay(viewport->GetMousePosition());
+	auto& input = Input::GetInstance(WindowManager::GetInstance().GetWindowByName("Main").get());
+
+	Raycast::Hit hit{};
+	if (const auto camera = viewport->GetCamera().lock())
+	{
+		if (viewport->IsHovered())
+		{
+			const auto hits = Raycast::RaycastScene(scene, camera->GetComponent<Transform>().GetPosition(), mouseRay, 100.0f);
+			if (!hits.empty())
+			{
+				const glm::vec3 target = hits.rbegin()->first.point;
+				//scene->GetVisualizer().DrawSphere(target, 0.3f, 12, { 1.0f, 0.0f, 0.0f });
+
+				auto rotator = scene->FindEntityByName("Rotator");
+				auto body = scene->FindEntityByName("Body");
+
+				const glm::mat3 transformMat4 = glm::lookAt(rotator->GetComponent<Transform>().GetPosition(), target, { 0.0f, 1.0f, 0.0f });
+				float pitch = asin(-transformMat4[1][2]);
+				float yaw = atan2(transformMat4[0][2], transformMat4[2][2]);
+				float roll = atan2(transformMat4[1][0], transformMat4[1][1]);
+				glm::vec3 rotation = glm::vec3(pitch, yaw, roll);
+
+				rotator->GetComponent<Transform>().Rotate({ 0.0f, 0.0f, rotation.y - glm::half_pi<float>() });
+				body->GetComponent<Transform>().Rotate({ 0.0f, rotation.x, 0.0f });
+			}
+		}
+	}
+
+	auto barrel = scene->FindEntityByName("Barrel");
+	auto& entityAnimator = barrel->GetComponent<EntityAnimator>();
+	if (entityAnimator.animationTrack && !entityAnimator.animationTrack->keyframes.empty())
+	{
+		if (glm::abs<float>(entityAnimator.animationTrack->keyframes[1].time - entityAnimator.time) <= 0.005f)
+		{
+			auto muzzle = scene->FindEntityByName("Muzzle");
+			auto muzzlePosition = muzzle->GetComponent<Transform>().GetPosition();
+			auto barrelPosition = barrel->GetComponent<Transform>().GetPosition();
+			const auto hits = Raycast::RaycastScene(scene, muzzlePosition, glm::normalize(muzzlePosition - barrelPosition), 100.0f);
+			//for (const auto& hit : hits)
+			//{
+			//	scene->GetVisualizer().DrawSphere(hit.first.point, 0.3f, 12, { 1.0f, 0.0f, 0.0f });
+			//}
+
+			if (!hits.empty())
+			{
+				scene->GetVisualizer().DrawSphere(hits.rbegin()->first.point, 0.3f, 12, { 1.0f, 0.0f, 0.0f }, 1.0f);
+			}
+		}
+	}
 }
 
 void ExampleApplication::OnClose()
 {
+	scene = nullptr;
 }

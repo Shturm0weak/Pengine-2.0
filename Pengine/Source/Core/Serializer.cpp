@@ -3471,9 +3471,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 			directory,
 			materialName + "_MetallicRoughness" + FileFormats::Png()))
 		{
-			uniformWriter->WriteTexture("shadingTexture", metallicRoughnessTexture);
-			constexpr int useSingleShadingMap = 1;
-			material->WriteToBuffer("GBufferMaterial", "material.useSingleShadingMap", useSingleShadingMap);
+			uniformWriter->WriteTexture("metallicRoughnessTexture", metallicRoughnessTexture);
 		}
 	}
 

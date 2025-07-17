@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Application.h"
+#include "Core/Scene.h"
 
 class ExampleApplication : public Pengine::Application
 {
@@ -14,5 +15,6 @@ public:
 
 	virtual void OnClose() override;
 
-	std::string fps;
+	std::shared_ptr<Pengine::Scene> scene;
+
 };

@@ -14,15 +14,11 @@ Mat:
           Value: White
         - Name: normalTexture
           Value: Black
-        - Name: metalnessTexture
-          Value: Black
-        - Name: roughnessTexture
+        - Name: metallicRoughnessTexture
           Value: White
         - Name: aoTexture
           Value: White
         - Name: emissiveTexture
-          Value: White
-        - Name: shadingTexture
           Value: White
         - Name: GBufferMaterial
           Values:
@@ -51,9 +47,6 @@ Mat:
               Value: 0.01
               Type: float
             - Name: material.useNormalMap
-              Value: 0
-              Type: int
-            - Name: material.useSingleShadingMap
               Value: 0
               Type: int
             - Name: material.useAlphaCutoff

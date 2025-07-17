@@ -13,11 +13,9 @@ layout(location = 3) out vec4 outEmissive;
 
 layout(set = 1, binding = 1) uniform sampler2D albedoTexture;
 layout(set = 1, binding = 2) uniform sampler2D normalTexture;
-layout(set = 1, binding = 3) uniform sampler2D metalnessTexture;
-layout(set = 1, binding = 4) uniform sampler2D roughnessTexture;
-layout(set = 1, binding = 5) uniform sampler2D aoTexture;
-layout(set = 1, binding = 6) uniform sampler2D emissiveTexture;
-layout(set = 1, binding = 7) uniform sampler2D shadingTexture;
+layout(set = 1, binding = 3) uniform sampler2D metallicRoughnessTexture;
+layout(set = 1, binding = 4) uniform sampler2D aoTexture;
+layout(set = 1, binding = 5) uniform sampler2D emissiveTexture;
 
 #include "Shaders/Includes/DefaultMaterial.h"
 layout(set = 1, binding = 0) uniform GBufferMaterial
@@ -42,20 +40,10 @@ void main()
 		}
 	}
 
+	vec3 metallicRoughness = texture(metallicRoughnessTexture, uv).xyz;
+	float metallic = metallicRoughness.b;
+	float roughness = metallicRoughness.g;
 	float ao = texture(aoTexture, uv).r;
-	float metallic = 0.0f;
-	float roughness = 0.0f;
-	if (material.useSingleShadingMap > 0)
-	{
-		vec3 shading = texture(shadingTexture, uv).xyz;
-		metallic = shading.b;
-		roughness = shading.g;
-	}
-	else
-	{
-		metallic = texture(metalnessTexture, uv).r;
-		roughness = texture(roughnessTexture, uv).r;
-	}
 
 	outAlbedo = albedoColor;
 	outShading = vec4(

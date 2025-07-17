@@ -9,6 +9,5 @@ struct DefaultMaterial
 	float emissiveFactor;
 	float alphaCutoff;
 	int useNormalMap;
-	int useSingleShadingMap;
 	int useAlphaCutoff;
 };
