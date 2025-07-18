@@ -47,17 +47,21 @@ void VulkanRenderer::Render(
 		return;
 	}
 	
-	vkPipeline->Bind(vkFrame->CommandBuffer);
+	if (m_Pipeline != pipeline)
+	{
+		m_Pipeline = pipeline;
+		vkPipeline->Bind(vkFrame->CommandBuffer);
+	}
 
-	std::vector<VkDescriptorSet> descriptorSets;
-	descriptorSets.reserve(uniformWriters.size());
+	m_DescriptorSets.clear();
+	m_DescriptorSets.reserve(uniformWriters.size());
 	for (const auto& uniformWriter : uniformWriters)
 	{
-		descriptorSets.emplace_back(std::static_pointer_cast<VulkanUniformWriter>(
+		m_DescriptorSets.emplace_back(std::static_pointer_cast<VulkanUniformWriter>(
 			uniformWriter)->GetDescriptorSet());
 	}
 
-	if (!descriptorSets.empty())
+	if (!m_DescriptorSets.empty())
 	{
 		PROFILER_SCOPE("BindDescriptorSets");
 
@@ -66,8 +70,8 @@ void VulkanRenderer::Render(
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			vkPipeline->GetPipelineLayout(),
 			0,
-			descriptorSets.size(),
-			&descriptorSets[0],
+			m_DescriptorSets.size(),
+			&m_DescriptorSets[0],
 			0,
 			nullptr);
 	}
@@ -97,25 +101,29 @@ void VulkanRenderer::Dispatch(
 		return;
 	}
 
-	vkPipeline->Bind(vkFrame->CommandBuffer);
+	if (m_Pipeline != pipeline)
+	{
+		m_Pipeline = pipeline;
+		vkPipeline->Bind(vkFrame->CommandBuffer);
+	}
 
-	std::vector<VkDescriptorSet> descriptorSets;
-	descriptorSets.reserve(uniformWriters.size());
+	m_DescriptorSets.clear();
+	m_DescriptorSets.reserve(uniformWriters.size());
 	for (const auto& uniformWriter : uniformWriters)
 	{
-		descriptorSets.emplace_back(std::static_pointer_cast<VulkanUniformWriter>(
+		m_DescriptorSets.emplace_back(std::static_pointer_cast<VulkanUniformWriter>(
 			uniformWriter)->GetDescriptorSet());
 	}
 
-	if (!descriptorSets.empty())
+	if (!m_DescriptorSets.empty())
 	{
 		vkCmdBindDescriptorSets(
 			vkFrame->CommandBuffer,
 			VK_PIPELINE_BIND_POINT_COMPUTE,
 			vkPipeline->GetPipelineLayout(),
 			0,
-			descriptorSets.size(),
-			&descriptorSets[0],
+			m_DescriptorSets.size(),
+			&m_DescriptorSets[0],
 			0,
 			nullptr);
 	}
@@ -303,27 +311,27 @@ void VulkanRenderer::BindBuffers(
 
 	assert(vertexBuffers.size() == vertexBufferOffsets.size());
 
-	std::vector<VkBuffer> vkVertexBuffers;
-	vkVertexBuffers.reserve(vertexBuffers.size());
+	m_VertexBuffers.clear();
+	m_VertexBuffers.reserve(vertexBuffers.size());
 	for (const std::shared_ptr<Buffer> vertexBuffer : vertexBuffers)
 	{
-		vkVertexBuffers.emplace_back(std::static_pointer_cast<VulkanBuffer>(vertexBuffer)->GetBuffer());
+		m_VertexBuffers.emplace_back(std::static_pointer_cast<VulkanBuffer>(vertexBuffer)->GetBuffer());
 	}
 
-	std::vector<VkDeviceSize> vkVertexOffsets;
-	vkVertexOffsets.reserve(vertexBufferOffsets.size());
+	m_VertexOffsets.clear();
+	m_VertexOffsets.reserve(vertexBufferOffsets.size());
 	for (const size_t vertexBufferOffset : vertexBufferOffsets)
 	{
-		vkVertexOffsets.emplace_back(vertexBufferOffset);
+		m_VertexOffsets.emplace_back(vertexBufferOffset);
 	}
 
 	if (instanceBuffer)
 	{
-		vkVertexBuffers.emplace_back(std::static_pointer_cast<VulkanBuffer>(instanceBuffer)->GetBuffer());
-		vkVertexOffsets.emplace_back(instanceBufferOffset);
+		m_VertexBuffers.emplace_back(std::static_pointer_cast<VulkanBuffer>(instanceBuffer)->GetBuffer());
+		m_VertexOffsets.emplace_back(instanceBufferOffset);
 	}
 
-	vkCmdBindVertexBuffers(commandBuffer, 0, vkVertexBuffers.size(), vkVertexBuffers.data(), vkVertexOffsets.data());
+	vkCmdBindVertexBuffers(commandBuffer, 0, m_VertexBuffers.size(), m_VertexBuffers.data(), m_VertexOffsets.data());
 	vkCmdBindIndexBuffer(commandBuffer, std::static_pointer_cast<VulkanBuffer>(indexBuffer)->GetBuffer(), indexBufferOffset, VK_INDEX_TYPE_UINT32);
 }
 

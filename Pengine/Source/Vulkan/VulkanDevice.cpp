@@ -76,7 +76,7 @@ void VulkanDevice::CreateInstance(const std::string& applicationName)
 	appInfo.pApplicationName = applicationName.c_str();
 	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 	appInfo.pEngineName = "Pengine";
-	appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+	appInfo.engineVersion = VK_MAKE_VERSION(2, 5, 0);
 	appInfo.apiVersion = GetVulkanApiVersion();
 
 	VkInstanceCreateInfo createInfo{};
@@ -216,6 +216,10 @@ void VulkanDevice::CreateLogicalDevice()
 	vulkan12Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
 
 	vulkan12Features.scalarBlockLayout = VK_TRUE;
+	vulkan12Features.bufferDeviceAddress = VK_TRUE;
+	vulkan12Features.descriptorIndexing = VK_TRUE;
+	vulkan12Features.runtimeDescriptorArray = VK_TRUE;
+	vulkan12Features.descriptorBindingPartiallyBound = VK_TRUE;
 
 	VkDeviceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;

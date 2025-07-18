@@ -57,16 +57,21 @@ namespace Pengine::Vk
 		virtual void EndCommandLabel(void* frame) override;
 
 	private:
-		static void BindBuffers(
+		void BindBuffers(
 			VkCommandBuffer commandBuffer,
 			const std::vector<std::shared_ptr<Buffer>>& vertexBuffers,
 			const std::vector<size_t>& vertexBufferOffsets,
 			const std::shared_ptr<Buffer>& instanceBuffer,
-		    const size_t instanceBufferOffset,
+			const size_t instanceBufferOffset,
 			const std::shared_ptr<Buffer>& indexBuffer,
 			const size_t indexBufferOffset);
 
 		static void DrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount);
+
+		std::shared_ptr<class Pipeline> m_Pipeline;
+		std::vector<VkDescriptorSet> m_DescriptorSets;
+		std::vector<VkBuffer> m_VertexBuffers;
+		std::vector<VkDeviceSize> m_VertexOffsets;
 	};
 
 }

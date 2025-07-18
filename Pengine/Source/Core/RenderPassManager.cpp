@@ -714,7 +714,6 @@ void RenderPassManager::CreateGBuffer()
 				{
 					const size_t instanceDataOffset = instanceDatas.size();
 
-					bool hasSkltAnim = false;
 					for (const entt::entity& entity : entities)
 					{
 						InstanceData data{};

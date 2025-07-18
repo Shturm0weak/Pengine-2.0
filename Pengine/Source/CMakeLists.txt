@@ -182,6 +182,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE YAML)
 target_link_libraries(${PROJECT_NAME} PRIVATE ImGui)
 target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
 target_link_libraries(${PROJECT_NAME} PRIVATE fastgltf)
+target_link_libraries(${PROJECT_NAME} PRIVATE meshoptimizer)
 
 if (WIN32)
 	if (MSVC)
