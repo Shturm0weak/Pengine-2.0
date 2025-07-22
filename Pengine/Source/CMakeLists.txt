@@ -16,6 +16,7 @@ set(COMPONENTS_SOURCES
 	Components/Camera.cpp Components/Camera.h
 	Components/DirectionalLight.h
 	Components/EntityAnimator.h
+	Components/RigidBody.h
 	Components/PointLight.h
 	Components/Transform.cpp Components/Transform.h
 	Components/Renderer3D.cpp Components/Renderer3D.h
@@ -27,6 +28,7 @@ source_group("Components" FILES ${COMPONENTS_SOURCES})
 set(SYSTEMS_SOURCES
 	ComponentSystems/ComponentSystem.h
 	ComponentSystems/EntityAnimatorSystem.cpp ComponentSystems/EntityAnimatorSystem.h
+	ComponentSystems/PhysicsSystem.cpp ComponentSystems/PhysicsSystem.h
 	ComponentSystems/SkeletalAnimatorSystem.cpp ComponentSystems/SkeletalAnimatorSystem.h
 	ComponentSystems/UISystem.cpp ComponentSystems/UISystem.h
 )
@@ -183,6 +185,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ImGui)
 target_link_libraries(${PROJECT_NAME} PRIVATE freetype)
 target_link_libraries(${PROJECT_NAME} PRIVATE fastgltf)
 target_link_libraries(${PROJECT_NAME} PRIVATE meshoptimizer)
+target_link_libraries(${PROJECT_NAME} PRIVATE Jolt)
 
 if (WIN32)
 	if (MSVC)
@@ -245,6 +248,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor)
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/yaml-cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/imgui)
 target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/fastgltf/include)
+target_include_directories(${PROJECT_NAME} PRIVATE ../../Vendor/JoltPhysics)
 
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{GLFW_INCLUDE_PATH})
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{VULKAN_INCLUDE_PATH})
@@ -261,6 +265,11 @@ if (GENERATOR_IS_MULTI_CONFIG)
 		${CMAKE_BINARY_DIR}/Vendor/fastgltf/Build/$<CONFIG>
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
 
+	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_BINARY_DIR}/Vendor/JoltPhysics/Build/$<CONFIG>
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
+
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>
@@ -274,6 +283,11 @@ else ()
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/Vendor/fastgltf/Build
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
+
+	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_BINARY_DIR}/Vendor/JoltPhysics/Build
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
 
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD

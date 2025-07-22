@@ -32,13 +32,21 @@ namespace Pengine
 
 		void ShutDown();
 
-		void SetComponentSystem(const std::string& name, std::shared_ptr<ComponentSystem> componentSystem) { m_ComponentSystemsByName[name] = componentSystem; }
+		template<typename T>
+		void SetComponentSystem(const std::string& name)
+		{
+			auto callback = []()
+			{
+				return std::make_shared<T>();
+			};
+			m_ComponentSystemsByName.emplace(name, callback);
+		}
 
 	private:
 		SceneManager();
 		~SceneManager() = default;
 
-		std::unordered_map<std::string, std::shared_ptr<ComponentSystem>> m_ComponentSystemsByName;
+		std::unordered_map<std::string, std::function<std::shared_ptr<ComponentSystem>()>> m_ComponentSystemsByName;
 
 		std::unordered_map<std::string, std::shared_ptr<Scene>> m_ScenesByName;
 		std::unordered_map<std::string, std::shared_ptr<Scene>> m_ScenesByTag;

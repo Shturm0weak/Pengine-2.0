@@ -1,13 +1,5 @@
 #include "Editor.h"
 
-#include "../Components/Camera.h"
-#include "../Components/DirectionalLight.h"
-#include "../Components/PointLight.h"
-#include "../Components/Renderer3D.h"
-#include "../Components/SkeletalAnimator.h"
-#include "../Components/EntityAnimator.h"
-#include "../Components/Transform.h"
-#include "../Components/Canvas.h"
 #include "../Core/AsyncAssetLoader.h"
 #include "../Core/FileFormatNames.h"
 #include "../Core/Input.h"
@@ -26,12 +18,26 @@
 #include "../Core/RenderPassOrder.h"
 #include "../Core/ClayManager.h"
 #include "../Core/Profiler.h"
-#include "../Editor/ImGuizmo.h"
+
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 
 #include "../Graphics/Device.h"
 #include "../Graphics/Renderer.h"
+
+#include "../Editor/ImGuizmo.h"
+
+#include "../Components/Camera.h"
+#include "../Components/DirectionalLight.h"
+#include "../Components/PointLight.h"
+#include "../Components/Renderer3D.h"
+#include "../Components/SkeletalAnimator.h"
+#include "../Components/EntityAnimator.h"
+#include "../Components/Transform.h"
+#include "../Components/Canvas.h"
+#include "../Components/RigidBody.h"
+
+#include "../ComponentSystems/PhysicsSystem.h"
 
 #include <fstream>
 #include <format>
@@ -991,6 +997,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene, Window& window)
 			SkeletalAnimatorComponent(entity);
 			EntityAnimatorComponent(entity);
 			CanvasComponent(entity);
+			PhysicsBoxComponent(entity);
 
 			ImGui::NewLine();
 		}
@@ -2044,6 +2051,10 @@ void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
 		{
 			entity->AddComponent<Canvas>();
 		}
+		else if (ImGui::MenuItem("RigidBody"))
+		{
+			entity->AddComponent<RigidBody>();
+		}
 		ImGui::EndPopup();
 	}
 }
@@ -2097,6 +2108,10 @@ void Editor::MainMenuBar(const std::shared_ptr<Scene>& scene)
 		if (ImGui::MenuItem("Cube"))
 		{
 			scene->CreateCube();
+		}
+		if (ImGui::MenuItem("Sphere"))
+		{
+			scene->CreateSphere();
 		}
 		if (ImGui::MenuItem("Camera"))
 		{
@@ -2388,8 +2403,8 @@ void Editor::EntityAnimatorComponent(const std::shared_ptr<Entity>& entity)
 	{
 		Indent indent;
 
-		ImGui::Checkbox("IsPlaying", &entityAnimator.isPlaying);
-		ImGui::Checkbox("IsLoop", &entityAnimator.isLoop);
+		ImGui::Checkbox("Is Playing", &entityAnimator.isPlaying);
+		ImGui::Checkbox("Is Loop", &entityAnimator.isLoop);
 		ImGui::SliderFloat("Speed", &entityAnimator.speed, 0.0f, 10.0f);
 
 		if (entityAnimator.animationTrack && !entityAnimator.animationTrack->keyframes.empty())
@@ -2462,6 +2477,91 @@ void Editor::CanvasComponent(const std::shared_ptr<Entity>& entity)
 
 			ImGui::EndMenu();
 		}
+	}
+}
+
+void Editor::PhysicsBoxComponent(const std::shared_ptr<Entity>& entity)
+{
+	if (!entity->HasComponent<RigidBody>())
+	{
+		return;
+	}
+
+	RigidBody& rigidBody = entity->GetComponent<RigidBody>();
+
+	ImGui::PushID("RigidBody X");
+	if (ImGui::Button("X"))
+	{
+		entity->RemoveComponent<RigidBody>();
+	}
+	ImGui::PopID();
+
+	ImGui::SameLine();
+
+	if (ImGui::CollapsingHeader("RigidBody"))
+	{
+		Indent indent;
+
+		ImGui::Checkbox("Is Static", &rigidBody.isStatic);
+		ImGui::Checkbox("Is Valid", &rigidBody.isValid);
+
+		auto& physicsSystem = std::static_pointer_cast<PhysicsSystem>(entity->GetScene()->GetComponentSystem("PhysicsSystem"))->GetInstance();
+
+		int type = (int)rigidBody.type;
+		const char* types[] = { "Box", "Sphere"};
+		ImGui::PushID("PhysicsBodyType");
+		if (ImGui::Combo("Type", &type, types, 2))
+		{
+			rigidBody.type = (RigidBody::Type)type;
+			switch (rigidBody.type)
+			{
+			case RigidBody::Type::Box:
+			{
+				rigidBody.shape.box = RigidBody::Box();
+				rigidBody.isValid = false;
+				break;
+			}
+			case RigidBody::Type::Sphere:
+			{
+				rigidBody.shape.sphere = RigidBody::Sphere();
+				rigidBody.isValid = false;
+				break;
+			}
+			}
+		}
+		ImGui::PopID();
+
+		switch (rigidBody.type)
+		{
+		case RigidBody::Type::Box:
+		{
+			if (DrawVec3Control("Half Extents", rigidBody.shape.box.halfExtents))
+			{
+				rigidBody.isValid = false;
+			}
+			break;
+		}
+		case RigidBody::Type::Sphere:
+		{
+			if (ImGui::SliderFloat("Radius", &rigidBody.shape.sphere.radius, 0.0f, 10.0f))
+			{
+				rigidBody.isValid = false;
+			}
+			break;
+		}
+		}
+
+		if (ImGui::SliderFloat("Mass", &rigidBody.mass, 0.0f, 10.0f))
+		{
+			rigidBody.isValid = false;
+		}
+
+		JPH::BodyLockWrite lock(physicsSystem.GetBodyLockInterface(), rigidBody.id);
+		if (lock.Succeeded())
+		{
+			JPH::Body& body = lock.GetBody();
+		}
+		lock.ReleaseLock();
 	}
 }
 

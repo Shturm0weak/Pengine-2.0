@@ -260,3 +260,12 @@ void Entity::Move(Entity&& entity) noexcept
 	entity.m_Parent.reset();
 	entity.m_Childs.clear();
 }
+
+void Entity::NotifySceneAboutComponentRemove(const std::string& componentName)
+{
+	const auto scene = m_Scene.lock();
+	if (scene)
+	{
+		scene->ProcessComponentRemove(componentName, shared_from_this());
+	}
+}

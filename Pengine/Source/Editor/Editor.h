@@ -82,6 +82,8 @@ namespace Pengine
 
 		void CanvasComponent(const std::shared_ptr<Entity>& entity);
 
+		void PhysicsBoxComponent(const std::shared_ptr<Entity>& entity);
+
 		void GameObjectPopUpMenu(const std::shared_ptr<Scene>& scene);
 
 		void ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity);

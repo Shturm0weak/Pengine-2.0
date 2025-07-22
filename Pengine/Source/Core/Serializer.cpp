@@ -25,6 +25,9 @@
 #include "../Components/SkeletalAnimator.h"
 #include "../Components/Transform.h"
 #include "../Components/Canvas.h"
+#include "../Components/RigidBody.h"
+
+#include "../ComponentSystems/PhysicsSystem.h"
 
 #include "../Utils/Utils.h"
 
@@ -3640,6 +3643,7 @@ void Serializer::SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entit
 	SerializeSkeletalAnimator(out, entity);
 	SerializeEntityAnimator(out, entity);
 	SerializeCanvas(out, entity);
+	SerializeRigidBody(out, entity);
 
 	// Childs.
 	out << YAML::Key << "Childs";
@@ -3711,6 +3715,7 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 	DeserializeSkeletalAnimator(in, entity);
 	DeserializeEntityAnimator(in, entity);
 	DeserializeCanvas(in, entity);
+	DeserializeRigidBody(in, entity);
 
 	for (const auto& childData : in["Childs"])
 	{
@@ -4347,6 +4352,88 @@ void Serializer::DeserializeCanvas(const YAML::Node& in, const std::shared_ptr<E
 				canvas.scriptName = scriptName;
 				canvas.script = ClayManager::GetInstance().scriptsByName.at(scriptName);
 			}
+		}
+	}
+}
+
+void Serializer::SerializeRigidBody(YAML::Emitter& out, const std::shared_ptr<Entity>& entity)
+{
+	if (!entity->HasComponent<RigidBody>())
+	{
+		return;
+	}
+
+	const RigidBody& rigidBody = entity->GetComponent<RigidBody>();
+
+	out << YAML::Key << "RigidBody";
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "IsStatic" << YAML::Value << rigidBody.isStatic;
+	out << YAML::Key << "Mass" << YAML::Value << rigidBody.mass;
+	out << YAML::Key << "Type" << YAML::Value << (int)rigidBody.type;
+	
+	switch (rigidBody.type)
+	{
+	case RigidBody::Type::Box:
+	{
+		out << YAML::Key << "HalfExtents" << YAML::Value << rigidBody.shape.box.halfExtents;
+		break;
+	}
+	case RigidBody::Type::Sphere:
+	{
+		out << YAML::Key << "Radius" << YAML::Value << rigidBody.shape.sphere.radius;
+		break;
+	}
+	}
+
+	out << YAML::EndMap;
+}
+
+void Serializer::DeserializeRigidBody(const YAML::Node& in, const std::shared_ptr<Entity>& entity)
+{
+	if (const auto& rigidBodyData = in["RigidBody"])
+	{
+		if (!entity->HasComponent<RigidBody>())
+		{
+			entity->AddComponent<RigidBody>();
+		}
+
+		auto& rigidBody = entity->GetComponent<RigidBody>();
+		
+		if (const auto& isStaticData = rigidBodyData["IsStatic"])
+		{
+			rigidBody.isStatic = isStaticData.as<bool>();
+		}
+
+		if (const auto& massData = rigidBodyData["Mass"])
+		{
+			rigidBody.mass = massData.as<float>();
+		}
+
+		if (const auto& typeData = rigidBodyData["Type"])
+		{
+			rigidBody.type = (RigidBody::Type)typeData.as<int>();
+		}
+
+		switch (rigidBody.type)
+		{
+		case RigidBody::Type::Box:
+		{
+			if (const auto& halfExtentsData = rigidBodyData["HalfExtents"])
+			{
+				rigidBody.shape.box.halfExtents = halfExtentsData.as<glm::vec3>();
+			}
+			break;
+		}
+		case RigidBody::Type::Sphere:
+		{
+			if (const auto& radiusData = rigidBodyData["Radius"])
+			{
+				rigidBody.shape.sphere.radius = radiusData.as<float>();
+			}
+			break;
+		}
 		}
 	}
 }

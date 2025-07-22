@@ -70,7 +70,13 @@ namespace Pengine
 
 		void SetRenderView(std::shared_ptr<RenderView> renderView) { m_RenderView = renderView; }
 
-		void SetComponentSystem(const std::string& name, std::shared_ptr<ComponentSystem> componentSystem) { m_ComponentSystemsByName[name] = componentSystem; }
+		void SetComponentSystem(const std::string& name, std::function<std::shared_ptr<ComponentSystem>()> componentSystem) { m_ComponentSystemsByName[name] = componentSystem(); }
+
+		void ProcessComponentRemove(const std::string& componentName, std::shared_ptr<Entity> entity) const;
+
+		std::shared_ptr<ComponentSystem> GetComponentSystem(const std::string& name);
+
+		std::shared_ptr<Entity> CreateEmpty();
 
 		std::shared_ptr<Entity> CreateCamera();
 
@@ -79,6 +85,8 @@ namespace Pengine
 		std::shared_ptr<Entity> CreatePointLight();
 
 		std::shared_ptr<Entity> CreateCube();
+
+		std::shared_ptr<Entity> CreateSphere();
 
 		std::shared_ptr<Entity> CreateCanvas();
 	private:

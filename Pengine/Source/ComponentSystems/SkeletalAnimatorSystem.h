@@ -12,7 +12,7 @@ namespace Pengine
 	public:
 		virtual ~SkeletalAnimatorSystem() override = default;
 
-		virtual void OnUpdate(const float deltaTime, std::shared_ptr<class Scene> scene);
+		virtual void OnUpdate(const float deltaTime, std::shared_ptr<class Scene> scene) override;
 	};
 
 }

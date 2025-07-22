@@ -50,6 +50,18 @@ void Scene::FlushDeletionQueue()
 
 		if (entity->GetHandle() != entt::tombstone)
 		{
+			for (const auto& [componentSystemName, componentSystem] : m_ComponentSystemsByName)
+			{
+				const auto removeCallbacks = std::move(componentSystem->GetRemoveCallbacks());
+				for (const auto& [componentName, callback] : removeCallbacks)
+				{
+					if (callback)
+					{
+						callback(entity);
+					}
+				}
+			}
+
 			m_Registry.destroy(entity->GetHandle());
 		}
 	}
@@ -96,6 +108,42 @@ void Scene::Clear()
 	m_RenderView = nullptr;
 }
 
+void Scene::ProcessComponentRemove(
+	const std::string& componentName,
+	std::shared_ptr<Entity> entity) const
+{
+	for (const auto& [componentSystemName, componentSystem] : m_ComponentSystemsByName)
+	{
+		const auto removeCallbacks = std::move(componentSystem->GetRemoveCallbacks());
+		auto callback = removeCallbacks.find(componentName);
+		if (callback != removeCallbacks.end())
+		{
+			if (callback->second)
+			{
+				callback->second(entity);
+			}
+		}
+	}
+}
+
+std::shared_ptr<ComponentSystem> Scene::GetComponentSystem(const std::string& name)
+{
+	auto componentSystem = m_ComponentSystemsByName.find(name);
+	if (componentSystem != m_ComponentSystemsByName.end())
+	{
+		return componentSystem->second;
+	}
+
+	return nullptr;
+}
+
+std::shared_ptr<Entity> Scene::CreateEmpty()
+{
+	const auto entity = CreateEntity("Empty");
+	entity->AddComponent<Transform>(entity);
+	return entity;
+}
+
 std::shared_ptr<Entity> Scene::CreateCamera()
 {
 	const auto entity = CreateEntity("Camera");
@@ -126,6 +174,17 @@ std::shared_ptr<Entity> Scene::CreateCube()
 	entity->AddComponent<Transform>(entity);
 	auto& r3d = entity->AddComponent<Renderer3D>();
 	r3d.mesh = MeshManager::GetInstance().LoadMesh(std::filesystem::path("Meshes") / "Cube.mesh");
+	r3d.material = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "MeshBase.mat");
+	return entity;
+}
+
+std::shared_ptr<Entity> Scene::CreateSphere()
+{
+
+	const auto entity = CreateEntity("Sphere");
+	entity->AddComponent<Transform>(entity);
+	auto& r3d = entity->AddComponent<Renderer3D>();
+	r3d.mesh = MeshManager::GetInstance().LoadMesh(std::filesystem::path("Meshes") / "Sphere.mesh");
 	r3d.material = MaterialManager::GetInstance().LoadMaterial(std::filesystem::path("Materials") / "MeshBase.mat");
 	return entity;
 }

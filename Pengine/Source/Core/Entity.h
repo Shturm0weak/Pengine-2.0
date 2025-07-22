@@ -51,8 +51,9 @@ namespace Pengine
 		}
 
 		template<typename T>
-		void RemoveComponent() const
+		void RemoveComponent()
 		{
+			NotifySceneAboutComponentRemove(GetTypeName<T>());
 			m_Registry->remove<T>(m_Handle);
 		}
 
@@ -108,6 +109,8 @@ namespace Pengine
 		void Copy(const Entity& entity);
 
 		void Move(Entity&& entity) noexcept;
+
+		void NotifySceneAboutComponentRemove(const std::string& componentName);
 
 		entt::entity m_Handle{entt::tombstone};
 		std::weak_ptr<Entity> m_Parent;
