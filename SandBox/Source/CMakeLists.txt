@@ -11,6 +11,7 @@ set(CORE_SOURCES
 	Core/ExampleApplication.cpp Core/ExampleApplication.h
 	Core/CharacterControllerExample/CharacterControllerExample.cpp Core/CharacterControllerExample/CharacterControllerExample.h
 	Core/main.cpp
+	Core/TestUserComponent.h
 )
 source_group("Core" FILES ${CORE_SOURCES})
 
@@ -19,6 +20,7 @@ add_executable(${PROJECT_NAME} ${CORE_SOURCES})
 target_compile_definitions(${PROJECT_NAME} PUBLIC PENGINE_ENGINE=0)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Jolt)
+target_link_libraries(${PROJECT_NAME} PRIVATE YAML)
 target_link_libraries(${PROJECT_NAME} PRIVATE Pengine)
 
 target_include_directories(${PROJECT_NAME} PRIVATE $ENV{GLFW_INCLUDE_PATH})

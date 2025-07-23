@@ -14,6 +14,7 @@
 #include "WindowManager.h"
 #include "Profiler.h"
 #include "ClayManager.h"
+#include "ReflectionSystem.h"
 
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
@@ -3644,6 +3645,7 @@ void Serializer::SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entit
 	SerializeEntityAnimator(out, entity);
 	SerializeCanvas(out, entity);
 	SerializeRigidBody(out, entity);
+	SerializeUserComponents(out, entity);
 
 	// Childs.
 	out << YAML::Key << "Childs";
@@ -3716,6 +3718,7 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 	DeserializeEntityAnimator(in, entity);
 	DeserializeCanvas(in, entity);
 	DeserializeRigidBody(in, entity);
+	DeserializeUserComponents(in, entity);
 
 	for (const auto& childData : in["Childs"])
 	{
@@ -4434,6 +4437,142 @@ void Serializer::DeserializeRigidBody(const YAML::Node& in, const std::shared_pt
 			}
 			break;
 		}
+		}
+	}
+}
+
+void Serializer::SerializeUserComponents(YAML::Emitter& out, const std::shared_ptr<Entity>& entity)
+{
+	std::function<void(void*, const ReflectionSystem::RegisteredClass&, size_t)> serialize = [&out, &serialize]
+		(void* instance, const ReflectionSystem::RegisteredClass& registeredClass, size_t offset)
+	{
+		for (auto& [name, prop] : registeredClass.m_PropertiesByName)
+		{
+#define SERIALIZE_PROPERTY(_type) \
+if (prop.IsValue<_type>()) \
+{ \
+	const _type& value = prop.GetValue<_type>(instance, offset); \
+	out << YAML::Key << "Type" << prop.m_Type; \
+	out << YAML::Key << "Value" << value; \
+}
+
+			out << YAML::Key << name;
+			out << YAML::BeginMap;
+
+			SERIALIZE_PROPERTY(bool)
+			else SERIALIZE_PROPERTY(float)
+			else SERIALIZE_PROPERTY(int)
+			else SERIALIZE_PROPERTY(double)
+			else SERIALIZE_PROPERTY(std::string)
+			else SERIALIZE_PROPERTY(glm::vec2)
+			else SERIALIZE_PROPERTY(glm::vec3)
+			else SERIALIZE_PROPERTY(glm::vec4)
+			else SERIALIZE_PROPERTY(glm::ivec2)
+			else SERIALIZE_PROPERTY(glm::ivec3)
+			else SERIALIZE_PROPERTY(glm::ivec4)
+
+			out << YAML::EndMap;
+		}
+
+		for (const auto& parent : registeredClass.m_Parents)
+		{
+			ReflectionSystem& reflectionSystem = ReflectionSystem::GetInstance();
+			auto classByType = reflectionSystem.m_ClassesByType.find(parent.first);
+			if (classByType != reflectionSystem.m_ClassesByType.end())
+			{
+				serialize(instance, classByType->second, parent.second);
+			}
+		}
+	};
+
+	ReflectionSystem& reflectionSystem = ReflectionSystem::GetInstance();
+
+	for (auto [id, storage] : entity->GetRegistry().storage())
+	{
+		if (storage.contains(entity->GetHandle()))
+		{
+			auto classByType = reflectionSystem.m_ClassesByType.find(id);
+			if (classByType == reflectionSystem.m_ClassesByType.end())
+			{
+				continue;
+			}
+
+			const auto& registeredClass = classByType->second;
+			void* component = storage.value(entity->GetHandle());
+
+			out << YAML::Key << registeredClass.m_TypeInfo.name().data();
+
+			out << YAML::BeginMap;
+
+			serialize(component, classByType->second, 0);
+
+			if (registeredClass.m_SerializeCallback)
+			{
+				registeredClass.m_SerializeCallback(&out, component);
+			}
+
+			out << YAML::EndMap;
+		}
+	}
+}
+
+void Serializer::DeserializeUserComponents(const YAML::Node& in, const std::shared_ptr<Entity>& entity)
+{
+	std::function<void(const YAML::Node&, void*, ReflectionSystem::RegisteredClass&, size_t)> deserialize = [&deserialize]
+	(const YAML::Node& in, void* instance, ReflectionSystem::RegisteredClass& registeredClass, size_t offset)
+	{
+		ReflectionSystem& reflectionSystem = ReflectionSystem::GetInstance();
+
+		for (auto& [name, prop] : registeredClass.m_PropertiesByName)
+		{
+			if (auto& propData = in[name])
+			{
+				const std::string type = propData["Type"].as<std::string>();
+
+#define DESERIALIZE_PROPERTY(_type)             \
+if (GetTypeName<_type>() == type)               \
+{                                               \
+	_type value = propData["Value"].as<_type>();\
+	prop.SetValue(instance, value, offset);     \
+}                                               \
+
+				DESERIALIZE_PROPERTY(bool)
+				else DESERIALIZE_PROPERTY(float)
+				else DESERIALIZE_PROPERTY(int)
+				else DESERIALIZE_PROPERTY(double)
+				else DESERIALIZE_PROPERTY(std::string)
+				else DESERIALIZE_PROPERTY(glm::vec2)
+				else DESERIALIZE_PROPERTY(glm::vec3)
+				else DESERIALIZE_PROPERTY(glm::vec4)
+				else DESERIALIZE_PROPERTY(glm::ivec2)
+				else DESERIALIZE_PROPERTY(glm::ivec3)
+				else DESERIALIZE_PROPERTY(glm::ivec4)
+			}
+		}
+
+		for (const auto& parent : registeredClass.m_Parents)
+		{
+			ReflectionSystem& reflectionSystem = ReflectionSystem::GetInstance();
+			auto classByType = reflectionSystem.m_ClassesByType.find(parent.first);
+			if (classByType != reflectionSystem.m_ClassesByType.end())
+			{
+				deserialize(in, instance, classByType->second, parent.second);
+			}
+		}
+	};
+
+	ReflectionSystem& reflectionSystem = ReflectionSystem::GetInstance();
+	for (auto& [id, registeredClass] : reflectionSystem.m_ClassesByType)
+	{
+		if (const auto& userComponentData = in[registeredClass.m_TypeInfo.name().data()])
+		{
+			void* component = registeredClass.m_CreateCallback(entity->GetRegistry(), entity->GetHandle());
+			deserialize(userComponentData, component, registeredClass, 0);
+
+			if (registeredClass.m_DeserializeCallback)
+			{
+				registeredClass.m_DeserializeCallback((void*)&userComponentData, component);
+			}
 		}
 	}
 }

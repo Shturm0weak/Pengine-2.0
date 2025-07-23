@@ -105,12 +105,12 @@ namespace Pengine
 		
 		bool SetDeleted(const bool isDeleted) { return m_IsDeleted = isDeleted; }
 
+		void NotifySceneAboutComponentRemove(const std::string& componentName);
+
 	private:
 		void Copy(const Entity& entity);
 
 		void Move(Entity&& entity) noexcept;
-
-		void NotifySceneAboutComponentRemove(const std::string& componentName);
 
 		entt::entity m_Handle{entt::tombstone};
 		std::weak_ptr<Entity> m_Parent;

@@ -18,6 +18,7 @@
 #include "../Core/RenderPassOrder.h"
 #include "../Core/ClayManager.h"
 #include "../Core/Profiler.h"
+#include "../Core/ReflectionSystem.h"
 
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
@@ -998,6 +999,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene, Window& window)
 			EntityAnimatorComponent(entity);
 			CanvasComponent(entity);
 			PhysicsBoxComponent(entity);
+			UserComponents(entity);
 
 			ImGui::NewLine();
 		}
@@ -2055,6 +2057,16 @@ void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
 		{
 			entity->AddComponent<RigidBody>();
 		}
+
+		ReflectionSystem& reflectionSystem = ReflectionSystem::GetInstance();
+		for (auto& [id, registeredClass] : reflectionSystem.m_ClassesByType)
+		{
+			if (ImGui::MenuItem(registeredClass.m_TypeInfo.name().data()))
+			{
+				registeredClass.m_CreateCallback(entity->GetRegistry(), entity->GetHandle());
+			}
+		}
+
 		ImGui::EndPopup();
 	}
 }
@@ -2562,6 +2574,121 @@ void Editor::PhysicsBoxComponent(const std::shared_ptr<Entity>& entity)
 			JPH::Body& body = lock.GetBody();
 		}
 		lock.ReleaseLock();
+	}
+}
+
+void Editor::UserComponents(const std::shared_ptr<Entity>& entity)
+{
+	ReflectionSystem& reflectionSystem = ReflectionSystem::GetInstance();
+
+	std::function<void(void*, ReflectionSystem::RegisteredClass&, size_t)> properties = [this, &properties]
+		(void* instance, ReflectionSystem::RegisteredClass& registeredClass, size_t offset)
+	{
+		for (auto& [name, prop] : registeredClass.m_PropertiesByName)
+		{
+#define SERIALIZE_PROPERTY(_type) \
+if (prop.IsValue<_type>()) \
+{ \
+	const _type& value = prop.GetValue<_type>(instance, offset); \
+	out << YAML::Key << "Type" << prop.m_Type; \
+	out << YAML::Key << "Value" << value; \
+}
+
+			if (prop.IsValue<bool>())
+			{
+				ImGui::Checkbox(name.c_str(), &prop.GetValue<bool>(instance, offset));
+			}
+			else if(prop.IsValue<int>())
+			{
+				ImGui::SliderInt(name.c_str(), &prop.GetValue<int>(instance, offset), 0, 10);
+			}
+			else if (prop.IsValue<float>())
+			{
+				ImGui::SliderFloat(name.c_str(), &prop.GetValue<float>(instance, offset), 0.0f, 10.0f);
+			}
+			else if (prop.IsValue<double>())
+			{
+				ImGui::InputDouble(name.c_str(), &prop.GetValue<double>(instance, offset));
+			}
+			else if (prop.IsValue<std::string>())
+			{
+				char textBuffer[256];
+				strcpy(textBuffer, prop.GetValue<std::string>(instance, offset).data());
+				if (ImGui::InputText(name.c_str(), textBuffer, sizeof(textBuffer)))
+				{
+					prop.GetValue<std::string>(instance, offset) = textBuffer;
+				}
+			}
+			else if (prop.IsValue<glm::vec2>())
+			{
+				DrawVec2Control(name, prop.GetValue<glm::vec2>(instance, offset));
+			}
+			else if (prop.IsValue<glm::vec3>())
+			{
+				DrawVec3Control(name, prop.GetValue<glm::vec3>(instance, offset));
+			}
+			else if (prop.IsValue<glm::vec4>())
+			{
+				DrawVec4Control(name, prop.GetValue<glm::vec4>(instance, offset));
+			}
+			else if (prop.IsValue<glm::ivec2>())
+			{
+				DrawIVec2Control(name, prop.GetValue<glm::ivec2>(instance, offset));
+			}
+			else if (prop.IsValue<glm::ivec3>())
+			{
+				DrawIVec3Control(name, prop.GetValue<glm::ivec3>(instance, offset));
+			}
+			else if (prop.IsValue<glm::ivec4>())
+			{
+				DrawIVec4Control(name, prop.GetValue<glm::ivec4>(instance, offset));
+			}
+		}
+
+		for (const auto& parent : registeredClass.m_Parents)
+		{
+			ReflectionSystem& reflectionSystem = ReflectionSystem::GetInstance();
+			auto classByType = reflectionSystem.m_ClassesByType.find(parent.first);
+			if (classByType != reflectionSystem.m_ClassesByType.end())
+			{
+				properties(instance, classByType->second, parent.second);
+			}
+		}
+	};
+
+	for (auto [id, storage] : entity->GetRegistry().storage())
+	{
+		if (storage.contains(entity->GetHandle()))
+		{
+			auto classByType = reflectionSystem.m_ClassesByType.find(id);
+			if (classByType == reflectionSystem.m_ClassesByType.end())
+			{
+				continue;
+			}
+
+			auto& registeredClass = classByType->second;
+			void* component = storage.value(entity->GetHandle());
+
+			ImGui::PushID(registeredClass.m_TypeInfo.name().data());
+			if (ImGui::Button("X"))
+			{
+				if (registeredClass.m_RemoveCallback)
+				{
+					registeredClass.m_RemoveCallback(entity->GetRegistry(), entity->GetHandle());
+					entity->NotifySceneAboutComponentRemove(registeredClass.m_TypeInfo.name().data());
+				}
+			}
+			ImGui::PopID();
+
+			ImGui::SameLine();
+
+			if (ImGui::CollapsingHeader(registeredClass.m_TypeInfo.name().data()))
+			{
+				Indent indent;
+
+				properties(component, registeredClass, 0);
+			}
+		}
 	}
 }
 

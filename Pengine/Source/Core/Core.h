@@ -66,18 +66,15 @@ struct path_hash
 };
 
 template<typename T>
-std::string GetTypeName()
+inline constexpr const char* GetTypeName()
 {
-	if (const std::string typeName = typeid(T).name(); typeName.find(std::string("class")) == 0)
-	{
-		return typeName.substr(sizeof("class"));
-	}
-	else if (typeName.find(std::string("struct")) == 0)
-	{
-		return typeName.substr(sizeof("struct"));
-	}
+	return entt::type_name<std::remove_cv_t<std::remove_reference_t<T>>>().value().data();
+}
 
-	return typeid(T).name();
+template<typename T>
+inline constexpr entt::id_type GetTypeHash()
+{
+	return entt::type_hash<std::remove_cv_t<std::remove_reference_t<T>>>().value();
 }
 
 enum class MemoryType

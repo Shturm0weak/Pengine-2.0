@@ -59,7 +59,7 @@ set(CORE_SOURCES
 	Core/Profiler.h
 	Core/RandomGenerator.h
 	Core/Raycast.cpp Core/Raycast.h
-	Core/ReflectionSystem.h
+	Core/ReflectionSystem.cpp Core/ReflectionSystem.h
 	Core/RenderPassManager.cpp Core/RenderPassManager.h
 	Core/RenderPassOrder.h
 	Core/Scene.cpp Core/Scene.h
