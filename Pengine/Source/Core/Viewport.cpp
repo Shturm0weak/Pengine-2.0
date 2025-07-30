@@ -187,6 +187,24 @@ void Viewport::Update(const std::shared_ptr<Texture>& viewportTexture, std::shar
 			}
 		}
 
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GAMEOBJECT"))
+		{
+			UUID* uuidPtr = (UUID*)payload->Data;
+			auto callback = [this, uuid = *uuidPtr]()
+			{
+				if (std::shared_ptr<Entity> entity = SceneManager::GetInstance().GetSceneByTag("Main")->FindEntityByUUID(uuid))
+				{
+					if (entity->HasComponent<Camera>())
+					{
+						SetCamera(entity);
+					}
+				}
+			};
+
+			std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, this);
+			EventSystem::GetInstance().SendEvent(event);
+		}
+
 		ImGui::EndDragDropTarget();
 	}
 

@@ -10,9 +10,9 @@ ClayManager& ClayManager::GetInstance()
 	return ClayManager;
 }
 
-void ClayManager::Init(Canvas* canvas)
+void ClayManager::Init(Canvas* canvas, Clay_Context* context)
 {
-	Clay_SetCurrentContext(canvas->context);
+	Clay_SetCurrentContext(context);
 	Clay_SetMeasureTextFunction(canvas->measureText, nullptr);
 	Clay_SetLayoutDimensions({ (float)canvas->size.x, (float)canvas->size.y });
 }

@@ -43,7 +43,7 @@ Mat:
               Value: 0
               Type: int
         - Name: albedoTexture
-          Value: 0xe36f9d8535d3a6aecff9f16c983863b9
+          Value: White
         - Name: normalTexture
           Value: Black
         - Name: metallicRoughnessTexture

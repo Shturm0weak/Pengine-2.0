@@ -3,7 +3,7 @@
 #include "Core.h"
 #include "ViewportManager.h"
 
-#include "../Editor/Editor.h"
+#include "../Graphics/Texture.h"
 
 #include "GLFW/glfw3.h"
 
@@ -55,10 +55,6 @@ namespace Pengine
 
 		void SetIsRunning(const bool isRunning) { m_IsRunning = isRunning; }
 
-		void SetEditor(bool hasEditor);
-
-		void EditorUpdate(const std::shared_ptr<Scene>& scene);
-
 		void SetContextCurrent();
 
 		[[nodiscard]] GLFWwindow* GetGLFWWindow() const { return m_Window; }
@@ -92,7 +88,6 @@ namespace Pengine
 		GLFWwindow* m_Window = nullptr;
 		ImGuiContext* m_ImGuiContext = nullptr;
 
-		std::unique_ptr<Editor> m_Editor;
 		ViewportManager m_ViewportManager;
 	};
 

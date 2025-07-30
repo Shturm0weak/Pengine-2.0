@@ -31,6 +31,8 @@ namespace Pengine
 
 		void Update(const float deltaTime);
 
+		void UpdateSystems(const float deltaTime);
+
 		std::shared_ptr<Entity> CreateEntity(const std::string& name = "Unnamed", const UUID& uuid = UUID());
 
 		std::shared_ptr<Entity> CloneEntity(std::shared_ptr<Entity> entity);
@@ -120,6 +122,7 @@ namespace Pengine
 		std::shared_ptr<SceneBVH> m_BuildingBVH;
 		std::shared_ptr<SceneBVH> m_CurrentBVH;
 		bool m_IsBuildingBVH = false;
+		bool m_IsSystemUpdating = true;
 		std::mutex m_LockBVH;
 		std::condition_variable m_BVHConditionalVariable;
 

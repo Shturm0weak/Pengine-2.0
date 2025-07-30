@@ -42,6 +42,13 @@ private:
 			const RenderPass::RenderCallbackInfo& renderInfo,
 			std::shared_ptr<Pipeline> pipeline);
 
+		void ProcessCommand(
+			const RenderPass::RenderCallbackInfo& renderInfo,
+			void* command,
+			uint32_t& batchIndex,
+			std::shared_ptr<Pipeline> pipeline,
+			const glm::mat4& projectionMat4);
+
 		struct QuadVertex
 		{
 			glm::vec4 position;

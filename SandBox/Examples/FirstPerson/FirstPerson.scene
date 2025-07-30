@@ -1,0 +1,276 @@
+Settings:
+  DrawBoundingBoxes: false
+GraphicsSettings: 0x7fd51f678fded0482f31b51f98d47745
+Scene:
+  - UUID: 0xbc89eeab5ceee82cb0f9732449b3e39d
+    Name: DirectionalLight
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0.925024509, 0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    DirectionalLight:
+      Color: [1, 1, 1]
+      Intensity: 5
+      Ambient: 0.100000001
+    Childs:
+      []
+  - UUID: 0x9b33b233351125c475ca89c959921c0e
+    Name: Cube
+    IsEnabled: true
+    Transform:
+      Position: [0, -10, 0]
+      Rotation: [0, -0, 0]
+      Scale: [25, 1, 25]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x83defcab1dcae13080e550f3cca63db9
+      Mesh: 0x397e453582968927b0368b21ffa62a67
+      Material: 0xf2f5b71fa89eeb7f390c5933c9682563
+      RenderingOrder: 5
+      IsEnabled: true
+    RigidBody:
+      IsStatic: true
+      Mass: 10
+      Type: 0
+      HalfExtents: [25, 1, 25]
+      AngularVelocity: [0, 0, 0]
+      LinearVelocity: [0, 0, 0]
+      Friction: 10
+      Restitution: 0
+      AllowSleeping: true
+    Childs:
+      []
+  - UUID: 0xf74cf96f90e565219fb3b6effb9ee33a
+    Name: Cube
+    IsEnabled: true
+    Transform:
+      Position: [1.54967403, -8.02000809, 4.85564089]
+      Rotation: [-3.46740281e-09, 0.021946501, 3.65947187e-07]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0xc98f218aee6e098e645f47f416d8021f
+      Mesh: 0x397e453582968927b0368b21ffa62a67
+      Material: 0xf2f5b71fa89eeb7f390c5933c9682563
+      RenderingOrder: 5
+      IsEnabled: true
+    RigidBody:
+      IsStatic: false
+      Mass: 10
+      Type: 0
+      HalfExtents: [1, 1, 1]
+      AngularVelocity: [0, 0, 0]
+      LinearVelocity: [0, 0, 0]
+      Friction: 0.200000003
+      Restitution: 0
+      AllowSleeping: true
+    struct Enemy>(void) noexcept:
+      health:
+        Type: float>(void) noexcept
+        Value: 100
+    Childs:
+      []
+  - UUID: 0xd68ff8561247ae1ab82af462b3a4c78f
+    Name: Cube
+    IsEnabled: true
+    Transform:
+      Position: [-6.50700426, -8.00489807, 10.2972937]
+      Rotation: [3.13945699, 0.0116306022, 0.00532381935]
+      Scale: [1, 0.99999696, 0.999996841]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0xbcd9ab30d210f9ea3574308ca2474a54
+      Mesh: 0x397e453582968927b0368b21ffa62a67
+      Material: 0xf2f5b71fa89eeb7f390c5933c9682563
+      RenderingOrder: 5
+      IsEnabled: true
+    RigidBody:
+      IsStatic: false
+      Mass: 10
+      Type: 0
+      HalfExtents: [1, 1, 1]
+      AngularVelocity: [0, 0, 0]
+      LinearVelocity: [0, 0, 0]
+      Friction: 0.200000003
+      Restitution: 0
+      AllowSleeping: true
+    Childs:
+      []
+  - UUID: 0xda649819bf70f3d314ae35e85e448f92
+    Name: Sphere
+    IsEnabled: true
+    Transform:
+      Position: [0.243259415, -8.02000237, 8.0644474]
+      Rotation: [1.89821255, 0.00973302219, 0.12051931]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x46c0c750da599d7086c85d4aa9972075
+      Mesh: 0x9542e08eb0733885db5f792d5038d44b
+      Material: 0xf2f5b71fa89eeb7f390c5933c9682563
+      RenderingOrder: 5
+      IsEnabled: true
+    RigidBody:
+      IsStatic: false
+      Mass: 10
+      Type: 1
+      Radius: 1
+      AngularVelocity: [0, 0, 0]
+      LinearVelocity: [0, 0, 0]
+      Friction: 0.200000003
+      Restitution: 0.200000003
+      AllowSleeping: true
+    Childs:
+      []
+  - UUID: 0xba259bbd38248ae4c4ea0ed3a4f7fff8
+    Name: Sphere
+    IsEnabled: true
+    Transform:
+      Position: [18.6562099, -8.02000141, 12.3883963]
+      Rotation: [-0.0249655079, 0.00163067831, 0.0524481125]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x7b1b68777b60284e70109ec97f3d24dc
+      Mesh: 0x9542e08eb0733885db5f792d5038d44b
+      Material: 0xf2f5b71fa89eeb7f390c5933c9682563
+      RenderingOrder: 5
+      IsEnabled: true
+    RigidBody:
+      IsStatic: false
+      Mass: 10
+      Type: 1
+      Radius: 1
+      AngularVelocity: [0, 0, 0]
+      LinearVelocity: [0, 0, 0]
+      Friction: 0.200000003
+      Restitution: 0.200000003
+      AllowSleeping: true
+    Childs:
+      []
+  - PrefabFilepath: 0x29f3a7cd277509ef54f68a492bf5c9c9
+    UUID: 0xf3f5562f5253281a0571568f385c5051
+    Transform:
+      Position: [-3.49489045, -8, -11.9167871]
+      Rotation: [0, 3.14159274, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+  - UUID: 0x589cab8c5af9cd5a476499ce691368c2
+    Name: Camera
+    IsEnabled: true
+    Transform:
+      Position: [11.634387, 3.6228838, -13.2275486]
+      Rotation: [-1.01265192, -3.93889308, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Camera:
+      Fov: 1.57079637
+      Type: 1
+      ZNear: 0.100000001
+      ZFar: 1000
+      PassName: Final
+      RenderTargetIndex: 0
+    Childs:
+      []
+  - UUID: 0xf36997a588e9a4f3b5919dfa07776dbd
+    Name: Cube
+    IsEnabled: true
+    Transform:
+      Position: [12.5, -7, 0]
+      Rotation: [0, -0, 0]
+      Scale: [5, 2, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0xe3aff09e67dd96ad1532a672e7110ac8
+      Mesh: 0x397e453582968927b0368b21ffa62a67
+      Material: 0xf2f5b71fa89eeb7f390c5933c9682563
+      RenderingOrder: 5
+      IsEnabled: true
+    RigidBody:
+      IsStatic: true
+      Mass: 1
+      Type: 0
+      HalfExtents: [5, 2, 1]
+      AngularVelocity: [0, 0, 0]
+      LinearVelocity: [0, 0, 0]
+      Friction: 0.200000003
+      Restitution: 0
+      AllowSleeping: true
+    Childs:
+      []
+  - UUID: 0x49684d0bb077b7da86847f999b81ea5f
+    Name: Cube
+    IsEnabled: true
+    Transform:
+      Position: [12, -8, -2]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x2c1ebae4fd299b84032bef0b9de8177f
+      Mesh: 0x397e453582968927b0368b21ffa62a67
+      Material: 0xf2f5b71fa89eeb7f390c5933c9682563
+      RenderingOrder: 5
+      IsEnabled: true
+    RigidBody:
+      IsStatic: true
+      Mass: 1
+      Type: 0
+      HalfExtents: [1, 1, 1]
+      AngularVelocity: [0, 0, 0]
+      LinearVelocity: [0, 0, 0]
+      Friction: 0.200000003
+      Restitution: 0
+      AllowSleeping: true
+    Childs:
+      []
+  - UUID: 0x7c625e0b35341f2e3fc756a594c570d8
+    Name: Sphere
+    IsEnabled: true
+    Transform:
+      Position: [0, 25, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0xd038d7bdfe11968a8d8576a1583447ae
+      Mesh: 0x9542e08eb0733885db5f792d5038d44b
+      Material: 0xe501cfaa6618025c81e99026718b8258
+      RenderingOrder: 5
+      IsEnabled: true
+    RigidBody:
+      IsStatic: false
+      Mass: 10
+      Type: 1
+      Radius: 1
+      AngularVelocity: [0, 0, 0]
+      LinearVelocity: [0, 0, 0]
+      Friction: 0.200000003
+      Restitution: 0.200000003
+      AllowSleeping: true
+    Childs:
+      []
+  - PrefabFilepath: 0x65fc476ed7998dc16300d71309ea23b3
+    UUID: 0xdf311777653bfa460db928aca62b0dd0
+    Transform:
+      Position: [-1.09403825, -9, -6.9993391]
+      Rotation: [-1.57079673, -0, 0]
+      Scale: [1, 0.99999994, 0.99999994]
+      FollowOwner: true
+  - UUID: 0xed72e17bb578a4ddb323b737c5a4c703
+    Name: PointLight
+    IsEnabled: true
+    Transform:
+      Position: [-1.09403825, -6.26730633, -7.00130081]
+      Rotation: [2.84217128e-14, -0, 0]
+      Scale: [1, 0.999999881, 0.999999881]
+      FollowOwner: true
+    PointLight:
+      Color: [1, 1, 1]
+      Intensity: 2
+      Radius: 10
+      DrawBoundingSphere: false
+    Childs:
+      []

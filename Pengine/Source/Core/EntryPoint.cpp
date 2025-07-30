@@ -18,7 +18,6 @@
 #include "Profiler.h"
 
 #include "../Components/Camera.h"
-#include "../Editor/Editor.h"
 #include "../EventSystem/EventSystem.h"
 #include "../Graphics/Device.h"
 #include "../Graphics/Renderer.h"
@@ -145,7 +144,7 @@ void CreateDefaultResources()
 
 void EntryPoint::Run() const
 {
-	auto gDevice = Device::Create("Pengine");
+	Device::Create("Pengine");
 
 	EventSystem& eventSystem = EventSystem::GetInstance();
 
@@ -164,7 +163,6 @@ void EntryPoint::Run() const
 		{ 800, 800 });
 
 	mainWindow->GetViewportManager().Create("Main", { 800, 800 });
-	mainWindow->SetEditor(true);
 
 	WindowManager::GetInstance().SetCurrentWindow(mainWindow);
 
@@ -196,7 +194,7 @@ void EntryPoint::Run() const
 			PROFILER_SCOPE("Scene::Update");
 			scene->Update(Time::GetDeltaTime());
 		}
-		
+
 		for (const auto& [windowName, window] : WindowManager::GetInstance().GetWindows())
 		{
 			if (!window->IsRunning())
@@ -242,9 +240,8 @@ void EntryPoint::Run() const
 				viewport->Update(TextureManager::GetInstance().GetWhite(), window);
 			}
 
-#ifndef NO_EDITOR
-			window->EditorUpdate(SceneManager::GetInstance().GetSceneByTag("Main"));
-#endif
+			m_Application->OnImGuiUpdate();
+
 			window->ImGuiEnd();
 
 			drawCallsCount = 0;

@@ -43,6 +43,7 @@ PhysicsSystem::PhysicsSystem()
 
 		RigidBody& rigidBody = entity->GetComponent<RigidBody>();
 		m_DestroyBodies.emplace_back(rigidBody.id);
+		m_EntitiesByBodyId.erase(rigidBody.id);
 	};
 	m_RemoveCallbacks[GetTypeName<RigidBody>()] = callback;
 }
@@ -129,6 +130,7 @@ void PhysicsSystem::UpdateBodies(std::shared_ptr<Scene> scene)
 			if (!rigidBody.id.IsInvalid())
 			{
 				destroyBodies.emplace_back(rigidBody.id);
+				m_EntitiesByBodyId.erase(rigidBody.id);
 			}
 
 			JPH::ShapeSettings::ShapeResult shapeResult;

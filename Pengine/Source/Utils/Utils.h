@@ -193,9 +193,9 @@ namespace Pengine::Utils
 
 	inline UUID FindUuid(const std::filesystem::path& filepath)
 	{
-		std::lock_guard<std::mutex> lock(uuidMutex);
-		auto foundItem = uuidByFilepath.find(filepath);
-		if (foundItem != uuidByFilepath.end())
+		std::lock_guard<std::mutex> lock(GlobalDataAccessor::GetInstance().GetUUIDMutex());
+		auto foundItem = GlobalDataAccessor::GetInstance().GetUuidByFilepath().find(filepath);
+		if (foundItem != GlobalDataAccessor::GetInstance().GetUuidByFilepath().end())
 		{
 			return foundItem->second;
 		}
@@ -205,9 +205,9 @@ namespace Pengine::Utils
 
 	inline std::filesystem::path FindFilepath(const UUID& uuid)
 	{
-		std::lock_guard<std::mutex> lock(uuidMutex);
-		auto foundItem = filepathByUuid.find(uuid);
-		if (foundItem != filepathByUuid.end())
+		std::lock_guard<std::mutex> lock(GlobalDataAccessor::GetInstance().GetUUIDMutex());
+		auto foundItem = GlobalDataAccessor::GetInstance().GetFilepathByUuid().find(uuid);
+		if (foundItem != GlobalDataAccessor::GetInstance().GetFilepathByUuid().end())
 		{
 			return foundItem->second;
 		}
@@ -217,11 +217,11 @@ namespace Pengine::Utils
 
 	inline void SetUUID(const UUID& uuid, const std::filesystem::path& filepath)
 	{
-		assert(!filepathByUuid.contains(uuid));
+		assert(!GlobalDataAccessor::GetInstance().GetFilepathByUuid().contains(uuid));
 
-		std::lock_guard<std::mutex> lock(uuidMutex);
-		filepathByUuid[uuid] = filepath;
-		uuidByFilepath[filepath] = uuid;
+		std::lock_guard<std::mutex> lock(GlobalDataAccessor::GetInstance().GetUUIDMutex());
+		GlobalDataAccessor::GetInstance().GetFilepathByUuid()[uuid] = filepath;
+		GlobalDataAccessor::GetInstance().GetUuidByFilepath()[filepath] = uuid;
 	}
 
 	inline std::string EraseFromBack(std::string string, const char what)

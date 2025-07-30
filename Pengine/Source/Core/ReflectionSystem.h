@@ -192,24 +192,6 @@ namespace Pengine
 
 #define COM ,
 
-#define RTTR_CAT_IMPL(a, b) a##b
-#define RTTR_CAT(a, b) RTTR_CAT_IMPL(a, b)
-
-#define RTTR_REGISTRATION_USER_DEFINED(type)                                                                           \
-	static void rttr_auto_register_reflection_function_##type();                                                       \
-	namespace                                                                                                          \
-	{                                                                                                                  \
-		struct rttr__auto__register__##type                                                                            \
-		{                                                                                                              \
-			rttr__auto__register__##type()                                                                             \
-			{                                                                                                          \
-				rttr_auto_register_reflection_function_##type();                                                       \
-			}                                                                                                          \
-		};                                                                                                             \
-	}                                                                                                                  \
-	static const rttr__auto__register__##type RTTR_CAT(RTTR_CAT(auto_register__, __LINE__), type);                     \
-	static void rttr_auto_register_reflection_function_##type()
-
 #define REGISTER_CLASS(_type)                                                                                          \
 	RTTR_REGISTRATION_USER_DEFINED(_type)                                                                              \
 	{                                                                                                                  \

@@ -43,11 +43,13 @@ namespace Pengine
 
 		[[nodiscard]] std::shared_ptr<SkeletalAnimation> GetSkeletalAnimation() const { return m_SkeletalAnimation; }
 
-		void SetSkeletalAnimation(std::shared_ptr<SkeletalAnimation> skeletalAnimation) { m_SkeletalAnimation = skeletalAnimation; }
+		void SetSkeletalAnimation(std::shared_ptr<SkeletalAnimation> skeletalAnimation) { m_SkeletalAnimation = skeletalAnimation; m_IsBlending = false; }
 
 		[[nodiscard]] std::shared_ptr<SkeletalAnimation> GetNextSkeletalAnimation() const { return m_NextSkeletalAnimation; }
 
 		void SetNextSkeletalAnimation(std::shared_ptr<SkeletalAnimation> skeletalAnimation, float transitionTime);
+
+		void BlendSkeletalAnimations(std::shared_ptr<SkeletalAnimation> firstSkeletalAnimation, std::shared_ptr<SkeletalAnimation> secondSkeletalAnimation, float value);
 
 	private:
 		void CalculateBoneTransform(std::shared_ptr<Entity> entity, const uint32_t boneId, const glm::mat4& parentTransform);
@@ -66,6 +68,7 @@ namespace Pengine
 		float m_Speed = 0.0f;
 		float m_CurrentTime = 0.0f;
 		float m_NextTime = 0.0f;
+		bool m_IsBlending = false;
 	};
 
 }

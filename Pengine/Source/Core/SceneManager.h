@@ -42,6 +42,14 @@ namespace Pengine
 			m_ComponentSystemsByName.emplace(name, callback);
 		}
 
+		void SetIsComponentSystemsUpdating(bool isComponentSystemsUpdating) { m_IsComponentSystemsUpdating = isComponentSystemsUpdating; }
+
+		bool IsComponentSystemsUpdating() const { return m_IsComponentSystemsUpdating; }
+
+		void SetIsPhysicsSystemsUpdating(bool isPhysicsSystemsUpdating) { m_IsPhysicsSystemsUpdating = isPhysicsSystemsUpdating; }
+
+		bool IsPhysicsSystemsUpdating() const { return m_IsPhysicsSystemsUpdating; }
+
 	private:
 		SceneManager();
 		~SceneManager() = default;
@@ -50,6 +58,9 @@ namespace Pengine
 
 		std::unordered_map<std::string, std::shared_ptr<Scene>> m_ScenesByName;
 		std::unordered_map<std::string, std::shared_ptr<Scene>> m_ScenesByTag;
+
+		bool m_IsComponentSystemsUpdating = true;
+		bool m_IsPhysicsSystemsUpdating = true;
 	};
 
 }

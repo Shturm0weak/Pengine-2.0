@@ -54,27 +54,6 @@ bool Window::Resize(const glm::ivec2& size)
 	return true;
 }
 
-void Window::SetEditor(bool hasEditor)
-{
-	if (!hasEditor)
-	{
-		return;
-	}
-
-	if (!m_Editor)
-	{
-		m_Editor = std::make_unique<Editor>();
-	}
-}
-
-void Window::EditorUpdate(const std::shared_ptr<Scene>& scene)
-{
-	if (m_Editor)
-	{
-		m_Editor->Update(scene, *this);
-	}
-}
-
 void Window::SetContextCurrent()
 {
 	ImGui::SetCurrentContext(m_ImGuiContext);

@@ -39,16 +39,19 @@ namespace Pengine
 		if (m_NextSkeletalAnimation)
 		{
 			m_NextTime += deltaTime * m_Speed;
-			m_TransitionTimer += deltaTime;
-
-			if (m_TransitionTimer >= m_TransitionTime)
+			if (!m_IsBlending)
 			{
-				m_TransitionTimer = 0.0f;
-				m_TransitionTime = 0.0f;
-				m_CurrentTime = m_NextTime;
-				m_NextTime = 0.0f;
-				m_SkeletalAnimation = m_NextSkeletalAnimation;
-				m_NextSkeletalAnimation = nullptr;
+				m_TransitionTimer += deltaTime;
+
+				if (m_TransitionTimer >= m_TransitionTime)
+				{
+					m_TransitionTimer = 0.0f;
+					m_TransitionTime = 0.0f;
+					m_CurrentTime = m_NextTime;
+					m_NextTime = 0.0f;
+					m_SkeletalAnimation = m_NextSkeletalAnimation;
+					m_NextSkeletalAnimation = nullptr;
+				}
 			}
 		}
 
@@ -70,6 +73,19 @@ namespace Pengine
 		m_TransitionTime = transitionTime;
 		m_TransitionTimer = 0.0f;
 		m_NextTime = 0.0f;
+		m_IsBlending = false;
+	}
+
+	void SkeletalAnimator::BlendSkeletalAnimations(
+		std::shared_ptr<SkeletalAnimation> firstSkeletalAnimation,
+		std::shared_ptr<SkeletalAnimation> secondSkeletalAnimation,
+		float value)
+	{
+		m_SkeletalAnimation = firstSkeletalAnimation;
+		m_NextSkeletalAnimation = secondSkeletalAnimation;
+		m_TransitionTime = 1.0f;
+		m_TransitionTimer = value;
+		m_IsBlending = true;
 	}
 
 	void SkeletalAnimator::CalculateBoneTransform(std::shared_ptr<Entity> entity, const uint32_t boneId, const glm::mat4& parentTransform)

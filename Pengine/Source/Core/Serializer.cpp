@@ -2704,7 +2704,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(
 			*uvAccessor,
 		[&](fastgltf::math::fvec2 uv, std::size_t index)
 		{
-			vertices[index].uv = { uv.x(), 1.0f - uv.y() };
+			vertices[index].uv = { uv.x(), uv.y() };
 		});
 	}
 
@@ -2925,7 +2925,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 			*uvAccessor,
 			[&](fastgltf::math::fvec2 uv, std::size_t index)
 			{
-				vertices[index].uv = { uv.x(), 1.0f - uv.y() };
+				vertices[index].uv = { uv.x(), uv.y() };
 			});
 	}
 
@@ -4317,7 +4317,13 @@ void Serializer::SerializeCanvas(YAML::Emitter& out, const std::shared_ptr<Entit
 
 	out << YAML::Key << "DrawInMainViewport" << YAML::Value << canvas.drawInMainViewport;
 	out << YAML::Key << "Size" << YAML::Value << canvas.size;
-	out << YAML::Key << "ScriptName" << YAML::Value << canvas.scriptName;
+
+	std::vector<std::string> scriptNames;
+	for (const auto& script : canvas.scripts)
+	{
+		scriptNames.emplace_back(script.name);
+	}
+	out << YAML::Key << "ScriptNames" << YAML::Value << scriptNames;
 
 	out << YAML::EndMap;
 }
@@ -4356,13 +4362,14 @@ void Serializer::DeserializeCanvas(const YAML::Node& in, const std::shared_ptr<E
 			canvas.size = sizeData.as<glm::ivec2>();
 		}
 
-		if (const auto& scriptNameData = canvasData["ScriptName"])
+		for (const auto& scriptNamesData : canvasData["ScriptNames"])
 		{
-			const std::string scriptName = scriptNameData.as<std::string>();
+			const std::string scriptName = scriptNamesData.as<std::string>();
 			if (ClayManager::GetInstance().scriptsByName.contains(scriptName))
 			{
-				canvas.scriptName = scriptName;
-				canvas.script = ClayManager::GetInstance().scriptsByName.at(scriptName);
+				Canvas::Script& script = canvas.scripts.emplace_back();
+				script.name = scriptName;
+				script.callback = ClayManager::GetInstance().scriptsByName.at(script.name);
 			}
 		}
 	}
