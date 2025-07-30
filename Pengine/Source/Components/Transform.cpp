@@ -233,15 +233,15 @@ void Transform::Move(Transform&& transform) noexcept
 
 void Transform::UpdateVectors()
 {
-	const float cosPitch = cos(m_LocalTransformData.m_Rotation.x);
-	m_Back.z = cos(m_LocalTransformData.m_Rotation.y) * cosPitch;
-	m_Back.x = sin(m_LocalTransformData.m_Rotation.y) * cosPitch;
-	m_Back.y = sin(m_LocalTransformData.m_Rotation.x);
-	m_Back = glm::normalize(m_Back);
+	constexpr glm::vec3 worldForward = glm::vec3(0.0f, 0.0f, -1.0f); // Negative Z is forward
+	constexpr glm::vec3 worldRight = glm::vec3(1.0f, 0.0f, 0.0f);    // Positive X is right
+	constexpr glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);       // Positive Y is up
 
-	const glm::mat3 inverseTransformMat3 = GetInverseTransform(System::LOCAL);
-	m_Up = glm::normalize(glm::vec3(inverseTransformMat3[0][1],
-		inverseTransformMat3[1][1], inverseTransformMat3[2][1]));
+	const glm::quat rotation = glm::quat(GetRotation());
+
+	m_Forward = rotation * worldForward;
+	m_Right = rotation * worldRight;
+	m_Up = rotation * worldUp;
 }
 
 void Transform::UpdateTransforms()

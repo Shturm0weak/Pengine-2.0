@@ -24,24 +24,24 @@ namespace Pengine
 		{
 			std::string name;
 			std::filesystem::path filepath;
-			uint32_t rootBoneId = -1;
 			std::vector<Bone> bones;
+			std::vector<uint32_t> rootBoneIds;
 		};
 
 		Skeleton(const CreateInfo& createInfo)
 			: Asset(createInfo.name, createInfo.filepath)
-			, m_RootBoneId(createInfo.rootBoneId)
+			, m_RootBoneIds(createInfo.rootBoneIds)
 			, m_Bones(createInfo.bones)
 		{
 		}
 
-		[[nodiscard]] uint32_t GetRootBoneId() const { return m_RootBoneId; }
+		[[nodiscard]] const std::vector<uint32_t>& GetRootBoneIds() const { return m_RootBoneIds; }
 
 		[[nodiscard]] const std::vector<Bone>& GetBones() const { return m_Bones; }
 
 	private:
 
-		uint32_t m_RootBoneId;
+		std::vector<uint32_t> m_RootBoneIds;
 		std::vector<Bone> m_Bones;
 	};
 

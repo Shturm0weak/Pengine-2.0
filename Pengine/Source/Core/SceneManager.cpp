@@ -4,7 +4,6 @@
 
 #include "../ComponentSystems/SkeletalAnimatorSystem.h"
 #include "../ComponentSystems/EntityAnimatorSystem.h"
-#include "../ComponentSystems/PhysicsSystem.h"
 #include "../ComponentSystems/UISystem.h"
 
 using namespace Pengine;
@@ -101,6 +100,5 @@ SceneManager::SceneManager()
 {
 	SetComponentSystem<SkeletalAnimatorSystem>("SkeletalAnimatorSystem");
 	SetComponentSystem<EntityAnimatorSystem>("EntityAnimatorSystem");
-	SetComponentSystem<PhysicsSystem>("PhysicsSystem");
 	SetComponentSystem<UISystem>("UISystem");
 }

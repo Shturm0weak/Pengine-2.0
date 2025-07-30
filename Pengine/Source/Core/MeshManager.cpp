@@ -103,7 +103,8 @@ std::shared_ptr<SkeletalAnimation> MeshManager::LoadSkeletalAnimation(const std:
 		skeletalAnimation = Serializer::DeserializeSkeletalAnimation(filepath);
 		if (!skeletalAnimation)
 		{
-			FATAL_ERROR(filepath.string() + ":There is no such skeletal animation!");
+			Logger::Error(filepath.string() + ":There is no such skeletal animation!");
+			return nullptr;
 		}
 
 		std::lock_guard<std::mutex> lock(m_MutexSkeletalAnimation);

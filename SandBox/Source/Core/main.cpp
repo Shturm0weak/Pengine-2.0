@@ -1,5 +1,5 @@
 #include "Core/EntryPoint.h"
-#include "CharacterControllerExample/CharacterControllerExample.h"
+#include "../FirstPersonExample/FirstPersonExampleApplication.h"
 #include "Core/Logger.h"
 
 //int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, int nCmdShow)
@@ -22,7 +22,7 @@ int main()
 {
 	try
 	{
-		CharacterControllerExample application;
+		FirstPersonExampleApplication application{};
 		Pengine::EntryPoint entryPoint(&application);
 		entryPoint.Run();
 	}

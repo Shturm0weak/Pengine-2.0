@@ -1648,7 +1648,7 @@ void Serializer::SerializeSkeleton(const std::shared_ptr<Skeleton>& skeleton)
 
 	out << YAML::BeginMap;
 
-	out << YAML::Key << "RootBoneId" << YAML::Value << skeleton->GetRootBoneId();
+	out << YAML::Key << "RootBoneIds" << YAML::Value << skeleton->GetRootBoneIds();
 
 	out << YAML::Key << "Bones";
 
@@ -1711,9 +1711,9 @@ std::shared_ptr<Skeleton> Serializer::DeserializeSkeleton(const std::filesystem:
 	createInfo.name = Utils::GetFilename(filepath);
 	createInfo.filepath = filepath;
 
-	if (const auto& rootBoneIdData = data["RootBoneId"])
+	if (const auto& rootBoneIdData = data["RootBoneIds"])
 	{
-		createInfo.rootBoneId = rootBoneIdData.as<uint32_t>();
+		createInfo.rootBoneIds = rootBoneIdData.as<std::vector<uint32_t>>();
 	}
 
 	for (const auto& boneData : data["Bones"])
@@ -3193,7 +3193,7 @@ std::shared_ptr<Skeleton> Serializer::GenerateSkeleton(
 	const std::filesystem::path& directory)
 {
 	Skeleton::CreateInfo createInfo{};
-	createInfo.name = gltfSkin.name;
+	createInfo.name = gltfSkin.name.empty() ? "Skeleton" : gltfSkin.name;
 	createInfo.filepath = (directory / createInfo.name).concat(FileFormats::Skeleton());
 
 	std::vector<glm::mat4> inverseBindMatrices;
@@ -3239,7 +3239,7 @@ std::shared_ptr<Skeleton> Serializer::GenerateSkeleton(
 
 	if (gltfSkin.skeleton)
 	{
-		createInfo.rootBoneId = *gltfSkin.skeleton;
+		createInfo.rootBoneIds.emplace_back(*gltfSkin.skeleton);
 	}
 	else
 	{
@@ -3247,8 +3247,7 @@ std::shared_ptr<Skeleton> Serializer::GenerateSkeleton(
 		{
 			if (bone.parentId == -1)
 			{
-				assert(createInfo.rootBoneId == -1);
-				createInfo.rootBoneId = bone.id;
+				createInfo.rootBoneIds.emplace_back(bone.id);
 			}
 		}
 	}
@@ -3856,6 +3855,11 @@ void Serializer::SerializeRenderer3D(YAML::Emitter& out, const std::shared_ptr<E
 
 	out << YAML::BeginMap;
 
+	if (r3d.skeletalAnimatorEntity.IsValid())
+	{
+		out << YAML::Key << "SkeletalAnimatorEntity" << YAML::Value << r3d.skeletalAnimatorEntity;
+	}
+
 	if (r3d.mesh)
 	{
 		UUID uuid = Utils::FindUuid(r3d.mesh->GetFilepath());
@@ -3899,6 +3903,11 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 		if (const auto& isEnabledData = renderer3DData["IsEnabled"])
 		{
 			r3d.isEnabled = isEnabledData.as<bool>();
+		}
+
+		if (const auto& skeletalAnimatorEntityData = renderer3DData["SkeletalAnimatorEntity"])
+		{
+			r3d.skeletalAnimatorEntity = skeletalAnimatorEntityData.as<UUID>();
 		}
 
 		if (const auto& meshData = renderer3DData["Mesh"])
@@ -4390,6 +4399,21 @@ void Serializer::SerializeRigidBody(YAML::Emitter& out, const std::shared_ptr<En
 	}
 	}
 
+	auto& joltPhysicsSystem = entity->GetScene()->GetPhysicsSystem()->GetInstance();
+
+	out << YAML::Key << "AngularVelocity" << YAML::Value << JoltVec3ToGlmVec3(joltPhysicsSystem.GetBodyInterface().GetAngularVelocity(rigidBody.id));
+	out << YAML::Key << "LinearVelocity" << YAML::Value << JoltVec3ToGlmVec3(joltPhysicsSystem.GetBodyInterface().GetLinearVelocity(rigidBody.id));
+	out << YAML::Key << "Friction" << YAML::Value << joltPhysicsSystem.GetBodyInterface().GetFriction(rigidBody.id);
+	out << YAML::Key << "Restitution" << YAML::Value << joltPhysicsSystem.GetBodyInterface().GetRestitution(rigidBody.id);
+	
+	JPH::BodyLockWrite lock(joltPhysicsSystem.GetBodyLockInterface(), rigidBody.id);
+	if (lock.Succeeded())
+	{
+		JPH::Body& body = lock.GetBody();
+		out << YAML::Key << "AllowSleeping" << YAML::Value << body.GetAllowSleeping();
+	}
+	lock.ReleaseLock();
+
 	out << YAML::EndMap;
 }
 
@@ -4438,6 +4462,43 @@ void Serializer::DeserializeRigidBody(const YAML::Node& in, const std::shared_pt
 			break;
 		}
 		}
+
+		const auto physicsSystem = entity->GetScene()->GetPhysicsSystem();
+		auto& joltPhysicsSystem = physicsSystem->GetInstance();
+
+		physicsSystem->UpdateBodies(entity->GetScene());
+
+		if (const auto& angularVelocityData = rigidBodyData["AngularVelocity"])
+		{
+			joltPhysicsSystem.GetBodyInterface().SetAngularVelocity(rigidBody.id, GlmVec3ToJoltVec3(angularVelocityData.as<glm::vec3>()));
+		}
+
+		if (const auto& linearVelocityData = rigidBodyData["LinearVelocity"])
+		{
+			joltPhysicsSystem.GetBodyInterface().SetLinearVelocity(rigidBody.id, GlmVec3ToJoltVec3(linearVelocityData.as<glm::vec3>()));
+		}
+
+		if (const auto& frictionData = rigidBodyData["Friction"])
+		{
+			joltPhysicsSystem.GetBodyInterface().SetFriction(rigidBody.id, frictionData.as<float>());
+		}
+
+		if (const auto& restitutionData = rigidBodyData["Restitution"])
+		{
+			joltPhysicsSystem.GetBodyInterface().SetRestitution(rigidBody.id, restitutionData.as<float>());
+		}
+
+		JPH::BodyLockWrite lock(joltPhysicsSystem.GetBodyLockInterface(), rigidBody.id);
+		if (lock.Succeeded())
+		{
+			JPH::Body& body = lock.GetBody();
+
+			if (const auto& allowSleepingData = rigidBodyData["AllowSleeping"])
+			{
+				body.SetAllowSleeping(allowSleepingData.as<bool>());
+			}
+		}
+		lock.ReleaseLock();
 	}
 }
 
@@ -4508,7 +4569,7 @@ if (prop.IsValue<_type>()) \
 
 			if (registeredClass.m_SerializeCallback)
 			{
-				registeredClass.m_SerializeCallback(&out, component);
+				registeredClass.m_SerializeCallback(&out, component, entity.get());
 			}
 
 			out << YAML::EndMap;
@@ -4571,7 +4632,7 @@ if (GetTypeName<_type>() == type)               \
 
 			if (registeredClass.m_DeserializeCallback)
 			{
-				registeredClass.m_DeserializeCallback((void*)&userComponentData, component);
+				registeredClass.m_DeserializeCallback((void*)&userComponentData, component, entity.get());
 			}
 		}
 	}

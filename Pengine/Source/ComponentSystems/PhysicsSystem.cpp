@@ -167,6 +167,8 @@ void PhysicsSystem::UpdateBodies(std::shared_ptr<Scene> scene)
 			rigidBody.isValid = true;
 
 			addBodies.emplace_back(rigidBody.id);
+
+			m_EntitiesByBodyId[rigidBody.id] = handle;
 		}
 	}
 
@@ -175,4 +177,15 @@ void PhysicsSystem::UpdateBodies(std::shared_ptr<Scene> scene)
 
 	const auto state = m_PhysicsSystem.GetBodyInterface().AddBodiesPrepare(addBodies.data(), addBodies.size());
 	m_PhysicsSystem.GetBodyInterface().AddBodiesFinalize(addBodies.data(), addBodies.size(), state, JPH::EActivation::Activate);
+}
+
+entt::entity PhysicsSystem::GetEntity(JPH::BodyID bodyId) const
+{
+	auto foundEntity = m_EntitiesByBodyId.find(bodyId);
+	if (foundEntity != m_EntitiesByBodyId.end())
+	{
+		return foundEntity->second;
+	}
+
+	return entt::tombstone;
 }

@@ -42,6 +42,8 @@ namespace Pengine
 
 		JPH::TempAllocator* GetTempAllocator() { return m_TempAllocator.get(); }
 
+		[[nodiscard]] entt::entity GetEntity(JPH::BodyID bodyId) const;
+
 	private:
 
 		JPH::PhysicsSystem m_PhysicsSystem;
@@ -50,6 +52,7 @@ namespace Pengine
 
 		std::map<std::string, std::function<void(std::shared_ptr<class Entity>)>> m_RemoveCallbacks;
 		std::vector<JPH::BodyID> m_DestroyBodies;
+		std::unordered_map<JPH::BodyID, entt::entity> m_EntitiesByBodyId;
 
 		class ObjectLayerPairFilterImpl : public JPH::ObjectLayerPairFilter
 		{

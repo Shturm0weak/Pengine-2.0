@@ -130,6 +130,90 @@ void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
 	ImGui::End();
 }
 
+bool Editor::DrawAngle3Control(
+	const std::string& label,
+	glm::vec3& values,
+	float resetValue,
+	const glm::vec2& limits,
+	float columnWidth) const
+{
+	bool changed = false;
+
+	ImGui::PushID(label.c_str());
+
+	ImGui::Columns(2);
+	ImGui::SetColumnWidth(0, columnWidth);
+	if (m_DrawVecLabel) ImGui::Text(label.c_str());
+	ImGui::NextColumn();
+
+	ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 5.0f });
+
+	const float lineHeight = ImGui::GetFont()->FontSize + ImGui::GetStyle().FramePadding.y * 2.0f;
+	const ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
+
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+	if (ImGui::Button("X", buttonSize))
+	{
+		values.x = resetValue;
+		changed = true;
+	}
+	ImGui::PopStyleColor(3);
+
+	ImGui::SameLine();
+	if (ImGui::SliderAngle("##X", &values.x, limits.x, limits.y, "%.2f"))
+	{
+		changed = true;
+	}
+	ImGui::PopItemWidth();
+	ImGui::SameLine();
+
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+	if (ImGui::Button("Y", buttonSize))
+	{
+		values.y = resetValue;
+		changed = true;
+	}
+	ImGui::PopStyleColor(3);
+
+	ImGui::SameLine();
+	if (ImGui::SliderAngle("##Y", &values.y, limits.x, limits.y, "%.2f"))
+	{
+		changed = true;
+	}
+	ImGui::PopItemWidth();
+	ImGui::SameLine();
+
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
+	if (ImGui::Button("Z", buttonSize))
+	{
+		values.z = resetValue;
+		changed = true;
+	}
+	ImGui::PopStyleColor(3);
+
+	ImGui::SameLine();
+	if (ImGui::SliderAngle("##Z", &values.z, limits.x, limits.y, "%.2f"))
+	{
+		changed = true;
+	}
+	ImGui::PopItemWidth();
+
+	ImGui::PopStyleVar();
+
+	ImGui::Columns(1);
+
+	ImGui::PopID();
+
+	return changed;
+}
+
 bool Editor::DrawVec2Control(
 	const std::string& label,
 	glm::vec2& values,
@@ -831,7 +915,8 @@ void Editor::DrawNode(const std::shared_ptr<Entity>& entity, ImGuiTreeNodeFlags 
 		ImGui::EndDragDropTarget();
 	}
 
-	if (ImGui::IsItemClicked() && (ImGui::GetMousePos().x - ImGui::GetItemRectMin().x) > ImGui::GetTreeNodeToLabelSpacing())
+	if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered(ImGuiHoveredFlags_None)
+		&& (ImGui::GetMousePos().x - ImGui::GetItemRectMin().x) > ImGui::GetTreeNodeToLabelSpacing())
 	{
 		auto& selectedEntities = entity->GetScene()->GetSelectedEntities();
 		if (!Input::GetInstance(&window).IsKeyDown(KeyCode::KEY_LEFT_CONTROL))
@@ -1343,7 +1428,7 @@ void Editor::TransformComponent(const std::shared_ptr<Entity>& entity)
 		if (m_TransformSystem == 0)
 		{
 			position = transform.GetPosition(Transform::System::LOCAL);
-			rotation = glm::degrees(transform.GetRotation(Transform::System::LOCAL));
+			rotation = transform.GetRotation(Transform::System::LOCAL);
 			scale = transform.GetScale(Transform::System::LOCAL);
 		}
 		else if (m_TransformSystem == 1)
@@ -1354,17 +1439,16 @@ void Editor::TransformComponent(const std::shared_ptr<Entity>& entity)
 			}
 
 			position = transform.GetPosition(Transform::System::GLOBAL);
-			rotation = glm::degrees(transform.GetRotation(Transform::System::GLOBAL));
+			rotation = transform.GetRotation(Transform::System::GLOBAL);
 			scale = transform.GetScale(Transform::System::GLOBAL);
 		}
 
 		DrawVec3Control("Translation", position);
-		DrawVec3Control("Rotation", rotation, 0.0f, { -360.0f, 360.0f }, 1.0f);
+		DrawAngle3Control("Rotation", rotation, 0.0f, { -360.0f, 360.0f });
 		DrawVec3Control("Scale", scale, 1.0f, { 0.0f, 25.0f });
-
 		transform.Scale(scale);
 		transform.Translate(position);
-		transform.Rotate(glm::radians(rotation));
+		transform.Rotate(rotation);
 
 		if (parent)
 		{
@@ -1374,7 +1458,7 @@ void Editor::TransformComponent(const std::shared_ptr<Entity>& entity)
 		if (ImGui::Button("Copy"))
 		{
 			m_CopyTransform.position = position;
-			m_CopyTransform.rotation = glm::radians(rotation);
+			m_CopyTransform.rotation = rotation;
 			m_CopyTransform.scale = scale;
 		}
 
@@ -1879,6 +1963,8 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene, Window& window)
 
 void Editor::MoveCamera(const std::shared_ptr<Entity>& camera, Window& window)
 {
+	return;
+
 	if (!camera)
 	{
 		return;
@@ -2177,6 +2263,32 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 	if (ImGui::CollapsingHeader("Renderer3D"))
 	{
 		Indent indent;
+
+		if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
+		{
+			if (r3d.skeletalAnimatorEntity.IsValid())
+			{
+				const auto skeletalAnimatorEntity = entity->GetScene()->FindEntityByUUID(r3d.skeletalAnimatorEntity);
+				if (skeletalAnimatorEntity)
+				{
+					ImGui::Text("Skeletal Animator: %s", skeletalAnimatorEntity->GetName().c_str());
+				}
+				else
+				{
+					ImGui::Text("Skeletal Animator: %s", none);
+				}
+
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GAMEOBJECT"))
+					{
+						UUID* uuidPtr = (UUID*)payload->Data;
+						r3d.skeletalAnimatorEntity = *uuidPtr;
+					}
+					ImGui::EndDragDropTarget();
+				}
+			}
+		}
 
 		if (r3d.mesh)
 		{
@@ -2517,7 +2629,7 @@ void Editor::PhysicsBoxComponent(const std::shared_ptr<Entity>& entity)
 		ImGui::Checkbox("Is Static", &rigidBody.isStatic);
 		ImGui::Checkbox("Is Valid", &rigidBody.isValid);
 
-		auto& physicsSystem = std::static_pointer_cast<PhysicsSystem>(entity->GetScene()->GetComponentSystem("PhysicsSystem"))->GetInstance();
+		auto& physicsSystem = entity->GetScene()->GetPhysicsSystem()->GetInstance();
 
 		int type = (int)rigidBody.type;
 		const char* types[] = { "Box", "Sphere"};
@@ -2572,6 +2684,36 @@ void Editor::PhysicsBoxComponent(const std::shared_ptr<Entity>& entity)
 		if (lock.Succeeded())
 		{
 			JPH::Body& body = lock.GetBody();
+
+			float friction = body.GetFriction();
+			if (ImGui::SliderFloat("Friction", &friction, 0.0f, 1.0f));
+			{
+				body.SetFriction(friction);
+			}
+
+			float restitution = body.GetRestitution();
+			if (ImGui::SliderFloat("Restitution ", &restitution, 0.0f, 1.0f));
+			{
+				body.SetRestitution(restitution);
+			}
+
+			glm::vec3 angularVelocity = JoltVec3ToGlmVec3(body.GetAngularVelocity());
+			if (DrawVec3Control("Angular Velocity ", angularVelocity));
+			{
+				body.SetAngularVelocity(GlmVec3ToJoltVec3(angularVelocity));
+			}
+
+			glm::vec3 linearVelocity = JoltVec3ToGlmVec3(body.GetLinearVelocity());
+			if (DrawVec3Control("Linear Velocity ", linearVelocity));
+			{
+				body.SetLinearVelocity(GlmVec3ToJoltVec3(linearVelocity));
+			}
+
+			bool allowSleeping = body.GetAllowSleeping();
+			if (ImGui::Checkbox("Allow Sleeping", &allowSleeping))
+			{
+				body.SetAllowSleeping(allowSleeping);
+			}
 		}
 		lock.ReleaseLock();
 	}

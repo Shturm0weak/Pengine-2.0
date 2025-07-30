@@ -12,6 +12,10 @@ namespace Pengine
 
 		virtual void OnUpdate(const float deltaTime, std::shared_ptr<class Scene> scene) {}
 
+		virtual void OnPrePhysicsUpdate(const float deltaTime, std::shared_ptr<class Scene> scene) {}
+
+		virtual void OnPostPhysicsUpdate(const float deltaTime, std::shared_ptr<class Scene> scene) {}
+
 		virtual std::map<std::string, std::function<void(std::shared_ptr<class Entity>)>> GetRemoveCallbacks() { return {}; }
 	};
 

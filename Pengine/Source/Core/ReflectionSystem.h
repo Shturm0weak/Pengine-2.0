@@ -98,8 +98,8 @@ namespace Pengine
 			std::vector<std::pair<entt::id_type, size_t>> m_Parents;
 			std::function<void*(entt::registry&, entt::entity)> m_CreateCallback;
 			std::function<void(entt::registry&, entt::entity)> m_RemoveCallback;
-			std::function<void(void*, void*)> m_SerializeCallback;
-			std::function<void(void*, void*)> m_DeserializeCallback;
+			std::function<void(void*, void*, void*)> m_SerializeCallback;
+			std::function<void(void*, void*, void*)> m_DeserializeCallback;
 			entt::type_info m_TypeInfo;
 
 			RegisteredClass(const entt::type_info& typeInfo) : m_TypeInfo(typeInfo) {}

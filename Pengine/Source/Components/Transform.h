@@ -41,8 +41,9 @@ namespace Pengine
 		mutable TransformData m_LocalTransformData{};
 		mutable TransformData m_GlobalTransformData{};
 
-		glm::vec3 m_Back{};
+		glm::vec3 m_Forward{};
 		glm::vec3 m_Up{};
+		glm::vec3 m_Right{};
 
 		std::unordered_map<std::string, std::function<void()>> m_OnRotationCallbacks;
 		std::unordered_map<std::string, std::function<void()>> m_OnTranslationCallbacks;
@@ -90,13 +91,13 @@ namespace Pengine
 		
 		[[nodiscard]] glm::vec3 GetScale(System system = System::GLOBAL) const;
 		
-		[[nodiscard]] glm::vec3 GetBack() const { return m_Back; }
+		[[nodiscard]] glm::vec3 GetBack() const { return glm::normalize(-m_Forward); }
 		
 		[[nodiscard]] glm::vec3 GetUp() const { return m_Up; }
 		
-		[[nodiscard]] glm::vec3 GetForward() const { return glm::normalize(glm::vec3(-m_Back.x, m_Back.y, -m_Back.z)); }
+		[[nodiscard]] glm::vec3 GetForward() const { return m_Forward; }
 		
-		[[nodiscard]] glm::vec3 GetRight() const { return glm::normalize(glm::cross(GetForward(), GetUp())); }
+		[[nodiscard]] glm::vec3 GetRight() const { return m_Right; }
 		
 		[[nodiscard]] glm::mat4 GetTransform(System system = System::GLOBAL) const;
 

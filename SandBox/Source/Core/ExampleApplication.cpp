@@ -20,7 +20,6 @@
 
 #include "ComponentSystems/PhysicsSystem.h"
 
-#define CLAY_IMPLEMENTATION
 #include "Components/Canvas.h"
 
 using namespace Pengine;

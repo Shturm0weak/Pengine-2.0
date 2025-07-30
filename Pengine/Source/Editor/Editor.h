@@ -32,6 +32,9 @@ namespace Pengine
 			~Indent();
 		};
 
+		bool DrawAngle3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f,
+			const glm::vec2& limits = glm::vec2(-360.0f, 360.0f), float columnWidth = 100.0f) const;
+
 		bool DrawVec2Control(const std::string& label, glm::vec2& values, float resetValue = 0.0f,
 			const glm::vec2& limits = glm::vec2(-25.0f, 25.0f), float speed = 0.1f, float columnWidth = 100.0f) const;
 

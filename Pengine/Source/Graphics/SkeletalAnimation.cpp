@@ -5,10 +5,19 @@ namespace Pengine
 
 	glm::mat4 SkeletalAnimation::Bone::Update(float time) const
 	{
-		glm::mat4 translation = InterpolatePosition(time);
-		glm::mat4 rotation = InterpolateRotation(time);
-		glm::mat4 scale = InterpolateScaling(time);
-		return translation * rotation * scale;
+		glm::vec3 position;
+		glm::quat rotation;
+		glm::vec3 scale;
+		Update(time, position, rotation, scale);
+
+		return glm::translate(glm::mat4(1.0f), position) * glm::toMat4(rotation) * glm::scale(glm::mat4(1.0f), scale);
+	}
+
+	void SkeletalAnimation::Bone::Update(float time, glm::vec3& position, glm::quat& rotation, glm::vec3& scale) const
+	{
+		position = InterpolatePosition(time);
+		rotation = InterpolateRotation(time);
+		scale = InterpolateScaling(time);
 	}
 
 	int SkeletalAnimation::Bone::GetPositionIndex(float animationTime) const
@@ -52,48 +61,58 @@ namespace Pengine
 		return (time - lastTime) / (nextTime - lastTime);
 	}
 
-	glm::mat4 SkeletalAnimation::Bone::InterpolatePosition(float time) const
+	glm::vec3 SkeletalAnimation::Bone::InterpolatePosition(float time) const
 	{
+		if (positions.empty())
+		{
+			return glm::vec3(0.0f);
+		}
+
 		if (positions.size() == 1)
 		{
-			return glm::translate(glm::mat4(1.0f), positions[0].value);
+			return positions[0].value;
 		}
 
 		const int p0Index = GetPositionIndex(time);
 		const int p1Index = p0Index + 1;
 		const float scaleFactor = GetScaleFactor(positions[p0Index].time, positions[p1Index].time, time);
-		glm::vec3 position = glm::mix(positions[p0Index].value, positions[p1Index].value, scaleFactor);
-
-		return glm::translate(glm::mat4(1.0f), position);
+		return glm::mix(positions[p0Index].value, positions[p1Index].value, scaleFactor);
 	}
 
-	glm::mat4 SkeletalAnimation::Bone::InterpolateRotation(float time) const
+	glm::quat SkeletalAnimation::Bone::InterpolateRotation(float time) const
 	{
+		if (rotations.empty())
+		{
+			return glm::quat(glm::vec3(0.0f));
+		}
+
 		if (rotations.size() == 1)
 		{
-			const glm::quat rotation = glm::normalize(rotations[0].value);
-			return glm::toMat4(rotation);
+			return glm::normalize(rotations[0].value);
 		}
 
 		const int p0Index = GetRotationIndex(time);
 		const int p1Index = p0Index + 1;
 		const float scaleFactor = GetScaleFactor(rotations[p0Index].time, rotations[p1Index].time, time);
-		const glm::quat rotation = glm::slerp(rotations[p0Index].value, rotations[p1Index].value, scaleFactor);
-		return glm::toMat4(glm::normalize(rotation));
+		return glm::normalize(glm::slerp(rotations[p0Index].value, rotations[p1Index].value, scaleFactor));
 	}
 
-	glm::mat4 SkeletalAnimation::Bone::InterpolateScaling(float time) const
+	glm::vec3 SkeletalAnimation::Bone::InterpolateScaling(float time) const
 	{
+		if (scales.empty())
+		{
+			return glm::vec3(1.0f);
+		}
+
 		if (scales.size() == 1)
 		{
-			return glm::scale(glm::mat4(1.0f), scales[0].value);
+			return scales[0].value;
 		}
 
 		const int p0Index = GetScaleIndex(time);
 		const int p1Index = p0Index + 1;
 		const float scaleFactor = GetScaleFactor(scales[p0Index].time, scales[p1Index].time, time);
-		const glm::vec3 scale = glm::mix(scales[p0Index].value, scales[p1Index].value, scaleFactor);
-		return glm::scale(glm::mat4(1.0f), scale);
+		return glm::mix(scales[p0Index].value, scales[p1Index].value, scaleFactor);
 	}
 
 }

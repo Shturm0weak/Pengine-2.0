@@ -35,8 +35,41 @@ namespace Pengine
 		}
 
 		m_CurrentTime += deltaTime * m_Speed;
+		
+		if (m_NextSkeletalAnimation)
+		{
+			m_NextTime += deltaTime * m_Speed;
+			m_TransitionTimer += deltaTime;
+
+			if (m_TransitionTimer >= m_TransitionTime)
+			{
+				m_TransitionTimer = 0.0f;
+				m_TransitionTime = 0.0f;
+				m_CurrentTime = m_NextTime;
+				m_NextTime = 0.0f;
+				m_SkeletalAnimation = m_NextSkeletalAnimation;
+				m_NextSkeletalAnimation = nullptr;
+			}
+		}
+
 		m_CurrentTime = fmod(m_CurrentTime, m_SkeletalAnimation->GetDuration());
-		CalculateBoneTransform(entity, m_Skeleton->GetRootBoneId(), parentTransform);
+		if (m_NextSkeletalAnimation)
+		{
+			m_NextTime = fmod(m_NextTime, m_NextSkeletalAnimation->GetDuration());
+		}
+
+		for (const uint32_t& rootBoneId : m_Skeleton->GetRootBoneIds())
+		{
+			CalculateBoneTransform(entity, rootBoneId, parentTransform);
+		}
+	}
+
+	void SkeletalAnimator::SetNextSkeletalAnimation(std::shared_ptr<SkeletalAnimation> skeletalAnimation, float transitionTime)
+	{
+		m_NextSkeletalAnimation = skeletalAnimation;
+		m_TransitionTime = transitionTime;
+		m_TransitionTimer = 0.0f;
+		m_NextTime = 0.0f;
 	}
 
 	void SkeletalAnimator::CalculateBoneTransform(std::shared_ptr<Entity> entity, const uint32_t boneId, const glm::mat4& parentTransform)
@@ -45,18 +78,37 @@ namespace Pengine
 		std::string nodeName = node.name;
 		glm::mat4 nodeTransform = node.transform;
 		glm::mat4 globalTransformation = parentTransform * nodeTransform;
+
+		glm::vec3 currentPosition;
+		glm::quat currentRotation;
+		glm::vec3 currentScale;
 		if (m_SkeletalAnimation->GetBonesByName().contains(nodeName))
 		{
 			const SkeletalAnimation::Bone& bone = m_SkeletalAnimation->GetBonesByName().at(nodeName);
-			nodeTransform = bone.Update(m_CurrentTime);
-			globalTransformation = parentTransform * nodeTransform;
-			m_FinalBoneMatrices[node.id] = globalTransformation * node.offset;
-
-			if (const auto& boneEntity = entity->FindEntityInHierarchy(node.name))
+			bone.Update(m_CurrentTime, currentPosition, currentRotation, currentScale);
+			/*if (const auto& boneEntity = entity->FindEntityInHierarchy(node.name))
 			{
 				boneEntity->GetComponent<Transform>().SetTransform(nodeTransform);
-			}
+			}*/
 		}
+
+		if (m_NextSkeletalAnimation && m_NextSkeletalAnimation->GetBonesByName().contains(nodeName))
+		{
+			const SkeletalAnimation::Bone& bone = m_NextSkeletalAnimation->GetBonesByName().at(nodeName);
+
+			glm::vec3 nextPosition;
+			glm::quat nextRotation;
+			glm::vec3 nextScale;
+			bone.Update(m_NextTime, nextPosition, nextRotation, nextScale);
+
+			currentPosition = glm::mix(currentPosition, nextPosition, m_TransitionTimer / m_TransitionTime);
+			currentRotation = glm::normalize(glm::slerp(currentRotation, nextRotation, m_TransitionTimer / m_TransitionTime));
+			currentScale = glm::mix(currentScale, nextScale, m_TransitionTimer / m_TransitionTime);
+		}
+
+		nodeTransform = glm::translate(glm::mat4(1.0f), currentPosition) * glm::toMat4(currentRotation) * glm::scale(glm::mat4(1.0f), currentScale);
+		globalTransformation = parentTransform * nodeTransform;
+		m_FinalBoneMatrices[node.id] = globalTransformation * node.offset;
 
 		for (int i = 0; i < node.childIds.size(); i++)
 		{

@@ -81,6 +81,7 @@ Scene::Scene(const std::string& name, const std::filesystem::path& filepath)
 {
 	m_CurrentBVH = std::make_shared<SceneBVH>(this);
 	m_BuildingBVH = std::make_shared<SceneBVH>(this);
+	m_PhysicsSystem = std::make_shared<PhysicsSystem>();
 }
 
 Scene::~Scene()
@@ -221,6 +222,18 @@ void Scene::Update(const float deltaTime)
 	for (const auto& [name, system] : m_ComponentSystemsByName)
 	{
 		system->OnUpdate(deltaTime, shared_from_this());
+	}
+
+	for (const auto& [name, system] : m_ComponentSystemsByName)
+	{
+		system->OnPrePhysicsUpdate(deltaTime, shared_from_this());
+	}
+
+	m_PhysicsSystem->OnUpdate(deltaTime, shared_from_this());
+
+	for (const auto& [name, system] : m_ComponentSystemsByName)
+	{
+		system->OnPostPhysicsUpdate(deltaTime, shared_from_this());
 	}
 
 	{

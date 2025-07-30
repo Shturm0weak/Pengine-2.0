@@ -417,12 +417,15 @@ void RenderPassManager::CreateZPrePass()
 			
 			if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
 			{
-				SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
-				if (skeletalAnimator)
+				if (const auto skeletalAnimatorEntity = renderInfo.scene->FindEntityByUUID(r3d.skeletalAnimatorEntity))
 				{
-					UpdateSkeletalAnimator(skeletalAnimator, r3d.material->GetBaseMaterial(), pipeline);
+					SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
+					if (skeletalAnimator)
+					{
+						UpdateSkeletalAnimator(skeletalAnimator, r3d.material->GetBaseMaterial(), pipeline);
+					}
 				}
-
+				
 				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].single.emplace_back(std::make_pair(r3d.mesh, entity));
 			}
 			else if (r3d.mesh->GetType() == Mesh::Type::STATIC)
@@ -751,7 +754,13 @@ void RenderPassManager::CreateGBuffer()
 					data.inverseTransform = glm::transpose(transform.GetInverseTransform());
 					instanceDatas.emplace_back(data);
 
-					const SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
+					const SkeletalAnimator* skeletalAnimator = nullptr;
+					const Renderer3D& r3d = registry.get<Renderer3D>(entity);
+					if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntity))
+					{
+						skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
+					}
+
 					if (skeletalAnimator)
 					{
 						std::vector<std::shared_ptr<UniformWriter>> newUniformWriters = uniformWriters;
@@ -1322,10 +1331,13 @@ void RenderPassManager::CreateTransparent()
 			renderData.scale = transform.GetScale();
 			renderData.position = transform.GetPosition();
 
-			SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
-			if (skeletalAnimator)
+			if (const auto skeletalAnimatorEntity = renderInfo.scene->FindEntityByUUID(r3d.skeletalAnimatorEntity))
 			{
-				UpdateSkeletalAnimator(skeletalAnimator, r3d.material->GetBaseMaterial(), pipeline);
+				SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
+				if (skeletalAnimator)
+				{
+					UpdateSkeletalAnimator(skeletalAnimator, r3d.material->GetBaseMaterial(), pipeline);
+				}
 			}
 
 			renderDatasByRenderingOrder[r3d.renderingOrder].emplace_back(renderData);
@@ -1417,7 +1429,13 @@ void RenderPassManager::CreateTransparent()
 					renderData.r3d.material,
 					renderInfo);
 				
-				const SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(renderData.entity);
+				SkeletalAnimator* skeletalAnimator = nullptr;
+				const Renderer3D& r3d = registry.get<Renderer3D>(renderData.entity);
+				if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntity))
+				{
+					skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
+				}
+
 				if (skeletalAnimator)
 				{
 					uniformWriters.emplace_back(skeletalAnimator->GetUniformWriter());
@@ -1696,10 +1714,13 @@ void RenderPassManager::CreateCSM()
 
 			if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
 			{
-				SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
-				if (skeletalAnimator)
+				if (const auto skeletalAnimatorEntity = renderInfo.scene->FindEntityByUUID(r3d.skeletalAnimatorEntity))
 				{
-					UpdateSkeletalAnimator(skeletalAnimator, r3d.material->GetBaseMaterial(), pipeline);
+					SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
+					if (skeletalAnimator)
+					{
+						UpdateSkeletalAnimator(skeletalAnimator, r3d.material->GetBaseMaterial(), pipeline);
+					}
 				}
 
 				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].single.emplace_back(std::make_pair(r3d.mesh, entity));
@@ -1833,7 +1854,13 @@ void RenderPassManager::CreateCSM()
 					const Transform& transform = registry.get<Transform>(entity);
 					instanceDatas.emplace_back(transform.GetTransform());
 
-					const SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
+					SkeletalAnimator* skeletalAnimator = nullptr;
+					const Renderer3D& r3d = registry.get<Renderer3D>(entity);
+					if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntity))
+					{
+						skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
+					}
+
 					if (skeletalAnimator)
 					{
 						std::vector<std::shared_ptr<UniformWriter>> newUniformWriters = uniformWriters;

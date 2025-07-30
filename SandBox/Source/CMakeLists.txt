@@ -12,6 +12,9 @@ set(CORE_SOURCES
 	Core/CharacterControllerExample/CharacterControllerExample.cpp Core/CharacterControllerExample/CharacterControllerExample.h
 	Core/main.cpp
 	Core/TestUserComponent.h
+	FirstPersonExample/FirstPersonCharacter.h
+	FirstPersonExample/FirstPersonCharacterSystem.cpp FirstPersonExample/FirstPersonCharacterSystem.h
+	FirstPersonExample/FirstPersonExampleApplication.cpp FirstPersonExample/FirstPersonExampleApplication.h
 )
 source_group("Core" FILES ${CORE_SOURCES})
 

@@ -9,6 +9,7 @@
 
 #include "../Graphics/RenderView.h"
 #include "../ComponentSystems/ComponentSystem.h"
+#include "../ComponentSystems/PhysicsSystem.h"
 
 namespace Pengine
 {
@@ -76,6 +77,8 @@ namespace Pengine
 
 		std::shared_ptr<ComponentSystem> GetComponentSystem(const std::string& name);
 
+		std::shared_ptr<PhysicsSystem> GetPhysicsSystem() const { return m_PhysicsSystem; }
+
 		std::shared_ptr<Entity> CreateEmpty();
 
 		std::shared_ptr<Entity> CreateCamera();
@@ -111,6 +114,8 @@ namespace Pengine
 		std::set<std::shared_ptr<Entity>> m_SelectedEntities;
 
 		std::shared_ptr<RenderView> m_RenderView;
+
+		std::shared_ptr<PhysicsSystem> m_PhysicsSystem;
 		
 		std::shared_ptr<SceneBVH> m_BuildingBVH;
 		std::shared_ptr<SceneBVH> m_CurrentBVH;

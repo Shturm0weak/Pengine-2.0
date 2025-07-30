@@ -10,16 +10,6 @@ Mat:
   Pipelines:
     - RenderPass: GBuffer
       Uniforms:
-        - Name: albedoTexture
-          Value: White
-        - Name: normalTexture
-          Value: Black
-        - Name: metallicRoughnessTexture
-          Value: White
-        - Name: aoTexture
-          Value: White
-        - Name: emissiveTexture
-          Value: White
         - Name: GBufferMaterial
           Values:
             - Name: material.albedoColor
@@ -44,7 +34,7 @@ Mat:
               Value: 0
               Type: float
             - Name: material.alphaCutoff
-              Value: 0.01
+              Value: 0.00999999978
               Type: float
             - Name: material.useNormalMap
               Value: 0
@@ -52,6 +42,16 @@ Mat:
             - Name: material.useAlphaCutoff
               Value: 0
               Type: int
+        - Name: albedoTexture
+          Value: 0xe36f9d8535d3a6aecff9f16c983863b9
+        - Name: normalTexture
+          Value: Black
+        - Name: metallicRoughnessTexture
+          Value: White
+        - Name: aoTexture
+          Value: White
+        - Name: emissiveTexture
+          Value: White
     - RenderPass: Transparent
       Uniforms:
         []

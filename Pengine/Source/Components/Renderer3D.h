@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Core/Core.h"
+#include "../Core/UUID.h"
 
 namespace Pengine
 {
@@ -20,6 +21,8 @@ namespace Pengine
 		int renderingOrder = 5;
 
 		bool isEnabled = true;
+
+		UUID skeletalAnimatorEntity;
 
 		~Renderer3D();
 	};

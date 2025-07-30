@@ -12,6 +12,8 @@
 
 #include "ComponentSystems/PhysicsSystem.h"
 
+#include "../TestUserComponent.h"
+
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Character/Character.h>
 #include <Jolt/Physics/Collision/Shape/RotatedTranslatedShape.h>
@@ -84,23 +86,13 @@ void CharacterControllerExample::OnStart()
 		GlmVec3ToJoltVec3(transform.GetPosition()),
 		GlmQuatToJoltQuat(transform.GetRotation()),
 		0,
-		&std::static_pointer_cast<PhysicsSystem>(m_Scene->GetComponentSystem("PhysicsSystem"))->GetInstance());
+		&m_Scene->GetPhysicsSystem()->GetInstance());
 	m_Character.joltCharacter->AddToPhysicsSystem();
 }
 
 void CharacterControllerExample::OnUpdate()
 {
-	const auto physicsSystem = std::static_pointer_cast<PhysicsSystem>(m_Scene->GetComponentSystem("PhysicsSystem"));
-	auto& joltPhysicsSystem = physicsSystem->GetInstance();
-
-	/*m_Character.joltCharacter->UpdateGroundVelocity();
-	m_Character.joltCharacter->Update(Time::GetDeltaTime(),
-		joltPhysicsSystem.GetGravity(),
-		joltPhysicsSystem.GetDefaultBroadPhaseLayerFilter(ObjectLayers::DYNAMIC),
-		joltPhysicsSystem.GetDefaultLayerFilter(ObjectLayers::DYNAMIC),
-		{},
-		{},
-		*physicsSystem->GetTempAllocator());*/
+	auto& joltPhysicsSystem = m_Scene->GetPhysicsSystem()->GetInstance();
 
 	Transform& transform = m_Character.entity->GetComponent<Transform>();
 	transform.Translate(JoltVec3ToGlmVec3(m_Character.joltCharacter->GetPosition()));

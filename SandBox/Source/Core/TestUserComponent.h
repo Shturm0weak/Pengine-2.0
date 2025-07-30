@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Core/ReflectionSystem.h"
+#include "Core/Scene.h"
+#include "Core/Logger.h"
 
 #include <yaml-cpp/yaml.h>
 
@@ -20,20 +22,26 @@ public:
 		float customFloat = 321;
 	} customData;
 
-	static void OnSerialize(void* outPtr, void* componentPtr)
+	static void OnSerialize(void* outPtr, void* componentPtr, void* entityPtr)
 	{
 		YAML::Emitter& out = *static_cast<YAML::Emitter*>(outPtr);
 		TestUserComponent& component = *static_cast<TestUserComponent*>(componentPtr);
+
+		Pengine::Entity& entity = *static_cast<Pengine::Entity*>(entityPtr);
+		Pengine::Logger::Log("OnSerialize " + entity.GetName());
 
 		out << YAML::Key << "customInt" << YAML::Value << component.customData.customInt;
 		out << YAML::Key << "customFloat" << YAML::Value << component.customData.customFloat;
 	}
 	SERIALIZE_CALLBACK(TestUserComponent::OnSerialize)
 
-	static void OnDeserialize(void* inPtr, void* componentPtr)
+	static void OnDeserialize(void* inPtr, void* componentPtr, void* entityPtr)
 	{
 		const YAML::Node& in = *static_cast<YAML::Node*>(inPtr);
 		TestUserComponent& component = *static_cast<TestUserComponent*>(componentPtr);
+
+		Pengine::Entity& entity = *static_cast<Pengine::Entity*>(entityPtr);
+		Pengine::Logger::Log("OnDeserialize " + entity.GetName());
 
 		if (const auto& customIntData = in["customInt"])
 		{

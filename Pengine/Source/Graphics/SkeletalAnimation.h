@@ -30,6 +30,8 @@ namespace Pengine
 
 			glm::mat4 Update(float time) const;
 
+			void Update(float time, glm::vec3& position, glm::quat& rotation, glm::vec3& scale) const;
+
 			int GetPositionIndex(float animationTime) const;
 
 			int GetRotationIndex(float animationTime) const;
@@ -39,11 +41,11 @@ namespace Pengine
 		private:
 			float GetScaleFactor(float lastTime, float nextTime, float time) const;
 
-			glm::mat4 InterpolatePosition(float time) const;
+			glm::vec3 InterpolatePosition(float time) const;
 
-			glm::mat4 InterpolateRotation(float time) const;
+			glm::quat InterpolateRotation(float time) const;
 
-			glm::mat4 InterpolateScaling(float time) const;
+			glm::vec3 InterpolateScaling(float time) const;
 		};
 
 		struct CreateInfo
