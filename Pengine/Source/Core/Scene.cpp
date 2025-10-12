@@ -14,6 +14,7 @@
 
 #include "../Core/MaterialManager.h"
 #include "../Core/MeshManager.h"
+#include "../Core/SceneManager.h"
 
 using namespace Pengine;
 
@@ -53,6 +54,17 @@ void Scene::FlushDeletionQueue()
 			for (const auto& [componentSystemName, componentSystem] : m_ComponentSystemsByName)
 			{
 				const auto removeCallbacks = std::move(componentSystem->GetRemoveCallbacks());
+				for (const auto& [componentName, callback] : removeCallbacks)
+				{
+					if (callback)
+					{
+						callback(entity);
+					}
+				}
+			}
+
+			{
+				const auto removeCallbacks = std::move(m_PhysicsSystem->GetRemoveCallbacks());
 				for (const auto& [componentName, callback] : removeCallbacks)
 				{
 					if (callback)
@@ -102,6 +114,33 @@ void Scene::Clear()
 	m_Name = none;
 	m_Filepath = none;
 
+	for (const auto& entity : m_Entities)
+	{
+		for (const auto& [componentSystemName, componentSystem] : m_ComponentSystemsByName)
+		{
+			const auto removeCallbacks = std::move(componentSystem->GetRemoveCallbacks());
+			for (const auto& [componentName, callback] : removeCallbacks)
+			{
+				if (callback)
+				{
+					callback(entity);
+				}
+			}
+
+		}
+
+		{
+			const auto removeCallbacks = std::move(m_PhysicsSystem->GetRemoveCallbacks());
+			for (const auto& [componentName, callback] : removeCallbacks)
+			{
+				if (callback)
+				{
+					callback(entity);
+				}
+			}
+		}
+	}
+
 	m_Entities.clear();
 	m_Registry.clear();
 	m_SelectedEntities.clear();
@@ -122,6 +161,17 @@ void Scene::ProcessComponentRemove(
 			if (callback->second)
 			{
 				callback->second(entity);
+			}
+		}
+	}
+
+	{
+		const auto removeCallbacks = std::move(m_PhysicsSystem->GetRemoveCallbacks());
+		for (const auto& [componentName, callback] : removeCallbacks)
+		{
+			if (callback)
+			{
+				callback(entity);
 			}
 		}
 	}
@@ -219,10 +269,7 @@ Scene& Scene::operator=(const Scene& scene)
 
 void Scene::Update(const float deltaTime)
 {
-	for (const auto& [name, system] : m_ComponentSystemsByName)
-	{
-		system->OnUpdate(deltaTime, shared_from_this());
-	}
+	UpdateSystems(deltaTime);
 
 	for (const auto& [name, system] : m_ComponentSystemsByName)
 	{
@@ -257,6 +304,36 @@ void Scene::Update(const float deltaTime)
 		m_IsBuildingBVH = false;
 		m_BVHConditionalVariable.notify_all();
 	});
+}
+
+void Scene::UpdateSystems(const float deltaTime)
+{
+	const auto& sceneManager = SceneManager::GetInstance();
+	if (sceneManager.IsComponentSystemsUpdating())
+	{
+		for (const auto& [name, system] : m_ComponentSystemsByName)
+		{
+			system->OnUpdate(deltaTime, shared_from_this());
+		}
+
+		for (const auto& [name, system] : m_ComponentSystemsByName)
+		{
+			system->OnPrePhysicsUpdate(deltaTime, shared_from_this());
+		}
+	}
+
+	if (sceneManager.IsPhysicsSystemsUpdating())
+	{
+		m_PhysicsSystem->OnUpdate(deltaTime, shared_from_this());
+	}
+
+	if (sceneManager.IsComponentSystemsUpdating())
+	{
+		for (const auto& [name, system] : m_ComponentSystemsByName)
+		{
+			system->OnPostPhysicsUpdate(deltaTime, shared_from_this());
+		}
+	}
 }
 
 std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name, const UUID& uuid)

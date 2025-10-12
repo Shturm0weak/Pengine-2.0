@@ -41,7 +41,7 @@ set(CORE_SOURCES
 	Core/BoundingBox.h
 	Core/ClayManager.cpp Core/ClayManager.h
 	Core/ColoredOutput.h
-	Core/Core.h
+	Core/Core.h Core/Core.cpp
 	Core/CustomData.h
 	Core/CSMRenderer.cpp Core/CSMRenderer.h
 	Core/Entity.cpp Core/Entity.h
@@ -80,14 +80,6 @@ set(CORE_SOURCES
 	Core/WindowManager.cpp Core/WindowManager.h
 )
 source_group("Core" FILES ${CORE_SOURCES})
-
-set(EDITOR_SOURCES
-	Editor/Editor.cpp Editor/Editor.h
-	Editor/EntityAnimatorEditor.cpp Editor/EntityAnimatorEditor.h
-	Editor/ImGuizmo.cpp Editor/ImGuizmo.h
-	Editor/ThumbnailAtlas.cpp Editor/ThumbnailAtlas.h
-)
-source_group("Editor" FILES ${EDITOR_SOURCES})
 
 set(GRAPHICS_SOURCES
 	Graphics/BaseMaterial.cpp Graphics/BaseMaterial.h
@@ -274,6 +266,11 @@ if (GENERATOR_IS_MULTI_CONFIG)
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>
 		${CMAKE_BINARY_DIR}/${APP_NAME}/Build/$<CONFIG>)
+
+	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>
+		${CMAKE_BINARY_DIR}/Editor/Build/$<CONFIG>)
 else ()
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -294,4 +291,9 @@ else ()
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build
 		${CMAKE_BINARY_DIR}/${APP_NAME}/Build)
+
+	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build
+		${CMAKE_BINARY_DIR}/Editor/Build)
 endif ()

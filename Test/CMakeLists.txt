@@ -32,35 +32,28 @@ add_executable(${PROJECT_NAME} ${CORE_SOURCES})
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC PENGINE_ENGINE=0)
 
+target_link_libraries(${PROJECT_NAME} PRIVATE Jolt)
+target_link_libraries(${PROJECT_NAME} PRIVATE YAML)
 target_link_libraries(${PROJECT_NAME} PRIVATE Pengine)
 target_link_libraries(${PROJECT_NAME} PRIVATE GTest::gtest_main)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ../Pengine/Source)
 target_include_directories(${PROJECT_NAME} PRIVATE ../Vendor)
+target_include_directories(${PROJECT_NAME} PRIVATE ../Vendor/JoltPhysics)
 
 include(GoogleTest)
 gtest_discover_tests(${PROJECT_NAME})
 
 if (MSVC)
-	set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}")
+	set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/${APP_NAME}")
 endif ()
 
 if (GENERATOR_IS_MULTI_CONFIG)
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_BINARY_DIR}/bin/$<CONFIG>
-		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
-
-	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
-		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/Pengine/Build/$<CONFIG>
 		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build/$<CONFIG>)
 else ()
-	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
-		COMMAND ${CMAKE_COMMAND} -E copy_directory
-		${CMAKE_BINARY_DIR}/bin
-		${CMAKE_BINARY_DIR}/${PROJECT_NAME}/Build)
-
 	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 		${CMAKE_BINARY_DIR}/Pengine/Build

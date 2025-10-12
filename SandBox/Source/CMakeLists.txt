@@ -7,14 +7,20 @@ message("Building SandBox")
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP")
 
+#set(CORE_SOURCES
+#	Core/ExampleApplication.cpp Core/ExampleApplication.h
+#	Core/CharacterControllerExample/CharacterControllerExample.cpp Core/CharacterControllerExample/CharacterControllerExample.h
+#	Core/main.cpp
+#	Core/TestUserComponent.h
+#)
+#source_group("Core" FILES ${CORE_SOURCES})
+
 set(CORE_SOURCES
-	Core/ExampleApplication.cpp Core/ExampleApplication.h
-	Core/CharacterControllerExample/CharacterControllerExample.cpp Core/CharacterControllerExample/CharacterControllerExample.h
+	FirstPersonExample/Character.cpp FirstPersonExample/Character.h
+	FirstPersonExample/CharacterSystem.cpp FirstPersonExample/CharacterSystem.h
+	FirstPersonExample/Application.cpp FirstPersonExample/Application.h
+	FirstPersonExample/StateMachine.h
 	Core/main.cpp
-	Core/TestUserComponent.h
-	FirstPersonExample/FirstPersonCharacter.h
-	FirstPersonExample/FirstPersonCharacterSystem.cpp FirstPersonExample/FirstPersonCharacterSystem.h
-	FirstPersonExample/FirstPersonExampleApplication.cpp FirstPersonExample/FirstPersonExampleApplication.h
 )
 source_group("Core" FILES ${CORE_SOURCES})
 

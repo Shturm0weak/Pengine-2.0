@@ -15,7 +15,7 @@ namespace Pengine
 		ClayManager(const ClayManager&) = delete;
 		ClayManager& operator=(const ClayManager&) = delete;
 
-		static void Init(class Canvas* canvas);
+		static void Init(class Canvas* canvas, Clay_Context* context);
 
 		static void BeginLayout();
 
@@ -43,3 +43,5 @@ namespace Pengine
 	};
 
 }
+
+#define REGISTER_CLAY_SCRIPT(_type) RTTR_REGISTRATION_USER_DEFINED(_type)

@@ -17,6 +17,8 @@ namespace Pengine
 
 		virtual void OnUpdate() {}
 
+		virtual void OnImGuiUpdate() {}
+
 		virtual void OnClose() {}
 	};
 

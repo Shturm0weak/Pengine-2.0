@@ -1,5 +1,5 @@
 SSAO:
-  IsEnabled: true
+  IsEnabled: false
   AoScale: 1
   Bias: 0.0500000007
   KernelSize: 16
@@ -8,7 +8,7 @@ SSAO:
   ResolutionScale: 2
   ResolutionBlurScale: 2
 CSM:
-  IsEnabled: true
+  IsEnabled: false
   Quality: 1
   CascadeCount: 4
   SplitFactor: 0.899999976
@@ -22,13 +22,13 @@ CSM:
     - 0.150000006
     - 0.400000006
 Bloom:
-  IsEnabled: true
+  IsEnabled: false
   MipCount: 10
   BrightnessThreshold: 1
   Intensity: 1
   ResolutionScale: 3
 SSR:
-  IsEnabled: true
+  IsEnabled: false
   MaxDistance: 15
   Resolution: 0.300000012
   ResolutionBlurScale: 0
@@ -40,4 +40,4 @@ SSR:
 PostProcess:
   Gamma: 2.20000005
   ToneMapper: 1
-  FXAA: true
+  FXAA: false
