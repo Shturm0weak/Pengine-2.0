@@ -74,20 +74,16 @@ void main()
 		1.0f);
 	outEmissive = texture(emissiveTexture, decalUV.xy) * material.emissiveColor * material.emissiveFactor;
 
-	vec3 ddxWp = dFdx(worldSpacePosition);
-	vec3 ddyWp = dFdy(worldSpacePosition);
-	vec3 normal = normalize(cross(ddyWp, ddxWp));
+	vec3 bitangent = normalize(dFdx(worldSpacePosition));
+	vec3 tangent = normalize(dFdy(worldSpacePosition));
+	vec3 normal = normalize(cross(tangent, bitangent));
 
-	mat3 viewMat3 = mat3(camera.viewMat4) * transpose(mat3(inverseTransform));
-	vec3 normalViewSpace = normalize(viewMat3 * normal);
+	vec3 normalViewSpace = normalize(mat3(camera.viewMat4) * normal);
 
 	if (material.useNormalMap > 0)
 	{
-		vec3 bitangent = normalize(ddxWp);
-		vec3 tangent = normalize(ddyWp);
-
-		vec3 tangentViewSpace = normalize(viewMat3 * tangent);
-		vec3 bitangentViewSpace = normalize(viewMat3 * bitangent);
+		vec3 tangentViewSpace = normalize(mat3(camera.viewMat4) * tangent);
+		vec3 bitangentViewSpace = normalize(mat3(camera.viewMat4) * bitangent);
 
 		mat3 TBN = mat3(tangentViewSpace, bitangentViewSpace, normalViewSpace);
 		vec3 normalMap = texture(normalTexture, decalUV.xy).xyz;
