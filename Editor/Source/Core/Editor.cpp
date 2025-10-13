@@ -30,6 +30,7 @@
 #include "ImGuizmo.h"
 
 #include "Components/Camera.h"
+#include "Components/Decal.h"
 #include "Components/DirectionalLight.h"
 #include "Components/PointLight.h"
 #include "Components/Renderer3D.h"
@@ -1095,6 +1096,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene, Window& window)
 			TransformComponent(entity);
 			CameraComponent(entity, window);
 			Renderer3DComponent(entity);
+			DecalComponent(entity);
 			PointLightComponent(entity);
 			DirectionalLightComponent(entity);
 			SkeletalAnimatorComponent(entity);
@@ -1985,8 +1987,6 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene, Window& window)
 
 void Editor::MoveCamera(const std::shared_ptr<Entity>& camera, Window& window)
 {
-	return;
-
 	if (!camera)
 	{
 		return;
@@ -2202,6 +2202,10 @@ void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
 		if (ImGui::MenuItem("Renderer3D"))
 		{
 			entity->AddComponent<Renderer3D>();
+		}
+		else if (ImGui::MenuItem("Decal"))
+		{
+			entity->AddComponent<Decal>();
 		}
 		else if (ImGui::MenuItem("PointLight"))
 		{
@@ -2820,6 +2824,61 @@ void Editor::PhysicsBoxComponent(const std::shared_ptr<Entity>& entity)
 			}
 		}
 		lock.ReleaseLock();
+	}
+}
+
+void Editor::DecalComponent(const std::shared_ptr<Pengine::Entity>& entity)
+{
+	if (!entity->HasComponent<Decal>())
+	{
+		return;
+	}
+
+	Decal& decal = entity->GetComponent<Decal>();
+
+	ImGui::PushID("Decal X");
+	if (ImGui::Button("X"))
+	{
+		entity->RemoveComponent<Decal>();
+	}
+	ImGui::PopID();
+
+	ImGui::SameLine();
+
+	if (ImGui::CollapsingHeader("Decal"))
+	{
+		Indent indent;
+
+		ImGui::Text("Material:");
+		ImGui::SameLine();
+		if (decal.material)
+		{
+			if (ImGui::Button(decal.material->GetName().c_str()))
+			{
+				m_MaterialMenu.opened = true;
+				m_MaterialMenu.material = decal.material;
+			}
+		}
+		else
+		{
+			ImGui::Button(none);
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+			{
+				std::wstring filepath((const wchar_t*)payload->Data);
+				filepath.resize(payload->DataSize / sizeof(wchar_t));
+
+				if (Utils::GetFileFormat(filepath) == FileFormats::Mat())
+				{
+					decal.material = MaterialManager::GetInstance().LoadMaterial(filepath);
+				}
+			}
+
+			ImGui::EndDragDropTarget();
+		}
 	}
 }
 

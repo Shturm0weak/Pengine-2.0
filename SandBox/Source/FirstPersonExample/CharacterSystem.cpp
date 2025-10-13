@@ -2,6 +2,7 @@
 
 #include "Core/Scene.h"
 #include "Core/MeshManager.h"
+#include "Core/MaterialManager.h"
 #include "Core/Input.h"
 #include "Core/KeyCode.h"
 #include "Core/Viewport.h"
@@ -9,9 +10,12 @@
 #include "Core/WindowManager.h"
 #include "Core/TextureManager.h"
 #include "Core/Logger.h"
+#include "Core/RandomGenerator.h"
 
 #include "Components/Transform.h"
 #include "Components/SkeletalAnimator.h"
+#include "Components/Decal.h"
+#include "Components/Rigidbody.h"
 
 #include "ComponentSystems/PhysicsSystem.h"
 
@@ -326,6 +330,10 @@ CharacterSystem::CharacterSystem()
 		character.joltCharacter->RemoveFromPhysicsSystem();
 	};
 	m_RemoveCallbacks[GetTypeName<FirstPersonCharacter>()] = callback;
+
+	m_BloodDecalMaterails.emplace_back(MaterialManager::GetInstance().LoadMaterial("BloodDecals/BloodDecal1.mat"));
+	m_BloodDecalMaterails.emplace_back(MaterialManager::GetInstance().LoadMaterial("BloodDecals/BloodDecal2.mat"));
+	m_BloodDecalMaterails.emplace_back(MaterialManager::GetInstance().LoadMaterial("BloodDecals/BloodDecal3.mat"));
 }
 
 CharacterSystem::~CharacterSystem()
@@ -435,6 +443,25 @@ void CharacterSystem::OnUpdate(const float deltaTime, std::shared_ptr<Scene> sce
 	}
 }
 
+std::shared_ptr<Entity> CharacterSystem::CreateDecal(std::shared_ptr<Scene> scene, const glm::vec3& position, const glm::vec3& normal)
+{
+	std::shared_ptr<Entity> entity = scene->CreateEntity("Decal");
+
+	Transform& transform = entity->AddComponent<Transform>(entity);
+	transform.Translate(position);
+	transform.Scale(glm::vec3(0.2f));
+
+	const float yaw = atan2(normal.x, normal.z);
+	const float pitch = asin(normal.y);
+
+	transform.Rotate(glm::vec3(glm::radians(90.0f), 0.0f, 0.0f));
+	transform.Rotate(transform.GetRotation() + glm::vec3(pitch, yaw, 0.0f));
+	Decal& decal = entity->AddComponent<Decal>();
+	decal.material = m_BloodDecalMaterails[RandomGenerator::GetInstance().Get(0, 2)];
+
+	return entity;
+}
+
 void CharacterSystem::OnPrePhysicsUpdate(const float deltaTime, std::shared_ptr<Scene> scene)
 {
 	auto& input = Input::GetInstance(WindowManager::GetInstance().GetWindowByName("Main").get());
@@ -524,12 +551,31 @@ void CharacterSystem::OnPrePhysicsUpdate(const float deltaTime, std::shared_ptr<
 			scene->GetVisualizer().DrawSphere(JoltVec3ToGlmVec3(point), 0.3f, 10, { 1.0f, 0.0f, 0.0f }, 1.0f);
 
 			const entt::entity handle = scene->GetPhysicsSystem()->GetEntity(result.mBodyID);
+			auto entity = scene->GetRegistry().get<Transform>(handle).GetEntity();
+
+			JPH::BodyLockRead lock(joltPhysicsSystem.GetBodyLockInterface(), result.mBodyID);
+			if (lock.Succeeded())
+			{
+				const JPH::Body& body = lock.GetBody();
+				JPH::Vec3 normal = body.GetWorldSpaceSurfaceNormal(result.mSubShapeID2, point);
+				const auto decal = CreateDecal(scene, JoltVec3ToGlmVec3(point), JoltVec3ToGlmVec3(normal));
+
+				if (RigidBody* rigidbody = scene->GetRegistry().try_get<RigidBody>(handle))
+				{
+					if (!rigidbody->isStatic)
+					{
+						entity->AddChild(decal);
+					}
+				}
+
+				scene->GetVisualizer().DrawLine(JoltVec3ToGlmVec3(point), JoltVec3ToGlmVec3(point + normal), { 1.0f, 1.0f, 0.0f }, 1.0f);
+			}
+
 			if (Enemy* enemy = scene->GetRegistry().try_get<Enemy>(handle))
 			{
 				enemy->health -= character.damage;
 				if (enemy->health <= 0.0f)
-				{
-					auto entity = scene->GetRegistry().get<Transform>(handle).GetEntity();
+				{	
 					scene->DeleteEntity(entity);
 				}
 			}

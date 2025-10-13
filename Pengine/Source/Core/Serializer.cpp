@@ -20,6 +20,7 @@
 #include "../EventSystem/NextFrameEvent.h"
 
 #include "../Components/Camera.h"
+#include "../Components/Decal.h"
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
 #include "../Components/Renderer3D.h"
@@ -3639,6 +3640,7 @@ void Serializer::SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entit
 	SerializeCamera(out, entity);
 	SerializeRenderer3D(out, entity);
 	SerializePointLight(out, entity);
+	SerializeDecal(out, entity);
 	SerializeDirectionalLight(out, entity);
 	SerializeSkeletalAnimator(out, entity);
 	SerializeEntityAnimator(out, entity);
@@ -3712,6 +3714,7 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 	DeserializeCamera(in, entity);
 	DeserializeRenderer3D(in, entity);
 	DeserializePointLight(in, entity);
+	DeserializeDecal(in, entity);
 	DeserializeDirectionalLight(in, entity);
 	DeserializeSkeletalAnimator(in, entity);
 	DeserializeEntityAnimator(in, entity);
@@ -4506,6 +4509,77 @@ void Serializer::DeserializeRigidBody(const YAML::Node& in, const std::shared_pt
 			}
 		}
 		lock.ReleaseLock();
+	}
+}
+
+void Serializer::SerializeDecal(YAML::Emitter& out, const std::shared_ptr<Entity>& entity)
+{
+	if (!entity->HasComponent<Decal>())
+	{
+		return;
+	}
+
+	const Decal& decal = entity->GetComponent<Decal>();
+
+	out << YAML::Key << "Decal";
+
+	out << YAML::BeginMap;
+
+	if (decal.material)
+	{
+		UUID uuid = Utils::FindUuid(decal.material->GetFilepath());
+		if (uuid.IsValid())
+		{
+			out << YAML::Key << "Material" << YAML::Value << uuid;
+		}
+	}
+
+	out << YAML::EndMap;
+}
+
+void Serializer::DeserializeDecal(const YAML::Node& in, const std::shared_ptr<Entity>& entity)
+{
+	if (const auto& decalData = in["Decal"])
+	{
+		if (!entity->HasComponent<Decal>())
+		{
+			entity->AddComponent<Decal>();
+		}
+
+		Decal& decal = entity->GetComponent<Decal>();
+
+		if (const auto& materialData = decalData["Material"])
+		{
+			const UUID uuid = materialData.as<UUID>();
+
+			AsyncAssetLoader::GetInstance().AsyncLoadMaterial(Utils::FindFilepath(uuid), [wEntity = std::weak_ptr(entity)](std::weak_ptr<Material> material)
+			{
+				std::shared_ptr<Material> sharedMaterial = material.lock();
+				if (!material.lock())
+				{
+					return;
+				}
+
+				if (std::shared_ptr<Entity> entity = wEntity.lock())
+				{
+					if (entity->HasComponent<Decal>())
+					{
+						entity->GetComponent<Decal>().material = sharedMaterial;
+					}
+				}
+				else
+				{
+					auto callback = [material]()
+					{
+						std::shared_ptr<Material> sharedMaterial = material.lock();
+						MaterialManager::GetInstance().DeleteMaterial(sharedMaterial);
+					};
+
+					std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, nullptr);
+					EventSystem::GetInstance().SendEvent(event);
+				}
+			});
+		}
 	}
 }
 

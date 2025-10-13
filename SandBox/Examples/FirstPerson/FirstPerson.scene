@@ -46,8 +46,8 @@ Scene:
     Name: Cube
     IsEnabled: true
     Transform:
-      Position: [1.54967403, -8.02000809, 4.85564089]
-      Rotation: [-3.46740281e-09, 0.021946501, 3.65947187e-07]
+      Position: [1.54976058, -8.02000046, 4.8552413]
+      Rotation: [1.48413919e-05, 0.0219214261, 9.81909216e-06]
       Scale: [1, 1, 1]
       FollowOwner: true
     Renderer3D:
@@ -76,8 +76,8 @@ Scene:
     Name: Cube
     IsEnabled: true
     Transform:
-      Position: [-6.50700426, -8.00489807, 10.2972937]
-      Rotation: [3.13945699, 0.0116306022, 0.00532381935]
+      Position: [-6.51413059, -8.00402355, 10.2912846]
+      Rotation: [3.13885307, 0.0116797173, 0.00682456559]
       Scale: [1, 0.99999696, 0.999996841]
       FollowOwner: true
     Renderer3D:
@@ -102,9 +102,9 @@ Scene:
     Name: Sphere
     IsEnabled: true
     Transform:
-      Position: [0.243259415, -8.02000237, 8.0644474]
-      Rotation: [1.89821255, 0.00973302219, 0.12051931]
-      Scale: [1, 1, 1]
+      Position: [-0.100252181, -8.01762486, 8.08465195]
+      Rotation: [1.8768872, 0.00877860747, 0.121152364]
+      Scale: [0.999996066, 0.999945343, 0.999941528]
       FollowOwner: true
     Renderer3D:
       SkeletalAnimatorEntity: 0x46c0c750da599d7086c85d4aa9972075
@@ -124,12 +124,24 @@ Scene:
       AllowSleeping: true
     Childs:
       []
+  - UUID: 0xda82c1aae53907a38d93f8bfe9f7ed42
+    Name: Decal
+    IsEnabled: true
+    Transform:
+      Position: [8.9909029, -7.32928133, -0.902912736]
+      Rotation: [1.57079625, -1.42108539e-14, -3.1415925]
+      Scale: [0.999999881, 0.100000001, 0.99999994]
+      FollowOwner: true
+    Decal:
+      Material: 0x2bf65207954bb2f6a61828b218911803
+    Childs:
+      []
   - UUID: 0xba259bbd38248ae4c4ea0ed3a4f7fff8
     Name: Sphere
     IsEnabled: true
     Transform:
-      Position: [18.6562099, -8.02000141, 12.3883963]
-      Rotation: [-0.0249655079, 0.00163067831, 0.0524481125]
+      Position: [18.6562195, -8, 12.3882961]
+      Rotation: [-0.0250021219, 0.00163260009, 0.052434817]
       Scale: [1, 1, 1]
       FollowOwner: true
     Renderer3D:
@@ -161,8 +173,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [11.634387, 3.6228838, -13.2275486]
-      Rotation: [-1.01265192, -3.93889308, 0]
+      Position: [8.22587585, -6.75382423, -4.6515398]
+      Rotation: [-0.0221486278, -2.97333789, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -230,7 +242,7 @@ Scene:
     Name: Sphere
     IsEnabled: true
     Transform:
-      Position: [0, 25, 0]
+      Position: [0, -7.99999952, 0]
       Rotation: [0, -0, 0]
       Scale: [1, 1, 1]
       FollowOwner: true

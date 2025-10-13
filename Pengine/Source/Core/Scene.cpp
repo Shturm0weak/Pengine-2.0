@@ -271,18 +271,6 @@ void Scene::Update(const float deltaTime)
 {
 	UpdateSystems(deltaTime);
 
-	for (const auto& [name, system] : m_ComponentSystemsByName)
-	{
-		system->OnPrePhysicsUpdate(deltaTime, shared_from_this());
-	}
-
-	m_PhysicsSystem->OnUpdate(deltaTime, shared_from_this());
-
-	for (const auto& [name, system] : m_ComponentSystemsByName)
-	{
-		system->OnPostPhysicsUpdate(deltaTime, shared_from_this());
-	}
-
 	{
 		std::unique_lock<std::mutex> lock(m_LockBVH);
 		m_BVHConditionalVariable.wait(lock, [this]

@@ -16,6 +16,7 @@ namespace Pengine
 		UI,
 		ZPrePass,
 		GBuffer,
+		DecalPass,
 		CSM,
 		SSAO,
 		SSAOBlur,

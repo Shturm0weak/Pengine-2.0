@@ -1,14 +1,9 @@
 Mat:
-  Basemat: 0x5e24d711eb129f19fc9801b407c05618
+  Basemat: 0xb4ece70155b18cc7c648bb6994b87058
   Options:
-    - Name: Transparency
-      IsEnabled: false
-      Active:
-        - Transparent
-      Inactive:
-        - GBuffer
+    []
   Pipelines:
-    - RenderPass: GBuffer
+    - RenderPass: DecalPass
       Uniforms:
         - Name: GBufferMaterial
           Values:
@@ -25,7 +20,7 @@ Mat:
               Value: 0
               Type: float
             - Name: material.roughnessFactor
-              Value: 1
+              Value: 0
               Type: float
             - Name: material.aoFactor
               Value: 1
@@ -33,32 +28,22 @@ Mat:
             - Name: material.emissiveFactor
               Value: 0
               Type: float
+            - Name: material.alphaCutoff
+              Value: 0.00999999978
+              Type: float
             - Name: material.useNormalMap
-              Value: 1
-              Type: int
-            - Name: material.useSingleShadingMap
               Value: 0
               Type: int
+            - Name: material.useAlphaCutoff
+              Value: 1
+              Type: int
         - Name: albedoTexture
-          Value: 0x82a84207710993583190b378bf0ba7fc
+          Value: 0x3b7fe01a6b00eb14caa3d7a7de935a33
         - Name: normalTexture
-          Value: 0xf97f2797b46e6bb936148a3543dfe504
-        - Name: metalnessTexture
-          Value: 0x694aa313ef559acbd571653ef7a2cee5
-        - Name: roughnessTexture
-          Value: 0x06bc38a922c7e0017ccb3efef11ac4d2
+          Value: White
+        - Name: metallicRoughnessTexture
+          Value: White
         - Name: aoTexture
-          Value: 0xb0ac08d5b248381f1bdacf47a0b39b8e
+          Value: White
         - Name: emissiveTexture
           Value: White
-        - Name: shadingTexture
-          Value: White
-    - RenderPass: Transparent
-      Uniforms:
-        []
-    - RenderPass: CSM
-      Uniforms:
-        []
-    - RenderPass: ZPrePass
-      Uniforms:
-        []

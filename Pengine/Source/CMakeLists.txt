@@ -14,6 +14,7 @@ endif()
 
 set(COMPONENTS_SOURCES
 	Components/Camera.cpp Components/Camera.h
+	Components/Decal.cpp Components/Decal.h
 	Components/DirectionalLight.h
 	Components/EntityAnimator.h
 	Components/RigidBody.h

@@ -178,6 +178,10 @@ namespace Pengine
 
 		static void DeserializeRigidBody(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
 
+		static void SerializeDecal(YAML::Emitter& out, const std::shared_ptr<Entity>& entity);
+
+		static void DeserializeDecal(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
+
 		static void SerializeUserComponents(YAML::Emitter& out, const std::shared_ptr<Entity>& entity);
 
 		static void DeserializeUserComponents(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
