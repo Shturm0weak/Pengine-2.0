@@ -1,0 +1,49 @@
+Mat:
+  Basemat: 0xb4ece70155b18cc7c648bb6994b87058
+  Options:
+    []
+  Pipelines:
+    - RenderPass: DecalPass
+      Uniforms:
+        - Name: GBufferMaterial
+          Values:
+            - Name: material.albedoColor
+              Value: [1, 1, 1, 1]
+              Type: vec4
+            - Name: material.emissiveColor
+              Value: [1, 0.050632894, 0.050632894, 1]
+              Type: vec4
+            - Name: material.uvTransform
+              Value: [1, 1, 0, 0]
+              Type: vec4
+            - Name: material.metallicFactor
+              Value: 0
+              Type: float
+            - Name: material.roughnessFactor
+              Value: 0
+              Type: float
+            - Name: material.aoFactor
+              Value: 1
+              Type: float
+            - Name: material.emissiveFactor
+              Value: 0.134000003
+              Type: float
+            - Name: material.alphaCutoff
+              Value: 0.00999999978
+              Type: float
+            - Name: material.useNormalMap
+              Value: 0
+              Type: int
+            - Name: material.useAlphaCutoff
+              Value: 1
+              Type: int
+        - Name: albedoTexture
+          Value: 0xd9dc7f7da150e902fa143b88753f1624
+        - Name: normalTexture
+          Value: White
+        - Name: metallicRoughnessTexture
+          Value: White
+        - Name: aoTexture
+          Value: White
+        - Name: emissiveTexture
+          Value: White

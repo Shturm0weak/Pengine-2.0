@@ -8,6 +8,7 @@ namespace Pengine
 {
 	class Scene;
 	class Entity;
+	class Material;
 }
 
 class PENGINE_API CharacterSystem : public Pengine::ComponentSystem
@@ -24,8 +25,11 @@ public:
 
 	virtual std::map<std::string, std::function<void(std::shared_ptr<Pengine::Entity>)>> GetRemoveCallbacks() override { return m_RemoveCallbacks; }
 
+	std::shared_ptr<Pengine::Entity> CreateDecal(std::shared_ptr<Pengine::Scene> scene, const glm::vec3& position, const glm::vec3& normal);
+
 private:
 	std::weak_ptr<class Pengine::Scene> m_WeakScene;
 
+	std::vector<std::shared_ptr<Pengine::Material>> m_BloodDecalMaterails;
 	std::map<std::string, std::function<void(std::shared_ptr<Pengine::Entity>)>> m_RemoveCallbacks;
 };

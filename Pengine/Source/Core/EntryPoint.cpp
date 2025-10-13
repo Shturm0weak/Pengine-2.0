@@ -89,46 +89,35 @@ void CreateDefaultResources()
 	}
 
 	{
+		glm::vec3* vertices = new glm::vec3[8];
+		vertices[0] = {	-1.0f, -1.0f, -1.0f, };  // 0: bottom-left-back
+		vertices[1] = {	 1.0f, -1.0f, -1.0f, };  // 1: bottom-right-back
+		vertices[2] = {	 1.0f,  1.0f, -1.0f, };  // 2: top-right-back
+		vertices[3] = {	-1.0f,  1.0f, -1.0f, };  // 3: top-left-back
+		vertices[4] = {	-1.0f, -1.0f,  1.0f, };  // 4: bottom-left-front
+		vertices[5] = {	 1.0f, -1.0f,  1.0f, };  // 5: bottom-right-front
+		vertices[6] = {	 1.0f,  1.0f,  1.0f, };  // 6: top-right-front
+		vertices[7] = {	-1.0f,  1.0f,  1.0f  };  // 7: top-left-front
+
 		std::vector<uint32_t> indices =
 		{
-			//Top
-			2, 6, 7,
-			2, 3, 7,
-
-			//Bottom
-			0, 4, 5,
-			0, 1, 5,
-
-			//Left
-			0, 2, 6,
-			0, 4, 6,
-
-			//Right
-			1, 3, 7,
-			1, 5, 7,
-
-			//Front
-			0, 2, 3,
-			0, 1, 3,
-
-			//Back
-			4, 6, 7,
-			4, 5, 7
+			// Front face
+			4, 5, 6, 6, 7, 4,
+			// Back face
+			1, 0, 3, 3, 2, 1,
+			// Top face
+			7, 6, 2, 2, 3, 7,
+			// Bottom face
+			0, 1, 5, 5, 4, 0,
+			// Right face
+			5, 1, 2, 2, 6, 5,
+			// Left face
+			0, 4, 7, 7, 3, 0
 		};
 
-		glm::vec3* vertices = new glm::vec3[8];
-		vertices[0] = { -1.0f, -1.0f,  1.0f };
-		vertices[1] = {  1.0f, -1.0f,  1.0f };
-		vertices[2] = { -1.0f,  1.0f,  1.0f };
-		vertices[3] = {  1.0f,  1.0f,  1.0f };
-		vertices[4] = { -1.0f, -1.0f, -1.0f };
-		vertices[5] = {  1.0f, -1.0f, -1.0f };
-		vertices[6] = { -1.0f,  1.0f, -1.0f };
-		vertices[7] = {  1.0f,  1.0f, -1.0f };
-
 		Mesh::CreateInfo createInfo{};
-		createInfo.filepath = "SkyBoxCube";
-		createInfo.name = "SkyBoxCube";
+		createInfo.filepath = "UnitCube";
+		createInfo.name = "UnitCube";
 		createInfo.indices = std::move(indices);
 		createInfo.vertices = vertices;
 		createInfo.vertexSize = sizeof(glm::vec3);

@@ -13,6 +13,7 @@
 
 #include "../Components/Canvas.h"
 #include "../Components/Camera.h"
+#include "../Components/Decal.h"
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
 #include "../Components/Renderer3D.h"
@@ -295,6 +296,7 @@ RenderPassManager::RenderPassManager()
 	CreateSSR();
 	CreateSSRBlur();
 	CreateUI();
+	CreateDecalPass();
 }
 
 void RenderPassManager::GetVertexBuffers(
@@ -806,7 +808,7 @@ void RenderPassManager::CreateGBuffer()
 		// Render SkyBox.
 		if (!registry.view<DirectionalLight>().empty())
 		{
-			std::shared_ptr<Mesh> cubeMesh = MeshManager::GetInstance().LoadMesh("SkyBoxCube");
+			std::shared_ptr<Mesh> cubeMesh = MeshManager::GetInstance().LoadMesh("UnitCube");
 			std::shared_ptr<BaseMaterial> skyBoxBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 				std::filesystem::path("Materials") / "SkyBox.basemat");
 
@@ -2637,6 +2639,198 @@ void RenderPassManager::CreateUI()
 		}
 
 		uiRenderer->Render(entities, baseMaterial, renderInfo);
+	};
+
+	CreateRenderPass(createInfo);
+}
+
+void RenderPassManager::CreateDecalPass()
+{
+	glm::vec4 clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
+	glm::vec4 clearNormal = { 0.0f, 0.0f, 0.0f, 0.0f };
+	glm::vec4 clearShading = { 0.0f, 0.0f, 0.0f, 0.0f };
+	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+	RenderPass::AttachmentDescription color = GetRenderPass(GBuffer)->GetAttachmentDescriptions()[0];
+	color.load = RenderPass::Load::LOAD;
+	color.store = RenderPass::Store::STORE;
+	color.getFrameBufferCallback = [](RenderView* renderView)
+	{
+		return renderView->GetFrameBuffer(GBuffer)->GetAttachment(0);
+	};
+
+	RenderPass::AttachmentDescription normal = GetRenderPass(GBuffer)->GetAttachmentDescriptions()[1];
+	normal.load = RenderPass::Load::LOAD;
+	normal.store = RenderPass::Store::STORE;
+	normal.getFrameBufferCallback = [](RenderView* renderView)
+	{
+		return renderView->GetFrameBuffer(GBuffer)->GetAttachment(1);
+	};
+
+	RenderPass::AttachmentDescription shading = GetRenderPass(GBuffer)->GetAttachmentDescriptions()[2];
+	shading.load = RenderPass::Load::LOAD;
+	shading.store = RenderPass::Store::STORE;
+	shading.getFrameBufferCallback = [](RenderView* renderView)
+	{
+		return renderView->GetFrameBuffer(GBuffer)->GetAttachment(2);
+	};
+
+	RenderPass::AttachmentDescription emissive = GetRenderPass(GBuffer)->GetAttachmentDescriptions()[3];
+	emissive.load = RenderPass::Load::LOAD;
+	emissive.store = RenderPass::Store::STORE;
+	emissive.getFrameBufferCallback = [](RenderView* renderView)
+	{
+		return renderView->GetFrameBuffer(GBuffer)->GetAttachment(3);
+	};
+
+	Texture::SamplerCreateInfo emissiveSamplerCreateInfo{};
+	emissiveSamplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
+	emissiveSamplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK;
+	emissiveSamplerCreateInfo.maxAnisotropy = 1.0f;
+
+	emissive.textureCreateInfo.samplerCreateInfo = emissiveSamplerCreateInfo;
+
+	RenderPass::CreateInfo createInfo{};
+	createInfo.type = Pass::Type::GRAPHICS;
+	createInfo.name = DecalPass;
+	createInfo.clearColors = { clearColor, clearNormal, clearShading, clearEmissive };
+	createInfo.attachmentDescriptions = { color, normal, shading, emissive };
+	createInfo.resizeWithViewport = true;
+	createInfo.resizeViewportScale = { 1.0f, 1.0f };
+
+	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
+	{
+		PROFILER_SCOPE(DecalPass);
+
+		const std::string renderPassName = renderInfo.renderPass->GetName();
+
+		size_t renderableCount = 0;
+		const std::shared_ptr<Scene> scene = renderInfo.scene;
+		entt::registry& registry = scene->GetRegistry();
+		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
+		const glm::mat4 viewProjectionMat4 = renderInfo.projection * camera.GetViewMat4();
+		const auto r3dView = registry.view<Decal>();
+		const auto unitCubeMesh = MeshManager::GetInstance().LoadMesh("UnitCube");
+
+		std::unordered_map<std::shared_ptr<BaseMaterial>, std::unordered_map<std::shared_ptr<Material>, std::vector<entt::entity>>> renderableEntities;
+
+		for (const entt::entity& entity : r3dView)
+		{
+			const Decal& decal = registry.get<Decal>(entity);
+			const Transform& transform = registry.get<Transform>(entity);
+			if (!transform.GetEntity()->IsEnabled())
+			{
+				continue;
+			}
+
+			if (!decal.material || !decal.material->IsPipelineEnabled(DecalPass))
+			{
+				continue;
+			}
+
+			const std::shared_ptr<Pipeline> pipeline = decal.material->GetBaseMaterial()->GetPipeline(renderPassName);
+			if (!pipeline)
+			{
+				continue;
+			}
+
+			const glm::mat4& transformMat4 = transform.GetTransform();
+			const BoundingBox& box = unitCubeMesh->GetBoundingBox();
+
+			bool isInFrustum = FrustumCulling::CullBoundingBox(viewProjectionMat4, transformMat4, box.min, box.max, camera.GetZNear());
+			if (!isInFrustum)
+			{
+				continue;
+			}
+
+			renderableEntities[decal.material->GetBaseMaterial()][decal.material].emplace_back(entity);
+
+			renderableCount++;
+		}
+
+		struct DecalInstanceData
+		{
+			glm::mat4 transform;
+			glm::mat4 inverseTransform;
+		};
+
+		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderView->GetBuffer("DecalInstanceBuffer");
+		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() < renderableCount))
+		{
+			instanceBuffer = Buffer::Create(
+				sizeof(DecalInstanceData),
+				renderableCount,
+				Buffer::Usage::VERTEX_BUFFER,
+				MemoryType::CPU,
+				true);
+
+			renderInfo.renderView->SetBuffer("DecalInstanceBuffer", instanceBuffer);
+		}
+
+		std::vector<DecalInstanceData> instanceDatas;
+
+		const std::shared_ptr<BaseMaterial> decalBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+			std::filesystem::path("Materials") / "DecalBase.basemat");
+		const std::shared_ptr<Pipeline> decalBasePipeline = decalBaseMaterial->GetPipeline(DecalPass);
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, decalBasePipeline, DecalPass);
+		renderUniformWriter->WriteTexture("depthTexture", renderInfo.renderView->GetFrameBuffer(GBuffer)->GetAttachment(4));
+
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
+
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
+
+		for (const auto& [baseMaterial, entitiesByMaterial] : renderableEntities)
+		{
+			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+
+			for (const auto& [material, entities] : entitiesByMaterial)
+			{
+				const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
+				FlushUniformWriters(uniformWriters);
+
+				const size_t instanceDataOffset = instanceDatas.size();
+
+				for (const entt::entity& entity : entities)
+				{
+					DecalInstanceData data{};
+					const Transform& transform = registry.get<Transform>(entity);
+					data.transform = transform.GetTransform();
+					data.inverseTransform = transform.GetInverseTransformMat4();
+					instanceDatas.emplace_back(data);
+				}
+
+				std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+				std::vector<size_t> vertexBufferOffsets;
+				GetVertexBuffers(pipeline, unitCubeMesh, vertexBuffers, vertexBufferOffsets);
+
+				renderInfo.renderer->Render(
+					vertexBuffers,
+					vertexBufferOffsets,
+					unitCubeMesh->GetIndexBuffer(),
+					0,
+					unitCubeMesh->GetIndexCount(),
+					pipeline,
+					instanceBuffer,
+					instanceDataOffset * instanceBuffer->GetInstanceSize(),
+					entities.size(),
+					uniformWriters,
+					renderInfo.frame);
+			}
+		}
+
+		// Because these are all just commands and will be rendered later we can write the instance buffer
+		// just once when all instance data is collected.
+		if (instanceBuffer && !instanceDatas.empty())
+		{
+			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(DecalInstanceData));
+			instanceBuffer->Flush();
+		}
+
+		renderInfo.renderer->EndRenderPass(submitInfo);
 	};
 
 	CreateRenderPass(createInfo);

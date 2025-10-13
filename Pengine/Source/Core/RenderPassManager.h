@@ -105,6 +105,8 @@ namespace Pengine
 
 		void CreateUI();
 
+		void CreateDecalPass();
+
 		static void FlushUniformWriters(const std::vector<std::shared_ptr<class UniformWriter>>& uniformWriters);
 
 		static void WriteRenderViews(
