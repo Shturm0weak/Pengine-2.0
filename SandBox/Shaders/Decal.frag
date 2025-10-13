@@ -3,9 +3,8 @@
 layout(location = 0) flat in mat4 inverseTransform;
 
 layout(location = 0) out vec4 outAlbedo;
-layout(location = 1) out vec4 outNormal;
-layout(location = 2) out vec4 outShading;
-layout(location = 3) out vec4 outEmissive;
+layout(location = 1) out vec4 outShading;
+layout(location = 2) out vec4 outEmissive;
 
 layout(set = 1, binding = 1) uniform sampler2D albedoTexture;
 layout(set = 1, binding = 2) uniform sampler2D normalTexture;
@@ -25,7 +24,8 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 	Camera camera;
 };
 
-layout(set = 2, binding = 0) uniform sampler2D depthTexture;
+layout(set = 2, binding = 0) uniform sampler2D depthGBufferTexture;
+layout(set = 2, binding = 1, rgba16f) uniform image2D normalGBufferTexture;
 
 void main()
 {
@@ -38,7 +38,7 @@ void main()
     viewRay.y = screenPosition.y * camera.tanHalfFOV;
 
     vec3 positionViewSpace = CalculatePositionFromDepth(
-        texture(depthTexture, screenUV).x,
+        texture(depthGBufferTexture, screenUV).x,
         camera.projectionMat4,
         viewRay);
 
@@ -74,28 +74,23 @@ void main()
 		1.0f);
 	outEmissive = texture(emissiveTexture, decalUV.xy) * material.emissiveColor * material.emissiveFactor;
 
-	vec3 ddxWp = dFdx(worldSpacePosition);
-	vec3 ddyWp = dFdy(worldSpacePosition);
-	vec3 normal = normalize(cross(ddyWp, ddxWp));
+	vec4 gbufferNormal = imageLoad(normalGBufferTexture, pixelCoord);
+	vec3 normal = gbufferNormal.xyz;
 
-	mat3 viewMat3 = mat3(camera.viewMat4) * transpose(mat3(inverseTransform));
-	vec3 normalViewSpace = normalize(viewMat3 * normal);
+	vec3 up = normalize(mat3(camera.viewMat4) * vec3(0.0f, 1.0f, 0.0f));
+	if (abs(dot(normal, up)) > 0.999f)
+	{
+		up = normalize(mat3(camera.viewMat4) * vec3(1.0f, 0.0f, 0.0f));
+	}
+
+	vec3 tangent = normalize(cross(normal, up));
+	vec3 bitangent = cross(normal, tangent);
 
 	if (material.useNormalMap > 0)
 	{
-		vec3 bitangent = normalize(ddxWp);
-		vec3 tangent = normalize(ddyWp);
-
-		vec3 tangentViewSpace = normalize(viewMat3 * tangent);
-		vec3 bitangentViewSpace = normalize(viewMat3 * bitangent);
-
-		mat3 TBN = mat3(tangentViewSpace, bitangentViewSpace, normalViewSpace);
+		mat3 TBN = mat3(tangent, bitangent, normal);
 		vec3 normalMap = texture(normalTexture, decalUV.xy).xyz;
 		normalMap = normalMap * 2.0f - 1.0f;
-		outNormal = vec4(normalize(TBN * normalMap), 1.0f);
-	}
-	else
-	{
-		outNormal = vec4(normalViewSpace, 1.0f);
+		imageStore(normalGBufferTexture, pixelCoord, vec4(normalize(TBN * normalMap), gbufferNormal.a));
 	}
 }

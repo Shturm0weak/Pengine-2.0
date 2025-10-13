@@ -161,7 +161,18 @@ Scene:
       Restitution: 0.200000003
       AllowSleeping: true
     Childs:
-      []
+      - UUID: 0x05fa5dd3a0031ae59ca70f436cc8c0d6
+        Name: Decal
+        IsEnabled: true
+        Transform:
+          Position: [0.000221252441, 0.395372391, -0.732192039]
+          Rotation: [-1.57079637, 4.0636019e-09, 2.61336027e-07]
+          Scale: [0.415400475, 0.415399849, 0.415399551]
+          FollowOwner: true
+        Decal:
+          Material: 0x2bf65207954bb2f6a61828b218911803
+        Childs:
+          []
   - PrefabFilepath: 0x29f3a7cd277509ef54f68a492bf5c9c9
     UUID: 0xf3f5562f5253281a0571568f385c5051
     Transform:
@@ -173,8 +184,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [8.22587585, -6.75382423, -4.6515398]
-      Rotation: [-0.0221486278, -2.97333789, 0]
+      Position: [19.3425312, -6.39757967, 10.2977991]
+      Rotation: [-0.574559212, -3.6664443, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:

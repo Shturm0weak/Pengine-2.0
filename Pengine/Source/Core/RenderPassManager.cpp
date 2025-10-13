@@ -605,7 +605,7 @@ void RenderPassManager::CreateGBuffer()
 	normal.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
 	normal.textureCreateInfo.channels = 4;
 	normal.textureCreateInfo.isMultiBuffered = true;
-	normal.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
+	normal.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::STORAGE, Texture::Usage::COLOR_ATTACHMENT };
 	normal.textureCreateInfo.name = "GBufferNormal";
 	normal.textureCreateInfo.filepath = normal.textureCreateInfo.name;
 	normal.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
@@ -2647,7 +2647,6 @@ void RenderPassManager::CreateUI()
 void RenderPassManager::CreateDecalPass()
 {
 	glm::vec4 clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
-	glm::vec4 clearNormal = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glm::vec4 clearShading = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 
@@ -2657,14 +2656,6 @@ void RenderPassManager::CreateDecalPass()
 	color.getFrameBufferCallback = [](RenderView* renderView)
 	{
 		return renderView->GetFrameBuffer(GBuffer)->GetAttachment(0);
-	};
-
-	RenderPass::AttachmentDescription normal = GetRenderPass(GBuffer)->GetAttachmentDescriptions()[1];
-	normal.load = RenderPass::Load::LOAD;
-	normal.store = RenderPass::Store::STORE;
-	normal.getFrameBufferCallback = [](RenderView* renderView)
-	{
-		return renderView->GetFrameBuffer(GBuffer)->GetAttachment(1);
 	};
 
 	RenderPass::AttachmentDescription shading = GetRenderPass(GBuffer)->GetAttachmentDescriptions()[2];
@@ -2693,8 +2684,8 @@ void RenderPassManager::CreateDecalPass()
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = Pass::Type::GRAPHICS;
 	createInfo.name = DecalPass;
-	createInfo.clearColors = { clearColor, clearNormal, clearShading, clearEmissive };
-	createInfo.attachmentDescriptions = { color, normal, shading, emissive };
+	createInfo.clearColors = { clearColor, clearShading, clearEmissive };
+	createInfo.attachmentDescriptions = { color, shading, emissive };
 	createInfo.resizeWithViewport = true;
 	createInfo.resizeViewportScale = { 1.0f, 1.0f };
 
@@ -2773,7 +2764,11 @@ void RenderPassManager::CreateDecalPass()
 			std::filesystem::path("Materials") / "DecalBase.basemat");
 		const std::shared_ptr<Pipeline> decalBasePipeline = decalBaseMaterial->GetPipeline(DecalPass);
 		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, decalBasePipeline, DecalPass);
-		renderUniformWriter->WriteTexture("depthTexture", renderInfo.renderView->GetFrameBuffer(GBuffer)->GetAttachment(4));
+
+		const std::shared_ptr<Texture> depthTexture = renderInfo.renderView->GetFrameBuffer(GBuffer)->GetAttachment(4);
+		const std::shared_ptr<Texture> normalTexture = renderInfo.renderView->GetFrameBuffer(GBuffer)->GetAttachment(1);
+		renderUniformWriter->WriteTexture("depthGBufferTexture", depthTexture);
+		renderUniformWriter->WriteTexture("normalGBufferTexture", normalTexture);
 
 		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
 
