@@ -979,47 +979,14 @@ void RenderPassManager::CreateDeferred()
 		outputUniformWriter->WriteTexture("outColor", colorTexture);
 		outputUniformWriter->WriteTexture("outEmissive", emissiveTexture);
 		
-		std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
-
-		// TODO: Maybe fix, very slow.
-		// Here we need Transition to flush uniform writers, because to update storage image the layout should be GENERAL.
-		// And before and after the dispatch we need Transition again, because this command buffer will be executed later, so we don't know what can happen before.
-		{
-			PROFILER_SCOPE("Deferred Color Output Transition Layout");
-
-			void* transitionFrame = device->CreateFrame();
-
-			device->BeginFrame(transitionFrame);
-			renderInfo.renderer->BeginCommandLabel("Layout Transition", topLevelRenderPassDebugColor, transitionFrame);
-			colorTexture->Transition(Texture::Layout::GENERAL, transitionFrame);
-			emissiveTexture->Transition(Texture::Layout::GENERAL, transitionFrame);
-			renderInfo.renderer->EndCommandLabel(transitionFrame);
-			device->EndFrame(transitionFrame);
-
-			uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-			FlushUniformWriters(uniformWriters);
-
-			device->BeginFrame(transitionFrame);
-			renderInfo.renderer->BeginCommandLabel("Layout Transition", topLevelRenderPassDebugColor, transitionFrame);
-			colorTexture->Transition(Texture::Layout::SHADER_READ_ONLY_OPTIMAL, transitionFrame);
-			emissiveTexture->Transition(Texture::Layout::SHADER_READ_ONLY_OPTIMAL, transitionFrame);
-			renderInfo.renderer->EndCommandLabel(transitionFrame);
-			device->EndFrame(transitionFrame);
-			
-			device->DestroyFrame(transitionFrame);
-		}
+		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
+		FlushUniformWriters(uniformWriters);
 
 		renderInfo.renderer->BeginCommandLabel(passName, topLevelRenderPassDebugColor, renderInfo.frame);
-
-		colorTexture->Transition(Texture::Layout::GENERAL, renderInfo.frame);
-		emissiveTexture->Transition(Texture::Layout::GENERAL, renderInfo.frame);
 
 		glm::uvec2 groupCount = renderInfo.viewportSize / glm::ivec2(16, 16);
 		groupCount += glm::uvec2(1, 1);
 		renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
-
-		colorTexture->Transition(Texture::Layout::SHADER_READ_ONLY_OPTIMAL, renderInfo.frame);
-		emissiveTexture->Transition(Texture::Layout::SHADER_READ_ONLY_OPTIMAL, renderInfo.frame);
 
 		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 	};

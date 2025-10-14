@@ -72,6 +72,8 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 			imageData.image,
 			imageData.vmaAllocation,
 			imageData.vmaAllocationInfo);
+
+		TransitionInternal(imageData, VK_IMAGE_LAYOUT_GENERAL);
 	}
 
 	if (createInfo.data)
@@ -84,20 +86,14 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 
 		for (auto& imageData : m_ImageDatas)
 		{
-			TransitionInternal(imageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-
 			GetVkDevice()->CopyBufferToImage(
 				stagingBuffer->GetBuffer(),
 				imageData.image,
 				static_cast<uint32_t>(m_Size.x),
 				static_cast<uint32_t>(m_Size.y));
 
-			TransitionInternal(imageData, VkImageLayout::VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
 			if (m_MipLevels > 1)
 			{
-				TransitionInternal(imageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-
 				GetVkDevice()->GenerateMipMaps(
 					imageData.image,
 					ConvertFormat(m_Format),
@@ -106,24 +102,7 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 					m_MipLevels,
 					m_LayerCount,
 					VK_NULL_HANDLE);
-
-				imageData.m_PreviousLayout = VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-				imageData.m_Layout = VkImageLayout::VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			}
-		}
-	}
-	else if ((imageInfo.usage & VkImageUsageFlagBits::VK_IMAGE_USAGE_STORAGE_BIT) == VkImageUsageFlagBits::VK_IMAGE_USAGE_STORAGE_BIT)
-	{
-		for (auto& imageData : m_ImageDatas)
-		{
-			TransitionInternal(imageData, VkImageLayout::VK_IMAGE_LAYOUT_GENERAL);
-		}
-	}
-	else
-	{
-		for (auto& imageData : m_ImageDatas)
-		{
-			TransitionInternal(imageData, VkImageLayout::VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		}
 	}
 
@@ -157,20 +136,7 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 		binding.name = "imageTexture";
 		binding.binding = 0;
 		binding.count = 1;
-
-		// STORAGE usage is the first priority.
-		if ((imageInfo.usage & VkImageUsageFlagBits::VK_IMAGE_USAGE_STORAGE_BIT) == VkImageUsageFlagBits::VK_IMAGE_USAGE_STORAGE_BIT)
-		{
-			binding.type = ShaderReflection::Type::STORAGE_IMAGE;
-		}
-		else if ((imageInfo.usage & VkImageUsageFlagBits::VK_IMAGE_USAGE_SAMPLED_BIT) == VkImageUsageFlagBits::VK_IMAGE_USAGE_SAMPLED_BIT)
-		{
-			binding.type = ShaderReflection::Type::COMBINED_IMAGE_SAMPLER;
-		}
-		else
-		{
-			Logger::Warning("Texture:" + GetFilepath().string() + " doesn't have any usage!");
-		}
+		binding.type = ShaderReflection::Type::COMBINED_IMAGE_SAMPLER;
 
 		m_UniformWriter = UniformWriter::Create(UniformLayout::Create(bindings), IsMultiBuffered());
 		std::shared_ptr<VulkanUniformWriter> vkUniformWriter = std::dynamic_pointer_cast<VulkanUniformWriter>(m_UniformWriter);
@@ -552,9 +518,6 @@ void VulkanTexture::Copy(
 	ImageData& srcImageData = vkSrc->GetImageData();
 	ImageData& dstImageData = GetImageData();
 
-	TransitionInternal(srcImageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-	TransitionInternal(dstImageData, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-
 	Vk::GetVkDevice()->CopyImageToImage(
 		srcImageData.image,
 		srcImageData.m_Layout,
@@ -564,9 +527,6 @@ void VulkanTexture::Copy(
 		region.dstOffset,
 		region.extent,
 		commandBuffer);
-
-	TransitionInternal(srcImageData, srcImageData.m_PreviousLayout);
-	TransitionInternal(dstImageData, dstImageData.m_PreviousLayout);
 }
 
 void VulkanTexture::Transition(Layout layout, void* frame)

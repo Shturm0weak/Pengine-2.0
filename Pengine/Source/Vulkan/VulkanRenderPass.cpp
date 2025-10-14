@@ -26,8 +26,8 @@ VulkanRenderPass::VulkanRenderPass(const CreateInfo& createInfo)
 		attachment.storeOp = (VkAttachmentStoreOp)attachmentDescription.store;
 		attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachment.initialLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		attachment.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		attachment.initialLayout = VK_IMAGE_LAYOUT_GENERAL;
+		attachment.finalLayout = VK_IMAGE_LAYOUT_GENERAL;
 
 		attachments[attachmentIndex] = attachment;
 

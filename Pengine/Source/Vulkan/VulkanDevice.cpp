@@ -211,6 +211,7 @@ void VulkanDevice::CreateLogicalDevice()
 	deviceFeatures.geometryShader = VK_TRUE;
 	deviceFeatures.depthClamp = VK_TRUE;
 	deviceFeatures.independentBlend = VK_TRUE;
+	deviceFeatures.fragmentStoresAndAtomics = VK_TRUE;
 
 	VkPhysicalDeviceVulkan12Features vulkan12Features{};
 	vulkan12Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
@@ -859,7 +860,7 @@ void VulkanDevice::CopyBufferToImage(
 		commandBuffer,
 		buffer,
 		image,
-		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		VK_IMAGE_LAYOUT_GENERAL,
 		1,
 		&region);
 
@@ -1087,8 +1088,8 @@ void VulkanDevice::GenerateMipMaps(
 		for (uint32_t mipLevel = 1; mipLevel < mipLevels; mipLevel++)
 		{
 			barrier.subresourceRange.baseMipLevel = mipLevel - 1;
-			barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-			barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+			barrier.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
+			barrier.newLayout = VK_IMAGE_LAYOUT_GENERAL;
 			barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 			barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 
@@ -1113,13 +1114,13 @@ void VulkanDevice::GenerateMipMaps(
 			blit.dstSubresource.layerCount = 1;
 
 			vkCmdBlitImage(commandBuffer,
-				image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-				image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				image, VK_IMAGE_LAYOUT_GENERAL,
+				image, VK_IMAGE_LAYOUT_GENERAL,
 				1, &blit,
 				VK_FILTER_LINEAR);
 
-			barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-			barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			barrier.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
+			barrier.newLayout = VK_IMAGE_LAYOUT_GENERAL;
 			barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
@@ -1134,8 +1135,8 @@ void VulkanDevice::GenerateMipMaps(
 		}
 
 		barrier.subresourceRange.baseMipLevel = mipLevels - 1;
-		barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-		barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		barrier.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
+		barrier.newLayout = VK_IMAGE_LAYOUT_GENERAL;
 		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
