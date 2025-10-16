@@ -8,6 +8,10 @@ struct DefaultMaterial
 	float aoFactor;
 	float emissiveFactor;
 	float alphaCutoff;
+	int maxParallaxLayers;
+	int minParallaxLayers;
+    float parallaxHeightScale;
 	int useNormalMap;
 	int useAlphaCutoff;
+	int useParallaxOcclusion;
 };

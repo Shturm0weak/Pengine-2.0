@@ -2353,7 +2353,7 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 	{
 		Indent indent;
 
-		if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
+		if (r3d.mesh && r3d.mesh->GetType() == Mesh::Type::SKINNED)
 		{
 			if (r3d.skeletalAnimatorEntity.IsValid())
 			{
@@ -3157,7 +3157,9 @@ void Editor::MaterialMenu::Update(Editor& editor)
 								{
 									if (variable.type == ShaderReflection::ReflectVariable::Type::INT)
 									{
-										isChanged += ImGui::Checkbox(variable.name.c_str(), &Utils::GetValue<bool>(data, variable.offset));
+										bool used = (bool)Utils::GetValue<int>(data, variable.offset);
+										isChanged += ImGui::Checkbox(variable.name.c_str(), &used);
+										Utils::GetValue<int>(data, variable.offset) = (int)used;
 									}
 									return;
 								}

@@ -13,6 +13,8 @@ layout(location = 1) out vec3 tangentViewSpace;
 layout(location = 2) out vec3 bitangentViewSpace;
 layout(location = 3) out vec2 uv;
 layout(location = 4) out vec4 color;
+layout(location = 5) out vec3 positionTangentSpace;
+layout(location = 6) out vec3 cameraPositionTangentSpace;
 
 #include "Shaders/Includes/Camera.h"
 layout(set = 0, binding = 0) uniform GlobalBuffer
@@ -28,17 +30,27 @@ layout(set = 1, binding = 0) uniform GBufferMaterial
 
 void main()
 {
-	gl_Position = camera.viewProjectionMat4 * transformA * vec4(positionA, 1.0f);
+	vec4 positionWorldSpace = transformA * vec4(positionA, 1.0f);
+	gl_Position = camera.viewProjectionMat4 * positionWorldSpace;
 
-	vec3 normal = normalize(normalA);
-	vec3 tangent = normalize(tangentA.xyz);
+	vec3 normal = normalize(inverseTransformA * normalize(normalA));
+	vec3 tangent = normalize(inverseTransformA * normalize(tangentA.xyz));
 	vec3 bitangent = normalize(cross(normal, tangent) * tangentA.w);
 
-	mat3 viewMat3 = mat3(camera.viewMat4) * inverseTransformA;
+	if (material.useParallaxOcclusion > 0)
+	{
+		vec3 T   = tangent;
+    	vec3 B   = bitangent;
+   		vec3 N   = normal;
+    	mat3 TBN = transpose(mat3(T, B, N));
 
-	normalViewSpace = normalize(viewMat3 * normal);
-	tangentViewSpace = normalize(viewMat3 * tangent);
-	bitangentViewSpace = normalize(viewMat3 * bitangent);
+		cameraPositionTangentSpace = TBN * camera.position;
+    	positionTangentSpace = TBN * positionWorldSpace.xyz;
+	}
+
+	normalViewSpace = normalize(mat3(camera.viewMat4) * normal);
+	tangentViewSpace = normalize(mat3(camera.viewMat4) * tangent);
+	bitangentViewSpace = normalize(mat3(camera.viewMat4) * bitangent);
 
 	uv = uvA * material.uvTransform.xy + material.uvTransform.zw;
 

@@ -1,0 +1,77 @@
+Mat:
+  Basemat: 0x5e24d711eb129f19fc9801b407c05618
+  Options:
+    - Name: Transparency
+      IsEnabled: false
+      Active:
+        - Transparent
+      Inactive:
+        - GBuffer
+  Pipelines:
+    - RenderPass: GBuffer
+      Uniforms:
+        - Name: GBufferMaterial
+          Values:
+            - Name: material.albedoColor
+              Value: [1, 1, 1, 1]
+              Type: vec4
+            - Name: material.emissiveColor
+              Value: [1, 1, 1, 1]
+              Type: vec4
+            - Name: material.uvTransform
+              Value: [2, 2, 0, 0]
+              Type: vec4
+            - Name: material.metallicFactor
+              Value: 1
+              Type: float
+            - Name: material.roughnessFactor
+              Value: 1
+              Type: float
+            - Name: material.aoFactor
+              Value: 1
+              Type: float
+            - Name: material.emissiveFactor
+              Value: 0
+              Type: float
+            - Name: material.alphaCutoff
+              Value: 0.00999999978
+              Type: float
+            - Name: material.maxParallaxLayers
+              Value: 8
+              Type: int
+            - Name: material.minParallaxLayers
+              Value: 8
+              Type: int
+            - Name: material.parallaxHeightScale
+              Value: 0.0500000007
+              Type: float
+            - Name: material.useNormalMap
+              Value: 1
+              Type: int
+            - Name: material.useAlphaCutoff
+              Value: 0
+              Type: int
+            - Name: material.useParallaxOcclusion
+              Value: 1
+              Type: int
+        - Name: albedoTexture
+          Value: 0x5d80c66ccb76c6363c64cd6cd54416b4
+        - Name: normalTexture
+          Value: 0xd31bd8e41bc3cbada5ca1722f344c344
+        - Name: metallicRoughnessTexture
+          Value: 0x3792f93537beaf6d8f3024a8b61d0c47
+        - Name: aoTexture
+          Value: 0x3abe5ad962af915cd0bc97f3b171facc
+        - Name: emissiveTexture
+          Value: White
+        - Name: heightTexture
+          Value: 0x6a4d5f66c3897879aef61c9c63c5ad5b
+    - RenderPass: Transparent
+      Uniforms:
+        []
+    - RenderPass: CSM
+      Uniforms:
+        []
+    - RenderPass: ZPrePass
+      Uniforms:
+        []

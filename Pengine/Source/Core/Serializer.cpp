@@ -3433,6 +3433,18 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 	material->WriteToBuffer("GBufferMaterial", "material.roughnessFactor", gltfMaterial.pbrData.roughnessFactor);
 	material->WriteToBuffer("GBufferMaterial", "material.emissiveFactor", gltfMaterial.emissiveStrength);
 
+	{
+		const int useParallaxOcclusion = 0;
+		const int minParallaxLayers = 0;
+		const int maxParallaxLayers = 0;
+		const float parallaxHeightScale = 0.0f;
+		material->WriteToBuffer("GBufferMaterial", "material.useParallaxOcclusion", useParallaxOcclusion);
+		material->WriteToBuffer("GBufferMaterial", "material.minParallaxLayers", minParallaxLayers);
+		material->WriteToBuffer("GBufferMaterial", "material.maxParallaxLayers", maxParallaxLayers);
+		material->WriteToBuffer("GBufferMaterial", "material.parallaxHeightScale", parallaxHeightScale);
+		uniformWriter->WriteTexture("heightTexture", TextureManager::GetInstance().GetWhite());
+	}
+
 	float ao = 1.0f;
 	material->WriteToBuffer("GBufferMaterial", "material.aoFactor", ao);
 

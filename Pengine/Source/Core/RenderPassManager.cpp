@@ -187,6 +187,13 @@ void RenderPassManager::PrepareUniformsPerViewportBeforeDraw(const RenderPass::R
 		"camera.inverseRotationMat4",
 		inverseRotationMat4);
 
+	const glm::vec3 position = cameraTransform.GetPosition();
+	reflectionBaseMaterial->WriteToBuffer(
+		globalBuffer,
+		globalBufferName,
+		"camera.position",
+		position);
+
 	const float time = Time::GetTime();
 	reflectionBaseMaterial->WriteToBuffer(
 		globalBuffer,

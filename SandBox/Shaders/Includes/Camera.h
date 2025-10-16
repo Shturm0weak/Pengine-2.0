@@ -12,6 +12,7 @@ struct Camera
 	float deltaTime;
 	float zFar;
 	float zNear;
+	vec3 position;
 };
 
 vec3 CalculatePositionFromDepth(

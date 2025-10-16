@@ -10,16 +10,6 @@ Mat:
   Pipelines:
     - RenderPass: GBuffer
       Uniforms:
-        - Name: albedoTexture
-          Value: White
-        - Name: normalTexture
-          Value: Black
-        - Name: metallicRoughnessTexture
-          Value: White
-        - Name: aoTexture
-          Value: White
-        - Name: emissiveTexture
-          Value: White
         - Name: GBufferMaterial
           Values:
             - Name: material.albedoColor
@@ -44,7 +34,16 @@ Mat:
               Value: 0
               Type: float
             - Name: material.alphaCutoff
-              Value: 0.01
+              Value: 0.00999999978
+              Type: float
+            - Name: material.maxParallaxLayers
+              Value: 0
+              Type: int
+            - Name: material.minParallaxLayers
+              Value: 0
+              Type: int
+            - Name: material.parallaxHeightScale
+              Value: 0
               Type: float
             - Name: material.useNormalMap
               Value: 0
@@ -52,6 +51,21 @@ Mat:
             - Name: material.useAlphaCutoff
               Value: 0
               Type: int
+            - Name: material.useParallaxOcclusion
+              Value: 0
+              Type: int
+        - Name: albedoTexture
+          Value: White
+        - Name: normalTexture
+          Value: Black
+        - Name: metallicRoughnessTexture
+          Value: White
+        - Name: aoTexture
+          Value: White
+        - Name: emissiveTexture
+          Value: White
+        - Name: heightTexture
+          Value: White
     - RenderPass: Transparent
       Uniforms:
         []

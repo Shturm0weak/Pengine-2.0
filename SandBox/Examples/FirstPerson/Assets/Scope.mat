@@ -36,10 +36,22 @@ Mat:
             - Name: material.alphaCutoff
               Value: 0.5
               Type: float
+            - Name: material.maxParallaxLayers
+              Value: 0
+              Type: int
+            - Name: material.minParallaxLayers
+              Value: 0
+              Type: int
+            - Name: material.parallaxHeightScale
+              Value: 0
+              Type: float
             - Name: material.useNormalMap
               Value: 1
               Type: int
             - Name: material.useAlphaCutoff
+              Value: 0
+              Type: int
+            - Name: material.useParallaxOcclusion
               Value: 0
               Type: int
         - Name: albedoTexture
@@ -52,6 +64,8 @@ Mat:
           Value: White
         - Name: emissiveTexture
           Value: 0x8cd0aa95b05029061313a7c1faf3d47e
+        - Name: heightTexture
+          Value: White
     - RenderPass: Transparent
       Uniforms:
         []

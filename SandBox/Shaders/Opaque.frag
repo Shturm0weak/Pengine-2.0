@@ -5,6 +5,8 @@ layout(location = 1) in vec3 tangentViewSpace;
 layout(location = 2) in vec3 bitangentViewSpace;
 layout(location = 3) in vec2 uv;
 layout(location = 4) in vec4 color;
+layout(location = 5) in vec3 positionTangentSpace;
+layout(location = 6) in vec3 cameraPositionTangentSpace;
 
 layout(location = 0) out vec4 outAlbedo;
 layout(location = 1) out vec4 outNormal;
@@ -16,6 +18,7 @@ layout(set = 1, binding = 2) uniform sampler2D normalTexture;
 layout(set = 1, binding = 3) uniform sampler2D metallicRoughnessTexture;
 layout(set = 1, binding = 4) uniform sampler2D aoTexture;
 layout(set = 1, binding = 5) uniform sampler2D emissiveTexture;
+layout(set = 1, binding = 6) uniform sampler2D heightTexture;
 
 #include "Shaders/Includes/DefaultMaterial.h"
 layout(set = 1, binding = 0) uniform GBufferMaterial
@@ -29,9 +32,24 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 	Camera camera;
 };
 
+#include "Shaders/Includes/ParallaxOcclusionMapping.h"
+
 void main()
 {
-	vec4 albedoColor = texture(albedoTexture, uv) * material.albedoColor * color;
+	vec2 finalUV = uv;
+	if (material.useParallaxOcclusion > 0)
+	{
+		vec3 viewDirection = normalize(cameraPositionTangentSpace - positionTangentSpace);
+		finalUV = ParallaxOcclusionMapping(
+			heightTexture,
+			finalUV,
+			viewDirection,
+			material.minParallaxLayers,
+			material.maxParallaxLayers,
+			material.parallaxHeightScale);
+	}
+
+	vec4 albedoColor = texture(albedoTexture, finalUV) * material.albedoColor * color;
 	if (material.useAlphaCutoff > 0)
 	{
 		if (albedoColor.a < material.alphaCutoff)
@@ -40,10 +58,10 @@ void main()
 		}
 	}
 
-	vec3 metallicRoughness = texture(metallicRoughnessTexture, uv).xyz;
+	vec3 metallicRoughness = texture(metallicRoughnessTexture, finalUV).xyz;
 	float metallic = metallicRoughness.b;
 	float roughness = metallicRoughness.g;
-	float ao = texture(aoTexture, uv).r;
+	float ao = texture(aoTexture, finalUV).r;
 
 	outAlbedo = albedoColor;
 	outShading = vec4(
@@ -51,14 +69,14 @@ void main()
 		roughness * material.roughnessFactor,
 		ao * material.aoFactor,
 		1.0f);
-	outEmissive = texture(emissiveTexture, uv) * material.emissiveColor * material.emissiveFactor;
+	outEmissive = texture(emissiveTexture, finalUV) * material.emissiveColor * material.emissiveFactor;
 
 	vec3 normal = gl_FrontFacing ? normalViewSpace : -normalViewSpace;
 	normal = normalize(normal);
 	if (material.useNormalMap > 0)
 	{
 		mat3 TBN = mat3(normalize(tangentViewSpace), normalize(bitangentViewSpace), normal);
-		normal = texture(normalTexture, uv).xyz;
+		normal = texture(normalTexture, finalUV).xyz;
 		normal = normal * 2.0f - 1.0f;
 		outNormal = vec4(normalize(TBN * normal), 1.0f);
 	}

@@ -36,11 +36,23 @@ Mat:
             - Name: material.alphaCutoff
               Value: 0.00999999978
               Type: float
+            - Name: material.maxParallaxLayers
+              Value: 0
+              Type: int
+            - Name: material.minParallaxLayers
+              Value: 0
+              Type: int
+            - Name: material.parallaxHeightScale
+              Value: 0
+              Type: float
             - Name: material.useNormalMap
               Value: 0
               Type: int
             - Name: material.useAlphaCutoff
               Value: 0
+              Type: int
+            - Name: material.useParallaxOcclusion
+              Value: -842150656
               Type: int
             - Name: size
               Value: [1, 1]

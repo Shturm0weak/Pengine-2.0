@@ -7,7 +7,7 @@ Scene:
     IsEnabled: true
     Transform:
       Position: [0, 0, 0]
-      Rotation: [0.925024509, 0, 0]
+      Rotation: [2.6246264, 0, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     DirectionalLight:
@@ -140,14 +140,14 @@ Scene:
     Name: Sphere
     IsEnabled: true
     Transform:
-      Position: [18.6562195, -8, 12.3882961]
-      Rotation: [-0.0250021219, 0.00163260009, 0.052434817]
-      Scale: [1, 1, 1]
+      Position: [18.6560898, -8.00019264, 12.3883533]
+      Rotation: [-2.14046288, 0.00163284794, 0.0524343103]
+      Scale: [0.999990702, 0.999933362, 0.999956131]
       FollowOwner: true
     Renderer3D:
       SkeletalAnimatorEntity: 0x7b1b68777b60284e70109ec97f3d24dc
       Mesh: 0x9542e08eb0733885db5f792d5038d44b
-      Material: 0xf2f5b71fa89eeb7f390c5933c9682563
+      Material: 0x6572a3dea6d7cc7d2344c15bae8abe3e
       RenderingOrder: 5
       IsEnabled: true
     RigidBody:
@@ -184,8 +184,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [19.3425312, -6.39757967, 10.2977991]
-      Rotation: [-0.574559212, -3.6664443, 0]
+      Position: [5.25048637, -8.25393009, 9.15899944]
+      Rotation: [-0.885086954, 2.9658556, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -295,5 +295,49 @@ Scene:
       Intensity: 2
       Radius: 10
       DrawBoundingSphere: false
+    Childs:
+      []
+  - UUID: 0x3c109db832e4bc77b904cc25e34f2307
+    Name: Plane
+    IsEnabled: true
+    Transform:
+      Position: [9.5, -7, 1.00639784]
+      Rotation: [1.57079637, -0, 0]
+      Scale: [2, 1, 2]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0xbb35d426687612a4075674c8b6318b4e
+      Mesh: 0x3f83219ad29d9c27728dd755119284cd
+      Material: 0x6572a3dea6d7cc7d2344c15bae8abe3e
+      RenderingOrder: 5
+      IsEnabled: true
+    Childs:
+      []
+  - UUID: 0xa0401c11c79052d8b5a4f4f8360c99e8
+    Name: Plane
+    IsEnabled: true
+    Transform:
+      Position: [13.5, -7, 1.00639796]
+      Rotation: [1.57079637, -0, 0]
+      Scale: [2, 1, 2]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0xbb35d426687612a4075674c8b6318b4e
+      Mesh: 0x3f83219ad29d9c27728dd755119284cd
+      Material: 0x6572a3dea6d7cc7d2344c15bae8abe3e
+      RenderingOrder: 5
+      IsEnabled: true
+    Childs:
+      []
+  - UUID: 0xc826a4938ca26a8bbd7e20edc7b87afd
+    Name: Unnamed
+    IsEnabled: true
+    Transform:
+      Position: [5, -9, 10]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Decal:
+      Material: 0xb1c9112b47daf087a51e26c3a0f74edb
     Childs:
       []

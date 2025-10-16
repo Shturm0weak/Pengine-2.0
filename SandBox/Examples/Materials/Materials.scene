@@ -1,0 +1,164 @@
+Settings:
+  DrawBoundingBoxes: false
+GraphicsSettings: 0xa72c7a2630143bb38403a712dde47cac
+Scene:
+  - UUID: 0x29619794c3d4bff2768389e64f7fe0a1
+    Name: DirectionalLight
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0.785398185, 0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    DirectionalLight:
+      Color: [1, 1, 1]
+      Intensity: 2
+      Ambient: 0.100000001
+    Childs:
+      []
+  - UUID: 0x717b67e0d4040203c577f13012114b78
+    Name: Camera
+    IsEnabled: true
+    Transform:
+      Position: [-18.5334854, 2.80292511, -6.40641308]
+      Rotation: [-0.445836663, 3.65504694, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Camera:
+      Fov: 1.57079637
+      Type: 1
+      ZNear: 0.100000001
+      ZFar: 1000
+      PassName: Final
+      RenderTargetIndex: 0
+      Viewport: Main
+    Childs:
+      []
+  - UUID: 0x6b9af152906d4c23154546157258bdb8
+    Name: BrickWall
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x0fe75ff2d6d576dfbc6c1e5710638777
+      Mesh: 0x9542e08eb0733885db5f792d5038d44b
+      Material: 0x53ba3974bfcc3896aaa350e2657291f4
+      RenderingOrder: 5
+      IsEnabled: true
+    Childs:
+      []
+  - UUID: 0x25677bc7513d5ff2b6738850f69d336c
+    Name: CastleBrickBroken
+    IsEnabled: true
+    Transform:
+      Position: [-3, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x0fe75ff2d6d576dfbc6c1e5710638777
+      Mesh: 0x9542e08eb0733885db5f792d5038d44b
+      Material: 0x5281db838f8526f0cf5516d7b64b5e9d
+      RenderingOrder: 5
+      IsEnabled: true
+    Childs:
+      []
+  - UUID: 0x0b6e7a905d70e962a347800850b72e36
+    Name: OakVeneer
+    IsEnabled: true
+    Transform:
+      Position: [-6, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x0fe75ff2d6d576dfbc6c1e5710638777
+      Mesh: 0x9542e08eb0733885db5f792d5038d44b
+      Material: 0x90a23f15a60752eec4a038bb36ea3108
+      RenderingOrder: 5
+      IsEnabled: true
+    Childs:
+      []
+  - UUID: 0x4bbe0dde4e535cf8c0b1a702422972ba
+    Name: RockyTerrain
+    IsEnabled: true
+    Transform:
+      Position: [-9, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x0fe75ff2d6d576dfbc6c1e5710638777
+      Mesh: 0x9542e08eb0733885db5f792d5038d44b
+      Material: 0xb2b69a0abe3987837cbc88861f4f4af3
+      RenderingOrder: 5
+      IsEnabled: true
+    Childs:
+      []
+  - UUID: 0xcdec6acb63350265f33eadad2af9f6b6
+    Name: MetalPlate
+    IsEnabled: true
+    Transform:
+      Position: [-12, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x0fe75ff2d6d576dfbc6c1e5710638777
+      Mesh: 0x9542e08eb0733885db5f792d5038d44b
+      Material: 0x8cfa6bcbbbdee0d64062328bf3cfce84
+      RenderingOrder: 5
+      IsEnabled: true
+    Childs:
+      []
+  - UUID: 0x6e483a26cb66157d5519794e6b87bb14
+    Name: RustyMetal
+    IsEnabled: true
+    Transform:
+      Position: [-15, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x0fe75ff2d6d576dfbc6c1e5710638777
+      Mesh: 0x9542e08eb0733885db5f792d5038d44b
+      Material: 0x781ee073efc6f0e47c306679bc6280f2
+      RenderingOrder: 5
+      IsEnabled: true
+    Childs:
+      []
+  - UUID: 0x64aac8a311af25bd44e51572583abd0d
+    Name: SlabTIles
+    IsEnabled: true
+    Transform:
+      Position: [-18, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x0fe75ff2d6d576dfbc6c1e5710638777
+      Mesh: 0x9542e08eb0733885db5f792d5038d44b
+      Material: 0x0f38fbe57e399522266dc934d155cd1f
+      RenderingOrder: 5
+      IsEnabled: true
+    Childs:
+      []
+  - UUID: 0xa15c5609eb4bdb49748b532603fc3472
+    Name: CheckeredPavementTiles
+    IsEnabled: true
+    Transform:
+      Position: [-21, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x0fe75ff2d6d576dfbc6c1e5710638777
+      Mesh: 0x9542e08eb0733885db5f792d5038d44b
+      Material: 0x962e6b5baffe148b78481d828d970373
+      RenderingOrder: 5
+      IsEnabled: true
+    Childs:
+      []

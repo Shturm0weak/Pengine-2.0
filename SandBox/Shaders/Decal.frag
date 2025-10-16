@@ -11,6 +11,7 @@ layout(set = 1, binding = 2) uniform sampler2D normalTexture;
 layout(set = 1, binding = 3) uniform sampler2D metallicRoughnessTexture;
 layout(set = 1, binding = 4) uniform sampler2D aoTexture;
 layout(set = 1, binding = 5) uniform sampler2D emissiveTexture;
+layout(set = 1, binding = 6) uniform sampler2D heightTexture;
 
 #include "Shaders/Includes/DefaultMaterial.h"
 layout(set = 1, binding = 0) uniform GBufferMaterial
@@ -27,6 +28,24 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 layout(set = 2, binding = 0) uniform sampler2D depthGBufferTexture;
 layout(set = 2, binding = 1, rgba16f) uniform image2D normalGBufferTexture;
 
+#include "Shaders/Includes/ParallaxOcclusionMapping.h"
+
+mat3 ConstructTBN( vec3 N, vec3 p, vec2 uv )
+{
+	// get edge vectors of the pixel triangle
+	vec3 dp1 = dFdx( p );
+	vec3 dp2 = dFdy( p );
+	vec2 duv1 = dFdx( uv );
+	vec2 duv2 = dFdy( uv );
+	// solve the linear system
+	vec3 dp2perp = cross( dp2, N );
+	vec3 dp1perp = cross( N, dp1 );
+	vec3 T = dp2perp * duv1.x + dp1perp * duv2.x;
+	vec3 B = dp2perp * duv1.y + dp1perp * duv2.y;
+	// construct a scale-invariant frame
+	float invmax = inversesqrt( max( dot(T,T), dot(B,B) ) );
+	return mat3( T * invmax, B * invmax, N ); }
+
 void main()
 {
     ivec2 pixelCoord = ivec2(gl_FragCoord.xy);
@@ -42,8 +61,8 @@ void main()
         camera.projectionMat4,
         viewRay);
 
-    vec3 worldSpacePosition = (camera.inverseViewMat4 * vec4(positionViewSpace, 1.0f)).xyz;
-    vec3 localPosition = vec4(inverseTransform * vec4(worldSpacePosition, 1.0f)).xyz;
+    vec3 positionWorldSpace = (camera.inverseViewMat4 * vec4(positionViewSpace, 1.0f)).xyz;
+    vec3 localPosition = vec4(inverseTransform * vec4(positionWorldSpace, 1.0f)).xyz;
     vec2 decalUV = localPosition.xz * 0.5f + 0.5f;
 
     if (abs(localPosition.x) > 1.0f || abs(localPosition.z) > 1.0f ||
@@ -52,7 +71,27 @@ void main()
 		discard;
 	}
 
-	vec4 albedoColor = texture(albedoTexture, decalUV.xy) * material.albedoColor;
+	vec4 gbufferNormal = imageLoad(normalGBufferTexture, pixelCoord);
+	
+	vec2 uvForTBN = decalUV;
+	if (material.useParallaxOcclusion > 0)
+	{
+		vec3 normalWorldSpace = normalize(mat3(camera.inverseViewMat4) * normalize(gbufferNormal.xyz));
+		mat3 TBN = transpose(ConstructTBN(normalWorldSpace, positionWorldSpace, uvForTBN));
+
+		vec3 cameraPositionTangentSpace = TBN * camera.position;
+    	vec3 positionTangentSpace = TBN * positionWorldSpace;
+		vec3 viewDirection = normalize(cameraPositionTangentSpace - positionTangentSpace);
+		decalUV = ParallaxOcclusionMapping(
+			heightTexture,
+			decalUV,
+			viewDirection,
+			material.minParallaxLayers,
+			material.maxParallaxLayers,
+			-material.parallaxHeightScale);
+	}
+
+	vec4 albedoColor = texture(albedoTexture, decalUV) * material.albedoColor;
 	if (material.useAlphaCutoff > 0)
 	{
 		if (albedoColor.a < material.alphaCutoff)
@@ -61,10 +100,10 @@ void main()
 		}
 	}
 
-	vec3 metallicRoughness = texture(metallicRoughnessTexture, decalUV.xy).xyz;
+	vec3 metallicRoughness = texture(metallicRoughnessTexture, decalUV).xyz;
 	float metallic = metallicRoughness.b;
 	float roughness = metallicRoughness.g;
-	float ao = texture(aoTexture, decalUV.xy).r;
+	float ao = texture(aoTexture, decalUV).r;
 
 	outAlbedo = albedoColor;
 	outShading = vec4(
@@ -72,25 +111,17 @@ void main()
 		roughness * material.roughnessFactor,
 		ao * material.aoFactor,
 		1.0f);
-	outEmissive = texture(emissiveTexture, decalUV.xy) * material.emissiveColor * material.emissiveFactor;
-
-	vec4 gbufferNormal = imageLoad(normalGBufferTexture, pixelCoord);
-	vec3 normal = gbufferNormal.xyz;
-
-	vec3 up = normalize(mat3(camera.viewMat4) * vec3(0.0f, 1.0f, 0.0f));
-	if (abs(dot(normal, up)) > 0.999f)
-	{
-		up = normalize(mat3(camera.viewMat4) * vec3(1.0f, 0.0f, 0.0f));
-	}
-
-	vec3 tangent = normalize(cross(normal, up));
-	vec3 bitangent = cross(normal, tangent);
-
+	outEmissive = texture(emissiveTexture, decalUV) * material.emissiveColor * material.emissiveFactor;
+	
 	if (material.useNormalMap > 0)
 	{
-		mat3 TBN = mat3(tangent, bitangent, normal);
-		vec3 normalMap = texture(normalTexture, decalUV.xy).xyz;
+		mat3 TBN = ConstructTBN(gbufferNormal.xyz, positionViewSpace, uvForTBN);
+		vec3 normalMap = texture(normalTexture, decalUV).xyz;
 		normalMap = normalMap * 2.0f - 1.0f;
 		imageStore(normalGBufferTexture, pixelCoord, vec4(normalize(TBN * normalMap), gbufferNormal.a));
+	}
+	else
+	{
+		imageStore(normalGBufferTexture, pixelCoord, gbufferNormal);
 	}
 }
