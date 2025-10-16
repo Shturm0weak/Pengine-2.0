@@ -125,7 +125,7 @@ namespace Pengine
 			std::filesystem::path filepath;
 			UUID uuid;
 			bool createMipMaps = true;
-			bool srgb = true;
+			bool srgb = false;
 		};
 
 		struct CreateInfo

@@ -620,7 +620,7 @@ void RenderPassManager::CreateGBuffer()
 	normal.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription shading{};
-	shading.textureCreateInfo.format = Format::R8G8B8A8_SRGB;
+	shading.textureCreateInfo.format = Format::R8G8B8A8_UNORM;
 	shading.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
 	shading.textureCreateInfo.channels = 4;
 	shading.textureCreateInfo.isMultiBuffered = true;

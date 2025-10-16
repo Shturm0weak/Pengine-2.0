@@ -3450,11 +3450,16 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 
 	if (gltfMaterial.pbrData.baseColorTexture.has_value())
 	{
+		Texture::Meta meta{};
+		meta.uuid = UUID();
+		meta.createMipMaps = false;
+		meta.srgb = true;
 		if (const std::shared_ptr<Texture> albedoTexture = LoadGltfTexture(
 			gltfAsset,
 			gltfAsset.textures[gltfMaterial.pbrData.baseColorTexture->textureIndex],
 			directory,
-			materialName + "_BaseColor" + FileFormats::Png()))
+			materialName + "_BaseColor" + FileFormats::Png(),
+			meta))
 		{
 			uniformWriter->WriteTexture("albedoTexture", albedoTexture);
 		}
@@ -3462,16 +3467,11 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 
 	if (gltfMaterial.normalTexture.has_value())
 	{
-		Texture::Meta meta{};
-		meta.uuid = UUID();
-		meta.createMipMaps = false;
-		meta.srgb = false;
 		if (const std::shared_ptr<Texture> normalTexture = LoadGltfTexture(
 			gltfAsset,
 			gltfAsset.textures[gltfMaterial.normalTexture->textureIndex],
 			directory,
-			materialName + "_Normal" + FileFormats::Png(),
-			meta))
+			materialName + "_Normal" + FileFormats::Png()))
 		{
 			uniformWriter->WriteTexture("normalTexture", normalTexture);
 			constexpr int useNormalMap = 1;
