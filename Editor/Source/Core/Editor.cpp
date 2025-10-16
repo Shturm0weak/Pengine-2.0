@@ -1405,6 +1405,14 @@ void Editor::CameraComponent(const std::shared_ptr<Entity>& entity, Window& wind
 
 			ImGui::EndMenu();
 		}
+
+		auto objectVisibilityMask = camera.GetObjectVisibilityMask();
+		DrawBitMask("Object Visibility Mask", &objectVisibilityMask, 8, 2);
+		camera.SetObjectVisibilityMask(objectVisibilityMask);
+
+		auto shadowVisibilityMask = camera.GetShadowVisibilityMask();
+		DrawBitMask("Shadow Visibility Mask", &shadowVisibilityMask, 8, 2);
+		camera.SetShadowVisibilityMask(shadowVisibilityMask);
 	}
 }
 
@@ -2188,6 +2196,85 @@ void Editor::PlayButtonMenu(std::shared_ptr<Scene> scene)
 	ImGui::End();
 }
 
+void Editor::DrawBitMask(const std::string& label, void* bitMask, size_t bitCount, size_t maxRows)
+{
+	ImGui::Text(label.c_str());
+
+	ImGui::SameLine();
+
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 0.3f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.8f, 0.4f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.6f, 0.2f, 1.0f));
+
+	ImGui::PushID((label + "SetAll").c_str());
+	if (ImGui::Button("", { 16, 16 }))
+	{
+		for (size_t i = 0; i < bitCount; i++)
+		{
+			*(size_t*)bitMask |= (1 << i);
+		}
+	}
+	ImGui::PopID();
+
+	ImGui::PopStyleColor(3);
+
+	ImGui::SameLine();
+
+	ImGui::PushID((label + "ClearAll").c_str());
+	if (ImGui::Button("", { 16, 16 }))
+	{
+		for (size_t i = 0; i < bitCount; i++)
+		{
+			*(size_t*)bitMask &= ~(1 << i);
+		}
+	}
+	ImGui::PopID();
+
+	Indent indent;
+
+	size_t columns = bitCount / maxRows;
+	size_t rows = maxRows;
+
+	if (columns == 0)
+	{
+		rows = 1;
+		columns = bitCount;
+	}
+
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < columns; j++)
+		{
+			size_t index = i * columns + j;
+
+			bool bit = (*(size_t*)bitMask >> index) & 1;
+
+			if (bit)
+			{
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.7f, 0.3f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.8f, 0.4f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.6f, 0.2f, 1.0f));
+			}
+
+			ImGui::PushID((label + std::to_string(index)).c_str());
+			if (ImGui::Button("", { 16, 16 }))
+			{
+				*(size_t*)bitMask ^= (1 << index);
+			}
+			ImGui::PopID();
+
+			if (bit)
+			{
+				ImGui::PopStyleColor(3);
+			}
+
+			ImGui::SameLine();
+		}
+
+		ImGui::NewLine();
+	}
+}
+
 void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
 {
 	if (ImGui::BeginPopupContextWindow())
@@ -2439,10 +2526,17 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 		ImGui::Checkbox("Is Enabled", &r3d.isEnabled);
 		ImGui::PopID();
 
+		ImGui::PushID("R3D Cast Shadows");
+		ImGui::Checkbox("Cast Shadows", &r3d.castShadows);
+		ImGui::PopID();
+
 		const char* const renderingOrder[] = { "-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3", "4", "5", };
 		ImGui::PushID("R3D Rendering Order");
 		ImGui::Combo("Rendering Order", &r3d.renderingOrder, renderingOrder, 11);
 		ImGui::PopID();
+
+		DrawBitMask("Object Visibility Mask", &r3d.objectVisibilityMask, 8, 2);
+		DrawBitMask("Shadow Visibility Mask", &r3d.shadowVisibilityMask, 8, 2);
 	}
 }
 
@@ -2879,6 +2973,8 @@ void Editor::DecalComponent(const std::shared_ptr<Pengine::Entity>& entity)
 
 			ImGui::EndDragDropTarget();
 		}
+
+		DrawBitMask("Object Visibility Mask", &decal.objectVisibilityMask, 8, 2);
 	}
 }
 

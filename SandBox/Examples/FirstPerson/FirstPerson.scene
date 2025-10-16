@@ -30,6 +30,9 @@ Scene:
       Material: 0xf2f5b71fa89eeb7f390c5933c9682563
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     RigidBody:
       IsStatic: true
       Mass: 10
@@ -56,6 +59,9 @@ Scene:
       Material: 0xf2f5b71fa89eeb7f390c5933c9682563
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     RigidBody:
       IsStatic: false
       Mass: 10
@@ -86,6 +92,9 @@ Scene:
       Material: 0xf2f5b71fa89eeb7f390c5933c9682563
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     RigidBody:
       IsStatic: false
       Mass: 10
@@ -112,6 +121,9 @@ Scene:
       Material: 0xf2f5b71fa89eeb7f390c5933c9682563
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     RigidBody:
       IsStatic: false
       Mass: 10
@@ -134,6 +146,7 @@ Scene:
       FollowOwner: true
     Decal:
       Material: 0x2bf65207954bb2f6a61828b218911803
+      ObjectVisibilityMask: 255
     Childs:
       []
   - UUID: 0xba259bbd38248ae4c4ea0ed3a4f7fff8
@@ -150,6 +163,9 @@ Scene:
       Material: 0x6572a3dea6d7cc7d2344c15bae8abe3e
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     RigidBody:
       IsStatic: false
       Mass: 10
@@ -171,6 +187,7 @@ Scene:
           FollowOwner: true
         Decal:
           Material: 0x2bf65207954bb2f6a61828b218911803
+          ObjectVisibilityMask: 255
         Childs:
           []
   - PrefabFilepath: 0x29f3a7cd277509ef54f68a492bf5c9c9
@@ -184,8 +201,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [5.25048637, -8.25393009, 9.15899944]
-      Rotation: [-0.885086954, 2.9658556, 0]
+      Position: [-1.62417984, -6.60821724, -10.8929243]
+      Rotation: [-0.698030949, 1.04572368, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -195,6 +212,8 @@ Scene:
       ZFar: 1000
       PassName: Final
       RenderTargetIndex: 0
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     Childs:
       []
   - UUID: 0xf36997a588e9a4f3b5919dfa07776dbd
@@ -211,6 +230,9 @@ Scene:
       Material: 0xf2f5b71fa89eeb7f390c5933c9682563
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     RigidBody:
       IsStatic: true
       Mass: 1
@@ -237,6 +259,9 @@ Scene:
       Material: 0xf2f5b71fa89eeb7f390c5933c9682563
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     RigidBody:
       IsStatic: true
       Mass: 1
@@ -263,6 +288,9 @@ Scene:
       Material: 0xe501cfaa6618025c81e99026718b8258
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     RigidBody:
       IsStatic: false
       Mass: 10
@@ -311,6 +339,9 @@ Scene:
       Material: 0x6572a3dea6d7cc7d2344c15bae8abe3e
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     Childs:
       []
   - UUID: 0xa0401c11c79052d8b5a4f4f8360c99e8
@@ -327,6 +358,9 @@ Scene:
       Material: 0x6572a3dea6d7cc7d2344c15bae8abe3e
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     Childs:
       []
   - UUID: 0xc826a4938ca26a8bbd7e20edc7b87afd
@@ -339,5 +373,6 @@ Scene:
       FollowOwner: true
     Decal:
       Material: 0xb1c9112b47daf087a51e26c3a0f74edb
+      ObjectVisibilityMask: 255
     Childs:
       []

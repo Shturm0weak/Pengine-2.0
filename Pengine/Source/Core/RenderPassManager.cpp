@@ -403,6 +403,11 @@ void RenderPassManager::CreateZPrePass()
 		for (const entt::entity& entity : r3dView)
 		{
 			const Renderer3D& r3d = registry.get<Renderer3D>(entity);
+			if ((r3d.objectVisibilityMask & camera.GetObjectVisibilityMask()) == 0)
+			{
+				continue;
+			}
+
 			const Transform& transform = registry.get<Transform>(entity);
 			if (!transform.GetEntity()->IsEnabled() || !r3d.isEnabled)
 			{
@@ -1256,12 +1261,18 @@ void RenderPassManager::CreateTransparent()
 		renderDatasByRenderingOrder.resize(11);
 
 		size_t renderableCount = 0;
+		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
 		entt::registry& registry = scene->GetRegistry();
 		const auto r3dView = registry.view<Renderer3D>();
 		for (const entt::entity& entity : r3dView)
 		{
 			Renderer3D& r3d = registry.get<Renderer3D>(entity);
+			if ((r3d.objectVisibilityMask & camera.GetObjectVisibilityMask()) == 0)
+			{
+				continue;
+			}
+
 			Transform& transform = registry.get<Transform>(entity);
 			if (!transform.GetEntity()->IsEnabled() || !r3d.isEnabled)
 			{
@@ -1279,7 +1290,6 @@ void RenderPassManager::CreateTransparent()
 				continue;
 			}
 
-			const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 			const glm::mat4& transformMat4 = transform.GetTransform();
 			const BoundingBox& box = r3d.mesh->GetBoundingBox();
 
@@ -1671,6 +1681,17 @@ void RenderPassManager::CreateCSM()
 		for (const entt::entity& entity : r3dView)
 		{
 			const Renderer3D& r3d = registry.get<Renderer3D>(entity);
+
+			if (!r3d.castShadows)
+			{
+				continue;
+			}
+
+			if ((r3d.shadowVisibilityMask & camera.GetShadowVisibilityMask()) == 0)
+			{
+				continue;
+			}
+
 			const Transform& transform = registry.get<Transform>(entity);
 			if (!transform.GetEntity()->IsEnabled() || !r3d.isEnabled)
 			{
@@ -2682,6 +2703,11 @@ void RenderPassManager::CreateDecalPass()
 		for (const entt::entity& entity : r3dView)
 		{
 			const Decal& decal = registry.get<Decal>(entity);
+			if ((decal.objectVisibilityMask & camera.GetObjectVisibilityMask()) == 0)
+			{
+				continue;
+			}
+
 			const Transform& transform = registry.get<Transform>(entity);
 			if (!transform.GetEntity()->IsEnabled())
 			{

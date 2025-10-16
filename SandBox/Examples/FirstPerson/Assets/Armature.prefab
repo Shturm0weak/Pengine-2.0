@@ -6,17 +6,20 @@ Transform:
   Scale: [1, 1, 1]
   FollowOwner: true
 Renderer3D:
-  SkeletalAnimatorEntity: 0xf12e00844bd33939ae3d61438e8c2e2d
+  SkeletalAnimatorEntity: 0xd5999f4563213bb25c399d4bb2894e82
   RenderingOrder: 5
   IsEnabled: true
+  CastShadows: true
+  ObjectVisibilityMask: 255
+  ShadowVisibilityMask: 255
 SkeletalAnimator:
   Skeleton: 0x76c6238fe0a6171d063e86fad53120de
   SkeletalAnimation: 0x53cb7430f57b18999df5bc664d6de5ef
   Speed: 1
-  CurrentTime: 0.895811558
+  CurrentTime: 1.06177044
 Canvas:
   DrawInMainViewport: true
-  Size: [1612, 907]
+  Size: [1795, 907]
   ScriptNames:
     - Aim
     - Ammo
@@ -715,6 +718,8 @@ Childs:
       ZFar: 1000
       PassName: Final
       RenderTargetIndex: 0
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
       Viewport: Main
     Childs:
       - Name: Rifle
@@ -730,6 +735,9 @@ Childs:
           Material: 0x40dcb4baa2d1315fe57dd0e07a4d8344
           RenderingOrder: 5
           IsEnabled: true
+          CastShadows: true
+          ObjectVisibilityMask: 255
+          ShadowVisibilityMask: 255
         Childs:
           - Name: Silencer
             IsEnabled: true
@@ -744,6 +752,9 @@ Childs:
               Material: 0xc72f2d51c9d9e5496b643f7e08b60cf7
               RenderingOrder: 5
               IsEnabled: true
+              CastShadows: true
+              ObjectVisibilityMask: 255
+              ShadowVisibilityMask: 255
             Childs:
               []
           - Name: Scope
@@ -759,6 +770,9 @@ Childs:
               Material: 0x27d7c109427d352580c8d0d1c660e24b
               RenderingOrder: 5
               IsEnabled: true
+              CastShadows: true
+              ObjectVisibilityMask: 255
+              ShadowVisibilityMask: 255
             Childs:
               []
           - Name: Magazine
@@ -774,6 +788,9 @@ Childs:
               Material: 0x111f8a0b30bd7d5b40f8b31aca111700
               RenderingOrder: 5
               IsEnabled: true
+              CastShadows: true
+              ObjectVisibilityMask: 255
+              ShadowVisibilityMask: 255
             Childs:
               []
       - Name: Arms
@@ -789,5 +806,8 @@ Childs:
           Material: 0x692155fa5229ce3b3cd38e6d100fd712
           RenderingOrder: 5
           IsEnabled: true
+          CastShadows: true
+          ObjectVisibilityMask: 255
+          ShadowVisibilityMask: 255
         Childs:
           []

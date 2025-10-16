@@ -3895,6 +3895,9 @@ void Serializer::SerializeRenderer3D(YAML::Emitter& out, const std::shared_ptr<E
 
 	out << YAML::Key << "RenderingOrder" << YAML::Value << r3d.renderingOrder;
 	out << YAML::Key << "IsEnabled" << YAML::Value << r3d.isEnabled;
+	out << YAML::Key << "CastShadows" << YAML::Value << r3d.castShadows;
+	out << YAML::Key << "ObjectVisibilityMask" << YAML::Value << (uint32_t)r3d.objectVisibilityMask;
+	out << YAML::Key << "ShadowVisibilityMask" << YAML::Value << (uint32_t)r3d.shadowVisibilityMask;
 
 	out << YAML::EndMap;
 }
@@ -3923,6 +3926,21 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 		if (const auto& skeletalAnimatorEntityData = renderer3DData["SkeletalAnimatorEntity"])
 		{
 			r3d.skeletalAnimatorEntity = skeletalAnimatorEntityData.as<UUID>();
+		}
+
+		if (const auto& castShadowsData = renderer3DData["CastShadows"])
+		{
+			r3d.castShadows = castShadowsData.as<bool>();
+		}
+
+		if (const auto& objectVisibilityMaskData = renderer3DData["ObjectVisibilityMask"])
+		{
+			r3d.objectVisibilityMask = objectVisibilityMaskData.as<uint32_t>();
+		}
+
+		if (const auto& shadowVisibilityMaskData = renderer3DData["ShadowVisibilityMask"])
+		{
+			r3d.shadowVisibilityMask = shadowVisibilityMaskData.as<uint32_t>();
 		}
 
 		if (const auto& meshData = renderer3DData["Mesh"])
@@ -4240,6 +4258,8 @@ void Serializer::SerializeCamera(YAML::Emitter& out, const std::shared_ptr<Entit
 	out << YAML::Key << "ZFar" << YAML::Value << camera.GetZFar();
 	out << YAML::Key << "PassName" << YAML::Value << camera.GetPassName();
 	out << YAML::Key << "RenderTargetIndex" << YAML::Value << camera.GetRenderTargetIndex();
+	out << YAML::Key << "ObjectVisibilityMask" << YAML::Value << (uint32_t)camera.GetObjectVisibilityMask();
+	out << YAML::Key << "ShadowVisibilityMask" << YAML::Value << (uint32_t)camera.GetShadowVisibilityMask();
 
 	// TODO: Maybe do it more optimal.
 	// TODO: Also take window into account, for now it is just viewports, but viewports can have the same names across different windows.
@@ -4299,6 +4319,16 @@ void Serializer::DeserializeCamera(const YAML::Node& in, const std::shared_ptr<E
 		if (const auto& renderTargetIndexData = cameraData["RenderTargetIndex"])
 		{
 			camera.SetRenderTargetIndex(renderTargetIndexData.as<int>());
+		}
+
+		if (const auto& objectVisibilityMaskData = cameraData["ObjectVisibilityMask"])
+		{
+			camera.SetObjectVisibilityMask(objectVisibilityMaskData.as<uint32_t>());
+		}
+
+		if (const auto& shadowVisibilityMaskData = cameraData["ShadowVisibilityMask"])
+		{
+			camera.SetShadowVisibilityMask(shadowVisibilityMaskData.as<uint32_t>());
 		}
 
 		if (const auto& viewportData = cameraData["Viewport"])
@@ -4546,6 +4576,8 @@ void Serializer::SerializeDecal(YAML::Emitter& out, const std::shared_ptr<Entity
 		}
 	}
 
+	out << YAML::Key << "ObjectVisibilityMask" << YAML::Value << (uint32_t)decal.objectVisibilityMask;
+
 	out << YAML::EndMap;
 }
 
@@ -4591,6 +4623,11 @@ void Serializer::DeserializeDecal(const YAML::Node& in, const std::shared_ptr<En
 					EventSystem::GetInstance().SendEvent(event);
 				}
 			});
+		}
+
+		if (const auto& objectVisibilityMaskData = decalData["ObjectVisibilityMask"])
+		{
+			decal.objectVisibilityMask = objectVisibilityMaskData.as<uint32_t>();
 		}
 	}
 }

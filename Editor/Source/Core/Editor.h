@@ -124,6 +124,8 @@ private:
 
 	void PlayButtonMenu(std::shared_ptr<Pengine::Scene> scene);
 
+	void DrawBitMask(const std::string& label, void* bitMask, size_t bitCount, size_t maxRows);
+
 	struct MaterialMenu
 	{
 		std::shared_ptr<Pengine::Material> material = nullptr;

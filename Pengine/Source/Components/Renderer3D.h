@@ -21,6 +21,10 @@ namespace Pengine
 		int renderingOrder = 5;
 
 		bool isEnabled = true;
+		bool castShadows = true;
+
+		uint8_t objectVisibilityMask = -1;
+		uint8_t shadowVisibilityMask = -1;
 
 		UUID skeletalAnimatorEntity;
 

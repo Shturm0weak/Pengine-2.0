@@ -64,6 +64,14 @@ namespace Pengine
 
 		std::shared_ptr<class Texture> TakeScreenshot(const std::filesystem::path& filepath, const std::string& viewportName, bool* isLoaded);
 
+		uint8_t GetObjectVisibilityMask() const { return m_ObjectVisibilityMask; }
+
+		void SetObjectVisibilityMask(uint8_t objectVisibilityMask) { m_ObjectVisibilityMask = objectVisibilityMask; }
+
+		uint8_t GetShadowVisibilityMask() const { return m_ShadowVisibilityMask; }
+
+		void SetShadowVisibilityMask(uint8_t shadowVisibilityMask) { m_ShadowVisibilityMask = shadowVisibilityMask; }
+
 	private:
 		glm::mat4 m_ViewMat4{};
 
@@ -76,6 +84,9 @@ namespace Pengine
 		float m_Fov = glm::radians(90.0f);
 
 		Type m_Type = Type::ORTHOGRAPHIC;
+
+		uint8_t m_ObjectVisibilityMask = -1;
+		uint8_t m_ShadowVisibilityMask = -1;
 
 		std::string m_PassName = Final;
 		int m_RenderTargetIndex = 0;

@@ -11,6 +11,7 @@ namespace Pengine
 	{
 	public:
 		std::shared_ptr<Material> material;
+		uint8_t objectVisibilityMask = -1;
 
 		~Decal();
 	};
