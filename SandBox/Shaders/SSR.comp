@@ -22,14 +22,17 @@ layout(set = 1, binding = 5) uniform SSR
 };
 
 layout(set = 1, binding = 6, rgba8) uniform writeonly image2D outColor;
+layout(set = 1, binding = 7, rgba16f) uniform image2D outEmissive;
 
-vec4 RayMarch(
+void RayMarch(
     in vec2 viewportSize,
     in vec3 positionFrom,
     in vec3 pivot,
     in vec3 unitPosition,
     in float roughness,
-    in vec2 viewRay)
+    in vec2 viewRay,
+    out vec4 color,
+    out vec4 emissive)
 {
     vec4 start = vec4(positionFrom, 1.0f);
     vec4 end = vec4(positionFrom + (pivot * maxDistance), 1.0f);
@@ -132,7 +135,13 @@ vec4 RayMarch(
 
     visibility = clamp(visibility, 0.0f, 1.0f);
 
-    return vec4(mix(vec3(0.0f, 0.0f, 0.0f), texture(colorTexture, fragmentUV).xyz, visibility), visibility);
+    vec3 sceneColor = texture(colorTexture, fragmentUV).xyz;
+
+    ivec2 emissivePixelCoord = ivec2(fragmentUV * imageSize(outEmissive));
+    vec3 bloomColor = imageLoad(outEmissive, emissivePixelCoord).xyz;
+
+    color = vec4(mix(vec3(0.0f, 0.0f, 0.0f), sceneColor, visibility), visibility);
+    emissive = vec4(mix(vec3(0.0f, 0.0f, 0.0f), bloomColor, visibility), visibility);
 }
 
 float random(vec2 uv)
@@ -174,10 +183,15 @@ void main()
         return;
     }
 
-    vec4 color = RayMarch(viewportSize, positionViewSpace, pivot, unitPosition, shading.y, viewRay);
+    vec4 color;
+    vec4 emissive;
+    RayMarch(viewportSize, positionViewSpace, pivot, unitPosition, shading.y, viewRay, color, emissive);
     color *= clamp(abs(pivot.z) / 0.1f, 0.0f, 1.0f);
+    emissive *= clamp(abs(pivot.z) / 0.1f, 0.0f, 1.0f);
 
+    ivec2 emissivePixelCoord = ivec2(uv * imageSize(outEmissive));
+    vec4 emissiveSource = imageLoad(outEmissive, emissivePixelCoord);
+    
     imageStore(outColor, pixelCoord, color);
-
-    //outColor = vec4(visibility, visibility, visibility, 1.0f);
+    imageStore(outEmissive, emissivePixelCoord, emissiveSource + emissive);
 }
