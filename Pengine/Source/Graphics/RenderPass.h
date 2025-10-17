@@ -10,7 +10,7 @@ namespace Pengine
 {
 	const std::string ZPrePass = "ZPrePass";
 	const std::string GBuffer = "GBuffer";
-	const std::string DecalPass = "DecalPass";
+	const std::string Decals = "Decals";
 	const std::string Deferred = "Deferred";
 	const std::string DefaultReflection = "DefaultReflection";
 	const std::string Atmosphere = "Atmosphere";

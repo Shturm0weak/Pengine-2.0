@@ -28,7 +28,7 @@ Bloom:
   Intensity: 1
   ResolutionScale: 3
 SSR:
-  IsEnabled: false
+  IsEnabled: true
   MaxDistance: 15
   Resolution: 0.300000012
   ResolutionBlurScale: 0

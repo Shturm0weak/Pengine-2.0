@@ -2678,7 +2678,7 @@ void RenderPassManager::CreateDecalPass()
 
 	RenderPass::CreateInfo createInfo{};
 	createInfo.type = Pass::Type::GRAPHICS;
-	createInfo.name = DecalPass;
+	createInfo.name = Decals;
 	createInfo.clearColors = { clearColor, clearShading, clearEmissive };
 	createInfo.attachmentDescriptions = { color, shading, emissive };
 	createInfo.resizeWithViewport = true;
@@ -2686,7 +2686,7 @@ void RenderPassManager::CreateDecalPass()
 
 	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
-		PROFILER_SCOPE(DecalPass);
+		PROFILER_SCOPE(Decals);
 
 		const std::string renderPassName = renderInfo.renderPass->GetName();
 
@@ -2714,7 +2714,7 @@ void RenderPassManager::CreateDecalPass()
 				continue;
 			}
 
-			if (!decal.material || !decal.material->IsPipelineEnabled(DecalPass))
+			if (!decal.material || !decal.material->IsPipelineEnabled(Decals))
 			{
 				continue;
 			}
@@ -2762,8 +2762,8 @@ void RenderPassManager::CreateDecalPass()
 
 		const std::shared_ptr<BaseMaterial> decalBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 			std::filesystem::path("Materials") / "DecalBase.basemat");
-		const std::shared_ptr<Pipeline> decalBasePipeline = decalBaseMaterial->GetPipeline(DecalPass);
-		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, decalBasePipeline, DecalPass);
+		const std::shared_ptr<Pipeline> decalBasePipeline = decalBaseMaterial->GetPipeline(Decals);
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, decalBasePipeline, Decals);
 
 		const std::shared_ptr<Texture> depthTexture = renderInfo.renderView->GetFrameBuffer(GBuffer)->GetAttachment(4);
 		const std::shared_ptr<Texture> normalTexture = renderInfo.renderView->GetFrameBuffer(GBuffer)->GetAttachment(1);

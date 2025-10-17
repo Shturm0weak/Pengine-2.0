@@ -3,7 +3,7 @@ Mat:
   Options:
     []
   Pipelines:
-    - RenderPass: DecalPass
+    - RenderPass: Decals
       Uniforms:
         - Name: GBufferMaterial
           Values:

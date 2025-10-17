@@ -52,7 +52,7 @@ Mat:
               Value: 0
               Type: int
             - Name: material.useParallaxOcclusion
-              Value: -842150656
+              Value: 1
               Type: int
             - Name: size
               Value: [1, 1]
@@ -72,6 +72,8 @@ Mat:
         - Name: aoTexture
           Value: White
         - Name: emissiveTexture
+          Value: White
+        - Name: heightTexture
           Value: White
     - RenderPass: Transparent
       Uniforms:

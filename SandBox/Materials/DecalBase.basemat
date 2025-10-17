@@ -1,6 +1,6 @@
 Basemat:
   Pipelines:
-    - RenderPass: DecalPass
+    - RenderPass: Decals
       DepthTest: false
       DepthWrite: false
       CullMode: Front
@@ -15,7 +15,7 @@ Basemat:
         - Type: Material
           Set: 1
         - Type: Renderer
-          RenderPass: DecalPass
+          RenderPass: Decals
           Set: 2
       VertexInputBindingDescriptions:
         - Binding: 0

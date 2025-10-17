@@ -22,7 +22,7 @@ Mat:
               Value: [1, 1, 0, 0]
               Type: vec4
             - Name: material.metallicFactor
-              Value: 0.699999988
+              Value: 1
               Type: float
             - Name: material.roughnessFactor
               Value: 1
@@ -59,7 +59,7 @@ Mat:
         - Name: normalTexture
           Value: 0xb8eddb088df3f8b4a5cc2b2cbd2df5e1
         - Name: metallicRoughnessTexture
-          Value: White
+          Value: 0x8301f0ab4d8b5c0b88b8c48d99edb8f7
         - Name: aoTexture
           Value: White
         - Name: emissiveTexture
