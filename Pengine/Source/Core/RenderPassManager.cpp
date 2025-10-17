@@ -295,13 +295,14 @@ RenderPassManager::RenderPassManager()
 	CreateDeferred();
 	CreateAtmosphere();
 	CreateTransparent();
-	CreateFinal();
+	CreateToneMappingPass();
 	CreateSSAO();
 	CreateSSAOBlur();
 	CreateCSM();
 	CreateBloom();
 	CreateSSR();
 	CreateSSRBlur();
+	CreateAntiAliasingAndComposePass();
 	CreateUI();
 	CreateDecalPass();
 }
@@ -1455,100 +1456,6 @@ void RenderPassManager::CreateTransparent()
 			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(InstanceData));
 			instanceBuffer->Flush();
 		}
-
-		renderInfo.renderer->EndRenderPass(submitInfo);
-	};
-
-	CreateRenderPass(createInfo);
-}
-
-void RenderPassManager::CreateFinal()
-{
-	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	RenderPass::AttachmentDescription color{};
-	color.textureCreateInfo.format = Format::R8G8B8A8_SRGB;
-	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	color.textureCreateInfo.channels = 4;
-	color.textureCreateInfo.isMultiBuffered = true;
-	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
-	color.textureCreateInfo.name = "FinalColor";
-	color.textureCreateInfo.filepath = color.textureCreateInfo.name;
-	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
-	color.load = RenderPass::Load::LOAD;
-	color.store = RenderPass::Store::STORE;
-
-	RenderPass::CreateInfo createInfo{};
-	createInfo.type = Pass::Type::GRAPHICS;
-	createInfo.name = Final;
-	createInfo.clearColors = { clearColor };
-	createInfo.attachmentDescriptions = { color };
-	createInfo.resizeWithViewport = true;
-	createInfo.resizeViewportScale = { 1.0f, 1.0f };
-
-	const std::shared_ptr<Mesh> planeMesh = nullptr;
-
-	createInfo.executeCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
-	{
-		PROFILER_SCOPE(Final);
-
-		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
-
-		const std::string renderPassName = renderInfo.renderPass->GetName();
-
-		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Final.basemat");
-		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
-		if (!pipeline)
-		{
-			return;
-		}
-
-		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
-
-		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, renderPassName);
-		const std::string postProcessBufferName = "PostProcessBuffer";
-		const std::shared_ptr<Buffer> postProcessBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, postProcessBufferName);
-
-		const glm::vec2 viewportSize = renderInfo.viewportSize;
-		const int fxaa = graphicsSettings.postProcess.fxaa;
-		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "toneMapperIndex", graphicsSettings.postProcess.toneMapper);
-		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "gamma", graphicsSettings.postProcess.gamma);
-		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "viewportSize", viewportSize);
-		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "fxaa", fxaa);
-
-		const int isSSREnabled = graphicsSettings.ssr.isEnabled;
-		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "isSSREnabled", isSSREnabled);
-
-		postProcessBuffer->Flush();
-
-		WriteRenderViews(renderInfo.renderView, renderInfo.scene->GetRenderView(), pipeline, renderUniformWriter);
-
-		const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-		FlushUniformWriters(uniformWriters);
-
-		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
-		RenderPass::SubmitInfo submitInfo{};
-		submitInfo.frame = renderInfo.frame;
-		submitInfo.renderPass = renderInfo.renderPass;
-		submitInfo.frameBuffer = frameBuffer;
-		renderInfo.renderer->BeginRenderPass(submitInfo);
-
-		std::vector<std::shared_ptr<Buffer>> vertexBuffers;
-		std::vector<size_t> vertexBufferOffsets;
-		GetVertexBuffers(pipeline, plane, vertexBuffers, vertexBufferOffsets);
-
-		renderInfo.renderer->Render(
-			vertexBuffers,
-			vertexBufferOffsets,
-			plane->GetIndexBuffer(),
-			0,
-			plane->GetIndexCount(),
-			pipeline,
-			nullptr,
-			0,
-			1,
-			uniformWriters,
-			renderInfo.frame);
 
 		renderInfo.renderer->EndRenderPass(submitInfo);
 	};
@@ -2827,6 +2734,180 @@ void RenderPassManager::CreateDecalPass()
 
 		renderInfo.renderer->EndRenderPass(submitInfo);
 	};
+
+	CreateRenderPass(createInfo);
+}
+
+void RenderPassManager::CreateToneMappingPass()
+{
+	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	RenderPass::AttachmentDescription color{};
+	color.textureCreateInfo.format = Format::R8G8B8A8_SRGB;
+	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	color.textureCreateInfo.channels = 4;
+	color.textureCreateInfo.isMultiBuffered = true;
+	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
+	color.textureCreateInfo.name = "ToneMappedColor";
+	color.textureCreateInfo.filepath = color.textureCreateInfo.name;
+	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
+
+	RenderPass::CreateInfo createInfo{};
+	createInfo.type = Pass::Type::GRAPHICS;
+	createInfo.name = ToneMapping;
+	createInfo.clearColors = { clearColor };
+	createInfo.attachmentDescriptions = { color };
+	createInfo.resizeWithViewport = true;
+	createInfo.resizeViewportScale = { 1.0f, 1.0f };
+
+	createInfo.executeCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
+	{
+		PROFILER_SCOPE(ToneMapping);
+
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
+
+		const std::string renderPassName = renderInfo.renderPass->GetName();
+
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/ToneMapping.basemat");
+		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+		if (!pipeline)
+		{
+			return;
+		}
+
+		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
+
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, renderPassName);
+		const std::string toneMappingBufferBufferName = "ToneMappingBuffer";
+		const std::shared_ptr<Buffer> toneMappingBufferBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, toneMappingBufferBufferName);
+
+		const int isSSREnabled = graphicsSettings.ssr.isEnabled;
+		baseMaterial->WriteToBuffer(toneMappingBufferBuffer, toneMappingBufferBufferName, "toneMapperIndex", graphicsSettings.postProcess.toneMapper);
+		baseMaterial->WriteToBuffer(toneMappingBufferBuffer, toneMappingBufferBufferName, "gamma", graphicsSettings.postProcess.gamma);
+		baseMaterial->WriteToBuffer(toneMappingBufferBuffer, toneMappingBufferBufferName, "isSSREnabled", isSSREnabled);
+
+		toneMappingBufferBuffer->Flush();
+
+		WriteRenderViews(renderInfo.renderView, renderInfo.scene->GetRenderView(), pipeline, renderUniformWriter);
+
+		const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
+		FlushUniformWriters(uniformWriters);
+
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
+
+		std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+		std::vector<size_t> vertexBufferOffsets;
+		GetVertexBuffers(pipeline, plane, vertexBuffers, vertexBufferOffsets);
+
+		renderInfo.renderer->Render(
+			vertexBuffers,
+			vertexBufferOffsets,
+			plane->GetIndexBuffer(),
+			0,
+			plane->GetIndexCount(),
+			pipeline,
+			nullptr,
+			0,
+			1,
+			uniformWriters,
+			renderInfo.frame);
+
+		renderInfo.renderer->EndRenderPass(submitInfo);
+	};
+
+	CreateRenderPass(createInfo);
+}
+
+void RenderPassManager::CreateAntiAliasingAndComposePass()
+{
+	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+	RenderPass::AttachmentDescription color{};
+	color.textureCreateInfo.format = Format::R8G8B8A8_SRGB;
+	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
+	color.textureCreateInfo.channels = 4;
+	color.textureCreateInfo.isMultiBuffered = true;
+	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
+	color.textureCreateInfo.name = "AntiAliasingAndCompose";
+	color.textureCreateInfo.filepath = color.textureCreateInfo.name;
+	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
+	color.load = RenderPass::Load::DONT_CARE;
+	color.store = RenderPass::Store::STORE;
+
+	RenderPass::CreateInfo createInfo{};
+	createInfo.type = Pass::Type::GRAPHICS;
+	createInfo.name = AntiAliasingAndCompose;
+	createInfo.clearColors = { clearColor };
+	createInfo.attachmentDescriptions = { color };
+	createInfo.resizeWithViewport = true;
+	createInfo.resizeViewportScale = { 1.0f, 1.0f };
+
+	createInfo.executeCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
+		{
+			PROFILER_SCOPE(AntiAliasingAndCompose);
+
+			const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
+
+			const std::string renderPassName = renderInfo.renderPass->GetName();
+
+			const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/AntiAliasingAndCompose.basemat");
+			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+			if (!pipeline)
+			{
+				return;
+			}
+
+			const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
+
+			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, renderPassName);
+			const std::string postProcessBufferName = "PostProcessBuffer";
+			const std::shared_ptr<Buffer> postProcessBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, postProcessBufferName);
+
+			const glm::vec2 viewportSize = renderInfo.viewportSize;
+			const int fxaa = graphicsSettings.postProcess.fxaa;
+			baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "viewportSize", viewportSize);
+			baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "fxaa", fxaa);
+
+			postProcessBuffer->Flush();
+
+			WriteRenderViews(renderInfo.renderView, renderInfo.scene->GetRenderView(), pipeline, renderUniformWriter);
+
+			const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
+			FlushUniformWriters(uniformWriters);
+
+			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
+			RenderPass::SubmitInfo submitInfo{};
+			submitInfo.frame = renderInfo.frame;
+			submitInfo.renderPass = renderInfo.renderPass;
+			submitInfo.frameBuffer = frameBuffer;
+			renderInfo.renderer->BeginRenderPass(submitInfo);
+
+			std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+			std::vector<size_t> vertexBufferOffsets;
+			GetVertexBuffers(pipeline, plane, vertexBuffers, vertexBufferOffsets);
+
+			renderInfo.renderer->Render(
+				vertexBuffers,
+				vertexBufferOffsets,
+				plane->GetIndexBuffer(),
+				0,
+				plane->GetIndexCount(),
+				pipeline,
+				nullptr,
+				0,
+				1,
+				uniformWriters,
+				renderInfo.frame);
+
+			renderInfo.renderer->EndRenderPass(submitInfo);
+		};
 
 	CreateRenderPass(createInfo);
 }

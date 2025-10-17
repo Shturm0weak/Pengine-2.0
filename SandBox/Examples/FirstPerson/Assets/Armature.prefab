@@ -716,7 +716,7 @@ Childs:
       Type: 1
       ZNear: 0.00999999978
       ZFar: 1000
-      PassName: Final
+      PassName: AntiAliasingAndCompose
       RenderTargetIndex: 0
       ObjectVisibilityMask: 255
       ShadowVisibilityMask: 255

@@ -1,0 +1,27 @@
+Basemat:
+  Pipelines:
+    - RenderPass: AntiAliasingAndCompose
+      DepthTest: false
+      DepthWrite: false
+      CullMode: None
+      PolygonMode: Fill
+      TopologyMode: TriangleList
+      Vertex: Shaders/AntiAliasingAndCompose.vert
+      Fragment: Shaders/AntiAliasingAndCompose.frag
+      DescriptorSets:
+        - Type: Renderer
+          RenderPass: AntiAliasingAndCompose
+          Set: 0
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Tag: Position
+          Names:
+            - positionA
+      ColorBlendStates:
+        - BlendEnabled: false
+      Uniforms:
+        - Name: toneMappedColorTexture
+          TextureAttachment: "ToneMapping[0]"
+        - Name: uiTexture
+          TextureAttachment: "UI[0]"

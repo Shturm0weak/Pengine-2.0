@@ -1,16 +1,16 @@
 Basemat:
   Pipelines:
-    - RenderPass: Final
+    - RenderPass: ToneMapping
       DepthTest: false
       DepthWrite: false
       CullMode: None
       PolygonMode: Fill
       TopologyMode: TriangleList
-      Vertex: Shaders/Final.vert
-      Fragment: Shaders/Final.frag
+      Vertex: Shaders/ToneMapping.vert
+      Fragment: Shaders/ToneMapping.frag
       DescriptorSets:
         - Type: Renderer
-          RenderPass: Final
+          RenderPass: ToneMapping
           Set: 0
       VertexInputBindingDescriptions:
         - Binding: 0
@@ -34,5 +34,3 @@ Basemat:
         - Name: bloomTexture
           TextureAttachment: "BloomFrameBuffers(0)[0]"
           TextureAttachmentDefault: "Black"
-        - Name: uiTexture
-          TextureAttachment: "UI[0]"

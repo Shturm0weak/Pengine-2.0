@@ -9,13 +9,10 @@ layout(location = 3) out vec2 v_rgbSW;
 layout(location = 4) out vec2 v_rgbSE;
 layout(location = 5) out vec2 v_rgbM;
 
-layout(set = 0, binding = 6) uniform PostProcessBuffer
+layout(set = 0, binding = 2) uniform PostProcessBuffer
 {
-	int toneMapperIndex;
-	float gamma;
 	vec2 viewportSize;
 	int fxaa;
-	int isSSREnabled;
 };
 
 #include "Shaders/Includes/FXAAUV.h"

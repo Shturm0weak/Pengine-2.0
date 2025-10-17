@@ -89,8 +89,6 @@ namespace Pengine
 
 		void CreateTransparent();
 
-		void CreateFinal();
-
 		void CreateCSM();
 
 		void CreateBloom();
@@ -106,6 +104,10 @@ namespace Pengine
 		void CreateUI();
 
 		void CreateDecalPass();
+
+		void CreateToneMappingPass();
+
+		void CreateAntiAliasingAndComposePass();
 
 		static void FlushUniformWriters(const std::vector<std::shared_ptr<class UniformWriter>>& uniformWriters);
 

@@ -88,7 +88,7 @@ namespace Pengine
 		uint8_t m_ObjectVisibilityMask = -1;
 		uint8_t m_ShadowVisibilityMask = -1;
 
-		std::string m_PassName = Final;
+		std::string m_PassName = AntiAliasingAndCompose;
 		int m_RenderTargetIndex = 0;
 
 		void Copy(const Camera& camera);

@@ -210,7 +210,7 @@ Scene:
       Type: 1
       ZNear: 0.100000001
       ZFar: 1000
-      PassName: Final
+      PassName: AntiAliasingAndCompose
       RenderTargetIndex: 0
       ObjectVisibilityMask: 255
       ShadowVisibilityMask: 255

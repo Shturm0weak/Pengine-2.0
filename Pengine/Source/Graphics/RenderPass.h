@@ -15,11 +15,12 @@ namespace Pengine
 	const std::string DefaultReflection = "DefaultReflection";
 	const std::string Atmosphere = "Atmosphere";
 	const std::string Transparent = "Transparent";
-	const std::string Final = "Final";
 	const std::string SSAO = "SSAO";
 	const std::string SSAOBlur = "SSAOBlur";
 	const std::string CSM = "CSM";
 	const std::string Bloom = "Bloom";
+	const std::string ToneMapping = "ToneMapping";
+	const std::string AntiAliasingAndCompose = "AntiAliasingAndCompose";
 	const std::string SSR = "SSR";
 	const std::string SSRBlur = "SSRBlur";
 	const std::string UI = "UI";

@@ -40,4 +40,4 @@ SSR:
 PostProcess:
   Gamma: 2.20000005
   ToneMapper: 1
-  FXAA: false
+  FXAA: true

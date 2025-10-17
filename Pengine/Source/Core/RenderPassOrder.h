@@ -25,7 +25,8 @@ namespace Pengine
 		SSR,
 		SSRBlur,
 		Bloom,
-		Final
+		ToneMapping,
+		AntiAliasingAndCompose,
 	};
 
 }
