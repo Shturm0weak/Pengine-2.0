@@ -6,7 +6,7 @@ SSAO:
   NoiseSize: 32
   Radius: 0.25
   ResolutionScale: 1
-  ResolutionBlurScale: 1
+  ResolutionBlurScale: 0
 CSM:
   IsEnabled: true
   Quality: 0
