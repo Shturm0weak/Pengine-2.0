@@ -29,8 +29,10 @@ Scene:
       Type: 1
       ZNear: 0.100000001
       ZFar: 1000
-      PassName: Final
+      PassName: AntiAliasingAndCompose
       RenderTargetIndex: 0
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
       Viewport: Main
     Childs:
       []
@@ -48,6 +50,9 @@ Scene:
       Material: 0x53ba3974bfcc3896aaa350e2657291f4
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     Childs:
       []
   - UUID: 0x25677bc7513d5ff2b6738850f69d336c
@@ -64,6 +69,9 @@ Scene:
       Material: 0x5281db838f8526f0cf5516d7b64b5e9d
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     Childs:
       []
   - UUID: 0x0b6e7a905d70e962a347800850b72e36
@@ -80,6 +88,9 @@ Scene:
       Material: 0x90a23f15a60752eec4a038bb36ea3108
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     Childs:
       []
   - UUID: 0x4bbe0dde4e535cf8c0b1a702422972ba
@@ -96,6 +107,9 @@ Scene:
       Material: 0xb2b69a0abe3987837cbc88861f4f4af3
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     Childs:
       []
   - UUID: 0xcdec6acb63350265f33eadad2af9f6b6
@@ -112,6 +126,9 @@ Scene:
       Material: 0x8cfa6bcbbbdee0d64062328bf3cfce84
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     Childs:
       []
   - UUID: 0x6e483a26cb66157d5519794e6b87bb14
@@ -128,6 +145,9 @@ Scene:
       Material: 0x781ee073efc6f0e47c306679bc6280f2
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     Childs:
       []
   - UUID: 0x64aac8a311af25bd44e51572583abd0d
@@ -144,6 +164,9 @@ Scene:
       Material: 0x0f38fbe57e399522266dc934d155cd1f
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     Childs:
       []
   - UUID: 0xa15c5609eb4bdb49748b532603fc3472
@@ -160,5 +183,8 @@ Scene:
       Material: 0x962e6b5baffe148b78481d828d970373
       RenderingOrder: 5
       IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
     Childs:
       []

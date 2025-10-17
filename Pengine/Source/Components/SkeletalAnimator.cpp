@@ -5,6 +5,8 @@
 #include "../Components/Transform.h"
 #include "../Core/Logger.h"
 #include "../Core/Entity.h"
+#include "../Core/Scene.h"
+#include "../Utils/Utils.h"
 
 namespace Pengine
 {
@@ -102,10 +104,6 @@ namespace Pengine
 		{
 			const SkeletalAnimation::Bone& bone = m_SkeletalAnimation->GetBonesByName().at(nodeName);
 			bone.Update(m_CurrentTime, currentPosition, currentRotation, currentScale);
-			/*if (const auto& boneEntity = entity->FindEntityInHierarchy(node.name))
-			{
-				boneEntity->GetComponent<Transform>().SetTransform(nodeTransform);
-			}*/
 		}
 
 		if (m_NextSkeletalAnimation && m_NextSkeletalAnimation->GetBonesByName().contains(nodeName))
@@ -125,6 +123,22 @@ namespace Pengine
 		nodeTransform = glm::translate(glm::mat4(1.0f), currentPosition) * glm::toMat4(currentRotation) * glm::scale(glm::mat4(1.0f), currentScale);
 		globalTransformation = parentTransform * nodeTransform;
 		m_FinalBoneMatrices[node.id] = globalTransformation * node.offset;
+
+		// TODO: Very slow, maybe optimize!
+		if (const auto& boneEntity = entity->FindEntityInHierarchy(node.name))
+		{
+			Transform& boneEntityTransform = boneEntity->GetComponent<Transform>();
+			boneEntityTransform.Translate(currentPosition);
+			boneEntityTransform.Rotate(glm::eulerAngles(currentRotation));
+			boneEntityTransform.Scale(currentScale);
+			if (GetDrawDebugSkeleton() && boneEntity->HasParent())
+			{
+				boneEntity->GetScene()->GetVisualizer().DrawLine(
+					boneEntityTransform.GetPosition(),
+					boneEntity->GetParent()->GetComponent<Transform>().GetPosition(),
+					{ 1.0f, 0.0f, 1.0f });
+			}
+		}
 
 		for (int i = 0; i < node.childIds.size(); i++)
 		{

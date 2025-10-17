@@ -2685,6 +2685,12 @@ void Editor::SkeletalAnimatorComponent(const std::shared_ptr<Entity>& entity)
 				skeletalAnimator.SetCurrentTime(currentTime);
 			}
 		}
+
+		bool drawDebugSkeleton = skeletalAnimator.GetDrawDebugSkeleton();
+		if (ImGui::Checkbox("Draw Debug Skeleton", &drawDebugSkeleton))
+		{
+			skeletalAnimator.SetDrawDebugSkeleton(drawDebugSkeleton);
+		}
 	}
 }
 

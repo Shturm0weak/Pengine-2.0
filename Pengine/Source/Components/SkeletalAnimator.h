@@ -51,6 +51,10 @@ namespace Pengine
 
 		void BlendSkeletalAnimations(std::shared_ptr<SkeletalAnimation> firstSkeletalAnimation, std::shared_ptr<SkeletalAnimation> secondSkeletalAnimation, float value);
 
+		bool GetDrawDebugSkeleton() const { return m_DrawDebugSkeleton; }
+
+		void SetDrawDebugSkeleton(bool drawDebugSkeleton) { m_DrawDebugSkeleton = drawDebugSkeleton; }
+
 	private:
 		void CalculateBoneTransform(std::shared_ptr<Entity> entity, const uint32_t boneId, const glm::mat4& parentTransform);
 
@@ -69,6 +73,7 @@ namespace Pengine
 		float m_CurrentTime = 0.0f;
 		float m_NextTime = 0.0f;
 		bool m_IsBlending = false;
+		bool m_DrawDebugSkeleton = false;
 	};
 
 }
