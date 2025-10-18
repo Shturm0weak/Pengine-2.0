@@ -1,0 +1,69 @@
+Mat:
+  Basemat: 0xd4e01e5fd1e00c656d6ca62d11cf247e
+  Options:
+    []
+  Pipelines:
+    - RenderPass: GBuffer
+      Uniforms:
+        - Name: GBufferMaterial
+          Values:
+            - Name: material.albedoColor
+              Value: [1, 1, 1, 1]
+              Type: vec4
+            - Name: material.emissiveColor
+              Value: [0, 0, 0, 1]
+              Type: vec4
+            - Name: material.uvTransform
+              Value: [1, 1, 0, 0]
+              Type: vec4
+            - Name: material.metallicFactor
+              Value: 0
+              Type: float
+            - Name: material.roughnessFactor
+              Value: 0.82196492
+              Type: float
+            - Name: material.aoFactor
+              Value: 1
+              Type: float
+            - Name: material.emissiveFactor
+              Value: 1
+              Type: float
+            - Name: material.alphaCutoff
+              Value: 0.5
+              Type: float
+            - Name: material.maxParallaxLayers
+              Value: 0
+              Type: int
+            - Name: material.minParallaxLayers
+              Value: 0
+              Type: int
+            - Name: material.parallaxHeightScale
+              Value: 0
+              Type: float
+            - Name: material.useNormalMap
+              Value: 1
+              Type: int
+            - Name: material.useAlphaCutoff
+              Value: 1
+              Type: int
+            - Name: material.useParallaxOcclusion
+              Value: 0
+              Type: int
+        - Name: albedoTexture
+          Value: 0xc3f82d09a5c01bd4588521f564626a2a
+        - Name: normalTexture
+          Value: 0x7e5b9f52e70c651675bf1ff5520239f9
+        - Name: metallicRoughnessTexture
+          Value: White
+        - Name: aoTexture
+          Value: White
+        - Name: emissiveTexture
+          Value: White
+        - Name: heightTexture
+          Value: White
+    - RenderPass: CSM
+      Uniforms:
+        []
+    - RenderPass: ZPrePass
+      Uniforms:
+        []

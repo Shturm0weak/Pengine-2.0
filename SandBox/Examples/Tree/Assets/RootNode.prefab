@@ -1,0 +1,80 @@
+Name: Tree
+IsEnabled: true
+Transform:
+  Position: [-7.33659792, -9, -9.79238224]
+  Rotation: [0, -0, 0]
+  Scale: [0.100000001, 0.100000001, 0.100000001]
+  FollowOwner: true
+Childs:
+  - Name: Platano-Tree_leafs Platano_0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.099999994, 0.0999999866, 0.0999999866]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x84cf94687c725f4ba78bc234a397ec4e
+      Mesh: 0x5d402dedb496a98e2d51400357fcdd92
+      Material: 0x1b23be0974e7bdd2560b77bab9306f8d
+      RenderingOrder: 5
+      IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
+    Childs:
+      []
+  - Name: Platano-Tree_leafs Platano_0.001
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.099999994, 0.0999999866, 0.0999999866]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x9c33b6c0b5619c687843f8e3dbdb1eaa
+      Mesh: 0x492a2c467878ac767cb49cdb7c648828
+      Material: 0x1b23be0974e7bdd2560b77bab9306f8d
+      RenderingOrder: 5
+      IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
+    Childs:
+      []
+  - Name: Platano-Tree_Platano Trunk_0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.099999994, 0.0999999866, 0.0999999866]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0x5ee1b27fe9864f5cbe784ef79be13cdb
+      Mesh: 0x11a4bf8a2c751a80ee19801d1dd227bc
+      Material: 0xaae381f34e2f1b01cf90517bae7c117d
+      RenderingOrder: 5
+      IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
+    Childs:
+      []
+  - Name: Platano-Tree_treetop platano_0
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [0.099999994, 0.0999999866, 0.0999999866]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: 0xcf3712881925d6e49e98fbe17378c446
+      Mesh: 0x520bf66597a5a45707c7a4a90bcb7a42
+      Material: 0xe4a4a47f7d44b3ae657d0e763706b576
+      RenderingOrder: 5
+      IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
+    Childs:
+      []

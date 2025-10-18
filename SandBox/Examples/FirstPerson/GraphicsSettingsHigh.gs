@@ -11,7 +11,7 @@ CSM:
   IsEnabled: true
   Quality: 1
   CascadeCount: 4
-  SplitFactor: 0.899999976
+  SplitFactor: 0.800000012
   MaxDistance: 50
   FogFactor: 0.200000003
   PcfEnabled: true

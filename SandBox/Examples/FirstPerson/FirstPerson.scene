@@ -1,5 +1,9 @@
 Settings:
   DrawBoundingBoxes: false
+  Wind:
+    Direction: [1, 1, 1]
+    Frequency: 10
+    Strength: 1
 GraphicsSettings: 0x7fd51f678fded0482f31b51f98d47745
 Scene:
   - UUID: 0xbc89eeab5ceee82cb0f9732449b3e39d
@@ -201,8 +205,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [-3.08969116, -7.4682436, -12.2731295]
-      Rotation: [-0.529909492, 2.38990211, 0]
+      Position: [-15.510066, -4.455616, -24.9600029]
+      Rotation: [-0.225246564, -2.52496362, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -214,6 +218,7 @@ Scene:
       RenderTargetIndex: 0
       ObjectVisibilityMask: 255
       ShadowVisibilityMask: 255
+      Viewport: Main
     Childs:
       []
   - UUID: 0xf36997a588e9a4f3b5919dfa07776dbd
@@ -376,3 +381,143 @@ Scene:
       ObjectVisibilityMask: 255
     Childs:
       []
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0x9e492fe33f1f88a13318fa895febf8a5
+    Transform:
+      Position: [-7.33659792, -9, -9.79238224]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0xb37b4138d1b741595852ce77ff586470
+    Transform:
+      Position: [-8.1227417, -9.00005436, -3.18741751]
+      Rotation: [0, 0.487264395, 0]
+      Scale: [0.0919999778, 0.0919999555, 0.0919999778]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0xe85dec94266bd57c05a6768c516c232d
+    Transform:
+      Position: [-11.7670183, -9.00004578, -8.29118538]
+      Rotation: [0, -0.336966842, 0]
+      Scale: [0.116999991, 0.117000096, 0.116999991]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0xed9ca1e08c0c522515ca8e635729ecb9
+    Transform:
+      Position: [-13.9146347, -9.00001144, -0.972189128]
+      Rotation: [0, 0.479452342, 0]
+      Scale: [0.0959999934, 0.0960000679, 0.0959999934]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0x3136d7f4ab687bab53db8ca80d139393
+    Transform:
+      Position: [-15.4975023, -9.00001144, -9.11003494]
+      Rotation: [0, 0.24524352, 0]
+      Scale: [0.115000024, 0.115000039, 0.115000024]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0x873836d23b69d3c11bb249f36174efab
+    Transform:
+      Position: [-18.8834019, -9.00000954, -4.00109196]
+      Rotation: [0, 0.203424588, 0]
+      Scale: [0.0899999961, 0.0900000334, 0.0899999961]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0x3aa1ffc50ff273601f61f14524fa8790
+    Transform:
+      Position: [-17.9369965, -9.00000477, 6.80359554]
+      Rotation: [0, -0.691377163, 0]
+      Scale: [0.094999969, 0.0949999765, 0.094999969]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0xa64a4d0a8e9209044e717b86bcc08d4c
+    Transform:
+      Position: [-11.6209917, -9.00002384, 12.7996387]
+      Rotation: [0, 0.645797253, 0]
+      Scale: [0.124000147, 0.12400008, 0.124000147]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0x7080651afe66e63453a5b80b761bf388
+    Transform:
+      Position: [-20.4783821, -9.0000124, -7.59977388]
+      Rotation: [0, 0.725574493, 0]
+      Scale: [0.111000039, 0.111000098, 0.111000039]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0xa08e5fde53e526ae1a93ef05fee5f73b
+    Transform:
+      Position: [-13.7359123, -9, -13.5776119]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0xb1fc2f2582402c5394403a9a06f500fe
+    Transform:
+      Position: [-18.3983688, -9.00001431, -10.890914]
+      Rotation: [0, -1.08809769, 0]
+      Scale: [0.106000021, 0.106000014, 0.106000021]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0x634fc6652e1367aaa3dc9d428b35fe62
+    Transform:
+      Position: [12.1395941, -9.0000124, -17.2723427]
+      Rotation: [-3.1415925, 0.916475832, -3.1415925]
+      Scale: [0.0950207487, 0.0950207263, 0.0950207487]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0x677c5e181107ca2c003c792b9ce1db9c
+    Transform:
+      Position: [14.2762699, -9, -9.80301571]
+      Rotation: [0, -0, 0]
+      Scale: [0.109000005, 0.109000005, 0.109000005]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0x5bc3834977ad82491581ee6aed330f85
+    Transform:
+      Position: [4.75158548, -9, -20.2444935]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0xd42c55e111220b9ee4674ba114350e96
+    Transform:
+      Position: [4.66518402, -9, -14.9280567]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0x853fe3821b0e5a5f15ad00b48c023e95
+    Transform:
+      Position: [-4.52653646, -9.00002003, -21.0524311]
+      Rotation: [0, -0.941850781, 0]
+      Scale: [0.107000098, 0.107000038, 0.107000098]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0x34f2cc7ccd46c00442ed2a5a0351502a
+    Transform:
+      Position: [-2.22953749, -9.00002384, 19.6391525]
+      Rotation: [0, -0.738830626, 0]
+      Scale: [0.115999974, 0.115999982, 0.115999974]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0x046fc44de23ee7205bb1d0095814a7ab
+    Transform:
+      Position: [-4.35514307, -9, 5.98819828]
+      Rotation: [0, -0, 0]
+      Scale: [0.100000001, 0.100000001, 0.100000001]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0xfddd0ac59e182d6b940b7a4084531454
+    Transform:
+      Position: [-7.08778143, -9.00002575, 15.9469223]
+      Rotation: [0, -0, 0]
+      Scale: [0.0960000008, 0.0960000008, 0.0960000008]
+      FollowOwner: true
+  - PrefabFilepath: 0x2d357ff472f70e993d2fa02c469436bf
+    UUID: 0x0557f6153931abf0791d83ca2920b59a
+    Transform:
+      Position: [-17.4806023, -9.00001431, 19.1708241]
+      Rotation: [0, 1.33511758, 0]
+      Scale: [0.115000002, 0.114999913, 0.115000002]
+      FollowOwner: true

@@ -2370,6 +2370,7 @@ Serializer::LoadIntermediate(
 	const bool importSkeletons,
 	const bool importAnimations,
 	const bool importPrefabs,
+	const bool flipUVY,
 	std::string& workName,
 	float& workStatus)
 {
@@ -2474,11 +2475,11 @@ Serializer::LoadIntermediate(
 				std::shared_ptr<Mesh> mesh;
 				if (!skeletonsByIndex.empty())
 				{
-					mesh = GenerateMeshSkinned(gltfAsset, primitive, meshName, directory);
+					mesh = GenerateMeshSkinned(gltfAsset, primitive, meshName, directory, flipUVY);
 				}
 				else
 				{
-					mesh = GenerateMesh(gltfAsset, primitive, meshName, directory);
+					mesh = GenerateMesh(gltfAsset, primitive, meshName, directory, flipUVY);
 				}
 
 				primitivesByIndex.emplace_back(mesh);
@@ -2605,8 +2606,6 @@ std::shared_ptr<Texture> Serializer::LoadGltfTexture(
 			if (!meta)
 			{
 				meta = Texture::Meta();
-				meta->createMipMaps = true;
-				meta->srgb = true;
 			}
 
 			if (!meta->uuid.IsValid())
@@ -2634,7 +2633,8 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(
 	const fastgltf::Asset& gltfAsset,
 	const fastgltf::Primitive& gltfPrimitive,
 	const std::string& name,
-	const std::filesystem::path& directory)
+	const std::filesystem::path& directory,
+	const bool flipUVY)
 {
 	std::string defaultMeshName = name;
 	std::string meshName = defaultMeshName;
@@ -2705,7 +2705,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(
 			*uvAccessor,
 		[&](fastgltf::math::fvec2 uv, std::size_t index)
 		{
-			vertices[index].uv = { uv.x(), uv.y() };
+			vertices[index].uv = { uv.x(), flipUVY ? 1.0f - uv.y() : uv.y() };
 		});
 	}
 
@@ -2848,7 +2848,8 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 	const fastgltf::Asset& gltfAsset,
 	const fastgltf::Primitive& gltfPrimitive,
 	const std::string& name,
-	const std::filesystem::path& directory)
+	const std::filesystem::path& directory,
+	const bool flipUVY)
 {
 	std::string defaultMeshName = name;
 	std::string meshName = defaultMeshName;
@@ -2926,7 +2927,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 			*uvAccessor,
 			[&](fastgltf::math::fvec2 uv, std::size_t index)
 			{
-				vertices[index].uv = { uv.x(), uv.y() };
+				vertices[index].uv = { uv.x(), flipUVY ? 1.0f - uv.y() : uv.y() };
 			});
 	}
 
@@ -3452,7 +3453,6 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 	{
 		Texture::Meta meta{};
 		meta.uuid = UUID();
-		meta.createMipMaps = false;
 		meta.srgb = true;
 		if (const std::shared_ptr<Texture> albedoTexture = LoadGltfTexture(
 			gltfAsset,
@@ -4786,6 +4786,18 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 
 	out << YAML::Key << "DrawBoundingBoxes" << YAML::Value << scene->GetSettings().m_DrawBoundingBoxes;
 
+	// Wind Settings.
+	out << YAML::Key << "Wind";
+	out << YAML::Value << YAML::BeginMap;
+
+	const Scene::WindSettings& windSettings = scene->GetWindSettings();
+	out << YAML::Key << "Direction" << YAML::Value << windSettings.direction;
+	out << YAML::Key << "Frequency" << YAML::Value << windSettings.frequency;
+	out << YAML::Key << "Strength" << YAML::Value << windSettings.strength;
+
+	out << YAML::EndMap;
+	//
+
 	out << YAML::EndMap;
 	//
 
@@ -4862,6 +4874,26 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path&
 		if (const auto& drawBoundingBoxesData = settingsData["DrawBoundingBoxes"])
 		{
 			scene->GetSettings().m_DrawBoundingBoxes = drawBoundingBoxesData.as<bool>();
+		}
+
+		if (const auto& windSettingsData = settingsData["Wind"])
+		{
+			Scene::WindSettings windSettings{};
+			if (const auto& directionData = windSettingsData["Direction"])
+			{
+				windSettings.direction = directionData.as<glm::vec3>();
+			}
+
+			if (const auto& frequencyData = windSettingsData["Frequency"])
+			{
+				windSettings.frequency = frequencyData.as<float>();
+			}
+
+			if (const auto& strengthData = windSettingsData["Strength"])
+			{
+				windSettings.strength = strengthData.as<float>();
+			}
+			scene->SetWindSettings(windSettings);
 		}
 	}
 

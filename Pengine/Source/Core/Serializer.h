@@ -81,6 +81,7 @@ namespace Pengine
 			const bool importSkeletons,
 			const bool importAnimations,
 			const bool importPrefabs,
+			const bool flipUVY,
 			std::string& workName,
 			float& workStatus);
 
@@ -95,13 +96,15 @@ namespace Pengine
 			const fastgltf::Asset& gltfAsset,
 			const fastgltf::Primitive& gltfPrimitive,
 			const std::string& name,
-			const std::filesystem::path& directory);
+			const std::filesystem::path& directory,
+			const bool flipUVY);
 
 		static std::shared_ptr<Mesh> GenerateMeshSkinned(
 			const fastgltf::Asset& gltfAsset,
 			const fastgltf::Primitive& gltfPrimitive,
 			const std::string& name,
-			const std::filesystem::path& directory);
+			const std::filesystem::path& directory,
+			const bool flipUVY);
 
 		static void ProcessColors(
 			const fastgltf::Asset& gltfAsset,

@@ -242,6 +242,26 @@ void RenderPassManager::PrepareUniformsPerViewportBeforeDraw(const RenderPass::R
 		globalBufferName,
 		"camera.tanHalfFOV",
 		tanHalfFOV);
+
+	const Scene::WindSettings& windSettings = renderInfo.scene->GetWindSettings();
+	const glm::vec3 windDirection = glm::normalize(windSettings.direction);
+	reflectionBaseMaterial->WriteToBuffer(
+		renderInfo.renderView->GetBuffer(globalBufferName),
+		globalBufferName,
+		"camera.wind.direction",
+		windDirection);
+
+	reflectionBaseMaterial->WriteToBuffer(
+		renderInfo.renderView->GetBuffer(globalBufferName),
+		globalBufferName,
+		"camera.wind.strength",
+		windSettings.strength);
+
+	reflectionBaseMaterial->WriteToBuffer(
+		renderInfo.renderView->GetBuffer(globalBufferName),
+		globalBufferName,
+		"camera.wind.frequency",
+		windSettings.frequency);
 }
 
 std::shared_ptr<Texture> RenderPassManager::ScaleTexture(

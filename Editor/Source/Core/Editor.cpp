@@ -809,6 +809,16 @@ void Editor::SceneInfo(const std::shared_ptr<Scene>& scene)
 				scene->GetSettings().m_DrawBoundingBoxes = drawBoundingBoxes;
 			}
 
+			if (ImGui::CollapsingHeader("Wind Settings"))
+			{
+				Indent indent;
+				Scene::WindSettings windSettings = scene->GetWindSettings();
+				DrawVec3Control("Wind Direction", windSettings.direction, 0.0f, { -1.0f, 1.0f });
+				ImGui::SliderFloat("Strength##Wind", &windSettings.strength, 0.0f, 10.0f);
+				ImGui::SliderFloat("Frequency##Wind ", &windSettings.frequency, 0.0f, 10.0f);
+				scene->SetWindSettings(windSettings);
+			}
+
 			GraphicsSettingsInfo(scene->GetGraphicsSettings());
 		}
 
@@ -3584,7 +3594,9 @@ void Editor::ImportMenu::Update(Editor& editor)
 
 		if (options.importMeshes)
 		{
+			Indent indent;
 			ImGui::Checkbox("Skeletons", &options.importSkeletons);
+			ImGui::Checkbox("Flip UV Y", &options.flipUVY);
 		}
 
 		ImGui::Checkbox("Materials", &options.importMaterials);
@@ -3611,6 +3623,7 @@ void Editor::ImportMenu::Update(Editor& editor)
 					options.importSkeletons * options.importMeshes,
 					options.importAnimations,
 					options.importPrefabs,
+					options.flipUVY,
 					editor.m_LoadIntermediateMenu.workName,
 					editor.m_LoadIntermediateMenu.workStatus);
 

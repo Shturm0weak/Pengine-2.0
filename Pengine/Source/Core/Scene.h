@@ -94,6 +94,17 @@ namespace Pengine
 		std::shared_ptr<Entity> CreateSphere();
 
 		std::shared_ptr<Entity> CreateCanvas();
+
+		struct WindSettings
+		{
+			glm::vec3 direction = { -1.0f, 0.0f, 0.0f };
+			float strength = 1.0f;
+			float frequency = 1.0f;
+		};
+
+		const WindSettings& GetWindSettings() { return m_WindSettings; }
+
+		void SetWindSettings(const WindSettings& windSettings) { m_WindSettings = windSettings; }
 	private:
 		struct Resources
 		{
@@ -110,6 +121,7 @@ namespace Pengine
 		Visualizer m_Visualizer;
 		Settings m_Settings;
 		GraphicsSettings m_GraphicsSettings;
+		WindSettings m_WindSettings;
 
 		std::string m_Tag = none;
 

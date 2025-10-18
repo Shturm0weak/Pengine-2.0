@@ -218,6 +218,8 @@ private:
 			bool importMaterials = true;
 			bool importAnimations = true;
 			bool importPrefabs = true;
+
+			bool flipUVY = false;
 		} options;
 
 		void Update(Editor& editor);

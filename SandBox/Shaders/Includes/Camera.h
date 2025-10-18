@@ -1,3 +1,10 @@
+struct Wind
+{
+	float strength;
+	vec3 direction;
+    float frequency;
+};
+
 struct Camera
 {
 	mat4 viewProjectionMat4;
@@ -13,6 +20,7 @@ struct Camera
 	float zFar;
 	float zNear;
 	vec3 position;
+	Wind wind;
 };
 
 vec3 CalculatePositionFromDepth(
