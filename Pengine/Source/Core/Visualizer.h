@@ -34,11 +34,29 @@ namespace Pengine
 			const float duration = 0.0f);
 
 		void DrawSphere(
-			const glm::vec3& position,
+			const glm::vec3& color,
+			const glm::mat4& transform,
 			const float radius,
 			int segments,
-			const glm::vec3& color,
 			const float duration = 0.0f);
+
+		void DrawCapsule(
+			const glm::vec3& bottomCenter,
+			const glm::vec3& topCenter,
+			const glm::vec3& color,
+			const glm::mat4& transform,
+			float radius,
+			int segments = 16,
+			float duration = 0.0f);
+
+		void DrawCylinder(
+			const glm::vec3& bottomCenter,
+			const glm::vec3& topCenter,
+			const glm::vec3& color,
+			const glm::mat4& transform,
+			float radius,
+			int segments = 16,
+			float duration = 0.0f);
 
 		std::queue<Line>& GetLines() { return m_Lines; }
 

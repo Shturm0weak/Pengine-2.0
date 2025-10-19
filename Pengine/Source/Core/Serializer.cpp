@@ -1439,7 +1439,9 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 		mesh->GetIndexCount() * sizeof(uint32_t) +
 		mesh->GetName().size() +
 		mesh->GetFilepath().string().size() +
-		7 * 4; // Type, Vertex Count, Vertex Size, Index Count, Mesh Size, Filepath Size, Vertex Layout Count.
+		mesh->GetCreateInfo().sourceFileInfo.meshName.size() +
+		mesh->GetCreateInfo().sourceFileInfo.filepath.string().size() +
+		8 * 4; // Type, Primitive Index, Vertex Count, Vertex Size, Index Count, Mesh Size, Filepath Size, Vertex Layout Count.
 
 	uint32_t offset = 0;
 
@@ -1458,6 +1460,35 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 
 		memcpy(&Utils::GetValue<uint8_t>(data, offset), meshName.data(), meshName.size());
 		offset += static_cast<uint32_t>(meshName.size());
+	}
+
+	// SourceFile.
+	{
+		const Mesh::CreateInfo::SourceFileInfo& sourceFileInfo = mesh->GetCreateInfo().sourceFileInfo;
+		// Filepath.
+		{
+			const std::string filepath = sourceFileInfo.filepath.string();
+			Utils::GetValue<uint32_t>(data, offset) = static_cast<uint32_t>(filepath.size());
+			offset += sizeof(uint32_t);
+
+			memcpy(&Utils::GetValue<uint8_t>(data, offset), filepath.data(), filepath.size());
+			offset += static_cast<uint32_t>(filepath.size());
+		}
+
+		// Name.
+		{
+			Utils::GetValue<uint32_t>(data, offset) = static_cast<uint32_t>(sourceFileInfo.meshName.size());
+			offset += sizeof(uint32_t);
+
+			memcpy(&Utils::GetValue<uint8_t>(data, offset), sourceFileInfo.meshName.data(), sourceFileInfo.meshName.size());
+			offset += static_cast<uint32_t>(sourceFileInfo.meshName.size());
+		}
+
+		// Primitive index.
+		{
+			Utils::GetValue<uint32_t>(data, offset) = sourceFileInfo.primitiveIndex;
+			offset += sizeof(uint32_t);
+		}
 	}
 
 	// Vertices.
@@ -2467,19 +2498,32 @@ Serializer::LoadIntermediate(
 			{
 				std::string meshName = gltfAsset.meshes[meshIndex].name.c_str();
 				
+				Mesh::CreateInfo::SourceFileInfo sourceFileInfo{};
+				sourceFileInfo.filepath = filepath;
+				sourceFileInfo.meshName = meshName;
+				sourceFileInfo.primitiveIndex = primitiveIndex;
+
 				if (gltfAsset.meshes[meshIndex].primitives.size() > 1)
 				{
 					meshName += std::format("{}", primitiveIndex++);
 				}
 
-				std::shared_ptr<Mesh> mesh;
+				std::optional<Mesh::CreateInfo> meshCreateInfo;
 				if (!skeletonsByIndex.empty())
 				{
-					mesh = GenerateMeshSkinned(gltfAsset, primitive, meshName, directory, flipUVY);
+					meshCreateInfo = GenerateMeshSkinned(sourceFileInfo, gltfAsset, primitive, meshName, directory, flipUVY);
 				}
 				else
 				{
-					mesh = GenerateMesh(gltfAsset, primitive, meshName, directory, flipUVY);
+					meshCreateInfo = GenerateMesh(sourceFileInfo, gltfAsset, primitive, meshName, directory, flipUVY);
+				}
+
+				std::shared_ptr<Mesh> mesh = nullptr;
+
+				if (meshCreateInfo)
+				{
+					std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(*meshCreateInfo);
+					SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
 				}
 
 				primitivesByIndex.emplace_back(mesh);
@@ -2629,7 +2673,8 @@ std::shared_ptr<Texture> Serializer::LoadGltfTexture(
 	return nullptr;
 }
 
-std::shared_ptr<Mesh> Serializer::GenerateMesh(
+std::optional<Mesh::CreateInfo> Serializer::GenerateMesh(
+	const Mesh::CreateInfo::SourceFileInfo& sourceFileInfo,
 	const fastgltf::Asset& gltfAsset,
 	const fastgltf::Primitive& gltfPrimitive,
 	const std::string& name,
@@ -2655,7 +2700,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(
 	if (primitive.type != fastgltf::PrimitiveType::Triangles)
 	{
 		Logger::Error(std::format("{}: Primitive type is not supported!", meshName));
-		return nullptr;
+		return std::nullopt;
 	}
 
 	auto positionAttribute = primitive.findAttribute("POSITION");
@@ -2678,7 +2723,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(
 	if (positionAttribute == primitive.attributes.end())
 	{
 		Logger::Error(std::format("{}: Mesh doesn't have POSITION attribute!", name));
-		return nullptr;
+		return std::nullopt;
 	}
 
 	const size_t vertexCount = positionAccessor->count;
@@ -2826,6 +2871,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(
 	Mesh::CreateInfo createInfo{};
 	createInfo.filepath = std::move(meshFilepath);
 	createInfo.name = std::move(meshName);
+	createInfo.sourceFileInfo = sourceFileInfo;
 	createInfo.type = Mesh::Type::STATIC;
 	createInfo.indices = std::move(indices);
 	createInfo.vertices = vertices;
@@ -2838,13 +2884,11 @@ std::shared_ptr<Mesh> Serializer::GenerateMesh(
 		VertexLayout(sizeof(VertexColor), "Color")
 	};
 
-	std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(createInfo);
-	SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
-
-	return mesh;
+	return createInfo;
 }
 
-std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
+std::optional<Mesh::CreateInfo> Serializer::GenerateMeshSkinned(
+	const Mesh::CreateInfo::SourceFileInfo& sourceFileInfo,
 	const fastgltf::Asset& gltfAsset,
 	const fastgltf::Primitive& gltfPrimitive,
 	const std::string& name,
@@ -2871,7 +2915,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 	if (primitive.type != fastgltf::PrimitiveType::Triangles)
 	{
 		Logger::Error(std::format("{}: Primitive type is not supported!", meshName));
-		return nullptr;
+		return std::nullopt;
 	}
 
 	auto positionAttribute = primitive.findAttribute("POSITION");
@@ -2900,7 +2944,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 	if (positionAttribute == primitive.attributes.end())
 	{
 		Logger::Error(std::format("{}: Mesh doesn't have POSITION attribute!", name));
-		return nullptr;
+		return std::nullopt;
 	}
 
 	const size_t vertexCount = positionAccessor->count;
@@ -3077,6 +3121,7 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 	Mesh::CreateInfo createInfo{};
 	createInfo.filepath = std::move(meshFilepath);
 	createInfo.name = std::move(meshName);
+	createInfo.sourceFileInfo = sourceFileInfo;
 	createInfo.type = Mesh::Type::SKINNED;
 	createInfo.indices = std::move(indices);
 	createInfo.vertices = vertices;
@@ -3090,11 +3135,69 @@ std::shared_ptr<Mesh> Serializer::GenerateMeshSkinned(
 		VertexLayout(sizeof(VertexSkinned), "Bones")
 	};
 
-	std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(createInfo);
-	SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
-
-	return mesh;
+	return createInfo;
 }
+
+//std::optional<Mesh::CreateInfo> Serializer::ReimportMesh(
+//	const std::filesystem::path& filepath,
+//	const std::string& name)
+//{
+//	auto data = fastgltf::GltfDataBuffer::FromPath(filepath);
+//	if (data.error() != fastgltf::Error::None)
+//	{
+//		Logger::Error(std::format("Failed to load intermediate {}!", filepath.string()));
+//		return {};
+//	}
+//
+//	fastgltf::Parser parser{};
+//	const std::filesystem::path directory = filepath.parent_path();
+//	auto asset = parser.loadGltf(data.get(), directory,
+//		fastgltf::Options::GenerateMeshIndices | fastgltf::Options::LoadExternalBuffers);
+//
+//	if (asset.error() != fastgltf::Error::None)
+//	{
+//		Logger::Error(std::format("Failed to load intermediate {}!", filepath.string()));
+//		return {};
+//	}
+//
+//	fastgltf::Asset& gltfAsset = asset.get();
+//
+//	for (size_t meshIndex = 0; meshIndex < gltfAsset.meshes.size(); meshIndex++)
+//	{
+//		uint32_t primitiveIndex = 0;
+//		for (const auto& primitive : gltfAsset.meshes[meshIndex].primitives)
+//		{
+//			std::string meshName = gltfAsset.meshes[meshIndex].name.c_str();
+//
+//			if (gltfAsset.meshes[meshIndex].primitives.size() > 1)
+//			{
+//				meshName += std::format("{}", primitiveIndex++);
+//			}
+//
+//			std::optional<Mesh::CreateInfo> meshCreateInfo;
+//			if (!skeletonsByIndex.empty())
+//			{
+//				meshCreateInfo = GenerateMeshSkinned(filepath, gltfAsset, primitive, meshName, directory, flipUVY);
+//			}
+//			else
+//			{
+//				meshCreateInfo = GenerateMesh(filepath, gltfAsset, primitive, meshName, directory, flipUVY);
+//			}
+//
+//			std::shared_ptr<Mesh> mesh = nullptr;
+//
+//			if (meshCreateInfo)
+//			{
+//				std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(*meshCreateInfo);
+//				SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
+//			}
+//
+//			primitivesByIndex.emplace_back(mesh);
+//		}
+//	}
+//
+//	return std::optional<Mesh::CreateInfo>();
+//}
 
 void Serializer::ProcessColors(
 	const fastgltf::Asset& gltfAsset,
@@ -4449,6 +4552,12 @@ void Serializer::SerializeRigidBody(YAML::Emitter& out, const std::shared_ptr<En
 		out << YAML::Key << "Radius" << YAML::Value << rigidBody.shape.sphere.radius;
 		break;
 	}
+	case RigidBody::Type::Cylinder:
+	{
+		out << YAML::Key << "HalfHeight" << YAML::Value << rigidBody.shape.cylinder.halfHeight;
+		out << YAML::Key << "Radius" << YAML::Value << rigidBody.shape.cylinder.radius;
+		break;
+	}
 	}
 
 	auto& joltPhysicsSystem = entity->GetScene()->GetPhysicsSystem()->GetInstance();
@@ -4510,6 +4619,19 @@ void Serializer::DeserializeRigidBody(const YAML::Node& in, const std::shared_pt
 			if (const auto& radiusData = rigidBodyData["Radius"])
 			{
 				rigidBody.shape.sphere.radius = radiusData.as<float>();
+			}
+			break;
+		}
+		case RigidBody::Type::Cylinder:
+		{
+			if (const auto& halfHeightData = rigidBodyData["HalfHeight"])
+			{
+				rigidBody.shape.cylinder.halfHeight = halfHeightData.as<float>();
+			}
+
+			if (const auto& radiusData = rigidBodyData["Radius"])
+			{
+				rigidBody.shape.cylinder.radius = radiusData.as<float>();
 			}
 			break;
 		}
@@ -4784,7 +4906,8 @@ void Serializer::SerializeScene(const std::filesystem::path& filepath, const std
 	out << YAML::Key << "Settings";
 	out << YAML::Value << YAML::BeginMap;
 
-	out << YAML::Key << "DrawBoundingBoxes" << YAML::Value << scene->GetSettings().m_DrawBoundingBoxes;
+	out << YAML::Key << "DrawBoundingBoxes" << YAML::Value << scene->GetSettings().drawBoundingBoxes;
+	out << YAML::Key << "DrawPhysicsShapes" << YAML::Value << scene->GetSettings().drawPhysicsShapes;
 
 	// Wind Settings.
 	out << YAML::Key << "Wind";
@@ -4873,7 +4996,12 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path&
 	{
 		if (const auto& drawBoundingBoxesData = settingsData["DrawBoundingBoxes"])
 		{
-			scene->GetSettings().m_DrawBoundingBoxes = drawBoundingBoxesData.as<bool>();
+			scene->GetSettings().drawBoundingBoxes = drawBoundingBoxesData.as<bool>();
+		}
+
+		if (const auto& drawPhysicsShapesData = settingsData["DrawPhysicsShapes"])
+		{
+			scene->GetSettings().drawPhysicsShapes = drawPhysicsShapesData.as<bool>();
 		}
 
 		if (const auto& windSettingsData = settingsData["Wind"])
@@ -4905,6 +5033,8 @@ std::shared_ptr<Scene> Serializer::DeserializeScene(const std::filesystem::path&
 			scene->SetGraphicsSettings(DeserializeGraphicsSettings(graphicsSettingsFilepath));
 		}
 	}
+
+	AsyncAssetLoader::GetInstance().WaitIdle();
 
 	Logger::Log("Scene:" + filepath.string() + " has been loaded!", BOLDGREEN);
 

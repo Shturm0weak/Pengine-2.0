@@ -24,6 +24,12 @@ void Time::Update()
 
 	const double duration = std::chrono::duration<double>(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
 	m_DeltaTime = fabs(m_LastTime - duration);
+
+	if (m_DeltaTime > 1.0f / 5.0f)
+	{
+		m_DeltaTime = 1.0f / 30.0f;
+	}
+
 	m_LastTime = duration;
 	m_GlobalTime += m_DeltaTime;
 }

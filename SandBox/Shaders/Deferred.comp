@@ -99,14 +99,14 @@ void main()
     viewRay.y = -screenPosition.y * camera.tanHalfFOV;
 
 	vec3 albedoColor = texture(albedoTexture, uv).xyz;
-	vec3 shading = texture(shadingTexture, uv).xyz;
+	vec4 shading = texture(shadingTexture, uv);
 
 	vec4 normalViewSpace = texture(normalTexture, uv);
 	vec3 ssao = texture(ssaoTexture, uv).xyz;
 
 	vec3 result = vec3(0.0f);
 
-	if (normalViewSpace.a <= 0.0f)
+	if (shading.a <= 0.0f)
 	{
 		result = albedoColor;
 	}

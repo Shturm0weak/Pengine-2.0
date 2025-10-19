@@ -51,6 +51,8 @@ namespace Pengine
 
 		void ShutDown();
 
+		void ManipulateOnAllMaterialsDebug();
+
 	private:
 		MeshManager() = default;
 		~MeshManager() = default;

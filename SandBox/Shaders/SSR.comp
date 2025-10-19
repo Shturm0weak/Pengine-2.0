@@ -163,8 +163,8 @@ void main()
     viewRay.y = screenPosition.y * camera.tanHalfFOV;
 
     vec4 normalViewSpace = texture(normalTexture, uv);
-    vec2 shading = texture(shadingTexture, uv).xy;
-    if (normalViewSpace.a <= 0.0f || shading.x <= 0.0f)
+    vec4 shading = texture(shadingTexture, uv);
+    if (shading.a <= 0.0f || shading.x <= 0.0f)
     {
         imageStore(outColor, pixelCoord, vec4(0.0f, 0.0f, 0.0f, 0.0f));
         return;

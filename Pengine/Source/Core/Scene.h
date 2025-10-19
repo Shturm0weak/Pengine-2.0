@@ -19,7 +19,8 @@ namespace Pengine
 	public:
 		struct Settings
 		{
-			bool m_DrawBoundingBoxes = false;
+			bool drawBoundingBoxes = false;
+			bool drawPhysicsShapes = false;
 		};
 
 		static std::shared_ptr<Scene> Create(const std::string& name, const std::string& tag);

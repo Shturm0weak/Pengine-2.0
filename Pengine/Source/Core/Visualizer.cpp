@@ -56,10 +56,10 @@ void Visualizer::DrawBox(
 }
 
 void Visualizer::DrawSphere(
-	const glm::vec3& position,
+	const glm::vec3& color,
+	const glm::mat4& transform,
 	const float radius,
 	int segments,
-	const glm::vec3& color,
 	const float duration)
 {
 	// Need at least 3 segments.
@@ -79,7 +79,7 @@ void Visualizer::DrawSphere(
 		for (int i = 0; i < segments; i++)
 		{
 			float theta = 2.0f * glm::pi<float>() * float(i) / float(segments);
-			currentRings[i] = position + glm::vec3(
+			currentRings[i] = glm::vec3(
 				ringRadius * cos(theta),
 				y,
 				ringRadius * sin(theta)
@@ -92,7 +92,7 @@ void Visualizer::DrawSphere(
 			for (int i = 0; i < segments; i++)
 			{
 				int next = (i + 1) % segments;
-				DrawLine(currentRings[i], currentRings[next], color, duration);
+				DrawLine(transform * glm::vec4(currentRings[i], 1.0f), transform * glm::vec4(currentRings[next], 1.0f), color, duration);
 			}
 		}
 
@@ -101,11 +101,233 @@ void Visualizer::DrawSphere(
 		{
 			for (int i = 0; i < segments; i++)
 			{
-				DrawLine(previousRings[i], currentRings[i], color, duration);
+				DrawLine(transform * glm::vec4(previousRings[i], 1.0f), transform * glm::vec4(currentRings[i], 1.0f), color, duration);
 			}
 		}
 
 		// Save current ring for next iteration.
 		previousRings = currentRings;
+	}
+}
+
+void GenerateHemisphereLines(
+	std::vector<std::pair<glm::vec3, glm::vec3>>& lines,
+	const glm::vec3& center,
+	const glm::vec3& direction,
+	const glm::vec3& perp1,
+	const glm::vec3& perp2,
+	float radius,
+	int segments)
+{
+	const int ringCount = segments / 2;
+
+	for (int i = 0; i <= ringCount; ++i)
+	{
+		float phi = glm::pi<float>() * 0.5f * (static_cast<float>(i) / ringCount);
+		float ringRadius = radius * glm::cos(phi);
+		float ringHeight = radius * glm::sin(phi);
+
+		glm::vec3 ringCenter = center + direction * ringHeight;
+
+		for (int j = 0; j < segments; ++j)
+		{
+			float theta1 = 2.0f * glm::pi<float>() * (static_cast<float>(j) / segments);
+			float theta2 = 2.0f * glm::pi<float>() * (static_cast<float>(j + 1) / segments);
+
+			glm::vec3 point1 = ringCenter +
+				perp1 * (ringRadius * glm::cos(theta1)) +
+				perp2 * (ringRadius * glm::sin(theta1));
+
+			glm::vec3 point2 = ringCenter +
+				perp1 * (ringRadius * glm::cos(theta2)) +
+				perp2 * (ringRadius * glm::sin(theta2));
+
+			lines.push_back({ point1, point2 });
+
+			// Add vertical lines between rings.
+			if (i < ringCount)
+			{
+				float nextPhi = glm::pi<float>() * 0.5f * (static_cast<float>(i + 1) / ringCount);
+				float nextRingRadius = radius * glm::cos(nextPhi);
+				float nextRingHeight = radius * glm::sin(nextPhi);
+
+				glm::vec3 nextRingCenter = center + direction * nextRingHeight;
+				glm::vec3 point3 = nextRingCenter +
+					perp1 * (nextRingRadius * glm::cos(theta1)) +
+					perp2 * (nextRingRadius * glm::sin(theta1));
+
+				lines.push_back({ point1, point3 });
+			}
+		}
+	}
+}
+
+void GenerateCylinderLines(
+	std::vector<std::pair<glm::vec3, glm::vec3>>& lines,
+	const glm::vec3& bottomCenter,
+	const glm::vec3& topCenter,
+	const glm::vec3& axis,
+	const glm::vec3& perp1,
+	const glm::vec3& perp2,
+	float radius,
+	int segments)
+{
+	glm::vec3 cylinderVec = topCenter - bottomCenter;
+	float cylinderHeight = glm::length(cylinderVec);
+
+	for (int i = 0; i < segments; ++i)
+	{
+		float theta1 = 2.0f * glm::pi<float>() * (static_cast<float>(i) / segments);
+		float theta2 = 2.0f * glm::pi<float>() * (static_cast<float>(i + 1) / segments);
+
+		// Bottom circle.
+		glm::vec3 bottomPoint1 = bottomCenter +
+			perp1 * (radius * glm::cos(theta1)) +
+			perp2 * (radius * glm::sin(theta1));
+
+		glm::vec3 bottomPoint2 = bottomCenter +
+			perp1 * (radius * glm::cos(theta2)) +
+			perp2 * (radius * glm::sin(theta2));
+
+		lines.push_back({ bottomPoint1, bottomPoint2 });
+
+		// Top circle.
+		glm::vec3 topPoint1 = topCenter +
+			perp1 * (radius * glm::cos(theta1)) +
+			perp2 * (radius * glm::sin(theta1));
+
+		glm::vec3 topPoint2 = topCenter +
+			perp1 * (radius * glm::cos(theta2)) +
+			perp2 * (radius * glm::sin(theta2));
+
+		lines.push_back({ topPoint1, topPoint2 });
+
+		// Vertical lines connecting bottom and top.
+		lines.push_back({ bottomPoint1, topPoint1 });
+	}
+}
+
+void Visualizer::DrawCapsule(
+	const glm::vec3& bottomCenter,
+	const glm::vec3& topCenter,
+	const glm::vec3& color,
+	const glm::mat4& transform,
+	float radius,
+	int segments,
+	float duration)
+{
+	std::vector<std::pair<glm::vec3, glm::vec3>> lines;
+	
+	glm::vec3 axis = glm::normalize(topCenter - bottomCenter);
+	float height = glm::length(topCenter - bottomCenter);
+	
+	// Find perpendicular vectors to the capsule axis.
+	glm::vec3 perp1, perp2;
+	if (std::abs(axis.x) > std::abs(axis.y))
+	{
+		perp1 = glm::normalize(glm::vec3(axis.z, 0, -axis.x));
+	}
+	else
+	{
+		perp1 = glm::normalize(glm::vec3(0, -axis.z, axis.y));
+	}
+	perp2 = glm::normalize(glm::cross(axis, perp1));
+	
+	// Generate hemisphere at bottom.
+	glm::vec3 bottomHemisphereCenter = bottomCenter + axis * radius;
+	GenerateHemisphereLines(lines, bottomHemisphereCenter, -axis, perp1, perp2, radius, segments);
+	
+	// Generate hemisphere at top.
+	glm::vec3 topHemisphereCenter = topCenter - axis * radius;
+	GenerateHemisphereLines(lines, topHemisphereCenter, axis, perp1, perp2, radius, segments);
+	
+	// Generate connecting cylinder lines.
+	GenerateCylinderLines(lines, bottomHemisphereCenter, topHemisphereCenter, axis, perp1, perp2, radius, segments);
+	
+	for (const auto& [start, end] : lines)
+	{
+		DrawLine(transform * glm::vec4(start, 1.0f), transform * glm::vec4(end, 1.0f), color, duration);
+	}
+}
+
+void Visualizer::DrawCylinder(
+	const glm::vec3& bottomCenter,
+	const glm::vec3& topCenter,
+	const glm::vec3& color,
+	const glm::mat4& transform,
+	float radius,
+	int segments,
+	float duration)
+{
+	std::vector<std::pair<glm::vec3, glm::vec3>> lines;
+
+	glm::vec3 axis = topCenter - bottomCenter;
+	float height = glm::length(axis);
+	glm::vec3 unitAxis = glm::normalize(axis);
+
+	// Find two perpendicular vectors to the cylinder axis.
+	glm::vec3 perp1, perp2;
+
+	// Choose a vector that's not parallel to the axis.
+	if (std::abs(unitAxis.x) > std::abs(unitAxis.y)) {
+		perp1 = glm::normalize(glm::vec3(unitAxis.z, 0, -unitAxis.x));
+	}
+	else {
+		perp1 = glm::normalize(glm::vec3(0, -unitAxis.z, unitAxis.y));
+	}
+	perp2 = glm::normalize(glm::cross(unitAxis, perp1));
+
+	// Generate base circle.
+	for (int i = 0; i < segments; ++i)
+	{
+		float angle1 = 2.0f * glm::pi<float>() * (static_cast<float>(i) / segments);
+		float angle2 = 2.0f * glm::pi<float>() * (static_cast<float>(i + 1) / segments);
+
+		glm::vec3 point1 = bottomCenter +
+			perp1 * (radius * glm::cos(angle1)) +
+			perp2 * (radius * glm::sin(angle1));
+
+		glm::vec3 point2 = bottomCenter +
+			perp1 * (radius * glm::cos(angle2)) +
+			perp2 * (radius * glm::sin(angle2));
+
+		lines.push_back({ point1, point2 });
+	}
+
+	// Generate top circle.
+	for (int i = 0; i < segments; ++i)
+	{
+		float angle1 = 2.0f * glm::pi<float>() * (static_cast<float>(i) / segments);
+		float angle2 = 2.0f * glm::pi<float>() * (static_cast<float>(i + 1) / segments);
+
+		glm::vec3 point1 = topCenter +
+			perp1 * (radius * glm::cos(angle1)) +
+			perp2 * (radius * glm::sin(angle1));
+
+		glm::vec3 point2 = topCenter +
+			perp1 * (radius * glm::cos(angle2)) +
+			perp2 * (radius * glm::sin(angle2));
+
+		lines.push_back({ point1, point2 });
+	}
+
+	for (int i = 0; i < segments; ++i)
+	{
+		float angle = 2.0f * glm::pi<float>() * (static_cast<float>(i) / segments);
+
+		glm::vec3 basePoint = bottomCenter +
+			perp1 * (radius * glm::cos(angle)) +
+			perp2 * (radius * glm::sin(angle));
+
+		glm::vec3 topPoint = topCenter +
+			perp1 * (radius * glm::cos(angle)) +
+			perp2 * (radius * glm::sin(angle));
+
+		lines.push_back({ basePoint, topPoint });
+	}
+
+	for (const auto& [start, end] : lines)
+	{
+		DrawLine(transform * glm::vec4(start, 1.0f), transform * glm::vec4(end, 1.0f), color, duration);
 	}
 }

@@ -26,7 +26,7 @@ struct FirstPersonCharacter
 	std::map<State, std::shared_ptr<CharacterState>> states;
 	
 	std::shared_ptr<class JPH::Character> joltCharacter;
-	float height = 2.0f;
+	float height = 1.0f;
 	float radius = 0.5f;
 
 	float shotTimer = 0.0f;

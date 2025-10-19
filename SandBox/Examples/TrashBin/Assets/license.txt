@@ -1,0 +1,11 @@
+Model Information:
+* title:	Industrial Wasteland Pack
+* source:	https://sketchfab.com/3d-models/industrial-wasteland-pack-5f3dbff1ca9d4a7fa487ec24600f46d9
+* author:	George Hager (https://sketchfab.com/adjective.george)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Industrial Wasteland Pack" (https://sketchfab.com/3d-models/industrial-wasteland-pack-5f3dbff1ca9d4a7fa487ec24600f46d9) by George Hager (https://sketchfab.com/adjective.george) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

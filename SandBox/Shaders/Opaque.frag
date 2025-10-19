@@ -78,10 +78,10 @@ void main()
 		mat3 TBN = mat3(normalize(tangentViewSpace), normalize(bitangentViewSpace), normal);
 		normal = texture(normalTexture, finalUV).xyz;
 		normal = normal * 2.0f - 1.0f;
-		outNormal = vec4(normalize(TBN * normal), 1.0f);
+		outNormal = vec4(normalize(TBN * normal), 0.0f);
 	}
 	else
 	{
-		outNormal = vec4(normal, 1.0f);
+		outNormal = vec4(normal, 0.0f);
 	}
 }

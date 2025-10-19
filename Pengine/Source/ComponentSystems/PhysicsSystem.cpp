@@ -7,6 +7,7 @@
 #include <Jolt/RegisterTypes.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
+#include <Jolt/Physics/Collision/Shape/CylinderShape.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 
 using namespace Pengine;
@@ -85,20 +86,6 @@ void PhysicsSystem::OnUpdate(const float deltaTime, std::shared_ptr<Scene> scene
 			// TODO: for now works only in local space.
 			transform.Translate(outPosition);
 			transform.Rotate(glm::eulerAngles(outRotation));
-
-			switch (rigidBody.type)
-			{
-			case RigidBody::Type::Box:
-			{
-				scene->GetVisualizer().DrawBox(-rigidBody.shape.box.halfExtents, rigidBody.shape.box.halfExtents, { 0.0f, 1.0f, 0.0f }, glm::translate(glm::mat4(1.0f), outPosition) * glm::toMat4(outRotation));
-				break;
-			}
-			case RigidBody::Type::Sphere:
-			{
-				scene->GetVisualizer().DrawSphere(outPosition, rigidBody.shape.sphere.radius, 12, { 0.0f, 1.0f, 0.0f });
-				break;
-			}
-			}
 		}
 	}
 }
@@ -146,6 +133,12 @@ void PhysicsSystem::UpdateBodies(std::shared_ptr<Scene> scene)
 			{
 				JPH::SphereShapeSettings sphereShapeSettings(rigidBody.shape.sphere.radius);
 				shapeResult = sphereShapeSettings.Create();
+				break;
+			}
+			case RigidBody::Type::Cylinder:
+			{
+				JPH::CylinderShapeSettings cylinderShapeSettings(rigidBody.shape.cylinder.halfHeight, rigidBody.shape.cylinder.radius);
+				shapeResult = cylinderShapeSettings.Create();
 				break;
 			}
 			}

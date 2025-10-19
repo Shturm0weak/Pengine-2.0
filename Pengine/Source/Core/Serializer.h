@@ -92,19 +92,24 @@ namespace Pengine
 			const std::string& debugName,
 			std::optional<Texture::Meta> meta = std::nullopt);
 
-		static std::shared_ptr<Mesh> GenerateMesh(
+		static std::optional<Mesh::CreateInfo> GenerateMesh(
+			const Mesh::CreateInfo::SourceFileInfo& sourceFileInfo,
 			const fastgltf::Asset& gltfAsset,
 			const fastgltf::Primitive& gltfPrimitive,
 			const std::string& name,
 			const std::filesystem::path& directory,
 			const bool flipUVY);
 
-		static std::shared_ptr<Mesh> GenerateMeshSkinned(
+		static std::optional<Mesh::CreateInfo> GenerateMeshSkinned(
+			const Mesh::CreateInfo::SourceFileInfo& sourceFileInfo,
 			const fastgltf::Asset& gltfAsset,
 			const fastgltf::Primitive& gltfPrimitive,
 			const std::string& name,
 			const std::filesystem::path& directory,
 			const bool flipUVY);
+
+		//static std::optional<Mesh::CreateInfo> ReimportMesh(
+		//	Mesh::CreateInfo);
 
 		static void ProcessColors(
 			const fastgltf::Asset& gltfAsset,
@@ -112,8 +117,6 @@ namespace Pengine
 			void* vertices,
 			const size_t vertexSize,
 			const size_t colorOffset);
-
-		// static std::shared_ptr<Mesh> GenerateMeshSkinned(const std::shared_ptr<Skeleton>& skeleton, aiMesh* aiMesh, const std::filesystem::path& directory);
 
 		static std::shared_ptr<Skeleton> GenerateSkeleton(
 			const fastgltf::Asset& gltfAsset,

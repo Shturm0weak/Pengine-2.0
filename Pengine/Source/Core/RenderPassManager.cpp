@@ -474,7 +474,7 @@ void RenderPassManager::CreateZPrePass()
 				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh].emplace_back(entity);
 			}
 
-			if (scene->GetSettings().m_DrawBoundingBoxes)
+			if (scene->GetSettings().drawBoundingBoxes)
 			{
 				const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -923,7 +923,7 @@ void RenderPassManager::CreateDeferred()
 			if (pl.drawBoundingSphere)
 			{
 				constexpr glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
-				renderInfo.scene->GetVisualizer().DrawSphere(transform.GetPosition(), pl.radius, 10, color, 0.0f);
+				renderInfo.scene->GetVisualizer().DrawSphere(color, transform.GetTransform(), pl.radius, 10);
 			}
 
 			lightIndex++;
@@ -1323,7 +1323,7 @@ void RenderPassManager::CreateTransparent()
 				}
 			}
 
-			if (scene->GetSettings().m_DrawBoundingBoxes)
+			if (scene->GetSettings().drawBoundingBoxes)
 			{
 				constexpr glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
 				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);

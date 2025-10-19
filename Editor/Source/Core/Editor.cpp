@@ -803,10 +803,16 @@ void Editor::SceneInfo(const std::shared_ptr<Scene>& scene)
 			ImGui::Text("Tag: %s", scene->GetTag().c_str());
 			ImGui::Text("Entities Count: %zu", scene->GetEntities().size());
 
-			bool drawBoundingBoxes = scene->GetSettings().m_DrawBoundingBoxes;
+			bool drawBoundingBoxes = scene->GetSettings().drawBoundingBoxes;
 			if (ImGui::Checkbox("Draw Bounding Boxes", &drawBoundingBoxes))
 			{
-				scene->GetSettings().m_DrawBoundingBoxes = drawBoundingBoxes;
+				scene->GetSettings().drawBoundingBoxes = drawBoundingBoxes;
+			}
+
+			bool drawPhysicsShapes = scene->GetSettings().drawPhysicsShapes;
+			if (ImGui::Checkbox("Draw Physics Shapes", &drawPhysicsShapes))
+			{
+				scene->GetSettings().drawPhysicsShapes = drawPhysicsShapes;
 			}
 
 			if (ImGui::CollapsingHeader("Wind Settings"))
@@ -1095,7 +1101,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene, Window& window)
 					{
 						const std::filesystem::path prefabFilepath = Utils::GetShortFilepath(m_CurrentDirectory / (entity->GetName() + FileFormats::Prefab()));
 						entity->SetPrefabFilepathUUID(Serializer::GenerateFileUUID(prefabFilepath));
-						SaveScene(entity->GetScene());
+						Serializer::SerializePrefab(prefabFilepath, entity);
 					}
 					ImGui::PopID();
 				}
@@ -2850,9 +2856,9 @@ void Editor::PhysicsBoxComponent(const std::shared_ptr<Entity>& entity)
 		auto& physicsSystem = entity->GetScene()->GetPhysicsSystem()->GetInstance();
 
 		int type = (int)rigidBody.type;
-		const char* types[] = { "Box", "Sphere"};
+		const char* types[] = { "Box", "Sphere", "Cylinder" };
 		ImGui::PushID("PhysicsBodyType");
-		if (ImGui::Combo("Type", &type, types, 2))
+		if (ImGui::Combo("Type", &type, types, 3))
 		{
 			rigidBody.type = (RigidBody::Type)type;
 			switch (rigidBody.type)
@@ -2869,6 +2875,12 @@ void Editor::PhysicsBoxComponent(const std::shared_ptr<Entity>& entity)
 				rigidBody.isValid = false;
 				break;
 			}
+			case RigidBody::Type::Cylinder:
+			{
+				rigidBody.shape.cylinder = RigidBody::Cylinder();
+				rigidBody.isValid = false;
+				break;
+			}
 			}
 		}
 		ImGui::PopID();
@@ -2879,6 +2891,7 @@ void Editor::PhysicsBoxComponent(const std::shared_ptr<Entity>& entity)
 		{
 			if (DrawVec3Control("Half Extents", rigidBody.shape.box.halfExtents))
 			{
+				rigidBody.shape.box.halfExtents = glm::max(rigidBody.shape.box.halfExtents, glm::vec3(0.01f));
 				rigidBody.isValid = false;
 			}
 			break;
@@ -2887,6 +2900,21 @@ void Editor::PhysicsBoxComponent(const std::shared_ptr<Entity>& entity)
 		{
 			if (ImGui::SliderFloat("Radius", &rigidBody.shape.sphere.radius, 0.0f, 10.0f))
 			{
+				rigidBody.shape.sphere.radius = glm::max(rigidBody.shape.sphere.radius, 0.01f);
+				rigidBody.isValid = false;
+			}
+			break;
+		}
+		case RigidBody::Type::Cylinder:
+		{
+			if (ImGui::SliderFloat("Radius", &rigidBody.shape.cylinder.radius, 0.0f, 10.0f))
+			{
+				rigidBody.shape.cylinder.radius = glm::max(rigidBody.shape.cylinder.radius, 0.01f);
+				rigidBody.isValid = false;
+			}
+			if (ImGui::SliderFloat("Half Height", &rigidBody.shape.cylinder.halfHeight, 0.0f, 10.0f))
+			{
+				rigidBody.shape.cylinder.halfHeight = glm::max(rigidBody.shape.cylinder.halfHeight, 0.01f);
 				rigidBody.isValid = false;
 			}
 			break;
@@ -2910,19 +2938,19 @@ void Editor::PhysicsBoxComponent(const std::shared_ptr<Entity>& entity)
 			}
 
 			float restitution = body.GetRestitution();
-			if (ImGui::SliderFloat("Restitution ", &restitution, 0.0f, 1.0f));
+			if (ImGui::SliderFloat("Restitution", &restitution, 0.0f, 1.0f));
 			{
 				body.SetRestitution(restitution);
 			}
 
 			glm::vec3 angularVelocity = JoltVec3ToGlmVec3(body.GetAngularVelocity());
-			if (DrawVec3Control("Angular Velocity ", angularVelocity));
+			if (DrawVec3Control("Angular Velocity", angularVelocity));
 			{
 				body.SetAngularVelocity(GlmVec3ToJoltVec3(angularVelocity));
 			}
 
 			glm::vec3 linearVelocity = JoltVec3ToGlmVec3(body.GetLinearVelocity());
-			if (DrawVec3Control("Linear Velocity ", linearVelocity));
+			if (DrawVec3Control("Linear Velocity", linearVelocity));
 			{
 				body.SetLinearVelocity(GlmVec3ToJoltVec3(linearVelocity));
 			}

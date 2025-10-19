@@ -216,3 +216,21 @@ void MeshManager::ShutDown()
 		m_SkeletonsByFilepath.clear();
 	}
 }
+
+#include "FileFormatNames.h"
+
+void MeshManager::ManipulateOnAllMaterialsDebug()
+{
+	for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::current_path()))
+	{
+		if (!entry.is_directory())
+		{
+			if (FileFormats::Mesh() == Utils::GetFileFormat(entry.path()))
+			{
+				auto mesh = LoadMesh(Utils::GetShortFilepath(entry.path()));
+				Serializer::SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
+				// User code ...
+			}
+		}
+	}
+}

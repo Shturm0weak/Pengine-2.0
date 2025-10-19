@@ -155,6 +155,8 @@ void EntryPoint::Run() const
 
 	WindowManager::GetInstance().SetCurrentWindow(mainWindow);
 
+	MeshManager::GetInstance().ManipulateOnAllMaterialsDebug();
+
 	m_Application->OnPreStart();
 
 	const std::shared_ptr<Renderer> renderer = Renderer::Create();

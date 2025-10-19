@@ -384,7 +384,7 @@ void CharacterSystem::OnUpdate(const float deltaTime, std::shared_ptr<Scene> sce
 			settings.mMaxSlopeAngle = JPH::DegreesToRadians(45.0f);
 			settings.mLayer = ObjectLayers::DYNAMIC;
 			settings.mShape = JPH::RotatedTranslatedShapeSettings(
-				JPH::Vec3(0, 0, 0),
+				JPH::Vec3(0, -0.5f * character.height, 0),
 				JPH::Quat::sIdentity(),
 				new JPH::CapsuleShape(0.5f * character.height, character.radius)).Create().Get();
 
@@ -399,6 +399,10 @@ void CharacterSystem::OnUpdate(const float deltaTime, std::shared_ptr<Scene> sce
 				&joltPhysicsSystem);
 			character.joltCharacter->AddToPhysicsSystem();
 		}
+
+		const glm::vec3 bottomCenter = transform.GetPosition() - glm::vec3(0.0f, character.height, 0.0f);
+		const glm::vec3 topCenter = transform.GetPosition() + glm::vec3(0.0f, character.height, 0.0f);
+		//scene->GetVisualizer().DrawCapsule(bottomCenter, topCenter, { 1.0f, 1.0f, 0.0f }, 0.3);
 
 		character.isMovePressed = input.IsKeyDown(KeyCode::KEY_W)
 			|| input.IsKeyDown(KeyCode::KEY_S)
@@ -548,7 +552,7 @@ void CharacterSystem::OnPrePhysicsUpdate(const float deltaTime, std::shared_ptr<
 			joltPhysicsSystem.GetBodyInterface().AddForce(result.mBodyID, GlmVec3ToJoltVec3(cameraTransform.GetForward() * character.bulletForce), point, JPH::EActivation::Activate);
 			
 			scene->GetVisualizer().DrawLine(JoltVec3ToGlmVec3(origin), JoltVec3ToGlmVec3(point), { 1.0f, 0.0f, 0.0f }, 1.0f);
-			scene->GetVisualizer().DrawSphere(JoltVec3ToGlmVec3(point), 0.3f, 10, { 1.0f, 0.0f, 0.0f }, 1.0f);
+			scene->GetVisualizer().DrawSphere({ 1.0f, 0.0f, 0.0f }, glm::translate(glm::mat4(1.0f), JoltVec3ToGlmVec3(point)), 0.3f, 10, 1.0f);
 
 			const entt::entity handle = scene->GetPhysicsSystem()->GetEntity(result.mBodyID);
 			auto entity = scene->GetRegistry().get<Transform>(handle).GetEntity();

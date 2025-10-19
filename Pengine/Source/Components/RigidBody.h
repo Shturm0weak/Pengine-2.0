@@ -15,7 +15,8 @@ namespace Pengine
 		enum class Type
 		{
 			Box,
-			Sphere
+			Sphere,
+			Cylinder
 		};
 
 		struct Box
@@ -28,10 +29,17 @@ namespace Pengine
 			float radius = 1.0f;
 		};
 
+		struct Cylinder
+		{
+			float halfHeight = 0.5f;
+			float radius = 0.5f;
+		};
+
 		union Shape
 		{
 			Box box;
 			Sphere sphere;
+			Cylinder cylinder;
 		};
 		
 		Shape shape = Shape(Box());

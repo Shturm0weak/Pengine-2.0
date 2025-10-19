@@ -23,12 +23,20 @@ namespace Pengine
 
 		struct CreateInfo
 		{
+			struct SourceFileInfo
+			{
+				std::filesystem::path filepath;
+				std::string meshName;
+				uint32_t primitiveIndex;
+			};
+
+			SourceFileInfo sourceFileInfo;
 			std::string name;
 			std::filesystem::path filepath;
 			std::vector<VertexLayout> vertexLayouts;
-			uint32_t vertexCount;
-			uint32_t vertexSize;
-			void* vertices;
+			uint32_t vertexCount = 0;
+			uint32_t vertexSize = 0;
+			void* vertices = nullptr;
 			std::vector<uint32_t> indices;
 			std::optional<BoundingBox> boundingBox;
 			Type type = Type::STATIC;
@@ -42,7 +50,7 @@ namespace Pengine
 				Visualizer& visualizer)> raycastCallback;
 		};
 
-		Mesh(CreateInfo& createInfo);
+		Mesh(const CreateInfo& createInfo);
 		Mesh(const Mesh&) = delete;
 		Mesh(Mesh&&) = delete;
 		~Mesh();
@@ -53,21 +61,23 @@ namespace Pengine
 
 		[[nodiscard]] std::shared_ptr<Buffer> GetIndexBuffer() const { return m_Indices; };
 
-		[[nodiscard]] const void* GetRawVertices() const { return m_RawVertices; }
+		[[nodiscard]] const void* GetRawVertices() const { return m_CreateInfo.vertices; }
 
-		[[nodiscard]] const std::vector<uint32_t>& GetRawIndices() const { return m_RawIndices; };
+		[[nodiscard]] const std::vector<uint32_t>& GetRawIndices() const { return m_CreateInfo.indices; };
 
-		[[nodiscard]] uint32_t GetVertexCount() const { return m_VertexCount; }
+		[[nodiscard]] uint32_t GetVertexCount() const { return m_CreateInfo.vertexCount; }
 
-		[[nodiscard]] uint32_t GetIndexCount() const { return m_IndexCount; }
+		[[nodiscard]] uint32_t GetIndexCount() const { return m_CreateInfo.indices.size(); }
 
-		[[nodiscard]] uint32_t GetVertexSize() const { return m_VertexSize; }
+		[[nodiscard]] uint32_t GetVertexSize() const { return m_CreateInfo.vertexSize; }
 
 		[[nodiscard]] const BoundingBox& GetBoundingBox() const { return m_BoundingBox; }
 
-		[[nodiscard]] const std::vector<VertexLayout>& GetVertexLayouts() const { return m_VertexLayouts; }
+		[[nodiscard]] const std::vector<VertexLayout>& GetVertexLayouts() const { return m_CreateInfo.vertexLayouts; }
 
-		[[nodiscard]] Type GetType() const { return m_Type; }
+		[[nodiscard]] Type GetType() const { return m_CreateInfo.type; }
+
+		[[nodiscard]] const CreateInfo GetCreateInfo() const { return m_CreateInfo; }
 
 		[[nodiscard]] std::shared_ptr<MeshBVH> GetBVH() const { return m_BVH; }
 
@@ -78,25 +88,14 @@ namespace Pengine
 			Raycast::Hit& hit,
 			Visualizer& visualizer) const;
 
+		void Reload(const CreateInfo& createInfo);
+
 	protected:
 		std::shared_ptr<MeshBVH> m_BVH;
 		std::vector<std::shared_ptr<Buffer>> m_Vertices;
 		std::shared_ptr<Buffer> m_Indices;
-		void* m_RawVertices;
-		std::vector<uint32_t> m_RawIndices;
 		BoundingBox m_BoundingBox;
-		uint32_t m_VertexCount = 0;
-		uint32_t m_IndexCount = 0;
-		uint32_t m_VertexSize = 0;
-		std::vector<VertexLayout> m_VertexLayouts;
-		Type m_Type = Type::STATIC;
-		std::function<bool(
-			const glm::vec3& start,
-			const glm::vec3& direction,
-			const float length,
-			std::shared_ptr<MeshBVH> bvh,
-			Raycast::Hit& hit,
-			Visualizer& visualizer)> m_RaycastCallback;
+		CreateInfo m_CreateInfo;
 	};
 
 }

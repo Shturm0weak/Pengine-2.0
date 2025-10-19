@@ -11,6 +11,7 @@
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
 #include "../Components/Canvas.h"
+#include "../Components/RigidBody.h"
 
 #include "../Core/MaterialManager.h"
 #include "../Core/MeshManager.h"
@@ -22,6 +23,8 @@ void Scene::Copy(const Scene& scene)
 {
 	m_Name = scene.GetName();
 	m_Filepath = scene.GetFilepath();
+
+	Logger::Error("Scene::Copy(const Scene& scene) is not implemented!");
 
 	//for (const auto& gameObject : scene.m_GameObjects)
 	//{
@@ -320,6 +323,42 @@ void Scene::UpdateSystems(const float deltaTime)
 		for (const auto& [name, system] : m_ComponentSystemsByName)
 		{
 			system->OnPostPhysicsUpdate(deltaTime, shared_from_this());
+		}
+	}
+
+	if (m_Settings.drawPhysicsShapes)
+	{
+		const auto& view = GetRegistry().view<RigidBody>();
+		for (const auto handle : view)
+		{
+			const Transform& transform = GetRegistry().get<Transform>(handle);
+			if (!transform.GetEntity()->IsEnabled())
+			{
+				continue;
+			}
+
+			const RigidBody& rigidBody = GetRegistry().get<RigidBody>(handle);
+
+			switch (rigidBody.type)
+			{
+			case RigidBody::Type::Box:
+			{
+				GetVisualizer().DrawBox(-rigidBody.shape.box.halfExtents, rigidBody.shape.box.halfExtents, { 0.0f, 1.0f, 0.0f }, transform.GetPositionMat4() * transform.GetRotationMat4());
+				break;
+			}
+			case RigidBody::Type::Sphere:
+			{
+				GetVisualizer().DrawSphere({ 0.0f, 1.0f, 0.0f }, transform.GetPositionMat4() * transform.GetRotationMat4(), rigidBody.shape.sphere.radius, 12);
+				break;
+			}
+			case RigidBody::Type::Cylinder:
+			{
+				const glm::vec3 bottomCenter = glm::vec3(0.0f, -rigidBody.shape.cylinder.halfHeight, 0.0f);
+				const glm::vec3 topCenter = glm::vec3(0.0f, rigidBody.shape.cylinder.halfHeight, 0.0f);
+				GetVisualizer().DrawCylinder(bottomCenter, topCenter, { 0.0f, 1.0f, 0.0f }, transform.GetPositionMat4() * transform.GetRotationMat4(), rigidBody.shape.cylinder.radius, 12);
+				break;
+			}
+			}
 		}
 	}
 }
