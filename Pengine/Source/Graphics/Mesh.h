@@ -94,8 +94,8 @@ namespace Pengine
 		std::shared_ptr<MeshBVH> m_BVH;
 		std::vector<std::shared_ptr<Buffer>> m_Vertices;
 		std::shared_ptr<Buffer> m_Indices;
-		BoundingBox m_BoundingBox;
-		CreateInfo m_CreateInfo;
+		BoundingBox m_BoundingBox{};
+		CreateInfo m_CreateInfo{};
 	};
 
 }

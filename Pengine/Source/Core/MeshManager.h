@@ -19,7 +19,7 @@ namespace Pengine
 		MeshManager(const MeshManager&) = delete;
 		MeshManager& operator=(const MeshManager&) = delete;
 
-		std::shared_ptr<Mesh> CreateMesh(Mesh::CreateInfo& createInfo);
+		std::shared_ptr<Mesh> CreateMesh(Mesh::CreateInfo& createInfo, const bool tryToGet = true);
 
 		std::shared_ptr<Mesh> LoadMesh(const std::filesystem::path& filepath);
 

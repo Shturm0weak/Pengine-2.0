@@ -4,6 +4,7 @@
 
 #include "Core/Core.h"
 #include "Core/GraphicsSettings.h"
+#include "Core/Serializer.h"
 #include "Graphics/Texture.h"
 
 #include "EntityAnimatorEditor.h"
@@ -209,18 +210,8 @@ private:
 	{
 		bool opened = false;
 
-		std::filesystem::path filepath;
-
-		struct Options
-		{
-			bool importMeshes = true;
-			bool importSkeletons = true;
-			bool importMaterials = true;
-			bool importAnimations = true;
-			bool importPrefabs = true;
-
-			bool flipUVY = false;
-		} options;
+		Pengine::Serializer::ImportInfo importInfo;
+		Pengine::Serializer::ImportOptions importOptions;
 
 		void Update(Editor& editor);
 	} m_ImportMenu;

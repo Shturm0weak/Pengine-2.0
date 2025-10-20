@@ -1,0 +1,154 @@
+Name: Sketchfab_model
+IsEnabled: true
+Transform:
+  Position: [0, 0, 0]
+  Rotation: [-1.57079637, -0, 0]
+  Scale: [1, 1, 1]
+  FollowOwner: true
+Childs:
+  - Name: 8d8863669f354a6e8e97e26a3e1219eb.fbx
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [1.57079625, -0, 0]
+      Scale: [0.00999999978, 0.00999999885, 0.00999999885]
+      FollowOwner: true
+    Childs:
+      - Name: RootNode
+        IsEnabled: true
+        Transform:
+          Position: [0, 0, 0]
+          Rotation: [0, -0, 0]
+          Scale: [1, 1, 1]
+          FollowOwner: true
+        Childs:
+          - Name: Construction4
+            IsEnabled: true
+            Transform:
+              Position: [2632.59058, 0, 262.725006]
+              Rotation: [-1.57079649, -0, 0]
+              Scale: [100, 99.9999924, 99.9999924]
+              FollowOwner: true
+            Childs:
+              - Name: Construction4_ConstructionPack_0
+                IsEnabled: true
+                Transform:
+                  Position: [0, 0, 0]
+                  Rotation: [0, -0, 0]
+                  Scale: [1, 1, 1]
+                  FollowOwner: true
+                Renderer3D:
+                  SkeletalAnimatorEntity: 0xcc2e10a0eb3dcdfe31c800091b21cc6d
+                  Mesh: 0x273f7e8fea31be7b37de9580c0111dfe
+                  Material: 0xbaf7c16223d1423ab0f65d246cec0ab3
+                  RenderingOrder: 5
+                  IsEnabled: true
+                  CastShadows: true
+                  ObjectVisibilityMask: 255
+                  ShadowVisibilityMask: 255
+                Childs:
+                  []
+          - Name: Construction1
+            IsEnabled: true
+            Transform:
+              Position: [347.253784, 0, -46.8128433]
+              Rotation: [-1.57079649, -0, 0]
+              Scale: [100, 99.9999924, 99.9999924]
+              FollowOwner: true
+            Childs:
+              - Name: Construction1_ConstructionPack_0
+                IsEnabled: true
+                Transform:
+                  Position: [0, 0, 0]
+                  Rotation: [0, -0, 0]
+                  Scale: [1, 1, 1]
+                  FollowOwner: true
+                Renderer3D:
+                  SkeletalAnimatorEntity: 0x2af48403754f1695753fb0b942235d13
+                  Mesh: 0x4ebada32e3b97d4ca54be2c2e4f4e713
+                  Material: 0xbaf7c16223d1423ab0f65d246cec0ab3
+                  RenderingOrder: 5
+                  IsEnabled: true
+                  CastShadows: true
+                  ObjectVisibilityMask: 255
+                  ShadowVisibilityMask: 255
+                Childs:
+                  []
+          - Name: Construction2
+            IsEnabled: true
+            Transform:
+              Position: [-1922.02686, 0, -12.7913475]
+              Rotation: [-1.57079649, -0, 0]
+              Scale: [100, 99.9999924, 99.9999924]
+              FollowOwner: true
+            Childs:
+              - Name: Construction2_ConstructionPack_0
+                IsEnabled: true
+                Transform:
+                  Position: [0, 0, 0]
+                  Rotation: [0, -0, 0]
+                  Scale: [1, 1, 1]
+                  FollowOwner: true
+                Renderer3D:
+                  SkeletalAnimatorEntity: 0x0079942b15a6c2eef4d1157b58f6b830
+                  Mesh: 0x232135a952d20709096581b71421f71d
+                  Material: 0xbaf7c16223d1423ab0f65d246cec0ab3
+                  RenderingOrder: 5
+                  IsEnabled: true
+                  CastShadows: true
+                  ObjectVisibilityMask: 255
+                  ShadowVisibilityMask: 255
+                Childs:
+                  []
+          - Name: Construction3
+            IsEnabled: true
+            Transform:
+              Position: [1467.83948, 0, 2585.11865]
+              Rotation: [-1.57079649, -0, 0]
+              Scale: [100, 99.9999924, 99.9999924]
+              FollowOwner: true
+            Childs:
+              - Name: Construction3_ConstructionPack_0
+                IsEnabled: true
+                Transform:
+                  Position: [0, 0, 0]
+                  Rotation: [0, -0, 0]
+                  Scale: [1, 1, 1]
+                  FollowOwner: true
+                Renderer3D:
+                  SkeletalAnimatorEntity: 0x21a28e1d5a9b13d626f70f734305a97e
+                  Mesh: 0x9b8e031c15bcb7d43a66fe53c2cc3b4b
+                  Material: 0xbaf7c16223d1423ab0f65d246cec0ab3
+                  RenderingOrder: 5
+                  IsEnabled: true
+                  CastShadows: true
+                  ObjectVisibilityMask: 255
+                  ShadowVisibilityMask: 255
+                Childs:
+                  []
+          - Name: Construction5
+            IsEnabled: true
+            Transform:
+              Position: [-1997.27747, 0, 2603.06006]
+              Rotation: [-1.57079649, -0, 0]
+              Scale: [100, 99.9999924, 99.9999924]
+              FollowOwner: true
+            Childs:
+              - Name: Construction5_ConstructionPack_0
+                IsEnabled: true
+                Transform:
+                  Position: [0, 0, 0]
+                  Rotation: [0, -0, 0]
+                  Scale: [1, 1, 1]
+                  FollowOwner: true
+                Renderer3D:
+                  SkeletalAnimatorEntity: 0x25d1e07374d21d43bec9193336498bd1
+                  Mesh: 0x0694810e3bc6edf0106a2cc2b03bc7a4
+                  Material: 0xbaf7c16223d1423ab0f65d246cec0ab3
+                  RenderingOrder: 5
+                  IsEnabled: true
+                  CastShadows: true
+                  ObjectVisibilityMask: 255
+                  ShadowVisibilityMask: 255
+                Childs:
+                  []

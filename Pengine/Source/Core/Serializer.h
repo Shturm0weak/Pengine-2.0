@@ -74,14 +74,36 @@ namespace Pengine
 
 		static std::optional<ShaderReflection::ReflectShaderModule> DeserializeShaderModuleReflection(const std::filesystem::path& filepath);
 
+		struct ImportInfo
+		{
+			std::filesystem::path filepath;
+			std::vector<std::string> meshes;
+			std::vector<std::string> materials;
+			std::vector<std::string> animations;
+			std::vector<std::string> skeletons;
+		};
+
+		static [[nodiscard]] ImportInfo GetImportInfo(const std::filesystem::path& filepath);
+
+		struct ImportOptions
+		{
+			std::filesystem::path filepath;
+
+			struct MeshOptions
+			{
+				bool import = true;
+				bool skinned = false;
+				glm::bvec2 flipUV = { false, false };
+			} meshes;
+			
+			bool skeletons = true;
+			bool materials = true;
+			bool animations = true;
+			bool prefabs = true;
+		};
+
 		static std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> LoadIntermediate(
-			const std::filesystem::path& filepath,
-			const bool importMeshes,
-			const bool importMaterials,
-			const bool importSkeletons,
-			const bool importAnimations,
-			const bool importPrefabs,
-			const bool flipUVY,
+			const ImportOptions options,
 			std::string& workName,
 			float& workStatus);
 
@@ -98,15 +120,7 @@ namespace Pengine
 			const fastgltf::Primitive& gltfPrimitive,
 			const std::string& name,
 			const std::filesystem::path& directory,
-			const bool flipUVY);
-
-		static std::optional<Mesh::CreateInfo> GenerateMeshSkinned(
-			const Mesh::CreateInfo::SourceFileInfo& sourceFileInfo,
-			const fastgltf::Asset& gltfAsset,
-			const fastgltf::Primitive& gltfPrimitive,
-			const std::string& name,
-			const std::filesystem::path& directory,
-			const bool flipUVY);
+			const ImportOptions::MeshOptions& options);
 
 		//static std::optional<Mesh::CreateInfo> ReimportMesh(
 		//	Mesh::CreateInfo);

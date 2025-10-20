@@ -1717,11 +1717,11 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 			{
 				if (FileFormats::IsMeshIntermediate(format))
 				{
-					if (ImGui::MenuItem("Generate meshes"))
+					if (ImGui::MenuItem("Import"))
 					{
 						m_ImportMenu = {};
 						m_ImportMenu.opened = true;
-						m_ImportMenu.filepath = path;
+						m_ImportMenu.importInfo = Serializer::GetImportInfo(path);
 					}
 				}
 				if (format == FileFormats::Scene())
@@ -3616,24 +3616,77 @@ void Editor::ImportMenu::Update(Editor& editor)
 		return;
 	}
 
-	if (opened && ImGui::Begin("Import Properties", &opened))
+	if (opened && ImGui::Begin("Import Settings", &opened))
 	{
-		ImGui::Checkbox("Meshes", &options.importMeshes);
+		ImGui::Text("Filepath##Import", importInfo.filepath.c_str());
 
-		if (options.importMeshes)
+		ImGui::Checkbox("Prefabs", &importOptions.prefabs);
+
+		if (!importInfo.meshes.empty() && ImGui::CollapsingHeader("Meshes##Import"))
 		{
 			Indent indent;
-			ImGui::Checkbox("Skeletons", &options.importSkeletons);
-			ImGui::Checkbox("Flip UV Y", &options.flipUVY);
+
+			ImGui::Checkbox("Import##ImportMeshes", &importOptions.meshes.import);
+			ImGui::Checkbox("Skinned##ImportMeshes", &importOptions.meshes.skinned);
+			ImGui::Checkbox("Flip UV X##ImportMeshes", &importOptions.meshes.flipUV.x);
+			ImGui::SameLine();
+			ImGui::Checkbox("Flip UV Y##ImportMeshes", &importOptions.meshes.flipUV.y);
+
+			{
+				Indent indent;
+				for (const auto& mesh : importInfo.meshes)
+				{
+					ImGui::Text(mesh.c_str());
+				}
+			}
 		}
 
-		ImGui::Checkbox("Materials", &options.importMaterials);
+		if (!importInfo.materials.empty() && ImGui::CollapsingHeader("Materials##Import"))
+		{
+			Indent indent;
 
-		ImGui::Checkbox("Animations", &options.importAnimations);
+			ImGui::Checkbox("Import##ImportMaterials", &importOptions.materials);
 
-		ImGui::Checkbox("Prefabs", &options.importPrefabs);
+			{
+				Indent indent;
+				for (const auto& material : importInfo.materials)
+				{
+					ImGui::Text(material.c_str());
+				}
+			}
+		}
 
-		if (ImGui::Button("Import"))
+		if (!importInfo.animations.empty() && ImGui::CollapsingHeader("Animations##Import"))
+		{
+			Indent indent;
+
+			ImGui::Checkbox("Import##ImportAnimations", &importOptions.animations);
+
+			{
+				Indent indent;
+				for (const auto& animation : importInfo.animations)
+				{
+					ImGui::Text(animation.c_str());
+				}
+			}
+		}
+
+		if (!importInfo.skeletons.empty() && ImGui::CollapsingHeader("Skeletons##Import"))
+		{
+			Indent indent;
+
+			ImGui::Checkbox("Import##ImportSkeletons", &importOptions.skeletons);
+
+			{
+				Indent indent;
+				for (const auto& skeleton : importInfo.skeletons)
+				{
+					ImGui::Text(skeleton.c_str());
+				}
+			}
+		}
+
+		if (ImGui::Button("Import##Button"))
 		{
 			opened = false;
 
@@ -3643,21 +3696,16 @@ void Editor::ImportMenu::Update(Editor& editor)
 
 			ThreadPool::GetInstance().EnqueueAsync([&editor, this]()
 			{
-				filepath = Utils::Erase(filepath.string(), editor.m_RootDirectory.string() + "/");
+				importOptions.filepath = Utils::Erase(importInfo.filepath.string(), editor.m_RootDirectory.string() + "/");
 				Serializer::LoadIntermediate(
-					filepath,
-					options.importMeshes,
-					options.importMaterials,
-					options.importSkeletons * options.importMeshes,
-					options.importAnimations,
-					options.importPrefabs,
-					options.flipUVY,
+					importOptions,
 					editor.m_LoadIntermediateMenu.workName,
 					editor.m_LoadIntermediateMenu.workStatus);
 
 				editor.m_LoadIntermediateMenu.opened = false;
 
-				options = {};
+				importInfo = {};
+				importOptions = {};
 			});
 		}
 

@@ -14,22 +14,23 @@ MeshManager& MeshManager::GetInstance()
 	return meshManager;
 }
 
-std::shared_ptr<Mesh> MeshManager::CreateMesh(Mesh::CreateInfo& createInfo)
+std::shared_ptr<Mesh> MeshManager::CreateMesh(Mesh::CreateInfo& createInfo, const bool tryToGet)
 {
 	PROFILER_SCOPE(__FUNCTION__);
 
-	if (std::shared_ptr<Mesh> mesh = GetMesh(createInfo.filepath))
+	if (tryToGet)
 	{
-		return mesh;
+		if (std::shared_ptr<Mesh> mesh = GetMesh(createInfo.filepath))
+		{
+			return mesh;
+		}
 	}
-	else
-	{
-		mesh = std::make_shared<Mesh>(createInfo);
-		std::lock_guard<std::mutex> lock(m_MutexMesh);
-		m_MeshesByFilepath[createInfo.filepath] = mesh;
 
-		return mesh;
-	}
+	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(createInfo);
+	std::lock_guard<std::mutex> lock(m_MutexMesh);
+	m_MeshesByFilepath[createInfo.filepath] = mesh;
+
+	return mesh;
 }
 
 std::shared_ptr<Mesh> MeshManager::LoadMesh(const std::filesystem::path& filepath)
@@ -228,7 +229,7 @@ void MeshManager::ManipulateOnAllMaterialsDebug()
 			if (FileFormats::Mesh() == Utils::GetFileFormat(entry.path()))
 			{
 				auto mesh = LoadMesh(Utils::GetShortFilepath(entry.path()));
-				Serializer::SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
+				//Serializer::SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
 				// User code ...
 			}
 		}

@@ -1,5 +1,6 @@
 Settings:
   DrawBoundingBoxes: false
+  DrawPhysicsShapes: false
   Wind:
     Direction: [1, 1, 1]
     Frequency: 10
@@ -26,7 +27,7 @@ Scene:
     Transform:
       Position: [0, -10, 0]
       Rotation: [0, -0, 0]
-      Scale: [25, 1, 25]
+      Scale: [70, 1, 70]
       FollowOwner: true
     Renderer3D:
       SkeletalAnimatorEntity: 0x83defcab1dcae13080e550f3cca63db9
@@ -41,7 +42,7 @@ Scene:
       IsStatic: true
       Mass: 10
       Type: 0
-      HalfExtents: [25, 1, 25]
+      HalfExtents: [70, 1, 70]
       AngularVelocity: [0, 0, 0]
       LinearVelocity: [0, 0, 0]
       Friction: 10
@@ -205,15 +206,15 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [7.75078154, -7.05050325, 4.90921593]
-      Rotation: [-0.156317085, -0.31082949, 0]
+      Position: [-6.01979065, -4.96318054, -52.8296204]
+      Rotation: [-0.033386711, -2.7799716, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
       Fov: 1.57079637
       Type: 1
-      ZNear: 0.100000001
-      ZFar: 1000
+      ZNear: 0.0500000007
+      ZFar: 200
       PassName: AntiAliasingAndCompose
       RenderTargetIndex: 0
       ObjectVisibilityMask: 255
@@ -513,4 +514,11 @@ Scene:
       Position: [8.81800652, -8.99999428, 1.79534364]
       Rotation: [1.57079649, -0, 0]
       Scale: [0.0120000001, 0.0120000001, 0.0120000001]
+      FollowOwner: true
+  - PrefabFilepath: 0x8a271321769e89df58cdb3d111ba8856
+    UUID: 0x091efc7e9bf599dc56ae148221757634
+    Transform:
+      Position: [30.1546593, -9, -6.45928097]
+      Rotation: [-1.57079637, 1.57079637, 0]
+      Scale: [0.999981046, 0.999999523, 0.999980986]
       FollowOwner: true

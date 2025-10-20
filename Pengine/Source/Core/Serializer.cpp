@@ -1441,7 +1441,7 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 		mesh->GetFilepath().string().size() +
 		mesh->GetCreateInfo().sourceFileInfo.meshName.size() +
 		mesh->GetCreateInfo().sourceFileInfo.filepath.string().size() +
-		8 * 4; // Type, Primitive Index, Vertex Count, Vertex Size, Index Count, Mesh Size, Filepath Size, Vertex Layout Count.
+		10 * 4; // Type, Primitive Index, Source Mesh Size, Source Filepath Size, Vertex Count, Vertex Size, Index Count, Mesh Size, Filepath Size, Vertex Layout Count.
 
 	uint32_t offset = 0;
 
@@ -1598,6 +1598,40 @@ Mesh::CreateInfo Serializer::DeserializeMesh(const std::filesystem::path& filepa
 		meshName.resize(meshNameSize);
 		memcpy(meshName.data(), &Utils::GetValue<uint8_t>(data, offset), meshNameSize);
 		offset += meshNameSize;
+	}
+
+	// SourceFile.
+	{
+		Mesh::CreateInfo::SourceFileInfo sourceFile{};
+
+		std::string sourceFilepath;
+		// Filepath.
+		{
+			const uint32_t sourcefilepathSize = Utils::GetValue<uint32_t>(data, offset);
+			offset += sizeof(uint32_t);
+
+			sourceFilepath.resize(sourcefilepathSize);
+			memcpy(sourceFilepath.data(), &Utils::GetValue<uint8_t>(data, offset), sourcefilepathSize);
+			offset += sourcefilepathSize;
+		}
+		sourceFile.filepath = sourceFilepath;
+
+		// MeshName.
+		{
+			const uint32_t meshNameSize = Utils::GetValue<uint32_t>(data, offset);
+			offset += sizeof(uint32_t);
+
+			sourceFile.meshName.resize(meshNameSize);
+			memcpy(sourceFile.meshName.data(), &Utils::GetValue<uint8_t>(data, offset), meshNameSize);
+			offset += meshNameSize;
+		}
+
+		uint32_t primitiveIndex;
+		// Primitive Index.
+		{
+			sourceFile.primitiveIndex = Utils::GetValue<uint32_t>(data, offset);
+			offset += sizeof(uint32_t);
+		}
 	}
 
 	// Vertices.
@@ -2393,20 +2427,8 @@ std::optional<ShaderReflection::ReflectShaderModule> Serializer::DeserializeShad
 	return reflectShaderModule;
 }
 
-std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>>
-Serializer::LoadIntermediate(
-	const std::filesystem::path& filepath,
-	const bool importMeshes,
-	const bool importMaterials,
-	const bool importSkeletons,
-	const bool importAnimations,
-	const bool importPrefabs,
-	const bool flipUVY,
-	std::string& workName,
-	float& workStatus)
+Serializer::ImportInfo Serializer::GetImportInfo(const std::filesystem::path& filepath)
 {
-	workName = "Loading " + filepath.string();
-
 	const std::filesystem::path directory = filepath.parent_path();
 
 	auto data = fastgltf::GltfDataBuffer::FromPath(filepath);
@@ -2417,8 +2439,7 @@ Serializer::LoadIntermediate(
 	}
 
 	fastgltf::Parser parser{};
-	auto asset = parser.loadGltf(data.get(), directory,
-		fastgltf::Options::GenerateMeshIndices | fastgltf::Options::LoadExternalBuffers);
+	auto asset = parser.loadGltf(data.get(), directory, fastgltf::Options::None);
 
 	if (asset.error() != fastgltf::Error::None)
 	{
@@ -2428,11 +2449,78 @@ Serializer::LoadIntermediate(
 
 	fastgltf::Asset& gltfAsset = asset.get();
 
+	ImportInfo importInfo{};
+	importInfo.filepath = filepath;
+
+	for (const auto& material : gltfAsset.materials)
+	{
+		importInfo.materials.emplace_back(material.name.c_str());
+	}
+
+	for (const auto& mesh : gltfAsset.meshes)
+	{
+		size_t primitiveIndex = 0;
+		for (const auto& primitive : mesh.primitives)
+		{
+			std::string meshName = mesh.name.c_str();
+			if (primitiveIndex > 0)
+			{
+				meshName += std::format("{}", primitiveIndex);
+			}
+
+			importInfo.meshes.emplace_back(meshName);
+
+			primitiveIndex++;
+		}
+	}
+
+	for (const auto& skin : gltfAsset.skins)
+	{
+		importInfo.skeletons.emplace_back(skin.name.c_str());
+	}
+
+	for (const auto& animation : gltfAsset.animations)
+	{
+		importInfo.animations.emplace_back(animation.name.c_str());
+	}
+
+	return importInfo;
+}
+
+std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>>
+Serializer::LoadIntermediate(
+	const ImportOptions options,
+	std::string& workName,
+	float& workStatus)
+{
+	workName = "Loading " + options.filepath.string();
+
+	const std::filesystem::path directory = options.filepath.parent_path();
+
+	auto data = fastgltf::GltfDataBuffer::FromPath(options.filepath);
+	if (data.error() != fastgltf::Error::None)
+	{
+		Logger::Error(std::format("Failed to load intermediate {}!", options.filepath.string()));
+		return {};
+	}
+
+	fastgltf::Parser parser{};
+	auto asset = parser.loadGltf(data.get(), directory,
+		fastgltf::Options::GenerateMeshIndices | fastgltf::Options::LoadExternalBuffers);
+
+	if (asset.error() != fastgltf::Error::None)
+	{
+		Logger::Error(std::format("Failed to load intermediate {}!", options.filepath.string()));
+		return {};
+	}
+
+	fastgltf::Asset& gltfAsset = asset.get();
+
 	const float maxWorkStatus = gltfAsset.materials.size() + gltfAsset.meshes.size() + gltfAsset.animations.size();
 	float currentWorkStatus = 0.0f;
 
 	std::unordered_map<size_t, std::shared_ptr<Material>> materialsByIndex;
-	if (importMaterials)
+	if (options.materials)
 	{
 		workName = "Generating Materials";
 		std::mutex futureMaterialMutex;
@@ -2476,7 +2564,7 @@ Serializer::LoadIntermediate(
 	}
 
 	std::vector<std::shared_ptr<Skeleton>> skeletonsByIndex;
-	if (importSkeletons)
+	if (options.skeletons)
 	{
 		workName = "Generating Skeletons";
 		for (const auto& skin : gltfAsset.skins)
@@ -2487,7 +2575,7 @@ Serializer::LoadIntermediate(
 
 	std::vector<std::vector<std::shared_ptr<Mesh>>> meshesByIndex;
 	std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>> materialsByMeshes;
-	if (importMeshes)
+	if (options.meshes.import)
 	{
 		workName = "Generating Meshes";
 		for (size_t meshIndex = 0; meshIndex < gltfAsset.meshes.size(); meshIndex++)
@@ -2499,7 +2587,7 @@ Serializer::LoadIntermediate(
 				std::string meshName = gltfAsset.meshes[meshIndex].name.c_str();
 				
 				Mesh::CreateInfo::SourceFileInfo sourceFileInfo{};
-				sourceFileInfo.filepath = filepath;
+				sourceFileInfo.filepath = options.filepath;
 				sourceFileInfo.meshName = meshName;
 				sourceFileInfo.primitiveIndex = primitiveIndex;
 
@@ -2508,21 +2596,19 @@ Serializer::LoadIntermediate(
 					meshName += std::format("{}", primitiveIndex++);
 				}
 
-				std::optional<Mesh::CreateInfo> meshCreateInfo;
-				if (!skeletonsByIndex.empty())
-				{
-					meshCreateInfo = GenerateMeshSkinned(sourceFileInfo, gltfAsset, primitive, meshName, directory, flipUVY);
-				}
-				else
-				{
-					meshCreateInfo = GenerateMesh(sourceFileInfo, gltfAsset, primitive, meshName, directory, flipUVY);
-				}
+				std::optional<Mesh::CreateInfo> meshCreateInfo = GenerateMesh(
+					sourceFileInfo,
+					gltfAsset,
+					primitive,
+					meshName,
+					directory,
+					options.meshes);
 
 				std::shared_ptr<Mesh> mesh = nullptr;
 
 				if (meshCreateInfo)
 				{
-					std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().CreateMesh(*meshCreateInfo);
+					mesh = MeshManager::GetInstance().CreateMesh(*meshCreateInfo, false);
 					SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
 				}
 
@@ -2534,7 +2620,7 @@ Serializer::LoadIntermediate(
 		}
 	}
 
-	if (importAnimations)
+	if (options.animations)
 	{
 		workName = "Generating Animations";
 		for (const auto& animation : gltfAsset.animations)
@@ -2545,7 +2631,7 @@ Serializer::LoadIntermediate(
 		}
 	}
 
-	if (importPrefabs)
+	if (options.prefabs)
 	{
 		for (const auto& scene : gltfAsset.scenes)
 		{
@@ -2679,7 +2765,7 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMesh(
 	const fastgltf::Primitive& gltfPrimitive,
 	const std::string& name,
 	const std::filesystem::path& directory,
-	const bool flipUVY)
+	const ImportOptions::MeshOptions& options)
 {
 	std::string defaultMeshName = name;
 	std::string meshName = defaultMeshName;
@@ -2688,227 +2774,13 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMesh(
 
 	std::filesystem::path meshFilepath = directory / (meshName + FileFormats::Mesh());
 
-	int containIndex = 0;
-	while (MeshManager::GetInstance().GetMesh(meshFilepath))
-	{
-		meshName = defaultMeshName + "_" + std::to_string(containIndex);
-		meshFilepath.replace_filename(meshName + FileFormats::Mesh());
-		containIndex++;
-	}
-
-	const auto& primitive = gltfPrimitive;
-	if (primitive.type != fastgltf::PrimitiveType::Triangles)
-	{
-		Logger::Error(std::format("{}: Primitive type is not supported!", meshName));
-		return std::nullopt;
-	}
-
-	auto positionAttribute = primitive.findAttribute("POSITION");
-	auto uvAttribute = primitive.findAttribute("TEXCOORD_0");
-	auto normalAttribute = primitive.findAttribute("NORMAL");
-	auto colorAttribute = primitive.findAttribute("COLOR_0");
-	auto tangentAttribute = primitive.findAttribute("TANGENT");
-
-	const auto& positionAccessor = positionAttribute != primitive.attributes.end()
-		? &gltfAsset.accessors[positionAttribute->accessorIndex] : nullptr;
-	const auto& uvAccessor = uvAttribute != primitive.attributes.end()
-		? &gltfAsset.accessors[uvAttribute->accessorIndex] : nullptr;
-	const auto& normalAccessor = normalAttribute != primitive.attributes.end()
-		? &gltfAsset.accessors[normalAttribute->accessorIndex] : nullptr;
-	const auto& tangentAccessor = tangentAttribute != primitive.attributes.end()
-		? &gltfAsset.accessors[tangentAttribute->accessorIndex] : nullptr;
-	const auto& colorAccessor = colorAttribute != primitive.attributes.end()
-		? &gltfAsset.accessors[colorAttribute->accessorIndex] : nullptr;
-
-	if (positionAttribute == primitive.attributes.end())
-	{
-		Logger::Error(std::format("{}: Mesh doesn't have POSITION attribute!", name));
-		return std::nullopt;
-	}
-
-	const size_t vertexCount = positionAccessor->count;
-
-	VertexDefault* vertices = new VertexDefault[vertexCount];
-	std::vector<uint32_t> indices;
-
-	fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(
-		gltfAsset,
-		*positionAccessor,
-		[&](fastgltf::math::fvec3 position, std::size_t index)
-	{
-		vertices[index].position = { position.x(), position.y(), position.z() };
-		vertices[index].uv = { 0.0f, 0.0f };
-		vertices[index].normal = { 0.0f, 0.0f, 0.0f };
-		vertices[index].tangent = { 0.0f, 0.0f, 0.0f, 0.0f };
-		vertices[index].color = 0xffffffff;
-	});
-
-	if (uvAccessor)
-	{
-		fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec2>(
-			gltfAsset,
-			*uvAccessor,
-		[&](fastgltf::math::fvec2 uv, std::size_t index)
-		{
-			vertices[index].uv = { uv.x(), flipUVY ? 1.0f - uv.y() : uv.y() };
-		});
-	}
-
-	if (normalAccessor)
-	{
-		fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(
-			gltfAsset,
-			*normalAccessor,
-		[&](fastgltf::math::fvec3 normal, std::size_t index)
-		{
-			vertices[index].normal = { normal.x(), normal.y(), normal.z() };
-		});
-	}
-
-	if (colorAccessor)
-	{
-		ProcessColors(gltfAsset, colorAccessor, vertices, sizeof(VertexDefault), offsetof(VertexDefault, color));
-	}
-
-	if (primitive.indicesAccessor)
-	{
-		const auto& indexAccessor = gltfAsset.accessors[*primitive.indicesAccessor];
-		if (indexAccessor.componentType == fastgltf::ComponentType::UnsignedInt)
-		{
-			indices.resize(indexAccessor.count);
-			fastgltf::iterateAccessorWithIndex<uint32_t>(
-				gltfAsset,
-				indexAccessor,
-			[&](uint32_t idx, std::size_t index)
-			{
-				indices[index] = idx;
-			});
-		}
-		else if (indexAccessor.componentType == fastgltf::ComponentType::UnsignedShort)
-		{
-			indices.resize(indexAccessor.count);
-			fastgltf::iterateAccessorWithIndex<uint16_t>(
-				gltfAsset,
-				indexAccessor,
-			[&](uint16_t idx, std::size_t index)
-			{
-				indices[index] = idx;
-			});
-		}
-		else if (indexAccessor.componentType == fastgltf::ComponentType::UnsignedByte)
-		{
-			indices.resize(indexAccessor.count);
-			fastgltf::iterateAccessorWithIndex<uint8_t>(
-				gltfAsset,
-				indexAccessor,
-			[&](uint8_t idx, std::size_t index)
-			{
-				indices[index] = idx;
-			});
-		}
-		else
-		{
-			Logger::Error(std::format("{}: Index type is not supported!", meshName));
-		}
-	}
-	else
-	{
-		indices.resize(vertexCount);
-		for (size_t i = 0; i < vertexCount; ++i)
-		{
-			indices[i] = static_cast<uint32_t>(i);
-		}
-	}
-
-	if (tangentAccessor)
-	{
-		fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec4>(
-			gltfAsset,
-			*tangentAccessor,
-		[&](fastgltf::math::fvec4 tangent, std::size_t index)
-		{
-			vertices[index].tangent = { tangent.x(), tangent.y(), tangent.z(), tangent.w() };
-		});
-	}
-	else
-	{
-		for (size_t i = 0; i < indices.size(); i += 3)
-		{
-			const uint32_t i0 = indices[i];
-			const uint32_t i1 = indices[i+1];
-			const uint32_t i2 = indices[i+2];
-
-			const glm::vec3 pos0 = vertices[i0].position;
-			const glm::vec3 pos1 = vertices[i1].position;
-			const glm::vec3 pos2 = vertices[i2].position;
-
-			const glm::vec2 uv0 = vertices[i0].uv;
-			const glm::vec2 uv1 = vertices[i1].uv;
-			const glm::vec2 uv2 = vertices[i2].uv;
-
-			const glm::vec3 edge1 = pos1 - pos0;
-			const glm::vec3 edge2 = pos2 - pos0;
-
-			const glm::vec2 deltaUV1 = uv1 - uv0;
-			const glm::vec2 deltaUV2 = uv2 - uv0;
-
-			float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-
-			glm::vec3 tangent = f * (deltaUV2.y * edge1 - deltaUV1.y * edge2);
-			tangent = glm::normalize(tangent);
-
-			glm::vec3 bitangent = (edge2 * deltaUV1.x - edge1 * deltaUV2.x) * f;
-			bitangent = glm::normalize(bitangent);
-
-			const float handedness = (glm::dot(glm::cross(vertices[i0].normal, tangent), bitangent) < 0.0f) ? -1.0f : 1.0f;
-
-			vertices[i0].tangent = glm::vec4(tangent, handedness);
-			vertices[i1].tangent = glm::vec4(tangent, handedness);
-			vertices[i2].tangent = glm::vec4(tangent, handedness);
-		}
-	}
-
-	Mesh::CreateInfo createInfo{};
-	createInfo.filepath = std::move(meshFilepath);
-	createInfo.name = std::move(meshName);
-	createInfo.sourceFileInfo = sourceFileInfo;
-	createInfo.type = Mesh::Type::STATIC;
-	createInfo.indices = std::move(indices);
-	createInfo.vertices = vertices;
-	createInfo.vertexCount = vertexCount;
-	createInfo.vertexSize = sizeof(VertexDefault);
-	createInfo.vertexLayouts =
-	{
-		VertexLayout(sizeof(VertexPosition), "Position"),
-		VertexLayout(sizeof(VertexNormal), "Normal"),
-		VertexLayout(sizeof(VertexColor), "Color")
-	};
-
-	return createInfo;
-}
-
-std::optional<Mesh::CreateInfo> Serializer::GenerateMeshSkinned(
-	const Mesh::CreateInfo::SourceFileInfo& sourceFileInfo,
-	const fastgltf::Asset& gltfAsset,
-	const fastgltf::Primitive& gltfPrimitive,
-	const std::string& name,
-	const std::filesystem::path& directory,
-	const bool flipUVY)
-{
-	std::string defaultMeshName = name;
-	std::string meshName = defaultMeshName;
-	meshName.erase(std::remove(meshName.begin(), meshName.end(), ':'), meshName.end());
-	meshName.erase(std::remove(meshName.begin(), meshName.end(), '|'), meshName.end());
-
-	std::filesystem::path meshFilepath = directory / (meshName + FileFormats::Mesh());
-
-	int containIndex = 0;
-	while (MeshManager::GetInstance().GetMesh(meshFilepath))
-	{
-		meshName = defaultMeshName + "_" + std::to_string(containIndex);
-		meshFilepath.replace_filename(meshName + FileFormats::Mesh());
-		containIndex++;
-	}
+	//int containIndex = 0;
+	//while (MeshManager::GetInstance().GetMesh(meshFilepath))
+	//{
+	//	meshName = defaultMeshName + "_" + std::to_string(containIndex);
+	//	meshFilepath.replace_filename(meshName + FileFormats::Mesh());
+	//	containIndex++;
+	//}
 
 	const auto& primitive = gltfPrimitive;
 
@@ -2948,8 +2820,9 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMeshSkinned(
 	}
 
 	const size_t vertexCount = positionAccessor->count;
+	const bool skinned = options.skinned && jointAccessor && weightAccessor;
 
-	VertexDefaultSkinned* vertices = new VertexDefaultSkinned[vertexCount];
+	void* vertices = skinned ? (void*)new VertexDefaultSkinned[vertexCount] : (void*)new VertexDefault[vertexCount];
 	std::vector<uint32_t> indices;
 
 	fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec3>(
@@ -2957,11 +2830,17 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMeshSkinned(
 		*positionAccessor,
 		[&](fastgltf::math::fvec3 position, std::size_t index)
 		{
-			vertices[index].position = { position.x(), position.y(), position.z() };
-			vertices[index].uv = { 0.0f, 0.0f };
-			vertices[index].normal = { 0.0f, 0.0f, 0.0f };
-			vertices[index].tangent = { 0.0f, 0.0f, 0.0f, 0.0f };
-			vertices[index].color = 0xffffffff;
+			static_cast<VertexDefault*>(vertices)[index].position = { position.x(), position.y(), position.z() };
+			static_cast<VertexDefault*>(vertices)[index].uv = { 0.0f, 0.0f };
+			static_cast<VertexDefault*>(vertices)[index].normal = { 0.0f, 0.0f, 0.0f };
+			static_cast<VertexDefault*>(vertices)[index].tangent = { 0.0f, 0.0f, 0.0f, 0.0f };
+			static_cast<VertexDefault*>(vertices)[index].color = 0xffffffff;
+
+			if (skinned)
+			{
+				static_cast<VertexDefaultSkinned*>(vertices)[index].boneIds = { 0, 0, 0, 0 };
+				static_cast<VertexDefaultSkinned*>(vertices)[index].weights = { 0.0f, 0.0f, 0.0f, 0.0f };
+			}
 		});
 
 	if (uvAccessor)
@@ -2971,7 +2850,11 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMeshSkinned(
 			*uvAccessor,
 			[&](fastgltf::math::fvec2 uv, std::size_t index)
 			{
-				vertices[index].uv = { uv.x(), flipUVY ? 1.0f - uv.y() : uv.y() };
+				static_cast<VertexDefault*>(vertices)[index].uv =
+				{
+					options.flipUV.x ? 1.0f - uv.x() : uv.x(),
+					options.flipUV.y ? 1.0f - uv.y() : uv.y()
+				};
 			});
 	}
 
@@ -2982,13 +2865,20 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMeshSkinned(
 			*normalAccessor,
 			[&](fastgltf::math::fvec3 normal, std::size_t index)
 			{
-				vertices[index].normal = { normal.x(), normal.y(), normal.z() };
+				static_cast<VertexDefault*>(vertices)[index].normal = { normal.x(), normal.y(), normal.z() };
 			});
 	}
 
 	if (colorAccessor)
 	{
-		ProcessColors(gltfAsset, colorAccessor, vertices, sizeof(VertexDefaultSkinned), offsetof(VertexDefaultSkinned, color));
+		if (skinned)
+		{
+			ProcessColors(gltfAsset, colorAccessor, vertices, sizeof(VertexDefaultSkinned), offsetof(VertexDefaultSkinned, color));
+		}
+		else
+		{
+			ProcessColors(gltfAsset, colorAccessor, vertices, sizeof(VertexDefault), offsetof(VertexDefault, color));
+		}
 	}
 
 	if (primitive.indicesAccessor)
@@ -3048,7 +2938,7 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMeshSkinned(
 			*tangentAccessor,
 			[&](fastgltf::math::fvec4 tangent, std::size_t index)
 			{
-				vertices[index].tangent = { tangent.x(), tangent.y(), tangent.z(), tangent.w() };
+				static_cast<VertexDefault*>(vertices)[index].tangent = { tangent.x(), tangent.y(), tangent.z(), tangent.w() };
 			});
 	}
 	else
@@ -3059,13 +2949,13 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMeshSkinned(
 			const uint32_t i1 = indices[i + 1];
 			const uint32_t i2 = indices[i + 2];
 
-			const glm::vec3 pos0 = vertices[i0].position;
-			const glm::vec3 pos1 = vertices[i1].position;
-			const glm::vec3 pos2 = vertices[i2].position;
+			const glm::vec3 pos0 = static_cast<VertexDefault*>(vertices)[i0].position;
+			const glm::vec3 pos1 = static_cast<VertexDefault*>(vertices)[i1].position;
+			const glm::vec3 pos2 = static_cast<VertexDefault*>(vertices)[i2].position;
 
-			const glm::vec2 uv0 = vertices[i0].uv;
-			const glm::vec2 uv1 = vertices[i1].uv;
-			const glm::vec2 uv2 = vertices[i2].uv;
+			const glm::vec2 uv0 = static_cast<VertexDefault*>(vertices)[i0].uv;
+			const glm::vec2 uv1 = static_cast<VertexDefault*>(vertices)[i1].uv;
+			const glm::vec2 uv2 = static_cast<VertexDefault*>(vertices)[i2].uv;
 
 			const glm::vec3 edge1 = pos1 - pos0;
 			const glm::vec3 edge2 = pos2 - pos0;
@@ -3081,22 +2971,22 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMeshSkinned(
 			glm::vec3 bitangent = (edge2 * deltaUV1.x - edge1 * deltaUV2.x) * f;
 			bitangent = glm::normalize(bitangent);
 
-			const float handedness = (glm::dot(glm::cross(vertices[i0].normal, tangent), bitangent) < 0.0f) ? -1.0f : 1.0f;
+			const float handedness = (glm::dot(glm::cross(static_cast<VertexDefault*>(vertices)[i0].normal, tangent), bitangent) < 0.0f) ? -1.0f : 1.0f;
 
-			vertices[i0].tangent = glm::vec4(tangent, handedness);
-			vertices[i1].tangent = glm::vec4(tangent, handedness);
-			vertices[i2].tangent = glm::vec4(tangent, handedness);
+			static_cast<VertexDefault*>(vertices)[i0].tangent = glm::vec4(tangent, handedness);
+			static_cast<VertexDefault*>(vertices)[i1].tangent = glm::vec4(tangent, handedness);
+			static_cast<VertexDefault*>(vertices)[i2].tangent = glm::vec4(tangent, handedness);
 		}
 	}
 
-	if (jointAccessor)
+	if (skinned && jointAccessor)
 	{
 		if (jointAccessor->componentType == fastgltf::ComponentType::UnsignedByte)
 		{
 			fastgltf::iterateAccessorWithIndex<fastgltf::math::u8vec4>(gltfAsset, *jointAccessor,
 			[&](fastgltf::math::u8vec4 value, size_t index)
 			{
-				vertices[index].boneIds = { value.x(), value.y(), value.z(), value.w() };
+				static_cast<VertexDefaultSkinned*>(vertices)[index].boneIds = { value.x(), value.y(), value.z(), value.w() };
 			});
 		}
 		else if (jointAccessor->componentType == fastgltf::ComponentType::UnsignedShort)
@@ -3104,37 +2994,64 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMeshSkinned(
 			fastgltf::iterateAccessorWithIndex<fastgltf::math::u16vec4>(gltfAsset, *jointAccessor,
 			[&](fastgltf::math::u16vec4 value, size_t index)
 			{
-				vertices[index].boneIds = { value.x(), value.y(), value.z(), value.w() };
+				static_cast<VertexDefaultSkinned*>(vertices)[index].boneIds = { value.x(), value.y(), value.z(), value.w() };
 			});
 		}
 	}
 
-	if (weightAccessor)
+	if (skinned && weightAccessor)
 	{
 		fastgltf::iterateAccessorWithIndex<fastgltf::math::fvec4>(gltfAsset, *weightAccessor,
 		[&](fastgltf::math::fvec4 value, size_t index)
 		{
-			vertices[index].weights = { value.x(), value.y(), value.z(), value.w() };
+			static_cast<VertexDefaultSkinned*>(vertices)[index].weights = { value.x(), value.y(), value.z(), value.w() };
 		});
 	}
 
+	Mesh::Type meshType = skinned ? Mesh::Type::SKINNED : Mesh::Type::STATIC;
 	Mesh::CreateInfo createInfo{};
-	createInfo.filepath = std::move(meshFilepath);
-	createInfo.name = std::move(meshName);
-	createInfo.sourceFileInfo = sourceFileInfo;
-	createInfo.type = Mesh::Type::SKINNED;
-	createInfo.indices = std::move(indices);
-	createInfo.vertices = vertices;
-	createInfo.vertexCount = vertexCount;
-	createInfo.vertexSize = sizeof(VertexDefaultSkinned);
-	createInfo.vertexLayouts =
+	if (meshType == Mesh::Type::STATIC)
 	{
-		VertexLayout(sizeof(VertexPosition), "Position"),
-		VertexLayout(sizeof(VertexNormal), "Normal"),
-		VertexLayout(sizeof(VertexColor), "Color"),
-		VertexLayout(sizeof(VertexSkinned), "Bones")
-	};
-
+		createInfo.filepath = std::move(meshFilepath);
+		createInfo.name = std::move(meshName);
+		createInfo.sourceFileInfo = sourceFileInfo;
+		createInfo.type = meshType;
+		createInfo.indices = std::move(indices);
+		createInfo.vertices = vertices;
+		createInfo.vertexCount = vertexCount;
+		createInfo.vertexSize = sizeof(VertexDefault);
+		createInfo.vertexLayouts =
+		{
+			VertexLayout(sizeof(VertexPosition), "Position"),
+			VertexLayout(sizeof(VertexNormal), "Normal"),
+			VertexLayout(sizeof(VertexColor), "Color"),
+		};
+	}
+	else if (meshType == Mesh::Type::SKINNED)
+	{
+		createInfo.filepath = std::move(meshFilepath);
+		createInfo.name = std::move(meshName);
+		createInfo.sourceFileInfo = sourceFileInfo;
+		createInfo.type = meshType;
+		createInfo.indices = std::move(indices);
+		createInfo.vertices = vertices;
+		createInfo.vertexCount = vertexCount;
+		createInfo.vertexSize = sizeof(VertexDefaultSkinned);
+		createInfo.vertexLayouts =
+		{
+			VertexLayout(sizeof(VertexPosition), "Position"),
+			VertexLayout(sizeof(VertexNormal), "Normal"),
+			VertexLayout(sizeof(VertexColor), "Color"),
+			VertexLayout(sizeof(VertexSkinned), "Bones")
+		};
+	}
+	else
+	{
+		Logger::Error(std::format("Failed to generate mesh {} at {}, unsupported mesh type!",
+			meshName, sourceFileInfo.filepath.string()));
+		return std::nullopt;
+	}
+	
 	return createInfo;
 }
 
