@@ -1441,7 +1441,7 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 		mesh->GetFilepath().string().size() +
 		mesh->GetCreateInfo().sourceFileInfo.meshName.size() +
 		mesh->GetCreateInfo().sourceFileInfo.filepath.string().size() +
-		8 * 4; // Type, Primitive Index, Vertex Count, Vertex Size, Index Count, Mesh Size, Filepath Size, Vertex Layout Count.
+		10 * 4; // Type, Primitive Index, Source Mesh Size, Source Filepath Size, Vertex Count, Vertex Size, Index Count, Mesh Size, Filepath Size, Vertex Layout Count.
 
 	uint32_t offset = 0;
 
@@ -1598,6 +1598,40 @@ Mesh::CreateInfo Serializer::DeserializeMesh(const std::filesystem::path& filepa
 		meshName.resize(meshNameSize);
 		memcpy(meshName.data(), &Utils::GetValue<uint8_t>(data, offset), meshNameSize);
 		offset += meshNameSize;
+	}
+
+	// SourceFile.
+	{
+		Mesh::CreateInfo::SourceFileInfo sourceFile{};
+
+		std::string sourceFilepath;
+		// Filepath.
+		{
+			const uint32_t sourcefilepathSize = Utils::GetValue<uint32_t>(data, offset);
+			offset += sizeof(uint32_t);
+
+			sourceFilepath.resize(sourcefilepathSize);
+			memcpy(sourceFilepath.data(), &Utils::GetValue<uint8_t>(data, offset), sourcefilepathSize);
+			offset += sourcefilepathSize;
+		}
+		sourceFile.filepath = sourceFilepath;
+
+		// MeshName.
+		{
+			const uint32_t meshNameSize = Utils::GetValue<uint32_t>(data, offset);
+			offset += sizeof(uint32_t);
+
+			sourceFile.meshName.resize(meshNameSize);
+			memcpy(sourceFile.meshName.data(), &Utils::GetValue<uint8_t>(data, offset), meshNameSize);
+			offset += meshNameSize;
+		}
+
+		uint32_t primitiveIndex;
+		// Primitive Index.
+		{
+			sourceFile.primitiveIndex = Utils::GetValue<uint32_t>(data, offset);
+			offset += sizeof(uint32_t);
+		}
 	}
 
 	// Vertices.
