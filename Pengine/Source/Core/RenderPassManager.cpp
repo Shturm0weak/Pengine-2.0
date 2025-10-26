@@ -452,7 +452,7 @@ void RenderPassManager::CreateZPrePass()
 			
 			if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
 			{
-				if (const auto skeletalAnimatorEntity = renderInfo.scene->FindEntityByUUID(r3d.skeletalAnimatorEntity))
+				if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
 				{
 					SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
 					if (skeletalAnimator)
@@ -791,7 +791,7 @@ void RenderPassManager::CreateGBuffer()
 
 					const SkeletalAnimator* skeletalAnimator = nullptr;
 					const Renderer3D& r3d = registry.get<Renderer3D>(entity);
-					if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntity))
+					if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
 					{
 						skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
 					}
@@ -1338,7 +1338,7 @@ void RenderPassManager::CreateTransparent()
 			renderData.scale = transform.GetScale();
 			renderData.position = transform.GetPosition();
 
-			if (const auto skeletalAnimatorEntity = renderInfo.scene->FindEntityByUUID(r3d.skeletalAnimatorEntity))
+			if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
 			{
 				SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
 				if (skeletalAnimator)
@@ -1438,7 +1438,7 @@ void RenderPassManager::CreateTransparent()
 				
 				SkeletalAnimator* skeletalAnimator = nullptr;
 				const Renderer3D& r3d = registry.get<Renderer3D>(renderData.entity);
-				if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntity))
+				if (const auto skeletalAnimatorEntity = registry.get<Transform>(renderData.entity).GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
 				{
 					skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
 				}
@@ -1638,7 +1638,7 @@ void RenderPassManager::CreateCSM()
 
 			if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
 			{
-				if (const auto skeletalAnimatorEntity = renderInfo.scene->FindEntityByUUID(r3d.skeletalAnimatorEntity))
+				if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
 				{
 					SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
 					if (skeletalAnimator)
@@ -1780,7 +1780,7 @@ void RenderPassManager::CreateCSM()
 
 					SkeletalAnimator* skeletalAnimator = nullptr;
 					const Renderer3D& r3d = registry.get<Renderer3D>(entity);
-					if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntity))
+					if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
 					{
 						skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
 					}

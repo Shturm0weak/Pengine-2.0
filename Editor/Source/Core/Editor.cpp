@@ -1011,7 +1011,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene, Window& window)
 				ImGui::Text("Owner: Null");
 			}
 
-			ImGui::Text("UUID: %zu%zu", entity->GetUUID().GetUpper(), entity->GetUUID().GetLower());
+			ImGui::Text("UUID: %s", entity->GetUUID().ToString().c_str());
 
 			char name[256];
 			strcpy(name, entity->GetName().c_str());
@@ -1958,7 +1958,7 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene, Window& window)
 			}
 
 			const std::shared_ptr<Entity> entity = *camera->GetScene()->GetSelectedEntities().begin();
-			if (!entity)
+			if (!entity || !entity->IsValid())
 			{
 				return;
 			}
@@ -2458,9 +2458,9 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 
 		if (r3d.mesh && r3d.mesh->GetType() == Mesh::Type::SKINNED)
 		{
-			if (r3d.skeletalAnimatorEntity.IsValid())
+			if (!r3d.skeletalAnimatorEntityName.empty())
 			{
-				const auto skeletalAnimatorEntity = entity->GetScene()->FindEntityByUUID(r3d.skeletalAnimatorEntity);
+				const auto skeletalAnimatorEntity = entity->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName);
 				if (skeletalAnimatorEntity)
 				{
 					ImGui::Text("Skeletal Animator: %s", skeletalAnimatorEntity->GetName().c_str());
@@ -2475,7 +2475,7 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GAMEOBJECT"))
 					{
 						UUID* uuidPtr = (UUID*)payload->Data;
-						r3d.skeletalAnimatorEntity = *uuidPtr;
+						r3d.skeletalAnimatorEntityName = entity->GetScene()->FindEntityByUUID(*uuidPtr)->GetName();
 					}
 					ImGui::EndDragDropTarget();
 				}
@@ -3818,6 +3818,8 @@ void Editor::Thumbnails::UpdateThumbnails()
 
 	const ThumbnailLoadInfo thumbnailLoadInfo = m_ThumbnailQueue.front();
 	m_ThumbnailQueue.pop_front();
+
+	m_ThumbnailScene->Update(Time::GetDeltaTime());
 
 	if (thumbnailLoadInfo.type == Type::MAT || thumbnailLoadInfo.type == Type::MESH)
 	{

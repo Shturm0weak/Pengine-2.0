@@ -22,7 +22,7 @@ Mat:
               Value: [1, 1, 0, 0]
               Type: vec4
             - Name: material.metallicFactor
-              Value: 0
+              Value: 0.5
               Type: float
             - Name: material.roughnessFactor
               Value: 0.55278641
@@ -55,9 +55,9 @@ Mat:
               Value: 0
               Type: int
         - Name: albedoTexture
-          Value: 0xec2d841939d06426e68e2fbff89c1d9f
+          Value: 0x714e2847e897b28bd213dbb9627ba470
         - Name: normalTexture
-          Value: 0x81bd53cae52d20ca59fd44f037fa456a
+          Value: 0xb9d564c2bd1e6a87036b8e8b748b6077
         - Name: metallicRoughnessTexture
           Value: White
         - Name: aoTexture

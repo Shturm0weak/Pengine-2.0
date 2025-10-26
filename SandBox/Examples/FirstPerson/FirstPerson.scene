@@ -206,8 +206,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [-6.01979065, -4.96318054, -52.8296204]
-      Rotation: [-0.033386711, -2.7799716, 0]
+      Position: [7.13322163, -5.65811157, 4.14337683]
+      Rotation: [-0.380068868, -0.818192184, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -219,6 +219,7 @@ Scene:
       RenderTargetIndex: 0
       ObjectVisibilityMask: 255
       ShadowVisibilityMask: 255
+      Viewport: Main
     Childs:
       []
   - UUID: 0xf36997a588e9a4f3b5919dfa07776dbd
@@ -508,17 +509,17 @@ Scene:
       Rotation: [-1.57079649, 0.132787332, -1.50335051e-08]
       Scale: [0.030000018, 0.0300001577, 0.0300000142]
       FollowOwner: true
-  - PrefabFilepath: 0xd658f86dca7c8ff5fcda73b2e8af1ac2
-    UUID: 0xb83ddc7634fc5470a49b4532a1307bab
-    Transform:
-      Position: [8.81800652, -8.99999428, 1.79534364]
-      Rotation: [1.57079649, -0, 0]
-      Scale: [0.0120000001, 0.0120000001, 0.0120000001]
-      FollowOwner: true
   - PrefabFilepath: 0x8a271321769e89df58cdb3d111ba8856
     UUID: 0x091efc7e9bf599dc56ae148221757634
     Transform:
       Position: [30.1546593, -9, -6.45928097]
       Rotation: [-1.57079637, 1.57079637, 0]
       Scale: [0.999981046, 0.999999523, 0.999980986]
+      FollowOwner: true
+  - PrefabFilepath: 0x06564cd42963a2cce40b3ab62ff0a1f2
+    UUID: 0xb82adb6f3446957fc798daa641c2ba90
+    Transform:
+      Position: [8.47387218, -9, 1.64027011]
+      Rotation: [1.57079649, -0, 0]
+      Scale: [0.00999999978, 0.0100000007, 0.0100000007]
       FollowOwner: true

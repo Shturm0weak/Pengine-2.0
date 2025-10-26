@@ -96,6 +96,8 @@ namespace Pengine
 		std::shared_ptr<Buffer> m_Indices;
 		BoundingBox m_BoundingBox{};
 		CreateInfo m_CreateInfo{};
+
+		mutable std::mutex m_VertexBufferAccessMutex;
 	};
 
 }

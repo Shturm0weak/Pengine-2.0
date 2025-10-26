@@ -99,7 +99,7 @@ namespace Pengine
 
 		bool IsPrefab() const { return m_PrefabFilepathUUID.IsValid(); }
 
-		bool IsValid() const { return IsDeleted(); }
+		bool IsValid() const { return !IsDeleted(); }
 		
 		bool IsDeleted() const { return m_IsDeleted; }
 		

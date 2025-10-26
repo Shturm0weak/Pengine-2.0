@@ -18,10 +18,14 @@ Mesh::~Mesh()
 		delete m_CreateInfo.vertices;
 		m_CreateInfo.vertices = nullptr;
 	}
+
+	m_Vertices.clear();
 }
 
 std::shared_ptr<Buffer> Mesh::GetVertexBuffer(const size_t index) const
 {
+	std::lock_guard<std::mutex> lock(m_VertexBufferAccessMutex);
+
 	if (index >= m_Vertices.size())
 	{
 		const std::string message = GetFilepath().string() + ":doesn't have enough vertex buffers!";
@@ -58,13 +62,13 @@ void Mesh::Reload(const CreateInfo& createInfo)
 	// TODO: Maybe need to check whether createInfo is valid!
 	m_CreateInfo = createInfo;
 
-	m_Indices = Buffer::Create(
+	std::shared_ptr<Buffer> indices = Buffer::Create(
 		sizeof(m_CreateInfo.indices[0]),
 		m_CreateInfo.indices.size(),
 		Buffer::Usage::INDEX_BUFFER,
 		MemoryType::GPU);
 
-	m_Indices->WriteToBuffer(m_CreateInfo.indices.data(), m_Indices->GetSize());
+	indices->WriteToBuffer(m_CreateInfo.indices.data(), indices->GetSize());
 
 	std::vector<std::vector<uint8_t>> vertexBuffers;
 	for (size_t i = 0; i < m_CreateInfo.vertexLayouts.size(); i++)
@@ -89,15 +93,22 @@ void Mesh::Reload(const CreateInfo& createInfo)
 		}
 	}
 
+	std::vector<std::shared_ptr<Buffer>> vertices;
 	for (std::vector<uint8_t>& vertexBuffer : vertexBuffers)
 	{
-		m_Vertices.emplace_back(Buffer::Create(
+		vertices.emplace_back(Buffer::Create(
 			sizeof(vertexBuffer[0]),
 			vertexBuffer.size(),
 			Buffer::Usage::VERTEX_BUFFER,
 			MemoryType::GPU));
 
-		m_Vertices.back()->WriteToBuffer(vertexBuffer.data(), vertexBuffer.size());
+		vertices.back()->WriteToBuffer(vertexBuffer.data(), vertexBuffer.size());
+	}
+
+	{
+		std::lock_guard<std::mutex> lock(m_VertexBufferAccessMutex);
+		m_Vertices = std::move(vertices);
+		m_Indices = indices;
 	}
 
 	if (createInfo.boundingBox)

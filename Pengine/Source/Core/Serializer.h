@@ -150,7 +150,8 @@ namespace Pengine
 			const std::shared_ptr<Scene>& scene,
 			const std::vector<std::vector<std::shared_ptr<Mesh>>>& meshesByIndex,
 			const std::vector<std::shared_ptr<Skeleton>>& skeletonsByIndex,
-			const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes);
+			const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes,
+			const std::vector< std::shared_ptr<SkeletalAnimation>>& animations);
 
 		static void SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entity>& entity, bool rootEntity = false, bool isSerializingPrefab = false);
 

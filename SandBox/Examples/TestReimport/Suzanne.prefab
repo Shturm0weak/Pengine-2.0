@@ -1,0 +1,18 @@
+Name: Suzanne
+IsEnabled: true
+Transform:
+  Position: [0, 0, 0]
+  Rotation: [0, -0, 0]
+  Scale: [1, 1, 1]
+  FollowOwner: true
+Renderer3D:
+  SkeletalAnimatorEntity: 0xd03cb03a32341ce7ecf375b8179ac1ac
+  Mesh: 0x6f507183f21c5c7a3fbe1f71d3e00b08
+  Material: 0x07e46f38e3511b4d8e61e74f9b89516a
+  RenderingOrder: 5
+  IsEnabled: true
+  CastShadows: true
+  ObjectVisibilityMask: 255
+  ShadowVisibilityMask: 255
+Childs:
+  []

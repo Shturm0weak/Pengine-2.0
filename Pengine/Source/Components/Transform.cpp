@@ -12,7 +12,6 @@ void Transform::Copy(const Transform& transform)
 	Rotate(transform.GetRotation(System::LOCAL));
 	Scale(transform.GetScale(System::LOCAL));
 	m_FollowOwner = transform.m_FollowOwner;
-	m_IsDirty = transform.m_IsDirty;
 }
 
 void Transform::CopyGlobal(const Transform& transform)
@@ -23,7 +22,6 @@ void Transform::CopyGlobal(const Transform& transform)
 	Rotate(transform.GetRotation());
 	Scale(transform.GetScale());
 	m_FollowOwner = transform.m_FollowOwner;
-	m_IsDirty = transform.m_IsDirty;
 }
 
 void Transform::SetEntity(std::shared_ptr<Entity> entity)

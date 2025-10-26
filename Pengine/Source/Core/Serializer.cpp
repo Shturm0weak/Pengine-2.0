@@ -723,7 +723,7 @@ void Serializer::SerializeTexture(const std::filesystem::path& filepath, std::sh
 
 		stbi_flip_vertically_on_write(false);
 		stbi_write_png(filepath.string().c_str(), copy->GetSize().x, copy->GetSize().y, copy->GetChannels(), data, subresourceLayout.rowPitch);
-		
+
 		Logger::Log("Texture:" + filepath.string() + " has been saved!", BOLDGREEN);
 
 		if (isLoaded)
@@ -2608,7 +2608,7 @@ Serializer::LoadIntermediate(
 
 				if (meshCreateInfo)
 				{
-					mesh = MeshManager::GetInstance().CreateMesh(*meshCreateInfo, false);
+					mesh = MeshManager::GetInstance().CreateMesh(*meshCreateInfo);
 					SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
 				}
 
@@ -2620,12 +2620,13 @@ Serializer::LoadIntermediate(
 		}
 	}
 
+	std::vector<std::shared_ptr<SkeletalAnimation>> animations;
 	if (options.animations)
 	{
 		workName = "Generating Animations";
 		for (const auto& animation : gltfAsset.animations)
 		{
-			GenerateAnimation(gltfAsset, animation, directory);
+			animations.emplace_back(GenerateAnimation(gltfAsset, animation, directory));
 	
 			workStatus = currentWorkStatus++ / maxWorkStatus;
 		}
@@ -2639,24 +2640,62 @@ Serializer::LoadIntermediate(
 			{
 				workName = "Generating Prefab " + scene.name;
 
-				std::shared_ptr<Scene> GenerateGameObjectScene = SceneManager::GetInstance().Create("GenerateGameObject", "GenerateGameObject");
+				std::shared_ptr<Scene> generateGameObjectScene = SceneManager::GetInstance().Create("GenerateGameObject", "GenerateGameObject");
 				std::shared_ptr<Entity> root = GenerateEntity(
 					gltfAsset,
 					gltfAsset.nodes[nodeIndex],
-					GenerateGameObjectScene,
+					generateGameObjectScene,
 					meshesByIndex,
 					skeletonsByIndex,
-					materialsByMeshes);
+					materialsByMeshes,
+					animations);
 
 				std::filesystem::path prefabFilepath = directory / root->GetName();
 				prefabFilepath.replace_extension(FileFormats::Prefab());
 				SerializePrefab(prefabFilepath, root);
 
-				SceneManager::GetInstance().Delete(GenerateGameObjectScene);
+				// TODO: Very slow! Maybe to rewrite!
+				for (const auto& [name, scene] : SceneManager::GetInstance().GetScenes())
+				{
+					if (scene->GetTag() == generateGameObjectScene->GetTag())
+					{
+						continue;
+					}
+
+					auto entities = scene->GetEntities();
+					for (auto& entity : entities)
+					{
+						if (entity->IsPrefab() && entity->GetPrefabFilepathUUID() == root->GetPrefabFilepathUUID())
+						{
+							const auto prefab = DeserializePrefab(prefabFilepath, scene);
+							prefab->GetComponent<Transform>().Copy(entity->GetComponent<Transform>());
+							scene->DeleteEntity(entity);
+						}
+					}
+				}
+
+				SceneManager::GetInstance().Delete(generateGameObjectScene);
 			}
 		}
 	}
 	
+	materialsByMeshes.clear();
+
+	for (auto& [index, material] : materialsByIndex)
+	{
+		MaterialManager::GetInstance().DeleteMaterial(material);
+	}
+	materialsByIndex.clear();
+
+	for (auto& primitives : meshesByIndex)
+	{
+		for (auto& mesh : primitives)
+		{
+			MeshManager::GetInstance().DeleteMesh(mesh);
+		}
+	}
+	meshesByIndex.clear();
+
 	// TODO: Remove or put here something, now the result is unused.
 	return {};
 }
@@ -2830,16 +2869,18 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMesh(
 		*positionAccessor,
 		[&](fastgltf::math::fvec3 position, std::size_t index)
 		{
-			static_cast<VertexDefault*>(vertices)[index].position = { position.x(), position.y(), position.z() };
-			static_cast<VertexDefault*>(vertices)[index].uv = { 0.0f, 0.0f };
-			static_cast<VertexDefault*>(vertices)[index].normal = { 0.0f, 0.0f, 0.0f };
-			static_cast<VertexDefault*>(vertices)[index].tangent = { 0.0f, 0.0f, 0.0f, 0.0f };
-			static_cast<VertexDefault*>(vertices)[index].color = 0xffffffff;
+			void* vertex = skinned ? (void*)&static_cast<VertexDefaultSkinned*>(vertices)[index] : (void*)&static_cast<VertexDefault*>(vertices)[index];
+			
+			static_cast<VertexDefault*>(vertex)->position = { position.x(), position.y(), position.z() };
+			static_cast<VertexDefault*>(vertex)->uv = { 0.0f, 0.0f };
+			static_cast<VertexDefault*>(vertex)->normal = { 0.0f, 0.0f, 0.0f };
+			static_cast<VertexDefault*>(vertex)->tangent = { 0.0f, 0.0f, 0.0f, 0.0f };
+			static_cast<VertexDefault*>(vertex)->color = 0xffffffff;
 
 			if (skinned)
 			{
-				static_cast<VertexDefaultSkinned*>(vertices)[index].boneIds = { 0, 0, 0, 0 };
-				static_cast<VertexDefaultSkinned*>(vertices)[index].weights = { 0.0f, 0.0f, 0.0f, 0.0f };
+				static_cast<VertexDefaultSkinned*>(vertex)->boneIds = { 0, 0, 0, 0 };
+				static_cast<VertexDefaultSkinned*>(vertex)->weights = { 0.0f, 0.0f, 0.0f, 0.0f };
 			}
 		});
 
@@ -2850,7 +2891,8 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMesh(
 			*uvAccessor,
 			[&](fastgltf::math::fvec2 uv, std::size_t index)
 			{
-				static_cast<VertexDefault*>(vertices)[index].uv =
+				void* vertex = skinned ? (void*)&static_cast<VertexDefaultSkinned*>(vertices)[index] : (void*)&static_cast<VertexDefault*>(vertices)[index];
+				static_cast<VertexDefault*>(vertex)->uv =
 				{
 					options.flipUV.x ? 1.0f - uv.x() : uv.x(),
 					options.flipUV.y ? 1.0f - uv.y() : uv.y()
@@ -2865,7 +2907,8 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMesh(
 			*normalAccessor,
 			[&](fastgltf::math::fvec3 normal, std::size_t index)
 			{
-				static_cast<VertexDefault*>(vertices)[index].normal = { normal.x(), normal.y(), normal.z() };
+				void* vertex = skinned ? (void*)&static_cast<VertexDefaultSkinned*>(vertices)[index] : (void*)&static_cast<VertexDefault*>(vertices)[index];
+				static_cast<VertexDefault*>(vertex)->normal = { normal.x(), normal.y(), normal.z() };
 			});
 	}
 
@@ -2938,7 +2981,8 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMesh(
 			*tangentAccessor,
 			[&](fastgltf::math::fvec4 tangent, std::size_t index)
 			{
-				static_cast<VertexDefault*>(vertices)[index].tangent = { tangent.x(), tangent.y(), tangent.z(), tangent.w() };
+				void* vertex = skinned ? (void*)&static_cast<VertexDefaultSkinned*>(vertices)[index] : (void*)&static_cast<VertexDefault*>(vertices)[index];
+				static_cast<VertexDefault*>(vertex)->tangent = { tangent.x(), tangent.y(), tangent.z(), tangent.w() };
 			});
 	}
 	else
@@ -2949,13 +2993,17 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMesh(
 			const uint32_t i1 = indices[i + 1];
 			const uint32_t i2 = indices[i + 2];
 
-			const glm::vec3 pos0 = static_cast<VertexDefault*>(vertices)[i0].position;
-			const glm::vec3 pos1 = static_cast<VertexDefault*>(vertices)[i1].position;
-			const glm::vec3 pos2 = static_cast<VertexDefault*>(vertices)[i2].position;
+			void* v0 = skinned ? (void*)&static_cast<VertexDefaultSkinned*>(vertices)[i0] : (void*)&static_cast<VertexDefault*>(vertices)[i0];
+			void* v1 = skinned ? (void*)&static_cast<VertexDefaultSkinned*>(vertices)[i1] : (void*)&static_cast<VertexDefault*>(vertices)[i1];
+			void* v2 = skinned ? (void*)&static_cast<VertexDefaultSkinned*>(vertices)[i2] : (void*)&static_cast<VertexDefault*>(vertices)[i2];
 
-			const glm::vec2 uv0 = static_cast<VertexDefault*>(vertices)[i0].uv;
-			const glm::vec2 uv1 = static_cast<VertexDefault*>(vertices)[i1].uv;
-			const glm::vec2 uv2 = static_cast<VertexDefault*>(vertices)[i2].uv;
+			const glm::vec3 pos0 = static_cast<VertexDefault*>(v0)->position;
+			const glm::vec3 pos1 = static_cast<VertexDefault*>(v1)->position;
+			const glm::vec3 pos2 = static_cast<VertexDefault*>(v2)->position;
+
+			const glm::vec2 uv0 = static_cast<VertexDefault*>(v0)->uv;
+			const glm::vec2 uv1 = static_cast<VertexDefault*>(v1)->uv;
+			const glm::vec2 uv2 = static_cast<VertexDefault*>(v2)->uv;
 
 			const glm::vec3 edge1 = pos1 - pos0;
 			const glm::vec3 edge2 = pos2 - pos0;
@@ -2971,11 +3019,11 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMesh(
 			glm::vec3 bitangent = (edge2 * deltaUV1.x - edge1 * deltaUV2.x) * f;
 			bitangent = glm::normalize(bitangent);
 
-			const float handedness = (glm::dot(glm::cross(static_cast<VertexDefault*>(vertices)[i0].normal, tangent), bitangent) < 0.0f) ? -1.0f : 1.0f;
+			const float handedness = (glm::dot(glm::cross(static_cast<VertexDefault*>(v0)->normal, tangent), bitangent) < 0.0f) ? -1.0f : 1.0f;
 
-			static_cast<VertexDefault*>(vertices)[i0].tangent = glm::vec4(tangent, handedness);
-			static_cast<VertexDefault*>(vertices)[i1].tangent = glm::vec4(tangent, handedness);
-			static_cast<VertexDefault*>(vertices)[i2].tangent = glm::vec4(tangent, handedness);
+			static_cast<VertexDefault*>(v0)->tangent = glm::vec4(tangent, handedness);
+			static_cast<VertexDefault*>(v1)->tangent = glm::vec4(tangent, handedness);
+			static_cast<VertexDefault*>(v2)->tangent = glm::vec4(tangent, handedness);
 		}
 	}
 
@@ -3549,7 +3597,8 @@ std::shared_ptr<Entity> Serializer::GenerateEntity(
 	const std::shared_ptr<Scene>& scene,
 	const std::vector<std::vector<std::shared_ptr<Mesh>>>& meshesByIndex,
 	const std::vector<std::shared_ptr<Skeleton>>& skeletonsByIndex,
-	const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes)
+	const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes,
+	const std::vector< std::shared_ptr<SkeletalAnimation>>& animations)
 {
 	std::vector<std::shared_ptr<Entity>> nodes;
 	if (gltfNode.meshIndex && !meshesByIndex.empty())
@@ -3591,8 +3640,20 @@ std::shared_ptr<Entity> Serializer::GenerateEntity(
 
 				if (gltfNode.skinIndex)
 				{
-					SkeletalAnimator& skeletalAnimator = node->AddComponent<SkeletalAnimator>();
-					skeletalAnimator.SetSkeleton(skeletonsByIndex[*gltfNode.skinIndex]);
+					std::shared_ptr<Entity> topEntity = scene->GetEntities().front();
+					if (!topEntity->HasComponent<SkeletalAnimator>())
+					{
+						SkeletalAnimator& skeletalAnimator = topEntity->AddComponent<SkeletalAnimator>();
+						skeletalAnimator.SetSkeleton(skeletonsByIndex[*gltfNode.skinIndex]);
+						skeletalAnimator.SetSpeed(1.0f);
+
+						if (!animations.empty())
+						{
+							skeletalAnimator.SetSkeletalAnimation(animations[0]);
+						}
+					}
+
+					r3d.skeletalAnimatorEntityName = topEntity->GetName();
 				}
 			}
 		}
@@ -3611,7 +3672,7 @@ std::shared_ptr<Entity> Serializer::GenerateEntity(
 	for (size_t childIndex = 0; childIndex < gltfNode.children.size(); childIndex++)
 	{
 		const auto child = gltfNode.children[childIndex];
-		rootNode->AddChild(GenerateEntity(gltfAsset, gltfAsset.nodes[child], scene, meshesByIndex, skeletonsByIndex, materialsByMeshes));
+		rootNode->AddChild(GenerateEntity(gltfAsset, gltfAsset.nodes[child], scene, meshesByIndex, skeletonsByIndex, materialsByMeshes, animations));
 	}
 
 	for (const auto& node : nodes)
@@ -3890,9 +3951,9 @@ void Serializer::SerializeRenderer3D(YAML::Emitter& out, const std::shared_ptr<E
 
 	out << YAML::BeginMap;
 
-	if (r3d.skeletalAnimatorEntity.IsValid())
+	if (!r3d.skeletalAnimatorEntityName.empty())
 	{
-		out << YAML::Key << "SkeletalAnimatorEntity" << YAML::Value << r3d.skeletalAnimatorEntity;
+		out << YAML::Key << "SkeletalAnimatorEntity" << YAML::Value << r3d.skeletalAnimatorEntityName;
 	}
 
 	if (r3d.mesh)
@@ -3945,7 +4006,7 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 
 		if (const auto& skeletalAnimatorEntityData = renderer3DData["SkeletalAnimatorEntity"])
 		{
-			r3d.skeletalAnimatorEntity = skeletalAnimatorEntityData.as<UUID>();
+			r3d.skeletalAnimatorEntityName = skeletalAnimatorEntityData.as<std::string>();
 		}
 
 		if (const auto& castShadowsData = renderer3DData["CastShadows"])

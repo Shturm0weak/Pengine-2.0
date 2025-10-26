@@ -38,7 +38,7 @@ Childs:
                   Scale: [1, 1, 1]
                   FollowOwner: true
                 Renderer3D:
-                  SkeletalAnimatorEntity: 0xcc2e10a0eb3dcdfe31c800091b21cc6d
+                  SkeletalAnimatorEntity: 0x01161045742aac0dce0f62f0917a3fdb
                   Mesh: 0x273f7e8fea31be7b37de9580c0111dfe
                   Material: 0xbaf7c16223d1423ab0f65d246cec0ab3
                   RenderingOrder: 5
@@ -64,7 +64,7 @@ Childs:
                   Scale: [1, 1, 1]
                   FollowOwner: true
                 Renderer3D:
-                  SkeletalAnimatorEntity: 0x2af48403754f1695753fb0b942235d13
+                  SkeletalAnimatorEntity: 0x8ab2b556299af60084822a49ee55b27a
                   Mesh: 0x4ebada32e3b97d4ca54be2c2e4f4e713
                   Material: 0xbaf7c16223d1423ab0f65d246cec0ab3
                   RenderingOrder: 5
@@ -90,7 +90,7 @@ Childs:
                   Scale: [1, 1, 1]
                   FollowOwner: true
                 Renderer3D:
-                  SkeletalAnimatorEntity: 0x0079942b15a6c2eef4d1157b58f6b830
+                  SkeletalAnimatorEntity: 0x4b6638d3ee372196a311fabe927d45dd
                   Mesh: 0x232135a952d20709096581b71421f71d
                   Material: 0xbaf7c16223d1423ab0f65d246cec0ab3
                   RenderingOrder: 5
@@ -116,7 +116,7 @@ Childs:
                   Scale: [1, 1, 1]
                   FollowOwner: true
                 Renderer3D:
-                  SkeletalAnimatorEntity: 0x21a28e1d5a9b13d626f70f734305a97e
+                  SkeletalAnimatorEntity: 0xe9c1be00b88039f0a8d8cb9632a58640
                   Mesh: 0x9b8e031c15bcb7d43a66fe53c2cc3b4b
                   Material: 0xbaf7c16223d1423ab0f65d246cec0ab3
                   RenderingOrder: 5
@@ -142,7 +142,7 @@ Childs:
                   Scale: [1, 1, 1]
                   FollowOwner: true
                 Renderer3D:
-                  SkeletalAnimatorEntity: 0x25d1e07374d21d43bec9193336498bd1
+                  SkeletalAnimatorEntity: 0x7012f9e459a2fcf948a00936bf0a0cd7
                   Mesh: 0x0694810e3bc6edf0106a2cc2b03bc7a4
                   Material: 0xbaf7c16223d1423ab0f65d246cec0ab3
                   RenderingOrder: 5

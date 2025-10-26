@@ -141,8 +141,15 @@ void SceneBVH::Rebuild()
 			continue;
 		}
 
+		AABB aabb = LocalToWorldAABB({ r3d.mesh->GetBoundingBox().min, r3d.mesh->GetBoundingBox().max }, transform.GetTransform());
+		const float distance = glm::distance(aabb.max, aabb.min);
+		if (distance < 1e-6f)
+		{
+			continue;
+		}
+
 		BVHNode* node = new BVHNode();
-		node->aabb = LocalToWorldAABB({ r3d.mesh->GetBoundingBox().min, r3d.mesh->GetBoundingBox().max }, transform.GetTransform());
+		node->aabb = std::move(aabb);
 		node->entity = transform.GetEntity();
 		node->subtreeSize = 1;
 		nodes.emplace_back(node);
