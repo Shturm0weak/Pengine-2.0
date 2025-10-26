@@ -22,7 +22,7 @@ layout(set = 1, binding = 5) uniform SSR
 };
 
 layout(set = 1, binding = 6, rgba8) uniform writeonly image2D outColor;
-layout(set = 1, binding = 7, rgba16f) uniform image2D outEmissive;
+layout(set = 1, binding = 7, r11f_g11f_b10f) uniform image2D outEmissive;
 
 void RayMarch(
     in vec2 viewportSize,

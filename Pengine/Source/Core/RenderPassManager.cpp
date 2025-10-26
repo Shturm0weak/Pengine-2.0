@@ -658,9 +658,9 @@ void RenderPassManager::CreateGBuffer()
 	shading.store = RenderPass::Store::STORE;
 
 	RenderPass::AttachmentDescription emissive{};
-	emissive.textureCreateInfo.format = Format::R16G16B16A16_SFLOAT;
+	emissive.textureCreateInfo.format = Format::B10G11R11_UFLOAT_PACK32;
 	emissive.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	emissive.textureCreateInfo.channels = 4;
+	emissive.textureCreateInfo.channels = 3;
 	emissive.textureCreateInfo.isMultiBuffered = true;
 	emissive.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::STORAGE, Texture::Usage::COLOR_ATTACHMENT };
 	emissive.textureCreateInfo.name = "GBufferEmissive";

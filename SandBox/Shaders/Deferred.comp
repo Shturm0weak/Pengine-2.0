@@ -32,7 +32,7 @@ layout(set = 2, binding = 0) uniform Lights
 };
 
 layout(set = 3, binding = 0, r11f_g11f_b10f) uniform writeonly image2D outColor;
-layout(set = 3, binding = 1, rgba16f) uniform image2D outEmissive;
+layout(set = 3, binding = 1, r11f_g11f_b10f) uniform image2D outEmissive;
 
 vec3 ScreenSpaceShadows(vec3 positionViewSpace, vec3 lightDirection, vec2 viewRay)
 {
