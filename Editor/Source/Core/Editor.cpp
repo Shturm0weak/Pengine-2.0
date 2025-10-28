@@ -1960,6 +1960,7 @@ void Editor::Manipulate(const std::shared_ptr<Scene>& scene, Window& window)
 			const std::shared_ptr<Entity> entity = *camera->GetScene()->GetSelectedEntities().begin();
 			if (!entity || !entity->IsValid())
 			{
+				camera->GetScene()->GetSelectedEntities().erase(entity);
 				return;
 			}
 

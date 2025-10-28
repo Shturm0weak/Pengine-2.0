@@ -22,6 +22,11 @@ VulkanComputePipeline::VulkanComputePipeline(const CreateComputeInfo& createComp
 	}
 
 	const std::shared_ptr<ShaderModule> shaderModule = ShaderModuleManager::GetInstance().GetOrCreateShaderModule(filepath, ShaderModule::Type::COMPUTE);
+	if (!shaderModule->IsValid())
+	{
+		FATAL_ERROR(std::format("Failed to get shader module {}, it is invalid!", filepath.string()));
+	}
+
 	m_ShaderModulesByType[ShaderModule::Type::COMPUTE] = shaderModule;
 
 	std::map<uint32_t, std::vector<ShaderReflection::ReflectDescriptorSetBinding>> bindingsByDescriptorSet;

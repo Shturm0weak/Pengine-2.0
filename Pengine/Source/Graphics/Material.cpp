@@ -50,8 +50,7 @@ void Material::Reload(const std::shared_ptr<Material>& material, bool reloadBase
 
 		try
 		{
-			const CreateInfo createInfo = Serializer::LoadMaterial(material->GetFilepath());
-			material->CreateResources(createInfo);
+			material->CreateResources(Serializer::LoadMaterial(material->GetFilepath()));
 		}
 		catch (const std::exception&)
 		{

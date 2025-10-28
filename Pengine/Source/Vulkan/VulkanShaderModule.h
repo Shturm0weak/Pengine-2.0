@@ -20,6 +20,10 @@ namespace Pengine::Vk
 		VulkanShaderModule(const VulkanShaderModule&) = delete;
 		VulkanShaderModule& operator=(const VulkanShaderModule&) = delete;
 
+		virtual void Reload(bool useCache = true) override;
+
+		virtual bool IsValid() const override { return m_ShaderModule != VK_NULL_HANDLE; }
+
 		[[nodiscard]] VkShaderModule GetShaderModule() const { return m_ShaderModule; }
 
 	private:

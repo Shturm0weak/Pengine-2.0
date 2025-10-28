@@ -1,6 +1,6 @@
 Settings:
   DrawBoundingBoxes: false
-  DrawPhysicsShapes: false
+  DrawPhysicsShapes: true
   Wind:
     Direction: [1, 1, 1]
     Frequency: 10
@@ -206,8 +206,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [7.13322163, -5.65811157, 4.14337683]
-      Rotation: [-0.380068868, -0.818192184, 0]
+      Position: [9.07105923, -7.31411171, 2.83228898]
+      Rotation: [-0.2824848, 0.482359022, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -219,7 +219,6 @@ Scene:
       RenderTargetIndex: 0
       ObjectVisibilityMask: 255
       ShadowVisibilityMask: 255
-      Viewport: Main
     Childs:
       []
   - UUID: 0xf36997a588e9a4f3b5919dfa07776dbd

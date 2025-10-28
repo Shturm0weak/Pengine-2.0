@@ -741,12 +741,19 @@ void RenderPassManager::CreateGBuffer()
 		for (const auto& [baseMaterial, meshesByMaterial] : renderableData->renderableEntities)
 		{
 			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+			if (!pipeline)
+			{
+				continue;
+			}
 
 			for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
 			{
 				const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
 				// Already updated in ZPrePass.
-				FlushUniformWriters(uniformWriters);
+				if (!FlushUniformWriters(uniformWriters))
+				{
+					continue;
+				}
 
 				for (const auto& [mesh, entities] : gameObjectsByMeshes.instanced)
 				{
@@ -1013,15 +1020,16 @@ void RenderPassManager::CreateDeferred()
 		outputUniformWriter->WriteTexture("outEmissive", emissiveTexture);
 		
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-		FlushUniformWriters(uniformWriters);
+		if (FlushUniformWriters(uniformWriters))
+		{
+			renderInfo.renderer->BeginCommandLabel(passName, topLevelRenderPassDebugColor, renderInfo.frame);
 
-		renderInfo.renderer->BeginCommandLabel(passName, topLevelRenderPassDebugColor, renderInfo.frame);
+			glm::uvec2 groupCount = renderInfo.viewportSize / glm::ivec2(16, 16);
+			groupCount += glm::uvec2(1, 1);
+			renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
 
-		glm::uvec2 groupCount = renderInfo.viewportSize / glm::ivec2(16, 16);
-		groupCount += glm::uvec2(1, 1);
-		renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
-
-		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+		}
 	};
 
 	CreateComputePass(createInfo);
@@ -1147,7 +1155,10 @@ void RenderPassManager::CreateAtmosphere()
 		baseMaterial->WriteToBuffer(atmosphereBuffer, "AtmosphereBuffer", "faceSize", faceSize);
 
 		const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-		FlushUniformWriters(uniformWriters);
+		if (!FlushUniformWriters(uniformWriters))
+		{
+			return;
+		}
 		
 		RenderPass::SubmitInfo submitInfo{};
 		submitInfo.frame = renderInfo.frame;
@@ -1448,7 +1459,10 @@ void RenderPassManager::CreateTransparent()
 					uniformWriters.emplace_back(skeletalAnimator->GetUniformWriter());
 				}
 				
-				FlushUniformWriters(uniformWriters);
+				if (!FlushUniformWriters(uniformWriters))
+				{
+					continue;
+				}
 
 				std::vector<std::shared_ptr<Buffer>> vertexBuffers;
 				std::vector<size_t> vertexBufferOffsets;
@@ -1700,6 +1714,10 @@ void RenderPassManager::CreateCSM()
 		for (const auto& [baseMaterial, meshesByMaterial] : renderableEntities)
 		{
 			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+			if (!pipeline)
+			{
+				continue;
+			}
 
 			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, renderPassName);
 			const std::string lightSpaceMatricesBufferName = "LightSpaceMatrices";
@@ -1739,7 +1757,10 @@ void RenderPassManager::CreateCSM()
 			for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
 			{
 				std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
-				FlushUniformWriters(uniformWriters);
+				if (!FlushUniformWriters(uniformWriters))
+				{
+					continue;
+				}
 
 				for (const auto& [mesh, entities] : gameObjectsByMeshes.instanced)
 				{
@@ -2173,17 +2194,18 @@ void RenderPassManager::CreateSSR()
 		baseMaterial->WriteToBuffer(ssrBuffer, ssrBufferName, "thickness", ssrSettings.thickness);
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-		FlushUniformWriters(uniformWriters);
+		if (FlushUniformWriters(uniformWriters))
+		{
+			renderInfo.renderer->BeginCommandLabel(passName, topLevelRenderPassDebugColor, renderInfo.frame);
 
-		renderInfo.renderer->BeginCommandLabel(passName, topLevelRenderPassDebugColor, renderInfo.frame);
+			renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
 
-		renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
+			glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
+			groupCount += glm::uvec2(1, 1);
+			renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
 
-		glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
-		groupCount += glm::uvec2(1, 1);
-		renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
-
-		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+		}
 	};
 
 	CreateRenderPass(createInfo);
@@ -2265,17 +2287,18 @@ void RenderPassManager::CreateSSRBlur()
 		WriteRenderViews(renderInfo.renderView, renderInfo.scene->GetRenderView(), pipeline, renderUniformWriter);
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-		FlushUniformWriters(uniformWriters);
+		if (FlushUniformWriters(uniformWriters))
+		{
+			renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
 
-		renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
+			glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
+			groupCount += glm::uvec2(1, 1);
+			renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
 
-		glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
-		groupCount += glm::uvec2(1, 1);
-		renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 
-		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
-
-		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+		}
 	};
 
 	CreateRenderPass(createInfo);
@@ -2381,17 +2404,18 @@ void RenderPassManager::CreateSSAO()
 		baseMaterial->WriteToBuffer(ssaoBuffer, ssaoBufferName, "bias", ssaoSettings.bias);
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-		FlushUniformWriters(uniformWriters);
+		if (FlushUniformWriters(uniformWriters))
+		{
+			renderInfo.renderer->BeginCommandLabel(passName, topLevelRenderPassDebugColor, renderInfo.frame);
 
-		renderInfo.renderer->BeginCommandLabel(passName, topLevelRenderPassDebugColor, renderInfo.frame);
+			renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
 
-		renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
+			glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
+			groupCount += glm::uvec2(1, 1);
+			renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
 
-		glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
-		groupCount += glm::uvec2(1, 1);
-		renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
-
-		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+		}
 	};
 
 	CreateComputePass(createInfo);
@@ -2464,17 +2488,18 @@ void RenderPassManager::CreateSSAOBlur()
 		WriteRenderViews(renderInfo.renderView, renderInfo.scene->GetRenderView(), pipeline, renderUniformWriter);
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-		FlushUniformWriters(uniformWriters);
+		if (FlushUniformWriters(uniformWriters))
+		{
+			renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
 
-		renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
+			glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
+			groupCount += glm::uvec2(1, 1);
+			renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
 
-		glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
-		groupCount += glm::uvec2(1, 1);
-		renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 
-		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
-
-		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+		}
 	};
 
 	CreateComputePass(createInfo);
@@ -2689,7 +2714,13 @@ void RenderPassManager::CreateDecalPass()
 
 		const std::shared_ptr<BaseMaterial> decalBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
 			std::filesystem::path("Materials") / "DecalBase.basemat");
+
 		const std::shared_ptr<Pipeline> decalBasePipeline = decalBaseMaterial->GetPipeline(Decals);
+		if (!decalBasePipeline)
+		{
+			return;
+		}
+
 		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, decalBasePipeline, Decals);
 
 		const std::shared_ptr<Texture> depthTexture = renderInfo.renderView->GetFrameBuffer(GBuffer)->GetAttachment(4);
@@ -2708,11 +2739,18 @@ void RenderPassManager::CreateDecalPass()
 		for (const auto& [baseMaterial, entitiesByMaterial] : renderableEntities)
 		{
 			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+			if (!pipeline)
+			{
+				continue;
+			}
 
 			for (const auto& [material, entities] : entitiesByMaterial)
 			{
 				const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
-				FlushUniformWriters(uniformWriters);
+				if (!FlushUniformWriters(uniformWriters))
+				{
+					continue;
+				}
 
 				const size_t instanceDataOffset = instanceDatas.size();
 
@@ -2813,7 +2851,10 @@ void RenderPassManager::CreateToneMappingPass()
 		WriteRenderViews(renderInfo.renderView, renderInfo.scene->GetRenderView(), pipeline, renderUniformWriter);
 
 		const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-		FlushUniformWriters(uniformWriters);
+		if (!FlushUniformWriters(uniformWriters))
+		{
+			return;
+		}
 
 		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
 		RenderPass::SubmitInfo submitInfo{};
@@ -2870,74 +2911,82 @@ void RenderPassManager::CreateAntiAliasingAndComposePass()
 	createInfo.resizeViewportScale = { 1.0f, 1.0f };
 
 	createInfo.executeCallback = [](const RenderPass::RenderCallbackInfo& renderInfo)
+	{
+		PROFILER_SCOPE(AntiAliasingAndCompose);
+
+		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
+
+		const std::string renderPassName = renderInfo.renderPass->GetName();
+
+		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/AntiAliasingAndCompose.basemat");
+		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+		if (!pipeline)
 		{
-			PROFILER_SCOPE(AntiAliasingAndCompose);
+			return;
+		}
 
-			const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
+		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
 
-			const std::string renderPassName = renderInfo.renderPass->GetName();
+		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, renderPassName);
+		const std::string postProcessBufferName = "PostProcessBuffer";
+		const std::shared_ptr<Buffer> postProcessBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, postProcessBufferName);
 
-			const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/AntiAliasingAndCompose.basemat");
-			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
-			if (!pipeline)
-			{
-				return;
-			}
+		const glm::vec2 viewportSize = renderInfo.viewportSize;
+		const int fxaa = graphicsSettings.postProcess.fxaa;
+		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "viewportSize", viewportSize);
+		baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "fxaa", fxaa);
 
-			const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
+		postProcessBuffer->Flush();
 
-			const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, renderPassName);
-			const std::string postProcessBufferName = "PostProcessBuffer";
-			const std::shared_ptr<Buffer> postProcessBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, postProcessBufferName);
+		WriteRenderViews(renderInfo.renderView, renderInfo.scene->GetRenderView(), pipeline, renderUniformWriter);
 
-			const glm::vec2 viewportSize = renderInfo.viewportSize;
-			const int fxaa = graphicsSettings.postProcess.fxaa;
-			baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "viewportSize", viewportSize);
-			baseMaterial->WriteToBuffer(postProcessBuffer, "PostProcessBuffer", "fxaa", fxaa);
+		const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
+		if (!FlushUniformWriters(uniformWriters))
+		{
+			return;
+		}
 
-			postProcessBuffer->Flush();
+		const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
+		RenderPass::SubmitInfo submitInfo{};
+		submitInfo.frame = renderInfo.frame;
+		submitInfo.renderPass = renderInfo.renderPass;
+		submitInfo.frameBuffer = frameBuffer;
+		renderInfo.renderer->BeginRenderPass(submitInfo);
 
-			WriteRenderViews(renderInfo.renderView, renderInfo.scene->GetRenderView(), pipeline, renderUniformWriter);
+		std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+		std::vector<size_t> vertexBufferOffsets;
+		GetVertexBuffers(pipeline, plane, vertexBuffers, vertexBufferOffsets);
 
-			const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
-			FlushUniformWriters(uniformWriters);
+		renderInfo.renderer->Render(
+			vertexBuffers,
+			vertexBufferOffsets,
+			plane->GetIndexBuffer(),
+			0,
+			plane->GetIndexCount(),
+			pipeline,
+			nullptr,
+			0,
+			1,
+			uniformWriters,
+			renderInfo.frame);
 
-			const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
-			RenderPass::SubmitInfo submitInfo{};
-			submitInfo.frame = renderInfo.frame;
-			submitInfo.renderPass = renderInfo.renderPass;
-			submitInfo.frameBuffer = frameBuffer;
-			renderInfo.renderer->BeginRenderPass(submitInfo);
-
-			std::vector<std::shared_ptr<Buffer>> vertexBuffers;
-			std::vector<size_t> vertexBufferOffsets;
-			GetVertexBuffers(pipeline, plane, vertexBuffers, vertexBufferOffsets);
-
-			renderInfo.renderer->Render(
-				vertexBuffers,
-				vertexBufferOffsets,
-				plane->GetIndexBuffer(),
-				0,
-				plane->GetIndexCount(),
-				pipeline,
-				nullptr,
-				0,
-				1,
-				uniformWriters,
-				renderInfo.frame);
-
-			renderInfo.renderer->EndRenderPass(submitInfo);
-		};
+		renderInfo.renderer->EndRenderPass(submitInfo);
+	};
 
 	CreateRenderPass(createInfo);
 }
 
-void RenderPassManager::FlushUniformWriters(const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters)
+bool RenderPassManager::FlushUniformWriters(const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters)
 {
 	PROFILER_SCOPE(__FUNCTION__);
 
 	for (const auto& uniformWriter : uniformWriters)
 	{
+		if (!uniformWriter)
+		{
+			return false;
+		}
+
 		uniformWriter->Flush();
 
 		for (const auto& [name, buffers] : uniformWriter->GetBuffersByName())
@@ -2948,6 +2997,8 @@ void RenderPassManager::FlushUniformWriters(const std::vector<std::shared_ptr<Un
 			}
 		}
 	}
+
+	return true;
 }
 
 void RenderPassManager::WriteRenderViews(

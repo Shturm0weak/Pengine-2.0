@@ -14,6 +14,7 @@ std::shared_ptr<ShaderModule> ShaderModuleManager::GetOrCreateShaderModule(
 {
 	if (std::shared_ptr<ShaderModule> shaderModule = GetShaderModule(filepath))
 	{
+		shaderModule->Reload();
 		return shaderModule;
 	}
 

@@ -25,6 +25,11 @@ VulkanGraphicsPipeline::VulkanGraphicsPipeline(const CreateGraphicsInfo& createG
 	for (const auto& [type, filepath] : createGraphicsInfo.shaderFilepathsByType)
 	{
 		const std::shared_ptr<ShaderModule> shaderModule = ShaderModuleManager::GetInstance().GetOrCreateShaderModule(filepath, type);
+		if (!shaderModule->IsValid())
+		{
+			FATAL_ERROR(std::format("Failed to get shader module {}, it is invalid!", filepath.string()));
+		}
+
 		m_ShaderModulesByType[type] = shaderModule;
 
 		CollectBindingsByDescriptorSet(bindingsByDescriptorSet, shaderModule->GetReflection().setLayouts, filepath);

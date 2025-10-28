@@ -40,16 +40,8 @@ void BaseMaterial::Reload(const std::shared_ptr<BaseMaterial>& baseMaterial)
 		baseMaterial->m_UniformWriterByPass.clear();
 		baseMaterial->m_BuffersByName.clear();
 		baseMaterial->m_UniformsCache.clear();
+		baseMaterial->CreateResources(Serializer::LoadBaseMaterial(baseMaterial->GetFilepath()));
 
-		try
-		{
-			const CreateInfo createInfo = Serializer::LoadBaseMaterial(baseMaterial->GetFilepath());
-			baseMaterial->CreateResources(createInfo);
-		}
-		catch (const std::exception&)
-		{
-
-		}
 	};
 
 	std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, baseMaterial.get());
@@ -62,14 +54,7 @@ BaseMaterial::BaseMaterial(
 	const CreateInfo& createInfo)
 	: Asset(name, filepath)
 {
-	try
-	{
-		CreateResources(createInfo);
-	}
-	catch (const std::exception&)
-	{
-
-	}
+	CreateResources(createInfo);
 }
 
 BaseMaterial::~BaseMaterial()
@@ -311,18 +296,32 @@ void BaseMaterial::CreateResources(const CreateInfo& createInfo)
 	{
 		const std::string passName = pipelineCreateGraphicsInfo.renderPass->GetName();
 
-		const std::shared_ptr<Pipeline> pipeline = GraphicsPipeline::Create(pipelineCreateGraphicsInfo);
-
-		CreatePipelineResources(passName, pipeline, pipelineCreateGraphicsInfo.uniformInfo);
+		try
+		{
+			const std::shared_ptr<Pipeline> pipeline = GraphicsPipeline::Create(pipelineCreateGraphicsInfo);
+			CreatePipelineResources(passName, pipeline, pipelineCreateGraphicsInfo.uniformInfo);
+			m_PipelinesByPass[passName] = pipeline;
+		}
+		catch (const std::exception&)
+		{
+			m_PipelinesByPass[passName] = nullptr;
+		}
 	}
 
 	for (const ComputePipeline::CreateComputeInfo& pipelineCreateComputeInfo : createInfo.pipelineCreateComputeInfos)
 	{
 		const std::string passName = pipelineCreateComputeInfo.passName;
 
-		const std::shared_ptr<Pipeline> pipeline = ComputePipeline::Create(pipelineCreateComputeInfo);
-
-		CreatePipelineResources(passName, pipeline, pipelineCreateComputeInfo.uniformInfo);
+		try
+		{
+			const std::shared_ptr<Pipeline> pipeline = ComputePipeline::Create(pipelineCreateComputeInfo);
+			CreatePipelineResources(passName, pipeline, pipelineCreateComputeInfo.uniformInfo);
+			m_PipelinesByPass[passName] = pipeline;
+		}
+		catch (const std::exception&)
+		{
+			m_PipelinesByPass[passName] = nullptr;
+		}
 	}
 }
 
@@ -364,8 +363,6 @@ void BaseMaterial::CreatePipelineResources(
 			}
 		}
 	}
-
-	m_PipelinesByPass[passName] = pipeline;
 
 	if (uniformInfo.texturesByName.empty() && uniformInfo.uniformBuffersByName.empty())
 	{

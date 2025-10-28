@@ -74,10 +74,7 @@ std::string VulkanPipelineUtils::CompileShaderModule(
 
 		spv = std::move(std::string((const char*)module.cbegin(), (const char*)module.cend()));
 
-		if (useCache)
-		{
-			Serializer::SerializeShaderCache(filepath, spv);
-		}
+		Serializer::SerializeShaderCache(filepath, spv);
 
 		if (useLog)
 		{
@@ -95,12 +92,19 @@ std::string VulkanPipelineUtils::CompileShaderModule(
 	return spv;
 }
 
-ShaderReflection::ReflectShaderModule VulkanPipelineUtils::Reflect(const std::filesystem::path& filepath, ShaderModule::Type type)
+std::optional<ShaderReflection::ReflectShaderModule> VulkanPipelineUtils::Reflect(
+	const std::filesystem::path& filepath,
+	ShaderModule::Type type,
+	bool useCache)
 {
-	std::optional<ShaderReflection::ReflectShaderModule> loadedReflectShaderModule = Serializer::DeserializeShaderModuleReflection(filepath);
-	if (loadedReflectShaderModule)
+	std::optional<ShaderReflection::ReflectShaderModule> loadedReflectShaderModule;
+	
+	if (useCache)
 	{
-		return *loadedReflectShaderModule;
+		if (loadedReflectShaderModule = Serializer::DeserializeShaderModuleReflection(filepath))
+		{
+			return loadedReflectShaderModule;
+		}
 	}
 
 	shaderc::CompileOptions options{};
@@ -115,7 +119,8 @@ ShaderReflection::ReflectShaderModule VulkanPipelineUtils::Reflect(const std::fi
 	SpvReflectResult result = spvReflectCreateShaderModule(spv.size(), spv.data(), &reflectModule);
 	if (result != SPV_REFLECT_RESULT_SUCCESS)
 	{
-		FATAL_ERROR("Failed to get spirv reflection!");
+		Logger::Error(std::format("Failed to get spirv reflection of {}!", filepath.string()));
+		return std::nullopt;
 	}
 
 	ShaderReflection::ReflectShaderModule reflectShaderModule{};

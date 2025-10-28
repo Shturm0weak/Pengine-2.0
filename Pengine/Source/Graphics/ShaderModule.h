@@ -30,6 +30,10 @@ namespace Pengine
 		ShaderModule(const ShaderModule&) = delete;
 		ShaderModule& operator=(const ShaderModule&) = delete;
 
+		virtual void Reload(bool useCache = true) = 0;
+
+		virtual bool IsValid() const = 0;
+
 		Type GetType() const { return m_Type; }
 
 		const ShaderReflection::ReflectShaderModule GetReflection() const { return m_Reflection; }

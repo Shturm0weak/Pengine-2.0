@@ -109,7 +109,7 @@ namespace Pengine
 
 		void CreateAntiAliasingAndComposePass();
 
-		static void FlushUniformWriters(const std::vector<std::shared_ptr<class UniformWriter>>& uniformWriters);
+		static bool FlushUniformWriters(const std::vector<std::shared_ptr<class UniformWriter>>& uniformWriters);
 
 		static void WriteRenderViews(
 			std::shared_ptr<class RenderView> cameraRenderView,

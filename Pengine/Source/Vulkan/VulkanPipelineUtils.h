@@ -23,7 +23,10 @@ namespace Pengine
 			bool useCache = true,
 			bool useLog = true);
 
-		static ShaderReflection::ReflectShaderModule Reflect(const std::filesystem::path& filepath, ShaderModule::Type type);
+		static std::optional<ShaderReflection::ReflectShaderModule> Reflect(
+			const std::filesystem::path& filepath,
+			ShaderModule::Type type,
+			bool useCache = true);
 
 		static void ReflectDescriptorSets(
 			SpvReflectShaderModule& reflectModule,
