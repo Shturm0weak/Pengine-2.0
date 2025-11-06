@@ -58,13 +58,18 @@ cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 * Cascade Shadow Maps
 * SSAO
 * SSR
+* Parallax Occlusion Mapping
+* Decals
 * Bloom
 * FXAA
+* Tone Mapping
 * Atmospheric Scattering
 * Forward Order Dependent Transparency Rendering
 * Multiple Viewport Rendering
 * Assync Resource Loader
 * Scriptable Materials
+* Jolt Physics
+* Skeletal Animations
 
 ## **Used Libraries**
 * GLFW
@@ -74,15 +79,22 @@ cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 * Assimp
 * ImGui
 * Yaml-cpp
+* Jolt
 
 ## **Screenshots**
-![image](https://github.com/user-attachments/assets/f1cff851-3218-4c87-ab61-abc023539da0)
-![image](https://github.com/user-attachments/assets/9f742be0-1fba-4466-9e50-87294011cba3)
-![image](https://github.com/user-attachments/assets/6dba647a-fd41-4c95-8b65-8eb754a6618f)
-![image](https://github.com/user-attachments/assets/d42a0c37-b9b4-4500-abb9-5448641d65a6)
+<img width="2559" height="1374" alt="MultiViewports" src="https://github.com/user-attachments/assets/0bbcebaa-91fb-40ba-af93-8321af239cb6" />
+
 ![image](https://github.com/user-attachments/assets/ddfa34bb-5934-411c-b84f-588e5e4bd7f0)
+
 ![image](https://github.com/user-attachments/assets/053e7830-4217-4a9d-a578-dc31a80d86fc)
+
 ![image](https://github.com/user-attachments/assets/2c69fa6d-59a7-4ea6-a756-6ab668ef6704)
+
 ![image](https://github.com/user-attachments/assets/19903bde-e2ba-4439-acfb-994f382ca625)
 
+<img width="2560" height="1377" alt="Materials" src="https://github.com/user-attachments/assets/69762984-ac18-4740-b5b6-4cbb67679883" />
+
 https://github.com/user-attachments/assets/f47cdb9f-c40e-4d38-88ea-fd54fad8a2f5
+
+https://github.com/user-attachments/assets/1d6eee45-2424-4ba7-a65b-92672579031d
+
