@@ -68,7 +68,6 @@ cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 * Multiple Viewport Rendering
 * Assync Resource Loader
 * Scriptable Materials
-* Jolt Physics
 * Skeletal Animations
 
 ## **Used Libraries**
@@ -76,10 +75,11 @@ cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 * GLM
 * Vulkan
 * Entt
-* Assimp
+* FastGLTF
 * ImGui
 * Yaml-cpp
 * Jolt
+* FreeType
 
 ## **Screenshots**
 <img width="2559" height="1374" alt="MultiViewports" src="https://github.com/user-attachments/assets/0bbcebaa-91fb-40ba-af93-8321af239cb6" />
