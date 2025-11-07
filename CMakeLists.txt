@@ -14,7 +14,17 @@ add_subdirectory(Vendor/entt Vendor/entt/Build)
 add_subdirectory(Vendor/freetype Vendor/freetype/Build)
 add_subdirectory(Vendor/fastgltf Vendor/fastgltf/Build)
 add_subdirectory(Vendor/meshoptimizer Vendor/meshoptimizer/Build)
+
 add_subdirectory(Vendor/JoltPhysics/Build Vendor/JoltPhysics/Build)
+
+if (MSVC)
+    # Set runtime library for the JoltPhysics target
+    target_compile_options(Jolt PRIVATE $<$<CONFIG:Debug>:/MDd>)
+    target_compile_options(Jolt PRIVATE $<$<CONFIG:Release>:/MD>)
+    target_compile_options(Jolt PRIVATE $<$<CONFIG:RelWithDebInfo>:/MD>)
+    target_compile_options(Jolt PRIVATE $<$<CONFIG:MinSizeRel>:/MD>)
+endif ()
+
 add_subdirectory(Pengine/Source Pengine/Build)
 add_subdirectory(SandBox/Source SandBox/Build)
 add_subdirectory(Editor/Source Editor/Build)
