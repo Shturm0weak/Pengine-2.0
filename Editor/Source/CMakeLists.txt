@@ -17,6 +17,20 @@ set(CORE_SOURCES
 )
 source_group("Core" FILES ${CORE_SOURCES})
 
+file(GLOB COMPONENT_HEADER_FILES "../../SandBox/Source/Components/*.h")
+
+set(MASTER_HEADER_CONTENT "// Auto-generated master include file\n// Do not edit manually!\n\n")
+set(MASTER_HEADER_CONTENT "${MASTER_HEADER_CONTENT}#pragma once\n\n")
+
+foreach (headerFile ${COMPONENT_HEADER_FILES})
+    get_filename_component(FILENAME ${headerFile} NAME)
+    if (NOT FILENAME STREQUAL "Components.h")
+        set(MASTER_HEADER_CONTENT "${MASTER_HEADER_CONTENT}#include \"${headerFile}\"\n")
+    endif ()
+endforeach ()
+
+file(WRITE "${CMAKE_CURRENT_SOURCE_DIR}/Include/Components.h" "${MASTER_HEADER_CONTENT}")
+
 add_executable(${PROJECT_NAME} ${CORE_SOURCES})
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC PENGINE_ENGINE=0)

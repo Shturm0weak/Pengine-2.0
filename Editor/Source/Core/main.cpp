@@ -2,7 +2,7 @@
 #include "EditorApplication.h"
 #include "Core/Logger.h"
 
-#include "../../../SandBox/Source/FirstPersonExample/Character.h"
+#include "../Include/Components.h"
 
 //int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR lpCmdLine, int nCmdShow)
 //{

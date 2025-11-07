@@ -16,7 +16,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -MP")
 #source_group("Core" FILES ${CORE_SOURCES})
 
 set(CORE_SOURCES
-	FirstPersonExample/Character.cpp FirstPersonExample/Character.h
+	Components/Character.h
+	Components/Enemy.h
+	Components/UI.h
 	FirstPersonExample/CharacterSystem.cpp FirstPersonExample/CharacterSystem.h
 	FirstPersonExample/Application.cpp FirstPersonExample/Application.h
 	FirstPersonExample/StateMachine.h

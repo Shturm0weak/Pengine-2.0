@@ -2,104 +2,62 @@
 
 #include "Core/ReflectionSystem.h"
 #include "Core/TextureManager.h"
+#include "Core/FontManager.h"
+#include "Core/Entity.h"
+
 #include "Core/ClayManager.h"
-#include "Graphics/SkeletalAnimation.h"
-#include "StateMachine.h"
 
 #define CLAY_IMPLEMENTATION
 #include "Components/Canvas.h"
 
-namespace JPH
-{
-	class Character;
-}
-
-struct Enemy
-{
-	PROPERTY(float, health, 100.0f);
-};
-REGISTER_CLASS(Enemy);
-
-struct FirstPersonCharacter
-{
-	std::map<State, std::shared_ptr<Pengine::SkeletalAnimation>> animations;
-	std::map<State, std::shared_ptr<CharacterState>> states;
-	
-	std::shared_ptr<class JPH::Character> joltCharacter;
-	float height = 1.0f;
-	float radius = 0.5f;
-
-	float shotTimer = 0.0f;
-
-	std::string ammoUI;
-
-	CharacterState* currentState;
-
-	bool isJumpPressed = false;
-	bool isMovePressed = false;
-	bool isShotPressed = false;
-
-	public: PROPERTY(int, currentAmmo, 90);
-	public: PROPERTY(int, currentMagazine, 30);
-	public: PROPERTY(int, maxMagazine, 30);
-	public: PROPERTY(float, speed, 1.0f);
-	public: PROPERTY(float, jump, 1.0f);
-	public: PROPERTY(float, bulletForce, 100.0f);
-	public: PROPERTY(float, damage, 30.0f);
-};
-REGISTER_CLASS(FirstPersonCharacter);
-
 REGISTER_CLAY_SCRIPT(Aim)
 {
 	Pengine::ClayManager::GetInstance().scriptsByName["Aim"] = [](Pengine::Canvas* canvas, std::shared_ptr<Pengine::Entity> entity)
-	{
-		Pengine::ClayManager::BeginLayout();
-
-		Pengine::ClayManager::OpenElement();
-		Pengine::ClayManager::ConfigureOpenElement(
-			{
-				.layout =
-					{
-						.sizing = {.width = CLAY_SIZING_GROW(), .height = CLAY_SIZING_GROW() },
-						.childAlignment =
-							{
-								.x = Clay_LayoutAlignmentX::CLAY_ALIGN_X_CENTER,
-								.y = Clay_LayoutAlignmentY::CLAY_ALIGN_Y_CENTER,
-							},
-					}
-			});
 		{
+			Pengine::ClayManager::BeginLayout();
+
 			Pengine::ClayManager::OpenElement();
 			Pengine::ClayManager::ConfigureOpenElement(
 				{
-					.id = CLAY_ID("CrossHair"),
 					.layout =
 						{
-							.sizing = {.width = CLAY_SIZING_FIXED(64), .height = CLAY_SIZING_FIXED(64) },
+							.sizing = {.width = CLAY_SIZING_GROW(), .height = CLAY_SIZING_GROW() },
 							.childAlignment =
-							{
-								.x = Clay_LayoutAlignmentX::CLAY_ALIGN_X_CENTER,
-								.y = Clay_LayoutAlignmentY::CLAY_ALIGN_Y_CENTER,
-							},
-							.layoutDirection = Clay_LayoutDirection::CLAY_TOP_TO_BOTTOM,
-						},
-					.backgroundColor = { 1.0f, 0.0f, 0.0f, 1.0f },
-					.image =
-					{
-						.imageData = Pengine::TextureManager::GetInstance().Load("Examples/FirstPerson/Assets/textures/CrossHair.png").get(),
-					},
+								{
+									.x = Clay_LayoutAlignmentX::CLAY_ALIGN_X_CENTER,
+									.y = Clay_LayoutAlignmentY::CLAY_ALIGN_Y_CENTER,
+								},
+						}
 				});
+			{
+				Pengine::ClayManager::OpenElement();
+				Pengine::ClayManager::ConfigureOpenElement(
+					{
+						.id = CLAY_ID("CrossHair"),
+						.layout =
+							{
+								.sizing = {.width = CLAY_SIZING_FIXED(64), .height = CLAY_SIZING_FIXED(64) },
+								.childAlignment =
+								{
+									.x = Clay_LayoutAlignmentX::CLAY_ALIGN_X_CENTER,
+									.y = Clay_LayoutAlignmentY::CLAY_ALIGN_Y_CENTER,
+								},
+								.layoutDirection = Clay_LayoutDirection::CLAY_TOP_TO_BOTTOM,
+							},
+						.backgroundColor = { 1.0f, 0.0f, 0.0f, 1.0f },
+						.image =
+						{
+							.imageData = Pengine::TextureManager::GetInstance().Load("Examples/FirstPerson/Assets/textures/CrossHair.png").get(),
+						},
+					});
+				Pengine::ClayManager::CloseElement();
+			}
+
 			Pengine::ClayManager::CloseElement();
-		}
 
-		Pengine::ClayManager::CloseElement();
-
-		return Pengine::ClayManager::EndLayout();
-	};
+			return Pengine::ClayManager::EndLayout();
+		};
 }
-
-#include "Core/FontManager.h"
-#include "Core/Entity.h"
 
 REGISTER_CLAY_SCRIPT(Ammo)
 {

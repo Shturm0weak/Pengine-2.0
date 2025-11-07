@@ -28,7 +28,9 @@
 #include <Jolt/Physics/Collision/CastResult.h>
 #include <Jolt/Physics/Collision/CollisionCollectorImpl.h>
 
-#include "Character.h"
+#include "../Components/Character.h"
+#include "../Components/Enemy.h"
+#include "../Components/UI.h"
 
 using namespace Pengine;
 

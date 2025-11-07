@@ -1,6 +1,6 @@
 Settings:
   DrawBoundingBoxes: false
-  DrawPhysicsShapes: true
+  DrawPhysicsShapes: false
   Wind:
     Direction: [1, 1, 1]
     Frequency: 10
@@ -206,8 +206,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [9.07105923, -7.31411171, 2.83228898]
-      Rotation: [-0.2824848, 0.482359022, 0]
+      Position: [-12.3092556, 3.88509226, 15.2755089]
+      Rotation: [-0.563922524, -0.0175348595, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
