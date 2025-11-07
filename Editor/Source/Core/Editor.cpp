@@ -2376,9 +2376,13 @@ void Editor::MainMenuBar(const std::shared_ptr<Scene>& scene)
 		{
 			MaterialManager::GetInstance().SaveAll();
 		}
+		if (ImGui::MenuItem("Reload BaseMaterials"))
+		{
+			MaterialManager::GetInstance().Reload(MaterialManager::Category::BaseMaterial);
+		}
 		if (ImGui::MenuItem("Reload Materials"))
 		{
-			MaterialManager::GetInstance().ReloadAll();
+			MaterialManager::GetInstance().Reload(MaterialManager::Category::Material);
 		}
 		if (ImGui::MenuItem("Reload UUIDs"))
 		{

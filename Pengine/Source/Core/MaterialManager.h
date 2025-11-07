@@ -38,7 +38,14 @@ namespace Pengine
 
 		void DeleteBaseMaterial(std::shared_ptr<BaseMaterial>& baseMaterial);
 
-		void ReloadAll();
+		enum class Category
+		{
+			Material,
+			BaseMaterial,
+			All
+		};
+
+		void Reload(Category category);
 
 		void SaveAll();
 

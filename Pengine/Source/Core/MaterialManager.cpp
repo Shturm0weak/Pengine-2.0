@@ -113,16 +113,22 @@ void MaterialManager::DeleteBaseMaterial(std::shared_ptr<BaseMaterial>& baseMate
 	baseMaterial = nullptr;
 }
 
-void MaterialManager::ReloadAll()
+void MaterialManager::Reload(Category category)
 {
-	for (const auto& [filepath, baseMaterial] : m_BaseMaterialsByFilepath)
+	if (category == Category::BaseMaterial || category == Category::All)
 	{
-		BaseMaterial::Reload(baseMaterial);
+		for (const auto& [filepath, baseMaterial] : m_BaseMaterialsByFilepath)
+		{
+			BaseMaterial::Reload(baseMaterial);
+		}
 	}
 	
-	for (const auto& [filepath, material] : m_MaterialsByFilepath)
+	if (category == Category::Material || category == Category::All)
 	{
-		Material::Reload(material, false);
+		for (const auto& [filepath, material] : m_MaterialsByFilepath)
+		{
+			Material::Reload(material, false);
+		}
 	}
 }
 
