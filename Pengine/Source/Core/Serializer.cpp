@@ -2495,7 +2495,8 @@ Serializer::LoadIntermediate(
 {
 	workName = "Loading " + options.filepath.string();
 
-	const std::filesystem::path directory = options.filepath.parent_path();
+	std::filesystem::path directory = options.filepath.parent_path();
+	const std::filesystem::path texturesDirectory = directory;
 
 	auto data = fastgltf::GltfDataBuffer::FromPath(options.filepath);
 	if (data.error() != fastgltf::Error::None)
@@ -2519,6 +2520,15 @@ Serializer::LoadIntermediate(
 	const float maxWorkStatus = gltfAsset.materials.size() + gltfAsset.meshes.size() + gltfAsset.animations.size();
 	float currentWorkStatus = 0.0f;
 
+	if (options.createFolder)
+	{
+		directory = Utils::EraseFileFormat(options.filepath);
+		if (!std::filesystem::exists(directory))
+		{
+			std::filesystem::create_directory(directory);
+		}
+	}
+
 	std::unordered_map<size_t, std::shared_ptr<Material>> materialsByIndex;
 	if (options.materials)
 	{
@@ -2530,6 +2540,7 @@ Serializer::LoadIntermediate(
 		{
 			ThreadPool::GetInstance().EnqueueAsync([
 					&gltfMaterial = gltfAsset.materials[materialIndex],
+					texturesDirectory,
 					directory,
 					materialIndex,
 					maxWorkStatus,
@@ -2541,7 +2552,7 @@ Serializer::LoadIntermediate(
 					&workStatus,
 					&currentWorkStatus]()
 				{
-					std::shared_ptr<Material> material = GenerateMaterial(gltfAsset, gltfAsset.materials[materialIndex], directory);
+					std::shared_ptr<Material> material = GenerateMaterial(gltfAsset, gltfAsset.materials[materialIndex], texturesDirectory, directory);
 
 					std::lock_guard<std::mutex> lock(futureMaterialMutex);
 
@@ -2703,6 +2714,7 @@ Serializer::LoadIntermediate(
 std::shared_ptr<Texture> Serializer::LoadGltfTexture(
 	const fastgltf::Asset& gltfAsset,
 	const fastgltf::Texture& gltfTexture,
+	const std::filesystem::path& texturesDirectory,
 	const std::filesystem::path& directory,
 	const std::string& debugName,
 	std::optional<Texture::Meta> meta)
@@ -2718,7 +2730,7 @@ std::shared_ptr<Texture> Serializer::LoadGltfTexture(
 	{
 		if (meta)
 		{
-			meta->filepath = directory / filepath->uri.fspath().concat(FileFormats::Meta());
+			meta->filepath = texturesDirectory / filepath->uri.fspath().concat(FileFormats::Meta());
 			
 			const auto existingMeta = DeserializeTextureMeta(meta->filepath);
 			if (existingMeta)
@@ -2733,7 +2745,7 @@ std::shared_ptr<Texture> Serializer::LoadGltfTexture(
 
 			SerializeTextureMeta(*meta);
 		}
-		return AsyncAssetLoader::GetInstance().SyncLoadTexture(directory / filepath->uri.fspath());
+		return AsyncAssetLoader::GetInstance().SyncLoadTexture(texturesDirectory / filepath->uri.fspath());
 	}
 	if (const auto* view = std::get_if<fastgltf::sources::BufferView>(&image.data))
 	{
@@ -3431,6 +3443,7 @@ std::shared_ptr<SkeletalAnimation> Serializer::GenerateAnimation(
 std::shared_ptr<Material> Serializer::GenerateMaterial(
 	const fastgltf::Asset& gltfAsset,
 	const fastgltf::Material& gltfMaterial,
+	const std::filesystem::path& texturesDirectory,
 	const std::filesystem::path& directory)
 {
 	const std::string materialName = gltfMaterial.name.c_str();
@@ -3525,6 +3538,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 		if (const std::shared_ptr<Texture> albedoTexture = LoadGltfTexture(
 			gltfAsset,
 			gltfAsset.textures[gltfMaterial.pbrData.baseColorTexture->textureIndex],
+			texturesDirectory,
 			directory,
 			materialName + "_BaseColor" + FileFormats::Png(),
 			meta))
@@ -3538,6 +3552,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 		if (const std::shared_ptr<Texture> normalTexture = LoadGltfTexture(
 			gltfAsset,
 			gltfAsset.textures[gltfMaterial.normalTexture->textureIndex],
+			texturesDirectory,
 			directory,
 			materialName + "_Normal" + FileFormats::Png()))
 		{
@@ -3552,6 +3567,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 		if (const std::shared_ptr<Texture> metallicRoughnessTexture = LoadGltfTexture(
 			gltfAsset,
 			gltfAsset.textures[gltfMaterial.pbrData.metallicRoughnessTexture->textureIndex],
+			texturesDirectory,
 			directory,
 			materialName + "_MetallicRoughness" + FileFormats::Png()))
 		{
@@ -3564,6 +3580,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 		if (const std::shared_ptr<Texture> aoTexture = LoadGltfTexture(
 			gltfAsset,
 			gltfAsset.textures[gltfMaterial.occlusionTexture->textureIndex],
+			texturesDirectory,
 			directory,
 			materialName + "_Occlusion" + FileFormats::Png()))
 		{
@@ -3576,6 +3593,7 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 		if (const std::shared_ptr<Texture> emissiveTexture = LoadGltfTexture(
 			gltfAsset,
 			gltfAsset.textures[gltfMaterial.emissiveTexture->textureIndex],
+			texturesDirectory,
 			directory,
 			materialName + "_Emissive" + FileFormats::Png()))
 		{

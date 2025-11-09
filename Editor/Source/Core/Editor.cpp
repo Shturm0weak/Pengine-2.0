@@ -1719,7 +1719,6 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 				{
 					if (ImGui::MenuItem("Import"))
 					{
-						m_ImportMenu = {};
 						m_ImportMenu.opened = true;
 						m_ImportMenu.importInfo = Serializer::GetImportInfo(path);
 					}
@@ -3623,9 +3622,10 @@ void Editor::ImportMenu::Update(Editor& editor)
 
 	if (opened && ImGui::Begin("Import Settings", &opened))
 	{
-		ImGui::Text("Filepath##Import", importInfo.filepath.c_str());
+		ImGui::Text("Filepath: %s", importInfo.filepath.string().c_str());
 
 		ImGui::Checkbox("Prefabs", &importOptions.prefabs);
+		ImGui::Checkbox("Create Folder", &importOptions.createFolder);
 
 		if (!importInfo.meshes.empty() && ImGui::CollapsingHeader("Meshes##Import"))
 		{
@@ -3710,7 +3710,6 @@ void Editor::ImportMenu::Update(Editor& editor)
 				editor.m_LoadIntermediateMenu.opened = false;
 
 				importInfo = {};
-				importOptions = {};
 			});
 		}
 

@@ -100,6 +100,7 @@ namespace Pengine
 			bool materials = true;
 			bool animations = true;
 			bool prefabs = true;
+			bool createFolder = false;
 		};
 
 		static std::unordered_map<std::shared_ptr<Material>, std::vector<std::shared_ptr<Mesh>>> LoadIntermediate(
@@ -110,6 +111,7 @@ namespace Pengine
 		static std::shared_ptr<Texture> LoadGltfTexture(
 			const fastgltf::Asset& gltfAsset,
 			const fastgltf::Texture& gltfTexture,
+			const std::filesystem::path& texturesDirectory,
 			const std::filesystem::path& directory,
 			const std::string& debugName,
 			std::optional<Texture::Meta> meta = std::nullopt);
@@ -142,7 +144,11 @@ namespace Pengine
 			const fastgltf::Animation& animation,
 			const std::filesystem::path& directory);
 
-		static std::shared_ptr<Material> GenerateMaterial(const fastgltf::Asset& gltfAsset, const fastgltf::Material& gltfMaterial, const std::filesystem::path& directory);
+		static std::shared_ptr<Material> GenerateMaterial(
+			const fastgltf::Asset& gltfAsset,
+			const fastgltf::Material& gltfMaterial,
+			const std::filesystem::path& texturesDirectory,
+			const std::filesystem::path& directory);
 
 		static std::shared_ptr<Entity> GenerateEntity(
 			const fastgltf::Asset& gltfAsset,
