@@ -2706,6 +2706,12 @@ void Editor::SkeletalAnimatorComponent(const std::shared_ptr<Entity>& entity)
 			}
 		}
 
+		bool applySkeletonTransform = skeletalAnimator.GetApplySkeletonTransform();
+		if (ImGui::Checkbox("Apply Skeleton Transform", &applySkeletonTransform))
+		{
+			skeletalAnimator.SetApplySkeletonTransform(applySkeletonTransform);
+		}
+
 		bool drawDebugSkeleton = skeletalAnimator.GetDrawDebugSkeleton();
 		if (ImGui::Checkbox("Draw Debug Skeleton", &drawDebugSkeleton))
 		{

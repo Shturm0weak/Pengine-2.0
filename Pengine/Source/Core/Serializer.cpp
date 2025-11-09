@@ -2578,8 +2578,14 @@ Serializer::LoadIntermediate(
 	if (options.skeletons)
 	{
 		workName = "Generating Skeletons";
-		for (const auto& skin : gltfAsset.skins)
+		for (size_t i = 0; i < gltfAsset.skins.size(); i++)
 		{
+			auto& skin = gltfAsset.skins[i];
+			if (skin.name.empty())
+			{
+				skin.name = std::format("{}Skeleton{}", Utils::GetFilename(options.filepath.string()), i);
+			}
+
 			skeletonsByIndex.emplace_back(GenerateSkeleton(gltfAsset, skin, directory));
 		}
 	}
@@ -3271,11 +3277,11 @@ void Serializer::ProcessColors(
 
 std::shared_ptr<Skeleton> Serializer::GenerateSkeleton(
 	const fastgltf::Asset& gltfAsset,
-	const fastgltf::Skin gltfSkin,
+	const fastgltf::Skin& gltfSkin,
 	const std::filesystem::path& directory)
 {
 	Skeleton::CreateInfo createInfo{};
-	createInfo.name = gltfSkin.name.empty() ? "Skeleton" : gltfSkin.name;
+	createInfo.name = gltfSkin.name;
 	createInfo.filepath = (directory / createInfo.name).concat(FileFormats::Skeleton());
 
 	std::vector<glm::mat4> inverseBindMatrices;
@@ -3336,6 +3342,8 @@ std::shared_ptr<Skeleton> Serializer::GenerateSkeleton(
 
 	const std::shared_ptr<Skeleton> skeleton = MeshManager::GetInstance().CreateSkeleton(createInfo);
 	SerializeSkeleton(skeleton);
+
+	GenerateFileUUID(skeleton->GetFilepath());
 
 	return skeleton;
 }
@@ -3436,6 +3444,8 @@ std::shared_ptr<SkeletalAnimation> Serializer::GenerateAnimation(
 
 	const std::shared_ptr<SkeletalAnimation> skeletalAnimation = MeshManager::GetInstance().CreateSkeletalAnimation(createInfo);
 	SerializeSkeletalAnimation(skeletalAnimation);
+
+	GenerateFileUUID(skeletalAnimation->GetFilepath());
 
 	return skeletalAnimation;
 }
@@ -4237,6 +4247,7 @@ void Serializer::SerializeSkeletalAnimator(YAML::Emitter& out, const std::shared
 
 	out << YAML::Key << "Speed" << YAML::Value << skeletalAnimator.GetSpeed();
 	out << YAML::Key << "CurrentTime" << YAML::Value << skeletalAnimator.GetCurrentTime();
+	out << YAML::Key << "ApplySkeletonTransform" << YAML::Value << skeletalAnimator.GetApplySkeletonTransform();
 
 	out << YAML::EndMap;
 }
@@ -4270,6 +4281,11 @@ void Serializer::DeserializeSkeletalAnimator(const YAML::Node& in, const std::sh
 		if (const auto& currentTimeData = skeletalAnimatorData["CurrentTime"])
 		{
 			skeletalAnimator.SetCurrentTime(currentTimeData.as<float>());
+		}
+
+		if (const auto& applySkeletonTransformData = skeletalAnimatorData["ApplySkeletonTransform"])
+		{
+			skeletalAnimator.SetApplySkeletonTransform(applySkeletonTransformData.as<bool>());
 		}
 	}
 }

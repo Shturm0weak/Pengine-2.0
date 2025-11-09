@@ -55,6 +55,10 @@ namespace Pengine
 
 		void SetDrawDebugSkeleton(bool drawDebugSkeleton) { m_DrawDebugSkeleton = drawDebugSkeleton; }
 
+		bool GetApplySkeletonTransform() const { return m_ApplySkeletonTransform; }
+
+		void SetApplySkeletonTransform(bool applySkeletonTransform) { m_ApplySkeletonTransform = applySkeletonTransform; }
+
 	private:
 		void CalculateBoneTransform(std::shared_ptr<Entity> entity, const uint32_t boneId, const glm::mat4& parentTransform);
 
@@ -73,6 +77,7 @@ namespace Pengine
 		float m_CurrentTime = 0.0f;
 		float m_NextTime = 0.0f;
 		bool m_IsBlending = false;
+		bool m_ApplySkeletonTransform = false;
 		bool m_DrawDebugSkeleton = false;
 	};
 

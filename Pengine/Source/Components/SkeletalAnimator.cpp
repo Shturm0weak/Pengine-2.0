@@ -94,12 +94,10 @@ namespace Pengine
 	{
 		const Skeleton::Bone& node = m_Skeleton->GetBones()[boneId];
 		std::string nodeName = node.name;
-		glm::mat4 nodeTransform = node.transform;
-		glm::mat4 globalTransformation = parentTransform * nodeTransform;
 
-		glm::vec3 currentPosition;
-		glm::quat currentRotation;
-		glm::vec3 currentScale;
+		glm::vec3 currentPosition = glm::vec3(0.0f);
+		glm::quat currentRotation = glm::quat(glm::vec3(0.0f));
+		glm::vec3 currentScale = glm::vec3(1.0f);
 		if (m_SkeletalAnimation->GetBonesByName().contains(nodeName))
 		{
 			const SkeletalAnimation::Bone& bone = m_SkeletalAnimation->GetBonesByName().at(nodeName);
@@ -120,17 +118,35 @@ namespace Pengine
 			currentScale = glm::mix(currentScale, nextScale, m_TransitionTimer / m_TransitionTime);
 		}
 
-		nodeTransform = glm::translate(glm::mat4(1.0f), currentPosition) * glm::toMat4(currentRotation) * glm::scale(glm::mat4(1.0f), currentScale);
-		globalTransformation = parentTransform * nodeTransform;
-		m_FinalBoneMatrices[node.id] = globalTransformation * node.offset;
+		glm::mat4 nodeTransform = glm::translate(glm::mat4(1.0f), currentPosition) * glm::toMat4(currentRotation) * glm::scale(glm::mat4(1.0f), currentScale);
+		glm::mat4 globalTransform;
+		if (m_ApplySkeletonTransform) globalTransform = parentTransform * node.transform * nodeTransform;
+		else globalTransform = parentTransform * nodeTransform;
+		
+		m_FinalBoneMatrices[node.id] = globalTransform * node.offset;
 
 		// TODO: Very slow, maybe optimize!
 		if (const auto& boneEntity = entity->FindEntityInHierarchy(node.name))
 		{
 			Transform& boneEntityTransform = boneEntity->GetComponent<Transform>();
-			boneEntityTransform.Translate(currentPosition);
-			boneEntityTransform.Rotate(glm::eulerAngles(currentRotation));
-			boneEntityTransform.Scale(currentScale);
+
+			if (m_ApplySkeletonTransform)
+			{
+				glm::vec3 newPosition = glm::vec3(0.0f);
+				glm::vec3 newRotation = glm::vec3(0.0f);
+				glm::vec3 newScale = glm::vec3(1.0f);
+				Utils::DecomposeTransform(globalTransform, newPosition, newRotation, newScale);
+				boneEntityTransform.Translate(newPosition);
+				boneEntityTransform.Rotate(newRotation);
+				boneEntityTransform.Scale(newScale);
+			}
+			else
+			{
+				boneEntityTransform.Translate(currentPosition);
+				boneEntityTransform.Rotate(glm::eulerAngles(currentRotation));
+				boneEntityTransform.Scale(currentScale);
+			}
+
 			if (GetDrawDebugSkeleton() && boneEntity->HasParent())
 			{
 				boneEntity->GetScene()->GetVisualizer().DrawLine(
@@ -142,7 +158,7 @@ namespace Pengine
 
 		for (int i = 0; i < node.childIds.size(); i++)
 		{
-			CalculateBoneTransform(entity, m_Skeleton->GetBones()[node.childIds[i]].id, globalTransformation);
+			CalculateBoneTransform(entity, m_Skeleton->GetBones()[node.childIds[i]].id, globalTransform);
 		}
 	}
 

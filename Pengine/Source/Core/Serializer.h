@@ -136,7 +136,7 @@ namespace Pengine
 
 		static std::shared_ptr<Skeleton> GenerateSkeleton(
 			const fastgltf::Asset& gltfAsset,
-			const fastgltf::Skin gltfSkin,
+			const fastgltf::Skin& gltfSkin,
 			const std::filesystem::path& directory);
 
 		static std::shared_ptr<SkeletalAnimation> GenerateAnimation(
