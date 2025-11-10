@@ -39,12 +39,19 @@ namespace Pengine
 
 		struct Shadows
 		{
+			enum class Filter : int
+			{
+				None = 0,
+				PCF = 1,
+				PoissonDisk = 2
+			};
+
 			bool isEnabled = true;
 			std::vector<float> biases = { 0.0f, 0.0f, 0.0f };
 			float splitFactor = 0.75f;
 			float maxDistance = 200.0f;
 			float fogFactor = 0.2f;
-			bool pcfEnabled = true;
+			Filter filter = Filter::PoissonDisk;
 			bool visualize = false;
 			int pcfRange = 1;
 

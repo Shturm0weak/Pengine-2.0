@@ -6,13 +6,32 @@ struct CSM
     float fogFactor;
     float maxDistance;
     int isEnabled;
-    int pcfEnabled;
+    int filtering;
     int pcfRange;
     int visualize;
 	mat4 lightSpaceMatrices[MAX_CASCADE_COUNT];
 	float distances[MAX_CASCADE_COUNT];
     float biases[MAX_CASCADE_COUNT];
 };
+
+const vec2 poissonDisk[16] = vec2[](
+   vec2(-0.94201624, -0.39906216),
+   vec2(0.94558609, -0.76890725),
+   vec2(-0.094184101, -0.92938870),
+   vec2(0.34495938, 0.29387760),
+   vec2(-0.91588581, 0.45771432),
+   vec2(-0.81544232, -0.87912464),
+   vec2(-0.38277543, 0.27676845),
+   vec2(0.97484398, 0.75648379),
+   vec2(0.44323325, -0.97511554),
+   vec2(0.53742981, -0.47373420),
+   vec2(-0.26496911, -0.41893023),
+   vec2(0.79197514, 0.19090188),
+   vec2(-0.24188840, 0.99706507),
+   vec2(-0.81409955, 0.91437590),
+   vec2(0.19984126, 0.78641367),
+   vec2(0.14383161, -0.14100790)
+);
 
 vec3 CalculateCSM(
 	sampler2DArray CSMTexture,
@@ -66,10 +85,11 @@ vec3 CalculateCSM(
         bias *= 1 / (csm.distances[layer] * 0.5f);
     }
 
+    vec2 texelSize = 1.0f / vec2(textureSize(CSMTexture, 0));
+   
     float shadow = 0.0f;
-    if(csm.pcfEnabled == 1)
+    if(csm.filtering == 1)
     {
-        vec2 texelSize = 1.0f / vec2(textureSize(CSMTexture, 0));
         for(int x = -csm.pcfRange; x <= csm.pcfRange; ++x)
         {
             for(int y = -csm.pcfRange; y <= csm.pcfRange; ++y)
@@ -79,6 +99,22 @@ vec3 CalculateCSM(
             }
         }
         shadow /= (csm.pcfRange * 2 + 1) * (csm.pcfRange * 2 + 1);
+    }
+    else if (csm.filtering == 2)
+    {
+        float random = fract(sin(dot(uv.xy * vec2(textureSize(CSMTexture, 0)), vec2(12.9898, 78.233))) * 43758.5453);
+        float angle = random * 2.0 * 3.14159265;
+        
+        mat2 rotation = mat2(cos(angle), -sin(angle),
+                            sin(angle), cos(angle));
+
+        for(int i = 0; i < 16; i++)
+        {
+            vec2 offset = rotation * poissonDisk[i];
+            float pcfDepth = texture(CSMTexture, vec3(uv.xy + offset * texelSize, layer)).r;
+            shadow += (currentDepth - bias) > pcfDepth ? 1.0f : 0.0f;
+        }
+        shadow /= 16;
     }
     else
     {

@@ -1207,8 +1207,14 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			ImGui::Checkbox("Visualize", &graphicsSettings.shadows.visualize);
 			ImGui::PopID();
 
-			ImGui::PushID("Shadows Pcf Enabled");
-			isChangedToSerialize += ImGui::Checkbox("Pcf Enabled", &graphicsSettings.shadows.pcfEnabled);
+			const char* const filters[] = { "None", "PCF", "PoissonDisk" };
+			int currentFilter = (int)graphicsSettings.shadows.filter;
+			ImGui::PushID("Shadows Filters");
+			if (ImGui::Combo("Filter", &currentFilter, filters, 3))
+			{
+				graphicsSettings.shadows.filter = (GraphicsSettings::Shadows::Filter)currentFilter;
+				isChangedToSerialize += 1;
+			}
 			ImGui::PopID();
 
 			ImGui::PushID("Shadows Pcf Range");

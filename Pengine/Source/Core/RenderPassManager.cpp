@@ -988,8 +988,8 @@ void RenderPassManager::CreateDeferred()
 				baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "csm.maxDistance", shadowSettings.maxDistance);
 				baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "csm.pcfRange", shadowSettings.pcfRange);
 
-				const int pcfEnabled = shadowSettings.pcfEnabled;
-				baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "csm.pcfEnabled", pcfEnabled);
+				const int filter = (int)shadowSettings.filter;
+				baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "csm.filtering", filter);
 
 				const int visualize = shadowSettings.visualize;
 				baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "csm.visualize", visualize);
