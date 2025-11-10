@@ -52,6 +52,7 @@ namespace Pengine
 			float maxDistance = 200.0f;
 			float fogFactor = 0.2f;
 			Filter filter = Filter::PoissonDisk;
+			bool stabilizeCascades = true;
 			bool visualize = false;
 			int pcfRange = 1;
 

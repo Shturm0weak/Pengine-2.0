@@ -4,11 +4,13 @@ using namespace Pengine;
 
 bool CSMRenderer::GenerateLightSpaceMatrices(
 	const glm::mat4& viewProjectionMat4,
-	const glm::vec3 lightDirection,
+	const glm::vec3& lightDirection,
+	const glm::vec2& shadowMapSize,
 	const float zNear,
 	const float zFar,
 	const int cascadeCount,
-	const float splitFactor)
+	const float splitFactor,
+	const bool stabilizeCascades)
 {
 	m_Distances.clear();
 	m_LightSpaceMatrices.clear();
@@ -81,11 +83,25 @@ bool CSMRenderer::GenerateLightSpaceMatrices(
 		}
 		radius = std::ceil(radius * 16.0f) / 16.0f;
 
-		glm::vec3 maxExtents = glm::vec3(radius);
-		glm::vec3 minExtents = -maxExtents;
+		const glm::vec3 maxExtents = glm::vec3(radius);
+		const glm::vec3 minExtents = -maxExtents;
 
-		glm::mat4 lightSpaceViewMat4 = glm::lookAt(frustumCenter + lightDirection * -minExtents.z, frustumCenter, glm::vec3(0.0f, 1.0f, 0.0f));
+		const glm::mat4 lightSpaceViewMat4 = glm::lookAt(frustumCenter + lightDirection * -minExtents.z, frustumCenter, glm::vec3(0.0f, 1.0f, 0.0f));
 		glm::mat4 lightSpaceProjectionMat4 = glm::ortho(minExtents.x, maxExtents.x, minExtents.y, maxExtents.y, minExtents.z - maxExtents.z, maxExtents.z - minExtents.z);
+		
+		if (stabilizeCascades)
+		{
+			const glm::mat4 lightSpaceViewProjectionMat4 = lightSpaceProjectionMat4 * lightSpaceViewMat4;
+			glm::vec4 shadowOrigin = { 0.0f, 0.0f, 0.0f, 1.0f };
+			shadowOrigin = lightSpaceViewProjectionMat4 * shadowOrigin;
+			shadowOrigin *= shadowMapSize.x / 2.0f;
+			const glm::vec4 roundedOrigin = glm::round(shadowOrigin);
+			glm::vec4 roundedOffset = roundedOrigin - shadowOrigin;
+			roundedOffset *= 2.0f / shadowMapSize.x;
+			roundedOffset.z = 0.0f;
+			roundedOffset.w = 0.0f;
+			lightSpaceProjectionMat4[3] += roundedOffset;
+		}
 
 		m_Distances.emplace_back((zNear + splitDistance * clipRange));
 		m_LightSpaceMatrices.emplace_back(lightSpaceProjectionMat4 * lightSpaceViewMat4);

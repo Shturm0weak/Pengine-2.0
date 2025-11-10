@@ -5088,6 +5088,7 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Key << "Filter" << YAML::Value << (int)graphicsSettings.shadows.filter;
 	out << YAML::Key << "PcfRange" << YAML::Value << graphicsSettings.shadows.pcfRange;
 	out << YAML::Key << "Biases" << YAML::Value << graphicsSettings.shadows.biases;
+	out << YAML::Key << "StabilizeCascades" << YAML::Value << graphicsSettings.shadows.stabilizeCascades;
 
 	out << YAML::EndMap;
 	//
@@ -5252,6 +5253,11 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& pcfRangeData = csmData["PcfRange"])
 		{
 			graphicsSettings.shadows.pcfRange = pcfRangeData.as<int>();
+		}
+
+		if (const auto& stabilizeCascadesData = csmData["StabilizeCascades"])
+		{
+			graphicsSettings.shadows.stabilizeCascades = stabilizeCascadesData.as<bool>();
 		}
 	}
 

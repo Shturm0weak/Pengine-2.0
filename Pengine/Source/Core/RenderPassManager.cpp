@@ -1557,7 +1557,8 @@ void RenderPassManager::CreateCSM()
 			renderInfo.renderView->SetCustomData("CSMRenderer", csmRenderer);
 		}
 
-		glm::ivec2 resolutions[3] = { { 1024, 1024 }, { 2048, 2048 }, { 4096, 4096 } };
+		const glm::ivec2 resolutions[3] = { { 1024, 1024 }, { 2048, 2048 }, { 4096, 4096 } };
+		const glm::ivec2 shadowMapSize = resolutions[shadowsSettings.quality];
 
 		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
 		if (!frameBuffer)
@@ -1565,15 +1566,15 @@ void RenderPassManager::CreateCSM()
 			// NOTE: Maybe should be send as the next frame event, because creating a frame buffer here may cause some problems.
 			const std::string renderPassName = renderInfo.renderPass->GetName();
 			renderInfo.renderPass->GetAttachmentDescriptions().back().textureCreateInfo.layerCount = renderInfo.scene->GetGraphicsSettings().shadows.cascadeCount;
-			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderView.get(), resolutions[shadowsSettings.quality]);
+			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderView.get(), shadowMapSize);
 
 			renderInfo.renderView->SetFrameBuffer(renderPassName, frameBuffer);
 		}
 
 		// Recreate if quality has been changed.
-		if (frameBuffer->GetSize() != resolutions[shadowsSettings.quality])
+		if (frameBuffer->GetSize() != shadowMapSize)
 		{
-			auto callback = [frameBuffer, resolution = resolutions[shadowsSettings.quality]]()
+			auto callback = [frameBuffer, resolution = shadowMapSize]()
 			{
 				frameBuffer->Resize(resolution);
 			};
@@ -1605,19 +1606,21 @@ void RenderPassManager::CreateCSM()
 		}
 
 		// TODO: Camera can be ortho, so need to make for ortho as well.
-		const glm::mat4 projection = glm::perspective(
+		const glm::mat4 projectionMat4 = glm::perspective(
 			camera.GetFov(),
 			(float)renderInfo.viewportSize.x / (float)renderInfo.viewportSize.y,
 			camera.GetZNear(),
 			shadowsSettings.maxDistance);
 
 		const bool recreateFrameBuffer = csmRenderer->GenerateLightSpaceMatrices(
-			projection * camera.GetViewMat4(),
+			projectionMat4 * camera.GetViewMat4(),
 			lightDirection,
+			shadowMapSize,
 			camera.GetZNear(),
 			shadowsSettings.maxDistance,
 			shadowsSettings.cascadeCount,
-			shadowsSettings.splitFactor);
+			shadowsSettings.splitFactor,
+			shadowsSettings.stabilizeCascades);
 
 		for (const entt::entity& entity : r3dView)
 		{

@@ -1207,6 +1207,10 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			ImGui::Checkbox("Visualize", &graphicsSettings.shadows.visualize);
 			ImGui::PopID();
 
+			ImGui::PushID("Shadows Stabilize Cascades");
+			ImGui::Checkbox("Stabilize Cascades", &graphicsSettings.shadows.stabilizeCascades);
+			ImGui::PopID();
+
 			const char* const filters[] = { "None", "PCF", "PoissonDisk" };
 			int currentFilter = (int)graphicsSettings.shadows.filter;
 			ImGui::PushID("Shadows Filters");

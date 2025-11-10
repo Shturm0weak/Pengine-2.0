@@ -15,11 +15,13 @@ namespace Pengine
 		 */
 		bool GenerateLightSpaceMatrices(
 			const glm::mat4& viewProjectionMat4,
-			const glm::vec3 lightDirection,
+			const glm::vec3& lightDirection,
+			const glm::vec2& shadowMapSize,
 			const float zNear,
 			const float zFar,
 			const int cascadeCount,
-			const float splitFactor);
+			const float splitFactor,
+			const bool stabilizeCascades);
 
 		[[nodiscard]] const std::vector<glm::mat4>& GetLightSpaceMatrices() const { return m_LightSpaceMatrices; }
 

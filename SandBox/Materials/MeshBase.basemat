@@ -94,7 +94,7 @@ Basemat:
       DepthTest: true
       DepthWrite: true
       DepthClamp: true
-      CullMode: Front
+      CullMode: None
       PolygonMode: Fill
       TopologyMode: TriangleList
       Vertex: Shaders/CSM.vert
