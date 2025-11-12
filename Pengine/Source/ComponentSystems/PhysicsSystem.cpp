@@ -4,6 +4,8 @@
 #include "../Components/Transform.h"
 #include "../Components/RigidBody.h"
 
+#include "../Utils/Utils.h"
+
 #include <Jolt/RegisterTypes.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/SphereShape.h>
@@ -68,24 +70,38 @@ void PhysicsSystem::OnUpdate(const float deltaTime, std::shared_ptr<Scene> scene
 	m_PhysicsSystem.Update(deltaTime, collisionStepCount, m_TempAllocator.get(), m_JobSystem.get());
 
 	const auto& view = scene->GetRegistry().view<RigidBody>();
-	for (const entt::entity entity : view)
+	for (const entt::entity handle : view)
 	{
-		Transform& transform = scene->GetRegistry().get<Transform>(entity);
-		RigidBody& rigidBody = scene->GetRegistry().get<RigidBody>(entity);
+		Transform& transform = scene->GetRegistry().get<Transform>(handle);
+		RigidBody& rigidBody = scene->GetRegistry().get<RigidBody>(handle);
+
+		if (rigidBody.isStatic)
+		{
+			continue;
+		}
 
 		JPH::BodyLockRead lock(m_PhysicsSystem.GetBodyLockInterface(), rigidBody.id);
 		if (lock.Succeeded())
 		{
 			const JPH::Body& body = lock.GetBody();
-			const JPH::Vec3 position = body.GetPosition();
-			const JPH::Quat rotation = body.GetRotation();
+			glm::vec3 position = JoltVec3ToGlmVec3(body.GetPosition());
+			glm::vec3 rotation = glm::eulerAngles(JoltQuatToGlmQuat(body.GetRotation()));
 
-			const glm::vec3 outPosition = JoltVec3ToGlmVec3(position);
-			const glm::quat outRotation = JoltQuatToGlmQuat(rotation);
+			const std::shared_ptr<Entity> entity = transform.GetEntity();
+			if (entity->HasParent())
+			{
+				const Transform& parentTransform = entity->GetParent()->GetComponent<Transform>();
 
-			// TODO: for now works only in local space.
-			transform.Translate(outPosition);
-			transform.Rotate(glm::eulerAngles(outRotation));
+				glm::vec3 scale;
+				Utils::DecomposeTransform(
+					parentTransform.GetInverseTransformMat4() * glm::translate(glm::mat4(1.0f), position) * glm::toMat4(JoltQuatToGlmQuat(body.GetRotation())),
+					position,
+					rotation,
+					scale);
+			}
+
+			transform.Translate(position);
+			transform.Rotate(rotation);
 		}
 	}
 }

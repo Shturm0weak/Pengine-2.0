@@ -1,6 +1,6 @@
 Settings:
   DrawBoundingBoxes: false
-  DrawPhysicsShapes: false
+  DrawPhysicsShapes: true
   Wind:
     Direction: [1, 1, 1]
     Frequency: 10
@@ -12,7 +12,7 @@ Scene:
     IsEnabled: true
     Transform:
       Position: [0, 0, 0]
-      Rotation: [2.6246264, 0, 0]
+      Rotation: [-3.76991129, -0.538608611, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     DirectionalLight:
@@ -27,7 +27,7 @@ Scene:
     Transform:
       Position: [0, -10, 0]
       Rotation: [0, -0, 0]
-      Scale: [70, 1, 70]
+      Scale: [140, 1, 140]
       FollowOwner: true
     Renderer3D:
       SkeletalAnimatorEntity: 0x83defcab1dcae13080e550f3cca63db9
@@ -42,7 +42,7 @@ Scene:
       IsStatic: true
       Mass: 10
       Type: 0
-      HalfExtents: [70, 1, 70]
+      HalfExtents: [140, 1, 140]
       AngularVelocity: [0, 0, 0]
       LinearVelocity: [0, 0, 0]
       Friction: 10
@@ -54,7 +54,7 @@ Scene:
     Name: Cube
     IsEnabled: true
     Transform:
-      Position: [1.54976046, -8.01999569, 4.85524225]
+      Position: [1.54976022, -8.01999569, 4.85524416]
       Rotation: [7.86806049e-06, 0.0219214298, 2.99367548e-06]
       Scale: [1, 1, 1]
       FollowOwner: true
@@ -87,8 +87,8 @@ Scene:
     Name: Cube
     IsEnabled: true
     Transform:
-      Position: [-6.51405573, -8.00403595, 10.2913074]
-      Rotation: [3.13888121, 0.0116800796, 0.00678337365]
+      Position: [-6.51396179, -8.00405312, 10.291316]
+      Rotation: [3.13890123, 0.0116808275, 0.00674541621]
       Scale: [1, 0.99999696, 0.999996841]
       FollowOwner: true
     Renderer3D:
@@ -116,8 +116,8 @@ Scene:
     Name: Sphere
     IsEnabled: true
     Transform:
-      Position: [-0.100248858, -8.01762486, 8.08465195]
-      Rotation: [1.8768872, 0.00877860654, 0.121152364]
+      Position: [-0.100249201, -8.01762486, 8.08463764]
+      Rotation: [1.87688148, 0.00877931062, 0.121152431]
       Scale: [0.999996066, 0.999945343, 0.999941528]
       FollowOwner: true
     Renderer3D:
@@ -158,7 +158,7 @@ Scene:
     Name: Sphere
     IsEnabled: true
     Transform:
-      Position: [18.6560898, -8.00019264, 12.3883533]
+      Position: [18.6560898, -8.00019264, 12.38836]
       Rotation: [-2.14046288, 0.00163284573, 0.0524343103]
       Scale: [0.999990702, 0.999933362, 0.999956131]
       FollowOwner: true
@@ -206,8 +206,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [-12.3092556, 3.88509226, 15.2755089]
-      Rotation: [-0.563922524, -0.0175348595, 0]
+      Position: [7.16435194, -7.6750083, 1.83208787]
+      Rotation: [-0.0420989618, -1.48503351, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -520,5 +520,5 @@ Scene:
     Transform:
       Position: [8.47387218, -9, 1.64027011]
       Rotation: [1.57079649, -0, 0]
-      Scale: [0.00999999978, 0.0100000007, 0.0100000007]
+      Scale: [0.0109999999, 0.00999999978, 0.0109999999]
       FollowOwner: true

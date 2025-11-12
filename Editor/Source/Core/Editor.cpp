@@ -2909,7 +2909,7 @@ void Editor::PhysicsBoxComponent(const std::shared_ptr<Entity>& entity)
 		{
 		case RigidBody::Type::Box:
 		{
-			if (DrawVec3Control("Half Extents", rigidBody.shape.box.halfExtents))
+			if (DrawVec3Control("Half Extents", rigidBody.shape.box.halfExtents, 1.0f, { 0.01f, 10.0f }))
 			{
 				rigidBody.shape.box.halfExtents = glm::max(rigidBody.shape.box.halfExtents, glm::vec3(0.01f));
 				rigidBody.isValid = false;
@@ -2918,7 +2918,7 @@ void Editor::PhysicsBoxComponent(const std::shared_ptr<Entity>& entity)
 		}
 		case RigidBody::Type::Sphere:
 		{
-			if (ImGui::SliderFloat("Radius", &rigidBody.shape.sphere.radius, 0.0f, 10.0f))
+			if (ImGui::SliderFloat("Radius", &rigidBody.shape.sphere.radius, 0.01f, 10.0f))
 			{
 				rigidBody.shape.sphere.radius = glm::max(rigidBody.shape.sphere.radius, 0.01f);
 				rigidBody.isValid = false;
@@ -2927,12 +2927,12 @@ void Editor::PhysicsBoxComponent(const std::shared_ptr<Entity>& entity)
 		}
 		case RigidBody::Type::Cylinder:
 		{
-			if (ImGui::SliderFloat("Radius", &rigidBody.shape.cylinder.radius, 0.0f, 10.0f))
+			if (ImGui::SliderFloat("Radius", &rigidBody.shape.cylinder.radius, 0.01f, 10.0f))
 			{
 				rigidBody.shape.cylinder.radius = glm::max(rigidBody.shape.cylinder.radius, 0.01f);
 				rigidBody.isValid = false;
 			}
-			if (ImGui::SliderFloat("Half Height", &rigidBody.shape.cylinder.halfHeight, 0.0f, 10.0f))
+			if (ImGui::SliderFloat("Half Height", &rigidBody.shape.cylinder.halfHeight, 0.01f, 10.0f))
 			{
 				rigidBody.shape.cylinder.halfHeight = glm::max(rigidBody.shape.cylinder.halfHeight, 0.01f);
 				rigidBody.isValid = false;

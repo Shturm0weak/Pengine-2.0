@@ -339,23 +339,25 @@ void Scene::UpdateSystems(const float deltaTime)
 
 			const RigidBody& rigidBody = GetRegistry().get<RigidBody>(handle);
 
+			glm::mat4 transformMat4 = glm::translate(glm::mat4(1.0f), transform.GetPosition()) * transform.GetRotationMat4();
+
 			switch (rigidBody.type)
 			{
 			case RigidBody::Type::Box:
 			{
-				GetVisualizer().DrawBox(-rigidBody.shape.box.halfExtents, rigidBody.shape.box.halfExtents, { 0.0f, 1.0f, 0.0f }, transform.GetPositionMat4() * transform.GetRotationMat4());
+				GetVisualizer().DrawBox(-rigidBody.shape.box.halfExtents, rigidBody.shape.box.halfExtents, { 0.0f, 1.0f, 0.0f }, transformMat4);
 				break;
 			}
 			case RigidBody::Type::Sphere:
 			{
-				GetVisualizer().DrawSphere({ 0.0f, 1.0f, 0.0f }, transform.GetPositionMat4() * transform.GetRotationMat4(), rigidBody.shape.sphere.radius, 12);
+				GetVisualizer().DrawSphere({ 0.0f, 1.0f, 0.0f }, transformMat4, rigidBody.shape.sphere.radius, 12);
 				break;
 			}
 			case RigidBody::Type::Cylinder:
 			{
 				const glm::vec3 bottomCenter = glm::vec3(0.0f, -rigidBody.shape.cylinder.halfHeight, 0.0f);
 				const glm::vec3 topCenter = glm::vec3(0.0f, rigidBody.shape.cylinder.halfHeight, 0.0f);
-				GetVisualizer().DrawCylinder(bottomCenter, topCenter, { 0.0f, 1.0f, 0.0f }, transform.GetPositionMat4() * transform.GetRotationMat4(), rigidBody.shape.cylinder.radius, 12);
+				GetVisualizer().DrawCylinder(bottomCenter, topCenter, { 0.0f, 1.0f, 0.0f }, transformMat4, rigidBody.shape.cylinder.radius, 12);
 				break;
 			}
 			}
