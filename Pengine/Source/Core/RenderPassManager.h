@@ -56,10 +56,9 @@ namespace Pengine
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<class Material>, EntitiesByMesh>;
 		using RenderableEntities = std::unordered_map<std::shared_ptr<class BaseMaterial>, MeshesByMaterial>;
 
-		struct RenderableData : public CustomData
+		struct VisibleData : public CustomData
 		{
-			RenderableEntities renderableEntities;
-			size_t renderableCount = 0;
+			std::vector<entt::entity> visibleEntities;
 		};
 
 		struct InstanceData

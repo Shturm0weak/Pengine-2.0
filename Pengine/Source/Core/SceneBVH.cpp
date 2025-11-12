@@ -38,7 +38,7 @@ void SceneBVH::Update()
 	Rebuild();
 }
 
-void SceneBVH::Traverse(const std::function<void(BVHNode*)>& callback) const
+void SceneBVH::Traverse(const std::function<bool(BVHNode*)>& callback) const
 {
 	if (!m_Root) return;
 
@@ -52,14 +52,43 @@ void SceneBVH::Traverse(const std::function<void(BVHNode*)>& callback) const
 		BVHNode* currentNode = nodeStack.top();
 		nodeStack.pop();
 
-		callback(currentNode);
-
-		if (currentNode->right) nodeStack.push(currentNode->right);
-		if (currentNode->left) nodeStack.push(currentNode->left);
+		if (callback(currentNode))
+		{
+			if (currentNode->right) nodeStack.push(currentNode->right);
+			if (currentNode->left) nodeStack.push(currentNode->left);
+		}
 	}
 
 	m_BVHUseCount.fetch_sub(1);
 	m_BVHConditionalVariable.notify_all();
+}
+
+std::vector<entt::entity> SceneBVH::CullAgainstFrustum(const std::array<glm::vec4, 6>& planes)
+{
+	std::vector<entt::entity> visibleEntities;
+	Traverse([&planes, &visibleEntities](BVHNode* node)
+	{
+		if (!IntersectsFrustum(node->aabb, planes))
+		{
+			if (node->entity)
+			{
+				const Renderer3D& r3d = node->entity->GetComponent<Renderer3D>();
+				if (r3d.mesh->GetType() != Mesh::Type::SKINNED)
+				{
+					return false;
+				}
+			}
+		}
+
+		if (node->entity)
+		{
+			visibleEntities.emplace_back(node->entity->GetHandle());
+		}
+
+		return true;
+	});
+
+	return visibleEntities;
 }
 
 std::multimap<Raycast::Hit, std::shared_ptr<Entity>> SceneBVH::Raycast(
@@ -68,37 +97,25 @@ std::multimap<Raycast::Hit, std::shared_ptr<Entity>> SceneBVH::Raycast(
 	const float length) const
 {
 	std::multimap<Raycast::Hit, std::shared_ptr<Entity>> hits;
-	if (!m_Root) return hits;
 
-	m_BVHUseCount.fetch_add(1);
-
-	std::stack<BVHNode*> nodeStack;
-	nodeStack.push(m_Root);
-
-	while (!nodeStack.empty())
+	Traverse([start, direction, length, &hits](BVHNode* node)
 	{
-		BVHNode* currentNode = nodeStack.top();
-		nodeStack.pop();
-
 		Raycast::Hit hit;
-		if (!Raycast::IntersectBoxAABB(start, direction, currentNode->aabb.min, currentNode->aabb.max, length, hit)) continue;
-
-		if (currentNode->IsLeaf())
+		if (!Raycast::IntersectBoxAABB(start, direction, node->aabb.min, node->aabb.max, length, hit))
 		{
-			if (currentNode->entity && currentNode->entity->IsEnabled())
+			return false;
+		}
+
+		if (node->IsLeaf())
+		{
+			if (node->entity && node->entity->IsEnabled())
 			{
-				hits.emplace(hit, currentNode->entity);
+				hits.emplace(hit, node->entity);
 			}
 		}
-		else
-		{
-			if (currentNode->left) nodeStack.push(currentNode->left);
-			if (currentNode->right) nodeStack.push(currentNode->right);
-		}
-	}
 
-	m_BVHUseCount.fetch_sub(1);
-	m_BVHConditionalVariable.notify_all();
+		return true;
+	});
 
 	return hits;
 }
@@ -316,4 +333,23 @@ AABB SceneBVH::LocalToWorldAABB(const AABB& localAABB, const glm::mat4& transfor
 	}
 
 	return { worldMin, worldMax };
+}
+
+bool SceneBVH::IntersectsFrustum(const AABB& aabb, const std::array<glm::vec4, 6>& planes)
+{
+	glm::vec3 center = (aabb.min + aabb.max) * 0.5f;
+	glm::vec3 extents = aabb.max - center;
+
+	for (const auto& plane : planes)
+	{
+		float distance = glm::dot(center, glm::vec3(plane)) + plane.w;
+		float radius = glm::dot(extents, glm::abs(glm::vec3(plane)));
+
+		if (distance + radius < 0.0f)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }

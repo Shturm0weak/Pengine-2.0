@@ -406,205 +406,39 @@ void RenderPassManager::CreateZPrePass()
 
 		const std::string renderPassName = renderInfo.renderPass->GetName();
 
-		RenderableEntities renderableEntities;
-
-		size_t renderableCount = 0;
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
-		entt::registry& registry = scene->GetRegistry();
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 		const glm::mat4 viewProjectionMat4 = renderInfo.projection * camera.GetViewMat4();
-		const auto r3dView = registry.view<Renderer3D>();
 
-		/*scene->GetBVH()->Traverse([scene](SceneBVH::BVHNode* node)
-			{
-				scene->GetVisualizer().DrawBox(node->aabb.min, node->aabb.max, { 1.0f, 0.5f, 0.0f }, glm::mat4(1.0f));
-			}
-		);*/
+		const auto visibleEntities = scene->GetBVH()->CullAgainstFrustum(Utils::GetFrustumPlanes(viewProjectionMat4));
 
-		for (const entt::entity& entity : r3dView)
+		VisibleData* visibleData = (VisibleData*)renderInfo.renderView->GetCustomData("VisibleData");
+		if (!visibleData)
 		{
-			const Renderer3D& r3d = registry.get<Renderer3D>(entity);
+			visibleData = new VisibleData();
+			renderInfo.renderView->SetCustomData("VisibleData", visibleData);
+		}
+
+		visibleData->visibleEntities.clear();
+		visibleData->visibleEntities.reserve(visibleEntities.size());
+
+		// NOTE: All other checks are made in scene BVH during building.
+		for (const entt::entity entity : visibleEntities)
+		{
+			Renderer3D& r3d = scene->GetRegistry().get<Renderer3D>(entity);
+
 			if ((r3d.objectVisibilityMask & camera.GetObjectVisibilityMask()) == 0)
 			{
 				continue;
 			}
 
-			const Transform& transform = registry.get<Transform>(entity);
-			if (!transform.GetEntity()->IsEnabled() || !r3d.isEnabled)
+			if (!r3d.material)
 			{
 				continue;
 			}
 
-			// NOTE: Use GBuffer name for now, maybe in the future need to change.
-			if (!r3d.mesh || !r3d.material || !r3d.material->IsPipelineEnabled(GBuffer))
-			{
-				continue;
-			}
-
-			const std::shared_ptr<Pipeline> pipeline = r3d.material->GetBaseMaterial()->GetPipeline(renderPassName);
-			if (!pipeline)
-			{
-				continue;
-			}
-
-			const glm::mat4& transformMat4 = transform.GetTransform();
-			const BoundingBox& box = r3d.mesh->GetBoundingBox();
-			
-			if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
-			{
-				if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
-				{
-					SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
-					if (skeletalAnimator)
-					{
-						UpdateSkeletalAnimator(skeletalAnimator, r3d.material->GetBaseMaterial(), pipeline);
-					}
-				}
-				
-				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].single.emplace_back(std::make_pair(r3d.mesh, entity));
-			}
-			else if (r3d.mesh->GetType() == Mesh::Type::STATIC)
-			{
-				bool isInFrustum = FrustumCulling::CullBoundingBox(viewProjectionMat4, transformMat4, box.min, box.max, camera.GetZNear());
-				if (!isInFrustum)
-				{
-					continue;
-				}
-
-				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh].emplace_back(entity);
-			}
-
-			if (scene->GetSettings().drawBoundingBoxes)
-			{
-				const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
-
-				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
-			
-				/*r3d.mesh->GetBVH()->Traverse([scene, transformMat4](MeshBVH::BVHNode* node)
-					{
-						scene->GetVisualizer().DrawBox(node->aabb.min, node->aabb.max, { 1.0f, 1.0f, 0.0f }, transformMat4);
-					}
-				);*/
-			}
-
-			renderableCount++;
+			visibleData->visibleEntities.emplace_back(entity);
 		}
-
-		// Commented for now, no really need ZPrePrass, because the engine uses Deferred over Forward renderer.
-		//std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderView->GetBuffer("InstanceBufferZPrePass");
-		//if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() < renderableCount))
-		//{
-		//	instanceBuffer = Buffer::Create(
-		//		sizeof(glm::mat4),
-		//		renderableCount,
-		//		Buffer::Usage::VERTEX_BUFFER,
-		//		MemoryType::CPU,
-		//		true);
-
-		//	renderInfo.renderView->SetBuffer("InstanceBufferZPrePass", instanceBuffer);
-		//}
-
-		//std::vector<glm::mat4> instanceDatas;
-
-		//const std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
-
-		//RenderPass::SubmitInfo submitInfo{};
-		//submitInfo.frame = renderInfo.frame;
-		//submitInfo.renderPass = renderInfo.renderPass;
-		//submitInfo.frameBuffer = frameBuffer;
-		//renderInfo.renderer->BeginRenderPass(submitInfo);
-
-		//// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
-		//for (const auto& [baseMaterial, meshesByMaterial] : renderableEntities)
-		//{
-		//	const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
-
-		//	for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
-		//	{
-		//		const std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
-		//		FlushUniformWriters(uniformWriters);
-
-		//		for (const auto& [mesh, entities] : gameObjectsByMeshes.instanced)
-		//		{
-		//			const size_t instanceDataOffset = instanceDatas.size();
-
-		//			for (const entt::entity& entity : entities)
-		//			{
-		//				const Transform& transform = registry.get<Transform>(entity);
-		//				instanceDatas.emplace_back(transform.GetTransform());
-		//			}
-
-		//			std::vector<std::shared_ptr<Buffer>> vertexBuffers;
-		//			std::vector<size_t> vertexBufferOffsets;
-		//			GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
-
-		//			renderInfo.renderer->Render(
-		//				vertexBuffers,
-		//				vertexBufferOffsets,
-		//				mesh->GetIndexBuffer(),
-		//				0,
-		//				mesh->GetIndexCount(),
-		//				pipeline,
-		//				instanceBuffer,
-		//				instanceDataOffset * instanceBuffer->GetInstanceSize(),
-		//				entities.size(),
-		//				uniformWriters,
-		//				renderInfo.frame);
-		//		}
-
-		//		for (const auto& [mesh, entity] : gameObjectsByMeshes.single)
-		//		{
-		//			const size_t instanceDataOffset = instanceDatas.size();
-
-		//			const Transform& transform = registry.get<Transform>(entity);
-		//			instanceDatas.emplace_back(transform.GetTransform());
-
-		//			const SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(entity);
-		//			if (skeletalAnimator)
-		//			{
-		//				std::vector<std::shared_ptr<UniformWriter>> newUniformWriters = uniformWriters;
-		//				newUniformWriters.emplace_back(skeletalAnimator->GetUniformWriter());
-		//				skeletalAnimator->GetUniformWriter()->Flush();
-
-		//				std::vector<std::shared_ptr<Buffer>> vertexBuffers;
-		//				std::vector<size_t> vertexBufferOffsets;
-		//				GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
-
-		//				renderInfo.renderer->Render(
-		//					vertexBuffers,
-		//					vertexBufferOffsets,
-		//					mesh->GetIndexBuffer(),
-		//					0,
-		//					mesh->GetIndexCount(),
-		//					pipeline,
-		//					instanceBuffer,
-		//					instanceDataOffset * instanceBuffer->GetInstanceSize(),
-		//					1,
-		//					newUniformWriters,
-		//					renderInfo.frame);
-		//			}
-		//		}
-		//	}
-		//}
-
-		RenderableData* renderableData = (RenderableData*)renderInfo.renderView->GetCustomData("RenderableData");
-		if (!renderableData)
-		{
-			renderableData = new RenderableData();
-			renderInfo.renderView->SetCustomData("RenderableData", renderableData);
-		}
-		renderableData->renderableEntities = std::move(renderableEntities);
-		renderableData->renderableCount = renderableCount;
-
-		// Because these are all just commands and will be rendered later we can write the instance buffer
-		// just once when all instance data is collected.
-		/*if (instanceBuffer && !instanceDatas.empty())
-		{
-			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(glm::mat4));
-			instanceBuffer->Flush();
-		}
-
-		renderInfo.renderer->EndRenderPass(submitInfo);*/
 	};
 
 	CreateRenderPass(createInfo);
@@ -700,7 +534,7 @@ void RenderPassManager::CreateGBuffer()
 		
 		const std::string renderPassName = renderInfo.renderPass->GetName();
 
-		RenderableData* renderableData = (RenderableData*)renderInfo.renderView->GetCustomData("RenderableData");
+		VisibleData* visibleData = (VisibleData*)renderInfo.renderView->GetCustomData("VisibleData");
 
 		LineRenderer* lineRenderer = (LineRenderer*)renderInfo.scene->GetRenderView()->GetCustomData("LineRenderer");
 		if (!lineRenderer)
@@ -710,9 +544,58 @@ void RenderPassManager::CreateGBuffer()
 			renderInfo.scene->GetRenderView()->SetCustomData("LineRenderer", lineRenderer);
 		}
 
-		const size_t renderableCount = renderableData->renderableCount;
+		size_t renderableCount = 0;
+		RenderableEntities renderableEntities;
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
-		const entt::registry& registry = scene->GetRegistry();
+		entt::registry& registry = scene->GetRegistry();
+		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
+		const glm::mat4 viewProjectionMat4 = renderInfo.projection * camera.GetViewMat4();
+
+		for (const auto& entity : visibleData->visibleEntities)
+		{
+			const Renderer3D& r3d = registry.get<Renderer3D>(entity);
+			const Transform& transform = registry.get<Transform>(entity);
+
+			if (!r3d.material->IsPipelineEnabled(renderPassName))
+			{
+				continue;
+			}
+
+			const std::shared_ptr<Pipeline> pipeline = r3d.material->GetBaseMaterial()->GetPipeline(renderPassName);
+			if (!pipeline)
+			{
+				continue;
+			}
+
+			if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
+			{
+				if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
+				{
+					SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
+					if (skeletalAnimator)
+					{
+						UpdateSkeletalAnimator(skeletalAnimator, r3d.material->GetBaseMaterial(), pipeline);
+					}
+				}
+
+				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].single.emplace_back(std::make_pair(r3d.mesh, entity));
+			}
+			else if (r3d.mesh->GetType() == Mesh::Type::STATIC)
+			{
+				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh].emplace_back(entity);
+			}
+
+			if (scene->GetSettings().drawBoundingBoxes)
+			{
+				const glm::mat4& transformMat4 = transform.GetTransform();
+				const BoundingBox& box = r3d.mesh->GetBoundingBox();
+				const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
+
+				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
+			}
+
+			renderableCount++;
+		}
 
 		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderView->GetBuffer("InstanceBuffer");
 		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() < renderableCount))
@@ -738,7 +621,7 @@ void RenderPassManager::CreateGBuffer()
 		renderInfo.renderer->BeginRenderPass(submitInfo);
 
 		// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
-		for (const auto& [baseMaterial, meshesByMaterial] : renderableData->renderableEntities)
+		for (const auto& [baseMaterial, meshesByMaterial] : renderableEntities)
 		{
 			const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
 			if (!pipeline)
@@ -830,10 +713,6 @@ void RenderPassManager::CreateGBuffer()
 				}
 			}
 		}
-
-		// NOTE: Clear after the draw when it is not needed. If not clear, the crash will appear when closing the application.
-		renderableData->renderableCount = 0;
-		renderableData->renderableEntities.clear();
 
 		// Because these are all just commands and will be rendered later we can write the instance buffer
 		// just once when all instance data is collected.
@@ -1277,6 +1156,8 @@ void RenderPassManager::CreateTransparent()
 
 		const std::string renderPassName = renderInfo.renderPass->GetName();
 
+		VisibleData* visibleData = (VisibleData*)renderInfo.renderView->GetCustomData("VisibleData");
+
 		struct RenderData
 		{
 			Renderer3D r3d;
@@ -1296,22 +1177,12 @@ void RenderPassManager::CreateTransparent()
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
 		entt::registry& registry = scene->GetRegistry();
-		const auto r3dView = registry.view<Renderer3D>();
-		for (const entt::entity& entity : r3dView)
+		for (const entt::entity& entity : visibleData->visibleEntities)
 		{
 			Renderer3D& r3d = registry.get<Renderer3D>(entity);
-			if ((r3d.objectVisibilityMask & camera.GetObjectVisibilityMask()) == 0)
-			{
-				continue;
-			}
-
 			Transform& transform = registry.get<Transform>(entity);
-			if (!transform.GetEntity()->IsEnabled() || !r3d.isEnabled)
-			{
-				continue;
-			}
 
-			if (!r3d.mesh || !r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
+			if (!r3d.material->IsPipelineEnabled(renderPassName))
 			{
 				continue;
 			}
@@ -1325,15 +1196,6 @@ void RenderPassManager::CreateTransparent()
 			const glm::mat4& transformMat4 = transform.GetTransform();
 			const BoundingBox& box = r3d.mesh->GetBoundingBox();
 
-			if (r3d.mesh->GetType() == Mesh::Type::STATIC)
-			{
-				bool isInFrustum = FrustumCulling::CullBoundingBox(renderInfo.projection * camera.GetViewMat4(), transformMat4, box.min, box.max, camera.GetZNear());
-				if (!isInFrustum)
-				{
-					continue;
-				}
-			}
-
 			if (scene->GetSettings().drawBoundingBoxes)
 			{
 				constexpr glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -1343,7 +1205,7 @@ void RenderPassManager::CreateTransparent()
 			RenderData renderData{};
 			renderData.entity = entity;
 			renderData.r3d = r3d;
-			renderData.transformMat4 = transform.GetTransform();
+			renderData.transformMat4 = transformMat4;
 			renderData.rotationMat4 = transform.GetRotationMat4();
 			renderData.inversetransformMat3 = transform.GetInverseTransform();
 			renderData.scale = transform.GetScale();
@@ -1589,7 +1451,6 @@ void RenderPassManager::CreateCSM()
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 		entt::registry& registry = scene->GetRegistry();
-		const auto r3dView = registry.view<Renderer3D>();
 
 		glm::vec3 lightDirection{};
 		auto directionalLightView = renderInfo.scene->GetRegistry().view<DirectionalLight>();
@@ -1622,7 +1483,9 @@ void RenderPassManager::CreateCSM()
 			shadowsSettings.splitFactor,
 			shadowsSettings.stabilizeCascades);
 
-		for (const entt::entity& entity : r3dView)
+		const auto visibleEntities = scene->GetBVH()->CullAgainstFrustum(Utils::GetFrustumPlanes(csmRenderer->GetLightSpaceMatrices().back()));
+
+		for (const entt::entity& entity : visibleEntities)
 		{
 			const Renderer3D& r3d = registry.get<Renderer3D>(entity);
 
@@ -1668,17 +1531,6 @@ void RenderPassManager::CreateCSM()
 			}
 			else if (r3d.mesh->GetType() == Mesh::Type::STATIC)
 			{
-				//bool isInFrustum = FrustumCulling::CullBoundingBox(
-				//	csmRenderer->GetLightSpaceMatrices().front(),
-				//	transform.GetTransform(),
-				//	r3d.mesh->GetBoundingBox().min,
-				//	r3d.mesh->GetBoundingBox().max,
-				//	camera.GetZNear());
-				//if (!isInFrustum)
-				//{
-				//	continue;
-				//}
-
 				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh].emplace_back(entity);
 			}
 

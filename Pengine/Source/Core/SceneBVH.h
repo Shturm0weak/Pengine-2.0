@@ -41,7 +41,9 @@ namespace Pengine
 
 		void Update();
 
-		void Traverse(const std::function<void(BVHNode*)>& callback) const;
+		void Traverse(const std::function<bool(BVHNode*)>& callback) const;
+
+		std::vector<entt::entity> CullAgainstFrustum(const std::array<glm::vec4, 6>& planes);
 
 		std::multimap<Raycast::Hit, std::shared_ptr<Entity>> Raycast(
 			const glm::vec3& start,
@@ -72,6 +74,8 @@ namespace Pengine
 		BVHNode* FindParent(BVHNode* root, BVHNode* target) const;
 
 		AABB LocalToWorldAABB(const AABB& localAABB, const glm::mat4& transformMat4);
+
+		static bool IntersectsFrustum(const AABB& aabb, const std::array<glm::vec4, 6>& planes);
 	};
 
 }
