@@ -1,0 +1,117 @@
+Name: character-male-e
+IsEnabled: true
+Transform:
+  Position: [-1.43579888, 0, 6.37752008]
+  Rotation: [0, -0, 0]
+  Scale: [1, 1, 1]
+  FollowOwner: true
+SkeletalAnimator:
+  Skeleton: 0x692c37c1a59c06fb43874a955aea1831
+  SkeletalAnimation: 0xa608c6171363deb862997861dc014b8f
+  Speed: 0.5
+  CurrentTime: 0.0132521233
+  ApplySkeletonTransform: true
+Childs:
+  - Name: root
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Childs:
+      - Name: leg-left
+        IsEnabled: true
+        Transform:
+          Position: [0.0835709646, 0.176249996, -0.0287500005]
+          Rotation: [0, -0, 0]
+          Scale: [1, 1, 1]
+          FollowOwner: true
+        Childs:
+          []
+      - Name: leg-right
+        IsEnabled: true
+        Transform:
+          Position: [-0.0835709646, 0.176249996, -0.0287500005]
+          Rotation: [0, -0, 0]
+          Scale: [1, 1, 1]
+          FollowOwner: true
+        Childs:
+          []
+      - Name: torso
+        IsEnabled: true
+        Transform:
+          Position: [-1.44382282e-15, 0.176249996, -0.0287500005]
+          Rotation: [-0.0770977363, -0, 0]
+          Scale: [1, 0.99999994, 0.99999994]
+          FollowOwner: true
+        Childs:
+          - Name: arm-left
+            IsEnabled: true
+            Transform:
+              Position: [0.0998967737, 0.288304538, -0.0258720461]
+              Rotation: [-0.0545703657, -0.0544892997, -0.783910751]
+              Scale: [1, 0.99999994, 0.99999994]
+              FollowOwner: true
+            Childs:
+              []
+          - Name: arm-right
+            IsEnabled: true
+            Transform:
+              Position: [-0.0998967737, 0.288304538, -0.0258720461]
+              Rotation: [-0.238647133, 1.03205574, -0.231747001]
+              Scale: [0.99999994, 1, 1]
+              FollowOwner: true
+            Childs:
+              - PrefabFilepath: 0xe638df29f533c3cfb5448da14d5f6c95
+                UUID: 0x398b62ee1fd2b889f43559daa65cc47d
+                Transform:
+                  Position: [-0.318871498, -0.0642790198, 0.110578179]
+                  Rotation: [-3.1415925, 1.04719734, -3.1415925]
+                  Scale: [0.699999809, 0.700000167, 0.699999809]
+                  FollowOwner: true
+          - Name: head
+            IsEnabled: true
+            Transform:
+              Position: [1.81968784e-09, 0.344786406, -0.0153021822]
+              Rotation: [0, -0, 0]
+              Scale: [1, 0.99999994, 0.99999994]
+              FollowOwner: true
+            Childs:
+              []
+  - Name: body-mesh
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: character-male-e
+      Mesh: 0x0a462552d2357b1645306e2d8d6ddf68
+      Material: 0x8c1792b3255fa890720ec4f76168f566
+      RenderingOrder: 5
+      IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
+    Childs:
+      []
+  - Name: head-mesh
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: character-male-e
+      Mesh: 0xa0cd7c4a79b4b5da988175e3f2662c7c
+      Material: 0x8c1792b3255fa890720ec4f76168f566
+      RenderingOrder: 5
+      IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
+    Childs:
+      []

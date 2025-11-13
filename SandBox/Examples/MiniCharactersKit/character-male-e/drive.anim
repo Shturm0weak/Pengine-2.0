@@ -1,0 +1,52 @@
+Duration: 0.1666666716337204
+Bones:
+  - Name: root
+    Positions:
+      - Time: 0
+        Value: [-0, -0.150000006, 0]
+      - Time: 0.1666666716337204
+        Value: [-0, -0.150000006, 0]
+    Rotations:
+      []
+    Scales:
+      []
+  - Name: leg-left
+    Positions:
+      []
+    Rotations:
+      - Time: 0
+        Value: [0.608761489, 0, 0, -0.793353379]
+      - Time: 0.1666666716337204
+        Value: [0.608761489, 0, 0, -0.793353379]
+    Scales:
+      []
+  - Name: leg-right
+    Positions:
+      []
+    Rotations:
+      - Time: 0
+        Value: [0.608761489, 0, 0, -0.793353379]
+      - Time: 0.1666666716337204
+        Value: [0.608761489, 0, 0, -0.793353379]
+    Scales:
+      []
+  - Name: arm-right
+    Positions:
+      []
+    Rotations:
+      - Time: 0
+        Value: [-0, -0.5, 0, -0.866025388]
+      - Time: 0.1666666716337204
+        Value: [-0, -0.5, 0, -0.866025388]
+    Scales:
+      []
+  - Name: arm-left
+    Positions:
+      []
+    Rotations:
+      - Time: 0
+        Value: [-0, 0.5, 0, -0.866025388]
+      - Time: 0.1666666716337204
+        Value: [-0, 0.5, 0, -0.866025388]
+    Scales:
+      []

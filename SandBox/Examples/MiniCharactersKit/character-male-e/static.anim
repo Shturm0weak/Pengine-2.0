@@ -1,0 +1,114 @@
+Duration: 0.10000000149011612
+Bones:
+  - Name: root
+    Positions:
+      - Time: 0
+        Value: [-0, 0, 0]
+      - Time: 0.10000000149011612
+        Value: [-0, 0, 0]
+    Rotations:
+      - Time: 0
+        Value: [-0, 0, 0, -1]
+      - Time: 0.10000000149011612
+        Value: [-0, 0, 0, -1]
+    Scales:
+      - Time: 0
+        Value: [1, 1, 1]
+      - Time: 0.10000000149011612
+        Value: [1, 1, 1]
+  - Name: leg-left
+    Positions:
+      - Time: 0
+        Value: [0.0835709646, 0.176249996, -0.0287500005]
+      - Time: 0.10000000149011612
+        Value: [0.0835709646, 0.176249996, -0.0287500005]
+    Rotations:
+      - Time: 0
+        Value: [-0, 0, 0, -1]
+      - Time: 0.10000000149011612
+        Value: [-0, 0, 0, -1]
+    Scales:
+      - Time: 0
+        Value: [1, 1, 1]
+      - Time: 0.10000000149011612
+        Value: [1, 1, 1]
+  - Name: head
+    Positions:
+      - Time: 0
+        Value: [1.81968929e-09, 0.166999996, 0.0263887774]
+      - Time: 0.10000000149011612
+        Value: [1.81968929e-09, 0.166999996, 0.0263887774]
+    Rotations:
+      - Time: 0
+        Value: [-0, 0, 0, -1]
+      - Time: 0.10000000149011612
+        Value: [-0, 0, 0, -1]
+    Scales:
+      - Time: 0
+        Value: [1, 1, 1]
+      - Time: 0.10000000149011612
+        Value: [1, 1, 1]
+  - Name: leg-right
+    Positions:
+      - Time: 0
+        Value: [-0.0835709646, 0.176249996, -0.0287500005]
+      - Time: 0.10000000149011612
+        Value: [-0.0835709646, 0.176249996, -0.0287500005]
+    Rotations:
+      - Time: 0
+        Value: [-0, 0, 0, -1]
+      - Time: 0.10000000149011612
+        Value: [-0, 0, 0, -1]
+    Scales:
+      - Time: 0
+        Value: [1, 1, 1]
+      - Time: 0.10000000149011612
+        Value: [1, 1, 1]
+  - Name: torso
+    Positions:
+      - Time: 0
+        Value: [-1.44382282e-15, 0.176249996, -0.0287500005]
+      - Time: 0.10000000149011612
+        Value: [-1.44382282e-15, 0.176249996, -0.0287500005]
+    Rotations:
+      - Time: 0
+        Value: [-0, 0, 0, -1]
+      - Time: 0.10000000149011612
+        Value: [-0, 0, 0, -1]
+    Scales:
+      - Time: 0
+        Value: [1, 1, 1]
+      - Time: 0.10000000149011612
+        Value: [1, 1, 1]
+  - Name: arm-left
+    Positions:
+      - Time: 0
+        Value: [0.0998967737, 0.111500002, 0.0115]
+      - Time: 0.10000000149011612
+        Value: [0.0998967737, 0.111500002, 0.0115]
+    Rotations:
+      - Time: 0
+        Value: [-0, 0, 0, -1]
+      - Time: 0.10000000149011612
+        Value: [-0, 0, 0, -1]
+    Scales:
+      - Time: 0
+        Value: [1, 1, 1]
+      - Time: 0.10000000149011612
+        Value: [1, 1, 1]
+  - Name: arm-right
+    Positions:
+      - Time: 0
+        Value: [-0.0998967737, 0.111500002, 0.0115]
+      - Time: 0.10000000149011612
+        Value: [-0.0998967737, 0.111500002, 0.0115]
+    Rotations:
+      - Time: 0
+        Value: [-0, 0, 0, -1]
+      - Time: 0.10000000149011612
+        Value: [-0, 0, 0, -1]
+    Scales:
+      - Time: 0
+        Value: [1, 1, 1]
+      - Time: 0.10000000149011612
+        Value: [1, 1, 1]
