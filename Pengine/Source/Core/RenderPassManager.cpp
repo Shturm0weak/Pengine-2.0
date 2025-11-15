@@ -455,6 +455,11 @@ void RenderPassManager::CreateGBuffer()
 	glm::vec4 clearShading = { 0.0f, 0.0f, 0.0f, 0.0f };
 	glm::vec4 clearEmissive = { 0.0f, 0.0f, 0.0f, 0.0f };
 
+	Texture::SamplerCreateInfo samplerCreateInfo{};
+	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
+	samplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK;
+	samplerCreateInfo.maxAnisotropy = 1.0f;
+
 	RenderPass::AttachmentDescription color{};
 	color.textureCreateInfo.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
@@ -466,6 +471,7 @@ void RenderPassManager::CreateGBuffer()
 	color.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	color.load = RenderPass::Load::CLEAR;
 	color.store = RenderPass::Store::STORE;
+	color.textureCreateInfo.samplerCreateInfo = samplerCreateInfo;
 
 	RenderPass::AttachmentDescription normal{};
 	normal.textureCreateInfo.format = Format::R16G16B16A16_SFLOAT;
@@ -478,6 +484,7 @@ void RenderPassManager::CreateGBuffer()
 	normal.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	normal.load = RenderPass::Load::CLEAR;
 	normal.store = RenderPass::Store::STORE;
+	normal.textureCreateInfo.samplerCreateInfo = samplerCreateInfo;
 
 	RenderPass::AttachmentDescription shading{};
 	shading.textureCreateInfo.format = Format::R8G8B8A8_UNORM;
@@ -490,6 +497,7 @@ void RenderPassManager::CreateGBuffer()
 	shading.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	shading.load = RenderPass::Load::CLEAR;
 	shading.store = RenderPass::Store::STORE;
+	shading.textureCreateInfo.samplerCreateInfo = samplerCreateInfo;
 
 	RenderPass::AttachmentDescription emissive{};
 	emissive.textureCreateInfo.format = Format::B10G11R11_UFLOAT_PACK32;
@@ -502,13 +510,7 @@ void RenderPassManager::CreateGBuffer()
 	emissive.layout = Texture::Layout::COLOR_ATTACHMENT_OPTIMAL;
 	emissive.load = RenderPass::Load::CLEAR;
 	emissive.store = RenderPass::Store::STORE;
-
-	Texture::SamplerCreateInfo emissiveSamplerCreateInfo{};
-	emissiveSamplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
-	emissiveSamplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK;
-	emissiveSamplerCreateInfo.maxAnisotropy = 1.0f;
-
-	emissive.textureCreateInfo.samplerCreateInfo = emissiveSamplerCreateInfo;
+	emissive.textureCreateInfo.samplerCreateInfo = samplerCreateInfo;
 
 	RenderPass::AttachmentDescription depth = GetRenderPass(ZPrePass)->GetAttachmentDescriptions()[0];
 	// TODO: Revert Changes to LOAD, NONE when ZPrePass is used!
