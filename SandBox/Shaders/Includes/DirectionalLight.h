@@ -17,7 +17,8 @@ vec3 CalculateDirectionalLight(
 	in float metallic,
 	in float roughness,
 	in float ao,
-	in vec3 shadow)
+	in vec3 shadow,
+	in vec3 ssao)
 {
 	vec3 H = normalize(viewDirection + light.direction);
 
@@ -41,5 +42,5 @@ vec3 CalculateDirectionalLight(
 
 	kD *= 1.0f - metallic;
 
-	return ambient * albedo + (vec3(1.0f) - shadow) * (kD * albedo / PI + specular) * radiance * NdotL;
+	return ssao * ambient * albedo + (vec3(1.0f) - shadow) * (kD * albedo / PI + specular) * radiance * NdotL;
 }

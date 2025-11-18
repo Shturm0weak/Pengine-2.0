@@ -127,7 +127,8 @@ void main()
 			shading.x,
 			shading.y,
 			shading.z,
-			shadow);
+			shadow,
+			vec3(1.0f));
 	}
 
 	for (int i = 0; i < pointLightsCount; i++)
