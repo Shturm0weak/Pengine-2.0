@@ -164,17 +164,22 @@ std::map<Raycast::Hit, std::shared_ptr<Entity>> Raycast::RaycastScene(
 
 		Hit localHitMesh{};
 
-		const glm::vec4 localStartHomogeneous = transform.GetInverseTransformMat4() * glm::vec4(start, 1.0f);
+		const glm::mat4 inverseTransformMat4 = transform.GetInverseTransformMat4();
+		const glm::vec4 localStartHomogeneous = inverseTransformMat4 * glm::vec4(start, 1.0f);
 		const glm::vec3 localStart = glm::vec3(localStartHomogeneous) / localStartHomogeneous.w;
-		const glm::vec3 localDirection = transform.GetInverseTransform() * direction;
+
+		const glm::vec4 localEndHomogeneous = inverseTransformMat4 * glm::vec4(start + direction, 1.0f);
+		const glm::vec3 localEnd = glm::vec3(localEndHomogeneous) / localEndHomogeneous.w;
+
+		const glm::vec3 localDirection = glm::normalize(localEnd - localStart);
 
 		if (r3d.mesh->Raycast(localStart, localDirection, length, localHitMesh, scene->GetVisualizer()))
 		{
 			Hit worldHitMesh{};
-			worldHitMesh.distance = localHitMesh.distance;
 			worldHitMesh.uv = localHitMesh.uv;
 			worldHitMesh.point = transform.GetTransform() * glm::vec4(localHitMesh.point, 1.0f);
 			worldHitMesh.normal = glm::normalize(transform.GetInverseTransform() * glm::vec4(localHitMesh.normal, 0.0f));
+			worldHitMesh.distance = glm::distance(start, worldHitMesh.point);
 
 			hits.emplace(worldHitMesh, transform.GetEntity());
 		}
