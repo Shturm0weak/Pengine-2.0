@@ -1378,7 +1378,7 @@ void RenderPassManager::CreateCSM()
 	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 	Texture::SamplerCreateInfo samplerCreateInfo{};
-	samplerCreateInfo.filter = Texture::SamplerCreateInfo::Filter::NEAREST;
+	samplerCreateInfo.filter = Texture::SamplerCreateInfo::Filter::LINEAR;
 	samplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_WHITE;
 	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_EDGE;
 	samplerCreateInfo.maxAnisotropy = 1.0f;
@@ -2098,8 +2098,10 @@ void RenderPassManager::CreateSSRBlur()
 		createInfo.name = passName;
 		createInfo.format = Format::R8G8B8A8_UNORM;
 		createInfo.size = currentViewportSize;
-		createInfo.usage = { Texture::Usage::STORAGE, Texture::Usage::SAMPLED };
+		createInfo.usage = { Texture::Usage::STORAGE, Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::TRANSFER_DST };
 		createInfo.isMultiBuffered = true;
+		createInfo.mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(
+			createInfo.size.x, createInfo.size.y)))) + 1;
 
 		std::shared_ptr<Texture> ssrBlurTexture = renderInfo.renderView->GetStorageImage(passName);
 
@@ -2151,6 +2153,10 @@ void RenderPassManager::CreateSSRBlur()
 			glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
 			groupCount += glm::uvec2(1, 1);
 			renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriters, renderInfo.frame);
+
+			renderInfo.renderer->MemoryBarrierFragmentReadWrite(renderInfo.frame);
+
+			ssrBlurTexture->GenerateMipMaps(renderInfo.frame);
 
 			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 
@@ -2699,9 +2705,11 @@ void RenderPassManager::CreateToneMappingPass()
 		const std::shared_ptr<Buffer> toneMappingBufferBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, toneMappingBufferBufferName);
 
 		const int isSSREnabled = graphicsSettings.ssr.isEnabled;
+		const int SSRMipLevels = isSSREnabled ? renderInfo.renderView->GetStorageImage(SSRBlur)->GetMipLevels() * graphicsSettings.ssr.mipMultiplier : 0;
 		baseMaterial->WriteToBuffer(toneMappingBufferBuffer, toneMappingBufferBufferName, "toneMapperIndex", graphicsSettings.postProcess.toneMapper);
 		baseMaterial->WriteToBuffer(toneMappingBufferBuffer, toneMappingBufferBufferName, "gamma", graphicsSettings.postProcess.gamma);
 		baseMaterial->WriteToBuffer(toneMappingBufferBuffer, toneMappingBufferBufferName, "isSSREnabled", isSSREnabled);
+		baseMaterial->WriteToBuffer(toneMappingBufferBuffer, toneMappingBufferBufferName, "SSRMipLevels", SSRMipLevels);
 
 		toneMappingBufferBuffer->Flush();
 

@@ -19,10 +19,10 @@ CSM:
   Biases:
     - 0.00400000019
     - 0.00899999961
+    - 0.00899999961
+    - 0.00899999961
     - 0.0199999996
-    - 0.063000001
-    - 0.063000001
-    - 0.063000001
+    - 0.100000001
   StabilizeCascades: true
 Bloom:
   IsEnabled: true
@@ -32,14 +32,14 @@ Bloom:
   ResolutionScale: 3
 SSR:
   IsEnabled: true
-  MaxDistance: 15
-  Resolution: 0.300000012
-  ResolutionBlurScale: 0
+  MaxDistance: 8
+  Resolution: 1
+  ResolutionBlurScale: 1
   ResolutionScale: 1
   StepCount: 10
-  Thickness: 0.300000012
-  BlurRange: 5
-  BlurOffset: 5
+  Thickness: 0.150000006
+  BlurRange: 2
+  BlurOffset: 2
 PostProcess:
   Gamma: 2.20000005
   ToneMapper: 1

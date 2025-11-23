@@ -15,6 +15,7 @@ layout(set = 0, binding = 5) uniform ToneMappingBuffer
 	int toneMapperIndex;
 	float gamma;
 	int isSSREnabled;
+	int SSRMipLevels;
 };
 
 #include "Shaders/Includes/ACES.h"
@@ -32,10 +33,11 @@ void main()
 
 	if (isSSREnabled == 1)
 	{
-		reflectionColor = mix(texture(rawSSRTexture, uv), texture(blurSSRTexture, uv), roughness);
+		//reflectionColor = mix(texture(rawSSRTexture, uv), texture(blurSSRTexture, uv), roughness);
+		reflectionColor = textureLod(blurSSRTexture, uv, roughness * SSRMipLevels);
 	}
 
-	deferred = mix(deferred, reflectionColor.xyz, metallic * reflectionColor.a * isSSREnabled * alpha);
+	deferred = mix(deferred, reflectionColor.xyz, (1.0f - roughness) * reflectionColor.a * isSSREnabled * alpha);
 
 	vec3 toneMappedColor;
 	if (toneMapperIndex == 0)

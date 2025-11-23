@@ -5,21 +5,23 @@ SSAO:
   KernelSize: 10
   NoiseSize: 32
   Radius: 0.25
-  ResolutionScale: 1
+  ResolutionScale: 0
   ResolutionBlurScale: 0
 CSM:
   IsEnabled: true
   Quality: 0
-  CascadeCount: 3
+  CascadeCount: 4
   SplitFactor: 0.75
-  MaxDistance: 100
+  MaxDistance: 50
   FogFactor: 0.200000003
-  PcfEnabled: true
+  Filter: 2
   PcfRange: 1
   Biases:
-    - 0.0500000007
-    - 0.100000001
+    - 0
+    - 0.0399999991
+    - 0.0799999982
     - 0.300000012
+  StabilizeCascades: true
 Bloom:
   IsEnabled: true
   MipCount: 10
@@ -27,7 +29,7 @@ Bloom:
   Intensity: 1
   ResolutionScale: 1
 SSR:
-  IsEnabled: true
+  IsEnabled: false
   MaxDistance: 10
   Resolution: 0.300000012
   ResolutionBlurScale: 0

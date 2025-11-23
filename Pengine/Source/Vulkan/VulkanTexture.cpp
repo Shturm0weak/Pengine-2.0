@@ -515,7 +515,16 @@ VulkanTexture::SubresourceLayout VulkanTexture::GetSubresourceLayout() const
 
 void VulkanTexture::GenerateMipMaps(void* frame)
 {
-	Logger::Error("Generate mipmaps is not implemented!");
+	VkCommandBuffer commandBuffer = GetVkDevice()->GetCommandBufferFromFrame(frame);
+
+	GetVkDevice()->GenerateMipMaps(
+		GetImageData().image,
+		ConvertFormat(m_Format),
+		GetSize().x,
+		GetSize().y,
+		GetMipLevels(),
+		GetLayerCount(),
+		commandBuffer);
 }
 
 void VulkanTexture::Copy(

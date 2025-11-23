@@ -1310,6 +1310,10 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			ImGui::PushID("SSR Blur Offset");
 			isChangedToSerialize += ImGui::SliderInt("Blur Offset", &graphicsSettings.ssr.blurOffset, 0, 10);
 			ImGui::PopID();
+
+			ImGui::PushID("SSR Mip Multiplier");
+			isChangedToSerialize += ImGui::SliderInt("Mip Levels", &graphicsSettings.ssr.mipMultiplier, 0, 4);
+			ImGui::PopID();
 		}
 
 		if (ImGui::CollapsingHeader("Post Process"))

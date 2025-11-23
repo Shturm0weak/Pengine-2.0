@@ -18,7 +18,7 @@ layout(set = 1, binding = 5) uniform SSR
     float maxDistance;
     float resolution;
     int stepCount;
-    float thickness; 
+    float thickness;
 };
 
 layout(set = 1, binding = 6, rgba8) uniform writeonly image2D outColor;
@@ -50,12 +50,18 @@ void RayMarch(
     startFragment.xy *= viewportSize;
 
     vec4 endFragment = end;
-    endFragment /= endFragment.z < 0.0f ? endFragment.z : 1.0f;
     endFragment = camera.projectionMat4 * endFragment;
     endFragment.xyz /= endFragment.w;
     endFragment.xy = endFragment.xy * 0.5f + 0.5f;
     endFragment.y = 1.0f - endFragment.y;
     endFragment.xy *= viewportSize;
+
+    if (startFragment.z <= 0.0f || endFragment.z <= 0.0f)
+    {
+        color = vec4(0.0f);
+        emissive = vec4(0.0f);
+        return;
+    }
 
     vec2 fragment = startFragment.xy;
     vec2 fragmentUV = fragment / viewportSize;
@@ -83,6 +89,13 @@ void RayMarch(
     {
         fragment += increment;
         fragmentUV = fragment / viewportSize;
+
+        if (fragmentUV.x < 0.0f || fragmentUV.x > 1.0f || 
+            fragmentUV.y < 0.0f || fragmentUV.y > 1.0f)
+        {
+            break;
+        }
+        
         positionTo = CalculatePositionFromDepth(
             texture(depthTexture, fragmentUV).x,
             camera.projectionMat4,
@@ -106,10 +119,18 @@ void RayMarch(
 
     search1 = search0 + ((search1 - search0) / 2.0f);
 
+    float minStep = 1.0 / (viewportSize.x * 2.0);
     for (i = 0; i < stepCount * hit0; ++i)
     {
         fragment = mix(startFragment.xy, endFragment.xy, search1);
-        fragmentUV.xy = fragment / viewportSize;
+        fragmentUV = fragment / viewportSize;
+
+        if (fragmentUV.x < 0.0f || fragmentUV.x > 1.0f || 
+            fragmentUV.y < 0.0f || fragmentUV.y > 1.0f)
+        {
+            break;
+        }
+
         positionTo = CalculatePositionFromDepth(
             texture(depthTexture, fragmentUV).x,
             camera.projectionMat4,
@@ -127,13 +148,34 @@ void RayMarch(
         search0 = hit ? search0 : temp;
     }
 
-    float visibility = hit1 * (1.0f - max(dot(-unitPosition, pivot), 0.0f))
-        * (1.0f - clamp(depth / thickness, 0.0f, 1.0f))
-        * (1.0f - clamp(length(positionFrom - positionTo) / maxDistance, 0.0f, 1.0f))
-        * (fragmentUV.x < 0.0f || fragmentUV.x > 1.0f ? 0.0f : 1.0f)
-        * (fragmentUV.y < 0.0f || fragmentUV.y > 1.0f ? 0.0f : 1.0f);
+    //float visibility = hit1 * (1.0f - max(dot(-unitPosition, pivot), 0.0f))
+    //    * (1.0f - clamp(depth / thickness, 0.0f, 1.0f))
+    //    * (1.0f - clamp(length(positionFrom - positionTo) / maxDistance, 0.0f, 1.0f))
+    //    * (fragmentUV.x < 0.0f || fragmentUV.x > 1.0f ? 0.0f : 1.0f)
+    //    * (fragmentUV.y < 0.0f || fragmentUV.y > 1.0f ? 0.0f : 1.0f);
+
+    float visibility = float(hit1);
+    visibility *= 1.0 - smoothstep(0.0, thickness, depth);
+    visibility *= 1.0 - smoothstep(0.0, maxDistance, length(positionFrom - positionTo));
+    visibility *= (1.0 - roughness) * (1.0 - roughness);
+
+    vec2 edgeFade = smoothstep(0.0, 0.1, fragmentUV) * 
+                    smoothstep(1.0, 0.9, fragmentUV);
+    visibility *= edgeFade.x * edgeFade.y;
 
     visibility = clamp(visibility, 0.0f, 1.0f);
+
+    vec3 normalTo = texture(normalTexture, fragmentUV).xyz;
+    if (dot(normalTo, pivot) > -0.1f)
+    {
+        visibility = 0.0f;
+    }
+
+    float depthThreshold = 0.02f * maxDistance;
+    if (abs(depth) > depthThreshold)
+    {
+        visibility = 0.0f;
+    }
 
     vec3 sceneColor = texture(colorTexture, fragmentUV).xyz;
 
@@ -164,7 +206,7 @@ void main()
 
     vec4 normalViewSpace = texture(normalTexture, uv);
     vec4 shading = texture(shadingTexture, uv);
-    if (shading.a <= 0.0f || shading.x <= 0.0f)
+    if (shading.a <= 0.0f || shading.y >= 1.0f)
     {
         imageStore(outColor, pixelCoord, vec4(0.0f, 0.0f, 0.0f, 0.0f));
         return;
@@ -182,6 +224,9 @@ void main()
         imageStore(outColor, pixelCoord, vec4(0.0f, 0.0f, 0.0f, 0.0f));
         return;
     }
+
+    //vec2 jitter = vec2(random(uv + camera.time), random(uv - camera.time)) * 2.0 - 1.0;
+    //jitter *= 0.25 / viewportSize;
 
     vec4 color;
     vec4 emissive;

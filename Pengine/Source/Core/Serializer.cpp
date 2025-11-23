@@ -5119,6 +5119,7 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Key << "Thickness" << YAML::Value << graphicsSettings.ssr.thickness;
 	out << YAML::Key << "BlurRange" << YAML::Value << graphicsSettings.ssr.blurRange;
 	out << YAML::Key << "BlurOffset" << YAML::Value << graphicsSettings.ssr.blurOffset;
+	out << YAML::Key << "MipMultiplier" << YAML::Value << graphicsSettings.ssr.mipMultiplier;
 
 	out << YAML::EndMap;
 	//
@@ -5334,6 +5335,11 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& blurOffsetData = ssrData["BlurOffset"])
 		{
 			graphicsSettings.ssr.blurOffset = blurOffsetData.as<int>();
+		}
+
+		if (const auto& mipMultiplierData = ssrData["MipMultiplier"])
+		{
+			graphicsSettings.ssr.mipMultiplier = mipMultiplierData.as<int>();
 		}
 	}
 
