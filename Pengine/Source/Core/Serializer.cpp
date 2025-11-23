@@ -5177,6 +5177,8 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Key << "BlurRange" << YAML::Value << graphicsSettings.ssr.blurRange;
 	out << YAML::Key << "BlurOffset" << YAML::Value << graphicsSettings.ssr.blurOffset;
 	out << YAML::Key << "MipMultiplier" << YAML::Value << graphicsSettings.ssr.mipMultiplier;
+	out << YAML::Key << "UseSkyBoxFallback" << YAML::Value << graphicsSettings.ssr.useSkyBoxFallback;
+	out << YAML::Key << "Blur" << YAML::Value << (int)graphicsSettings.ssr.blur;
 
 	out << YAML::EndMap;
 	//
@@ -5397,6 +5399,16 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& mipMultiplierData = ssrData["MipMultiplier"])
 		{
 			graphicsSettings.ssr.mipMultiplier = mipMultiplierData.as<int>();
+		}
+
+		if (const auto& useSkyBoxFallbackData = ssrData["UseSkyBoxFallback"])
+		{
+			graphicsSettings.ssr.useSkyBoxFallback = useSkyBoxFallbackData.as<bool>();
+		}
+
+		if (const auto& blurData = ssrData["Blur"])
+		{
+			graphicsSettings.ssr.blur = (GraphicsSettings::SSR::Blur)blurData.as<int>();
 		}
 	}
 

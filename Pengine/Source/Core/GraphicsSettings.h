@@ -98,7 +98,17 @@ namespace Pengine
 
 		struct SSR
 		{
+			enum class Blur
+			{
+				NONE,
+				SIMPLE,
+				BILATERAL
+			};
+
 			bool isEnabled = true;
+			bool useSkyBoxFallback = true;
+
+			Blur blur = Blur::SIMPLE;
 
 			int blurRange = 2;
 			int blurOffset = 1;

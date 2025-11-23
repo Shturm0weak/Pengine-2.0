@@ -1287,6 +1287,16 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			isChangedToSerialize += ImGui::Combo("Blur Quality", &graphicsSettings.ssr.resolutionBlurScale, resolutionBlurScales, 5);
 			ImGui::PopID();
 
+			const char* const blurTypes[] = { "None", "Simple", "Bilateral" };
+			int blur = (int)graphicsSettings.ssr.blur;
+			ImGui::PushID("SSR Blur Type");
+			if (ImGui::Combo("Blur Type", &blur, blurTypes, 3))
+			{
+				graphicsSettings.ssr.blur = (GraphicsSettings::SSR::Blur)blur;
+				isChangedToSerialize += 1;
+			}
+			ImGui::PopID();
+
 			ImGui::PushID("SSR Max Distance");
 			isChangedToSerialize += ImGui::SliderFloat("Max Distance", &graphicsSettings.ssr.maxDistance, 1.0f, 100.0f);
 			ImGui::PopID();
@@ -1303,16 +1313,23 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			isChangedToSerialize += ImGui::SliderFloat("Thickness", &graphicsSettings.ssr.thickness, 0.0f, 5.0f);
 			ImGui::PopID();
 
-			ImGui::PushID("SSR Blur Range");
-			isChangedToSerialize += ImGui::SliderInt("Blur Range", &graphicsSettings.ssr.blurRange, 0, 10);
-			ImGui::PopID();
+			if (graphicsSettings.ssr.blur == GraphicsSettings::SSR::Blur::SIMPLE)
+			{
+				ImGui::PushID("SSR Blur Range");
+				isChangedToSerialize += ImGui::SliderInt("Blur Range", &graphicsSettings.ssr.blurRange, 0, 10);
+				ImGui::PopID();
 
-			ImGui::PushID("SSR Blur Offset");
-			isChangedToSerialize += ImGui::SliderInt("Blur Offset", &graphicsSettings.ssr.blurOffset, 0, 10);
-			ImGui::PopID();
+				ImGui::PushID("SSR Blur Offset");
+				isChangedToSerialize += ImGui::SliderInt("Blur Offset", &graphicsSettings.ssr.blurOffset, 0, 10);
+				ImGui::PopID();
+			}
 
 			ImGui::PushID("SSR Mip Multiplier");
 			isChangedToSerialize += ImGui::SliderInt("Mip Levels", &graphicsSettings.ssr.mipMultiplier, 0, 4);
+			ImGui::PopID();
+
+			ImGui::PushID("SSR Use SkyBox Fallback");
+			isChangedToSerialize += ImGui::Checkbox("Use SkyBox Fallback", &graphicsSettings.ssr.useSkyBoxFallback);
 			ImGui::PopID();
 		}
 
