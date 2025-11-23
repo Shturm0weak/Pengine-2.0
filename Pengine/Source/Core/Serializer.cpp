@@ -2452,9 +2452,16 @@ Serializer::ImportInfo Serializer::GetImportInfo(const std::filesystem::path& fi
 	ImportInfo importInfo{};
 	importInfo.filepath = filepath;
 
-	for (const auto& material : gltfAsset.materials)
+	const std::string filename = Utils::GetFilename(filepath.string());
+
+	for (size_t i = 0; i < gltfAsset.materials.size(); i++)
 	{
-		importInfo.materials.emplace_back(material.name.c_str());
+		if (gltfAsset.materials[i].name.empty())
+		{
+			gltfAsset.materials[i].name = std::format("{}Material{}", filename, i);
+		}
+
+		importInfo.materials.emplace_back(gltfAsset.materials[i].name);
 	}
 
 	for (const auto& mesh : gltfAsset.meshes)
@@ -2463,7 +2470,13 @@ Serializer::ImportInfo Serializer::GetImportInfo(const std::filesystem::path& fi
 		for (const auto& primitive : mesh.primitives)
 		{
 			std::string meshName = mesh.name.c_str();
-			if (primitiveIndex > 0)
+
+			if (meshName.empty())
+			{
+				meshName = std::format("{}Mesh", filename);
+			}
+
+			if (mesh.primitives.size() > 1)
 			{
 				meshName += std::format("{}", primitiveIndex);
 			}
@@ -2474,14 +2487,34 @@ Serializer::ImportInfo Serializer::GetImportInfo(const std::filesystem::path& fi
 		}
 	}
 
-	for (const auto& skin : gltfAsset.skins)
+	for (size_t i = 0; i < gltfAsset.skins.size(); i++)
 	{
-		importInfo.skeletons.emplace_back(skin.name.c_str());
+		if (gltfAsset.skins[i].name.empty())
+		{
+			gltfAsset.skins[i].name = std::format("{}Skin{}", filename, i);
+		}
+
+		importInfo.skeletons.emplace_back(gltfAsset.skins[i].name);
 	}
 
-	for (const auto& animation : gltfAsset.animations)
+	for (size_t i = 0; i < gltfAsset.animations.size(); i++)
 	{
-		importInfo.animations.emplace_back(animation.name.c_str());
+		if (gltfAsset.animations[i].name.empty())
+		{
+			gltfAsset.animations[i].name = std::format("{}Animation{}", filename, i);
+		}
+
+		importInfo.animations.emplace_back(gltfAsset.animations[i].name);
+	}
+
+	for (size_t i = 0; i < gltfAsset.scenes.size(); i++)
+	{
+		if (gltfAsset.scenes[i].name.empty())
+		{
+			gltfAsset.scenes[i].name = std::format("{}Scene{}", filename, i);
+		}
+
+		importInfo.prefabs.emplace_back(gltfAsset.scenes[i].name);
 	}
 
 	return importInfo;
@@ -2497,6 +2530,7 @@ Serializer::LoadIntermediate(
 
 	std::filesystem::path directory = options.filepath.parent_path();
 	const std::filesystem::path texturesDirectory = directory;
+	const std::string filename = Utils::GetFilename(options.filepath.string());
 
 	auto data = fastgltf::GltfDataBuffer::FromPath(options.filepath);
 	if (data.error() != fastgltf::Error::None)
@@ -2538,6 +2572,11 @@ Serializer::LoadIntermediate(
 		std::atomic<int> materialCount = 0;
 		for (size_t materialIndex = 0; materialIndex < gltfAsset.materials.size(); materialIndex++)
 		{
+			if (gltfAsset.materials[materialIndex].name.empty())
+			{
+				gltfAsset.materials[materialIndex].name = std::format("{}Material{}", filename, materialIndex);
+			}
+
 			ThreadPool::GetInstance().EnqueueAsync([
 					&gltfMaterial = gltfAsset.materials[materialIndex],
 					texturesDirectory,
@@ -2583,7 +2622,7 @@ Serializer::LoadIntermediate(
 			auto& skin = gltfAsset.skins[i];
 			if (skin.name.empty())
 			{
-				skin.name = std::format("{}Skeleton{}", Utils::GetFilename(options.filepath.string()), i);
+				skin.name = std::format("{}Skeleton{}", filename, i);
 			}
 
 			skeletonsByIndex.emplace_back(GenerateSkeleton(gltfAsset, skin, directory));
@@ -2602,7 +2641,11 @@ Serializer::LoadIntermediate(
 			for (const auto& primitive : gltfAsset.meshes[meshIndex].primitives)
 			{
 				std::string meshName = gltfAsset.meshes[meshIndex].name.c_str();
-				
+				if (meshName.empty())
+				{
+					meshName = std::format("{}Mesh", filename);
+				}
+
 				Mesh::CreateInfo::SourceFileInfo sourceFileInfo{};
 				sourceFileInfo.filepath = options.filepath;
 				sourceFileInfo.meshName = meshName;
@@ -2641,8 +2684,14 @@ Serializer::LoadIntermediate(
 	if (options.animations)
 	{
 		workName = "Generating Animations";
-		for (const auto& animation : gltfAsset.animations)
+		for (size_t i = 0; i < gltfAsset.animations.size(); i++)
 		{
+			fastgltf::Animation& animation = gltfAsset.animations[i];
+			if (animation.name.empty())
+			{
+				animation.name = std::format("{}Animation{}", filename, i);
+			}
+
 			animations.emplace_back(GenerateAnimation(gltfAsset, animation, directory));
 	
 			workStatus = currentWorkStatus++ / maxWorkStatus;
@@ -2651,8 +2700,14 @@ Serializer::LoadIntermediate(
 
 	if (options.prefabs)
 	{
-		for (const auto& scene : gltfAsset.scenes)
+		for (size_t i = 0; i < gltfAsset.scenes.size(); i++)
 		{
+			fastgltf::Scene& scene = gltfAsset.scenes[i];
+			if (scene.name.empty())
+			{
+				scene.name = std::format("{}Scene{}", filename, i);
+			}
+
 			for (const auto& nodeIndex : scene.nodeIndices)
 			{
 				workName = "Generating Prefab " + scene.name;
@@ -2667,7 +2722,7 @@ Serializer::LoadIntermediate(
 					materialsByMeshes,
 					animations);
 
-				std::filesystem::path prefabFilepath = directory / root->GetName();
+				std::filesystem::path prefabFilepath = directory / scene.name;
 				prefabFilepath.replace_extension(FileFormats::Prefab());
 				SerializePrefab(prefabFilepath, root);
 
@@ -3626,14 +3681,16 @@ std::shared_ptr<Entity> Serializer::GenerateEntity(
 	const std::vector<std::vector<std::shared_ptr<Mesh>>>& meshesByIndex,
 	const std::vector<std::shared_ptr<Skeleton>>& skeletonsByIndex,
 	const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes,
-	const std::vector< std::shared_ptr<SkeletalAnimation>>& animations)
+	const std::vector<std::shared_ptr<SkeletalAnimation>>& animations)
 {
+	const std::string nodeName = gltfNode.name.empty() ? "Unnamed" : gltfNode.name.c_str();
+
 	std::vector<std::shared_ptr<Entity>> nodes;
 	if (gltfNode.meshIndex && !meshesByIndex.empty())
 	{
 		for (const std::shared_ptr<Mesh> mesh : meshesByIndex[*gltfNode.meshIndex])
 		{
-			std::shared_ptr<Entity> node = scene->CreateEntity(gltfNode.name.c_str());
+			std::shared_ptr<Entity> node = scene->CreateEntity(nodeName);
 			Transform& nodeTransform = node->AddComponent<Transform>(node);
 
 			nodes.emplace_back(node);
@@ -3689,7 +3746,7 @@ std::shared_ptr<Entity> Serializer::GenerateEntity(
 
 	if (nodes.empty())
 	{
-		std::shared_ptr<Entity> node = scene->CreateEntity(gltfNode.name.c_str());
+		std::shared_ptr<Entity> node = scene->CreateEntity(nodeName);
 		Transform& nodeTransform = node->AddComponent<Transform>(node);
 
 		nodes.emplace_back(node);

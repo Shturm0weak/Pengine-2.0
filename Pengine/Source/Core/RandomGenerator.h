@@ -24,7 +24,7 @@ namespace Pengine
 		}
 
 		template<typename T>
-		T Get(T min, T max)
+		T Get(const T& min, const T& max)
 		{
 			std::lock_guard<std::mutex> lock(m_Mutex);
 			if constexpr (std::is_integral_v<T> && !std::is_same_v<T, bool>)
@@ -39,6 +39,18 @@ namespace Pengine
 			{
 				static_assert(sizeof(T) == 0, "Unsupported type for random generation");
 			}
+		}
+
+		template<typename T>
+		T GetGlmVec(const T& min, const T& max)
+		{
+			T random{};
+			for (size_t i = 0; i < random.length(); i++)
+			{
+				random[i] = Get(min[i], max[i]);
+			}
+			
+			return random;
 		}
 
 	private:

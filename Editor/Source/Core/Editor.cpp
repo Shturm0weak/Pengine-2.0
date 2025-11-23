@@ -3644,8 +3644,22 @@ void Editor::ImportMenu::Update(Editor& editor)
 	{
 		ImGui::Text("Filepath: %s", importInfo.filepath.string().c_str());
 
-		ImGui::Checkbox("Prefabs", &importOptions.prefabs);
 		ImGui::Checkbox("Create Folder", &importOptions.createFolder);
+
+		if (!importInfo.prefabs.empty() && ImGui::CollapsingHeader("Prefabs##Import"))
+		{
+			Indent indent;
+
+			ImGui::Checkbox("Import##ImportPrefabs", &importOptions.prefabs);
+
+			{
+				Indent indent;
+				for (const auto& prefab : importInfo.prefabs)
+				{
+					ImGui::Text(prefab.c_str());
+				}
+			}
+		}
 
 		if (!importInfo.meshes.empty() && ImGui::CollapsingHeader("Meshes##Import"))
 		{

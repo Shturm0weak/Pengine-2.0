@@ -210,7 +210,7 @@ glm::mat4 Transform::GetTransform(System system) const
 
 glm::mat3 Transform::GetInverseTransform(const System system) const
 {
-	return GetInverseTransformMat4(system);
+	return glm::inverse(glm::mat3(GetTransform(system)));
 }
 
 glm::mat4 Transform::GetInverseTransformMat4(const System system) const

@@ -81,6 +81,7 @@ namespace Pengine
 			std::vector<std::string> materials;
 			std::vector<std::string> animations;
 			std::vector<std::string> skeletons;
+			std::vector<std::string> prefabs;
 		};
 
 		static [[nodiscard]] ImportInfo GetImportInfo(const std::filesystem::path& filepath);
@@ -157,7 +158,7 @@ namespace Pengine
 			const std::vector<std::vector<std::shared_ptr<Mesh>>>& meshesByIndex,
 			const std::vector<std::shared_ptr<Skeleton>>& skeletonsByIndex,
 			const std::unordered_map<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& materialsByMeshes,
-			const std::vector< std::shared_ptr<SkeletalAnimation>>& animations);
+			const std::vector<std::shared_ptr<SkeletalAnimation>>& animations);
 
 		static void SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entity>& entity, bool rootEntity = false, bool isSerializingPrefab = false);
 
