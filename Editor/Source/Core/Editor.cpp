@@ -3976,6 +3976,9 @@ void Editor::Thumbnails::UpdateMatMeshThumbnail(const ThumbnailLoadInfo& thumbna
 		}
 	}
 
+	// Update BVH just in case.
+	scene->GetBVH()->Update();
+
 	Renderer::RenderViewportInfo renderViewportInfo{};
 	renderViewportInfo.camera = camera;
 	renderViewportInfo.renderView = cameraComponent.GetRendererTarget(name);
