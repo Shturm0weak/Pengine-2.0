@@ -14,8 +14,8 @@ void SceneBVH::Clear()
 {
 	WaitIdle();
 
-	delete m_Root;
-	m_Root = nullptr;
+	m_Nodes.clear();
+	m_Root = -1;
 	m_Scene = nullptr;
 }
 
@@ -30,32 +30,32 @@ void SceneBVH::Update()
 
 	if (m_Scene->GetEntities().empty())
 	{
-		delete m_Root;
-		m_Root = nullptr;
+		m_Root = -1;
+		m_Nodes.clear();
 		return;
 	}
 
 	Rebuild();
 }
 
-void SceneBVH::Traverse(const std::function<bool(BVHNode*)>& callback) const
+void SceneBVH::Traverse(const std::function<bool(const BVHNode&)>& callback) const
 {
-	if (!m_Root) return;
+	if (m_Root == -1) return;
 
 	m_BVHUseCount.fetch_add(1);
 
-	std::stack<BVHNode*> nodeStack;
+	std::stack<uint32_t> nodeStack;
 	nodeStack.push(m_Root);
 
 	while (!nodeStack.empty())
 	{
-		BVHNode* currentNode = nodeStack.top();
+		const BVHNode& currentNode = m_Nodes[nodeStack.top()];
 		nodeStack.pop();
 
 		if (callback(currentNode))
 		{
-			if (currentNode->right) nodeStack.push(currentNode->right);
-			if (currentNode->left) nodeStack.push(currentNode->left);
+			if (currentNode.right != -1) nodeStack.push(currentNode.right);
+			if (currentNode.left != -1) nodeStack.push(currentNode.left);
 		}
 	}
 
@@ -66,13 +66,13 @@ void SceneBVH::Traverse(const std::function<bool(BVHNode*)>& callback) const
 std::vector<entt::entity> SceneBVH::CullAgainstFrustum(const std::array<glm::vec4, 6>& planes)
 {
 	std::vector<entt::entity> visibleEntities;
-	Traverse([&planes, &visibleEntities](BVHNode* node)
+	Traverse([&planes, &visibleEntities](const BVHNode& node)
 	{
-		if (!IntersectsFrustum(node->aabb, planes))
+		if (!IntersectsFrustum(node.aabb, planes))
 		{
-			if (node->entity && node->entity->IsEnabled())
+			if (node.entity && node.entity->IsEnabled())
 			{
-				const Renderer3D& r3d = node->entity->GetComponent<Renderer3D>();
+				const Renderer3D& r3d = node.entity->GetComponent<Renderer3D>();
 				if (r3d.mesh->GetType() != Mesh::Type::SKINNED)
 				{
 					return false;
@@ -80,9 +80,9 @@ std::vector<entt::entity> SceneBVH::CullAgainstFrustum(const std::array<glm::vec
 			}
 		}
 
-		if (node->entity && node->entity->IsEnabled())
+		if (node.entity && node.entity->IsEnabled())
 		{
-			visibleEntities.emplace_back(node->entity->GetHandle());
+			visibleEntities.emplace_back(node.entity->GetHandle());
 		}
 
 		return true;
@@ -98,19 +98,19 @@ std::multimap<Raycast::Hit, std::shared_ptr<Entity>> SceneBVH::Raycast(
 {
 	std::multimap<Raycast::Hit, std::shared_ptr<Entity>> hits;
 
-	Traverse([start, direction, length, &hits](BVHNode* node)
+	Traverse([start, direction, length, &hits](const BVHNode& node)
 	{
 		Raycast::Hit hit;
-		if (!Raycast::IntersectBoxAABB(start, direction, node->aabb.min, node->aabb.max, length, hit))
+		if (!Raycast::IntersectBoxAABB(start, direction, node.aabb.min, node.aabb.max, length, hit))
 		{
 			return false;
 		}
 
-		if (node->IsLeaf())
+		if (node.IsLeaf())
 		{
-			if (node->entity && node->entity->IsEnabled())
+			if (node.entity && node.entity->IsEnabled())
 			{
-				hits.emplace(hit, node->entity);
+				hits.emplace(hit, node.entity);
 			}
 		}
 
@@ -137,12 +137,11 @@ void SceneBVH::Rebuild()
 		return;
 	}
 
-	delete m_Root;
-	m_Root = nullptr;
+	m_Root = -1;
+	m_Nodes.clear();
 
 	const auto r3dView = m_Scene->GetRegistry().view<Renderer3D>();
-	std::vector<BVHNode*> nodes;
-	nodes.reserve(r3dView.size());
+	m_Nodes.reserve(r3dView.size() * 2);
 
 	for (auto entity : r3dView)
 	{
@@ -165,30 +164,30 @@ void SceneBVH::Rebuild()
 			continue;
 		}
 
-		BVHNode* node = new BVHNode();
-		node->aabb = std::move(aabb);
-		node->entity = transform.GetEntity();
-		node->subtreeSize = 1;
-		nodes.emplace_back(node);
+		BVHNode node{};
+		node.aabb = std::move(aabb);
+		node.entity = transform.GetEntity();
+		node.subtreeSize = 1;
+		m_Nodes.emplace_back(std::move(node));
 	}
 
-	m_Root = BuildRecursive(nodes, 0, nodes.size());
+	m_Root = BuildRecursive(0, m_Nodes.size());
 }
 
-SceneBVH::BVHNode* SceneBVH::BuildRecursive(std::vector<BVHNode*>& nodes, int start, int end)
+uint32_t SceneBVH::BuildRecursive(int start, int end)
 {
 	const int count = end - start;
-	if (count == 0) return nullptr;
+	if (count == 0) return -1;
 
 	if (count == 1)
 	{
-		return nodes[start];
+		return start;
 	}
 
-	AABB centroidBounds = nodes[start]->aabb;
+	AABB centroidBounds = m_Nodes[start].aabb;
 	for (int i = start + 1; i < end; i++)
 	{
-		centroidBounds = centroidBounds.Expanded(nodes[i]->aabb);
+		centroidBounds = centroidBounds.Expanded(m_Nodes[i].aabb);
 	}
 
 	// Choose split axis (longest).
@@ -215,9 +214,9 @@ SceneBVH::BVHNode* SceneBVH::BuildRecursive(std::vector<BVHNode*>& nodes, int st
 	for (int i = start; i < end; i++)
 	{
 		int binIdx = std::min(BIN_COUNT - 1,
-			static_cast<int>((nodes[i]->aabb.Center()[axis] - centroidBounds.min[axis]) * scale));
+			static_cast<int>((m_Nodes[i].aabb.Center()[axis] - centroidBounds.min[axis]) * scale));
 		bins[binIdx].count++;
-		bins[binIdx].bounds = bins[binIdx].bounds.Expanded(nodes[i]->aabb);
+		bins[binIdx].bounds = bins[binIdx].bounds.Expanded(m_Nodes[i].aabb);
 	}
 
 	// Find best split.
@@ -256,15 +255,15 @@ SceneBVH::BVHNode* SceneBVH::BuildRecursive(std::vector<BVHNode*>& nodes, int st
 	}
 
 	// Partition nodes.
-	auto midIter = std::partition(nodes.begin() + start, nodes.begin() + end,
-		[&](BVHNode* node)
+	auto midIter = std::partition(m_Nodes.begin() + start, m_Nodes.begin() + end,
+		[&](const BVHNode& node)
 		{
 			int binIdx = std::min(BIN_COUNT - 1,
-				static_cast<int>((node->aabb.Center()[axis] - centroidBounds.min[axis]) * scale));
+				static_cast<int>((node.aabb.Center()[axis] - centroidBounds.min[axis]) * scale));
 			return binIdx < bestSplit;
 		});
 
-	int mid = midIter - nodes.begin();
+	int mid = midIter - m_Nodes.begin();
 
 	// Handle bad splits.
 	if (mid == start || mid == end)
@@ -273,34 +272,38 @@ SceneBVH::BVHNode* SceneBVH::BuildRecursive(std::vector<BVHNode*>& nodes, int st
 	}
 
 	// Recursively build children.
-	BVHNode* node = new BVHNode();
-	node->left = BuildRecursive(nodes, start, mid);
-	node->right = BuildRecursive(nodes, mid, end);
+	BVHNode node{};
+	node.left = BuildRecursive(start, mid);
+	node.right = BuildRecursive(mid, end);
 
 	// Combine AABBs.
-	node->aabb = node->left->aabb.Expanded(node->right->aabb);
-	node->subtreeSize = node->left->subtreeSize + node->right->subtreeSize;
+	const BVHNode& left = m_Nodes[node.left];
+	const BVHNode& right = m_Nodes[node.right];
+	node.aabb = left.aabb.Expanded(right.aabb);
+	node.subtreeSize = right.subtreeSize + right.subtreeSize;
 
-	return node;
+	m_Nodes.emplace_back(std::move(node));
+
+	return m_Nodes.size() - 1;
 }
 
-SceneBVH::BVHNode* SceneBVH::FindLeaf(BVHNode* node, std::shared_ptr<Entity> entity) const
-{
-	if (!node) return nullptr;
-	if (node->entity == entity) return node;
-
-	if (BVHNode* left = FindLeaf(node->left, entity)) return left;
-	return FindLeaf(node->right, entity);
-}
-
-SceneBVH::BVHNode* SceneBVH::FindParent(BVHNode* root, BVHNode* target) const
-{
-	if (!root || root == target) return nullptr;
-	if (root->left == target || root->right == target) return root;
-
-	if (BVHNode* left = FindParent(root->left, target)) return left;
-	return FindParent(root->right, target);
-}
+//SceneBVH::BVHNode* SceneBVH::FindLeaf(BVHNode* node, std::shared_ptr<Entity> entity) const
+//{
+//	if (!node) return nullptr;
+//	if (node->entity == entity) return node;
+//
+//	if (BVHNode* left = FindLeaf(node->left, entity)) return left;
+//	return FindLeaf(node->right, entity);
+//}
+//
+//SceneBVH::BVHNode* SceneBVH::FindParent(BVHNode* root, BVHNode* target) const
+//{
+//	if (!root || root == target) return nullptr;
+//	if (root->left == target || root->right == target) return root;
+//
+//	if (BVHNode* left = FindParent(root->left, target)) return left;
+//	return FindParent(root->right, target);
+//}
 
 AABB SceneBVH::LocalToWorldAABB(const AABB& localAABB, const glm::mat4& transformMat4)
 {

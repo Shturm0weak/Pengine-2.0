@@ -16,21 +16,12 @@ namespace Pengine
 		struct BVHNode
 		{
 			AABB aabb;
-			BVHNode* left = nullptr;
-			BVHNode* right = nullptr;
-			std::shared_ptr<Entity> entity = nullptr;
+			uint32_t left = -1;
+			uint32_t right = -1;
+			std::shared_ptr<Entity> entity;
 			int subtreeSize = 0;
 
-			[[nodiscard]] bool IsLeaf() const { return left == nullptr && right == nullptr; }
-
-			~BVHNode()
-			{
-				delete left;
-				delete right;
-
-				left = nullptr;
-				right = nullptr;
-			}
+			[[nodiscard]] bool IsLeaf() const { return left == -1 && right == -1; }
 		};
 
 		explicit SceneBVH(Scene* scene) : m_Scene(scene) {}
@@ -41,7 +32,7 @@ namespace Pengine
 
 		void Update();
 
-		void Traverse(const std::function<bool(BVHNode*)>& callback) const;
+		void Traverse(const std::function<bool(const BVHNode&)>& callback) const;
 
 		std::vector<entt::entity> CullAgainstFrustum(const std::array<glm::vec4, 6>& planes);
 
@@ -50,11 +41,13 @@ namespace Pengine
 			const glm::vec3& direction,
 			const float length) const;
 
-		[[nodiscard]] BVHNode* GetRoot() const { return m_Root; }
+		[[nodiscard]] std::optional<BVHNode> GetRoot() const { return m_Root == -1 ? std::nullopt : std::optional<BVHNode>(m_Nodes[m_Root]); }
 
 	private:
-		BVHNode* m_Root = nullptr;
 		Scene* m_Scene;
+
+		uint32_t m_Root = -1;
+		std::vector<BVHNode> m_Nodes;
 
 		/**
 		 * Protection that there is currently no use (ray cast or traverse in progress) before rebuilding or clearing.
@@ -67,11 +60,11 @@ namespace Pengine
 
 		void Rebuild();
 
-		BVHNode* BuildRecursive(std::vector<BVHNode*>& nodes, int start, int end);
+		uint32_t BuildRecursive(int start, int end);
 
-		BVHNode* FindLeaf(BVHNode* node, std::shared_ptr<Entity> entity) const;
+		//BVHNode* FindLeaf(BVHNode* node, std::shared_ptr<Entity> entity) const;
 
-		BVHNode* FindParent(BVHNode* root, BVHNode* target) const;
+		//BVHNode* FindParent(BVHNode* root, BVHNode* target) const;
 
 		AABB LocalToWorldAABB(const AABB& localAABB, const glm::mat4& transformMat4);
 

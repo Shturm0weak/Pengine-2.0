@@ -4052,7 +4052,7 @@ void Editor::Thumbnails::UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thu
 	// Update BVH just in case.
 	scene->GetBVH()->Update();
 	
-	const SceneBVH::BVHNode* root = scene->GetBVH()->GetRoot();
+	std::optional<SceneBVH::BVHNode> root = scene->GetBVH()->GetRoot();
 	
 	BoundingBox bb{};
 	if (root)
