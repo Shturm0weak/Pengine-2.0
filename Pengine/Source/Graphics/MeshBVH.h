@@ -18,37 +18,35 @@ namespace Pengine
 		struct BVHNode
 		{
 			AABB aabb;
-			std::unique_ptr<BVHNode> left;
-			std::unique_ptr<BVHNode> right;
+			uint32_t left = -1;
+			uint32_t right = -1;
 			std::vector<uint32_t> triangleIndices;
 			bool isLeaf;
 
 			BVHNode(const AABB& aabb, std::vector<uint32_t>&& indices)
 				: aabb(aabb)
-				, left(nullptr)
-				, right(nullptr)
+				, left(-1)
+				, right(-1)
 				, triangleIndices(std::move(indices)), isLeaf(true)
 			{
 			}
 
-			BVHNode(const AABB& aabb, std::unique_ptr<BVHNode> left,
-				std::unique_ptr<BVHNode> right)
+			BVHNode(const AABB& aabb, uint32_t left,
+				uint32_t right)
 				: aabb(aabb)
-				, left(std::move(left))
-				, right(std::move(right))
+				, left(left)
+				, right(right)
 				, isLeaf(false)
 			{
 			}
 		};
-
-		std::unique_ptr<BVHNode> root;
 
 		MeshBVH(void* vertices,
 			const std::vector<uint32_t>& indices,
 			const uint32_t vertexSize,
 			int leafSize = 4);
 
-		void Traverse(const std::function<void(BVHNode* node)>& callback) const;
+		void Traverse(const std::function<void(const BVHNode&)>& callback) const;
 
 		bool Raycast(
 			const glm::vec3& start,
@@ -62,8 +60,10 @@ namespace Pengine
 		const std::vector<uint32_t>& m_Indices;
 		const uint32_t m_VertexSize;
 		const int m_LeafSize;
+		std::vector<BVHNode> m_Nodes;
+		uint32_t m_Root = -1;
 
-		std::unique_ptr<BVHNode> BuildRecursive(std::vector<uint32_t> triangleIndices);
+		uint32_t BuildRecursive(std::vector<uint32_t> triangleIndices);
 
 		glm::vec3 GetTriangleCentroid(uint32_t index) const;
 

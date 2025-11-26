@@ -21,25 +21,25 @@ MeshBVH::MeshBVH(
 	std::vector<uint32_t> triangleIndices(indices.size() / 3);
 	std::iota(triangleIndices.begin(), triangleIndices.end(), 0);
 
-	root = BuildRecursive(triangleIndices);
+	m_Root = BuildRecursive(triangleIndices);
 }
 
-void MeshBVH::Traverse(const std::function<void(BVHNode* node)>& callback) const
+void MeshBVH::Traverse(const std::function<void(const BVHNode&)>& callback) const
 {
-	if (!root) return;
+	if (m_Root == -1) return;
 
-	std::stack<BVHNode*> nodeStack;
-	nodeStack.push(root.get());
+	std::stack<uint32_t> nodeStack;
+	nodeStack.push(m_Root);
 
 	while (!nodeStack.empty())
 	{
-		BVHNode* node = nodeStack.top();
+		const BVHNode& node = m_Nodes[nodeStack.top()];
 		nodeStack.pop();
 
 		callback(node);
 
-		if (node->right) nodeStack.push(node->right.get());
-		if (node->left) nodeStack.push(node->left.get());
+		if (node.right != -1) nodeStack.push(node.right);
+		if (node.left != -1) nodeStack.push(node.left);
 	};
 }
 
@@ -50,29 +50,29 @@ bool MeshBVH::Raycast(
 	Raycast::Hit& hit,
 	Visualizer& visualizer)
 {
-	if (!root) return {};
+	if (m_Root == -1) return false;
 
 	Raycast::Hit closestHit;
 	bool bHit = false;
-	std::stack<BVHNode*> nodeStack;
-	nodeStack.push(root.get());
+	std::stack<uint32_t> nodeStack;
+	nodeStack.push(m_Root);
 
 	while (!nodeStack.empty())
 	{
-		BVHNode* node = nodeStack.top();
+		const BVHNode& node = m_Nodes[nodeStack.top()];
 		nodeStack.pop();
 
 		Raycast::Hit currentHitAABB{};
-		if (!Raycast::IntersectBoxAABB(start, direction, node->aabb.min, node->aabb.max, length, currentHitAABB))
+		if (!Raycast::IntersectBoxAABB(start, direction, node.aabb.min, node.aabb.max, length, currentHitAABB))
 		{
 			continue;
 		}
 
 		//visualizer.DrawBox(node->aabb.min, node->aabb.max, { 1.0f, 1.0f, 0.0f }, glm::mat4(1.0f));
 
-		if (node->isLeaf)
+		if (node.isLeaf)
 		{
-			for (int index : node->triangleIndices)
+			for (int index : node.triangleIndices)
 			{
 				const VertexPosition& v0 = *(VertexPosition*)((uint8_t*)m_Vertices + m_Indices[index * 3 + 0] * m_VertexSize);
 				const VertexPosition& v1 = *(VertexPosition*)((uint8_t*)m_Vertices + m_Indices[index * 3 + 1] * m_VertexSize);
@@ -117,8 +117,8 @@ bool MeshBVH::Raycast(
 		}
 		else
 		{
-			if (node->right) nodeStack.push(node->right.get());
-			if (node->left) nodeStack.push(node->left.get());
+			if (node.right != -1) nodeStack.push(node.right);
+			if (node.left != -1) nodeStack.push(node.left);
 		}
 	}
 
@@ -127,7 +127,7 @@ bool MeshBVH::Raycast(
 	return bHit;
 }
 
-std::unique_ptr<MeshBVH::BVHNode> MeshBVH::BuildRecursive(
+uint32_t MeshBVH::BuildRecursive(
 	std::vector<uint32_t> triangleIndices)
 {
 	AABB aabb = ComputeBoundingBox(triangleIndices);
@@ -135,7 +135,8 @@ std::unique_ptr<MeshBVH::BVHNode> MeshBVH::BuildRecursive(
 	// Create leaf node if below threshold.
 	if (triangleIndices.size() <= m_LeafSize)
 	{
-		return std::make_unique<BVHNode>(aabb, std::move(triangleIndices));
+		m_Nodes.emplace_back(aabb, std::move(triangleIndices));
+		return m_Nodes.size() - 1;
 	}
 
 	// Determine split axis (longest dimension).
@@ -167,9 +168,10 @@ std::unique_ptr<MeshBVH::BVHNode> MeshBVH::BuildRecursive(
 	auto right = BuildRecursive(std::move(rightIndices));
 
 	// Merge child bounding boxes.
-	aabb = MergeAABBs(left->aabb, right->aabb);
+	aabb = MergeAABBs(m_Nodes[left].aabb, m_Nodes[right].aabb);
 
-	return std::make_unique<BVHNode>(aabb, std::move(left), std::move(right));
+	m_Nodes.emplace_back(aabb, left, right);
+	return m_Nodes.size() - 1;
 }
 
 glm::vec3 MeshBVH::GetTriangleCentroid(uint32_t index) const
