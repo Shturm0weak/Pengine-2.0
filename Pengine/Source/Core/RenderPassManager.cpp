@@ -1929,18 +1929,19 @@ void RenderPassManager::CreateBloom()
 
 			for (int mipLevel = mipCount - 1; mipLevel > 0; mipLevel--)
 			{
-				const std::string mipLevelString = std::to_string(mipLevel - 1);
+				const std::string srcMipLevelString = std::to_string(mipLevel);
+				const std::string dstMipLevelString = std::to_string(mipLevel - 1);
 
 				renderInfo.renderer->MemoryBarrierFragmentReadWrite(renderInfo.frame);
 
 				RenderPass::SubmitInfo submitInfo{};
 				submitInfo.frame = renderInfo.frame;
 				submitInfo.renderPass = renderInfo.renderPass;
-				submitInfo.frameBuffer = renderInfo.renderView->GetFrameBuffer("BloomFrameBuffers(" + mipLevelString + ")");
-				renderInfo.renderer->BeginRenderPass(submitInfo, "Bloom Up Sample [" + std::to_string(mipLevel) + "]", { 1.0f, 1.0f, 0.0f });
+				submitInfo.frameBuffer = renderInfo.renderView->GetFrameBuffer("BloomFrameBuffers(" + dstMipLevelString + ")");
+				renderInfo.renderer->BeginRenderPass(submitInfo, "Bloom Up Sample [" + srcMipLevelString + "]", { 1.0f, 1.0f, 0.0f });
 
-				const std::shared_ptr<UniformWriter> downUniformWriter = renderInfo.renderView->GetUniformWriter("BloomUpUniformWriters[" + mipLevelString + "]");
-				downUniformWriter->WriteTexture("sourceTexture", renderInfo.renderView->GetFrameBuffer("BloomFrameBuffers(" + std::to_string(mipLevel) + ")")->GetAttachment(0));
+				const std::shared_ptr<UniformWriter> downUniformWriter = renderInfo.renderView->GetUniformWriter("BloomUpUniformWriters[" + dstMipLevelString + "]");
+				downUniformWriter->WriteTexture("sourceTexture", renderInfo.renderView->GetFrameBuffer("BloomFrameBuffers(" + srcMipLevelString + ")")->GetAttachment(0));
 				downUniformWriter->Flush();
 
 				std::vector<std::shared_ptr<Buffer>> vertexBuffers;

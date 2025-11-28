@@ -5398,7 +5398,7 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 
 		if (const auto& mipMultiplierData = ssrData["MipMultiplier"])
 		{
-			graphicsSettings.ssr.mipMultiplier = mipMultiplierData.as<int>();
+			graphicsSettings.ssr.mipMultiplier = mipMultiplierData.as<float>();
 		}
 
 		if (const auto& useSkyBoxFallbackData = ssrData["UseSkyBoxFallback"])

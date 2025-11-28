@@ -1325,7 +1325,7 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 			}
 
 			ImGui::PushID("SSR Mip Multiplier");
-			isChangedToSerialize += ImGui::SliderInt("Mip Levels", &graphicsSettings.ssr.mipMultiplier, 0, 4);
+			isChangedToSerialize += ImGui::SliderFloat("Mip Multiplier", &graphicsSettings.ssr.mipMultiplier, 0.0f, 10.0f);
 			ImGui::PopID();
 
 			ImGui::PushID("SSR Use SkyBox Fallback");
@@ -3776,7 +3776,7 @@ void Editor::Thumbnails::Initialize()
 	m_ThumbnailScene = SceneManager::GetInstance().Create(name, name);
 	m_ThumbnailWindow = Window::CreateHeadless(name, name, { 256, 256 });
 
-	//m_ThumbnailScene->GetSettings().m_DrawBoundingBoxes = true;
+	m_ThumbnailScene->GetSettings().drawBoundingBoxes = false;
 
 	{
 		auto entity = m_ThumbnailScene->CreateEntity("Sun");
@@ -3845,12 +3845,12 @@ void Editor::Thumbnails::Initialize()
 
 void Editor::Thumbnails::UpdateThumbnails()
 {
-	//if (m_ThumbnailAtlas.GetAtlas(0))
-	//{
-	//	ImGui::Begin("Thumbnail Atlas");
-	//	ImGui::Image((ImTextureID)m_ThumbnailAtlas.GetAtlas(0)->GetId(), ImVec2(1024, 1024));
-	//	ImGui::End();
-	//}
+	/*if (m_ThumbnailAtlas.GetAtlas(0))
+	{
+		ImGui::Begin("Thumbnail Atlas");
+		ImGui::Image((ImTextureID)m_ThumbnailAtlas.GetAtlas(0)->GetId(), ImVec2(1024, 1024));
+		ImGui::End();
+	}*/
 
 	if (m_ThumbnailToCheck == m_CacheThumbnails.end())
 	{

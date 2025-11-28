@@ -1,31 +1,29 @@
 Name: Tree
 IsEnabled: true
 Transform:
-  Position: [-6.85744715, -6.00246429, -9.66706371]
+  Position: [3.94801784, -9, -7.75336313]
   Rotation: [8.02687191e-06, -4.63391391e-12, -1.93711912e-06]
-  Scale: [1, 1, 1]
+  Scale: [3, 3, 3]
   FollowOwner: true
 RigidBody:
   IsStatic: true
   Mass: 1
   Type: 2
-  HalfHeight: 3
+  HalfHeight: 10
   Radius: 0.300000012
   AngularVelocity: [0, 0, 0]
   LinearVelocity: [0, 0, 0]
-  Friction: 0.200000003
+  Friction: 0
   Restitution: 0
-  AllowSleeping: true
 Childs:
   - Name: Bark
     IsEnabled: true
     Transform:
-      Position: [5.10215759e-05, -3, -8.77380371e-05]
-      Rotation: [-8.02687191e-06, 2.01829213e-11, 1.93711912e-06]
-      Scale: [0.0199999996, 0.0199999996, 0.0199999996]
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
       FollowOwner: true
     Renderer3D:
-      SkeletalAnimatorEntity: 0xa0659b09d6d87550cf5b80439987dc94
       Mesh: 0xb8dfc2aacf7b8aa28806323af217bfbe
       Material: 0xc08dbb4e4b4385ddc025ede468796fce
       RenderingOrder: 5
@@ -38,12 +36,11 @@ Childs:
   - Name: Leaves
     IsEnabled: true
     Transform:
-      Position: [0, -3, 0]
-      Rotation: [-8.02687191e-06, 2.01829213e-11, 1.93711912e-06]
-      Scale: [0.0199999996, 0.0199999996, 0.0199999996]
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
       FollowOwner: true
     Renderer3D:
-      SkeletalAnimatorEntity: 0x7ac22bd68d91b28cd5c519b6bab9ed1f
       Mesh: 0x8e930815e3003eec7189730f47b3fd31
       Material: 0x95a3ca8b93eb24cd2f16352c443dedca
       RenderingOrder: 5

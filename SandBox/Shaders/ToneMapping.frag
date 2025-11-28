@@ -33,11 +33,11 @@ void main()
 
 	if (isSSREnabled == 1)
 	{
-		//reflectionColor = mix(texture(rawSSRTexture, uv), texture(blurSSRTexture, uv), roughness);
-		reflectionColor = textureLod(blurSSRTexture, uv, roughness * SSRMipLevels);
+		float SSRExist = ceil(texture(blurSSRTexture, uv).a);
+		reflectionColor = textureLod(blurSSRTexture, uv, roughness * SSRMipLevels * SSRExist);
 	}
 
-	deferred = mix(deferred, reflectionColor.xyz, (1.0f - roughness) * reflectionColor.a * isSSREnabled * alpha);
+	deferred = mix(deferred, reflectionColor.xyz, reflectionColor.a * isSSREnabled * alpha);
 
 	vec3 toneMappedColor;
 	if (toneMapperIndex == 0)

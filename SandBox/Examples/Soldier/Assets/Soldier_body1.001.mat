@@ -25,7 +25,7 @@ Mat:
               Value: 0.5
               Type: float
             - Name: material.roughnessFactor
-              Value: 0.55278641
+              Value: 0.800000012
               Type: float
             - Name: material.aoFactor
               Value: 1

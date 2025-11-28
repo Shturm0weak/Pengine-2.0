@@ -117,7 +117,7 @@ namespace Pengine
 			float resolution = 0.3f;
 			float thickness = 5.0f;
 			int stepCount = 10;
-			int mipMultiplier = 1;
+			float mipMultiplier = 1.0f;
 
 			/**
 			 * Resolution scale: 0.25 / 0.5 / 0.75 / 1.0

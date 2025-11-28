@@ -22,10 +22,10 @@ Mat:
               Value: [1, 1, 0, 0]
               Type: vec4
             - Name: material.metallicFactor
-              Value: 0.5
+              Value: 0
               Type: float
             - Name: material.roughnessFactor
-              Value: 0.55278641
+              Value: 0.800000012
               Type: float
             - Name: material.aoFactor
               Value: 1

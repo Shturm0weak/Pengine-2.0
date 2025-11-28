@@ -32,14 +32,17 @@ Bloom:
   ResolutionScale: 3
 SSR:
   IsEnabled: true
-  MaxDistance: 8
+  MaxDistance: 100
   Resolution: 1
-  ResolutionBlurScale: 1
+  ResolutionBlurScale: 2
   ResolutionScale: 1
   StepCount: 10
-  Thickness: 0.150000006
-  BlurRange: 2
-  BlurOffset: 2
+  Thickness: 1
+  BlurRange: 1
+  BlurOffset: 1
+  MipMultiplier: 0.5
+  UseSkyBoxFallback: true
+  Blur: 1
 PostProcess:
   Gamma: 2.20000005
   ToneMapper: 1

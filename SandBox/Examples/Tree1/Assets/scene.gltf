@@ -1,6 +1,6 @@
 {
 	"asset":{
-		"generator":"Khronos glTF Blender I/O v4.5.48",
+		"generator":"Khronos glTF Blender I/O v4.5.49",
 		"version":"2.0"
 	},
 	"scene":0,
@@ -15,41 +15,18 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Bark",
-			"rotation":[
-				0.70710688829422,
-				0,
-				0,
-				0.7071066498756409
-			]
+			"name":"Bark"
 		},
 		{
 			"mesh":1,
-			"name":"Leaves",
-			"rotation":[
-				0.70710688829422,
-				0,
-				0,
-				0.7071066498756409
-			]
+			"name":"Leaves"
 		},
 		{
 			"children":[
 				0,
 				1
 			],
-			"name":"Tree",
-			"rotation":[
-				-0.70710688829422,
-				0,
-				0,
-				0.7071066498756409
-			],
-			"scale":[
-				0.009999999776482582,
-				0.010000000707805157,
-				0.010000000707805157
-			]
+			"name":"Tree"
 		}
 	],
 	"materials":[
@@ -181,37 +158,36 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":5412,
+			"count":5423,
 			"max":[
-				135.99327087402344,
-				353.9539794921875,
-				118.27699279785156
+				1.3599326610565186,
+				3.5395383834838867,
+				1.1827694177627563
 			],
 			"min":[
-				-111.71092987060547,
+				-1.1171092987060547,
 				0,
-				-109.12217712402344
+				-1.0912213325500488
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":5412,
+			"count":5423,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":5412,
+			"count":5423,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
-			"componentType":5123,
-			"count":5412,
-			"normalized":true,
-			"type":"VEC4"
+			"componentType":5126,
+			"count":5423,
+			"type":"VEC3"
 		},
 		{
 			"bufferView":4,
@@ -224,14 +200,14 @@
 			"componentType":5126,
 			"count":3360,
 			"max":[
-				158.6839599609375,
-				380.4515075683594,
-				140.07339477539062
+				1.5868395566940308,
+				3.804513454437256,
+				1.4007333517074585
 			],
 			"min":[
-				-130.81459045410156,
-				86.37248229980469,
-				-127.9384765625
+				-1.3081458806991577,
+				0.8637244701385498,
+				-1.2793842554092407
 			],
 			"type":"VEC3"
 		},
@@ -264,62 +240,62 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":64944,
+			"byteLength":65076,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":64944,
-			"byteOffset":64944,
+			"byteLength":65076,
+			"byteOffset":65076,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":43296,
-			"byteOffset":129888,
+			"byteLength":43384,
+			"byteOffset":130152,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":43296,
-			"byteOffset":173184,
+			"byteLength":65076,
+			"byteOffset":173536,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":26022,
-			"byteOffset":216480,
+			"byteOffset":238612,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":40320,
-			"byteOffset":242504,
+			"byteOffset":264636,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":40320,
-			"byteOffset":282824,
+			"byteOffset":304956,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":26880,
-			"byteOffset":323144,
+			"byteOffset":345276,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":26880,
-			"byteOffset":350024,
+			"byteOffset":372156,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":10080,
-			"byteOffset":376904,
+			"byteOffset":399036,
 			"target":34963
 		}
 	],
@@ -331,7 +307,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":386984,
+			"byteLength":409116,
 			"uri":"scene.bin"
 		}
 	]

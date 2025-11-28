@@ -10,3 +10,9 @@ Basemat:
       Uniforms:
         - Name: sourceTexture
           TextureAttachment: "SSR"
+        - Name: normalTexture
+          TextureAttachment: "GBuffer[1]"
+        - Name: shadingTexture
+          TextureAttachment: "GBuffer[2]"
+        - Name: depthTexture
+          TextureAttachment: "GBuffer[4]"

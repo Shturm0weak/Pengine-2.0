@@ -10,8 +10,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [-2.4882226, 1.9378463, 6.42000866]
-      Rotation: [-1.04998994, -1.57512844, 0]
+      Position: [-1.05251265, 0.61794591, 1.02397418]
+      Rotation: [-0.424212247, -0.813388884, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
