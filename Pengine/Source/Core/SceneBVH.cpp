@@ -78,6 +78,10 @@ std::vector<entt::entity> SceneBVH::CullAgainstFrustum(const std::array<glm::vec
 					return false;
 				}
 			}
+			else
+			{
+				return false;
+			}
 		}
 
 		if (node.entity && node.entity->IsEnabled())
