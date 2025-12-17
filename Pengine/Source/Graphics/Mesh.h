@@ -73,6 +73,8 @@ namespace Pengine
 
 		[[nodiscard]] const BoundingBox& GetBoundingBox() const { return m_BoundingBox; }
 
+		[[nodiscard]] void SetBoundingBox(BoundingBox& boundingBox) { m_BoundingBox = boundingBox; }
+
 		[[nodiscard]] const std::vector<VertexLayout>& GetVertexLayouts() const { return m_CreateInfo.vertexLayouts; }
 
 		[[nodiscard]] Type GetType() const { return m_CreateInfo.type; }

@@ -108,6 +108,7 @@ void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
 	AssetBrowserHierarchy();
 	PlayButtonMenu(scene);
 
+	m_MeshMenu.Update(*this);
 	m_MaterialMenu.Update(*this);
 	m_BaseMaterialMenu.Update(*this);
 	m_CreateFileMenu.Update();
@@ -1794,6 +1795,14 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 						m_CloneMaterialMenu.name[0] = '\0';
 					}
 				}
+				else if (format == FileFormats::Mesh())
+				{
+					if (ImGui::MenuItem("Load"))
+					{
+						m_MeshMenu.opened = true;
+						m_MeshMenu.mesh = MeshManager::GetInstance().LoadMesh(path);
+					}
+				}
 				if (FileFormats::IsTexture(format))
 				{
 					if (ImGui::MenuItem("Meta"))
@@ -2519,7 +2528,11 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 
 		if (r3d.mesh)
 		{
-			ImGui::Text("Mesh: %s", r3d.mesh->GetName().c_str());
+			if (ImGui::Button(r3d.mesh->GetName().c_str()))
+			{
+				m_MeshMenu.opened = true;
+				m_MeshMenu.mesh = r3d.mesh;
+			}
 		}
 		else
 		{
@@ -3564,6 +3577,47 @@ void Editor::BaseMaterialMenu::Update(const Editor& editor)
 		ImGui::Text("Filepath: %s", baseMaterial->GetFilepath().string().c_str());
 
 		ImGui::End();
+	}
+}
+
+void Editor::MeshMenu::Update(const Editor& editor)
+{
+	if (!mesh)
+	{
+		return;
+	}
+
+	const bool previousOpened = opened;
+
+	if (opened && ImGui::Begin("Mesh", &opened))
+	{
+		ImGui::Text("Name: %s", mesh->GetName().c_str());
+		ImGui::Text("Filepath: %s", mesh->GetFilepath().string().c_str());
+
+		const char* const types[] = { "Static", "Skinned" };
+		ImGui::Text("Type %s", types[(int)mesh->GetType()]);
+
+		BoundingBox aabb = mesh->GetBoundingBox();
+		editor.DrawVec3Control("AABB min", aabb.min);
+		editor.DrawVec3Control("AABB max", aabb.max);
+		editor.DrawVec3Control("AABB offset", aabb.offset);
+		mesh->SetBoundingBox(aabb);
+		
+		ImGui::Text("Vertex Count %u", mesh->GetVertexCount());
+		ImGui::Text("Index Count %u", mesh->GetIndexCount());
+		ImGui::Text("Triangle Count %u", mesh->GetIndexCount() / 3);
+
+		if (ImGui::Button("Save"))
+		{
+			Serializer::SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
+		}
+
+		ImGui::End();
+	}
+
+	if (previousOpened && !opened)
+	{
+		MeshManager::GetInstance().DeleteMesh(mesh);
 	}
 }
 

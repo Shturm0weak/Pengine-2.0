@@ -1441,6 +1441,7 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 		mesh->GetFilepath().string().size() +
 		mesh->GetCreateInfo().sourceFileInfo.meshName.size() +
 		mesh->GetCreateInfo().sourceFileInfo.filepath.string().size() +
+		sizeof(BoundingBox) +
 		10 * 4; // Type, Primitive Index, Source Mesh Size, Source Filepath Size, Vertex Count, Vertex Size, Index Count, Mesh Size, Filepath Size, Vertex Layout Count.
 
 	uint32_t offset = 0;
@@ -1460,6 +1461,12 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 
 		memcpy(&Utils::GetValue<uint8_t>(data, offset), meshName.data(), meshName.size());
 		offset += static_cast<uint32_t>(meshName.size());
+	}
+
+	// BoundingBox.
+	{
+		memcpy(&Utils::GetValue<uint8_t>(data, offset), &mesh->GetBoundingBox(), sizeof(BoundingBox));
+		offset += sizeof(BoundingBox);
 	}
 
 	// SourceFile.
@@ -1600,6 +1607,13 @@ Mesh::CreateInfo Serializer::DeserializeMesh(const std::filesystem::path& filepa
 		offset += meshNameSize;
 	}
 
+	// BoundingBox.
+	BoundingBox boundingBox{};
+	{
+		memcpy(&boundingBox, &Utils::GetValue<uint8_t>(data, offset), sizeof(BoundingBox));
+		offset += sizeof(BoundingBox);
+	}
+
 	// SourceFile.
 	{
 		Mesh::CreateInfo::SourceFileInfo sourceFile{};
@@ -1699,6 +1713,7 @@ Mesh::CreateInfo Serializer::DeserializeMesh(const std::filesystem::path& filepa
 	createInfo.vertexCount = vertexCount;
 	createInfo.vertexSize = vertexSize;
 	createInfo.vertexLayouts = vertexLayouts;
+	createInfo.boundingBox = boundingBox;
 
 	return createInfo;
 }

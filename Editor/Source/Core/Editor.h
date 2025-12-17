@@ -18,6 +18,7 @@ namespace Pengine
 	class Window;
 	class BaseMaterial;
 	class Material;
+	class Mesh;
 	class Renderer;
 }
 
@@ -142,6 +143,14 @@ private:
 
 		void Update(const Editor& editor);
 	} m_BaseMaterialMenu;
+
+	struct MeshMenu
+	{
+		std::shared_ptr<Pengine::Mesh> mesh = nullptr;
+		bool opened = false;
+
+		void Update(const Editor& editor);
+	} m_MeshMenu;
 
 	struct CloneMaterialMenu
 	{

@@ -594,6 +594,11 @@ void RenderPassManager::CreateGBuffer()
 				const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
 
 				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
+				/*scene->GetBVH()->Traverse([scene](const SceneBVH::BVHNode& node)
+				{
+					scene->GetVisualizer().DrawBox(node.aabb.min, node.aabb.max, { 0.0f, 1.0f, 0.0f }, glm::mat4(1.0f));
+					return true;
+				});*/
 			}
 
 			renderableCount++;
@@ -1502,7 +1507,7 @@ void RenderPassManager::CreateCSM()
 			}
 
 			const Transform& transform = registry.get<Transform>(entity);
-			if (!transform.GetEntity()->IsEnabled() || !r3d.isEnabled)
+			if (!r3d.isEnabled)
 			{
 				continue;
 			}
@@ -2042,7 +2047,10 @@ void RenderPassManager::CreateSSR()
 		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName);
 
 		WriteRenderViews(renderInfo.renderView, renderInfo.scene->GetRenderView(), pipeline, renderUniformWriter);
-		renderUniformWriter->WriteTexture("skyboxTexture", renderInfo.scene->GetRenderView()->GetFrameBuffer(Atmosphere)->GetAttachment(0));
+		if (const auto frameBuffer = renderInfo.scene->GetRenderView()->GetFrameBuffer(Atmosphere))
+		{
+			renderUniformWriter->WriteTexture("skyboxTexture", frameBuffer->GetAttachment(0));
+		}
 
 		const glm::vec2 viewportScale = glm::vec2(resolutionScales[ssrSettings.resolutionScale]);
 		const int useSkyBoxFallback = ssrSettings.useSkyBoxFallback;
