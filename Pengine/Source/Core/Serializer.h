@@ -94,6 +94,10 @@ namespace Pengine
 			{
 				bool import = true;
 				bool skinned = false;
+				int lodCount = 3;
+				float targetError = 1e-2f;
+				float minIndexCountFactor = 0.2f;
+				glm::vec2 distanceMinMax = { 10.0f, 50.0f };
 				glm::bvec2 flipUV = { false, false };
 			} meshes;
 			

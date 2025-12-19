@@ -2526,6 +2526,8 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 			}
 		}
 
+		ImGui::Text("Mesh:");
+		ImGui::SameLine();
 		if (r3d.mesh)
 		{
 			if (ImGui::Button(r3d.mesh->GetName().c_str()))
@@ -2536,7 +2538,7 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 		}
 		else
 		{
-			ImGui::Text("Mesh: %s", none);
+			ImGui::Button(none);
 		}
 
 		if (ImGui::BeginDragDropTarget())
@@ -3602,10 +3604,20 @@ void Editor::MeshMenu::Update(const Editor& editor)
 		editor.DrawVec3Control("AABB max", aabb.max);
 		editor.DrawVec3Control("AABB offset", aabb.offset);
 		mesh->SetBoundingBox(aabb);
-		
+
 		ImGui::Text("Vertex Count %u", mesh->GetVertexCount());
-		ImGui::Text("Index Count %u", mesh->GetIndexCount());
-		ImGui::Text("Triangle Count %u", mesh->GetIndexCount() / 3);
+
+		const auto& lods = mesh->GetCreateInfo().lods;
+		for (size_t i = 0; i < lods.size(); i++)
+		{
+			if (ImGui::CollapsingHeader(std::format("Lod {}", i).c_str()))
+			{
+				Indent indent;
+				ImGui::Text("Index Count %u", lods[i].indexCount);
+				ImGui::Text("Index Offset %u", lods[i].indexOffset);
+				ImGui::Text("Triangle Count %u", lods[i].indexCount / 3);
+			}
+		}
 
 		if (ImGui::Button("Save"))
 		{
@@ -3738,6 +3750,10 @@ void Editor::ImportMenu::Update(Editor& editor)
 
 			ImGui::Checkbox("Import##ImportMeshes", &importOptions.meshes.import);
 			ImGui::Checkbox("Skinned##ImportMeshes", &importOptions.meshes.skinned);
+			ImGui::SliderFloat("Target Error##ImportMeshes", &importOptions.meshes.targetError, 0.0f, 0.1f);
+			ImGui::SliderFloat("Min Index Count Factor##ImportMeshes", &importOptions.meshes.minIndexCountFactor, 0.05f, 1.0f);
+			ImGui::SliderInt("Lod Count##ImportMeshes", &importOptions.meshes.lodCount, 1, 10);
+			editor.DrawVec2Control("Min Max Switch Distance", importOptions.meshes.distanceMinMax, 0.0f, { 0.0f, 100.0f });
 			ImGui::Checkbox("Flip UV X##ImportMeshes", &importOptions.meshes.flipUV.x);
 			ImGui::SameLine();
 			ImGui::Checkbox("Flip UV Y##ImportMeshes", &importOptions.meshes.flipUV.y);

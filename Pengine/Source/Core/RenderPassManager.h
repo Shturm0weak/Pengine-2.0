@@ -8,6 +8,7 @@
 #include "../Graphics/ComputePass.h"
 #include "../Graphics/RenderPass.h"
 #include "../Graphics/Pipeline.h"
+#include "../Graphics/Mesh.h"
 
 namespace Pengine
 {
@@ -49,8 +50,8 @@ namespace Pengine
 	private:
 		struct EntitiesByMesh
 		{
-			std::unordered_map<std::shared_ptr<class Mesh>, std::vector<entt::entity>> instanced;
-			std::vector<std::pair<std::shared_ptr<class Mesh>, entt::entity>> single;
+			std::unordered_map<std::shared_ptr<class Mesh>, std::unordered_map<size_t, std::vector<entt::entity>>> instanced;
+			std::vector<std::pair<std::shared_ptr<class Mesh>, std::pair<size_t, entt::entity>>> single;
 		};
 
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<class Material>, EntitiesByMesh>;
@@ -139,6 +140,12 @@ namespace Pengine
 			class SkeletalAnimator* skeletalAnimator,
 			std::shared_ptr<class BaseMaterial> baseMaterial,
 			std::shared_ptr<class Pipeline> pipeline);
+
+		static size_t GetLod(
+			const glm::vec3& cameraPosition,
+			const glm::vec3& meshPosition,
+			const float radius,
+			const std::vector<Mesh::Lod>& distanceThresholds);
 
 		std::unordered_map<std::string, std::shared_ptr<Pass>> m_PassesByName;
 	};

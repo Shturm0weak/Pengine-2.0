@@ -230,7 +230,7 @@ void MeshManager::ManipulateOnAllMaterialsDebug()
 			if (FileFormats::Mesh() == Utils::GetFileFormat(entry.path()))
 			{
 				auto mesh = LoadMesh(Utils::GetShortFilepath(entry.path()));
-				//Serializer::SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
+				Serializer::SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
 				// User code ...
 			}
 		}

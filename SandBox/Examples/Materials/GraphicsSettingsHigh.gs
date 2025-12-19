@@ -8,7 +8,7 @@ SSAO:
   ResolutionScale: 2
   ResolutionBlurScale: 1
 CSM:
-  IsEnabled: true
+  IsEnabled: false
   Quality: 1
   CascadeCount: 4
   SplitFactor: 0.899999976

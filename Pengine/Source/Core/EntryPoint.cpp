@@ -80,6 +80,7 @@ void CreateDefaultResources()
 		createInfo.vertices = vertices;
 		createInfo.vertexSize = sizeof(glm::vec2);
 		createInfo.vertexCount = 4;
+		createInfo.lods.emplace_back(Mesh::Lod{ .indexCount = createInfo.indices.size(), .indexOffset = 0, .distanceThreshold = 0.0f });
 		createInfo.vertexLayouts =
 		{
 			VertexLayout(createInfo.vertexSize, "Position")
@@ -122,6 +123,7 @@ void CreateDefaultResources()
 		createInfo.vertices = vertices;
 		createInfo.vertexSize = sizeof(glm::vec3);
 		createInfo.vertexCount = 8;
+		createInfo.lods.emplace_back(Mesh::Lod{ .indexCount = createInfo.indices.size(), .indexOffset = 0, .distanceThreshold = 0.0f });
 		createInfo.vertexLayouts =
 		{
 			VertexLayout(createInfo.vertexSize, "Position")

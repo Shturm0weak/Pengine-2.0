@@ -45,6 +45,7 @@
 #include <sstream>
 
 #include "fastgltf/tools.hpp"
+#include "meshoptimizer/src/meshoptimizer.h"
 
 using namespace Pengine;
 
@@ -1442,7 +1443,10 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 		mesh->GetCreateInfo().sourceFileInfo.meshName.size() +
 		mesh->GetCreateInfo().sourceFileInfo.filepath.string().size() +
 		sizeof(BoundingBox) +
-		10 * 4; // Type, Primitive Index, Source Mesh Size, Source Filepath Size, Vertex Count, Vertex Size, Index Count, Mesh Size, Filepath Size, Vertex Layout Count.
+		sizeof(Mesh::Lod) * mesh->GetLods().size() +
+		11 * 4;
+	// Type, Primitive Index, Source Mesh Size, Source Filepath Size, Vertex Count,
+	// Vertex Size, Index Count, Mesh Size, Filepath Size, Vertex Layout Count, Lod Count.
 
 	uint32_t offset = 0;
 
@@ -1467,6 +1471,20 @@ void Serializer::SerializeMesh(const std::filesystem::path& directory,  const st
 	{
 		memcpy(&Utils::GetValue<uint8_t>(data, offset), &mesh->GetBoundingBox(), sizeof(BoundingBox));
 		offset += sizeof(BoundingBox);
+	}
+
+	// Lods.
+	{
+		const auto& lods = mesh->GetLods();
+		const uint32_t lodCount = lods.size();
+		memcpy(&Utils::GetValue<uint8_t>(data, offset), &lodCount, sizeof(uint32_t));
+		offset += sizeof(uint32_t);
+
+		for (size_t i = 0; i < lodCount; i++)
+		{
+			memcpy(&Utils::GetValue<uint8_t>(data, offset), &lods[i], sizeof(Mesh::Lod));
+			offset += sizeof(Mesh::Lod);
+		}
 	}
 
 	// SourceFile.
@@ -1614,10 +1632,24 @@ Mesh::CreateInfo Serializer::DeserializeMesh(const std::filesystem::path& filepa
 		offset += sizeof(BoundingBox);
 	}
 
-	// SourceFile.
+	//// Lods.
+	std::vector<Mesh::Lod> lods;
 	{
-		Mesh::CreateInfo::SourceFileInfo sourceFile{};
+		size_t lodCount = 0;
+		memcpy(&lodCount, &Utils::GetValue<uint8_t>(data, offset), sizeof(uint32_t));
+		offset += sizeof(uint32_t);
 
+		lods.resize(lodCount);
+		for (size_t i = 0; i < lodCount; i++)
+		{
+			memcpy(&lods[i], &Utils::GetValue<uint8_t>(data, offset), sizeof(Mesh::Lod));
+			offset += sizeof(Mesh::Lod);
+		}
+	}
+
+	// SourceFile.
+	Mesh::CreateInfo::SourceFileInfo sourceFileInfo{};
+	{
 		std::string sourceFilepath;
 		// Filepath.
 		{
@@ -1628,22 +1660,22 @@ Mesh::CreateInfo Serializer::DeserializeMesh(const std::filesystem::path& filepa
 			memcpy(sourceFilepath.data(), &Utils::GetValue<uint8_t>(data, offset), sourcefilepathSize);
 			offset += sourcefilepathSize;
 		}
-		sourceFile.filepath = sourceFilepath;
+		sourceFileInfo.filepath = sourceFilepath;
 
 		// MeshName.
 		{
 			const uint32_t meshNameSize = Utils::GetValue<uint32_t>(data, offset);
 			offset += sizeof(uint32_t);
 
-			sourceFile.meshName.resize(meshNameSize);
-			memcpy(sourceFile.meshName.data(), &Utils::GetValue<uint8_t>(data, offset), meshNameSize);
+			sourceFileInfo.meshName.resize(meshNameSize);
+			memcpy(sourceFileInfo.meshName.data(), &Utils::GetValue<uint8_t>(data, offset), meshNameSize);
 			offset += meshNameSize;
 		}
 
 		uint32_t primitiveIndex;
 		// Primitive Index.
 		{
-			sourceFile.primitiveIndex = Utils::GetValue<uint32_t>(data, offset);
+			sourceFileInfo.primitiveIndex = Utils::GetValue<uint32_t>(data, offset);
 			offset += sizeof(uint32_t);
 		}
 	}
@@ -1707,6 +1739,7 @@ Mesh::CreateInfo Serializer::DeserializeMesh(const std::filesystem::path& filepa
 	Mesh::CreateInfo createInfo{};
 	createInfo.filepath = filepath;
 	createInfo.name = meshName;
+	createInfo.sourceFileInfo = sourceFileInfo;
 	createInfo.type = type;
 	createInfo.indices = indices;
 	createInfo.vertices = vertices;
@@ -1714,6 +1747,7 @@ Mesh::CreateInfo Serializer::DeserializeMesh(const std::filesystem::path& filepa
 	createInfo.vertexSize = vertexSize;
 	createInfo.vertexLayouts = vertexLayouts;
 	createInfo.boundingBox = boundingBox;
+	createInfo.lods = lods;
 
 	return createInfo;
 }
@@ -3145,6 +3179,103 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMesh(
 	}
 
 	Mesh::Type meshType = skinned ? Mesh::Type::SKINNED : Mesh::Type::STATIC;
+	const size_t vertexSize = meshType == Mesh::Type::STATIC ? sizeof(VertexDefault) : sizeof(VertexDefaultSkinned);
+	const size_t lodCount = options.lodCount;
+
+	auto generateLodTargets = [](size_t originalIndexCount, int lodCount, float startRatio = 1.0f, float endRatio = 0.2f)
+	{
+		std::vector<size_t> targets;
+		targets.reserve(lodCount);
+
+		if (lodCount == 1)
+		{
+			targets.push_back(originalIndexCount);
+			return targets;
+		}
+
+		for (int i = 0; i < lodCount; ++i)
+		{
+			const float t = static_cast<float>(i) / (lodCount - 1);
+			const float ratio = startRatio * std::pow(endRatio / startRatio, t);
+			size_t target = static_cast<size_t>(originalIndexCount * ratio);
+
+			target = std::max<size_t>(target, 3);
+
+			if (i > 0 && target >= targets.back())
+			{
+				target = std::max<size_t>(targets.back() / 2, 3);
+			}
+
+			target = std::min(target, originalIndexCount);
+			target = target - (target % 3);
+			targets.push_back(target);
+		}
+
+		return targets;
+	};
+
+
+	auto generateLODDistanceThresholds = [](
+		size_t lodCount,
+		float minDistance,
+		float maxDistance,
+		float curvePower = 2.0f)
+	{
+		std::vector<float> thresholds;
+
+		if (lodCount <= 1)
+		{
+			thresholds.push_back(minDistance);
+			return thresholds;
+		}
+
+		thresholds.resize(lodCount);
+
+		thresholds[0] = 0.0f;
+
+		for (size_t i = 1; i < lodCount; ++i)
+		{
+			float t = static_cast<float>(i + 1) / lodCount;
+			float ratio = std::pow(t, curvePower);
+			thresholds[i] = minDistance + (maxDistance - minDistance) * ratio;
+		}
+
+		return thresholds;
+	};
+
+	std::vector<size_t> lodsTargetIndexCount = generateLodTargets(indices.size(), lodCount, 1.0f, options.minIndexCountFactor);
+	std::vector<std::vector<uint32_t>> lodIndices(lodCount);
+	std::vector<Mesh::Lod> lods(lodCount);
+	std::vector<float> distanceThresholds = generateLODDistanceThresholds(lodCount, options.distanceMinMax.x, options.distanceMinMax.y);
+	size_t finalIndexCount = 0;
+	for (size_t i = 0; i < lodCount; i++)
+	{
+		lodIndices[i].resize(indices.size());
+		size_t indexCount = meshopt_simplify(
+			lodIndices[i].data(),
+			indices.data(),
+			indices.size(),
+			(float*)vertices,
+			vertexCount,
+			vertexSize,
+			lodsTargetIndexCount[i],
+			options.targetError,
+			0,
+			nullptr);
+
+		lodIndices[i].resize(indexCount);
+		lods[i].indexCount = indexCount;
+		lods[i].indexOffset = i == 0 ? 0 : lods[i - 1].indexOffset + lods[i - 1].indexCount;
+		lods[i].distanceThreshold = distanceThresholds[i];
+		finalIndexCount += indexCount;
+	}
+
+	indices.resize(finalIndexCount);
+	for (size_t i = 0; i < lodCount; i++)
+	{
+		memcpy(&indices[lods[i].indexOffset], lodIndices[i].data(), lods[i].indexCount * sizeof(uint32_t));
+	}
+
 	Mesh::CreateInfo createInfo{};
 	if (meshType == Mesh::Type::STATIC)
 	{
@@ -3155,7 +3286,8 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMesh(
 		createInfo.indices = std::move(indices);
 		createInfo.vertices = vertices;
 		createInfo.vertexCount = vertexCount;
-		createInfo.vertexSize = sizeof(VertexDefault);
+		createInfo.vertexSize = vertexSize;
+		createInfo.lods = lods;
 		createInfo.vertexLayouts =
 		{
 			VertexLayout(sizeof(VertexPosition), "Position"),
@@ -3172,7 +3304,8 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMesh(
 		createInfo.indices = std::move(indices);
 		createInfo.vertices = vertices;
 		createInfo.vertexCount = vertexCount;
-		createInfo.vertexSize = sizeof(VertexDefaultSkinned);
+		createInfo.vertexSize = vertexSize;
+		createInfo.lods = lods;
 		createInfo.vertexLayouts =
 		{
 			VertexLayout(sizeof(VertexPosition), "Position"),

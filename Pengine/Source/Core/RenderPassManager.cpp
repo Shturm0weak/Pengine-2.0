@@ -569,6 +569,12 @@ void RenderPassManager::CreateGBuffer()
 				continue;
 			}
 
+			auto lod = GetLod(
+				camera.GetEntity()->GetComponent<Transform>().GetPosition(),
+				transform.GetPosition(),
+				glm::length(transform.GetScale() * glm::max(glm::abs(r3d.mesh->GetBoundingBox().min), glm::abs(r3d.mesh->GetBoundingBox().max))),
+				r3d.mesh->GetLods());
+
 			if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
 			{
 				if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
@@ -580,11 +586,11 @@ void RenderPassManager::CreateGBuffer()
 					}
 				}
 
-				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].single.emplace_back(std::make_pair(r3d.mesh, entity));
+				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].single.emplace_back(std::make_pair(r3d.mesh, std::make_pair(lod, entity)));
 			}
 			else if (r3d.mesh->GetType() == Mesh::Type::STATIC)
 			{
-				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh].emplace_back(entity);
+				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh][lod].emplace_back(entity);
 			}
 
 			if (scene->GetSettings().drawBoundingBoxes)
@@ -645,39 +651,45 @@ void RenderPassManager::CreateGBuffer()
 					continue;
 				}
 
-				for (const auto& [mesh, entities] : gameObjectsByMeshes.instanced)
+				for (const auto& [mesh, entitiesByLod] : gameObjectsByMeshes.instanced)
 				{
-					const size_t instanceDataOffset = instanceDatas.size();
-
-					for (const entt::entity& entity : entities)
+					for (const auto& [lod, entities] : entitiesByLod)
 					{
-						InstanceData data{};
-						const Transform& transform = registry.get<Transform>(entity);
-						data.transform = transform.GetTransform();
-						data.inverseTransform = glm::transpose(transform.GetInverseTransform());
-						instanceDatas.emplace_back(data);
+						const size_t instanceDataOffset = instanceDatas.size();
+
+						for (const entt::entity& entity : entities)
+						{
+							InstanceData data{};
+							const Transform& transform = registry.get<Transform>(entity);
+							data.transform = transform.GetTransform();
+							data.inverseTransform = glm::transpose(transform.GetInverseTransform());
+							instanceDatas.emplace_back(data);
+						}
+
+						std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+						std::vector<size_t> vertexBufferOffsets;
+						GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
+
+						renderInfo.renderer->Render(
+							vertexBuffers,
+							vertexBufferOffsets,
+							mesh->GetIndexBuffer(),
+							mesh->GetLods()[lod].indexOffset * sizeof(uint32_t),
+							mesh->GetLods()[lod].indexCount,
+							pipeline,
+							instanceBuffer,
+							instanceDataOffset * instanceBuffer->GetInstanceSize(),
+							entities.size(),
+							uniformWriters,
+							renderInfo.frame);
 					}
-
-					std::vector<std::shared_ptr<Buffer>> vertexBuffers;
-					std::vector<size_t> vertexBufferOffsets;
-					GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
-
-					renderInfo.renderer->Render(
-						vertexBuffers,
-						vertexBufferOffsets,
-						mesh->GetIndexBuffer(),
-						0,
-						mesh->GetIndexCount(),
-						pipeline,
-						instanceBuffer,
-						instanceDataOffset* instanceBuffer->GetInstanceSize(),
-						entities.size(),
-						uniformWriters,
-						renderInfo.frame);
 				}
 
-				for (const auto& [mesh, entity] : gameObjectsByMeshes.single)
+				for (const auto& [mesh, lodEntityPair] : gameObjectsByMeshes.single)
 				{
+					const auto& lod = lodEntityPair.first;
+					const auto& entity = lodEntityPair.second;
+
 					const size_t instanceDataOffset = instanceDatas.size();
 
 					InstanceData data{};
@@ -708,8 +720,8 @@ void RenderPassManager::CreateGBuffer()
 							vertexBuffers,
 							vertexBufferOffsets,
 							mesh->GetIndexBuffer(),
-							0,
-							mesh->GetIndexCount(),
+							mesh->GetLods()[lod].indexOffset * sizeof(uint32_t),
+							mesh->GetLods()[lod].indexCount,
 							pipeline,
 							instanceBuffer,
 							instanceDataOffset * instanceBuffer->GetInstanceSize(),
@@ -751,8 +763,8 @@ void RenderPassManager::CreateGBuffer()
 					vertexBuffers,
 					vertexBufferOffsets,
 					cubeMesh->GetIndexBuffer(),
-					0,
-					cubeMesh->GetIndexCount(),
+					cubeMesh->GetLods()[0].indexOffset * sizeof(uint32_t),
+					cubeMesh->GetLods()[0].indexCount,
 					pipeline,
 					nullptr,
 					0,
@@ -1060,8 +1072,8 @@ void RenderPassManager::CreateAtmosphere()
 			vertexBuffers,
 			vertexBufferOffsets,
 			plane->GetIndexBuffer(),
-			0,
-			plane->GetIndexCount(),
+			plane->GetLods()[0].indexOffset * sizeof(uint32_t),
+			plane->GetLods()[0].indexCount,
 			pipeline,
 			nullptr,
 			0,
@@ -1244,7 +1256,7 @@ void RenderPassManager::CreateTransparent()
 			for (RenderData& renderData : renderDataByRenderingOrder)
 			{
 				const glm::vec3 boundingBoxWorldPosition = renderData.position + renderData.r3d.mesh->GetBoundingBox().offset * renderData.scale;
-				const glm::vec3 direction = glm::normalize((boundingBoxWorldPosition)-cameraPosition);
+				const glm::vec3 direction = glm::normalize((boundingBoxWorldPosition) - cameraPosition);
 
 				Raycast::Hit hit{};
 				if (Raycast::IntersectBoxOBB(
@@ -1341,8 +1353,8 @@ void RenderPassManager::CreateTransparent()
 					vertexBuffers,
 					vertexBufferOffsets,
 					renderData.r3d.mesh->GetIndexBuffer(),
-					0,
-					renderData.r3d.mesh->GetIndexCount(),
+					renderData.r3d.mesh->GetLods()[0].indexOffset * sizeof(uint32_t),
+					renderData.r3d.mesh->GetLods()[0].indexCount,
 					pipeline,
 					instanceBuffer,
 					instanceDataOffset * instanceBuffer->GetInstanceSize(),
@@ -1523,6 +1535,12 @@ void RenderPassManager::CreateCSM()
 				continue;
 			}
 
+			auto lod = GetLod(
+				camera.GetEntity()->GetComponent<Transform>().GetPosition(),
+				transform.GetPosition(),
+				glm::length(transform.GetScale() * glm::max(glm::abs(r3d.mesh->GetBoundingBox().min), glm::abs(r3d.mesh->GetBoundingBox().max))),
+				r3d.mesh->GetLods());
+
 			if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
 			{
 				if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
@@ -1534,11 +1552,11 @@ void RenderPassManager::CreateCSM()
 					}
 				}
 
-				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].single.emplace_back(std::make_pair(r3d.mesh, entity));
+				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].single.emplace_back(std::make_pair(r3d.mesh, std::make_pair(lod, entity)));
 			}
 			else if (r3d.mesh->GetType() == Mesh::Type::STATIC)
 			{
-				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh].emplace_back(entity);
+				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh][lod].emplace_back(entity);
 			}
 
 			renderableCount++;
@@ -1624,38 +1642,44 @@ void RenderPassManager::CreateCSM()
 					continue;
 				}
 
-				for (const auto& [mesh, entities] : gameObjectsByMeshes.instanced)
+				for (const auto& [mesh, entitiesByLod] : gameObjectsByMeshes.instanced)
 				{
-					const size_t instanceDataOffset = instanceDatas.size();
-
-					for (const entt::entity& entity : entities)
+					for (const auto& [lod, entities] : entitiesByLod)
 					{
-						InstanceDataCSM data{};
-						const Transform& transform = registry.get<Transform>(entity);
-						data.transform = transform.GetTransform();
-						instanceDatas.emplace_back(data);
+						const size_t instanceDataOffset = instanceDatas.size();
+
+						for (const entt::entity& entity : entities)
+						{
+							InstanceDataCSM data{};
+							const Transform& transform = registry.get<Transform>(entity);
+							data.transform = transform.GetTransform();
+							instanceDatas.emplace_back(data);
+						}
+
+						std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+						std::vector<size_t> vertexBufferOffsets;
+						GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
+
+						renderInfo.renderer->Render(
+							vertexBuffers,
+							vertexBufferOffsets,
+							mesh->GetIndexBuffer(),
+							mesh->GetLods()[lod].indexOffset * sizeof(uint32_t),
+							mesh->GetLods()[lod].indexCount,
+							pipeline,
+							instanceBuffer,
+							instanceDataOffset * instanceBuffer->GetInstanceSize(),
+							entities.size(),
+							uniformWriters,
+							renderInfo.frame);
 					}
-
-					std::vector<std::shared_ptr<Buffer>> vertexBuffers;
-					std::vector<size_t> vertexBufferOffsets;
-					GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
-
-					renderInfo.renderer->Render(
-						vertexBuffers,
-						vertexBufferOffsets,
-						mesh->GetIndexBuffer(),
-						0,
-						mesh->GetIndexCount(),
-						pipeline,
-						instanceBuffer,
-						instanceDataOffset * instanceBuffer->GetInstanceSize(),
-						entities.size(),
-						uniformWriters,
-						renderInfo.frame);
 				}
 
-				for (const auto& [mesh, entity] : gameObjectsByMeshes.single)
+				for (const auto& [mesh, lodEntityPair] : gameObjectsByMeshes.single)
 				{
+					const auto& lod = lodEntityPair.first;
+					const auto& entity = lodEntityPair.second;
+
 					const size_t instanceDataOffset = instanceDatas.size();
 
 					const Transform& transform = registry.get<Transform>(entity);
@@ -1681,8 +1705,8 @@ void RenderPassManager::CreateCSM()
 							vertexBuffers,
 							vertexBufferOffsets,
 							mesh->GetIndexBuffer(),
-							0,
-							mesh->GetIndexCount(),
+							mesh->GetLods()[lod].indexOffset * sizeof(uint32_t),
+							mesh->GetLods()[lod].indexCount,
 							pipeline,
 							instanceBuffer,
 							instanceDataOffset * instanceBuffer->GetInstanceSize(),
@@ -1894,8 +1918,8 @@ void RenderPassManager::CreateBloom()
 					vertexBuffers,
 					vertexBufferOffsets,
 					plane->GetIndexBuffer(),
-					0,
-					plane->GetIndexCount(),
+					plane->GetLods()[0].indexOffset * sizeof(uint32_t),
+					plane->GetLods()[0].indexCount,
 					pipeline,
 					nullptr,
 					0,
@@ -1957,8 +1981,8 @@ void RenderPassManager::CreateBloom()
 					vertexBuffers,
 					vertexBufferOffsets,
 					plane->GetIndexBuffer(),
-					0,
-					plane->GetIndexCount(),
+					plane->GetLods()[0].indexOffset * sizeof(uint32_t),
+					plane->GetLods()[0].indexCount,
 					pipeline,
 					nullptr,
 					0,
@@ -2649,8 +2673,8 @@ void RenderPassManager::CreateDecalPass()
 					vertexBuffers,
 					vertexBufferOffsets,
 					unitCubeMesh->GetIndexBuffer(),
-					0,
-					unitCubeMesh->GetIndexCount(),
+					unitCubeMesh->GetLods()[0].indexOffset * sizeof(uint32_t),
+					unitCubeMesh->GetLods()[0].indexCount,
 					pipeline,
 					instanceBuffer,
 					instanceDataOffset * instanceBuffer->GetInstanceSize(),
@@ -2751,8 +2775,8 @@ void RenderPassManager::CreateToneMappingPass()
 			vertexBuffers,
 			vertexBufferOffsets,
 			plane->GetIndexBuffer(),
-			0,
-			plane->GetIndexCount(),
+			plane->GetLods()[0].indexOffset * sizeof(uint32_t),
+			plane->GetLods()[0].indexCount,
 			pipeline,
 			nullptr,
 			0,
@@ -2841,8 +2865,8 @@ void RenderPassManager::CreateAntiAliasingAndComposePass()
 			vertexBuffers,
 			vertexBufferOffsets,
 			plane->GetIndexBuffer(),
-			0,
-			plane->GetIndexCount(),
+			plane->GetLods()[0].indexOffset * sizeof(uint32_t),
+			plane->GetLods()[0].indexCount,
 			pipeline,
 			nullptr,
 			0,
@@ -3030,4 +3054,28 @@ void RenderPassManager::UpdateSkeletalAnimator(
 
 	baseMaterial->WriteToBuffer(skeletalAnimator->GetBuffer(), "BoneMatrices", "boneMatrices", *skeletalAnimator->GetFinalBoneMatrices().data());
 	skeletalAnimator->GetBuffer()->Flush();
+}
+
+size_t RenderPassManager::GetLod(
+	const glm::vec3& cameraPosition,
+	const glm::vec3& meshPosition,
+	const float radius,
+	const std::vector<Mesh::Lod>& lods)
+{
+	if (lods.size() == 1)
+	{
+		return lods.size() - 1;
+	}
+
+	const float distance = glm::length(cameraPosition - meshPosition) - radius;
+
+	for (int i = 1; i < lods.size(); ++i)
+	{
+		if (distance <= lods[i].distanceThreshold)
+		{
+			return i - 1;
+		}
+	}
+
+	return lods.size() - 1;
 }

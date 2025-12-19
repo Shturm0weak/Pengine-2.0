@@ -21,6 +21,13 @@ namespace Pengine
 			SKINNED
 		};
 
+		struct Lod
+		{
+			size_t indexCount = 0;
+			size_t indexOffset = 0;
+			float distanceThreshold = 0.0f;
+		};
+
 		struct CreateInfo
 		{
 			struct SourceFileInfo
@@ -34,7 +41,8 @@ namespace Pengine
 			std::string name;
 			std::filesystem::path filepath;
 			std::vector<VertexLayout> vertexLayouts;
-			uint32_t vertexCount = 0;
+			std::vector<Lod> lods;
+			size_t vertexCount = 0;
 			uint32_t vertexSize = 0;
 			void* vertices = nullptr;
 			std::vector<uint32_t> indices;
@@ -65,9 +73,9 @@ namespace Pengine
 
 		[[nodiscard]] const std::vector<uint32_t>& GetRawIndices() const { return m_CreateInfo.indices; };
 
-		[[nodiscard]] uint32_t GetVertexCount() const { return m_CreateInfo.vertexCount; }
+		[[nodiscard]] size_t GetVertexCount() const { return m_CreateInfo.vertexCount; }
 
-		[[nodiscard]] uint32_t GetIndexCount() const { return m_CreateInfo.indices.size(); }
+		[[nodiscard]] size_t GetIndexCount() const { return m_CreateInfo.indices.size(); }
 
 		[[nodiscard]] uint32_t GetVertexSize() const { return m_CreateInfo.vertexSize; }
 
@@ -82,6 +90,8 @@ namespace Pengine
 		[[nodiscard]] const CreateInfo GetCreateInfo() const { return m_CreateInfo; }
 
 		[[nodiscard]] std::shared_ptr<MeshBVH> GetBVH() const { return m_BVH; }
+
+		[[nodiscard]] const std::vector<Lod>& GetLods() const { return m_CreateInfo.lods; }
 
 		[[nodiscard]] bool Raycast(
 			const glm::vec3& start,
