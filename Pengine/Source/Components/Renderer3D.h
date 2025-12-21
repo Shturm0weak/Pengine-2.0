@@ -26,7 +26,7 @@ namespace Pengine
 		uint8_t objectVisibilityMask = -1;
 		uint8_t shadowVisibilityMask = -1;
 
-		UUID skeletalAnimatorEntityUUID;
+		UUID skeletalAnimatorEntityUUID = UUID(0, 0);
 
 		~Renderer3D();
 	};
