@@ -1,0 +1,20 @@
+Basemat:
+  Pipelines:
+    - RenderPass: SSS
+      Type: Compute
+      Compute: Shaders/SSS.comp
+      DescriptorSets:
+        - Type: Renderer
+          RenderPass: SSS
+          Set: 0
+        - Type: Renderer
+          RenderPass: DefaultReflection
+          Set: 1
+        - Type: Renderer
+          RenderPass: Lights
+          Set: 2
+      Uniforms:
+        - Name: normalTexture
+          TextureAttachment: "GBuffer[1]"
+        - Name: depthTexture
+          TextureAttachment: "GBuffer[4]"

@@ -17,6 +17,8 @@ namespace Pengine
 	const std::string Transparent = "Transparent";
 	const std::string SSAO = "SSAO";
 	const std::string SSAOBlur = "SSAOBlur";
+	const std::string SSS = "SSS";
+	const std::string SSSBlur = "SSSBlur";
 	const std::string CSM = "CSM";
 	const std::string Bloom = "Bloom";
 	const std::string ToneMapping = "ToneMapping";

@@ -28,6 +28,9 @@ Basemat:
         - Name: ssaoTexture
           TextureAttachment: "SSAOBlur"
           TextureAttachmentDefault: "White"
+        - Name: sssTexture
+          TextureAttachment: "SSSBlur"
+          TextureAttachmentDefault: "Black"
         - Name: CSMTexture
           TextureAttachment: "CSM[0]"
           TextureAttachmentDefault: "WhiteLayered"

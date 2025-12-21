@@ -5,7 +5,8 @@ layout(set = 1, binding = 1) uniform sampler2D normalTexture;
 layout(set = 1, binding = 2) uniform sampler2D shadingTexture;
 layout(set = 1, binding = 3) uniform sampler2D depthTexture;
 layout(set = 1, binding = 4) uniform sampler2D ssaoTexture;
-layout(set = 1, binding = 5) uniform sampler2DArray CSMTexture;
+layout(set = 1, binding = 5) uniform sampler2D sssTexture;
+layout(set = 1, binding = 6) uniform sampler2DArray CSMTexture;
 
 #include "Shaders/Includes/IsBrightPixel.h"
 #include "Shaders/Includes/PointLight.h"
@@ -33,58 +34,6 @@ layout(set = 2, binding = 0) uniform Lights
 
 layout(set = 3, binding = 0, r11f_g11f_b10f) uniform writeonly image2D outColor;
 layout(set = 3, binding = 1, r11f_g11f_b10f) uniform image2D outEmissive;
-
-vec3 ScreenSpaceShadows(vec3 positionViewSpace, vec3 lightDirection, vec2 viewRay)
-{
-	uint  g_sss_max_steps        = 32;     // Max ray steps, affects quality and performance.
-	float g_sss_ray_max_distance = 1.0f;  // Max shadow length, longer shadows are less accurate.
-	float g_sss_thickness        = 0.03f;  // Depth testing thickness.
-	float g_sss_step_length      = g_sss_ray_max_distance / float(g_sss_max_steps);
-    // Compute ray position and direction (in view-space)
-    vec3 ray_pos = positionViewSpace;
-    vec3 ray_dir = lightDirection;
-
-    // Compute ray step
-    vec3 ray_step = ray_dir * g_sss_step_length;
-	ray_pos += ray_step * 5;
-    // Ray march towards the light
-    float occlusion = 0.0;
-    vec2 ray_uv   = vec2(0.0f);
-    for (uint i = 0; i < g_sss_max_steps; i++)
-    {
-        // Step the ray
-        ray_pos += ray_step;
-
-		vec4 clipPos = camera.projectionMat4 * vec4(ray_pos, 1.0f);
-        if (clipPos.w <= 0.0) break; // Behind camera
-		vec3 ndc = clipPos.xyz / clipPos.w;
-        ray_uv = ndc.xy * 0.5 + 0.5;
-		
-        // Ensure the UV coordinates are inside the screen
-        if ((ray_uv.x >= 0.0f && ray_uv.x <= 1.0f) && (ray_uv.y >= 0.0f && ray_uv.y <= 1.0f))
-        {
-			ray_uv.y = 1.0f - ray_uv.y;
-
-            // Compute the difference between the ray's and the camera's depth
-            float depth_z = CalculatePositionFromDepth(
-				texture(depthTexture, ray_uv).x,
-				camera.projectionMat4,
-				viewRay).z;
-            float depth_delta = ray_pos.z - depth_z;
-
-            // Check if the camera can't "see" the ray (ray depth must be larger than the camera depth, so positive depth_delta)
-            if ((depth_delta > 0.001f) && (depth_delta < g_sss_thickness))
-            {
-                // Mark as occluded
-                occlusion = 1.0f;
-
-                break;
-            }
-        }
-    }
-
-    return vec3(occlusion);
-}
 
 layout (local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
 void main()
@@ -133,8 +82,8 @@ void main()
 					directionalLight.direction);
 			}
 
-			//shadow += vec3(ScreenSpaceShadows(positionViewSpace, directionalLight.direction, viewRay));
-			//shadow = clamp(shadow, vec3(0.0f), vec3(1.0f));
+			shadow += vec3(texture(sssTexture, uv).r);
+			shadow = clamp(shadow, vec3(0.0f), vec3(1.0f));
 
 			vec3 basicReflectivity = mix(vec3(0.05), albedoColor, shading.x);
 			vec3 viewDirection = normalize(-positionViewSpace);

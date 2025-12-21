@@ -45,7 +45,8 @@ layout(set = 2, binding = 1) uniform sampler2D deferredNormalTexture;
 layout(set = 2, binding = 2) uniform sampler2D deferredShadingTexture;
 layout(set = 2, binding = 3) uniform sampler2D deferredDepthTexture;
 layout(set = 2, binding = 4) uniform sampler2D deferredSsaoTexture;
-layout(set = 2, binding = 5) uniform sampler2DArray deferredCSMTexture;
+layout(set = 2, binding = 5) uniform sampler2D deferredSssTexture;
+layout(set = 2, binding = 6) uniform sampler2DArray deferredCSMTexture;
 
 layout(set = 3, binding = 0) uniform Lights
 {

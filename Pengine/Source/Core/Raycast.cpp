@@ -135,7 +135,7 @@ bool Raycast::IntersectBoxAABB(
 
 	return true;
 }
-#include "Timer.h"
+
 std::map<Raycast::Hit, std::shared_ptr<Entity>> Raycast::RaycastScene(
 	std::shared_ptr<Scene> scene,
 	const glm::vec3& start,
@@ -144,7 +144,6 @@ std::map<Raycast::Hit, std::shared_ptr<Entity>> Raycast::RaycastScene(
 {
 	PROFILER_SCOPE(__FUNCTION__);
 
-	Timer timer;
 	const auto sceneBvhHits = scene->GetBVH()->Raycast(start, direction, length);
 
 	std::map<Hit, std::shared_ptr<Entity>> hits;

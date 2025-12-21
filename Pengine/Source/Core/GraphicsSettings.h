@@ -39,33 +39,58 @@ namespace Pengine
 
 		struct Shadows
 		{
-			enum class Filter : int
+			struct CSM
 			{
-				None = 0,
-				PCF = 1,
-				PoissonDisk = 2
-			};
+				enum class Filter : int
+				{
+					None = 0,
+					PCF = 1,
+					PoissonDisk = 2
+				};
 
-			bool isEnabled = true;
-			std::vector<float> biases = { 0.0f, 0.0f, 0.0f };
-			float splitFactor = 0.75f;
-			float maxDistance = 200.0f;
-			float fogFactor = 0.2f;
-			Filter filter = Filter::PoissonDisk;
-			bool stabilizeCascades = true;
-			bool visualize = false;
-			int pcfRange = 1;
+				bool isEnabled = true;
+				std::vector<float> biases = { 0.0f, 0.0f, 0.0f };
+				float splitFactor = 0.75f;
+				float maxDistance = 200.0f;
+				float fogFactor = 0.2f;
+				Filter filter = Filter::PoissonDisk;
+				bool stabilizeCascades = true;
+				bool visualize = false;
+				int pcfRange = 1;
 
-			/**
-			 * Resolution: 1024 / 2048 / 4096
-			 * 1024 by default.
-			 */
-			int quality = 1;
+				/**
+				 * Resolution: 1024 / 2048 / 4096
+				 * 1024 by default.
+				 */
+				int quality = 1;
+
+				/**
+				 * Has to be more than 1.
+				 */
+				int cascadeCount = 3;
+			} csm;
 			
-			/**
-			 * Has to be more than 1.
-			 */
-			int cascadeCount = 3;
+			struct SSS
+			{
+				/**
+				 * Resolution scale: 0.25 / 0.5 / 0.75 / 1.0
+				 * 0.75 by default.
+				 */
+				int resolutionScale = 2;
+
+				/**
+				 * Resolution scale: 0.25 / 0.5 / 0.75 / 1.0
+				 * 0.75 by default.
+				 */
+				int resolutionBlurScale = 2;
+
+				bool isEnabled = true;
+				int maxSteps = 16;
+				float maxRayDistance = 0.1f;
+				float maxDistance = 5.0f;
+				float minThickness = -0.0125f;
+				float maxThickness = 0.00015f;
+			} sss;
 		} shadows;
 
 		struct Bloom

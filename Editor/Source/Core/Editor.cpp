@@ -1186,64 +1186,107 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 
 		if (ImGui::CollapsingHeader("Shadows"))
 		{
-			ImGui::PushID("Shadows Is Enabled");
-			isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.shadows.isEnabled);
-			ImGui::PopID();
-
-			const char* const qualities[] = { "1024", "2048", "4096" };
-			ImGui::PushID("Shadows Quality");
-			isChangedToSerialize += ImGui::Combo("Quality", &graphicsSettings.shadows.quality, qualities, 3);
-			ImGui::PopID();
-
-			ImGui::PushID("Shadows Cascade Count");
-			if (ImGui::SliderInt("Cascade Count", &graphicsSettings.shadows.cascadeCount, 2, 10))
+			Indent indent;
+			if (ImGui::CollapsingHeader("CSM"))
 			{
-				isChangedToSerialize += true;
+				Indent indent;
+				ImGui::PushID("Shadows Is Enabled");
+				isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.shadows.csm.isEnabled);
+				ImGui::PopID();
 
-				graphicsSettings.shadows.biases.resize(graphicsSettings.shadows.cascadeCount, 0.0f);
+				const char* const qualities[] = { "1024", "2048", "4096" };
+				ImGui::PushID("Shadows Quality");
+				isChangedToSerialize += ImGui::Combo("Quality", &graphicsSettings.shadows.csm.quality, qualities, 3);
+				ImGui::PopID();
+
+				ImGui::PushID("Shadows Cascade Count");
+				if (ImGui::SliderInt("Cascade Count", &graphicsSettings.shadows.csm.cascadeCount, 2, 10))
+				{
+					isChangedToSerialize += true;
+
+					graphicsSettings.shadows.csm.biases.resize(graphicsSettings.shadows.csm.cascadeCount, 0.0f);
+				}
+				ImGui::PopID();
+
+				ImGui::PushID("Shadows Visualize");
+				ImGui::Checkbox("Visualize", &graphicsSettings.shadows.csm.visualize);
+				ImGui::PopID();
+
+				ImGui::PushID("Shadows Stabilize Cascades");
+				ImGui::Checkbox("Stabilize Cascades", &graphicsSettings.shadows.csm.stabilizeCascades);
+				ImGui::PopID();
+
+				const char* const filters[] = { "None", "PCF", "PoissonDisk" };
+				int currentFilter = (int)graphicsSettings.shadows.csm.filter;
+				ImGui::PushID("Shadows Filters");
+				if (ImGui::Combo("Filter", &currentFilter, filters, 3))
+				{
+					graphicsSettings.shadows.csm.filter = (GraphicsSettings::Shadows::CSM::Filter)currentFilter;
+					isChangedToSerialize += 1;
+				}
+				ImGui::PopID();
+
+				ImGui::PushID("Shadows Pcf Range");
+				isChangedToSerialize += ImGui::SliderInt("Pcf Range", &graphicsSettings.shadows.csm.pcfRange, 1, 5);
+				ImGui::PopID();
+
+				ImGui::PushID("Shadows Split Factor");
+				isChangedToSerialize += ImGui::SliderFloat("Split Factor", &graphicsSettings.shadows.csm.splitFactor, 0.0f, 1.0f);
+				ImGui::PopID();
+
+				ImGui::PushID("Shadows Max Distance");
+				isChangedToSerialize += ImGui::SliderFloat("Max Distance", &graphicsSettings.shadows.csm.maxDistance, 0.0f, 1000.0f);
+				ImGui::PopID();
+
+				ImGui::PushID("Shadows Fog Factor");
+				isChangedToSerialize += ImGui::SliderFloat("Fog Factor", &graphicsSettings.shadows.csm.fogFactor, 0.0f, 1.0f);
+				ImGui::PopID();
+
+				for (size_t i = 0; i < graphicsSettings.shadows.csm.biases.size(); i++)
+				{
+					const std::string biasName = "Bias " + std::to_string(i);
+					const std::string idName = "Shadows " + biasName;
+					ImGui::PushID(idName.c_str());
+					isChangedToSerialize += ImGui::SliderFloat(biasName.c_str(), &graphicsSettings.shadows.csm.biases[i], 0.0f, 1.0f);
+					ImGui::PopID();
+				}
 			}
-			ImGui::PopID();
 
-			ImGui::PushID("Shadows Visualize");
-			ImGui::Checkbox("Visualize", &graphicsSettings.shadows.visualize);
-			ImGui::PopID();
-
-			ImGui::PushID("Shadows Stabilize Cascades");
-			ImGui::Checkbox("Stabilize Cascades", &graphicsSettings.shadows.stabilizeCascades);
-			ImGui::PopID();
-
-			const char* const filters[] = { "None", "PCF", "PoissonDisk" };
-			int currentFilter = (int)graphicsSettings.shadows.filter;
-			ImGui::PushID("Shadows Filters");
-			if (ImGui::Combo("Filter", &currentFilter, filters, 3))
+			if (ImGui::CollapsingHeader("SSS"))
 			{
-				graphicsSettings.shadows.filter = (GraphicsSettings::Shadows::Filter)currentFilter;
-				isChangedToSerialize += 1;
-			}
-			ImGui::PopID();
+				Indent indent;
 
-			ImGui::PushID("Shadows Pcf Range");
-			isChangedToSerialize += ImGui::SliderInt("Pcf Range", &graphicsSettings.shadows.pcfRange, 1, 5);
-			ImGui::PopID();
+				ImGui::PushID("SSS Is Enabled");
+				isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.shadows.sss.isEnabled);
+				ImGui::PopID();
 
-			ImGui::PushID("Shadows Split Factor");
-			isChangedToSerialize += ImGui::SliderFloat("Split Factor", &graphicsSettings.shadows.splitFactor, 0.0f, 1.0f);
-			ImGui::PopID();
+				const char* const resolutionScales[] = { "0.25", "0.5", "0.75", "1.0" };
+				ImGui::PushID("SSS Quality");
+				isChangedToSerialize += ImGui::Combo("Quality", &graphicsSettings.shadows.sss.resolutionScale, resolutionScales, 4);
+				ImGui::PopID();
 
-			ImGui::PushID("Shadows Max Distance");
-			isChangedToSerialize += ImGui::SliderFloat("Max Distance", &graphicsSettings.shadows.maxDistance, 0.0f, 1000.0f);
-			ImGui::PopID();
+				ImGui::PushID("SSS Blur Quality");
+				isChangedToSerialize += ImGui::Combo("Blur Quality", &graphicsSettings.shadows.sss.resolutionBlurScale, resolutionScales, 4);
+				ImGui::PopID();
 
-			ImGui::PushID("Shadows Fog Factor");
-			isChangedToSerialize += ImGui::SliderFloat("Fog Factor", &graphicsSettings.shadows.fogFactor, 0.0f, 1.0f);
-			ImGui::PopID();
+				ImGui::PushID("SSS Max Steps");
+				isChangedToSerialize += ImGui::SliderInt("Max Steps", &graphicsSettings.shadows.sss.maxSteps, 1, 128);
+				ImGui::PopID();
 
-			for (size_t i = 0; i < graphicsSettings.shadows.biases.size(); i++)
-			{
-				const std::string biasName = "Bias " + std::to_string(i);
-				const std::string idName = "Shadows " + biasName;
-				ImGui::PushID(idName.c_str());
-				isChangedToSerialize += ImGui::SliderFloat(biasName.c_str(), &graphicsSettings.shadows.biases[i], 0.0f, 1.0f);
+				ImGui::PushID("SSS Max Ray Distance");
+				isChangedToSerialize += ImGui::SliderFloat("Max Ray Distance", &graphicsSettings.shadows.sss.maxRayDistance, 0.0f, 5.0f);
+				ImGui::PopID();
+
+				ImGui::PushID("SSS Max Distance");
+				isChangedToSerialize += ImGui::SliderFloat("Max Distance", &graphicsSettings.shadows.sss.maxDistance, 0.0f, 5.0f);
+				ImGui::PopID();
+
+				ImGui::PushID("SSS Min Thickness");
+				isChangedToSerialize += ImGui::SliderFloat("Min Thickness", &graphicsSettings.shadows.sss.minThickness, -0.1f, 0.0f, "%.6f");
+				ImGui::PopID();
+
+				ImGui::PushID("SSS Max Thickness");
+				isChangedToSerialize += ImGui::SliderFloat("Max Thickness", &graphicsSettings.shadows.sss.maxThickness, 0.0f, 0.01f, "%.6f");
 				ImGui::PopID();
 			}
 		}

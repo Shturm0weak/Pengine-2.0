@@ -101,6 +101,10 @@ namespace Pengine
 
 		void CreateSSAOBlur();
 
+		void CreateSSS();
+
+		void CreateSSSBlur();
+
 		void CreateUI();
 
 		void CreateDecalPass();

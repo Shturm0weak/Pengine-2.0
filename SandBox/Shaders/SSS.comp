@@ -1,0 +1,76 @@
+#version 450
+
+layout(set = 0, binding = 0, r8) uniform writeonly image2D outColor;
+
+layout(set = 0, binding = 1) uniform SSS
+{
+    int maxSteps;
+    float maxRayDistance;
+    float maxDistance;
+    float minThickness;
+    float maxThickness;
+    vec2 viewportScale;
+};
+
+#include "Shaders/Includes/Camera.h"
+#include "Shaders/Includes/SSS.h"
+#include "Shaders/Includes/CSM.h"
+#include "Shaders/Includes/PointLight.h"
+#include "Shaders/Includes/DirectionalLight.h"
+
+layout(set = 1, binding = 0) uniform GlobalBuffer
+{
+    Camera camera;
+};
+
+layout(set = 0, binding = 2) uniform sampler2D depthTexture;
+layout(set = 0, binding = 3) uniform sampler2D normalTexture;
+
+layout(set = 2, binding = 0) uniform Lights
+{
+	PointLight pointLights[32];
+	int pointLightsCount;
+
+	DirectionalLight directionalLight;
+	int hasDirectionalLight;
+
+	float brightnessThreshold;
+
+	CSM csm;
+};
+
+layout (local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+void main()
+{
+    vec2 sssSize = camera.viewportSize * viewportScale;
+	ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
+    vec2 uv = (vec2(pixelCoord) + vec2(0.5f)) / sssSize;
+	vec2 screenPosition = uv * 2.0f - 1.0f;
+	uv.y = 1.0f - uv.y;
+
+	vec2 viewRay;
+	viewRay.x = -screenPosition.x * camera.aspectRatio * camera.tanHalfFOV;
+    viewRay.y = -screenPosition.y * camera.tanHalfFOV;
+
+    vec3 positionViewSpace = CalculatePositionFromDepth(
+        texture(depthTexture, uv).x,
+        camera.projectionMat4,
+        viewRay);
+
+    vec3 shadow = ScreenSpaceShadows(
+        depthTexture,
+        positionViewSpace,
+        directionalLight.direction,
+        viewRay,
+        camera.projectionMat4,
+        maxSteps,
+        maxRayDistance,
+        maxDistance,
+        minThickness,
+        maxThickness);
+
+	vec4 color = vec4(shadow, 1.0f);
+
+	pixelCoord.y = int(sssSize.y) - pixelCoord.y;
+    imageStore(outColor, pixelCoord, color);
+}

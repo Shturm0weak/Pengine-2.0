@@ -20,6 +20,8 @@ namespace Pengine
 		CSM,
 		SSAO,
 		SSAOBlur,
+		SSS,
+		SSSBlur,
 		Deferred,
 		Transparent,
 		SSR,

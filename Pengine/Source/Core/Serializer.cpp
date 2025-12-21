@@ -5296,16 +5296,32 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::Key << "CSM";
 	out << YAML::Value << YAML::BeginMap;
 
-	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.shadows.isEnabled;
-	out << YAML::Key << "Quality" << YAML::Value << graphicsSettings.shadows.quality;
-	out << YAML::Key << "CascadeCount" << YAML::Value << graphicsSettings.shadows.cascadeCount;
-	out << YAML::Key << "SplitFactor" << YAML::Value << graphicsSettings.shadows.splitFactor;
-	out << YAML::Key << "MaxDistance" << YAML::Value << graphicsSettings.shadows.maxDistance;
-	out << YAML::Key << "FogFactor" << YAML::Value << graphicsSettings.shadows.fogFactor;
-	out << YAML::Key << "Filter" << YAML::Value << (int)graphicsSettings.shadows.filter;
-	out << YAML::Key << "PcfRange" << YAML::Value << graphicsSettings.shadows.pcfRange;
-	out << YAML::Key << "Biases" << YAML::Value << graphicsSettings.shadows.biases;
-	out << YAML::Key << "StabilizeCascades" << YAML::Value << graphicsSettings.shadows.stabilizeCascades;
+	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.shadows.csm.isEnabled;
+	out << YAML::Key << "Quality" << YAML::Value << graphicsSettings.shadows.csm.quality;
+	out << YAML::Key << "CascadeCount" << YAML::Value << graphicsSettings.shadows.csm.cascadeCount;
+	out << YAML::Key << "SplitFactor" << YAML::Value << graphicsSettings.shadows.csm.splitFactor;
+	out << YAML::Key << "MaxDistance" << YAML::Value << graphicsSettings.shadows.csm.maxDistance;
+	out << YAML::Key << "FogFactor" << YAML::Value << graphicsSettings.shadows.csm.fogFactor;
+	out << YAML::Key << "Filter" << YAML::Value << (int)graphicsSettings.shadows.csm.filter;
+	out << YAML::Key << "PcfRange" << YAML::Value << graphicsSettings.shadows.csm.pcfRange;
+	out << YAML::Key << "Biases" << YAML::Value << graphicsSettings.shadows.csm.biases;
+	out << YAML::Key << "StabilizeCascades" << YAML::Value << graphicsSettings.shadows.csm.stabilizeCascades;
+
+	out << YAML::EndMap;
+	//
+
+	// SSS.
+	out << YAML::Key << "SSS";
+	out << YAML::Value << YAML::BeginMap;
+
+	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.shadows.sss.isEnabled;
+	out << YAML::Key << "ResolutionScale" << YAML::Value << graphicsSettings.shadows.sss.resolutionScale;
+	out << YAML::Key << "ResolutionBlurScale" << YAML::Value << graphicsSettings.shadows.sss.resolutionBlurScale;
+	out << YAML::Key << "MaxRayDistance" << YAML::Value << graphicsSettings.shadows.sss.maxRayDistance;
+	out << YAML::Key << "MaxDistance" << YAML::Value << graphicsSettings.shadows.sss.maxDistance;
+	out << YAML::Key << "MaxSteps" << YAML::Value << graphicsSettings.shadows.sss.maxSteps;
+	out << YAML::Key << "MinThickness" << YAML::Value << graphicsSettings.shadows.sss.minThickness;
+	out << YAML::Key << "MaxThickness" << YAML::Value << graphicsSettings.shadows.sss.maxThickness;
 
 	out << YAML::EndMap;
 	//
@@ -5431,53 +5447,96 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 	{
 		if (const auto& isEnabledData = csmData["IsEnabled"])
 		{
-			graphicsSettings.shadows.isEnabled = isEnabledData.as<bool>();
+			graphicsSettings.shadows.csm.isEnabled = isEnabledData.as<bool>();
 		}
 
 		if (const auto& qualityData = csmData["Quality"])
 		{
 			constexpr int maxQualityIndex = 2;
-			graphicsSettings.shadows.quality = std::min(qualityData.as<int>(), maxQualityIndex);
+			graphicsSettings.shadows.csm.quality = std::min(qualityData.as<int>(), maxQualityIndex);
 		}
 
 		if (const auto& cascadeCountData = csmData["CascadeCount"])
 		{
-			graphicsSettings.shadows.cascadeCount = cascadeCountData.as<int>();
+			graphicsSettings.shadows.csm.cascadeCount = cascadeCountData.as<int>();
 		}
 
 		if (const auto& splitFactorData = csmData["SplitFactor"])
 		{
-			graphicsSettings.shadows.splitFactor = splitFactorData.as<float>();
+			graphicsSettings.shadows.csm.splitFactor = splitFactorData.as<float>();
 		}
 
 		if (const auto& maxDistanceData = csmData["MaxDistance"])
 		{
-			graphicsSettings.shadows.maxDistance = maxDistanceData.as<float>();
+			graphicsSettings.shadows.csm.maxDistance = maxDistanceData.as<float>();
 		}
 
 		if (const auto& biasesData = csmData["Biases"])
 		{
-			graphicsSettings.shadows.biases = biasesData.as<std::vector<float>>();
+			graphicsSettings.shadows.csm.biases = biasesData.as<std::vector<float>>();
 		}
 
 		if (const auto& fogFactorData = csmData["FogFactor"])
 		{
-			graphicsSettings.shadows.fogFactor = fogFactorData.as<float>();
+			graphicsSettings.shadows.csm.fogFactor = fogFactorData.as<float>();
 		}
 
 		if (const auto& filterData = csmData["Filter"])
 		{
-			graphicsSettings.shadows.filter = (GraphicsSettings::Shadows::Filter)filterData.as<int>();
+			graphicsSettings.shadows.csm.filter = (GraphicsSettings::Shadows::CSM::Filter)filterData.as<int>();
 		}
 
 		if (const auto& pcfRangeData = csmData["PcfRange"])
 		{
-			graphicsSettings.shadows.pcfRange = pcfRangeData.as<int>();
+			graphicsSettings.shadows.csm.pcfRange = pcfRangeData.as<int>();
 		}
 
 		if (const auto& stabilizeCascadesData = csmData["StabilizeCascades"])
 		{
-			graphicsSettings.shadows.stabilizeCascades = stabilizeCascadesData.as<bool>();
+			graphicsSettings.shadows.csm.stabilizeCascades = stabilizeCascadesData.as<bool>();
+		}
+	}
+
+	if (const auto& sssData = data["SSS"])
+	{
+		if (const auto& isEnabledData = sssData["IsEnabled"])
+		{
+			graphicsSettings.shadows.sss.isEnabled = isEnabledData.as<bool>();
+		}
+
+		if (const auto& resolutionScaleData = sssData["ResolutionScale"])
+		{
+			graphicsSettings.shadows.sss.resolutionScale = glm::clamp(resolutionScaleData.as<int>(), 0, 3);
+		}
+
+		if (const auto& resolutionBlurScaleData = sssData["ResolutionBlurScale"])
+		{
+			graphicsSettings.shadows.sss.resolutionBlurScale = glm::clamp(resolutionBlurScaleData.as<int>(), 0, 3);
+		}
+
+		if (const auto& maxRayDistanceData = sssData["MaxRayDistance"])
+		{
+			graphicsSettings.shadows.sss.maxRayDistance = maxRayDistanceData.as<float>();
+		}
+
+		if (const auto& maxDistanceData = sssData["MaxDistance"])
+		{
+			graphicsSettings.shadows.sss.maxDistance = maxDistanceData.as<float>();
+		}
+
+		if (const auto& maxStepsData = sssData["MaxSteps"])
+		{
+			graphicsSettings.shadows.sss.maxSteps = maxStepsData.as<int>();
+		}
+
+		if (const auto& minThicknessData = sssData["MinThickness"])
+		{
+			graphicsSettings.shadows.sss.minThickness = minThicknessData.as<float>();
+		}
+
+		if (const auto& maxThicknessData = sssData["MaxThickness"])
+		{
+			graphicsSettings.shadows.sss.maxThickness = maxThicknessData.as<float>();
 		}
 	}
 

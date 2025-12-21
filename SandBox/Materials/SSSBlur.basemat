@@ -1,0 +1,12 @@
+Basemat:
+  Pipelines:
+    - RenderPass: SSSBlur
+      Type: Compute
+      Compute: Shaders/SSSBlur.comp
+      DescriptorSets:
+        - Type: Renderer
+          RenderPass: SSSBlur
+          Set: 0
+      Uniforms:
+        - Name: sourceTexture
+          TextureAttachment: "SSS"
