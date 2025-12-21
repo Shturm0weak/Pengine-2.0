@@ -135,7 +135,7 @@ bool Raycast::IntersectBoxAABB(
 
 	return true;
 }
-
+#include "Timer.h"
 std::map<Raycast::Hit, std::shared_ptr<Entity>> Raycast::RaycastScene(
 	std::shared_ptr<Scene> scene,
 	const glm::vec3& start,
@@ -144,6 +144,7 @@ std::map<Raycast::Hit, std::shared_ptr<Entity>> Raycast::RaycastScene(
 {
 	PROFILER_SCOPE(__FUNCTION__);
 
+	Timer timer;
 	const auto sceneBvhHits = scene->GetBVH()->Raycast(start, direction, length);
 
 	std::map<Hit, std::shared_ptr<Entity>> hits;
@@ -151,16 +152,7 @@ std::map<Raycast::Hit, std::shared_ptr<Entity>> Raycast::RaycastScene(
 	for (const auto& [hit, entity] : sceneBvhHits)
 	{
 		const Transform& transform = scene->GetRegistry().get<Transform>(entity->GetHandle());
-		if (!transform.GetEntity()->IsEnabled())
-		{
-			continue;
-		}
-
 		const Renderer3D& r3d = scene->GetRegistry().get<Renderer3D>(entity->GetHandle());
-		if (!r3d.isEnabled || !r3d.mesh)
-		{
-			continue;
-		}
 
 		Hit localHitMesh{};
 

@@ -42,11 +42,10 @@ bool Mesh::Raycast(
 	Raycast::Hit& hit,
 	Visualizer& visualizer) const
 {
-	return m_CreateInfo.raycastCallback(
+	return m_BVH->Raycast(
 		start,
 		direction,
 		length,
-		m_BVH,
 		hit,
 		visualizer);
 }

@@ -289,12 +289,5 @@ VkDescriptorBufferInfo VulkanBuffer::GetDescriptorInfo(
 
 VkBuffer VulkanBuffer::GetBuffer() const
 {
-	if (m_IsMultiBuffered)
-	{
-		return m_BufferDatas[swapChainImageIndex].m_Buffer;
-	}
-	else
-	{
-		return m_BufferDatas.back().m_Buffer;
-	}
+	return m_IsMultiBuffered ? m_BufferDatas[swapChainImageIndex].m_Buffer : m_BufferDatas[0].m_Buffer;
 }

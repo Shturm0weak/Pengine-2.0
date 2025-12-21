@@ -551,6 +551,7 @@ void RenderPassManager::CreateGBuffer()
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
 		entt::registry& registry = scene->GetRegistry();
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
+		const glm::vec3 cameraPosition = camera.GetEntity()->GetComponent<Transform>().GetPosition();
 		const glm::mat4 viewProjectionMat4 = renderInfo.projection * camera.GetViewMat4();
 
 		for (const auto& entity : visibleData->visibleEntities)
@@ -570,14 +571,14 @@ void RenderPassManager::CreateGBuffer()
 			}
 
 			auto lod = GetLod(
-				camera.GetEntity()->GetComponent<Transform>().GetPosition(),
+				cameraPosition,
 				transform.GetPosition(),
 				glm::length(transform.GetScale() * glm::max(glm::abs(r3d.mesh->GetBoundingBox().min), glm::abs(r3d.mesh->GetBoundingBox().max))),
 				r3d.mesh->GetLods());
 
 			if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
 			{
-				if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
+				if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntityUUID))
 				{
 					SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
 					if (skeletalAnimator)
@@ -700,7 +701,7 @@ void RenderPassManager::CreateGBuffer()
 
 					const SkeletalAnimator* skeletalAnimator = nullptr;
 					const Renderer3D& r3d = registry.get<Renderer3D>(entity);
-					if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
+					if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntityUUID))
 					{
 						skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
 					}
@@ -1230,7 +1231,7 @@ void RenderPassManager::CreateTransparent()
 			renderData.scale = transform.GetScale();
 			renderData.position = transform.GetPosition();
 
-			if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
+			if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntityUUID))
 			{
 				SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
 				if (skeletalAnimator)
@@ -1330,7 +1331,7 @@ void RenderPassManager::CreateTransparent()
 				
 				SkeletalAnimator* skeletalAnimator = nullptr;
 				const Renderer3D& r3d = registry.get<Renderer3D>(renderData.entity);
-				if (const auto skeletalAnimatorEntity = registry.get<Transform>(renderData.entity).GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
+				if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntityUUID))
 				{
 					skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
 				}
@@ -1469,6 +1470,7 @@ void RenderPassManager::CreateCSM()
 		size_t renderableCount = 0;
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
+		const glm::vec3 cameraPosition = camera.GetEntity()->GetComponent<Transform>().GetPosition();
 		entt::registry& registry = scene->GetRegistry();
 
 		glm::vec3 lightDirection{};
@@ -1536,14 +1538,14 @@ void RenderPassManager::CreateCSM()
 			}
 
 			auto lod = GetLod(
-				camera.GetEntity()->GetComponent<Transform>().GetPosition(),
+				cameraPosition,
 				transform.GetPosition(),
 				glm::length(transform.GetScale() * glm::max(glm::abs(r3d.mesh->GetBoundingBox().min), glm::abs(r3d.mesh->GetBoundingBox().max))),
 				r3d.mesh->GetLods());
 
 			if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
 			{
-				if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
+				if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntityUUID))
 				{
 					SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
 					if (skeletalAnimator)
@@ -1687,7 +1689,7 @@ void RenderPassManager::CreateCSM()
 
 					SkeletalAnimator* skeletalAnimator = nullptr;
 					const Renderer3D& r3d = registry.get<Renderer3D>(entity);
-					if (const auto skeletalAnimatorEntity = transform.GetEntity()->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName))
+					if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntityUUID))
 					{
 						skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
 					}

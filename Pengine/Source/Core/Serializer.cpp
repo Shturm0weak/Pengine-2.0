@@ -3886,7 +3886,7 @@ std::shared_ptr<Entity> Serializer::GenerateEntity(
 						}
 					}
 
-					r3d.skeletalAnimatorEntityName = topEntity->GetName();
+					r3d.skeletalAnimatorEntityUUID = topEntity->GetUUID();
 				}
 			}
 		}
@@ -4184,9 +4184,9 @@ void Serializer::SerializeRenderer3D(YAML::Emitter& out, const std::shared_ptr<E
 
 	out << YAML::BeginMap;
 
-	if (!r3d.skeletalAnimatorEntityName.empty())
+	if (r3d.skeletalAnimatorEntityUUID.IsValid())
 	{
-		out << YAML::Key << "SkeletalAnimatorEntity" << YAML::Value << r3d.skeletalAnimatorEntityName;
+		out << YAML::Key << "SkeletalAnimatorEntity" << YAML::Value << entity->GetScene()->FindEntityByUUID(r3d.skeletalAnimatorEntityUUID)->GetName();
 	}
 
 	if (r3d.mesh)
@@ -4239,7 +4239,19 @@ void Serializer::DeserializeRenderer3D(const YAML::Node& in, const std::shared_p
 
 		if (const auto& skeletalAnimatorEntityData = renderer3DData["SkeletalAnimatorEntity"])
 		{
-			r3d.skeletalAnimatorEntityName = skeletalAnimatorEntityData.as<std::string>();
+			auto callback = [&r3d, wEntity = std::weak_ptr(entity), skeletalAnimatorEntityName = skeletalAnimatorEntityData.as<std::string>()]()
+			{
+				if (const std::shared_ptr<Entity> entity = wEntity.lock())
+				{
+					if (const std::shared_ptr<Entity> skeletalAnimatorEntity = entity->GetTopEntity()->FindEntityInHierarchy(skeletalAnimatorEntityName))
+					{
+						r3d.skeletalAnimatorEntityUUID = skeletalAnimatorEntity->GetUUID();
+					}
+				}
+			};
+
+			std::shared_ptr<NextFrameEvent> event = std::make_shared<NextFrameEvent>(callback, Event::Type::OnNextFrame, nullptr);
+			EventSystem::GetInstance().SendEvent(event);
 		}
 
 		if (const auto& castShadowsData = renderer3DData["CastShadows"])

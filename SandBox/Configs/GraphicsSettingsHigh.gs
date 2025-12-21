@@ -41,7 +41,7 @@ SSR:
   BlurRange: 1
   BlurOffset: 1
   MipMultiplier: 0.5
-  UseSkyBoxFallback: true
+  UseSkyBoxFallback: false
   Blur: 1
 PostProcess:
   Gamma: 2.20000005

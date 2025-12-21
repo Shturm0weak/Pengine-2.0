@@ -3,7 +3,11 @@
 #include "Core/SceneManager.h"
 #include "Core/WindowManager.h"
 #include "Core/Logger.h"
+#include "Core/Serializer.h"
+#include "Core/Raycast.h"
 #include "Graphics/Device.h"
+#include "Components/Transform.h"
+#include "Components/Camera.h"
 
 void EditorApplication::OnStart()
 {
@@ -13,7 +17,6 @@ void EditorApplication::OnStart()
 
 void EditorApplication::OnUpdate()
 {
-	
 }
 
 void EditorApplication::OnImGuiUpdate()

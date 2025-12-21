@@ -2502,9 +2502,9 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 
 		if (r3d.mesh && r3d.mesh->GetType() == Mesh::Type::SKINNED)
 		{
-			if (!r3d.skeletalAnimatorEntityName.empty())
+			if (r3d.skeletalAnimatorEntityUUID.IsValid())
 			{
-				const auto skeletalAnimatorEntity = entity->GetTopEntity()->FindEntityInHierarchy(r3d.skeletalAnimatorEntityName);
+				const auto skeletalAnimatorEntity = entity->GetScene()->FindEntityByUUID(r3d.skeletalAnimatorEntityUUID);
 				if (skeletalAnimatorEntity)
 				{
 					ImGui::Text("Skeletal Animator: %s", skeletalAnimatorEntity->GetName().c_str());
@@ -2519,7 +2519,7 @@ void Editor::Renderer3DComponent(const std::shared_ptr<Entity>& entity)
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GAMEOBJECT"))
 					{
 						UUID* uuidPtr = (UUID*)payload->Data;
-						r3d.skeletalAnimatorEntityName = entity->GetScene()->FindEntityByUUID(*uuidPtr)->GetName();
+						r3d.skeletalAnimatorEntityUUID = *uuidPtr;
 					}
 					ImGui::EndDragDropTarget();
 				}

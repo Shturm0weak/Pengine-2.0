@@ -70,18 +70,7 @@ std::vector<entt::entity> SceneBVH::CullAgainstFrustum(const std::array<glm::vec
 	{
 		if (!IntersectsFrustum(node.aabb, planes))
 		{
-			if (node.entity && node.entity->IsEnabled())
-			{
-				const Renderer3D& r3d = node.entity->GetComponent<Renderer3D>();
-				if (r3d.mesh->GetType() != Mesh::Type::SKINNED)
-				{
-					return false;
-				}
-			}
-			else
-			{
-				return false;
-			}
+			return false;
 		}
 
 		if (node.entity && node.entity->IsEnabled())

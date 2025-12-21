@@ -52,7 +52,7 @@ bool MeshBVH::Raycast(
 {
 	if (m_Root == -1) return false;
 
-	Raycast::Hit closestHit;
+	Raycast::Hit closestHit{};
 	bool bHit = false;
 	std::stack<uint32_t> nodeStack;
 	nodeStack.push(m_Root);

@@ -48,6 +48,11 @@ namespace Pengine
 
 		const std::vector<std::shared_ptr<Entity>>& GetEntities() const { return m_Entities; }
 
+		/**
+		 * Entity can change uuid internally, so we need to replace uuid in the search map as well.
+		 */
+		void ReplaceEntityUUID(UUID oldUUID, UUID newUUID);
+
 		void Clear();
 
 		void SetTag(const std::string& tag) { m_Tag = tag; }
@@ -115,6 +120,8 @@ namespace Pengine
 		};
 
 		std::unordered_map<std::string, std::shared_ptr<ComponentSystem>> m_ComponentSystemsByName;
+
+		std::unordered_map<UUID, std::shared_ptr<Entity>, uuid_hash> m_EntitiesByUUID;
 
 		std::vector<std::shared_ptr<Entity>> m_Entities;
 		std::queue<std::shared_ptr<Entity>> m_EntityDeletionQueue;

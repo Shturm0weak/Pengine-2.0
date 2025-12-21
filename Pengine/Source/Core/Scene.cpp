@@ -112,6 +112,12 @@ Scene::Scene(const Scene& scene)
 	Copy(scene);
 }
 
+void Scene::ReplaceEntityUUID(UUID oldUUID, UUID newUUID)
+{
+	m_EntitiesByUUID[newUUID] = m_EntitiesByUUID[oldUUID];
+	m_EntitiesByUUID.erase(oldUUID);
+}
+
 void Scene::Clear()
 {
 	m_Name = none;
@@ -145,6 +151,7 @@ void Scene::Clear()
 	}
 
 	m_Entities.clear();
+	m_EntitiesByUUID.clear();
 	m_Registry.clear();
 	m_SelectedEntities.clear();
 
@@ -369,6 +376,7 @@ std::shared_ptr<Entity> Scene::CreateEntity(const std::string& name, const UUID&
 {
 	std::shared_ptr<Entity> entity = std::make_shared<Entity>(shared_from_this(), name, uuid);
 	m_Entities.emplace_back(entity);
+	m_EntitiesByUUID[entity->GetUUID()] = entity;
 
 	return entity;
 }
@@ -450,6 +458,7 @@ void Scene::DeleteEntity(std::shared_ptr<Entity>& entity)
 	if (const auto entityToErase = std::find(m_Entities.begin(), m_Entities.end(), entity);
 		entityToErase != m_Entities.end())
 	{
+		m_EntitiesByUUID.erase(entity->GetUUID());
 		m_Entities.erase(entityToErase);
 	}
 
@@ -458,12 +467,10 @@ void Scene::DeleteEntity(std::shared_ptr<Entity>& entity)
 
 std::shared_ptr<Entity> Scene::FindEntityByUUID(const UUID& uuid)
 {
-	for (std::shared_ptr<Entity> entity : m_Entities)
+	auto entity = m_EntitiesByUUID.find(uuid);
+	if (entity != m_EntitiesByUUID.end())
 	{
-		if (entity->GetUUID() == uuid)
-		{
-			return entity;
-		}
+		return entity->second;
 	}
 
 	return nullptr;

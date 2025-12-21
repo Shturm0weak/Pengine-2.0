@@ -217,6 +217,14 @@ bool Entity::HasAsParent(const std::shared_ptr<Entity>& parent, const bool recur
 	return false;
 }
 
+void Entity::SetUUID(const UUID& uuid)
+{
+	assert(m_Scene.lock());
+
+	m_Scene.lock()->ReplaceEntityUUID(m_UUID, uuid);
+	m_UUID = uuid;
+}
+
 bool Entity::IsEnabled() const
 {
 	bool enabled = true;
