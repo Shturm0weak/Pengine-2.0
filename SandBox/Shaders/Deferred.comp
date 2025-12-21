@@ -51,7 +51,7 @@ void main()
 	vec4 shading = texture(shadingTexture, uv);
 
 	vec4 normalViewSpace = texture(normalTexture, uv);
-	vec3 ssao = texture(ssaoTexture, uv).xyz;
+	vec3 ssao = vec3(texture(ssaoTexture, uv).r);
 
 	vec3 result = vec3(0.0f);
 

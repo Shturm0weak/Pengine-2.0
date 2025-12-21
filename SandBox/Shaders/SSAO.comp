@@ -1,6 +1,6 @@
 #version 450
 
-layout(set = 0, binding = 0, rgba8) uniform writeonly image2D outColor;
+layout(set = 0, binding = 0, r8) uniform writeonly image2D outColor;
 
 layout(set = 0, binding = 1) uniform SSAO
 {
@@ -99,8 +99,6 @@ void main()
     occlusion = 1.0f - (occlusion / float(kernelSize));
     occlusion = pow(occlusion, aoScale);
 
-	vec4 color = vec4(occlusion, occlusion, occlusion, 1.0f);
-
 	pixelCoord.y = int(ssaoSize.y) - pixelCoord.y;
-    imageStore(outColor, pixelCoord, color);
+    imageStore(outColor, pixelCoord, vec4(occlusion));
 }

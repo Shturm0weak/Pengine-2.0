@@ -2216,10 +2216,10 @@ void RenderPassManager::CreateSSAO()
 
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
-		createInfo.channels = 4;
+		createInfo.channels = 1;
 		createInfo.filepath = passName;
 		createInfo.name = passName;
-		createInfo.format = Format::R8G8B8A8_UNORM;
+		createInfo.format = Format::R8_UNORM;
 		createInfo.size = currentViewportSize;
 		createInfo.usage = { Texture::Usage::STORAGE, Texture::Usage::SAMPLED };
 		createInfo.isMultiBuffered = true;
@@ -2327,10 +2327,10 @@ void RenderPassManager::CreateSSAOBlur()
 
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
-		createInfo.channels = 4;
+		createInfo.channels = 1;
 		createInfo.filepath = passName;
 		createInfo.name = passName;
-		createInfo.format = Format::R8G8B8A8_UNORM;
+		createInfo.format = Format::R8_UNORM;
 		createInfo.size = currentViewportSize;
 		createInfo.usage = { Texture::Usage::STORAGE, Texture::Usage::SAMPLED };
 		createInfo.isMultiBuffered = true;
