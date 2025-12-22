@@ -73,7 +73,7 @@ std::vector<entt::entity> SceneBVH::CullAgainstFrustum(const std::array<glm::vec
 			return false;
 		}
 
-		if (node.entity && node.entity->IsEnabled())
+		if (node.IsLeaf())
 		{
 			visibleEntities.emplace_back(node.entity->GetHandle());
 		}
@@ -101,10 +101,7 @@ std::multimap<Raycast::Hit, std::shared_ptr<Entity>> SceneBVH::Raycast(
 
 		if (node.IsLeaf())
 		{
-			if (node.entity && node.entity->IsEnabled())
-			{
-				hits.emplace(hit, node.entity);
-			}
+			hits.emplace(hit, node.entity);
 		}
 
 		return true;
