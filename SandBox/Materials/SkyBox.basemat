@@ -3,7 +3,6 @@ Basemat:
     - RenderPass: GBuffer
       DepthTest: true
       DepthWrite: false
-      DepthCompare: LessOrEqual
       CullMode: None
       PolygonMode: Fill
       TopologyMode: TriangleList

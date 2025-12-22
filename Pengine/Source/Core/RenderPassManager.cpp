@@ -374,7 +374,7 @@ void RenderPassManager::GetVertexBuffers(
 void RenderPassManager::CreateZPrePass()
 {
 	RenderPass::ClearDepth clearDepth{};
-	clearDepth.clearDepth = 1.0f;
+	clearDepth.clearDepth = 0.0f;
 	clearDepth.clearStencil = 0;
 
 	RenderPass::AttachmentDescription depth{};
@@ -389,7 +389,7 @@ void RenderPassManager::CreateZPrePass()
 
 	Texture::SamplerCreateInfo depthSamplerCreateInfo{};
 	depthSamplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_BORDER;
-	depthSamplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_WHITE;
+	depthSamplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_BLACK;
 
 	depth.textureCreateInfo.samplerCreateInfo = depthSamplerCreateInfo;
 
@@ -449,7 +449,7 @@ void RenderPassManager::CreateZPrePass()
 void RenderPassManager::CreateGBuffer()
 {
 	RenderPass::ClearDepth clearDepth{};
-	clearDepth.clearDepth = 1.0f;
+	clearDepth.clearDepth = 0.0f;
 	clearDepth.clearStencil = 0;
 
 	glm::vec4 clearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
@@ -939,7 +939,7 @@ void RenderPassManager::CreateDeferred()
 void RenderPassManager::CreateDefaultReflection()
 {
 	RenderPass::ClearDepth clearDepth{};
-	clearDepth.clearDepth = 1.0f;
+	clearDepth.clearDepth = 0.0f;
 	clearDepth.clearStencil = 0;
 
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -1108,7 +1108,7 @@ void RenderPassManager::CreateAtmosphere()
 void RenderPassManager::CreateTransparent()
 {
 	RenderPass::ClearDepth clearDepth{};
-	clearDepth.clearDepth = 1.0f;
+	clearDepth.clearDepth = 0.0f;
 	clearDepth.clearStencil = 0;
 
 	glm::vec4 clearColor = { 1.0f, 1.0f, 1.0f, 1.0f };

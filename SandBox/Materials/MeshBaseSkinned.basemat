@@ -113,6 +113,8 @@ Basemat:
     - RenderPass: CSM
       DepthTest: true
       DepthWrite: true
+      DepthClamp: true
+      DepthCompare: LessOrEqual
       CullMode: Front
       PolygonMode: Fill
       TopologyMode: TriangleList

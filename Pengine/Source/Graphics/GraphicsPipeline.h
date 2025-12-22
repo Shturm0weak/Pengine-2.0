@@ -111,7 +111,7 @@ namespace Pengine
 			bool depthTest = true;
 			bool depthWrite = true;
 			bool depthClamp = false;
-			DepthCompare depthCompare = DepthCompare::LESS_OR_EQUAL;
+			DepthCompare depthCompare = DepthCompare::GREATER_OR_EQUAL;
 		};
 
 		static std::shared_ptr<Pipeline> Create(const CreateGraphicsInfo& createGraphicsInfo);

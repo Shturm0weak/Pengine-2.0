@@ -379,5 +379,5 @@ void Viewport::SetPerspective(const glm::ivec2& size, const float zFar, const fl
 	}
 
 	const float ratio = static_cast<float>(size.x) / static_cast<float>(size.y);
-	m_Projection = glm::perspective(fov, ratio, zNear, zFar);
+	m_Projection = glm::perspectiveRH_ZO(fov, ratio, zFar, zNear);
 }
