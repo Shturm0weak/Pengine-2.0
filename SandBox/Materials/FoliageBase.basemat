@@ -46,6 +46,7 @@ Basemat:
       DepthTest: true
       DepthWrite: true
       DepthClamp: true
+      DepthCompare: LessOrEqual
       CullMode: None
       PolygonMode: Fill
       TopologyMode: TriangleList

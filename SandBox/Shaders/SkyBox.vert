@@ -13,6 +13,6 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 void main()
 {
 	gl_Position = camera.projectionMat4 * camera.inverseRotationMat4 * vec4(positionA, 1.0f);
-	gl_Position.z = gl_Position.w;
+	gl_Position.z = 0.0f;
 	uv = positionA;
 }
