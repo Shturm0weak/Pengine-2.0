@@ -7,7 +7,7 @@ layout(location = 3) in vec2 uv;
 layout(location = 4) in vec4 color;
 
 layout(location = 0) out vec4 outAlbedo;
-layout(location = 1) out vec4 outNormal;
+layout(location = 1) out vec2 outNormal;
 layout(location = 2) out vec4 outShading;
 layout(location = 3) out vec4 outEmissive;
 
@@ -72,10 +72,10 @@ void main()
 		mat3 TBN = mat3(normalize(tangentViewSpace), normalize(bitangentViewSpace), normal);
 		normal = texture(normalTexture, uv).xyz;
 		normal = normal * 2.0f - 1.0f;
-		outNormal = vec4(normalize(TBN * normal), 1.0f);
+		outNormal = OctEncode(normalize(TBN * normal));
 	}
 	else
 	{
-		outNormal = vec4(normal, 1.0f);
+		outNormal = OctEncode(normal);
 	}
 }

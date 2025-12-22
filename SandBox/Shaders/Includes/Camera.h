@@ -33,3 +33,28 @@ vec3 CalculatePositionFromDepth(
     float y = viewRay.y * z;
     return vec3(x, y, z);
 }
+
+vec2 OctEncode(vec3 n)
+{
+	n.xy /= (abs(n.x) + abs(n.y) + abs(n.z));
+
+	if (n.z < 0.0f)
+	{
+	    n.xy = (1.0f - abs(n.yx)) * sign(n.xy);
+	}
+
+	return n.xy * 0.5f + 0.5f;
+}
+
+vec3 OctDecode(vec2 f)
+{
+	f = f * 2.0f - 1.0f;
+	vec3 n = vec3(f.x, f.y, 1.0f - abs(f.x) - abs(f.y));
+
+	if (n.z < 0.0f)
+	{
+	    n.xy = (1.0f - abs(n.yx)) * sign(n.xy);
+	}
+
+	return normalize(n);
+}

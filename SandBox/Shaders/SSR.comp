@@ -169,7 +169,7 @@ void RayMarch(
 
     visibility = clamp(visibility, 0.0f, 1.0f);
 
-    vec3 normalTo = texture(normalTexture, fragmentUV).xyz;
+    vec3 normalTo = OctDecode(texture(normalTexture, fragmentUV).xy);
     if (dot(normalTo, pivot) > -0.1f)
     {
         visibility = 0.0f;
@@ -217,7 +217,7 @@ void main()
 	viewRay.x = -screenPosition.x * camera.aspectRatio * camera.tanHalfFOV;
     viewRay.y = screenPosition.y * camera.tanHalfFOV;
 
-    vec4 normalViewSpace = texture(normalTexture, uv);
+    vec3 normalViewSpace = OctDecode(texture(normalTexture, uv).xy);
     vec4 shading = texture(shadingTexture, uv);
     if (shading.a <= 0.0f || shading.y >= 1.0f)
     {
@@ -231,7 +231,7 @@ void main()
         viewRay);
 
     vec3 unitPosition = normalize(positionViewSpace);
-    vec3 pivot = normalize(reflect(unitPosition, normalize(normalViewSpace.xyz)));
+    vec3 pivot = normalize(reflect(unitPosition, normalize(normalViewSpace)));
     if (pivot.z > 0.0f)
     {
         float roughnessVisibility = (1.0f - shading.y) * (1.0f - shading.y);

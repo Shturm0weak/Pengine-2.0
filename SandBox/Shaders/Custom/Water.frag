@@ -11,7 +11,7 @@ layout(location = 7) in vec3 positionTangentSpace;
 layout(location = 8) in vec3 cameraPositionTangentSpace;
 
 layout(location = 0) out vec4 outColor;
-layout(location = 1) out vec4 outNormal;
+layout(location = 1) out vec2 outNormal;
 layout(location = 2) out vec4 outShading;
 layout(location = 3) out vec4 outEmissive;
 
@@ -140,6 +140,6 @@ void main()
 	vec3 emissiveColor = texture(emissiveTexture, finalUV).xyz;
     outEmissive = max(vec4(emissiveColor * material.emissiveColor.xyz * material.emissiveFactor, albedoColor.a), vec4(IsBrightPixel(result, brightnessThreshold), albedoColor.a));
 	outColor = vec4(result, albedoColor.a);
-	outNormal = vec4(normal, 1.0f);
+	outNormal = OctEncode(normal);
 	outShading = shading;
 }

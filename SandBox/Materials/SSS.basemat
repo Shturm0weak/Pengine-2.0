@@ -14,7 +14,5 @@ Basemat:
           RenderPass: Lights
           Set: 2
       Uniforms:
-        - Name: normalTexture
-          TextureAttachment: "GBuffer[1]"
         - Name: depthTexture
           TextureAttachment: "GBuffer[4]"

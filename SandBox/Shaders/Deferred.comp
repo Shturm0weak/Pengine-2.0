@@ -50,7 +50,7 @@ void main()
 	vec3 albedoColor = texture(albedoTexture, uv).xyz;
 	vec4 shading = texture(shadingTexture, uv);
 
-	vec4 normalViewSpace = texture(normalTexture, uv);
+	vec3 normalViewSpace = OctDecode(texture(normalTexture, uv).xy);
 	vec3 ssao = vec3(texture(ssaoTexture, uv).r);
 
 	vec3 result = vec3(0.0f);
@@ -78,7 +78,7 @@ void main()
 					csm,
 					abs(positionViewSpace.z),
 					worldSpacePosition,
-					normalViewSpace.xyz,
+					normalViewSpace,
 					directionalLight.direction);
 			}
 
@@ -91,7 +91,7 @@ void main()
 				directionalLight,
 				viewDirection,
 				basicReflectivity,
-				normalViewSpace.xyz,
+				normalViewSpace,
 				albedoColor,
 				shading.x,
 				shading.y,
@@ -102,7 +102,7 @@ void main()
 
 		for (int i = 0; i < pointLightsCount; i++)
 		{
-			result += CalculatePointLight(pointLights[i], positionViewSpace, normalViewSpace.xyz) * albedoColor;
+			result += CalculatePointLight(pointLights[i], positionViewSpace, normalViewSpace) * albedoColor;
 		}
 	}
 

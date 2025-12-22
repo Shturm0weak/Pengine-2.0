@@ -476,9 +476,9 @@ void RenderPassManager::CreateGBuffer()
 	color.textureCreateInfo.samplerCreateInfo = samplerCreateInfo;
 
 	RenderPass::AttachmentDescription normal{};
-	normal.textureCreateInfo.format = Format::R16G16B16A16_SFLOAT;
+	normal.textureCreateInfo.format = Format::R16G16_SFLOAT;
 	normal.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	normal.textureCreateInfo.channels = 4;
+	normal.textureCreateInfo.channels = 2;
 	normal.textureCreateInfo.isMultiBuffered = true;
 	normal.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::STORAGE, Texture::Usage::COLOR_ATTACHMENT };
 	normal.textureCreateInfo.name = "GBufferNormal";

@@ -26,7 +26,7 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 };
 
 layout(set = 2, binding = 0) uniform sampler2D depthGBufferTexture;
-layout(set = 2, binding = 1, rgba16f) uniform image2D normalGBufferTexture;
+layout(set = 2, binding = 1, rg16f) uniform image2D normalGBufferTexture;
 
 #include "Shaders/Includes/ParallaxOcclusionMapping.h"
 
@@ -71,12 +71,12 @@ void main()
 		discard;
 	}
 
-	vec4 gbufferNormal = imageLoad(normalGBufferTexture, pixelCoord);
+	vec3 gbufferNormal = OctDecode(imageLoad(normalGBufferTexture, pixelCoord).xy);
 	
 	vec2 uvForTBN = decalUV;
 	if (material.useParallaxOcclusion > 0)
 	{
-		vec3 normalWorldSpace = normalize(mat3(camera.inverseViewMat4) * normalize(gbufferNormal.xyz));
+		vec3 normalWorldSpace = normalize(mat3(camera.inverseViewMat4) * normalize(gbufferNormal));
 		mat3 TBN = transpose(ConstructTBN(normalWorldSpace, positionWorldSpace, uvForTBN));
 
 		vec3 cameraPositionTangentSpace = TBN * camera.position;
@@ -115,13 +115,13 @@ void main()
 	
 	if (material.useNormalMap > 0)
 	{
-		mat3 TBN = ConstructTBN(gbufferNormal.xyz, positionViewSpace, uvForTBN);
+		mat3 TBN = ConstructTBN(gbufferNormal, positionViewSpace, uvForTBN);
 		vec3 normalMap = texture(normalTexture, decalUV).xyz;
 		normalMap = normalMap * 2.0f - 1.0f;
-		imageStore(normalGBufferTexture, pixelCoord, vec4(normalize(TBN * normalMap), gbufferNormal.a));
+		imageStore(normalGBufferTexture, pixelCoord, vec4(OctEncode(normalize(TBN * normalMap)), 0.0f, 0.0f));
 	}
 	else
 	{
-		imageStore(normalGBufferTexture, pixelCoord, gbufferNormal);
+		imageStore(normalGBufferTexture, pixelCoord, vec4(OctEncode(gbufferNormal), 0.0f, 0.0f));
 	}
 }

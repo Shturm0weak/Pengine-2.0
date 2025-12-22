@@ -50,7 +50,7 @@ void main()
 
 	//groupMemoryBarrier();
 
-	vec3 normal = texture(normalTexture, uv).xyz;
+	vec3 normal = OctDecode(texture(normalTexture, uv).xy);
     vec3 randomVector = normalize(texture(noiseTexture, uv * noiseScale).xyz);
     vec3 tangent = normalize(randomVector - normal * dot(randomVector, normal));
     vec3 bitangent = normalize(cross(normal, tangent));
