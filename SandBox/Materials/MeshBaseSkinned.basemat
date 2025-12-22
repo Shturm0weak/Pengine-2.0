@@ -148,6 +148,7 @@ Basemat:
           InputRate: Instance
           Names:
             - transformA
+            - layersA
       ColorBlendStates:
         []
     - RenderPass: ZPrePass

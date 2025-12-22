@@ -12,6 +12,7 @@ layout(set = 0, binding = 0) uniform LightSpaceMatrices
 };
 
 layout(location = 0) in vec2 uvG[];
+layout(location = 1) in uint layersG[];
 
 layout(location = 0) out vec2 uv;
 
@@ -19,13 +20,16 @@ void main()
 {
     for (int i = 0; i < cascadeCount; ++i)
     {
-	    for (int j = 0; j < 3; ++j)
-	    {
-	        gl_Position = lightSpaceMatrices[i] * gl_in[j].gl_Position;
-	        gl_Layer = i;
-	        uv = uvG[j];
-	        EmitVertex();
-	    }
-        EndPrimitive();
+		if (((layersG[0] >> i) & 1) == 1)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				gl_Position = lightSpaceMatrices[i] * gl_in[j].gl_Position;
+				gl_Layer = i;
+				uv = uvG[j];
+				EmitVertex();
+			}
+        	EndPrimitive();
+		}
     }
 }

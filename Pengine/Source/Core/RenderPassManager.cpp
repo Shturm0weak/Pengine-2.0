@@ -1499,10 +1499,27 @@ void RenderPassManager::CreateCSM()
 			shadowsSettings.cascadeCount,
 			shadowsSettings.splitFactor,
 			shadowsSettings.stabilizeCascades);
-
-		const auto visibleEntities = scene->GetBVH()->CullAgainstFrustum(Utils::GetFrustumPlanes(csmRenderer->GetLightSpaceMatrices().back()));
-
-		for (const entt::entity& entity : visibleEntities)
+		
+		// TODO: Maybe optimize, looks scary!
+		std::unordered_map<entt::entity, uint32_t> visibleEntities;
+		for (size_t i = 0; i < shadowsSettings.cascadeCount; i++)
+		{
+			const auto entityLayer = scene->GetBVH()->CullAgainstFrustum(Utils::GetFrustumPlanes(csmRenderer->GetLightSpaceMatrices()[i]));
+			for (const auto& entity : entityLayer)
+			{
+				auto foundEntity = visibleEntities.find(entity);
+				if (foundEntity != visibleEntities.end())
+				{
+					foundEntity->second |= (1 << i);
+				}
+				else
+				{
+					visibleEntities.emplace(entity, 1 << i);
+				}
+			}
+		}
+		
+		for (const auto& [entity, layers] : visibleEntities)
 		{
 			const Renderer3D& r3d = registry.get<Renderer3D>(entity);
 
@@ -1563,6 +1580,7 @@ void RenderPassManager::CreateCSM()
 		struct InstanceDataCSM
 		{
 			glm::mat4 transform;
+			uint32_t layers;
 		};
 
 		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderView->GetBuffer("InstanceBufferCSM");
@@ -1651,6 +1669,7 @@ void RenderPassManager::CreateCSM()
 							InstanceDataCSM data{};
 							const Transform& transform = registry.get<Transform>(entity);
 							data.transform = transform.GetTransform();
+							data.layers = visibleEntities[entity];
 							instanceDatas.emplace_back(data);
 						}
 
@@ -1680,8 +1699,11 @@ void RenderPassManager::CreateCSM()
 
 					const size_t instanceDataOffset = instanceDatas.size();
 
+					InstanceDataCSM data{};
 					const Transform& transform = registry.get<Transform>(entity);
-					instanceDatas.emplace_back(transform.GetTransform());
+					data.transform = transform.GetTransform();
+					data.layers = visibleEntities[entity];
+					instanceDatas.emplace_back(data);
 
 					SkeletalAnimator* skeletalAnimator = nullptr;
 					const Renderer3D& r3d = registry.get<Renderer3D>(entity);

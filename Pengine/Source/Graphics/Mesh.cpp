@@ -24,13 +24,14 @@ Mesh::~Mesh()
 
 std::shared_ptr<Buffer> Mesh::GetVertexBuffer(const size_t index) const
 {
-	std::lock_guard<std::mutex> lock(m_VertexBufferAccessMutex);
+	// Kind of slow. If crashes uncomment this section.
+	//std::lock_guard<std::mutex> lock(m_VertexBufferAccessMutex);
 
-	if (index >= m_Vertices.size())
+	/*if (index >= m_Vertices.size())
 	{
 		const std::string message = GetFilepath().string() + ":doesn't have enough vertex buffers!";
 		FATAL_ERROR(message);
-	}
+	}*/
 	
 	return m_Vertices[index];
 }

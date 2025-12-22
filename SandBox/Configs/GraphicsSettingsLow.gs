@@ -14,11 +14,21 @@ CSM:
   SplitFactor: 0.899999976
   MaxDistance: 100
   FogFactor: 0.200000003
-  PcfEnabled: false
+  Filter: 2
   PcfRange: 1
   Biases:
     - 0
     - 0
+  StabilizeCascades: true
+SSS:
+  IsEnabled: false
+  ResolutionScale: 2
+  ResolutionBlurScale: 2
+  MaxRayDistance: 0.100000001
+  MaxDistance: 5
+  MaxSteps: 16
+  MinThickness: -0.0125000002
+  MaxThickness: 0.000150000007
 Bloom:
   IsEnabled: false
   MipCount: 10
@@ -35,6 +45,9 @@ SSR:
   Thickness: 5
   BlurRange: 2
   BlurOffset: 1
+  MipMultiplier: 1
+  UseSkyBoxFallback: true
+  Blur: 1
 PostProcess:
   Gamma: 2.20000005
   ToneMapper: 1
