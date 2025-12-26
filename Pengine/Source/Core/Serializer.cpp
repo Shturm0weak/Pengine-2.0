@@ -4353,7 +4353,9 @@ void Serializer::SerializePointLight(YAML::Emitter& out, const std::shared_ptr<E
 	out << YAML::Key << "Color" << YAML::Value << pointLight.color;
 	out << YAML::Key << "Intensity" << YAML::Value << pointLight.intensity;
 	out << YAML::Key << "Radius" << YAML::Value << pointLight.radius;
+	out << YAML::Key << "Bias" << YAML::Value << pointLight.bias;
 	out << YAML::Key << "DrawBoundingSphere" << YAML::Value << pointLight.drawBoundingSphere;
+	out << YAML::Key << "CastShadows" << YAML::Value << pointLight.castShadows;
 
 	out << YAML::EndMap;
 }
@@ -4384,9 +4386,19 @@ void Serializer::DeserializePointLight(const YAML::Node& in, const std::shared_p
 			pointLight.radius = radiusData.as<float>();
 		}
 
+		if (const auto& biasData = pointLightData["Bias"])
+		{
+			pointLight.bias = biasData.as<float>();
+		}
+
 		if (const auto& drawBoundingSphereData = pointLightData["DrawBoundingSphere"])
 		{
 			pointLight.drawBoundingSphere = drawBoundingSphereData.as<bool>();
+		}
+
+		if (const auto& castShadowsData = pointLightData["CastShadows"])
+		{
+			pointLight.castShadows = castShadowsData.as<bool>();
 		}
 	}
 }
@@ -5326,6 +5338,17 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::EndMap;
 	//
 
+	// SSS.
+	out << YAML::Key << "PointLightShadows";
+	out << YAML::Value << YAML::BeginMap;
+
+	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.shadows.pointLightShadows.isEnabled;
+	out << YAML::Key << "AtlasQuality" << YAML::Value << graphicsSettings.shadows.pointLightShadows.atlasQuality;
+	out << YAML::Key << "FaceQuality" << YAML::Value << graphicsSettings.shadows.pointLightShadows.faceQuality;
+
+	out << YAML::EndMap;
+	//
+
 	// Bloom.
 	out << YAML::Key << "Bloom";
 	out << YAML::Value << YAML::BeginMap;
@@ -5537,6 +5560,24 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& maxThicknessData = sssData["MaxThickness"])
 		{
 			graphicsSettings.shadows.sss.maxThickness = maxThicknessData.as<float>();
+		}
+	}
+
+	if (const auto& pointLightShadowsData = data["PointLightShadows"])
+	{
+		if (const auto& isEnabledData = pointLightShadowsData["IsEnabled"])
+		{
+			graphicsSettings.shadows.pointLightShadows.isEnabled = isEnabledData.as<bool>();
+		}
+
+		if (const auto& atlasQualityData = pointLightShadowsData["AtlasQuality"])
+		{
+			graphicsSettings.shadows.pointLightShadows.atlasQuality = glm::clamp(atlasQualityData.as<int>(), 0, 3);
+		}
+
+		if (const auto& faceQualityData = pointLightShadowsData["FaceQuality"])
+		{
+			graphicsSettings.shadows.pointLightShadows.faceQuality = glm::clamp(faceQualityData.as<int>(), 0, 3);
 		}
 	}
 

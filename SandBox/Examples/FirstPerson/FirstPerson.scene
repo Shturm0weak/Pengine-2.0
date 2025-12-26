@@ -17,7 +17,7 @@ Scene:
       FollowOwner: true
     DirectionalLight:
       Color: [1, 1, 1]
-      Intensity: 5
+      Intensity: 1
       Ambient: 0.100000001
     Childs:
       []
@@ -30,7 +30,6 @@ Scene:
       Scale: [140, 1, 140]
       FollowOwner: true
     Renderer3D:
-      SkeletalAnimatorEntity: 0x83defcab1dcae13080e550f3cca63db9
       Mesh: 0x397e453582968927b0368b21ffa62a67
       Material: 0xf2f5b71fa89eeb7f390c5933c9682563
       RenderingOrder: 5
@@ -59,7 +58,6 @@ Scene:
       Scale: [1, 1, 1]
       FollowOwner: true
     Renderer3D:
-      SkeletalAnimatorEntity: 0xc98f218aee6e098e645f47f416d8021f
       Mesh: 0x397e453582968927b0368b21ffa62a67
       Material: 0xf2f5b71fa89eeb7f390c5933c9682563
       RenderingOrder: 5
@@ -92,7 +90,6 @@ Scene:
       Scale: [1, 0.99999696, 0.999996841]
       FollowOwner: true
     Renderer3D:
-      SkeletalAnimatorEntity: 0xbcd9ab30d210f9ea3574308ca2474a54
       Mesh: 0x397e453582968927b0368b21ffa62a67
       Material: 0xf2f5b71fa89eeb7f390c5933c9682563
       RenderingOrder: 5
@@ -121,7 +118,6 @@ Scene:
       Scale: [0.999996066, 0.999944031, 0.999940574]
       FollowOwner: true
     Renderer3D:
-      SkeletalAnimatorEntity: 0x46c0c750da599d7086c85d4aa9972075
       Mesh: 0x9542e08eb0733885db5f792d5038d44b
       Material: 0xf2f5b71fa89eeb7f390c5933c9682563
       RenderingOrder: 5
@@ -163,7 +159,6 @@ Scene:
       Scale: [0.999990702, 0.999933362, 0.999956131]
       FollowOwner: true
     Renderer3D:
-      SkeletalAnimatorEntity: 0x7b1b68777b60284e70109ec97f3d24dc
       Mesh: 0x9542e08eb0733885db5f792d5038d44b
       Material: 0x6572a3dea6d7cc7d2344c15bae8abe3e
       RenderingOrder: 5
@@ -206,8 +201,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [-9.61281395, 5.36463451, -25.8837948]
-      Rotation: [-0.30060032, -2.58837485, 0]
+      Position: [59.2458916, -7.18747663, -11.734272]
+      Rotation: [0.0546121188, 4.13738155, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -230,7 +225,6 @@ Scene:
       Scale: [5, 2, 1]
       FollowOwner: true
     Renderer3D:
-      SkeletalAnimatorEntity: 0xe3aff09e67dd96ad1532a672e7110ac8
       Mesh: 0x397e453582968927b0368b21ffa62a67
       Material: 0xf2f5b71fa89eeb7f390c5933c9682563
       RenderingOrder: 5
@@ -259,7 +253,6 @@ Scene:
       Scale: [1, 1, 1]
       FollowOwner: true
     Renderer3D:
-      SkeletalAnimatorEntity: 0x2c1ebae4fd299b84032bef0b9de8177f
       Mesh: 0x397e453582968927b0368b21ffa62a67
       Material: 0xf2f5b71fa89eeb7f390c5933c9682563
       RenderingOrder: 5
@@ -288,7 +281,6 @@ Scene:
       Scale: [1, 1, 1]
       FollowOwner: true
     Renderer3D:
-      SkeletalAnimatorEntity: 0xd038d7bdfe11968a8d8576a1583447ae
       Mesh: 0x9542e08eb0733885db5f792d5038d44b
       Material: 0xe501cfaa6618025c81e99026718b8258
       RenderingOrder: 5
@@ -319,15 +311,17 @@ Scene:
     Name: PointLight
     IsEnabled: true
     Transform:
-      Position: [-1.09403825, -6.26730633, -7.00130081]
+      Position: [62.1461792, -7.95190525, -10.462554]
       Rotation: [2.84217128e-14, -0, 0]
       Scale: [1, 0.999999881, 0.999999881]
       FollowOwner: true
     PointLight:
       Color: [1, 1, 1]
-      Intensity: 2
-      Radius: 10
+      Intensity: 1
+      Radius: 3
+      Bias: 0.00999999978
       DrawBoundingSphere: false
+      CastShadows: true
     Childs:
       []
   - UUID: 0x3c109db832e4bc77b904cc25e34f2307
@@ -339,7 +333,6 @@ Scene:
       Scale: [2, 1, 2]
       FollowOwner: true
     Renderer3D:
-      SkeletalAnimatorEntity: 0xbb35d426687612a4075674c8b6318b4e
       Mesh: 0x3f83219ad29d9c27728dd755119284cd
       Material: 0x6572a3dea6d7cc7d2344c15bae8abe3e
       RenderingOrder: 5
@@ -358,7 +351,6 @@ Scene:
       Scale: [2, 1, 2]
       FollowOwner: true
     Renderer3D:
-      SkeletalAnimatorEntity: 0xbb35d426687612a4075674c8b6318b4e
       Mesh: 0x3f83219ad29d9c27728dd755119284cd
       Material: 0x6572a3dea6d7cc7d2344c15bae8abe3e
       RenderingOrder: 5
@@ -390,7 +382,6 @@ Scene:
       Scale: [1, 1, 1]
       FollowOwner: true
     Renderer3D:
-      SkeletalAnimatorEntity: 0x2c1ebae4fd299b84032bef0b9de8177f
       Mesh: 0x397e453582968927b0368b21ffa62a67
       Material: 0xf2f5b71fa89eeb7f390c5933c9682563
       RenderingOrder: 5

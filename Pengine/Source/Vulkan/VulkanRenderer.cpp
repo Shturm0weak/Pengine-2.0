@@ -6,6 +6,7 @@
 #include "VulkanGraphicsPipeline.h"
 #include "VulkanComputePipeline.h"
 #include "VulkanRenderPass.h"
+#include "VulkanTexture.h"
 #include "VulkanUniformWriter.h"
 #include "VulkanWindow.h"
 
@@ -36,16 +37,7 @@ void VulkanRenderer::Render(
 	PROFILER_SCOPE(__FUNCTION__);
 
 	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
-
-	std::shared_ptr<VulkanGraphicsPipeline> vkPipeline;
-	if (pipeline)
-	{
-		vkPipeline = std::dynamic_pointer_cast<VulkanGraphicsPipeline>(pipeline);
-	}
-	else
-	{
-		return;
-	}
+	std::shared_ptr<VulkanGraphicsPipeline> vkPipeline = std::static_pointer_cast<VulkanGraphicsPipeline>(pipeline);
 	
 	if (m_Pipeline != pipeline)
 	{
@@ -171,6 +163,28 @@ void VulkanRenderer::EndCommandLabel(void* frame)
 	GetVkDevice()->CommandEndLabel(vkFrame->CommandBuffer);
 }
 
+void VulkanRenderer::ClearDepthStencilImage(
+	std::shared_ptr<Texture> texture,
+	const RenderPass::ClearDepth& clearDepth,
+	void* frame)
+{
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
+	const std::shared_ptr<VulkanTexture> vkTexture = std::static_pointer_cast<VulkanTexture>(texture);
+	
+	VkClearDepthStencilValue clearValue{};
+	clearValue.depth = clearDepth.clearDepth;
+	clearValue.stencil = clearDepth.clearStencil;
+	
+	VkImageSubresourceRange range{};
+	range.aspectMask = VulkanTexture::ConvertAspectMask(vkTexture->GetAspectMask());
+	range.baseMipLevel = 0;
+	range.levelCount = vkTexture->GetMipLevels();
+	range.baseArrayLayer = 0;
+	range.layerCount = vkTexture->GetLayerCount();
+
+	GetVkDevice()->ClearDepthStencilImage(vkTexture->GetImage(), vkTexture->GetLayout(), &clearValue, 1, &range, vkFrame->CommandBuffer);
+}
+
 void VulkanRenderer::BeginRenderPass(
 	const RenderPass::SubmitInfo& renderPassSubmitInfo,
 	const std::string& debugName,
@@ -179,7 +193,7 @@ void VulkanRenderer::BeginRenderPass(
 	PROFILER_SCOPE(__FUNCTION__);
 
 	const VulkanFrameInfo* frame = static_cast<VulkanFrameInfo*>(renderPassSubmitInfo.frame);
- 
+
 	if (!debugName.empty())
 	{
 		BeginCommandLabel(debugName, debugColor, renderPassSubmitInfo.frame);

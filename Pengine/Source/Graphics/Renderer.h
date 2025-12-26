@@ -80,6 +80,11 @@ namespace Pengine
 			void* frame) = 0;
 
 		virtual void EndCommandLabel(void* frame) = 0;
+
+		virtual void ClearDepthStencilImage(
+			std::shared_ptr<Texture> texture,
+			const RenderPass::ClearDepth& clearDepth,
+			void* frame) = 0;
 	};
 
 }

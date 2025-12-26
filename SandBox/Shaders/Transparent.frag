@@ -35,9 +35,10 @@ layout(set = 1, binding = 0) uniform GBufferMaterial
 };
 
 #include "Shaders/Includes/IsBrightPixel.h"
-#include "Shaders/Includes/PointLight.h"
 #include "Shaders/Includes/DirectionalLight.h"
+#include "Shaders/Includes/PointLight.h"
 #include "Shaders/Includes/CSM.h"
+#include "Shaders/Includes/SSS.h"
 
 layout(set = 2, binding = 0) uniform sampler2D deferredAlbedoTexture;
 layout(set = 2, binding = 1) uniform sampler2D deferredNormalTexture;
@@ -46,6 +47,7 @@ layout(set = 2, binding = 3) uniform sampler2D deferredDepthTexture;
 layout(set = 2, binding = 4) uniform sampler2D deferredSsaoTexture;
 layout(set = 2, binding = 5) uniform sampler2D deferredSssTexture;
 layout(set = 2, binding = 6) uniform sampler2DArray deferredCSMTexture;
+layout(set = 2, binding = 7) uniform sampler2D deferredPointLightShadowMapTexture;
 
 layout(set = 3, binding = 0) uniform Lights
 {
@@ -58,6 +60,10 @@ layout(set = 3, binding = 0) uniform Lights
 	float brightnessThreshold;
 
 	CSM csm;
+
+	PointLightShadows pointLightShadows;
+    
+    SSS sss;
 };
 
 #include "Shaders/Includes/ParallaxOcclusionMapping.h"
@@ -114,7 +120,7 @@ void main()
 				csm,
 				abs(positionViewSpace.z),
 				positionWorldSpace,
-				normal.xyz,
+				normal,
 				directionalLight.direction);
 		}
 
@@ -122,7 +128,7 @@ void main()
 			directionalLight,
 			viewDirection,
 			basicReflectivity,
-			normal.xyz,
+			normal,
 			albedoColor.xyz,
 			shading.x,
 			shading.y,
@@ -133,7 +139,47 @@ void main()
 
 	for (int i = 0; i < pointLightsCount; i++)
 	{
-		result += CalculatePointLight(pointLights[i], positionViewSpace, normal.xyz) * albedoColor.xyz;
+		PointLight pointLight = pointLights[i];
+		vec3 toLight = pointLight.positionWorldSpace - positionWorldSpace;
+		float distanceToPoint = length(toLight);
+		if (distanceToPoint < pointLight.radius)
+		{
+			float shadow = 0.0f;
+			if (pointLightShadows.isEnabled == 1 && pointLight.shadowMapIndex > -1)
+			{
+				float distanceToCamera = length(pointLight.positionWorldSpace - camera.position);
+				shadow = CalculatePointLightShadow(
+					deferredPointLightShadowMapTexture,
+					pointLight,
+					pointLightShadows,
+					toLight,
+					distanceToPoint,
+					distanceToCamera);
+
+				// TODO: SSS for point lights!
+				// shadow += CalculateScreenSpaceShadows(
+				//     depthTexture,
+				//     positionViewSpace,
+				//     normalize(toLight),
+				//     viewRay,
+				//     camera.projectionMat4,
+				//     sss).r;
+
+				// shadow = clamp(shadow, 0.0f, 1.0f);
+			}
+			
+			result += CalculatePointLight(
+				pointLight,
+				viewDirection,
+				positionViewSpace,
+				basicReflectivity,
+				normal,
+				albedoColor.xyz,
+				shading.x,
+				shading.y,
+				shading.z,
+				shadow);
+		}
 	}
 
 	vec3 emissiveColor = texture(emissiveTexture, finalUV).xyz;

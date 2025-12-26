@@ -1,5 +1,6 @@
 #version 450 core
 
+#include "Shaders/Includes/Camera.h"
 #include "Shaders/Includes/CSM.h"
 
 layout(triangles) in;

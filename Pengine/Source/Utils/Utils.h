@@ -524,4 +524,25 @@ namespace Pengine::Utils
 
 		return planes;
 	}
+
+	inline bool IsSphereInsideFrustum(
+		const std::array<glm::vec4, 6>& planes,
+		const glm::vec3& position,
+		float radius)
+	{
+		for (const auto& plane : planes)
+		{
+			float distance = plane.x * position.x +
+				plane.y * position.y +
+				plane.z * position.z +
+				plane.w;
+
+			if (distance < -radius)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 }

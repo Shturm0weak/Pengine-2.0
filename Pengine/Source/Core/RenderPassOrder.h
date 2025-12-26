@@ -18,6 +18,7 @@ namespace Pengine
 		GBuffer,
 		Decals,
 		CSM,
+		PointLightShadows,
 		SSAO,
 		SSAOBlur,
 		SSS,

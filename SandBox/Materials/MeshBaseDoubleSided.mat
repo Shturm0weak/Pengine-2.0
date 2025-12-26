@@ -66,6 +66,9 @@ Mat:
           Value: White
         - Name: heightTexture
           Value: White
+    - RenderPass: PointLightShadows
+      Uniforms:
+        []
     - RenderPass: Transparent
       Uniforms:
         []

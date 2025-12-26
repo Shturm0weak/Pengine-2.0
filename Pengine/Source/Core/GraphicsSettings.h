@@ -91,6 +91,23 @@ namespace Pengine
 				float minThickness = -0.0125f;
 				float maxThickness = 0.00015f;
 			} sss;
+
+			struct PointLightShadows
+			{
+				/**
+				 * Resolution: 1024 / 2048 / 3072 / 4096
+				 * 3072 by default.
+				 */
+				int atlasQuality = 2;
+
+				/**
+				 * Resolution: 128 / 256 / 512 / 1024
+				 * 512 by default.
+				 */
+				int faceQuality = 2;
+				
+				bool isEnabled = true;
+			} pointLightShadows;
 		} shadows;
 
 		struct Bloom

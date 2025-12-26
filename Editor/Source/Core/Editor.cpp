@@ -1289,6 +1289,25 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 				isChangedToSerialize += ImGui::SliderFloat("Max Thickness", &graphicsSettings.shadows.sss.maxThickness, 0.0f, 0.01f, "%.6f");
 				ImGui::PopID();
 			}
+
+			if (ImGui::CollapsingHeader("PointLightShadows"))
+			{
+				Indent indent;
+
+				ImGui::PushID("PointLightShadows Is Enabled");
+				isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.shadows.pointLightShadows.isEnabled);
+				ImGui::PopID();
+
+				const char* const atlasQualities[] = { "1024", "2048", "3072", "4096" };
+				ImGui::PushID("PointLightShadows Atlas Quality");
+				isChangedToSerialize += ImGui::Combo("Atlas Size", &graphicsSettings.shadows.pointLightShadows.atlasQuality, atlasQualities, 4);
+				ImGui::PopID();
+
+				const char* const faceQualities[] = { "128", "256", "512", "1024" };
+				ImGui::PushID("PointLightShadows Face Quality");
+				isChangedToSerialize += ImGui::Combo("Face Size", &graphicsSettings.shadows.pointLightShadows.faceQuality, faceQualities, 4);
+				ImGui::PopID();
+			}
 		}
 
 		if (ImGui::CollapsingHeader("Bloom"))
@@ -2674,6 +2693,8 @@ void Editor::PointLightComponent(const std::shared_ptr<Entity>& entity)
 		ImGui::ColorEdit3("Color", &pointLight.color[0]);
 		ImGui::SliderFloat("Intensity", &pointLight.intensity, 0.0f, 10.0f);
 		ImGui::SliderFloat("Radius", &pointLight.radius, 0.0f, 10.0f);
+		ImGui::SliderFloat("Bias", &pointLight.bias, 0.001f, 0.1f);
+		ImGui::Checkbox("Cast Shadows", &pointLight.castShadows);
 		ImGui::Checkbox("Draw Bounding Sphere", &pointLight.drawBoundingSphere);
 	}
 }

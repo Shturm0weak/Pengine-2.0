@@ -29,6 +29,10 @@ SSS:
   MaxSteps: 16
   MinThickness: -0.0125000002
   MaxThickness: 0.000150000007
+PointLightShadows:
+  IsEnabled: false
+  AtlasQuality: 2
+  FaceQuality: 2
 Bloom:
   IsEnabled: false
   MipCount: 10

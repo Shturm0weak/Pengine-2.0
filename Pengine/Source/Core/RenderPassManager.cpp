@@ -10,6 +10,7 @@
 #include "Raycast.h"
 #include "UIRenderer.h"
 #include "Profiler.h"
+#include "Timer.h"
 
 #include "../Components/Canvas.h"
 #include "../Components/Camera.h"
@@ -321,6 +322,7 @@ RenderPassManager::RenderPassManager()
 	CreateSSS();
 	CreateSSSBlur();
 	CreateCSM();
+	CreatePointLightShadows();
 	CreateBloom();
 	CreateSSR();
 	CreateSSRBlur();
@@ -412,7 +414,7 @@ void RenderPassManager::CreateZPrePass()
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
 		const glm::mat4 viewProjectionMat4 = renderInfo.projection * camera.GetViewMat4();
 
-		const auto visibleEntities = scene->GetBVH()->CullAgainstFrustum(Utils::GetFrustumPlanes(viewProjectionMat4));
+		const std::vector<entt::entity> visibleEntities = scene->GetBVH()->CullAgainstFrustum(Utils::GetFrustumPlanes(viewProjectionMat4));
 
 		VisibleData* visibleData = (VisibleData*)renderInfo.renderView->GetCustomData("VisibleData");
 		if (!visibleData)
@@ -596,21 +598,21 @@ void RenderPassManager::CreateGBuffer()
 				renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh][lod].emplace_back(entity);
 			}
 
-			if (scene->GetSettings().drawBoundingBoxes)
-			{
-				const glm::mat4& transformMat4 = transform.GetTransform();
-				const BoundingBox& box = r3d.mesh->GetBoundingBox();
-				const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
+			renderableCount++;
+		}
 
-				scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
-				/*scene->GetBVH()->Traverse([scene](const SceneBVH::BVHNode& node)
+		if (scene->GetSettings().drawBoundingBoxes)
+		{
+			//const glm::mat4& transformMat4 = transform.GetTransform();
+			//const BoundingBox& box = r3d.mesh->GetBoundingBox();
+			//const glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
+
+			//scene->GetVisualizer().DrawBox(box.min, box.max, color, transformMat4);
+			scene->GetBVH()->Traverse([scene](const SceneBVH::BVHNode& node)
 				{
 					scene->GetVisualizer().DrawBox(node.aabb.min, node.aabb.max, { 0.0f, 1.0f, 0.0f }, glm::mat4(1.0f));
 					return true;
-				});*/
-			}
-
-			renderableCount++;
+				});
 		}
 
 		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderView->GetBuffer("InstanceBuffer");
@@ -618,7 +620,7 @@ void RenderPassManager::CreateGBuffer()
 		{
 			instanceBuffer = Buffer::Create(
 				sizeof(InstanceData),
-				renderableCount,
+				renderableCount * 2,
 				Buffer::Usage::VERTEX_BUFFER,
 				MemoryType::CPU,
 				true);
@@ -806,39 +808,6 @@ void RenderPassManager::CreateDeferred()
 		const std::shared_ptr<Buffer> lightsBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, lightsUniformWriter, lightsBufferName);
 
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
-
-		auto pointLightView = renderInfo.scene->GetRegistry().view<PointLight>();
-		uint32_t lightIndex = 0;
-		for (const entt::entity& entity : pointLightView)
-		{
-			if (lightIndex == 32)
-			{
-				break;
-			}
-
-			PointLight& pl = renderInfo.scene->GetRegistry().get<PointLight>(entity);
-			const Transform& transform = renderInfo.scene->GetRegistry().get<Transform>(entity);
-
-			const std::string valueNamePrefix = "pointLights[" + std::to_string(lightIndex) + "]";
-
-			// View Space!
-			glm::vec3 lightPosition = camera.GetViewMat4() * glm::vec4(transform.GetPosition(), 1.0f);
-			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, valueNamePrefix + ".position", lightPosition);
-			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, valueNamePrefix + ".color", pl.color);
-			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, valueNamePrefix + ".intensity", pl.intensity);
-			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, valueNamePrefix + ".radius", pl.radius);
-
-			if (pl.drawBoundingSphere)
-			{
-				constexpr glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
-				renderInfo.scene->GetVisualizer().DrawSphere(color, transform.GetTransform(), pl.radius, 10);
-			}
-
-			lightIndex++;
-		}
-
-		int pointLightsCount = pointLightView.size();
-		baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "pointLightsCount", pointLightsCount);
 
 		const GraphicsSettings& graphicsSettings = renderInfo.scene->GetGraphicsSettings();
 		baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "brightnessThreshold", graphicsSettings.bloom.brightnessThreshold);
@@ -1294,7 +1263,7 @@ void RenderPassManager::CreateTransparent()
 		{
 			instanceBuffer = Buffer::Create(
 				sizeof(InstanceData),
-				renderableCount,
+				renderableCount * 2,
 				Buffer::Usage::VERTEX_BUFFER,
 				MemoryType::CPU,
 				true);
@@ -1413,8 +1382,6 @@ void RenderPassManager::CreateCSM()
 	createInfo.resizeWithViewport = false;
 	createInfo.createFrameBuffer = false;
 
-	const std::shared_ptr<Mesh> planeMesh = nullptr;
-
 	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
 	{
 		PROFILER_SCOPE(CSM);
@@ -1447,7 +1414,6 @@ void RenderPassManager::CreateCSM()
 		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
 		if (!frameBuffer)
 		{
-			// NOTE: Maybe should be send as the next frame event, because creating a frame buffer here may cause some problems.
 			const std::string renderPassName = renderInfo.renderPass->GetName();
 			renderInfo.renderPass->GetAttachmentDescriptions().back().textureCreateInfo.layerCount = shadowsSettings.cascadeCount;
 			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderView.get(), shadowMapSize);
@@ -1455,7 +1421,6 @@ void RenderPassManager::CreateCSM()
 			renderInfo.renderView->SetFrameBuffer(renderPassName, frameBuffer);
 		}
 
-		// Recreate if quality has been changed.
 		if (frameBuffer->GetSize() != shadowMapSize)
 		{
 			frameBuffer->Resize(shadowMapSize);
@@ -1588,7 +1553,7 @@ void RenderPassManager::CreateCSM()
 		{
 			instanceBuffer = Buffer::Create(
 				sizeof(InstanceDataCSM),
-				renderableCount,
+				renderableCount * 2,
 				Buffer::Usage::VERTEX_BUFFER,
 				MemoryType::CPU,
 				true);
@@ -1747,6 +1712,531 @@ void RenderPassManager::CreateCSM()
 		}
 
 		renderInfo.renderer->EndRenderPass(submitInfo);
+	};
+
+	CreateRenderPass(createInfo);
+}
+
+void RenderPassManager::CreatePointLightShadows()
+{
+	RenderPass::ClearDepth clearDepth{};
+	clearDepth.clearDepth = 1.0f;
+	clearDepth.clearStencil = 0;
+
+	RenderPass::AttachmentDescription depth{};
+	depth.textureCreateInfo.format = Format::D32_SFLOAT;
+	depth.textureCreateInfo.aspectMask = Texture::AspectMask::DEPTH;
+	depth.textureCreateInfo.channels = 1;
+	depth.textureCreateInfo.isMultiBuffered = true;
+	depth.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::TRANSFER_DST, Texture::Usage::DEPTH_STENCIL_ATTACHMENT };
+	depth.textureCreateInfo.name = "PointLightShadows";
+	depth.textureCreateInfo.filepath = depth.textureCreateInfo.name;
+	depth.layout = Texture::Layout::DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	depth.load = RenderPass::Load::LOAD;
+	depth.store = RenderPass::Store::STORE;
+
+	Texture::SamplerCreateInfo samplerCreateInfo{};
+	samplerCreateInfo.filter = Texture::SamplerCreateInfo::Filter::NEAREST;
+	samplerCreateInfo.borderColor = Texture::SamplerCreateInfo::BorderColor::FLOAT_OPAQUE_WHITE;
+	samplerCreateInfo.addressMode = Texture::SamplerCreateInfo::AddressMode::CLAMP_TO_EDGE;
+	samplerCreateInfo.maxAnisotropy = 1.0f;
+
+	depth.textureCreateInfo.samplerCreateInfo = samplerCreateInfo;
+
+	RenderPass::CreateInfo createInfo{};
+	createInfo.type = Pass::Type::GRAPHICS;
+	createInfo.name = PointLightShadows;
+	createInfo.clearDepths = { clearDepth };
+	createInfo.attachmentDescriptions = { depth };
+	createInfo.resizeWithViewport = false;
+	createInfo.createFrameBuffer = false;
+
+	createInfo.executeCallback = [this](const RenderPass::RenderCallbackInfo& renderInfo)
+	{
+		PROFILER_SCOPE(PointLightShadows);
+
+		const std::string renderPassName = renderInfo.renderPass->GetName();
+
+		size_t renderableCount = 0;
+		const std::shared_ptr<Scene> scene = renderInfo.scene;
+		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
+		const glm::vec3 cameraPosition = camera.GetEntity()->GetComponent<Transform>().GetPosition();
+		entt::registry& registry = scene->GetRegistry();
+
+		struct FaceInfo
+		{
+			std::vector<entt::entity> entities;
+			RenderableEntities renderableEntities;
+			int faceIndex;
+		};
+
+		struct LightInfo
+		{
+			std::array<FaceInfo, 6> faceInfos;
+			int lightIndex;
+			int shadowMapIndex;
+		};
+
+		std::vector<LightInfo> lightInfos;
+
+		auto getPointLightViewMatrix = [](const glm::vec3& position, int faceIndex) -> glm::mat4
+		{
+			static const glm::vec3 directions[6] =
+			{
+				glm::vec3(-1.0f, 0.0f,  0.0f),  // -X (Left)
+				glm::vec3(1.0f,  0.0f,  0.0f),  // +X (Right)
+				glm::vec3(0.0f, -1.0f,  0.0f),  // -Y (Bottom)
+				glm::vec3(0.0f,  1.0f,  0.0f),  // +Y (Top)
+				glm::vec3(0.0f,  0.0f, -1.0f),  // -Z (Back)
+				glm::vec3(0.0f,  0.0f,  1.0f),  // +Z (Front)
+			};
+
+			static const glm::vec3 ups[6] =
+			{
+				glm::vec3(0.0f, -1.0f,  0.0f),  // -X (Left) - Y down for Vulkan
+				glm::vec3(0.0f, -1.0f,  0.0f),  // +X (Right) - Y down for Vulkan
+				glm::vec3(0.0f,  0.0f, -1.0f),  // -Y (Bottom) - Z down
+				glm::vec3(0.0f,  0.0f,  1.0f),  // +Y (Top) - Z up
+				glm::vec3(0.0f, -1.0f,  0.0f),  // -Z (Back) - Y down for Vulkan
+				glm::vec3(0.0f, -1.0f,  0.0f),  // +Z (Front) - Y down for Vulkan
+			};
+
+			assert(faceIndex < 6);
+
+			glm::vec3 target = position + directions[faceIndex];
+
+			return glm::lookAt(position, target, ups[faceIndex]);
+		};
+
+		const GraphicsSettings::Shadows::PointLightShadows& pointLightShadowsSettings = renderInfo.scene->GetGraphicsSettings().shadows.pointLightShadows;
+		const glm::ivec2 resolutions[4] = { { 1024, 1024 }, { 2048, 2048 }, { 3072, 3072 }, { 4096, 4096 } };
+		const glm::ivec2 shadowMapAtlasSize = resolutions[pointLightShadowsSettings.atlasQuality];
+
+		const int faceSizes[4] = { 128, 256, 512, 1024 };
+		const int faceSize = faceSizes[pointLightShadowsSettings.faceQuality];
+
+		const float facesPerRow = (float)shadowMapAtlasSize.x / (float)faceSize;
+		const int maxShadowMapCount = glm::floor((facesPerRow * facesPerRow) / 6.0f);
+
+		const std::shared_ptr<BaseMaterial> deferredBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+			std::filesystem::path("Materials") / "Deferred.basemat");
+		const std::shared_ptr<Pipeline> deferredPipeline = deferredBaseMaterial->GetPipeline(Deferred);
+		if (!deferredPipeline)
+		{
+			return;
+		}
+
+		const std::string lightsBufferName = "Lights";
+		const std::shared_ptr<UniformWriter> lightsUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, deferredPipeline, lightsBufferName);
+		const std::shared_ptr<Buffer> lightsBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, lightsUniformWriter, lightsBufferName);
+
+		const int isPointLightShadowsEnabled = pointLightShadowsSettings.isEnabled;
+		deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "pointLightShadows.isEnabled", isPointLightShadowsEnabled);
+		deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "pointLightShadows.shadowMapAtlasSize", shadowMapAtlasSize.x);
+		deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "pointLightShadows.faceSize", faceSize);
+
+		const auto view = registry.view<PointLight>();
+
+		struct LightInfoToSort
+		{
+			entt::entity entity;
+			glm::vec3 position;
+			float radius;
+		};
+
+		const std::array<glm::vec4, 6> cameraFrustumPlanes = Utils::GetFrustumPlanes(renderInfo.projection * camera.GetViewMat4());
+
+		std::vector<LightInfoToSort> lights;
+		lights.reserve(view.size());
+
+		for (size_t i = 0; i < view.size(); i++)
+		{
+			LightInfoToSort lightInfoToSort{};
+			lightInfoToSort.entity = view[i];
+			lightInfoToSort.position = registry.get<Transform>(view[i]).GetPosition();
+			lightInfoToSort.radius = registry.get<PointLight>(view[i]).radius;
+
+			if (Utils::IsSphereInsideFrustum(cameraFrustumPlanes, lightInfoToSort.position, lightInfoToSort.radius))
+			{
+				lights.emplace_back(lightInfoToSort);
+			}
+		}
+
+		std::sort(lights.begin(), lights.end(),
+		[&registry, &cameraPosition](const LightInfoToSort& first, const LightInfoToSort& second)
+		{
+			float firstDistance2 = 0.0f;
+			{
+				firstDistance2 = glm::distance2(cameraPosition, first.position) - (first.radius * first.radius);
+			}
+
+			float secondDistance2 = 0.0f;
+			{
+				secondDistance2 = glm::distance2(cameraPosition, second.position) - (second.radius * second.radius);
+			}
+
+			return firstDistance2 < secondDistance2;
+		});
+
+		int lightIndex = 0;
+		int shadowMapIndex = 0;
+		for (const auto& light : lights)
+		{
+			if (lightIndex == 32)
+			{
+				break;
+			}
+
+			int plShadowMapIndex = -1;
+			if (shadowMapIndex < maxShadowMapCount)
+			{
+				plShadowMapIndex = shadowMapIndex;
+				shadowMapIndex++;
+			}
+
+			LightInfo& lightInfo = lightInfos.emplace_back();
+			lightInfo.lightIndex = lightIndex;
+			lightInfo.shadowMapIndex = plShadowMapIndex;
+
+			PointLight& pl = registry.get<PointLight>(light.entity);
+
+			const glm::vec3 lightPositionWorldSpace = light.position;
+			const glm::vec3 lightPositionViewSpace = camera.GetViewMat4() * glm::vec4(light.position, 1.0f);
+			deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, std::format("pointLights[{}].positionWorldSpace", lightIndex), lightPositionWorldSpace);
+			deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, std::format("pointLights[{}].positionViewSpace", lightIndex), lightPositionViewSpace);
+			deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, std::format("pointLights[{}].color", lightIndex), pl.color);
+			deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, std::format("pointLights[{}].intensity", lightIndex), pl.intensity);
+			deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, std::format("pointLights[{}].radius", lightIndex), pl.radius);
+			deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, std::format("pointLights[{}].shadowMapIndex", lightIndex), plShadowMapIndex);
+			deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, std::format("pointLights[{}].bias", lightIndex), pl.bias);
+
+			if (pl.drawBoundingSphere)
+			{
+				constexpr glm::vec3 color = glm::vec3(0.0f, 1.0f, 0.0f);
+				Transform& transform = registry.get<Transform>(light.entity);
+				renderInfo.scene->GetVisualizer().DrawSphere(color, transform.GetTransform(), pl.radius, 10);
+			}
+
+			if (pointLightShadowsSettings.isEnabled && pl.castShadows)
+			{
+				const glm::mat4 projectionMat4 = glm::perspective(
+					glm::radians(90.0f),
+					1.0f,
+					camera.GetZNear(),
+					pl.radius);
+				for (size_t faceIndex = 0; faceIndex < 6; faceIndex++)
+				{
+					const glm::mat4 viewProjectionMat4 = projectionMat4 * getPointLightViewMatrix(lightPositionWorldSpace, faceIndex);
+
+					FaceInfo& faceInfo = lightInfo.faceInfos[faceIndex];
+					faceInfo.faceIndex = faceIndex;
+					
+					const auto frustumPlanes = Utils::GetFrustumPlanes(viewProjectionMat4);
+ 					faceInfo.entities = scene->GetBVH()->CullAgainstFrustum(frustumPlanes);
+
+					deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, std::format("pointLights[{}].pointLightFaceInfos[{}].viewProjectionMat4", lightIndex, faceIndex), viewProjectionMat4);
+				}
+			}
+
+			lightIndex++;
+		}
+
+		int pointLightsCount = lightInfos.size();
+		deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "pointLightsCount", pointLightsCount);
+
+
+		if (!pointLightShadowsSettings.isEnabled)
+		{
+			renderInfo.renderView->DeleteUniformWriter(renderPassName);
+			renderInfo.renderView->DeleteBuffer("InstanceBufferPointLightShadows");
+			renderInfo.renderView->DeleteFrameBuffer(renderPassName);
+
+			return;
+		}
+
+		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
+		if (!frameBuffer)
+		{
+			const std::string renderPassName = renderInfo.renderPass->GetName();
+			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderView.get(), shadowMapAtlasSize);
+
+			renderInfo.renderView->SetFrameBuffer(renderPassName, frameBuffer);
+		}
+
+		if (frameBuffer->GetSize() != shadowMapAtlasSize)
+		{
+			frameBuffer->Resize(shadowMapAtlasSize);
+		}
+
+		for (LightInfo& lightInfo : lightInfos)
+		{
+			for (FaceInfo& faceInfo : lightInfo.faceInfos)
+			{
+				for (const entt::entity& entity : faceInfo.entities)
+				{
+					const Renderer3D& r3d = registry.get<Renderer3D>(entity);
+
+					if (!r3d.castShadows)
+					{
+						continue;
+					}
+
+					if ((r3d.shadowVisibilityMask & camera.GetShadowVisibilityMask()) == 0)
+					{
+						continue;
+					}
+
+					if (!r3d.material || !r3d.material->IsPipelineEnabled(renderPassName))
+					{
+						continue;
+					}
+
+					const std::shared_ptr<Pipeline> pipeline = r3d.material->GetBaseMaterial()->GetPipeline(renderPassName);
+					if (!pipeline)
+					{
+						continue;
+					}
+					
+					const Transform& transform = registry.get<Transform>(entity);
+					auto lod = GetLod(
+						cameraPosition,
+						transform.GetPosition(),
+						glm::length(transform.GetScale() * glm::max(glm::abs(r3d.mesh->GetBoundingBox().min), glm::abs(r3d.mesh->GetBoundingBox().max))),
+						r3d.mesh->GetLods());
+
+					if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
+					{
+						if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntityUUID))
+						{
+							SkeletalAnimator* skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
+							if (skeletalAnimator)
+							{
+								UpdateSkeletalAnimator(skeletalAnimator, r3d.material->GetBaseMaterial(), pipeline);
+							}
+						}
+
+						faceInfo.renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].single.emplace_back(std::make_pair(r3d.mesh, std::make_pair(lod, entity)));
+					}
+					else if (r3d.mesh->GetType() == Mesh::Type::STATIC)
+					{
+						faceInfo.renderableEntities[r3d.material->GetBaseMaterial()][r3d.material].instanced[r3d.mesh][lod].emplace_back(entity);
+					}
+
+					renderableCount++;
+				}
+			}
+		}
+
+		struct InstanceData
+		{
+			glm::mat4 transform;
+			int lightIndex;
+			int faceIndex;
+		};
+
+		std::shared_ptr<Buffer> instanceBuffer = renderInfo.renderView->GetBuffer("InstanceBufferPointLightShadows");
+		if ((renderableCount != 0 && !instanceBuffer) || (instanceBuffer && renderableCount != 0 && instanceBuffer->GetInstanceCount() < renderableCount))
+		{
+			instanceBuffer = Buffer::Create(
+				sizeof(InstanceData),
+				renderableCount * 2,
+				Buffer::Usage::VERTEX_BUFFER,
+				MemoryType::CPU,
+				true);
+
+			renderInfo.renderView->SetBuffer("InstanceBufferPointLightShadows", instanceBuffer);
+		}
+
+		struct ShadowMapViewportInfo
+		{
+			uint32_t textureWidth;
+			uint32_t textureHeight;
+			uint32_t faceSize;
+		};
+
+		auto getShadowMapFaceViewport = [](
+			const ShadowMapViewportInfo& info,
+			uint32_t shadowMapIndex,
+			uint32_t faceIndex)
+		{
+			RenderPass::Viewport viewport{};
+
+			uint32_t totalIndex = shadowMapIndex * 6 + faceIndex;
+
+			uint32_t facesPerRow = info.textureWidth / info.faceSize;
+			uint32_t facesPerColumn = info.textureHeight / info.faceSize;
+
+			uint32_t row = totalIndex / facesPerRow;
+			uint32_t col = totalIndex % facesPerRow;
+
+			viewport.position.x = static_cast<float>(col * info.faceSize);
+			viewport.position.y = static_cast<float>(row * info.faceSize);
+			viewport.size.x = static_cast<float>(info.faceSize);
+			viewport.size.y = static_cast<float>(info.faceSize);
+			viewport.minMaxDepth = { 0.0f, 1.0f };
+
+			return viewport;
+		};
+
+		auto getShadowMapFaceScissor = [](
+			const RenderPass::Viewport& viewport,
+			uint32_t shadowMapIndex,
+			uint32_t faceIndex)
+		{
+			RenderPass::Scissors scissor{};
+			scissor.offset.x = static_cast<int32_t>(viewport.position.x);
+			scissor.offset.y = static_cast<int32_t>(viewport.position.y);
+			scissor.size.x = static_cast<uint32_t>(viewport.size.x);
+			scissor.size.y = static_cast<uint32_t>(viewport.size.y);
+
+			return scissor;
+		};
+
+		ShadowMapViewportInfo shadowMapViewportInfo{};
+		shadowMapViewportInfo.faceSize = faceSize;
+		shadowMapViewportInfo.textureWidth = shadowMapAtlasSize.x;
+		shadowMapViewportInfo.textureHeight = shadowMapAtlasSize.y;
+
+		std::vector<InstanceData> instanceDatas;
+		
+		renderInfo.renderer->BeginCommandLabel(PointLightShadows, topLevelRenderPassDebugColor, renderInfo.frame);
+		
+		renderInfo.renderer->BeginCommandLabel("ClearPointLightShadowMapAtlas", { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
+		{
+			RenderPass::ClearDepth clearDepth{};
+			clearDepth.clearDepth = 1.0f;
+			clearDepth.clearStencil = 0;
+			renderInfo.renderer->ClearDepthStencilImage(frameBuffer->GetAttachment(0), clearDepth, renderInfo.frame);
+		}
+		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+
+		for (const LightInfo& lightInfo : lightInfos)
+		{
+			renderInfo.renderer->BeginCommandLabel("PointLight", { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
+			for (const FaceInfo& faceInfo : lightInfo.faceInfos)
+			{
+				RenderPass::SubmitInfo submitInfo{};
+				submitInfo.frame = renderInfo.frame;
+				submitInfo.renderPass = renderInfo.renderPass;
+				submitInfo.frameBuffer = frameBuffer;
+				submitInfo.viewport = getShadowMapFaceViewport(shadowMapViewportInfo, lightInfo.shadowMapIndex, faceInfo.faceIndex);
+				submitInfo.scissors = getShadowMapFaceScissor(*submitInfo.viewport, lightInfo.shadowMapIndex, faceInfo.faceIndex);
+				renderInfo.renderer->BeginRenderPass(submitInfo, std::format("Face {}", faceInfo.faceIndex), { 1.0f, 1.0f, 0.0f });
+
+				// Render all base materials -> materials -> meshes | put gameobjects into the instance buffer.
+				for (const auto& [baseMaterial, meshesByMaterial] : faceInfo.renderableEntities)
+				{
+					const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
+					if (!pipeline)
+					{
+						continue;
+					}
+
+					for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
+					{
+						std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, material, renderInfo);
+						if (!FlushUniformWriters(uniformWriters))
+						{
+							continue;
+						}
+
+						for (const auto& [mesh, entitiesByLod] : gameObjectsByMeshes.instanced)
+						{
+							for (const auto& [lod, entities] : entitiesByLod)
+							{
+								const size_t instanceDataOffset = instanceDatas.size();
+
+								for (const entt::entity& entity : entities)
+								{
+									InstanceData data{};
+									const Transform& transform = registry.get<Transform>(entity);
+									data.transform = transform.GetTransform();
+									data.lightIndex = lightInfo.lightIndex;
+									data.faceIndex = faceInfo.faceIndex;
+									instanceDatas.emplace_back(data);
+								}
+
+								std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+								std::vector<size_t> vertexBufferOffsets;
+								GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
+
+								renderInfo.renderer->Render(
+									vertexBuffers,
+									vertexBufferOffsets,
+									mesh->GetIndexBuffer(),
+									mesh->GetLods()[lod].indexOffset * sizeof(uint32_t),
+									mesh->GetLods()[lod].indexCount,
+									pipeline,
+									instanceBuffer,
+									instanceDataOffset * instanceBuffer->GetInstanceSize(),
+									entities.size(),
+									uniformWriters,
+									renderInfo.frame);
+							}
+						}
+
+						for (const auto& [mesh, lodEntityPair] : gameObjectsByMeshes.single)
+						{
+							const auto& lod = lodEntityPair.first;
+							const auto& entity = lodEntityPair.second;
+
+							const size_t instanceDataOffset = instanceDatas.size();
+
+							InstanceData data{};
+							const Transform& transform = registry.get<Transform>(entity);
+							data.transform = transform.GetTransform();
+							data.lightIndex = lightInfo.lightIndex;
+							data.faceIndex = faceInfo.faceIndex;
+							instanceDatas.emplace_back(data);
+
+							SkeletalAnimator* skeletalAnimator = nullptr;
+							const Renderer3D& r3d = registry.get<Renderer3D>(entity);
+							if (const auto skeletalAnimatorEntity = scene->FindEntityByUUID(r3d.skeletalAnimatorEntityUUID))
+							{
+								skeletalAnimator = registry.try_get<SkeletalAnimator>(skeletalAnimatorEntity->GetHandle());
+							}
+
+							if (skeletalAnimator)
+							{
+								std::vector<std::shared_ptr<UniformWriter>> newUniformWriters = uniformWriters;
+								newUniformWriters.emplace_back(skeletalAnimator->GetUniformWriter());
+
+								std::vector<std::shared_ptr<Buffer>> vertexBuffers;
+								std::vector<size_t> vertexBufferOffsets;
+								GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
+
+								renderInfo.renderer->Render(
+									vertexBuffers,
+									vertexBufferOffsets,
+									mesh->GetIndexBuffer(),
+									mesh->GetLods()[lod].indexOffset * sizeof(uint32_t),
+									mesh->GetLods()[lod].indexCount,
+									pipeline,
+									instanceBuffer,
+									instanceDataOffset * instanceBuffer->GetInstanceSize(),
+									1,
+									newUniformWriters,
+									renderInfo.frame);
+							}
+						}
+					}
+				}
+
+				renderInfo.renderer->EndRenderPass(submitInfo);
+			}
+
+			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+		}
+
+		renderInfo.renderer->EndCommandLabel(renderInfo.frame);
+
+		// Because these are all just commands and will be rendered later we can write the instance buffer
+		// just once when all instance data is collected.
+		if (instanceBuffer && !instanceDatas.empty())
+		{
+			instanceBuffer->WriteToBuffer(instanceDatas.data(), instanceDatas.size() * sizeof(InstanceData));
+			instanceBuffer->Flush();
+		}
 	};
 
 	CreateRenderPass(createInfo);
@@ -2435,13 +2925,11 @@ void RenderPassManager::CreateSSS()
 		createInfo.usage = { Texture::Usage::STORAGE, Texture::Usage::SAMPLED };
 		createInfo.isMultiBuffered = true;
 
-		const std::string sssBufferName = passName;
 		std::shared_ptr<Texture> sssTexture = renderInfo.renderView->GetStorageImage(passName);
 
 		if (!sssSettings.isEnabled)
 		{
 			renderInfo.renderView->DeleteUniformWriter(passName);
-			renderInfo.renderView->DeleteBuffer(sssBufferName);
 			renderInfo.renderView->DeleteStorageImage(passName);
 
 			return;
@@ -2465,24 +2953,34 @@ void RenderPassManager::CreateSSS()
 		}
 
 		const std::shared_ptr<UniformWriter> renderUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, pipeline, passName);
-		const std::shared_ptr<Buffer> ssaoBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, renderUniformWriter, sssBufferName);
 
 		WriteRenderViews(renderInfo.renderView, renderInfo.scene->GetRenderView(), pipeline, renderUniformWriter);
 
+		const std::shared_ptr<BaseMaterial> deferredBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(
+			std::filesystem::path("Materials") / "Deferred.basemat");
+		const std::shared_ptr<Pipeline> deferredPipeline = deferredBaseMaterial->GetPipeline(Deferred);
+		if (!deferredPipeline)
+		{
+			return;
+		}
+
+		const std::string lightsBufferName = "Lights";
+		const std::shared_ptr<UniformWriter> lightsUniformWriter = GetOrCreateRendererUniformWriter(renderInfo.renderView, deferredPipeline, lightsBufferName);
+		const std::shared_ptr<Buffer> lightsBuffer = GetOrCreateRenderBuffer(renderInfo.renderView, lightsUniformWriter, lightsBufferName);
+
 		const glm::vec2 viewportScale = glm::vec2(resolutionScales[sssSettings.resolutionScale]);
-		baseMaterial->WriteToBuffer(ssaoBuffer, sssBufferName, "maxSteps", sssSettings.maxSteps);
-		baseMaterial->WriteToBuffer(ssaoBuffer, sssBufferName, "maxRayDistance", sssSettings.maxRayDistance);
-		baseMaterial->WriteToBuffer(ssaoBuffer, sssBufferName, "maxDistance", sssSettings.maxDistance);
-		baseMaterial->WriteToBuffer(ssaoBuffer, sssBufferName, "minThickness", sssSettings.minThickness);
-		baseMaterial->WriteToBuffer(ssaoBuffer, sssBufferName, "maxThickness", sssSettings.maxThickness);
-		baseMaterial->WriteToBuffer(ssaoBuffer, sssBufferName, "viewportScale", viewportScale);
+		deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "sss.maxSteps", sssSettings.maxSteps);
+		deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "sss.maxRayDistance", sssSettings.maxRayDistance);
+		deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "sss.maxDistance", sssSettings.maxDistance);
+		deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "sss.minThickness", sssSettings.minThickness);
+		deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "sss.maxThickness", sssSettings.maxThickness);
+		deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "sss.viewportScale", viewportScale);
 
 		renderInfo.renderer->BeginCommandLabel(passName, topLevelRenderPassDebugColor, renderInfo.frame);
 
 		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = GetUniformWriters(pipeline, baseMaterial, nullptr, renderInfo);
 		if (FlushUniformWriters(uniformWriters))
 		{
-
 			renderInfo.renderer->BeginCommandLabel(passName, { 1.0f, 1.0f, 0.0f }, renderInfo.frame);
 
 			glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
@@ -2772,7 +3270,7 @@ void RenderPassManager::CreateDecalPass()
 		{
 			instanceBuffer = Buffer::Create(
 				sizeof(DecalInstanceData),
-				renderableCount,
+				renderableCount * 2,
 				Buffer::Usage::VERTEX_BUFFER,
 				MemoryType::CPU,
 				true);

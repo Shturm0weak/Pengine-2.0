@@ -1,16 +1,22 @@
-vec3 ScreenSpaceShadows(
+struct SSS
+{
+    int maxSteps;
+    float maxRayDistance;
+    float maxDistance;
+    float minThickness;
+    float maxThickness;
+    vec2 viewportScale;
+};
+
+vec3 CalculateScreenSpaceShadows(
     sampler2D depthTexture,
     in vec3 positionViewSpace,
     in vec3 lightDirection,
     in vec2 viewRay,
     in mat4 projectionMat4,
-    in uint maxSteps,
-    in float maxRayDistance,
-    in float maxDistance,
-    in float minThickness,
-    in float maxThickness)
+    in SSS sss)
 {
-    if (-positionViewSpace.z > maxDistance)
+    if (-positionViewSpace.z > sss.maxDistance)
     {
         return vec3(0.0f);
     }
@@ -18,19 +24,19 @@ vec3 ScreenSpaceShadows(
     vec3 rayPosition = positionViewSpace;
     vec3 rayDirection = lightDirection;
 
-    float stepLength = maxRayDistance / maxSteps;
+    float stepLength = sss.maxRayDistance / sss.maxSteps;
     vec3 rayStep = rayDirection * stepLength;
 
     float occlusion = 0.0f;
     vec2 rayUV = vec2(0.0f);
-    for (uint i = 0; i < maxSteps; i++)
+    for (uint i = 0; i < sss.maxSteps; i++)
     {
         rayPosition += rayStep;
 
 		vec4 clipPos = projectionMat4 * vec4(rayPosition, 1.0f);
-        if (clipPos.w <= 0.0) break;
+        if (clipPos.w <= 0.0f) break;
 		vec3 ndc = clipPos.xyz / clipPos.w;
-        rayUV = ndc.xy * 0.5 + 0.5;
+        rayUV = ndc.xy * 0.5f + 0.5f;
 		
         if ((rayUV.x >= 0.0f && rayUV.x <= 1.0f) && (rayUV.y >= 0.0f && rayUV.y <= 1.0f))
         {
@@ -41,7 +47,7 @@ vec3 ScreenSpaceShadows(
 				viewRay).z;
             float depthDelta = rayPosition.z - depthZ;
 
-            if (depthDelta > minThickness && depthDelta < maxThickness)
+            if (depthDelta > sss.minThickness && depthDelta < sss.maxThickness)
             {
                 occlusion = 1.0f;
                 break;

@@ -58,6 +58,11 @@ namespace Pengine
 			int segments = 16,
 			float duration = 0.0f);
 
+		void DrawFrustum(
+			std::array<glm::vec4, 6> planes,
+			const glm::vec3& color,
+			float duration = 0.0f);
+
 		std::queue<Line>& GetLines() { return m_Lines; }
 
 	private:

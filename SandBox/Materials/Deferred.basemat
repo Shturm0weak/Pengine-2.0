@@ -34,3 +34,6 @@ Basemat:
         - Name: CSMTexture
           TextureAttachment: "CSM[0]"
           TextureAttachmentDefault: "WhiteLayered"
+        - Name: pointLightShadowMapTexture
+          TextureAttachment: "PointLightShadows"
+          TextureAttachmentDefault: "White"

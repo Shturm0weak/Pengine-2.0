@@ -12,6 +12,8 @@ using namespace Pengine;
 
 void SceneBVH::Clear()
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	WaitIdle();
 
 	m_Nodes.clear();
@@ -21,6 +23,8 @@ void SceneBVH::Clear()
 
 void SceneBVH::Update()
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	WaitIdle();
 
 	if (!m_Scene)
@@ -40,6 +44,8 @@ void SceneBVH::Update()
 
 void SceneBVH::Traverse(const std::function<bool(const BVHNode&)>& callback) const
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	if (m_Root == -1) return;
 
 	m_BVHUseCount.fetch_add(1);
@@ -65,6 +71,8 @@ void SceneBVH::Traverse(const std::function<bool(const BVHNode&)>& callback) con
 
 std::vector<entt::entity> SceneBVH::CullAgainstFrustum(const std::array<glm::vec4, 6>& planes)
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	std::vector<entt::entity> visibleEntities;
 	Traverse([&planes, &visibleEntities](const BVHNode& node)
 	{
@@ -72,8 +80,8 @@ std::vector<entt::entity> SceneBVH::CullAgainstFrustum(const std::array<glm::vec
 		{
 			return false;
 		}
-
-		if (node.IsLeaf())
+		
+		if (node.IsLeaf() && node.entity->IsValid())
 		{
 			visibleEntities.emplace_back(node.entity->GetHandle());
 		}
@@ -89,6 +97,8 @@ std::multimap<Raycast::Hit, std::shared_ptr<Entity>> SceneBVH::Raycast(
 	const glm::vec3& direction,
 	const float length) const
 {
+	PROFILER_SCOPE(__FUNCTION__);
+
 	std::multimap<Raycast::Hit, std::shared_ptr<Entity>> hits;
 
 	Traverse([start, direction, length, &hits](const BVHNode& node)
@@ -122,6 +132,7 @@ void SceneBVH::WaitIdle()
 void SceneBVH::Rebuild()
 {
 	PROFILER_SCOPE(__FUNCTION__);
+
 	if (!m_Scene)
 	{
 		return;
@@ -330,13 +341,13 @@ AABB SceneBVH::LocalToWorldAABB(const AABB& localAABB, const glm::mat4& transfor
 
 bool SceneBVH::IntersectsFrustum(const AABB& aabb, const std::array<glm::vec4, 6>& planes)
 {
-	glm::vec3 center = (aabb.min + aabb.max) * 0.5f;
-	glm::vec3 extents = aabb.max - center;
+	const glm::vec3 center = (aabb.min + aabb.max) * 0.5f;
+	const glm::vec3 extents = aabb.max - center;
 
 	for (const auto& plane : planes)
 	{
-		float distance = glm::dot(center, glm::vec3(plane)) + plane.w;
-		float radius = glm::dot(extents, glm::abs(glm::vec3(plane)));
+		const float distance = glm::dot(center, glm::vec3(plane)) + plane.w;
+		const float radius = glm::dot(extents, glm::abs(glm::vec3(plane)));
 
 		if (distance + radius < 0.0f)
 		{

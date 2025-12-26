@@ -33,6 +33,10 @@ SSS:
   MaxSteps: 16
   MinThickness: -0.0125000002
   MaxThickness: 0.000150000007
+PointLightShadows:
+  IsEnabled: true
+  AtlasQuality: 3
+  FaceQuality: 2
 Bloom:
   IsEnabled: true
   MipCount: 10
@@ -55,4 +59,4 @@ SSR:
 PostProcess:
   Gamma: 2.20000005
   ToneMapper: 1
-  FXAA: true
+  FXAA: false

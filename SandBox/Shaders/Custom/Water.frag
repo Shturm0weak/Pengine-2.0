@@ -35,11 +35,11 @@ layout(set = 1, binding = 0) uniform GBufferMaterial
 };
 
 #include "Shaders/Includes/IsBrightPixel.h"
-#include "Shaders/Includes/PointLight.h"
 #include "Shaders/Includes/DirectionalLight.h"
+#include "Shaders/Includes/PointLight.h"
 #include "Shaders/Includes/CSM.h"
+#include "Shaders/Includes/SSS.h"
 
-// Deferred uniform samplers. Only need lights from this descriptor set.
 layout(set = 2, binding = 0) uniform sampler2D deferredAlbedoTexture;
 layout(set = 2, binding = 1) uniform sampler2D deferredNormalTexture;
 layout(set = 2, binding = 2) uniform sampler2D deferredShadingTexture;
@@ -47,6 +47,7 @@ layout(set = 2, binding = 3) uniform sampler2D deferredDepthTexture;
 layout(set = 2, binding = 4) uniform sampler2D deferredSsaoTexture;
 layout(set = 2, binding = 5) uniform sampler2D deferredSssTexture;
 layout(set = 2, binding = 6) uniform sampler2DArray deferredCSMTexture;
+layout(set = 2, binding = 7) uniform sampler2D deferredPointLightShadowMapTexture;
 
 layout(set = 3, binding = 0) uniform Lights
 {
@@ -59,6 +60,10 @@ layout(set = 3, binding = 0) uniform Lights
 	float brightnessThreshold;
 
 	CSM csm;
+
+	PointLightShadows pointLightShadows;
+    
+    SSS sss;
 };
 
 #include "Shaders/Includes/ParallaxOcclusionMapping.h"
@@ -115,7 +120,7 @@ void main()
 				csm,
 				abs(positionViewSpace.z),
 				positionWorldSpace,
-				normal.xyz,
+				normal,
 				directionalLight.direction);
 		}
 
@@ -123,7 +128,7 @@ void main()
 			directionalLight,
 			viewDirection,
 			basicReflectivity,
-			normal.xyz,
+			normal,
 			albedoColor.xyz,
 			shading.x,
 			shading.y,
@@ -134,7 +139,17 @@ void main()
 
 	for (int i = 0; i < pointLightsCount; i++)
 	{
-		result += CalculatePointLight(pointLights[i], positionViewSpace, normal.xyz) * albedoColor.xyz;
+		result += CalculatePointLight(
+			pointLights[i],
+			viewDirection,
+			positionViewSpace,
+			basicReflectivity,
+			normal,
+			albedoColor.xyz,
+			shading.x,
+			shading.y,
+			shading.z,
+			0.0f);
 	}
 
 	vec3 emissiveColor = texture(emissiveTexture, finalUV).xyz;

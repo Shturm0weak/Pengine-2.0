@@ -91,6 +91,8 @@ namespace Pengine
 
 		void CreateCSM();
 
+		void CreatePointLightShadows();
+
 		void CreateBloom();
 
 		void CreateSSR();

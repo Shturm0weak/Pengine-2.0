@@ -24,6 +24,19 @@ CSM:
     - 0.0199999996
     - 0.100000001
   StabilizeCascades: true
+SSS:
+  IsEnabled: true
+  ResolutionScale: 2
+  ResolutionBlurScale: 2
+  MaxRayDistance: 0.100000001
+  MaxDistance: 5
+  MaxSteps: 16
+  MinThickness: -0.0125000002
+  MaxThickness: 0
+PointLightShadows:
+  IsEnabled: true
+  AtlasQuality: 2
+  FaceQuality: 2
 Bloom:
   IsEnabled: true
   MipCount: 10

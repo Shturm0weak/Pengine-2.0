@@ -56,6 +56,11 @@ namespace Pengine::Vk
 
 		virtual void EndCommandLabel(void* frame) override;
 
+		virtual void ClearDepthStencilImage(
+			std::shared_ptr<Texture> texture,
+			const RenderPass::ClearDepth& clearDepth,
+			void* frame) override;
+
 	private:
 		void BindBuffers(
 			VkCommandBuffer commandBuffer,

@@ -1,5 +1,7 @@
 #include "Visualizer.h"
 
+#include "Logger.h"
+
 using namespace Pengine;
 
 void Visualizer::DrawLine(
@@ -329,5 +331,78 @@ void Visualizer::DrawCylinder(
 	for (const auto& [start, end] : lines)
 	{
 		DrawLine(transform * glm::vec4(start, 1.0f), transform * glm::vec4(end, 1.0f), color, duration);
+	}
+}
+
+void Visualizer::DrawFrustum(std::array<glm::vec4, 6> planes, const glm::vec3& color, float duration)
+{
+	auto planeIntersection = [](const glm::vec4& p1, const glm::vec4& p2, const glm::vec4& p3) -> glm::vec3
+	{
+		glm::vec3 n1(p1.x, p1.y, p1.z);
+		glm::vec3 n2(p2.x, p2.y, p2.z);
+		glm::vec3 n3(p3.x, p3.y, p3.z);
+
+		float d1 = -p1.w;
+		float d2 = -p2.w;
+		float d3 = -p3.w;
+
+		glm::vec3 n2xn3 = glm::cross(n2, n3);
+		glm::vec3 n3xn1 = glm::cross(n3, n1);
+		glm::vec3 n1xn2 = glm::cross(n1, n2);
+
+		float det = glm::dot(n1, n2xn3);
+
+		if (fabs(det) < 1e-8f)
+		{
+			Logger::Warning(std::format("DrawFrustum::planeIntersection(): Degenerate intersection! Det = {}", det));
+			return glm::vec3(0.0f);
+		}
+
+		return (d1 * n2xn3 + d2 * n3xn1 + d3 * n1xn2) / det;
+	};
+
+	auto computeFrustumVertices = [&planeIntersection](const std::array<glm::vec4, 6>&planes) -> std::array<glm::vec3, 8>
+	{
+		const glm::vec4& left = planes[0];
+		const glm::vec4& right = planes[1];
+		const glm::vec4& bottom = planes[2];
+		const glm::vec4& top = planes[3];
+		const glm::vec4& near = planes[4];
+		const glm::vec4& far = planes[5];
+
+		std::array<glm::vec3, 8> corners;
+
+		// Calculate all 8 corners by intersecting 3 planes each
+		corners[0] = planeIntersection(near, left, top);     // Near-top-left
+		corners[1] = planeIntersection(near, left, bottom);  // Near-bottom-left
+		corners[2] = planeIntersection(near, right, top);    // Near-top-right
+		corners[3] = planeIntersection(near, right, bottom); // Near-bottom-right
+		corners[4] = planeIntersection(far, left, top);      // Far-top-left
+		corners[5] = planeIntersection(far, left, bottom);   // Far-bottom-left
+		corners[6] = planeIntersection(far, right, top);     // Far-top-right
+		corners[7] = planeIntersection(far, right, bottom);  // Far-bottom-right
+
+		return corners;
+	};
+
+	const std::array<glm::vec3, 8> vertices = computeFrustumVertices(planes);
+
+	std::array<std::pair<int, int>, 12> edges = 
+	{
+		{
+			// Near face.
+			{0, 1}, {1, 3}, {3, 2}, {2, 0},
+			// Far face.
+			{4, 5}, {5, 7}, {7, 6}, {6, 4},
+			// Connecting edges.
+			{0, 4}, {1, 5}, {2, 6}, {3, 7}
+		}
+	};
+
+	for (const auto& [p1, p2] : edges)
+	{
+		DrawLine(vertices[p1], vertices[p2], color, duration);
+		//DrawBox(glm::vec3(-0.1f), glm::vec3(0.1f), color, glm::translate(glm::mat4(1.0f), vertices[p1]), duration);
+		//DrawBox(glm::vec3(-0.1f), glm::vec3(0.1f), color, glm::translate(glm::mat4(1.0f), vertices[p2]), duration);
 	}
 }

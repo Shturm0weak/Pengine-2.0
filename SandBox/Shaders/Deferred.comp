@@ -7,12 +7,14 @@ layout(set = 1, binding = 3) uniform sampler2D depthTexture;
 layout(set = 1, binding = 4) uniform sampler2D ssaoTexture;
 layout(set = 1, binding = 5) uniform sampler2D sssTexture;
 layout(set = 1, binding = 6) uniform sampler2DArray CSMTexture;
+layout(set = 1, binding = 7) uniform sampler2D pointLightShadowMapTexture;
 
-#include "Shaders/Includes/IsBrightPixel.h"
-#include "Shaders/Includes/PointLight.h"
-#include "Shaders/Includes/DirectionalLight.h"
-#include "Shaders/Includes/CSM.h"
 #include "Shaders/Includes/Camera.h"
+#include "Shaders/Includes/IsBrightPixel.h"
+#include "Shaders/Includes/DirectionalLight.h"
+#include "Shaders/Includes/PointLight.h"
+#include "Shaders/Includes/CSM.h"
+#include "Shaders/Includes/SSS.h"
 
 layout(set = 0, binding = 0) uniform GlobalBuffer
 {
@@ -30,6 +32,10 @@ layout(set = 2, binding = 0) uniform Lights
 	float brightnessThreshold;
 
 	CSM csm;
+
+	PointLightShadows pointLightShadows;
+    
+    SSS sss;
 };
 
 layout(set = 3, binding = 0, r11f_g11f_b10f) uniform writeonly image2D outColor;
@@ -66,18 +72,20 @@ void main()
 			camera.projectionMat4,
 			viewRay);
 
+		vec3 positionWorldSpace = (camera.inverseViewMat4 * vec4(positionViewSpace, 1.0f)).xyz;
+		vec3 basicReflectivity = mix(vec3(0.05), albedoColor, shading.x);
+		vec3 viewDirection = normalize(-positionViewSpace);
+
 		if (hasDirectionalLight == 1)
 		{
 			vec3 shadow = vec3(0.0f);
 			if (csm.isEnabled == 1)
 			{
-				vec3 worldSpacePosition = (camera.inverseViewMat4 * vec4(positionViewSpace, 1.0f)).xyz;
-
 				shadow = CalculateCSM(
 					CSMTexture,
 					csm,
 					abs(positionViewSpace.z),
-					worldSpacePosition,
+					positionWorldSpace,
 					normalViewSpace,
 					directionalLight.direction);
 			}
@@ -85,8 +93,6 @@ void main()
 			shadow += vec3(texture(sssTexture, uv).r);
 			shadow = clamp(shadow, vec3(0.0f), vec3(1.0f));
 
-			vec3 basicReflectivity = mix(vec3(0.05), albedoColor, shading.x);
-			vec3 viewDirection = normalize(-positionViewSpace);
 			result += CalculateDirectionalLight(
 				directionalLight,
 				viewDirection,
@@ -102,7 +108,47 @@ void main()
 
 		for (int i = 0; i < pointLightsCount; i++)
 		{
-			result += CalculatePointLight(pointLights[i], positionViewSpace, normalViewSpace) * albedoColor;
+			PointLight pointLight = pointLights[i];
+			vec3 toLight = pointLight.positionWorldSpace - positionWorldSpace;
+        	float distanceToPoint = length(toLight);
+			if (distanceToPoint < pointLight.radius)
+			{
+				float shadow = 0.0f;
+				if (pointLightShadows.isEnabled == 1 && pointLight.shadowMapIndex > -1)
+				{
+					float distanceToCamera = length(pointLight.positionWorldSpace - camera.position);
+					shadow = CalculatePointLightShadow(
+						pointLightShadowMapTexture,
+						pointLight,
+						pointLightShadows,
+						toLight,
+						distanceToPoint,
+						distanceToCamera);
+
+					// TODO: SSS for point lights!
+					// shadow += CalculateScreenSpaceShadows(
+					//     depthTexture,
+					//     positionViewSpace,
+					//     normalize(toLight),
+					//     viewRay,
+					//     camera.projectionMat4,
+					//     sss).r;
+
+					// shadow = clamp(shadow, 0.0f, 1.0f);
+				}
+
+				result += CalculatePointLight(
+					pointLight,
+					viewDirection,
+					positionViewSpace,
+					basicReflectivity,
+					normalViewSpace,
+					albedoColor,
+					shading.x,
+					shading.y,
+					shading.z,
+					shadow);
+			}
 		}
 	}
 

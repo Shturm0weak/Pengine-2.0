@@ -20,6 +20,7 @@ namespace Pengine
 	const std::string SSS = "SSS";
 	const std::string SSSBlur = "SSSBlur";
 	const std::string CSM = "CSM";
+	const std::string PointLightShadows = "PointLightShadows";
 	const std::string Bloom = "Bloom";
 	const std::string ToneMapping = "ToneMapping";
 	const std::string AntiAliasingAndCompose = "AntiAliasingAndCompose";

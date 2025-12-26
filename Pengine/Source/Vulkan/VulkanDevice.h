@@ -169,6 +169,14 @@ namespace Pengine::Vk
 			VkCommandBuffer commandBuffer,
 			const glm::vec3& color) const;
 
+		void ClearDepthStencilImage(
+			VkImage image,
+			VkImageLayout imageLayout,
+			const VkClearDepthStencilValue* depthStencilClearValue,
+			uint32_t rangeCount,
+			const VkImageSubresourceRange* ranges,
+			VkCommandBuffer commandBuffer);
+
 		void CommandEndLabel(VkCommandBuffer commandBuffer) const;
 
 		virtual void WaitIdle() const override;

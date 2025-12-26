@@ -1172,6 +1172,17 @@ void VulkanDevice::CommandBeginLabel(
 	m_VkCmdBeginDebugUtilsLabelEXT(commandBuffer, &label);
 }
 
+void VulkanDevice::ClearDepthStencilImage(
+	VkImage image,
+	VkImageLayout imageLayout,
+	const VkClearDepthStencilValue* depthStencilClearValue,
+	uint32_t rangeCount,
+	const VkImageSubresourceRange* ranges,
+	VkCommandBuffer commandBuffer)
+{
+	vkCmdClearDepthStencilImage(commandBuffer, image, imageLayout, depthStencilClearValue, rangeCount, ranges);
+}
+
 void VulkanDevice::CommandEndLabel(const VkCommandBuffer commandBuffer) const
 {
 	if (m_VkCmdEndDebugUtilsLabelEXT)
