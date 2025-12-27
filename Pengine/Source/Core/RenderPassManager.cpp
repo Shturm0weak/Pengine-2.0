@@ -1767,14 +1767,14 @@ void RenderPassManager::CreatePointLightShadows()
 		{
 			std::vector<entt::entity> entities;
 			RenderableEntities renderableEntities;
-			int faceIndex;
+			int faceIndex = -1;
 		};
 
 		struct LightInfo
 		{
 			std::array<FaceInfo, 6> faceInfos;
-			int lightIndex;
-			int shadowMapIndex;
+			int lightIndex = -1;
+			int shadowMapIndex = -1;
 		};
 
 		std::vector<LightInfo> lightInfos;
@@ -1924,15 +1924,41 @@ void RenderPassManager::CreatePointLightShadows()
 					1.0f,
 					camera.GetZNear(),
 					pl.radius);
+
+				std::vector<SceneBVH::BVHNode> bvhNodes;
+				scene->GetBVH()->Traverse([&light, &bvhNodes](const SceneBVH::BVHNode& node)
+				{
+					if (!Utils::IntersectAABBvsSphere(node.aabb.min, node.aabb.max, light.position, light.radius))
+					{
+						return false;
+					}
+
+					if (node.IsLeaf() && node.entity->IsValid())
+					{
+						bvhNodes.emplace_back(node);
+					}
+
+					return true;
+				});
+
 				for (size_t faceIndex = 0; faceIndex < 6; faceIndex++)
 				{
 					const glm::mat4 viewProjectionMat4 = projectionMat4 * getPointLightViewMatrix(lightPositionWorldSpace, faceIndex);
 
 					FaceInfo& faceInfo = lightInfo.faceInfos[faceIndex];
 					faceInfo.faceIndex = faceIndex;
-					
+					faceInfo.entities.reserve(bvhNodes.size());
+
 					const auto frustumPlanes = Utils::GetFrustumPlanes(viewProjectionMat4);
- 					faceInfo.entities = scene->GetBVH()->CullAgainstFrustum(frustumPlanes);
+					
+					// NOTE: BVH Culling is a lot slower than this for loop checks.
+					for (const auto& node : bvhNodes)
+					{
+						if (Utils::isAABBInsideFrustum(frustumPlanes, node.aabb.min, node.aabb.max))
+						{
+							faceInfo.entities.emplace_back(node.entity->GetHandle());
+						}
+					}
 
 					deferredBaseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, std::format("pointLights[{}].pointLightFaceInfos[{}].viewProjectionMat4", lightIndex, faceIndex), viewProjectionMat4);
 				}

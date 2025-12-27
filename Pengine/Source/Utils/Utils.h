@@ -545,4 +545,44 @@ namespace Pengine::Utils
 
 		return true;
 	}
+
+	inline bool isAABBInsideFrustum(
+		const std::array<glm::vec4, 6>& planes,
+		const glm::vec3& min,
+		const glm::vec3& max)
+	{
+		const glm::vec3 center = (min + max) * 0.5f;
+		const glm::vec3 extents = max - center;
+
+		for (const auto& plane : planes)
+		{
+			const float distance = glm::dot(center, glm::vec3(plane)) + plane.w;
+			const float radius = glm::dot(extents, glm::abs(glm::vec3(plane)));
+
+			if (distance + radius < 0.0f)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	inline bool IntersectAABBvsSphere(
+		const glm::vec3& boxMin,
+		const glm::vec3& boxMax,
+		const glm::vec3& sphereCenter,
+		float sphereRadius)
+	{
+		glm::vec3 closestPoint;
+
+		closestPoint.x = glm::max(boxMin.x, glm::min(sphereCenter.x, boxMax.x));
+		closestPoint.y = glm::max(boxMin.y, glm::min(sphereCenter.y, boxMax.y));
+		closestPoint.z = glm::max(boxMin.z, glm::min(sphereCenter.z, boxMax.z));
+
+		const glm::vec3 diff = closestPoint - sphereCenter;
+		const float distance2 = glm::dot(diff, diff);
+
+		return distance2 <= (sphereRadius * sphereRadius);
+	}
 }

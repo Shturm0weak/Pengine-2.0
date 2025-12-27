@@ -24,17 +24,20 @@ namespace Pengine
 			[[nodiscard]] bool IsLeaf() const { return left == -1 && right == -1; }
 		};
 
-		explicit SceneBVH(Scene* scene) : m_Scene(scene) {}
-
+		SceneBVH() = default;
 		~SceneBVH() { Clear(); }
 
 		void Clear();
 
-		void Update();
+		void Update(const entt::registry& registry);
+
+		void Update(std::vector<BVHNode>& nodes);
 
 		void Traverse(const std::function<bool(const BVHNode&)>& callback) const;
 
 		std::vector<entt::entity> CullAgainstFrustum(const std::array<glm::vec4, 6>& planes);
+
+		std::vector<entt::entity> CullAgainstSphere(const glm::vec3& position, float radius);
 
 		std::multimap<Raycast::Hit, std::shared_ptr<Entity>> Raycast(
 			const glm::vec3& start,
@@ -44,7 +47,6 @@ namespace Pengine
 		[[nodiscard]] std::optional<BVHNode> GetRoot() const { return m_Root == -1 ? std::nullopt : std::optional<BVHNode>(m_Nodes[m_Root]); }
 
 	private:
-		Scene* m_Scene;
 
 		uint32_t m_Root = -1;
 		std::vector<BVHNode> m_Nodes;
@@ -58,7 +60,9 @@ namespace Pengine
 
 		void WaitIdle();
 
-		void Rebuild();
+		void Rebuild(const entt::registry& registry);
+
+		void Rebuild(std::vector<BVHNode>& nodes);
 
 		uint32_t BuildRecursive(int start, int end);
 
@@ -67,8 +71,6 @@ namespace Pengine
 		//BVHNode* FindParent(BVHNode* root, BVHNode* target) const;
 
 		AABB LocalToWorldAABB(const AABB& localAABB, const glm::mat4& transformMat4);
-
-		static bool IntersectsFrustum(const AABB& aabb, const std::array<glm::vec4, 6>& planes);
 	};
 
 }

@@ -8,6 +8,8 @@
 
 #include "../Graphics/Mesh.h"
 
+#include "../Utils/Utils.h"
+
 using namespace Pengine;
 
 void SceneBVH::Clear()
@@ -18,28 +20,38 @@ void SceneBVH::Clear()
 
 	m_Nodes.clear();
 	m_Root = -1;
-	m_Scene = nullptr;
 }
 
-void SceneBVH::Update()
+void SceneBVH::Update(const entt::registry& registry)
 {
 	PROFILER_SCOPE(__FUNCTION__);
 
 	WaitIdle();
 
-	if (!m_Scene)
-	{
-		return;
-	}
-
-	if (m_Scene->GetEntities().empty())
+	if (registry.view<Renderer3D>().empty())
 	{
 		m_Root = -1;
 		m_Nodes.clear();
 		return;
 	}
 
-	Rebuild();
+	Rebuild(registry);
+}
+
+void SceneBVH::Update(std::vector<BVHNode>& nodes)
+{
+	PROFILER_SCOPE(__FUNCTION__);
+
+	WaitIdle();
+
+	if (nodes.empty())
+	{
+		m_Root = -1;
+		m_Nodes.clear();
+		return;
+	}
+
+	Rebuild(nodes);
 }
 
 void SceneBVH::Traverse(const std::function<bool(const BVHNode&)>& callback) const
@@ -76,11 +88,34 @@ std::vector<entt::entity> SceneBVH::CullAgainstFrustum(const std::array<glm::vec
 	std::vector<entt::entity> visibleEntities;
 	Traverse([&planes, &visibleEntities](const BVHNode& node)
 	{
-		if (!IntersectsFrustum(node.aabb, planes))
+		if (!Utils::isAABBInsideFrustum(planes, node.aabb.min, node.aabb.max))
 		{
 			return false;
 		}
 		
+		if (node.IsLeaf() && node.entity->IsValid())
+		{
+			visibleEntities.emplace_back(node.entity->GetHandle());
+		}
+
+		return true;
+	});
+
+	return visibleEntities;
+}
+
+std::vector<entt::entity> SceneBVH::CullAgainstSphere(const glm::vec3& position, float radius)
+{
+	PROFILER_SCOPE(__FUNCTION__);
+
+	std::vector<entt::entity> visibleEntities;
+	Traverse([&position, radius, &visibleEntities](const BVHNode& node)
+	{
+		if (!Utils::IntersectAABBvsSphere(node.aabb.min, node.aabb.max, position, radius))
+		{
+			return false;
+		}
+
 		if (node.IsLeaf() && node.entity->IsValid())
 		{
 			visibleEntities.emplace_back(node.entity->GetHandle());
@@ -103,13 +138,13 @@ std::multimap<Raycast::Hit, std::shared_ptr<Entity>> SceneBVH::Raycast(
 
 	Traverse([start, direction, length, &hits](const BVHNode& node)
 	{
-		Raycast::Hit hit;
+		Raycast::Hit hit{};
 		if (!Raycast::IntersectBoxAABB(start, direction, node.aabb.min, node.aabb.max, length, hit))
 		{
 			return false;
 		}
 
-		if (node.IsLeaf())
+		if (node.IsLeaf() && node.entity->IsValid())
 		{
 			hits.emplace(hit, node.entity);
 		}
@@ -129,30 +164,25 @@ void SceneBVH::WaitIdle()
 	});
 }
 
-void SceneBVH::Rebuild()
+void SceneBVH::Rebuild(const entt::registry& registry)
 {
 	PROFILER_SCOPE(__FUNCTION__);
-
-	if (!m_Scene)
-	{
-		return;
-	}
 
 	m_Root = -1;
 	m_Nodes.clear();
 
-	const auto r3dView = m_Scene->GetRegistry().view<Renderer3D>();
+	const auto r3dView = registry.view<Renderer3D>();
 	m_Nodes.reserve(r3dView.size() * 2);
 
 	for (auto entity : r3dView)
 	{
-		const Transform& transform = m_Scene->GetRegistry().get<Transform>(entity);
+		const Transform& transform = registry.get<Transform>(entity);
 		if (!transform.GetEntity()->IsEnabled())
 		{
 			continue;
 		}
 
-		const Renderer3D& r3d = m_Scene->GetRegistry().get<Renderer3D>(entity);
+		const Renderer3D& r3d = registry.get<Renderer3D>(entity);
 		if (!r3d.mesh || !r3d.isEnabled)
 		{
 			continue;
@@ -172,6 +202,17 @@ void SceneBVH::Rebuild()
 		m_Nodes.emplace_back(std::move(node));
 	}
 
+	m_Root = BuildRecursive(0, m_Nodes.size());
+}
+
+void SceneBVH::Rebuild(std::vector<BVHNode>& nodes)
+{
+	PROFILER_SCOPE(__FUNCTION__);
+
+	m_Root = -1;
+	m_Nodes.clear();
+
+	m_Nodes = std::move(nodes);
 	m_Root = BuildRecursive(0, m_Nodes.size());
 }
 
@@ -337,23 +378,4 @@ AABB SceneBVH::LocalToWorldAABB(const AABB& localAABB, const glm::mat4& transfor
 	}
 
 	return { worldMin, worldMax };
-}
-
-bool SceneBVH::IntersectsFrustum(const AABB& aabb, const std::array<glm::vec4, 6>& planes)
-{
-	const glm::vec3 center = (aabb.min + aabb.max) * 0.5f;
-	const glm::vec3 extents = aabb.max - center;
-
-	for (const auto& plane : planes)
-	{
-		const float distance = glm::dot(center, glm::vec3(plane)) + plane.w;
-		const float radius = glm::dot(extents, glm::abs(glm::vec3(plane)));
-
-		if (distance + radius < 0.0f)
-		{
-			return false;
-		}
-	}
-
-	return true;
 }

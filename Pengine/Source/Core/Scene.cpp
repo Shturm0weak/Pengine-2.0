@@ -94,8 +94,8 @@ Scene::Scene(const std::string& name, const std::filesystem::path& filepath)
 	: Asset(name, filepath)
 	, m_GraphicsSettings("Default", "Default")
 {
-	m_CurrentBVH = std::make_shared<SceneBVH>(this);
-	m_BuildingBVH = std::make_shared<SceneBVH>(this);
+	m_CurrentBVH = std::make_shared<SceneBVH>();
+	m_BuildingBVH = std::make_shared<SceneBVH>();
 	m_PhysicsSystem = std::make_shared<PhysicsSystem>();
 }
 
@@ -298,7 +298,7 @@ void Scene::Update(const float deltaTime)
 	{
 		std::lock_guard<std::mutex> lock(m_LockBVH);
 		m_IsBuildingBVH = true;
-		m_BuildingBVH->Update();
+		m_BuildingBVH->Update(GetRegistry());
 		m_IsBuildingBVH = false;
 		m_BVHConditionalVariable.notify_all();
 	});
