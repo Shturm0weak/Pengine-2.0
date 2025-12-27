@@ -52,7 +52,7 @@ void main()
     vec3 shadow = CalculateScreenSpaceShadows(
         depthTexture,
         positionViewSpace,
-        directionalLight.direction,
+        directionalLight.directionViewSpace,
         viewRay,
         camera.projectionMat4,
         sss);

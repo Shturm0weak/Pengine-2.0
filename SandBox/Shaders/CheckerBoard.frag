@@ -65,17 +65,17 @@ void main()
 		1.0f);
 	outEmissive = texture(emissiveTexture, uv) * material.emissiveColor * material.emissiveFactor;
 
-	vec3 normal = gl_FrontFacing ? normalViewSpace : -normalViewSpace;
-	normal = normalize(normal);
+	vec3 normalViewSpaceFinal = gl_FrontFacing ? normalViewSpace : -normalViewSpace;
+	normalViewSpaceFinal = normalize(normalViewSpaceFinal);
 	if (material.useNormalMap > 0)
 	{
-		mat3 TBN = mat3(normalize(tangentViewSpace), normalize(bitangentViewSpace), normal);
-		normal = texture(normalTexture, uv).xyz;
-		normal = normal * 2.0f - 1.0f;
-		outNormal = OctEncode(normalize(TBN * normal));
+		mat3 TBN = mat3(normalize(tangentViewSpace), normalize(bitangentViewSpace), normalViewSpaceFinal);
+		normalViewSpaceFinal = texture(normalTexture, uv).xyz;
+		normalViewSpaceFinal = normalViewSpaceFinal * 2.0f - 1.0f;
+		outNormal = OctEncode(normalize(TBN * normalViewSpaceFinal));
 	}
 	else
 	{
-		outNormal = OctEncode(normal);
+		outNormal = OctEncode(normalViewSpaceFinal);
 	}
 }

@@ -188,12 +188,19 @@ void RenderPassManager::PrepareUniformsPerViewportBeforeDraw(const RenderPass::R
 		"camera.inverseRotationMat4",
 		inverseRotationMat4);
 
-	const glm::vec3 position = cameraTransform.GetPosition();
+	const glm::vec3 positionViewSpace = camera.GetViewMat4() * glm::vec4(cameraTransform.GetPosition(), 1.0f);
 	reflectionBaseMaterial->WriteToBuffer(
 		globalBuffer,
 		globalBufferName,
-		"camera.position",
-		position);
+		"camera.positionViewSpace",
+		positionViewSpace);
+
+	const glm::vec3 positionWorldSpace = cameraTransform.GetPosition();
+	reflectionBaseMaterial->WriteToBuffer(
+		globalBuffer,
+		globalBufferName,
+		"camera.positionWorldSpace",
+		positionWorldSpace);
 
 	const float time = Time::GetTime();
 	reflectionBaseMaterial->WriteToBuffer(
@@ -823,9 +830,10 @@ void RenderPassManager::CreateDeferred()
 			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "directionalLight.intensity", dl.intensity);
 			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "directionalLight.ambient", dl.ambient);
 
-			// View Space!
-			const glm::vec3 direction = glm::normalize(glm::mat3(camera.GetViewMat4()) * transform.GetForward());
-			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "directionalLight.direction", direction);
+			const glm::vec3 directionWorldSpace = transform.GetForward();
+			const glm::vec3 directionViewSpace = glm::normalize(glm::mat3(camera.GetViewMat4()) * directionWorldSpace);
+			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "directionalLight.directionWorldSpace", directionWorldSpace);
+			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "directionalLight.directionViewSpace", directionViewSpace);
 
 			const int hasDirectionalLight = 1;
 			baseMaterial->WriteToBuffer(lightsBuffer, lightsBufferName, "hasDirectionalLight", hasDirectionalLight);
@@ -1009,8 +1017,8 @@ void RenderPassManager::CreateAtmosphere()
 			baseMaterial->WriteToBuffer(atmosphereBuffer, "AtmosphereBuffer", "directionalLight.intensity", dl.intensity);
 			baseMaterial->WriteToBuffer(atmosphereBuffer, "AtmosphereBuffer", "directionalLight.ambient", dl.ambient);
 
-			const glm::vec3 direction = transform.GetForward();
-			baseMaterial->WriteToBuffer(atmosphereBuffer, "AtmosphereBuffer", "directionalLight.direction", direction);
+			const glm::vec3 directionWorldSpace = transform.GetForward();
+			baseMaterial->WriteToBuffer(atmosphereBuffer, "AtmosphereBuffer", "directionalLight.directionWorldSpace", directionWorldSpace);
 
 			int hasDirectionalLight = 1;
 			baseMaterial->WriteToBuffer(atmosphereBuffer, "AtmosphereBuffer", "hasDirectionalLight", hasDirectionalLight);

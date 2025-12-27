@@ -201,8 +201,8 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [59.2458916, -7.18747663, -11.734272]
-      Rotation: [0.0546121188, 4.13738155, 0]
+      Position: [8.11751652, -7.20284319, 3.46242905]
+      Rotation: [-0.219000459, -0.238670215, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:
@@ -214,6 +214,7 @@ Scene:
       RenderTargetIndex: 0
       ObjectVisibilityMask: 255
       ShadowVisibilityMask: 255
+      Viewport: Main
     Childs:
       []
   - UUID: 0xf36997a588e9a4f3b5919dfa07776dbd
@@ -571,5 +572,22 @@ Scene:
       CastShadows: true
       ObjectVisibilityMask: 255
       ShadowVisibilityMask: 255
+    Childs:
+      []
+  - UUID: 0x40d0b181b7e385a497d061f5a70f043c
+    Name: PointLight
+    IsEnabled: true
+    Transform:
+      Position: [8.44509029, -6.67941427, 2.1929152]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    PointLight:
+      Color: [1, 1, 1]
+      Intensity: 4
+      Radius: 3
+      Bias: 0.00999999978
+      DrawBoundingSphere: false
+      CastShadows: true
     Childs:
       []

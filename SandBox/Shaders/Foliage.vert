@@ -42,24 +42,24 @@ void main()
 	vec3 positionWorldSpace = vec3(transformA * vec4(windDisplacement + positionA, 1.0f));
 	gl_Position = camera.viewProjectionMat4 * vec4(positionWorldSpace, 1.0f);
 
-	vec3 normal = normalize(inverseTransformA * normalize(normalA));
-	vec3 tangent = normalize(inverseTransformA * normalize(tangentA.xyz));
-	vec3 bitangent = normalize(cross(normal, tangent) * tangentA.w);
+	vec3 normalWorldSpace = normalize(inverseTransformA * normalize(normalA));
+	vec3 tangentWorldSpace = normalize(inverseTransformA * normalize(tangentA.xyz));
+	vec3 bitangentWorldSpace = normalize(cross(normalWorldSpace, tangentWorldSpace) * tangentA.w);
 
 	if (material.useParallaxOcclusion > 0)
 	{
-		vec3 T   = tangent;
-    	vec3 B   = bitangent;
-   		vec3 N   = normal;
+		vec3 T   = tangentWorldSpace;
+    	vec3 B   = bitangentWorldSpace;
+   		vec3 N   = normalWorldSpace;
     	mat3 TBN = transpose(mat3(T, B, N));
 
-		cameraPositionTangentSpace = TBN * camera.position;
+		cameraPositionTangentSpace = TBN * camera.positionWorldSpace;
     	positionTangentSpace = TBN * positionWorldSpace.xyz;
 	}
 
-	normalViewSpace = normalize(mat3(camera.viewMat4) * normal);
-	tangentViewSpace = normalize(mat3(camera.viewMat4) * tangent);
-	bitangentViewSpace = normalize(mat3(camera.viewMat4) * bitangent);
+	normalViewSpace = normalize(mat3(camera.viewMat4) * normalWorldSpace);
+	tangentViewSpace = normalize(mat3(camera.viewMat4) * tangentWorldSpace);
+	bitangentViewSpace = normalize(mat3(camera.viewMat4) * bitangentWorldSpace);
 
 	uv = uvA * material.uvTransform.xy + material.uvTransform.zw;
 

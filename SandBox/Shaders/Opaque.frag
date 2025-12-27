@@ -39,11 +39,11 @@ void main()
 	vec2 finalUV = uv;
 	if (material.useParallaxOcclusion > 0)
 	{
-		vec3 viewDirection = normalize(cameraPositionTangentSpace - positionTangentSpace);
+		vec3 viewDirectionTangentSpace = normalize(cameraPositionTangentSpace - positionTangentSpace);
 		finalUV = ParallaxOcclusionMapping(
 			heightTexture,
 			finalUV,
-			viewDirection,
+			viewDirectionTangentSpace,
 			material.minParallaxLayers,
 			material.maxParallaxLayers,
 			material.parallaxHeightScale);

@@ -28,26 +28,26 @@ struct PointLightShadows
 
 vec3 CalculatePointLight(
 	in PointLight light,
-	in vec3 viewDirection,
+	in vec3 viewDirectionViewSpace,
 	in vec3 positionViewSpace,
 	in vec3 basicReflectivity,
-	in vec3 normal,
+	in vec3 normalViewSpace,
 	in vec3 albedo,
 	in float metallic,
 	in float roughness,
 	in float ao,
 	in float shadow)
 {
-	vec3 direction = normalize(light.positionViewSpace - positionViewSpace);
+	vec3 directionViewSpace = normalize(light.positionViewSpace - positionViewSpace);
 
-	vec3 H = normalize(viewDirection + direction);
+	vec3 H = normalize(viewDirectionViewSpace + directionViewSpace);
 
 	vec3 radiance = light.color * light.intensity;
 
-	float NdotV = max(dot(normal, viewDirection), 0.0000001f);
-	float NdotL = max(dot(normal, direction), 0.0000001f);
-	float HdotV = max(dot(H, viewDirection), 0.0f);
-	float NdotH = max(dot(normal, H), 0.0f);
+	float NdotV = max(dot(normalViewSpace, viewDirectionViewSpace), 0.0000001f);
+	float NdotL = max(dot(normalViewSpace, directionViewSpace), 0.0000001f);
+	float HdotV = max(dot(H, viewDirectionViewSpace), 0.0f);
+	float NdotH = max(dot(normalViewSpace, H), 0.0f);
 
 	float D = DistributionGGX(NdotH, roughness);
 	float G = GeometrySmith(NdotV, NdotL, roughness);

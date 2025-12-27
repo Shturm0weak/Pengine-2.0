@@ -11,7 +11,7 @@ struct SSS
 vec3 CalculateScreenSpaceShadows(
     sampler2D depthTexture,
     in vec3 positionViewSpace,
-    in vec3 lightDirection,
+    in vec3 lightDirectionViewSpace,
     in vec2 viewRay,
     in mat4 projectionMat4,
     in SSS sss)
@@ -22,7 +22,7 @@ vec3 CalculateScreenSpaceShadows(
     }
 
     vec3 rayPosition = positionViewSpace;
-    vec3 rayDirection = lightDirection;
+    vec3 rayDirection = lightDirectionViewSpace;
 
     float stepLength = sss.maxRayDistance / sss.maxSteps;
     vec3 rayStep = rayDirection * stepLength;

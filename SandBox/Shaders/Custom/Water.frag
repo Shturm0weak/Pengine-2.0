@@ -73,11 +73,11 @@ void main()
 	vec2 finalUV = uv + vec2(0.01f, 0.2f) * camera.time;
 	if (material.useParallaxOcclusion > 0)
 	{
-		vec3 viewDirection = normalize(cameraPositionTangentSpace - positionTangentSpace);
+		vec3 viewDirectionTangentSpace = normalize(cameraPositionTangentSpace - positionTangentSpace);
 		finalUV = ParallaxOcclusionMapping(
 			heightTexture,
 			finalUV,
-			viewDirection,
+			viewDirectionTangentSpace,
 			material.minParallaxLayers,
 			material.maxParallaxLayers,
 			material.parallaxHeightScale);
@@ -96,18 +96,18 @@ void main()
 		ao * material.aoFactor,
 		albedoColor.a);
 		
-	vec3 normal = gl_FrontFacing ? normalViewSpace : -normalViewSpace;
-	normal = normalize(normal);
+	vec3 normalViewSpaceFinal = gl_FrontFacing ? normalViewSpace : -normalViewSpace;
+	normalViewSpaceFinal = normalize(normalViewSpaceFinal);
 	if (material.useNormalMap > 0)
 	{
-		mat3 TBN = mat3(normalize(tangentViewSpace), normalize(bitangentViewSpace), normal);
-		normal = texture(normalTexture, finalUV).xyz;
-		normal = normal * 2.0f - 1.0f;
-		normal = normalize(TBN * normal);
+		mat3 TBN = mat3(normalize(tangentViewSpace), normalize(bitangentViewSpace), normalViewSpaceFinal);
+		normalViewSpaceFinal = texture(normalTexture, finalUV).xyz;
+		normalViewSpaceFinal = normalViewSpaceFinal * 2.0f - 1.0f;
+		normalViewSpaceFinal = normalize(TBN * normalViewSpaceFinal);
 	}
 
 	vec3 basicReflectivity = mix(vec3(0.05f), albedoColor.xyz, shading.x);
-	vec3 viewDirection = normalize(-positionViewSpace);
+	vec3 viewDirectionViewSpace = normalize(-positionViewSpace);
 	vec3 result = vec3(0.0f);
 
 	if (hasDirectionalLight == 1)
@@ -120,15 +120,15 @@ void main()
 				csm,
 				abs(positionViewSpace.z),
 				positionWorldSpace,
-				normal,
-				directionalLight.direction);
+				normalViewSpaceFinal,
+				directionalLight.directionViewSpace);
 		}
 
 		result += CalculateDirectionalLight(
 			directionalLight,
-			viewDirection,
+			viewDirectionViewSpace,
 			basicReflectivity,
-			normal,
+			normalViewSpaceFinal,
 			albedoColor.xyz,
 			shading.x,
 			shading.y,
@@ -141,10 +141,10 @@ void main()
 	{
 		result += CalculatePointLight(
 			pointLights[i],
-			viewDirection,
+			viewDirectionViewSpace,
 			positionViewSpace,
 			basicReflectivity,
-			normal,
+			normalViewSpaceFinal,
 			albedoColor.xyz,
 			shading.x,
 			shading.y,
@@ -155,6 +155,6 @@ void main()
 	vec3 emissiveColor = texture(emissiveTexture, finalUV).xyz;
     outEmissive = max(vec4(emissiveColor * material.emissiveColor.xyz * material.emissiveFactor, albedoColor.a), vec4(IsBrightPixel(result, brightnessThreshold), albedoColor.a));
 	outColor = vec4(result, albedoColor.a);
-	outNormal = OctEncode(normal);
+	outNormal = OctEncode(normalViewSpaceFinal);
 	outShading = shading;
 }

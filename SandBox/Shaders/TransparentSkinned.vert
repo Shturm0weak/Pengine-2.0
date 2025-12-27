@@ -40,65 +40,65 @@ layout(set = 4, binding = 0) uniform BoneMatrices
 
 void main()
 {
-	vec3 normal = normalize(normalA);
-	vec3 tangent = normalize(tangentA.xyz);
-	vec3 bitangent = normalize(cross(normal, tangent) * tangentA.w);
+	vec3 normalWorldSpace = normalize(normalA);
+	vec3 tangentWorldSpace = normalize(tangentA.xyz);
+	vec3 bitangentWorldSpace = normalize(cross(normalWorldSpace, tangentWorldSpace) * tangentA.w);
 	
-	vec4 totalPosition = vec4(0.0f);
-	vec3 totalNormal = vec3(0.0f);
-	vec3 totalTangent = vec3(0.0f);
-	vec3 totalBitangent = vec3(0.0f);
+	vec4 totalPositionWorldSpace = vec4(0.0f);
+	vec3 totalNormalWorldSpace = vec3(0.0f);
+	vec3 totalTangentWorldSpace = vec3(0.0f);
+	vec3 totalBitangentWorldSpace = vec3(0.0f);
 	for(int i = 0; i < MAX_BONE_INFLUENCE; i++)
 	{
 		if(boneIdsA[i] == -1)
 			continue;
 		if(boneIdsA[i] >= MAX_BONES)
 		{
-			totalPosition = vec4(positionA, 1.0f);
-			totalNormal = normal;
-			totalTangent = tangent;
-			totalBitangent = bitangent;
+			totalPositionWorldSpace = vec4(positionA, 1.0f);
+			totalNormalWorldSpace = normalWorldSpace;
+			totalTangentWorldSpace = tangentWorldSpace;
+			totalBitangentWorldSpace = bitangentWorldSpace;
 			break;
 		}
-		vec4 localPosition = boneMatrices[boneIdsA[i]] * vec4(positionA, 1.0f);
-		totalPosition += localPosition * weightsA[i];
+		vec4 localPositionWorldSpace = boneMatrices[boneIdsA[i]] * vec4(positionA, 1.0f);
+		totalPositionWorldSpace += localPositionWorldSpace * weightsA[i];
 
 		mat3 boneMat3 = mat3(boneMatrices[boneIdsA[i]]);
 
-		vec3 localNormal = boneMat3 * normal;
-		totalNormal += localNormal * weightsA[i];
+		vec3 localNormalWorldSpace = boneMat3 * normalWorldSpace;
+		totalNormalWorldSpace += localNormalWorldSpace * weightsA[i];
 
-		vec3 localTangent = boneMat3 * tangent;
-		totalTangent += localTangent * weightsA[i];
+		vec3 localTangentWorldSpace = boneMat3 * tangentWorldSpace;
+		totalTangentWorldSpace += localTangentWorldSpace * weightsA[i];
 
-		vec3 localBitangent = boneMat3 * bitangent;
-		totalBitangent += localBitangent * weightsA[i];
+		vec3 localBitangentWorldSpace = boneMat3 * bitangentWorldSpace;
+		totalBitangentWorldSpace += localBitangentWorldSpace * weightsA[i];
 	}
 
-	positionWorldSpace = (transformA * totalPosition).xyz;
+	positionWorldSpace = (transformA * totalPositionWorldSpace).xyz;
 	positionViewSpace = (camera.viewMat4 * vec4(positionWorldSpace, 1.0f)).xyz;
 	gl_Position = camera.projectionMat4 * vec4(positionViewSpace, 1.0f);
 
 	mat3 viewMat3 = mat3(camera.viewMat4) * inverseTransformA;
 
-	totalNormal = normalize(inverseTransformA * totalNormal);
-	totalTangent = normalize(inverseTransformA * totalTangent);
-	totalBitangent = normalize(inverseTransformA * totalBitangent);
+	totalNormalWorldSpace = normalize(inverseTransformA * totalNormalWorldSpace);
+	totalTangentWorldSpace = normalize(inverseTransformA * totalTangentWorldSpace);
+	totalBitangentWorldSpace = normalize(inverseTransformA * totalBitangentWorldSpace);
 
 	if (material.useParallaxOcclusion > 0)
 	{
-		vec3 T   = normalize(totalTangent);
-    	vec3 B   = normalize(totalBitangent);
-   		vec3 N   = normalize(totalNormal);
+		vec3 T   = normalize(totalTangentWorldSpace);
+    	vec3 B   = normalize(totalBitangentWorldSpace);
+   		vec3 N   = normalize(totalNormalWorldSpace);
     	mat3 TBN = transpose(mat3(T, B, N));
 
-		cameraPositionTangentSpace = TBN * camera.position;
+		cameraPositionTangentSpace = TBN * camera.positionWorldSpace;
     	positionTangentSpace = TBN * positionWorldSpace.xyz;
 	}
 
-	normalViewSpace = normalize(mat3(camera.viewMat4) * totalNormal);
-	tangentViewSpace = normalize(mat3(camera.viewMat4) * totalTangent);
-	bitangentViewSpace = normalize(mat3(camera.viewMat4) * totalBitangent);
+	normalViewSpace = normalize(mat3(camera.viewMat4) * totalNormalWorldSpace);
+	tangentViewSpace = normalize(mat3(camera.viewMat4) * totalTangentWorldSpace);
+	bitangentViewSpace = normalize(mat3(camera.viewMat4) * totalBitangentWorldSpace);
 
 	uv = uvA * material.uvTransform.xy + material.uvTransform.zw;
 

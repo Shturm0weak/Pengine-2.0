@@ -427,7 +427,7 @@ void main() {
 
     // get the scene color and depth, color is in xyz, depth in w
     // replace this with something better if you are using this shader for something else
-    vec4 scene = render_scene(camera_position, camera_vector, directionalLight.direction);
+    vec4 scene = render_scene(camera_position, camera_vector, directionalLight.directionWorldSpace);
 
     // the color of this pixel
     vec3 col = vec3(0.0);
@@ -440,8 +440,8 @@ void main() {
         camera_vector, 					// the camera vector (ray direction of this pixel)
         scene.w, 						// max dist, essentially the scene depth
         vec3(0.0f),						// scene color, the color of the current pixel being rendered
-        directionalLight.direction,					// light direction
-        100 * directionalLight.color * lightIntensity,						// light intensity, 40 looks nice
+        directionalLight.directionWorldSpace, // light direction
+        100 * directionalLight.color * lightIntensity, // light intensity, 40 looks nice
         PLANET_POS,						// position of the planet
         PLANET_RADIUS,                  // radius of the planet in meters
         ATMOS_RADIUS,                   // radius of the atmosphere in meters

@@ -44,7 +44,7 @@ layout(set = 2, binding = 0) uniform BoneMatrices
 
 void main()
 {
-    vec4 totalPosition = vec4(0.0f);
+    vec4 totalPositionWorldSpace = vec4(0.0f);
 	for(int i = 0 ; i < MAX_BONE_INFLUENCE ; i++)
 	{
 		if(boneIdsA[i] == -1)
@@ -53,14 +53,14 @@ void main()
 		}
 		if(boneIdsA[i] >= MAX_BONES)
 		{
-			totalPosition = vec4(positionA, 1.0f);
+			totalPositionWorldSpace = vec4(positionA, 1.0f);
 			break;
 		}
-		vec4 localPosition = boneMatrices[boneIdsA[i]] * vec4(positionA,1.0f);
-		totalPosition += localPosition * weightsA[i];
+		vec4 localPositionWorldSpace = boneMatrices[boneIdsA[i]] * vec4(positionA,1.0f);
+		totalPositionWorldSpace += localPositionWorldSpace * weightsA[i];
 	}
 
-    positionWorldSpace = transformA * vec4(totalPosition.xyz, 1.0f);
+    positionWorldSpace = transformA * vec4(totalPositionWorldSpace.xyz, 1.0f);
 	gl_Position = pointLights[lightIndexA].pointLightFaceInfos[faceIndexA].viewProjectionMat4 * positionWorldSpace;
     lightPositionWorldSpace = pointLights[lightIndexA].positionWorldSpace;
     radius = pointLights[lightIndexA].radius;

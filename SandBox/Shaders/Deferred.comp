@@ -74,7 +74,7 @@ void main()
 
 		vec3 positionWorldSpace = (camera.inverseViewMat4 * vec4(positionViewSpace, 1.0f)).xyz;
 		vec3 basicReflectivity = mix(vec3(0.05), albedoColor, shading.x);
-		vec3 viewDirection = normalize(-positionViewSpace);
+		vec3 viewDirectionViewSpace = normalize(-positionViewSpace);
 
 		if (hasDirectionalLight == 1)
 		{
@@ -87,7 +87,7 @@ void main()
 					abs(positionViewSpace.z),
 					positionWorldSpace,
 					normalViewSpace,
-					directionalLight.direction);
+					directionalLight.directionViewSpace);
 			}
 
 			shadow += vec3(texture(sssTexture, uv).r);
@@ -95,7 +95,7 @@ void main()
 
 			result += CalculateDirectionalLight(
 				directionalLight,
-				viewDirection,
+				viewDirectionViewSpace,
 				basicReflectivity,
 				normalViewSpace,
 				albedoColor,
@@ -109,37 +109,37 @@ void main()
 		for (int i = 0; i < pointLightsCount; i++)
 		{
 			PointLight pointLight = pointLights[i];
-			vec3 toLight = pointLight.positionWorldSpace - positionWorldSpace;
-        	float distanceToPoint = length(toLight);
+			vec3 toLightWorldSpace = pointLight.positionWorldSpace - positionWorldSpace;
+			vec3 toLightViewSpace = pointLight.positionViewSpace - positionViewSpace;
+        	float distanceToPoint = length(toLightWorldSpace);
 			if (distanceToPoint < pointLight.radius)
 			{
 				float shadow = 0.0f;
 				if (pointLightShadows.isEnabled == 1 && pointLight.shadowMapIndex > -1)
 				{
-					float distanceToCamera = length(pointLight.positionWorldSpace - camera.position);
+					float distanceToCamera = length(pointLight.positionWorldSpace - camera.positionWorldSpace);
 					shadow = CalculatePointLightShadow(
 						pointLightShadowMapTexture,
 						pointLight,
 						pointLightShadows,
-						toLight,
+						toLightWorldSpace,
 						distanceToPoint,
 						distanceToCamera);
 
-					// TODO: SSS for point lights!
-					// shadow += CalculateScreenSpaceShadows(
-					//     depthTexture,
-					//     positionViewSpace,
-					//     normalize(toLight),
-					//     viewRay,
-					//     camera.projectionMat4,
-					//     sss).r;
+					shadow += CalculateScreenSpaceShadows(
+					    depthTexture,
+					    positionViewSpace,
+					    normalize(toLightViewSpace),
+					    viewRay,
+					    camera.projectionMat4,
+					    sss).r;
 
-					// shadow = clamp(shadow, 0.0f, 1.0f);
+					shadow = clamp(shadow, 0.0f, 1.0f);
 				}
 
 				result += CalculatePointLight(
 					pointLight,
-					viewDirection,
+					viewDirectionViewSpace,
 					positionViewSpace,
 					basicReflectivity,
 					normalViewSpace,

@@ -32,19 +32,17 @@ layout(set = 2, binding = 1, rg16f) uniform image2D normalGBufferTexture;
 
 mat3 ConstructTBN( vec3 N, vec3 p, vec2 uv )
 {
-	// get edge vectors of the pixel triangle
 	vec3 dp1 = dFdx( p );
 	vec3 dp2 = dFdy( p );
 	vec2 duv1 = dFdx( uv );
 	vec2 duv2 = dFdy( uv );
-	// solve the linear system
 	vec3 dp2perp = cross( dp2, N );
 	vec3 dp1perp = cross( N, dp1 );
 	vec3 T = dp2perp * duv1.x + dp1perp * duv2.x;
 	vec3 B = dp2perp * duv1.y + dp1perp * duv2.y;
-	// construct a scale-invariant frame
 	float invmax = inversesqrt( max( dot(T,T), dot(B,B) ) );
-	return mat3( T * invmax, B * invmax, N ); }
+	return mat3( T * invmax, B * invmax, N );
+}
 
 void main()
 {
@@ -62,30 +60,30 @@ void main()
         viewRay);
 
     vec3 positionWorldSpace = (camera.inverseViewMat4 * vec4(positionViewSpace, 1.0f)).xyz;
-    vec3 localPosition = vec4(inverseTransform * vec4(positionWorldSpace, 1.0f)).xyz;
-    vec2 decalUV = localPosition.xz * 0.5f + 0.5f;
+    vec3 localPositionWorldSpace = vec4(inverseTransform * vec4(positionWorldSpace, 1.0f)).xyz;
+    vec2 decalUV = localPositionWorldSpace.xz * 0.5f + 0.5f;
 
-    if (abs(localPosition.x) > 1.0f || abs(localPosition.z) > 1.0f ||
-        abs(localPosition.y) > 1.0f)
+    if (abs(localPositionWorldSpace.x) > 1.0f || abs(localPositionWorldSpace.z) > 1.0f ||
+        abs(localPositionWorldSpace.y) > 1.0f)
     {
 		discard;
 	}
 
-	vec3 gbufferNormal = OctDecode(imageLoad(normalGBufferTexture, pixelCoord).xy);
+	vec3 gbufferNormalViewSpace = OctDecode(imageLoad(normalGBufferTexture, pixelCoord).xy);
 	
 	vec2 uvForTBN = decalUV;
 	if (material.useParallaxOcclusion > 0)
 	{
-		vec3 normalWorldSpace = normalize(mat3(camera.inverseViewMat4) * normalize(gbufferNormal));
+		vec3 normalWorldSpace = normalize(mat3(camera.inverseViewMat4) * normalize(gbufferNormalViewSpace));
 		mat3 TBN = transpose(ConstructTBN(normalWorldSpace, positionWorldSpace, uvForTBN));
 
-		vec3 cameraPositionTangentSpace = TBN * camera.position;
+		vec3 cameraPositionTangentSpace = TBN * camera.positionWorldSpace;
     	vec3 positionTangentSpace = TBN * positionWorldSpace;
-		vec3 viewDirection = normalize(cameraPositionTangentSpace - positionTangentSpace);
+		vec3 viewDirectionTangentSpace = normalize(cameraPositionTangentSpace - positionTangentSpace);
 		decalUV = ParallaxOcclusionMapping(
 			heightTexture,
 			decalUV,
-			viewDirection,
+			viewDirectionTangentSpace,
 			material.minParallaxLayers,
 			material.maxParallaxLayers,
 			-material.parallaxHeightScale);
@@ -115,13 +113,13 @@ void main()
 	
 	if (material.useNormalMap > 0)
 	{
-		mat3 TBN = ConstructTBN(gbufferNormal, positionViewSpace, uvForTBN);
+		mat3 TBN = ConstructTBN(gbufferNormalViewSpace, positionViewSpace, uvForTBN);
 		vec3 normalMap = texture(normalTexture, decalUV).xyz;
 		normalMap = normalMap * 2.0f - 1.0f;
 		imageStore(normalGBufferTexture, pixelCoord, vec4(OctEncode(normalize(TBN * normalMap)), 0.0f, 0.0f));
 	}
 	else
 	{
-		imageStore(normalGBufferTexture, pixelCoord, vec4(OctEncode(gbufferNormal), 0.0f, 0.0f));
+		imageStore(normalGBufferTexture, pixelCoord, vec4(OctEncode(gbufferNormalViewSpace), 0.0f, 0.0f));
 	}
 }

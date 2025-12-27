@@ -19,7 +19,8 @@ struct Camera
 	float deltaTime;
 	float zFar;
 	float zNear;
-	vec3 position;
+	vec3 positionViewSpace;
+	vec3 positionWorldSpace;
 	Wind wind;
 };
 

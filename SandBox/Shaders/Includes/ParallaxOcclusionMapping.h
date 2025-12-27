@@ -1,16 +1,16 @@
 vec2 ParallaxOcclusionMapping(
     sampler2D heightTexture,
     in vec2 uv,
-    in vec3 viewDirection,
+    in vec3 viewDirectionTangentSpace,
     in int minParallaxLayers,
     in int maxParallaxLayers,
     in float parallaxHeightScale)
 {
-    float numLayers = mix(maxParallaxLayers, minParallaxLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDirection)));
+    float numLayers = mix(maxParallaxLayers, minParallaxLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDirectionTangentSpace)));
     float layerDepth = 1.0 / numLayers;
     float currentLayerDepth = 0.0;
     
-    vec2 P = viewDirection.xy * -parallaxHeightScale;
+    vec2 P = viewDirectionTangentSpace.xy * -parallaxHeightScale;
     vec2 deltaUV = P / numLayers;
     
     vec2 currentUV = uv;

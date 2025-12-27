@@ -41,26 +41,22 @@ void main()
 	viewRay.x = -screenPosition.x * camera.aspectRatio * camera.tanHalfFOV;
     viewRay.y = -screenPosition.y * camera.tanHalfFOV;
 
-    vec3 position = CalculatePositionFromDepth(
+    vec3 positionViewSpace = CalculatePositionFromDepth(
         texture(depthTexture, uv).x,
         camera.projectionMat4,
         viewRay);
 
-	//positionSharedData[gl_LocalInvocationIndex] = position;
-
-	//groupMemoryBarrier();
-
-	vec3 normal = OctDecode(texture(normalTexture, uv).xy);
+	vec3 normalViewSpace = OctDecode(texture(normalTexture, uv).xy);
     vec3 randomVector = normalize(texture(noiseTexture, uv * noiseScale).xyz);
-    vec3 tangent = normalize(randomVector - normal * dot(randomVector, normal));
-    vec3 bitangent = normalize(cross(normal, tangent));
-    mat3 TBN = mat3(tangent, bitangent, normal);
+    vec3 tangentViewSpace = normalize(randomVector - normalViewSpace * dot(randomVector, normalViewSpace));
+    vec3 bitangentViewSpace = normalize(cross(normalViewSpace, tangentViewSpace));
+    mat3 TBN = mat3(tangentViewSpace, bitangentViewSpace, normalViewSpace);
 
     float occlusion = 0.0f;
     for (int i = 0; i < kernelSize; ++i)
     {
         vec3 currentSample = TBN * samples[i].xyz;
-        currentSample = position + currentSample * radius;
+        currentSample = positionViewSpace + currentSample * radius;
 
         vec4 offset = vec4(currentSample, 1.0f);
         offset = camera.projectionMat4 * offset;
@@ -68,32 +64,14 @@ void main()
         offset.xyz = offset.xyz * 0.5f + 0.5f;
 		//offset.y = 1.0f - offset.y;
 
-		vec2 offsetPixelCoord = offset.xy * ssaoSize - vec2(0.5f);
-		vec2 fWorkGroupID = offsetPixelCoord / vec2(16.0f, 16.0f);
-		uvec2 workGroupID = uvec2(fWorkGroupID);
-		vec2 localIDScale = fWorkGroupID - vec2(workGroupID);
-		uvec2 localID = uvec2(localIDScale * vec2(16.0f, 16.0f));
-
 		float sampleDepth = 0.0f;
-		//if (workGroupID.x == gl_WorkGroupID.x && workGroupID.y == gl_WorkGroupID.y)
-		//{
-			//uint localIndex = localID.y * 16 + localID.x;
-			//sampleDepth = positionSharedData[localIndex].z;
+        offset.y = 1.0f - offset.y;
+        sampleDepth = CalculatePositionFromDepth(
+            texture(depthTexture, offset.xy).x,
+            camera.projectionMat4,
+            viewRay).z;
 
-			//pixelCoord.y = int(ssaoSize.y) - pixelCoord.y;
-            //imageStore(outColor, pixelCoord, vec4(1.0f, 0.0f, 0.0f, 1.0f));
-            //return;
-		//}
-		//else
-		//{
-			offset.y = 1.0f - offset.y;
-			sampleDepth = CalculatePositionFromDepth(
-                texture(depthTexture, offset.xy).x,
-                camera.projectionMat4,
-                viewRay).z;
-		//}
-
-        float rangeCheck = 1.0f - smoothstep(0.0f, 1.0f, abs(position.z - sampleDepth) / radius);
+        float rangeCheck = 1.0f - smoothstep(0.0f, 1.0f, abs(positionViewSpace.z - sampleDepth) / radius);
         occlusion += (sampleDepth >= currentSample.z + bias ? 1.0f : 0.0f) * rangeCheck;
     }
     occlusion = 1.0f - (occlusion / float(kernelSize));
