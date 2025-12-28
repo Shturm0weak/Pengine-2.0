@@ -1861,9 +1861,15 @@ void RenderPassManager::CreatePointLightShadows()
 
 		for (size_t i = 0; i < view.size(); i++)
 		{
+			Transform& transform = registry.get<Transform>(view[i]);
+			if (!transform.GetEntity()->IsEnabled())
+			{
+				continue;
+			}
+
 			LightInfoToSort lightInfoToSort{};
 			lightInfoToSort.entity = view[i];
-			lightInfoToSort.position = registry.get<Transform>(view[i]).GetPosition();
+			lightInfoToSort.position = transform.GetPosition();
 			lightInfoToSort.radius = registry.get<PointLight>(view[i]).radius;
 
 			if (Utils::IsSphereInsideFrustum(cameraFrustumPlanes, lightInfoToSort.position, lightInfoToSort.radius))
@@ -2379,9 +2385,15 @@ void RenderPassManager::CreateSpotLightShadows()
 
 			for (size_t i = 0; i < view.size(); i++)
 			{
+				Transform& transform = registry.get<Transform>(view[i]);
+				if (!transform.GetEntity()->IsEnabled())
+				{
+					continue;
+				}
+
 				LightInfoToSort lightInfoToSort{};
 				lightInfoToSort.entity = view[i];
-				lightInfoToSort.position = registry.get<Transform>(view[i]).GetPosition();
+				lightInfoToSort.position = transform.GetPosition();
 				lightInfoToSort.radius = registry.get<SpotLight>(view[i]).radius;
 
 				if (Utils::IsSphereInsideFrustum(cameraFrustumPlanes, lightInfoToSort.position, lightInfoToSort.radius))
