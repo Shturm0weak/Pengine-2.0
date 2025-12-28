@@ -192,6 +192,46 @@ Basemat:
             - faceIndexA
       ColorBlendStates:
         []
+    - RenderPass: SpotLightShadows
+      DepthTest: true
+      DepthWrite: true
+      DepthClamp: true
+      DepthCompare: LessOrEqual
+      CullMode: None
+      PolygonMode: Fill
+      TopologyMode: TriangleList
+      Vertex: Shaders/SpotLightShadowsSkinned.vert
+      Fragment: Shaders/SpotLightShadows.frag
+      DescriptorSets:
+        - Type: Material
+          RenderPass: GBuffer
+          Set: 0
+        - Type: Renderer
+          RenderPass: Lights
+          Set: 1
+        - Type: Object
+          RenderPass: GBuffer
+          Set: 2
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Tag: Position
+          Names:
+            - positionA
+            - uvA
+        - Binding: 1
+          InputRate: Vertex
+          Tag: Bones
+          Names:
+            - weightsA
+            - boneIdsA
+        - Binding: 2
+          InputRate: Instance
+          Names:
+            - transformA
+            - lightIndexA
+      ColorBlendStates:
+        []
     - RenderPass: ZPrePass
       DepthTest: true
       DepthWrite: true

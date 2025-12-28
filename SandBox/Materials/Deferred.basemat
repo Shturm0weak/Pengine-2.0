@@ -37,3 +37,6 @@ Basemat:
         - Name: pointLightShadowMapTexture
           TextureAttachment: "PointLightShadows"
           TextureAttachmentDefault: "White"
+        - Name: spotLightShadowMapTexture
+          TextureAttachment: "SpotLightShadows"
+          TextureAttachmentDefault: "White"

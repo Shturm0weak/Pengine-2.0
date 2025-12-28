@@ -95,6 +95,8 @@ namespace Pengine
 
 		std::shared_ptr<Entity> CreatePointLight();
 
+		std::shared_ptr<Entity> CreateSpotLight();
+
 		std::shared_ptr<Entity> CreateCube();
 
 		std::shared_ptr<Entity> CreateSphere();

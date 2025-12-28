@@ -37,6 +37,7 @@ layout(set = 1, binding = 0) uniform GBufferMaterial
 #include "Shaders/Includes/IsBrightPixel.h"
 #include "Shaders/Includes/DirectionalLight.h"
 #include "Shaders/Includes/PointLight.h"
+#include "Shaders/Includes/SpotLight.h"
 #include "Shaders/Includes/CSM.h"
 #include "Shaders/Includes/SSS.h"
 
@@ -48,11 +49,15 @@ layout(set = 2, binding = 4) uniform sampler2D deferredSsaoTexture;
 layout(set = 2, binding = 5) uniform sampler2D deferredSssTexture;
 layout(set = 2, binding = 6) uniform sampler2DArray deferredCSMTexture;
 layout(set = 2, binding = 7) uniform sampler2D deferredPointLightShadowMapTexture;
+layout(set = 2, binding = 8) uniform sampler2D deferredSpotLightShadowMapTexture;
 
 layout(set = 3, binding = 0) uniform Lights
 {
 	PointLight pointLights[32];
 	int pointLightsCount;
+
+	SpotLight spotLights[32];
+	int spotLightsCount;
 
 	DirectionalLight directionalLight;
 	int hasDirectionalLight;
@@ -62,6 +67,7 @@ layout(set = 3, binding = 0) uniform Lights
 	CSM csm;
 
 	PointLightShadows pointLightShadows;
+    SpotLightShadows spotLightShadows;
     
     SSS sss;
 };

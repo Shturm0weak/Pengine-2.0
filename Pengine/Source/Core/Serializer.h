@@ -186,6 +186,10 @@ namespace Pengine
 
 		static void DeserializePointLight(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
 
+		static void SerializeSpotLight(YAML::Emitter& out, const std::shared_ptr<Entity>& entity);
+
+		static void DeserializeSpotLight(const YAML::Node& in, const std::shared_ptr<Entity>& entity);
+
 		static void SerializeDirectionalLight(YAML::Emitter& out, const std::shared_ptr<Entity>& entity);
 
 		static void DeserializeDirectionalLight(const YAML::Node& in, const std::shared_ptr<Entity>& entity);

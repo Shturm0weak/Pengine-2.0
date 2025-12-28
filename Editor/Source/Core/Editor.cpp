@@ -33,6 +33,7 @@
 #include "Components/Decal.h"
 #include "Components/DirectionalLight.h"
 #include "Components/PointLight.h"
+#include "Components/SpotLight.h"
 #include "Components/Renderer3D.h"
 #include "Components/SkeletalAnimator.h"
 #include "Components/EntityAnimator.h"
@@ -1115,6 +1116,7 @@ void Editor::Properties(const std::shared_ptr<Scene>& scene, Window& window)
 			Renderer3DComponent(entity);
 			DecalComponent(entity);
 			PointLightComponent(entity);
+			SpotLightComponent(entity);
 			DirectionalLightComponent(entity);
 			SkeletalAnimatorComponent(entity);
 			EntityAnimatorComponent(entity);
@@ -1306,6 +1308,25 @@ void Editor::GraphicsSettingsInfo(GraphicsSettings& graphicsSettings)
 				const char* const faceQualities[] = { "128", "256", "512", "1024" };
 				ImGui::PushID("PointLightShadows Face Quality");
 				isChangedToSerialize += ImGui::Combo("Face Size", &graphicsSettings.shadows.pointLightShadows.faceQuality, faceQualities, 4);
+				ImGui::PopID();
+			}
+
+			if (ImGui::CollapsingHeader("SpotLightShadows"))
+			{
+				Indent indent;
+
+				ImGui::PushID("SpotLightShadows Is Enabled");
+				isChangedToSerialize += ImGui::Checkbox("Is Enabled", &graphicsSettings.shadows.spotLightShadows.isEnabled);
+				ImGui::PopID();
+
+				const char* const atlasQualities[] = { "1024", "2048", "3072", "4096" };
+				ImGui::PushID("SpotLightShadows Atlas Quality");
+				isChangedToSerialize += ImGui::Combo("Atlas Size", &graphicsSettings.shadows.spotLightShadows.atlasQuality, atlasQualities, 4);
+				ImGui::PopID();
+
+				const char* const faceQualities[] = { "128", "256", "512", "1024" };
+				ImGui::PushID("SpotLightShadows Face Quality");
+				isChangedToSerialize += ImGui::Combo("Face Size", &graphicsSettings.shadows.spotLightShadows.faceQuality, faceQualities, 4);
 				ImGui::PopID();
 			}
 		}
@@ -2416,6 +2437,10 @@ void Editor::ComponentsPopUpMenu(const std::shared_ptr<Entity>& entity)
 		{
 			entity->AddComponent<PointLight>();
 		}
+		else if (ImGui::MenuItem("SpotLight"))
+		{
+			entity->AddComponent<SpotLight>();
+		}
 		else if (ImGui::MenuItem("DirectionalLight"))
 		{
 			entity->AddComponent<DirectionalLight>();
@@ -2520,6 +2545,10 @@ void Editor::MainMenuBar(const std::shared_ptr<Scene>& scene)
 		if (ImGui::MenuItem("Point Light"))
 		{
 			scene->CreatePointLight();
+		}
+		if (ImGui::MenuItem("Spot Light"))
+		{
+			scene->CreateSpotLight();
 		}
 		if (ImGui::MenuItem("Canvas"))
 		{
@@ -2695,7 +2724,42 @@ void Editor::PointLightComponent(const std::shared_ptr<Entity>& entity)
 		ImGui::SliderFloat("Radius", &pointLight.radius, 0.0f, 10.0f);
 		ImGui::SliderFloat("Bias", &pointLight.bias, 0.001f, 0.1f);
 		ImGui::Checkbox("Cast Shadows", &pointLight.castShadows);
+		ImGui::Checkbox("Cast SSS", &pointLight.castSSS);
 		ImGui::Checkbox("Draw Bounding Sphere", &pointLight.drawBoundingSphere);
+	}
+}
+
+void Editor::SpotLightComponent(const std::shared_ptr<Pengine::Entity>& entity)
+{
+	if (!entity->HasComponent<SpotLight>())
+	{
+		return;
+	}
+
+	SpotLight& spotLight = entity->GetComponent<SpotLight>();
+
+	ImGui::PushID("SpotLight X");
+	if (ImGui::Button("X"))
+	{
+		entity->RemoveComponent<SpotLight>();
+	}
+	ImGui::PopID();
+
+	ImGui::SameLine();
+
+	if (ImGui::CollapsingHeader("SpotLight"))
+	{
+		Indent indent;
+
+		ImGui::ColorEdit3("Color", &spotLight.color[0]);
+		ImGui::SliderFloat("Intensity", &spotLight.intensity, 0.0f, 10.0f);
+		ImGui::SliderFloat("Radius", &spotLight.radius, 0.0f, 10.0f);
+		ImGui::SliderFloat("Bias", &spotLight.bias, 0.001f, 0.1f);
+		ImGui::SliderAngle("Inner CutOff", &spotLight.innerCutOff, 0.0f, 90.0f);
+		ImGui::SliderAngle("Outer CutOff", &spotLight.outerCutOff, 0.0f, 90.0f);
+		ImGui::Checkbox("Cast Shadows", &spotLight.castShadows);
+		ImGui::Checkbox("Cast SSS", &spotLight.castSSS);
+		ImGui::Checkbox("Draw Bounding Sphere", &spotLight.drawBoundingSphere);
 	}
 }
 

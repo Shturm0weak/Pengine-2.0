@@ -37,6 +37,7 @@ layout(set = 1, binding = 0) uniform GBufferMaterial
 #include "Shaders/Includes/IsBrightPixel.h"
 #include "Shaders/Includes/DirectionalLight.h"
 #include "Shaders/Includes/PointLight.h"
+#include "Shaders/Includes/SpotLight.h"
 #include "Shaders/Includes/CSM.h"
 #include "Shaders/Includes/SSS.h"
 
@@ -48,11 +49,15 @@ layout(set = 2, binding = 4) uniform sampler2D deferredSsaoTexture;
 layout(set = 2, binding = 5) uniform sampler2D deferredSssTexture;
 layout(set = 2, binding = 6) uniform sampler2DArray deferredCSMTexture;
 layout(set = 2, binding = 7) uniform sampler2D deferredPointLightShadowMapTexture;
+layout(set = 2, binding = 8) uniform sampler2D deferredSpotLightShadowMapTexture;
 
 layout(set = 3, binding = 0) uniform Lights
 {
 	PointLight pointLights[32];
 	int pointLightsCount;
+
+	SpotLight spotLights[32];
+	int spotLightsCount;
 
 	DirectionalLight directionalLight;
 	int hasDirectionalLight;
@@ -62,6 +67,7 @@ layout(set = 3, binding = 0) uniform Lights
 	CSM csm;
 
 	PointLightShadows pointLightShadows;
+    SpotLightShadows spotLightShadows;
     
     SSS sss;
 };
@@ -140,36 +146,56 @@ void main()
 	for (int i = 0; i < pointLightsCount; i++)
 	{
 		PointLight pointLight = pointLights[i];
-		vec3 toLight = pointLight.positionWorldSpace - positionWorldSpace;
-		float distanceToPoint = length(toLight);
+		vec3 toLightWorldSpace = pointLight.positionWorldSpace - positionWorldSpace;
+		float distanceToPoint = length(toLightWorldSpace);
 		if (distanceToPoint < pointLight.radius)
 		{
 			float shadow = 0.0f;
 			if (pointLightShadows.isEnabled == 1 && pointLight.shadowMapIndex > -1)
 			{
-				float distanceToCamera = length(pointLight.positionWorldSpace - camera.positionWorldSpace);
 				shadow = CalculatePointLightShadow(
 					deferredPointLightShadowMapTexture,
 					pointLight,
 					pointLightShadows,
-					toLight,
-					distanceToPoint,
-					distanceToCamera);
-
-				// TODO: SSS for point lights!
-				// shadow += CalculateScreenSpaceShadows(
-				//     depthTexture,
-				//     positionViewSpace,
-				//     normalize(toLight),
-				//     viewRay,
-				//     camera.projectionMat4,
-				//     sss).r;
-
-				// shadow = clamp(shadow, 0.0f, 1.0f);
+					toLightWorldSpace,
+					distanceToPoint);
 			}
 			
 			result += CalculatePointLight(
 				pointLight,
+				viewDirectionViewSpace,
+				positionViewSpace,
+				basicReflectivity,
+				normalViewSpaceFinal,
+				albedoColor.xyz,
+				shading.x,
+				shading.y,
+				shading.z,
+				shadow);
+		}
+	}
+
+	for (int i = 0; i < spotLightsCount; i++)
+	{
+		SpotLight spotLight = spotLights[i];
+		vec3 toLightWorldSpace = spotLight.positionWorldSpace - positionWorldSpace;
+		float distanceToPoint = length(toLightWorldSpace);
+		if (distanceToPoint < spotLight.radius)
+		{
+			float shadow = 0.0f;
+			if (spotLightShadows.isEnabled == 1 && spotLight.shadowMapIndex > -1)
+			{
+				shadow = CalculateSpotLightShadow(
+					deferredSpotLightShadowMapTexture,
+					spotLight,
+					spotLightShadows,
+					positionWorldSpace,
+					positionViewSpace,
+					distanceToPoint);
+			}
+			
+			result += CalculateSpotLight(
+				spotLight,
 				viewDirectionViewSpace,
 				positionViewSpace,
 				basicReflectivity,

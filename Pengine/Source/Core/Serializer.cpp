@@ -23,6 +23,7 @@
 #include "../Components/Decal.h"
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
+#include "../Components/SpotLight.h"
 #include "../Components/Renderer3D.h"
 #include "../Components/SkeletalAnimator.h"
 #include "../Components/Transform.h"
@@ -3966,6 +3967,7 @@ void Serializer::SerializeEntity(YAML::Emitter& out, const std::shared_ptr<Entit
 	SerializeCamera(out, entity);
 	SerializeRenderer3D(out, entity);
 	SerializePointLight(out, entity);
+	SerializeSpotLight(out, entity);
 	SerializeDecal(out, entity);
 	SerializeDirectionalLight(out, entity);
 	SerializeSkeletalAnimator(out, entity);
@@ -4040,6 +4042,7 @@ std::shared_ptr<Entity> Serializer::DeserializeEntity(
 	DeserializeCamera(in, entity);
 	DeserializeRenderer3D(in, entity);
 	DeserializePointLight(in, entity);
+	DeserializeSpotLight(in, entity);
 	DeserializeDecal(in, entity);
 	DeserializeDirectionalLight(in, entity);
 	DeserializeSkeletalAnimator(in, entity);
@@ -4356,6 +4359,7 @@ void Serializer::SerializePointLight(YAML::Emitter& out, const std::shared_ptr<E
 	out << YAML::Key << "Bias" << YAML::Value << pointLight.bias;
 	out << YAML::Key << "DrawBoundingSphere" << YAML::Value << pointLight.drawBoundingSphere;
 	out << YAML::Key << "CastShadows" << YAML::Value << pointLight.castShadows;
+	out << YAML::Key << "CastSSS" << YAML::Value << pointLight.castSSS;
 
 	out << YAML::EndMap;
 }
@@ -4399,6 +4403,95 @@ void Serializer::DeserializePointLight(const YAML::Node& in, const std::shared_p
 		if (const auto& castShadowsData = pointLightData["CastShadows"])
 		{
 			pointLight.castShadows = castShadowsData.as<bool>();
+		}
+
+		if (const auto& castSSSData = pointLightData["CastSSS"])
+		{
+			pointLight.castSSS = castSSSData.as<bool>();
+		}
+	}
+}
+
+void Serializer::SerializeSpotLight(YAML::Emitter& out, const std::shared_ptr<Entity>& entity)
+{
+	if (!entity->HasComponent<SpotLight>())
+	{
+		return;
+	}
+
+	const SpotLight& spotLight = entity->GetComponent<SpotLight>();
+
+	out << YAML::Key << "SpotLight";
+
+	out << YAML::BeginMap;
+
+	out << YAML::Key << "Color" << YAML::Value << spotLight.color;
+	out << YAML::Key << "Intensity" << YAML::Value << spotLight.intensity;
+	out << YAML::Key << "Radius" << YAML::Value << spotLight.radius;
+	out << YAML::Key << "Bias" << YAML::Value << spotLight.bias;
+	out << YAML::Key << "InnerCutOff" << YAML::Value << spotLight.innerCutOff;
+	out << YAML::Key << "OuterCutOff" << YAML::Value << spotLight.outerCutOff;
+	out << YAML::Key << "DrawBoundingSphere" << YAML::Value << spotLight.drawBoundingSphere;
+	out << YAML::Key << "CastShadows" << YAML::Value << spotLight.castShadows;
+	out << YAML::Key << "CastSSS" << YAML::Value << spotLight.castSSS;
+
+	out << YAML::EndMap;
+}
+
+void Serializer::DeserializeSpotLight(const YAML::Node& in, const std::shared_ptr<Entity>& entity)
+{
+	if (const auto& spotLightData = in["SpotLight"])
+	{
+		if (!entity->HasComponent<SpotLight>())
+		{
+			entity->AddComponent<SpotLight>();
+		}
+
+		SpotLight& spotLight = entity->GetComponent<SpotLight>();
+
+		if (const auto& colorData = spotLightData["Color"])
+		{
+			spotLight.color = colorData.as<glm::vec3>();
+		}
+
+		if (const auto& intensityData = spotLightData["Intensity"])
+		{
+			spotLight.intensity = intensityData.as<float>();
+		}
+
+		if (const auto& radiusData = spotLightData["Radius"])
+		{
+			spotLight.radius = radiusData.as<float>();
+		}
+
+		if (const auto& biasData = spotLightData["Bias"])
+		{
+			spotLight.bias = biasData.as<float>();
+		}
+
+		if (const auto& innerCutOffData = spotLightData["InnerCutOff"])
+		{
+			spotLight.innerCutOff = innerCutOffData.as<float>();
+		}
+
+		if (const auto& outerCutOffData = spotLightData["OuterCutOff"])
+		{
+			spotLight.outerCutOff = outerCutOffData.as<float>();
+		}
+
+		if (const auto& drawBoundingSphereData = spotLightData["DrawBoundingSphere"])
+		{
+			spotLight.drawBoundingSphere = drawBoundingSphereData.as<bool>();
+		}
+
+		if (const auto& castShadowsData = spotLightData["CastShadows"])
+		{
+			spotLight.castShadows = castShadowsData.as<bool>();
+		}
+
+		if (const auto& castSSSData = spotLightData["CastSSS"])
+		{
+			spotLight.castSSS = castSSSData.as<bool>();
 		}
 	}
 }
@@ -5338,13 +5431,24 @@ void Serializer::SerializeGraphicsSettings(const GraphicsSettings& graphicsSetti
 	out << YAML::EndMap;
 	//
 
-	// SSS.
+	// PointLightShadows.
 	out << YAML::Key << "PointLightShadows";
 	out << YAML::Value << YAML::BeginMap;
 
 	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.shadows.pointLightShadows.isEnabled;
 	out << YAML::Key << "AtlasQuality" << YAML::Value << graphicsSettings.shadows.pointLightShadows.atlasQuality;
 	out << YAML::Key << "FaceQuality" << YAML::Value << graphicsSettings.shadows.pointLightShadows.faceQuality;
+
+	out << YAML::EndMap;
+	//
+
+	// SpotLightShadows.
+	out << YAML::Key << "SpotLightShadows";
+	out << YAML::Value << YAML::BeginMap;
+
+	out << YAML::Key << "IsEnabled" << YAML::Value << graphicsSettings.shadows.spotLightShadows.isEnabled;
+	out << YAML::Key << "AtlasQuality" << YAML::Value << graphicsSettings.shadows.spotLightShadows.atlasQuality;
+	out << YAML::Key << "FaceQuality" << YAML::Value << graphicsSettings.shadows.spotLightShadows.faceQuality;
 
 	out << YAML::EndMap;
 	//
@@ -5578,6 +5682,24 @@ GraphicsSettings Serializer::DeserializeGraphicsSettings(const std::filesystem::
 		if (const auto& faceQualityData = pointLightShadowsData["FaceQuality"])
 		{
 			graphicsSettings.shadows.pointLightShadows.faceQuality = glm::clamp(faceQualityData.as<int>(), 0, 3);
+		}
+	}
+
+	if (const auto& spotLightShadowsData = data["SpotLightShadows"])
+	{
+		if (const auto& isEnabledData = spotLightShadowsData["IsEnabled"])
+		{
+			graphicsSettings.shadows.spotLightShadows.isEnabled = isEnabledData.as<bool>();
+		}
+
+		if (const auto& atlasQualityData = spotLightShadowsData["AtlasQuality"])
+		{
+			graphicsSettings.shadows.spotLightShadows.atlasQuality = glm::clamp(atlasQualityData.as<int>(), 0, 3);
+		}
+
+		if (const auto& faceQualityData = spotLightShadowsData["FaceQuality"])
+		{
+			graphicsSettings.shadows.spotLightShadows.faceQuality = glm::clamp(faceQualityData.as<int>(), 0, 3);
 		}
 	}
 

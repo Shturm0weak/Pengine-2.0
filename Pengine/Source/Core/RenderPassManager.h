@@ -93,6 +93,8 @@ namespace Pengine
 
 		void CreatePointLightShadows();
 
+		void CreateSpotLightShadows();
+
 		void CreateBloom();
 
 		void CreateSSR();

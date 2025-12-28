@@ -5,7 +5,6 @@ layout(location = 1) in vec2 uvA;
 layout(location = 2) in uint colorA;
 layout(location = 3) in mat4 transformA;
 layout(location = 7) in int lightIndexA;
-layout(location = 8) in int faceIndexA;
 
 layout(location = 0) out vec2 uv;
 layout(location = 1) out vec4 positionWorldSpace;
@@ -57,8 +56,8 @@ void main()
 	vec3 windDisplacement = camera.wind.direction * windWave * windInfluence;
 
     positionWorldSpace = transformA * vec4(windDisplacement + positionA, 1.0f);
-	gl_Position = pointLights[lightIndexA].pointLightFaceInfos[faceIndexA].viewProjectionMat4 * positionWorldSpace;
-    lightPositionWorldSpace = pointLights[lightIndexA].positionWorldSpace;
-    radius = pointLights[lightIndexA].radius;
+	gl_Position = spotLights[lightIndexA].viewProjectionMat4 * positionWorldSpace;
+    lightPositionWorldSpace = spotLights[lightIndexA].positionWorldSpace;
+    radius = spotLights[lightIndexA].radius;
 	uv = uvA;
 }

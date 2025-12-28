@@ -10,6 +10,7 @@
 #include "../Components/Camera.h"
 #include "../Components/DirectionalLight.h"
 #include "../Components/PointLight.h"
+#include "../Components/SpotLight.h"
 #include "../Components/Canvas.h"
 #include "../Components/RigidBody.h"
 
@@ -226,6 +227,14 @@ std::shared_ptr<Entity> Scene::CreatePointLight()
 	const auto entity = CreateEntity("PointLight");
 	entity->AddComponent<Transform>(entity);
 	entity->AddComponent<PointLight>();
+	return entity;
+}
+
+std::shared_ptr<Entity> Pengine::Scene::CreateSpotLight()
+{
+	const auto entity = CreateEntity("SpotLight");
+	entity->AddComponent<Transform>(entity);
+	entity->AddComponent<SpotLight>();
 	return entity;
 }
 

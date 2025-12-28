@@ -90,6 +90,8 @@ private:
 
 	void PointLightComponent(const std::shared_ptr<Pengine::Entity>& entity);
 
+	void SpotLightComponent(const std::shared_ptr<Pengine::Entity>& entity);
+
 	void DirectionalLightComponent(const std::shared_ptr<Pengine::Entity>& entity);
 
 	void SkeletalAnimatorComponent(const std::shared_ptr<Pengine::Entity>& entity);

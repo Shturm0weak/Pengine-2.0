@@ -6,7 +6,6 @@ layout(location = 2) in vec4 weightsA;
 layout(location = 3) in ivec4 boneIdsA;
 layout(location = 4) in mat4 transformA;
 layout(location = 8) in int lightIndexA;
-layout(location = 9) in int faceIndexA;
 
 layout(location = 0) out vec2 uv;
 layout(location = 1) out vec4 positionWorldSpace;
@@ -66,8 +65,8 @@ void main()
 	}
 
     positionWorldSpace = transformA * vec4(totalPositionWorldSpace.xyz, 1.0f);
-	gl_Position = pointLights[lightIndexA].pointLightFaceInfos[faceIndexA].viewProjectionMat4 * positionWorldSpace;
-    lightPositionWorldSpace = pointLights[lightIndexA].positionWorldSpace;
-    radius = pointLights[lightIndexA].radius;
+	gl_Position = spotLights[lightIndexA].viewProjectionMat4 * positionWorldSpace;
+    lightPositionWorldSpace = spotLights[lightIndexA].positionWorldSpace;
+    radius = spotLights[lightIndexA].radius;
 	uv = uvA;
 }

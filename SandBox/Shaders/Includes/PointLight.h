@@ -17,6 +17,8 @@ struct PointLight
 	int shadowMapIndex;
 
 	float bias;
+	
+    int castSSS;
 };
 
 struct PointLightShadows
@@ -180,14 +182,13 @@ float CalculatePointLightShadow(
     in PointLight light,
 	in PointLightShadows pointLightShadows,
     in vec3 toLight,
-    float distanceToPoint,
-	float distanceToCamera)
+    float distanceToPoint)
 {
 	float shadow = 0.0f;
 
     vec2 texelSize = 1.0f / vec2(textureSize(shadowAtlasTexture, 0));
 
-	float random = fract(sin(dot(vec2(distanceToPoint, distanceToCamera) * vec2(textureSize(shadowAtlasTexture, 0)), vec2(12.9898, 78.233))) * 43758.5453);
+	float random = fract(sin(dot(vec2(distanceToPoint, toLight.x) * vec2(textureSize(shadowAtlasTexture, 0)), vec2(12.9898, 78.233))) * 43758.5453);
 	float angle = random * 2.0 * 3.14159265;
 	
 	mat2 rotation = mat2(cos(angle), -sin(angle),

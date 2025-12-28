@@ -108,6 +108,23 @@ namespace Pengine
 				
 				bool isEnabled = true;
 			} pointLightShadows;
+
+			struct SpotLightShadows
+			{
+				/**
+				 * Resolution: 1024 / 2048 / 3072 / 4096
+				 * 3072 by default.
+				 */
+				int atlasQuality = 2;
+
+				/**
+				 * Resolution: 128 / 256 / 512 / 1024
+				 * 512 by default.
+				 */
+				int faceQuality = 2;
+
+				bool isEnabled = true;
+			} spotLightShadows;
 		} shadows;
 
 		struct Bloom

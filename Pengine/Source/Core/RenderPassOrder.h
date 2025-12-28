@@ -19,6 +19,7 @@ namespace Pengine
 		Decals,
 		CSM,
 		PointLightShadows,
+		SpotLightShadows,
 		SSAO,
 		SSAOBlur,
 		SSS,

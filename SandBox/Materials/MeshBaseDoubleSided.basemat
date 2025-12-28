@@ -153,6 +153,37 @@ Basemat:
             - lightIndexA
             - faceIndexA
       ColorBlendStates:
+        [] 
+    - RenderPass: SpotLightShadows
+      DepthTest: true
+      DepthWrite: true
+      DepthClamp: true
+      DepthCompare: LessOrEqual
+      CullMode: None
+      PolygonMode: Fill
+      TopologyMode: TriangleList
+      Vertex: Shaders/SpotLightShadows.vert
+      Fragment: Shaders/SpotLightShadows.frag
+      DescriptorSets:
+        - Type: Material
+          RenderPass: GBuffer
+          Set: 0
+        - Type: Renderer
+          RenderPass: Lights
+          Set: 1
+      VertexInputBindingDescriptions:
+        - Binding: 0
+          InputRate: Vertex
+          Tag: Position
+          Names:
+            - positionA
+            - uvA
+        - Binding: 1
+          InputRate: Instance
+          Names:
+            - transformA
+            - lightIndexA
+      ColorBlendStates:
         []
     - RenderPass: ZPrePass
       DepthTest: true

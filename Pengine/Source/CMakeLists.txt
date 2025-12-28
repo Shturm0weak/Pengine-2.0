@@ -22,6 +22,7 @@ set(COMPONENTS_SOURCES
 	Components/Transform.cpp Components/Transform.h
 	Components/Renderer3D.cpp Components/Renderer3D.h
 	Components/SkeletalAnimator.cpp Components/SkeletalAnimator.h
+	Components/SpotLight.h
 	Components/Canvas.h
 )
 source_group("Components" FILES ${COMPONENTS_SOURCES})

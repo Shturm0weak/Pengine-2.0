@@ -4,7 +4,6 @@ layout(location = 0) in vec3 positionA;
 layout(location = 1) in vec2 uvA;
 layout(location = 2) in mat4 transformA;
 layout(location = 6) in int lightIndexA;
-layout(location = 7) in int faceIndexA;
 
 layout(location = 0) out vec2 uv;
 layout(location = 1) out vec4 positionWorldSpace;
@@ -42,8 +41,8 @@ layout(set = 1, binding = 0) uniform Lights
 void main()
 {
     positionWorldSpace = transformA * vec4(positionA, 1.0f);
-	gl_Position = pointLights[lightIndexA].pointLightFaceInfos[faceIndexA].viewProjectionMat4 * positionWorldSpace;
-    lightPositionWorldSpace = pointLights[lightIndexA].positionWorldSpace;
-    radius = pointLights[lightIndexA].radius;
+	gl_Position = spotLights[lightIndexA].viewProjectionMat4 * positionWorldSpace;
+    lightPositionWorldSpace = spotLights[lightIndexA].positionWorldSpace;
+    radius = spotLights[lightIndexA].radius;
 	uv = uvA;
 }
