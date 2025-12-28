@@ -225,6 +225,9 @@ void Transform::Move(Transform&& transform) noexcept
 	m_GlobalTransformData = std::move(transform.m_GlobalTransformData);
 	m_FollowOwner = std::move(transform.m_FollowOwner);
 	m_IsDirty = std::move(transform.m_IsDirty);
+	m_Forward = std::move(transform.m_Forward);
+	m_Up = std::move(transform.m_Up);
+	m_Right = std::move(transform.m_Right);
 
 	transform.m_Entity = nullptr;
 }
