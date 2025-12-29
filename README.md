@@ -54,10 +54,14 @@ cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 * Basic PBR
 * Directional Lights
 * Point Lights
+* Spot Lights
 * Normal Maps
 * Cascade Shadow Maps
+* Point Light Shadow Maps
+* Spot Light Shadow Maps
 * SSAO
 * SSR
+* SSS
 * Parallax Occlusion Mapping
 * Decals
 * Bloom
@@ -69,6 +73,7 @@ cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 * Assync Resource Loader
 * Scriptable Materials
 * Skeletal Animations
+* Mesh LODs
 
 ## **Used Libraries**
 * GLFW
@@ -80,6 +85,7 @@ cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 * Yaml-cpp
 * Jolt
 * FreeType
+* MeshOptimizer
 
 ## **Screenshots**
 <img width="2559" height="1374" alt="MultiViewports" src="https://github.com/user-attachments/assets/0bbcebaa-91fb-40ba-af93-8321af239cb6" />
@@ -93,6 +99,7 @@ cd Pengine-2.0 && mkdir Build && cd Build && cmake ..
 ![image](https://github.com/user-attachments/assets/19903bde-e2ba-4439-acfb-994f382ca625)
 
 <img width="2560" height="1377" alt="Materials" src="https://github.com/user-attachments/assets/69762984-ac18-4740-b5b6-4cbb67679883" />
+<img width="2560" height="1377" alt="BistroNight" src="https://github.com/user-attachments/assets/b3cf6caa-4852-4ba8-a619-c14b0a2b8191" />
 
 https://github.com/user-attachments/assets/f47cdb9f-c40e-4d38-88ea-fd54fad8a2f5
 
