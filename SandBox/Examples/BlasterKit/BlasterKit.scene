@@ -5,13 +5,14 @@ Settings:
     Direction: [-1, 0, 0]
     Frequency: 1
     Strength: 1
+GraphicsSettings: 0x84beaa5529d21a0d243484fff0af8349
 Scene:
   - UUID: 0xa35c5229445ef0485833491596e9411a
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [-1.05251265, 0.61794591, 1.02397418]
-      Rotation: [-0.424212247, -0.813388884, 0]
+      Position: [-3.55534387, 2.19247222, 8.29568958]
+      Rotation: [-0.461579144, -1.19345081, 0]
       Scale: [1, 1, 1]
       FollowOwner: true
     Camera:

@@ -5,7 +5,7 @@ Settings:
     Direction: [1, 1, 1]
     Frequency: 5
     Strength: 0.0250000004
-GraphicsSettings: 0x7fd51f678fded0482f31b51f98d47745
+GraphicsSettings: 0xa8bcf158e0bd7c2d324c14c4575b1957
 Scene:
   - UUID: 0xbc89eeab5ceee82cb0f9732449b3e39d
     Name: DirectionalLight
@@ -17,7 +17,7 @@ Scene:
       FollowOwner: true
     DirectionalLight:
       Color: [1, 1, 1]
-      Intensity: 1
+      Intensity: 3
       Ambient: 0.100000001
     Childs:
       []
@@ -214,7 +214,6 @@ Scene:
       RenderTargetIndex: 0
       ObjectVisibilityMask: 255
       ShadowVisibilityMask: 255
-      Viewport: Main
     Childs:
       []
   - UUID: 0xf36997a588e9a4f3b5919dfa07776dbd
@@ -323,6 +322,7 @@ Scene:
       Bias: 0.00999999978
       DrawBoundingSphere: false
       CastShadows: true
+      CastSSS: false
     Childs:
       []
   - UUID: 0x3c109db832e4bc77b904cc25e34f2307
@@ -556,38 +556,3 @@ Scene:
       Rotation: [8.02687191e-06, -4.63391391e-12, -1.93711912e-06]
       Scale: [3, 3, 3]
       FollowOwner: true
-  - UUID: 0x160bc43fcb7956cd2dd88af712f182f6
-    Name: Plane
-    IsEnabled: true
-    Transform:
-      Position: [8.18104458, -8.99436188, 16.1092091]
-      Rotation: [0, -0, 0]
-      Scale: [50, 50, 50]
-      FollowOwner: true
-    Renderer3D:
-      Mesh: 0x3f83219ad29d9c27728dd755119284cd
-      Material: 0x42945193ce7076cc876eac219951101e
-      RenderingOrder: 5
-      IsEnabled: true
-      CastShadows: true
-      ObjectVisibilityMask: 255
-      ShadowVisibilityMask: 255
-    Childs:
-      []
-  - UUID: 0x40d0b181b7e385a497d061f5a70f043c
-    Name: PointLight
-    IsEnabled: true
-    Transform:
-      Position: [8.44509029, -6.67941427, 2.1929152]
-      Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
-      FollowOwner: true
-    PointLight:
-      Color: [1, 1, 1]
-      Intensity: 4
-      Radius: 3
-      Bias: 0.00999999978
-      DrawBoundingSphere: false
-      CastShadows: true
-    Childs:
-      []

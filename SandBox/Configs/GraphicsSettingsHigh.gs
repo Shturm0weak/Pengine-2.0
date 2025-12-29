@@ -6,11 +6,11 @@ SSAO:
   NoiseSize: 64
   Radius: 0.5
   ResolutionScale: 1
-  ResolutionBlurScale: 0
+  ResolutionBlurScale: 1
 CSM:
   IsEnabled: true
   Quality: 1
-  CascadeCount: 6
+  CascadeCount: 4
   SplitFactor: 0.899999976
   MaxDistance: 50
   FogFactor: 0.200000003
@@ -19,10 +19,8 @@ CSM:
   Biases:
     - 0.00400000019
     - 0.00899999961
-    - 0.00899999961
-    - 0.00899999961
-    - 0.0199999996
-    - 0.100000001
+    - 0.0299999993
+    - 0.0799999982
   StabilizeCascades: true
 SSS:
   IsEnabled: true
@@ -36,7 +34,7 @@ SSS:
 PointLightShadows:
   IsEnabled: true
   AtlasQuality: 3
-  FaceQuality: 2
+  FaceQuality: 1
 SpotLightShadows:
   IsEnabled: true
   AtlasQuality: 3
