@@ -126,7 +126,7 @@ void VulkanUniformWriter::WriteTexture(uint32_t location, const std::vector<VkDe
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.descriptorType = VulkanUniformLayout::ConvertDescriptorType(binding->type);
 		write.dstBinding = location;
-		write.pImageInfo = &vkDescriptorImageInfos.back();
+		write.pImageInfo = &vkDescriptorImageInfos[i];
 		write.descriptorCount = binding->count;
 		write.dstSet = m_DescriptorSets[i];
 
