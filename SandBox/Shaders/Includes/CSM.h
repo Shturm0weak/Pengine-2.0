@@ -59,11 +59,11 @@ vec3 CalculateCSM(
     float bias = max(csm.biases[layer] * (1.0f - dot(normalViewSpace, lightDirectionViewSpace)), 0.001f);
     if (layer == csm.cascadeCount)
     {
-        bias *= 1 / (csm.maxDistance * 0.5f);
+        bias *= 1.0f / (csm.maxDistance * 0.5f);
     }
     else
     {
-        bias *= 1 / (csm.distances[layer] * 0.5f);
+        bias *= 1.0f / (csm.distances[layer] * 0.5f);
     }
 
     vec2 texelSize = 1.0f / vec2(textureSize(CSMTexture, 0));

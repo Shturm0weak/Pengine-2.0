@@ -10,7 +10,7 @@ struct DefaultMaterial
 	float alphaCutoff;
 	int maxParallaxLayers;
 	int minParallaxLayers;
-    float parallaxHeightScale;
+	float parallaxHeightScale;
 	int useNormalMap;
 	int useAlphaCutoff;
 	int useParallaxOcclusion;

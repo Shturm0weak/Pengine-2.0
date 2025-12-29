@@ -145,9 +145,9 @@ float CalculateSpotLightShadow(
 	vec4 positionLightSpace = light.viewProjectionMat4 * vec4(positionWorldSpace, 1.0f);
 	vec3 projectedCoords = positionLightSpace.xyz / positionLightSpace.w;
 
-    vec2 texelSize = 1.0f / vec2(textureSize(shadowAtlasTexture, 0));
+    vec2 texelSize = 1.0f / vec2(float(spotLightShadows.shadowMapAtlasSize));
 
-	float random = fract(sin(dot(positionWorldSpace.xy * vec2(textureSize(shadowAtlasTexture, 0)), vec2(12.9898, 78.233))) * 43758.5453);
+	float random = fract(sin(dot(positionWorldSpace.xy * texelSize, vec2(12.9898, 78.233))) * 43758.5453);
 	float angle = random * 2.0 * 3.14159265;
 	
 	mat2 rotation = mat2(cos(angle), -sin(angle),

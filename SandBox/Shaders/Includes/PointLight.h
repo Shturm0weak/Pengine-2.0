@@ -186,9 +186,9 @@ float CalculatePointLightShadow(
 {
 	float shadow = 0.0f;
 
-    vec2 texelSize = 1.0f / vec2(textureSize(shadowAtlasTexture, 0));
+    vec2 texelSize = 1.0f / vec2(float(pointLightShadows.shadowMapAtlasSize));
 
-	float random = fract(sin(dot(vec2(distanceToPoint, toLight.x) * vec2(textureSize(shadowAtlasTexture, 0)), vec2(12.9898, 78.233))) * 43758.5453);
+	float random = fract(sin(dot(vec2(distanceToPoint, toLight.x) * texelSize, vec2(12.9898, 78.233))) * 43758.5453);
 	float angle = random * 2.0 * 3.14159265;
 	
 	mat2 rotation = mat2(cos(angle), -sin(angle),
