@@ -12,15 +12,15 @@ CSM:
   Quality: 1
   CascadeCount: 4
   SplitFactor: 0.899999976
-  MaxDistance: 50
+  MaxDistance: 100
   FogFactor: 0.200000003
   Filter: 2
   PcfRange: 2
   Biases:
-    - 0.00400000019
-    - 0.00899999961
-    - 0.0299999993
-    - 0.0799999982
+    - 0.0189999994
+    - 0.0970000029
+    - 0.224999994
+    - 1
   StabilizeCascades: true
 SSS:
   IsEnabled: true
@@ -34,11 +34,11 @@ SSS:
 PointLightShadows:
   IsEnabled: true
   AtlasQuality: 3
-  FaceQuality: 1
+  FaceQuality: 2
 SpotLightShadows:
   IsEnabled: true
   AtlasQuality: 3
-  FaceQuality: 3
+  FaceQuality: 2
 Bloom:
   IsEnabled: true
   MipCount: 10
@@ -53,12 +53,12 @@ SSR:
   ResolutionScale: 1
   StepCount: 20
   Thickness: 5
-  BlurRange: 1
+  BlurRange: 0
   BlurOffset: 1
-  MipMultiplier: 0.5
+  MipMultiplier: 0
   UseSkyBoxFallback: false
   Blur: 1
 PostProcess:
   Gamma: 2.20000005
   ToneMapper: 1
-  FXAA: false
+  FXAA: true

@@ -4175,7 +4175,7 @@ void Editor::Thumbnails::UpdateMatMeshThumbnail(const ThumbnailLoadInfo& thumbna
 	}
 
 	// Update BVH just in case.
-	scene->GetBVH()->Update(scene->GetRegistry());
+	scene->GetBVH()->Update(SceneBVH::BuildNodes(scene->GetRegistry()));
 
 	Renderer::RenderViewportInfo renderViewportInfo{};
 	renderViewportInfo.camera = camera;
@@ -4248,7 +4248,7 @@ void Editor::Thumbnails::UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thu
 	cameraComponent.CreateRenderView(name, m_ThumbnailWindow->GetSize());
 
 	// Update BVH just in case.
-	scene->GetBVH()->Update(scene->GetRegistry());
+	scene->GetBVH()->Update(SceneBVH::BuildNodes(scene->GetRegistry()));
 	
 	std::optional<SceneBVH::BVHNode> root = scene->GetBVH()->GetRoot();
 	

@@ -29,9 +29,9 @@ namespace Pengine
 
 		void Clear();
 
-		void Update(const entt::registry& registry);
+		static std::vector<BVHNode> BuildNodes(const entt::registry& registry);
 
-		void Update(std::vector<BVHNode>& nodes);
+		void Update(std::vector<BVHNode>&& nodes);
 
 		void Traverse(const std::function<bool(const BVHNode&)>& callback) const;
 
@@ -54,23 +54,24 @@ namespace Pengine
 		/**
 		 * Protection that there is currently no use (ray cast or traverse in progress) before rebuilding or clearing.
 		 */
+		std::mutex m_LockWrite;
 		std::mutex m_LockBVH;
 		mutable std::condition_variable m_BVHConditionalVariable;
 		mutable std::atomic<size_t> m_BVHUseCount;
 
 		void WaitIdle();
 
-		void Rebuild(const entt::registry& registry);
+		void Rebuild(std::vector<BVHNode>&& nodes);
 
-		void Rebuild(std::vector<BVHNode>& nodes);
+		int Partition(const int binCount, int start, int end, int axis, float scale, float minAxis, int bestSplit);
 
-		uint32_t BuildRecursive(int start, int end);
+		uint32_t BuildRecursive(int start, int end, std::atomic<int>& parallel);
 
 		//BVHNode* FindLeaf(BVHNode* node, std::shared_ptr<Entity> entity) const;
 
 		//BVHNode* FindParent(BVHNode* root, BVHNode* target) const;
 
-		AABB LocalToWorldAABB(const AABB& localAABB, const glm::mat4& transformMat4);
+		static AABB LocalToWorldAABB(const AABB& localAABB, const glm::mat4& transformMat4);
 	};
 
 }

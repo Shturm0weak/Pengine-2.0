@@ -33,7 +33,7 @@ void Transform::SetEntity(std::shared_ptr<Entity> entity)
 	Scale(GetScale());
 }
 
-glm::mat4 Transform::GetPositionMat4(System system) const
+const glm::mat4& Transform::GetPositionMat4(System system) const
 {
 	switch (system)
 	{
@@ -52,7 +52,7 @@ glm::mat4 Transform::GetPositionMat4(System system) const
 					GetEntity()->GetParent()->GetComponent<Transform>().GetTransform(system) * m_GlobalTransformData.m_PositionMat4;
 			}
 
-			SetIsDirty(IsDirty() & ~DirtyFlagBits::TranslateMat4);
+			SetDirty(IsDirty() & ~DirtyFlagBits::TranslateMat4);
 
 			return m_GlobalTransformData.m_PositionMat4;
 		}
@@ -62,11 +62,11 @@ glm::mat4 Transform::GetPositionMat4(System system) const
 		}
 	}
 	default:
-		return glm::mat4(1.0f);
+		return identityMat4;
 	}
 }
 
-glm::mat4 Transform::GetRotationMat4(System system) const
+const glm::mat4& Transform::GetRotationMat4(System system) const
 {
 	switch (system)
 	{
@@ -85,7 +85,7 @@ glm::mat4 Transform::GetRotationMat4(System system) const
 					GetEntity()->GetParent()->GetComponent<Transform>().GetRotationMat4(system) * m_GlobalTransformData.m_RotationMat4;
 			}
 
-			SetIsDirty(IsDirty() & ~DirtyFlagBits::RotationMat4);
+			SetDirty(IsDirty() & ~DirtyFlagBits::RotationMat4);
 
 			return m_GlobalTransformData.m_RotationMat4;
 		}
@@ -95,11 +95,11 @@ glm::mat4 Transform::GetRotationMat4(System system) const
 		}
 	}
 	default:
-		return glm::mat4(1.0f);
+		return identityMat4;
 	}
 }
 
-glm::mat4 Transform::GetScaleMat4(System system) const
+const glm::mat4& Transform::GetScaleMat4(System system) const
 {
 	switch (system)
 	{
@@ -118,7 +118,7 @@ glm::mat4 Transform::GetScaleMat4(System system) const
 					GetEntity()->GetParent()->GetComponent<Transform>().GetScaleMat4(system) * m_GlobalTransformData.m_ScaleMat4;
 			}
 
-			SetIsDirty(IsDirty() & ~DirtyFlagBits::ScaleMat4);
+			SetDirty(IsDirty() & ~DirtyFlagBits::ScaleMat4);
 
 			return m_GlobalTransformData.m_ScaleMat4;
 		}
@@ -128,7 +128,7 @@ glm::mat4 Transform::GetScaleMat4(System system) const
 		}
 	}
 	default:
-		return glm::mat4(1.0f);
+		return identityMat4;
 	}
 }
 
@@ -156,7 +156,7 @@ glm::vec3 Transform::GetRotation(System system) const
 					GetEntity()->GetParent()->GetComponent<Transform>().GetRotation(system) + m_GlobalTransformData.m_Rotation;
 			}
 
-			SetIsDirty(IsDirty() & ~DirtyFlagBits::RotationVec3);
+			SetDirty(IsDirty() & ~DirtyFlagBits::RotationVec3);
 
 			return m_GlobalTransformData.m_Rotation;
 		}
@@ -175,7 +175,7 @@ glm::vec3 Transform::GetScale(System system) const
 	return Utils::GetScale(GetScaleMat4(system));
 }
 
-glm::mat4 Transform::GetTransform(System system) const
+const glm::mat4& Transform::GetTransform(System system) const
 {
 	switch (system)
 	{
@@ -194,7 +194,7 @@ glm::mat4 Transform::GetTransform(System system) const
 					GetEntity()->GetParent()->GetComponent<Transform>().GetTransform(system) * m_GlobalTransformData.m_TransformMat4;
 			}
 
-			SetIsDirty(IsDirty() & ~DirtyFlagBits::TransformMat4);
+			SetDirty(IsDirty() & ~DirtyFlagBits::TransformMat4);
 
 			return m_GlobalTransformData.m_TransformMat4;
 		}
@@ -204,7 +204,7 @@ glm::mat4 Transform::GetTransform(System system) const
 		}
 	}
 	default:
-		return glm::mat4(1.0f);
+		return identityMat4;
 	}
 }
 
@@ -319,7 +319,7 @@ void Transform::Translate(const glm::vec3& position)
 
 	UpdateTransforms();
 
-	SetIsDirty(IsDirty() | DirtyFlagBits::TranslateMat4 | DirtyFlagBits::TransformMat4);
+	SetDirty(IsDirty() | DirtyFlagBits::TranslateMat4 | DirtyFlagBits::TransformMat4);
 
 	std::function<void(Transform&)> translationCallbacks = [&translationCallbacks](const Transform& transform)
 	{
@@ -338,7 +338,7 @@ void Transform::Translate(const glm::vec3& position)
 			if (const std::shared_ptr<Entity> child = weakChild.lock())
 			{
 				Transform& childTransform = child->GetComponent<Transform>();
-				childTransform.SetIsDirty(childTransform.IsDirty() | DirtyFlagBits::TranslateMat4 | DirtyFlagBits::TransformMat4);
+				childTransform.SetDirty(childTransform.IsDirty() | DirtyFlagBits::TranslateMat4 | DirtyFlagBits::TransformMat4);
 
 				translationCallbacks(childTransform);
 			}
@@ -356,7 +356,7 @@ void Transform::Rotate(const glm::vec3& rotation)
 	UpdateTransforms();
 	UpdateVectors();
 
-	SetIsDirty(IsDirty() | DirtyFlagBits::RotationVec3
+	SetDirty(IsDirty() | DirtyFlagBits::RotationVec3
 		| DirtyFlagBits::RotationMat4 | DirtyFlagBits::TransformMat4);
 
 	std::function<void(Transform&)> rotationCallbacks = [&rotationCallbacks](const Transform& transform)
@@ -376,7 +376,7 @@ void Transform::Rotate(const glm::vec3& rotation)
 			if (const std::shared_ptr<Entity> child = weakChild.lock())
 			{
 				Transform& childTransform = child->GetComponent<Transform>();
-				childTransform.SetIsDirty(childTransform.IsDirty() | DirtyFlagBits::RotationVec3
+				childTransform.SetDirty(childTransform.IsDirty() | DirtyFlagBits::RotationVec3
 					| DirtyFlagBits::RotationMat4 | DirtyFlagBits::TransformMat4);
 
 				rotationCallbacks(childTransform);
@@ -393,7 +393,7 @@ void Transform::Scale(const glm::vec3& scale)
 
 	UpdateTransforms();
 
-	SetIsDirty(IsDirty() | DirtyFlagBits::ScaleMat4 | DirtyFlagBits::TransformMat4);
+	SetDirty(IsDirty() | DirtyFlagBits::ScaleMat4 | DirtyFlagBits::TransformMat4);
 
 	std::function<void(Transform&)> scaleCallbacks = [&scaleCallbacks](const Transform& transform)
 	{
@@ -412,7 +412,7 @@ void Transform::Scale(const glm::vec3& scale)
 			if (const std::shared_ptr<Entity> child = weakChild.lock())
 			{
 				Transform& childTransform = child->GetComponent<Transform>();
-				childTransform.SetIsDirty(childTransform.IsDirty() | DirtyFlagBits::ScaleMat4 | DirtyFlagBits::TransformMat4);
+				childTransform.SetDirty(childTransform.IsDirty() | DirtyFlagBits::ScaleMat4 | DirtyFlagBits::TransformMat4);
 
 				scaleCallbacks(childTransform);
 			}
@@ -437,7 +437,7 @@ void Transform::SetTransform(const glm::mat4& transformMat4)
 	UpdateTransforms();
 	UpdateVectors();
 
-	SetIsDirty(IsDirty() | DirtyFlagBits::AllTransform);
+	SetDirty(IsDirty() | DirtyFlagBits::AllTransform);
 
 	std::function<void(Transform&)> callbacks = [&callbacks](const Transform& transform)
 		{
@@ -466,7 +466,7 @@ void Transform::SetTransform(const glm::mat4& transformMat4)
 				if (const std::shared_ptr<Entity> child = weakChild.lock())
 				{
 					Transform& childTransform = child->GetComponent<Transform>();
-					childTransform.SetIsDirty(childTransform.IsDirty() | DirtyFlagBits::AllTransform);
+					childTransform.SetDirty(childTransform.IsDirty() | DirtyFlagBits::AllTransform);
 
 					callbacks(childTransform);
 				}

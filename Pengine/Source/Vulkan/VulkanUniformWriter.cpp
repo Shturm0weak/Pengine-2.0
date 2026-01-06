@@ -37,7 +37,7 @@ VulkanUniformWriter::~VulkanUniformWriter()
 
 void VulkanUniformWriter::Flush()
 {
-	const uint32_t index = IsMultiBuffered() ? swapChainImageIndex : 0;
+	const uint32_t index = IsMultiBuffered() * swapChainImageIndex;
 	const VkDescriptorSet set = m_DescriptorSets[index];
 
 	std::vector<VkWriteDescriptorSet> writes;
@@ -106,6 +106,11 @@ void VulkanUniformWriter::Flush()
 	vkUpdateDescriptorSets(GetVkDevice()->GetDevice(), writes.size(), writes.data(), 0, nullptr);
 }
 
+NativeHandle VulkanUniformWriter::GetNativeHandle() const
+{
+	return NativeHandle((size_t)GetDescriptorSet());
+}
+
 void VulkanUniformWriter::WriteTexture(uint32_t location, const std::vector<VkDescriptorImageInfo>& vkDescriptorImageInfos)
 {
 	const size_t count = IsMultiBuffered() ? swapChainImageCount : 1;
@@ -138,5 +143,5 @@ void VulkanUniformWriter::WriteTexture(uint32_t location, const std::vector<VkDe
 
 VkDescriptorSet VulkanUniformWriter::GetDescriptorSet() const
 {
-	return m_DescriptorSets[IsMultiBuffered() ? swapChainImageIndex : 0];
+	return m_DescriptorSets[IsMultiBuffered() * swapChainImageIndex];
 }

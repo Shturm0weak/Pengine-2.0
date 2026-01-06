@@ -133,6 +133,8 @@ void Entity::AddChild(const std::shared_ptr<Entity>& child, const bool saveTrans
 		m_ChildEntities.emplace_back(child->GetHandle());
 		child->SetParent(shared_from_this());
 	}
+
+	SetEnabledDirty();
 }
 
 void Entity::RemoveChild(const std::shared_ptr<Entity>& child)
@@ -169,6 +171,8 @@ void Entity::RemoveChild(const std::shared_ptr<Entity>& child)
 		}
 		child->SetParent(nullptr);
 	}
+
+	SetEnabledDirty();
 }
 
 bool Entity::HasAsChild(const std::shared_ptr<Entity>& child, const bool recursevely)
@@ -181,9 +185,9 @@ bool Entity::HasAsChild(const std::shared_ptr<Entity>& child, const bool recurse
 
 	if (recursevely)
 	{
-		for (const std::weak_ptr<Entity> weakCurrentChild : m_Childs)
+		for (const std::weak_ptr<Entity>& weakCurrentChild : m_Childs)
 		{
-			const std::shared_ptr<Entity> currentChild = weakCurrentChild.lock();
+			const std::shared_ptr<Entity>& currentChild = weakCurrentChild.lock();
 			if (currentChild && currentChild->HasAsChild(child, recursevely))
 			{
 				return true;
@@ -227,16 +231,28 @@ void Entity::SetUUID(const UUID& uuid)
 
 bool Entity::IsEnabled() const
 {
-	bool enabled = true;
-
-	std::shared_ptr<const Entity> entity = shared_from_this();
-	while (entity)
+	if (m_IsEnabledDirty)
 	{
-		enabled *= entity->m_IsEnabled && entity->IsValid();
-		entity = entity->GetParent();
+		m_IsEnabledInternal = true;
+
+		std::shared_ptr<const Entity> entity = shared_from_this();
+		while (entity)
+		{
+			m_IsEnabledInternal *= entity->m_IsEnabled && entity->IsValid();
+			entity = entity->GetParent();
+		}
+
+		m_IsEnabledDirty = false;
 	}
 
-	return enabled;
+	return m_IsEnabledInternal;
+}
+
+void Entity::SetEnabled(const bool isEnabled)
+{
+	m_IsEnabled = isEnabled;
+
+	SetEnabledDirty();
 }
 
 void Entity::Copy(const Entity& entity)
@@ -267,6 +283,27 @@ void Entity::Move(Entity&& entity) noexcept
 	entity.m_Scene.reset();
 	entity.m_Parent.reset();
 	entity.m_Childs.clear();
+}
+
+void Entity::SetEnabledDirty()
+{
+	m_IsEnabledDirty = true;
+
+	for (const std::weak_ptr<Entity>& weakCurrentChild : m_Childs)
+	{
+		const std::shared_ptr<Entity>& currentChild = weakCurrentChild.lock();
+		if (currentChild)
+		{
+			currentChild->SetEnabledDirty();
+		}
+	}
+}
+
+void Entity::SetDeleted(const bool isDeleted)
+{
+	m_IsDeleted = isDeleted;
+
+	SetEnabledDirty();
 }
 
 void Entity::NotifySceneAboutComponentRemove(const std::string& componentName)

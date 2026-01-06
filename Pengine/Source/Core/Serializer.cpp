@@ -3176,6 +3176,13 @@ std::optional<Mesh::CreateInfo> Serializer::GenerateMesh(
 		[&](fastgltf::math::fvec4 value, size_t index)
 		{
 			static_cast<VertexDefaultSkinned*>(vertices)[index].weights = { value.x(), value.y(), value.z(), value.w() };
+			for (size_t i = 0; i < 4; i++)
+			{
+				if (value[i] == 0.0f)
+				{
+					static_cast<VertexDefaultSkinned*>(vertices)[index].boneIds[i] = -1;
+				}
+			}
 		});
 	}
 

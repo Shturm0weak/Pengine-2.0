@@ -275,6 +275,11 @@ void VulkanBuffer::Flush()
 	m_IsChanged[imageIndex] = false;
 }
 
+NativeHandle VulkanBuffer::GetNativeHandle() const
+{
+	return NativeHandle(size_t(GetBuffer()));
+}
+
 VkDescriptorBufferInfo VulkanBuffer::GetDescriptorInfo(
 	const uint32_t imageIndex,
 	const VkDeviceSize size,
@@ -289,5 +294,5 @@ VkDescriptorBufferInfo VulkanBuffer::GetDescriptorInfo(
 
 VkBuffer VulkanBuffer::GetBuffer() const
 {
-	return m_IsMultiBuffered ? m_BufferDatas[swapChainImageIndex].m_Buffer : m_BufferDatas[0].m_Buffer;
+	return m_BufferDatas[swapChainImageIndex * m_IsMultiBuffered].m_Buffer;
 }

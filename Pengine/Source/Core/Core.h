@@ -51,6 +51,7 @@
 #include <imgui/imgui_internal.h>
 
 #include "UUID.h"
+#include "NativeHandle.h"
 
 #define RTTR_CAT_IMPL(a, b) a##b
 #define RTTR_CAT(a, b) RTTR_CAT_IMPL(a, b)
@@ -123,6 +124,8 @@ namespace Pengine
 	inline int64_t vramAllocated = 0;
 
 	inline std::shared_ptr<class Device> device = nullptr;
+
+	inline glm::mat4 identityMat4 = glm::mat4(1.0f);
 
 	namespace Vk
 	{

@@ -50,6 +50,8 @@ namespace Pengine
 		std::mutex m_MeshMutex;
 		std::mutex m_TextureMutex;
 		std::mutex m_UpdateMutex;
+		std::mutex m_WaitMutex;
+		std::condition_variable m_WaitIdleConditionalVariable;
 
 		std::unordered_set<std::filesystem::path> m_MaterialsLoading;
 		std::unordered_set<std::filesystem::path> m_BaseMaterialsLoading;

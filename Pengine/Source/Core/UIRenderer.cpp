@@ -283,17 +283,20 @@ void UIRenderer::RenderBatch(
 			renderInfo.renderer->SetScissors(*drawCommand.scissors, renderInfo.frame);
 		}
 
+		std::vector<NativeHandle> vertexBuffers = { batch.vertexBuffer->GetNativeHandle() };
+		std::vector<size_t> vertexBufferOffsets = { 0 };
+
 		renderInfo.renderer->Render(
-			{ batch.vertexBuffer },
-			{ 0 },
-			batch.indexBuffer,
+			vertexBuffers,
+			vertexBufferOffsets,
+			batch.indexBuffer->GetNativeHandle(),
 			drawCommand.indexBufferOffset,
 			drawCommand.indexCount,
 			pipeline,
-			nullptr,
+			NativeHandle::Invalid(),
 			0,
 			1,
-			{ texture->GetUniformWriter(), batch.uniformWriter },
+			{ texture->GetUniformWriter()->GetNativeHandle(), batch.uniformWriter->GetNativeHandle() },
 			renderInfo.frame);
 	}
 

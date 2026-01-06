@@ -22,7 +22,7 @@ Mesh::~Mesh()
 	m_Vertices.clear();
 }
 
-std::shared_ptr<Buffer> Mesh::GetVertexBuffer(const size_t index) const
+const std::shared_ptr<Buffer>& Mesh::GetVertexBuffer(const size_t index) const
 {
 	// Kind of slow. If crashes uncomment this section.
 	//std::lock_guard<std::mutex> lock(m_VertexBufferAccessMutex);
@@ -109,6 +109,13 @@ void Mesh::Reload(const CreateInfo& createInfo)
 		std::lock_guard<std::mutex> lock(m_VertexBufferAccessMutex);
 		m_Vertices = std::move(vertices);
 		m_Indices = indices;
+	}
+
+	m_VertexLayoutHandles.clear();
+	m_VertexLayoutHandles.resize(GetVertexLayouts().size());
+	for (size_t i = 0; i < GetVertexLayouts().size(); i++)
+	{
+		m_VertexLayoutHandles[i] = GetVertexBuffer(i)->GetNativeHandle();
 	}
 
 	if (createInfo.boundingBox)

@@ -24,6 +24,7 @@ void AsyncAssetLoader::AsyncLoadMaterial(const std::filesystem::path& filepath, 
 
 			std::lock_guard<std::mutex> lock(m_MaterialMutex);
 			m_MaterialsLoading.erase(filepath);
+			m_WaitIdleConditionalVariable.notify_all();
 		});
 	}
 
@@ -42,6 +43,7 @@ void AsyncAssetLoader::AsyncLoadBaseMaterial(const std::filesystem::path& filepa
 
 			std::lock_guard<std::mutex> lock(m_BaseMaterialMutex);
 			m_BaseMaterialsLoading.erase(filepath);
+			m_WaitIdleConditionalVariable.notify_all();
 		});
 	}
 
@@ -60,6 +62,7 @@ void AsyncAssetLoader::AsyncLoadMesh(const std::filesystem::path& filepath, std:
 
 			std::lock_guard<std::mutex> lock(m_MeshMutex);
 			m_MeshesLoading.erase(filepath);
+			m_WaitIdleConditionalVariable.notify_all();
 		});
 	}
 
@@ -78,6 +81,7 @@ void AsyncAssetLoader::AsyncLoadTexture(const std::filesystem::path& filepath, s
 
 			std::lock_guard<std::mutex> lock(m_TextureMutex);
 			m_TexturesLoading.erase(filepath);
+			m_WaitIdleConditionalVariable.notify_all();
 		});
 	}
 
@@ -121,6 +125,7 @@ std::shared_ptr<Material> AsyncAssetLoader::SyncLoadMaterial(const std::filesyst
 		
 		std::lock_guard<std::mutex> lock(m_MaterialMutex);
 		m_MaterialsLoading.erase(filepath);
+		m_WaitIdleConditionalVariable.notify_all();
 		
 		return material;
 	}).get();
@@ -157,6 +162,7 @@ std::shared_ptr<BaseMaterial> AsyncAssetLoader::SyncLoadBaseMaterial(const std::
 
 		std::lock_guard<std::mutex> lock(m_BaseMaterialMutex);
 		m_BaseMaterialsLoading.erase(filepath);
+		m_WaitIdleConditionalVariable.notify_all();
 
 		return baseMaterial;
 	}).get();
@@ -198,6 +204,7 @@ std::shared_ptr<Mesh> AsyncAssetLoader::SyncLoadMesh(const std::filesystem::path
 
 		std::lock_guard<std::mutex> lock(m_MeshMutex);
 		m_MeshesLoading.erase(filepath);
+		m_WaitIdleConditionalVariable.notify_all();
 
 		return mesh;
 	}).get();
@@ -239,6 +246,7 @@ std::shared_ptr<Texture> AsyncAssetLoader::SyncLoadTexture(const std::filesystem
 
 		std::lock_guard<std::mutex> lock(m_TextureMutex);
 		m_TexturesLoading.erase(filepath);
+		m_WaitIdleConditionalVariable.notify_all();
 
 		return texture;
 	}).get();
@@ -345,15 +353,17 @@ void AsyncAssetLoader::Update()
 
 void AsyncAssetLoader::WaitIdle()
 {
-	bool empty = false;
-	do
+	std::unique_lock<std::mutex> lock(m_WaitMutex);
+
+	m_WaitIdleConditionalVariable.wait(lock, [this]()
 	{
 		Update();
 
-		empty = 
+		bool empty =
 			m_MaterialsToBeLoaded.empty() &&
 			m_BaseMaterialsLoading.empty() &&
 			m_TexturesLoading.empty() &&
 			m_MeshesLoading.empty();
-	} while (!empty);
+		return empty;
+	});
 }

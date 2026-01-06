@@ -23,7 +23,9 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 	if (std::shared_ptr<BaseMaterial> lineBaseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/Line.basemat"))
 	{
 		std::shared_ptr<Pipeline> pipeline = lineBaseMaterial->GetPipeline(renderInfo.renderPass->GetName());
-		std::vector<std::shared_ptr<UniformWriter>> uniformWriters = RenderPassManager::GetUniformWriters(pipeline, lineBaseMaterial, nullptr, renderInfo);
+		std::vector<NativeHandle> uniformWritersNativeHandles;
+		std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
+		RenderPassManager::GetUniformWriters(pipeline, lineBaseMaterial, nullptr, renderInfo, uniformWriters, uniformWritersNativeHandles);
 
 		for (const auto& uniformWriter : uniformWriters)
 		{
@@ -38,7 +40,7 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 			}
 		}
 
-		auto render = [this, &uniformWriters, &renderInfo, &pipeline](
+		auto render = [this, &uniformWritersNativeHandles, &renderInfo, &pipeline](
 			uint32_t& index,
 			uint32_t& batchIndex,
 			std::vector<glm::vec3>& lineVertices,
@@ -71,17 +73,20 @@ void LineRenderer::Render(const RenderPass::RenderCallbackInfo& renderInfo)
 			batch.indexBuffer->WriteToBuffer(lineIndices.data(), lineIndices.size() * sizeof(uint32_t));
 			batch.indexBuffer->Flush();
 
+			std::vector<NativeHandle> vertexBuffers = { batch.vertexBuffer->GetNativeHandle() };
+			std::vector<size_t> vertexBufferOffsets = { 0 };
+
 			renderInfo.renderer->Render(
-				{ batch.vertexBuffer },
-				{ 0 },
-				batch.indexBuffer,
+				vertexBuffers,
+				vertexBufferOffsets,
+				batch.indexBuffer->GetNativeHandle(),
 				0,
 				index,
 				pipeline,
-				nullptr,
+				NativeHandle::Invalid(),
 				0,
 				1,
-				uniformWriters,
+				uniformWritersNativeHandles,
 				renderInfo.frame);
 
 			batchIndex++;

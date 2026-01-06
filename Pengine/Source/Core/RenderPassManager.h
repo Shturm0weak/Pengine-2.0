@@ -35,11 +35,13 @@ namespace Pengine
 
 		void ShutDown();
 
-		static std::vector<std::shared_ptr<class UniformWriter>> GetUniformWriters(
+		static void GetUniformWriters(
 			std::shared_ptr<class Pipeline> pipeline,
 			std::shared_ptr<class BaseMaterial> baseMaterial,
 			std::shared_ptr<class Material> material,
-			const RenderPass::RenderCallbackInfo& renderInfo);
+			const RenderPass::RenderCallbackInfo& renderInfo,
+			std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
+			std::vector<NativeHandle>& uniformWriterNativeHandles);
 
 		static void PrepareUniformsPerViewportBeforeDraw(const RenderPass::RenderCallbackInfo& renderInfo);
 
@@ -50,8 +52,16 @@ namespace Pengine
 	private:
 		struct EntitiesByMesh
 		{
-			std::unordered_map<std::shared_ptr<class Mesh>, std::unordered_map<size_t, std::vector<entt::entity>>> instanced;
-			std::vector<std::pair<std::shared_ptr<class Mesh>, std::pair<size_t, entt::entity>>> single;
+			std::unordered_map<std::shared_ptr<class Mesh>, std::vector<std::vector<entt::entity>>> instanced;
+
+			struct Single
+			{
+				std::shared_ptr<class Mesh> mesh;
+				entt::entity entity;
+				uint32_t lod;
+			};
+
+			std::vector<Single> single;
 		};
 
 		using MeshesByMaterial = std::unordered_map<std::shared_ptr<class Material>, EntitiesByMesh>;
@@ -74,7 +84,7 @@ namespace Pengine
 		static void GetVertexBuffers(
 			std::shared_ptr<class Pipeline> pipeline,
 			std::shared_ptr<class Mesh> mesh,
-			std::vector<std::shared_ptr<class Buffer>>& vertexBuffers,
+			std::vector<NativeHandle>& vertexBuffers,
 			std::vector<size_t>& vertexBufferOffsets);
 
 		void CreateZPrePass();

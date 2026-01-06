@@ -60,6 +60,8 @@ namespace Pengine::Vk
 
 		[[nodiscard]] virtual size_t GetInstanceSize() const override { return m_InstanceSize; }
 
+		[[nodiscard]] virtual NativeHandle GetNativeHandle() const override;
+
 		[[nodiscard]] VkDescriptorBufferInfo GetDescriptorInfo(
 			const uint32_t imageIndex,
 			VkDeviceSize size = VK_WHOLE_SIZE,
@@ -91,6 +93,8 @@ namespace Pengine::Vk
 
 		uint8_t* m_Data = nullptr;
 		std::vector<BufferData> m_BufferDatas;
+
+		VkBuffer m_CurrentBuffer = VK_NULL_HANDLE;
 
 		VkDeviceSize m_BufferSize;
 		uint32_t m_InstanceCount;

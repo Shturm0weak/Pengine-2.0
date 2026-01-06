@@ -43,6 +43,8 @@ namespace Pengine
 
 		virtual void Flush() = 0;
 
+		[[nodiscard]] virtual NativeHandle GetNativeHandle() const = 0;
+
 		[[nodiscard]] virtual size_t GetSize() const = 0;
 
 		[[nodiscard]] virtual uint32_t GetInstanceCount() const = 0;

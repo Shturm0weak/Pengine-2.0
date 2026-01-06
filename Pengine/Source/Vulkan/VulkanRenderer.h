@@ -30,21 +30,22 @@ namespace Pengine::Vk
 		virtual void SetViewport(const RenderPass::Viewport& viewport, void* frame) override;
 
 		virtual void Render(
-			const std::vector<std::shared_ptr<Buffer>>& vertexBuffers,
-			const std::vector<size_t>& vertexBufferOffsets,
-			const std::shared_ptr<Buffer>& indexBuffer,
+			std::vector<NativeHandle>& vertexBuffers,
+			std::vector<size_t>& vertexBufferOffsets,
+			const NativeHandle indexBuffer,
 			const size_t indexBufferOffset,
 			const int indexCount,
 			const std::shared_ptr<Pipeline>& pipeline,
-			const std::shared_ptr<Buffer>& instanceBuffer,
-			size_t instanceBufferOffset, size_t count,
-			const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
+			const NativeHandle instanceBuffer,
+			const size_t instanceBufferOffset,
+			const size_t count,
+			const std::vector<NativeHandle>& uniformWriters,
 			void* frame) override;
 
 		virtual void Dispatch(
 			const std::shared_ptr<Pipeline>& pipeline,
 			const glm::uvec3& groupCount,
-			const std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
+			const std::vector<NativeHandle>& uniformWriters,
 			void* frame) override;
 
 		virtual void MemoryBarrierFragmentReadWrite(void* frame) override;
@@ -64,19 +65,16 @@ namespace Pengine::Vk
 	private:
 		void BindBuffers(
 			VkCommandBuffer commandBuffer,
-			const std::vector<std::shared_ptr<Buffer>>& vertexBuffers,
-			const std::vector<size_t>& vertexBufferOffsets,
-			const std::shared_ptr<Buffer>& instanceBuffer,
+			std::vector<NativeHandle>& vertexBuffers,
+			std::vector<size_t>& vertexBufferOffsets,
+			const NativeHandle instanceBuffer,
 			const size_t instanceBufferOffset,
-			const std::shared_ptr<Buffer>& indexBuffer,
+			const NativeHandle indexBuffer,
 			const size_t indexBufferOffset);
 
 		static void DrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount);
 
 		std::shared_ptr<class Pipeline> m_Pipeline;
-		std::vector<VkDescriptorSet> m_DescriptorSets;
-		std::vector<VkBuffer> m_VertexBuffers;
-		std::vector<VkDeviceSize> m_VertexOffsets;
 	};
 
 }

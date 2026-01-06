@@ -53,7 +53,7 @@ namespace Pengine
 
 		bool m_FollowOwner = true;
 		bool m_Copyable = true;
-		mutable DirtyFlags m_IsDirty = 0;
+		mutable DirtyFlags m_IsDirty = DirtyFlagBits::AllTransform;
 
 		void Move(Transform&& transform) noexcept;
 		void UpdateVectors();
@@ -79,11 +79,11 @@ namespace Pengine
 
 		[[nodiscard]] std::shared_ptr<Entity> GetEntity() const { return m_Entity; }
 
-		[[nodiscard]] glm::mat4 GetPositionMat4(System system = System::GLOBAL) const;
+		[[nodiscard]] const glm::mat4& GetPositionMat4(System system = System::GLOBAL) const;
 		
-		[[nodiscard]] glm::mat4 GetRotationMat4(System system = System::GLOBAL) const;
+		[[nodiscard]] const glm::mat4& GetRotationMat4(System system = System::GLOBAL) const;
 		
-		[[nodiscard]] glm::mat4 GetScaleMat4(System system = System::GLOBAL) const;
+		[[nodiscard]] const glm::mat4& GetScaleMat4(System system = System::GLOBAL) const;
 		
 		[[nodiscard]] glm::vec3 GetPosition(System system = System::GLOBAL) const;
 		
@@ -99,7 +99,7 @@ namespace Pengine
 		
 		[[nodiscard]] glm::vec3 GetRight() const { return m_Right; }
 		
-		[[nodiscard]] glm::mat4 GetTransform(System system = System::GLOBAL) const;
+		[[nodiscard]] const glm::mat4& GetTransform(System system = System::GLOBAL) const;
 
 		[[nodiscard]] glm::mat3 GetInverseTransform(System system = System::GLOBAL) const;
 
@@ -109,7 +109,7 @@ namespace Pengine
 		
 		[[nodiscard]] DirtyFlags IsDirty() const { return m_IsDirty; }
 
-		[[nodiscard]] void SetIsDirty(DirtyFlags isDirty) const { m_IsDirty = isDirty; }
+		void SetDirty(DirtyFlags isDirty) const { m_IsDirty = isDirty; }
 		
 		void SetFollowOwner(const bool followOwner) { m_FollowOwner = followOwner; }
 

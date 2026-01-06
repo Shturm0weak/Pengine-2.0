@@ -65,9 +65,9 @@ namespace Pengine
 		Mesh& operator=(const Mesh&) = delete;
 		Mesh& operator=(Mesh&&) = delete;
 
-		[[nodiscard]] std::shared_ptr<Buffer> GetVertexBuffer(const size_t index) const;
+		[[nodiscard]] const std::shared_ptr<Buffer>& GetVertexBuffer(const size_t index) const;
 
-		[[nodiscard]] std::shared_ptr<Buffer> GetIndexBuffer() const { return m_Indices; };
+		[[nodiscard]] const std::shared_ptr<Buffer>& GetIndexBuffer() const { return m_Indices; };
 
 		[[nodiscard]] const void* GetRawVertices() const { return m_CreateInfo.vertices; }
 
@@ -84,6 +84,8 @@ namespace Pengine
 		[[nodiscard]] void SetBoundingBox(BoundingBox& boundingBox) { m_BoundingBox = boundingBox; }
 
 		[[nodiscard]] const std::vector<VertexLayout>& GetVertexLayouts() const { return m_CreateInfo.vertexLayouts; }
+
+		[[nodiscard]] const std::vector<NativeHandle>& GetVertexLayoutHandles() const { return m_VertexLayoutHandles; }
 
 		[[nodiscard]] Type GetType() const { return m_CreateInfo.type; }
 
@@ -105,6 +107,7 @@ namespace Pengine
 	protected:
 		std::shared_ptr<MeshBVH> m_BVH;
 		std::vector<std::shared_ptr<Buffer>> m_Vertices;
+		std::vector<NativeHandle> m_VertexLayoutHandles;
 		std::shared_ptr<Buffer> m_Indices;
 		BoundingBox m_BoundingBox{};
 		CreateInfo m_CreateInfo{};

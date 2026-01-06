@@ -302,12 +302,15 @@ void Scene::Update(const float deltaTime)
 
 	FlushDeletionQueue();
 
+	std::unique_ptr<std::vector<SceneBVH::BVHNode>> nodes = std::make_unique<std::vector<SceneBVH::BVHNode>>();
+	*nodes = std::move(SceneBVH::BuildNodes(GetRegistry()));
+
 	// TODO: Potential big problem, during rebuilding BVH entities can be added to the scene from other thread!
-	ThreadPool::GetInstance().EnqueueAsync([this]()
+	ThreadPool::GetInstance().EnqueueAsync([this, nodes = std::move(nodes)]()
 	{
 		std::lock_guard<std::mutex> lock(m_LockBVH);
 		m_IsBuildingBVH = true;
-		m_BuildingBVH->Update(GetRegistry());
+		m_BuildingBVH->Update(std::move(*nodes));
 		m_IsBuildingBVH = false;
 		m_BVHConditionalVariable.notify_all();
 	});

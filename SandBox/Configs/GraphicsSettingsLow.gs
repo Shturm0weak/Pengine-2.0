@@ -33,6 +33,10 @@ PointLightShadows:
   IsEnabled: false
   AtlasQuality: 2
   FaceQuality: 2
+SpotLightShadows:
+  IsEnabled: false
+  AtlasQuality: 2
+  FaceQuality: 2
 Bloom:
   IsEnabled: false
   MipCount: 10

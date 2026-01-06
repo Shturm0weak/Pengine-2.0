@@ -5,7 +5,7 @@ Settings:
     Direction: [1, 1, 1]
     Frequency: 5
     Strength: 0.0250000004
-GraphicsSettings: 0xa8bcf158e0bd7c2d324c14c4575b1957
+GraphicsSettings: 0x7fd51f678fded0482f31b51f98d47745
 Scene:
   - UUID: 0xbc89eeab5ceee82cb0f9732449b3e39d
     Name: DirectionalLight

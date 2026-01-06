@@ -30,6 +30,7 @@ namespace Pengine
 		void WriteTexture(const std::string& name, const std::shared_ptr<Texture>& texture);
 		void WriteTextures(const std::string& name, const std::vector<std::shared_ptr<Texture>>& textures);
 		virtual void Flush() = 0;
+		virtual NativeHandle GetNativeHandle() const = 0;
 
 		const std::unordered_map<std::string, std::vector<std::shared_ptr<Buffer>>>& GetBuffersByName() const { return m_BuffersByName; }
 

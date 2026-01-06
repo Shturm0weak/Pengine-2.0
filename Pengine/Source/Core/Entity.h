@@ -91,7 +91,7 @@ namespace Pengine
 
 		bool IsEnabled() const;
 
-		void SetEnabled(const bool isEnabled) { m_IsEnabled = isEnabled; }
+		void SetEnabled(const bool isEnabled);
 
 		void SetPrefabFilepathUUID(const UUID& prefabFilepathUUID) { m_PrefabFilepathUUID = prefabFilepathUUID; }
 		
@@ -103,7 +103,7 @@ namespace Pengine
 		
 		bool IsDeleted() const { return m_IsDeleted; }
 		
-		bool SetDeleted(const bool isDeleted) { return m_IsDeleted = isDeleted; }
+		void SetDeleted(const bool isDeleted);
 
 		void NotifySceneAboutComponentRemove(const std::string& componentName);
 
@@ -111,6 +111,8 @@ namespace Pengine
 		void Copy(const Entity& entity);
 
 		void Move(Entity&& entity) noexcept;
+
+		void SetEnabledDirty();
 
 		entt::entity m_Handle{entt::tombstone};
 		std::weak_ptr<Entity> m_Parent;
@@ -125,6 +127,9 @@ namespace Pengine
 
 		bool m_IsEnabled = true;
 		bool m_IsDeleted = false;
+
+		mutable bool m_IsEnabledInternal = true;
+		mutable bool m_IsEnabledDirty = true;
 
 		friend class Scene;
 	};

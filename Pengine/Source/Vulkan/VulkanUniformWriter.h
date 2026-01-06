@@ -22,6 +22,8 @@ namespace Pengine::Vk
 
 		virtual void Flush() override;
 
+		virtual NativeHandle GetNativeHandle() const override;
+
 		void WriteTexture(uint32_t location, const std::vector<VkDescriptorImageInfo>& vkDescriptorImageInfos);
 
 		[[nodiscard]] VkDescriptorSet GetDescriptorSet() const;
