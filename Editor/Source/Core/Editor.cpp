@@ -3970,6 +3970,7 @@ void Editor::Thumbnails::Initialize()
 	m_ThumbnailScene = SceneManager::GetInstance().Create(name, name);
 	m_ThumbnailWindow = Window::CreateHeadless(name, name, { 256, 256 });
 
+	m_ThumbnailScene->SetGraphicsSettings(Serializer::DeserializeGraphicsSettings(std::filesystem::path("Configs") / "GraphicsSettingsHigh.gs"));
 	m_ThumbnailScene->GetSettings().drawBoundingBoxes = false;
 
 	{
@@ -4019,7 +4020,7 @@ void Editor::Thumbnails::Initialize()
 		renderViewportInfo.size = m_ThumbnailWindow->GetSize();
 
 		const float aspect = (float)renderViewportInfo.size.x / (float)renderViewportInfo.size.y;
-		renderViewportInfo.projection = glm::perspective(cameraComponent.GetFov(), aspect, cameraComponent.GetZNear(), cameraComponent.GetZFar());
+		renderViewportInfo.projection = glm::perspectiveRH_ZO(cameraComponent.GetFov(), aspect, cameraComponent.GetZFar(), cameraComponent.GetZNear());
 
 		viewportsByScene[scene].emplace_back(renderViewportInfo);
 
@@ -4179,7 +4180,7 @@ void Editor::Thumbnails::UpdateMatMeshThumbnail(const ThumbnailLoadInfo& thumbna
 	renderViewportInfo.size = m_ThumbnailWindow->GetSize();
 
 	const float aspect = (float)renderViewportInfo.size.x / (float)renderViewportInfo.size.y;
-	renderViewportInfo.projection = glm::perspective(cameraComponent.GetFov(), aspect, cameraComponent.GetZNear(), cameraComponent.GetZFar());
+	renderViewportInfo.projection = glm::perspectiveRH_ZO(cameraComponent.GetFov(), aspect, cameraComponent.GetZFar(), cameraComponent.GetZNear());
 
 	viewportsByScene[scene].emplace_back(renderViewportInfo);
 
@@ -4304,7 +4305,7 @@ void Editor::Thumbnails::UpdateScenePrefabThumbnail(const ThumbnailLoadInfo& thu
 		renderViewportInfo.size = m_ThumbnailWindow->GetSize();
 
 		const float aspect = (float)renderViewportInfo.size.x / (float)renderViewportInfo.size.y;
-		renderViewportInfo.projection = glm::perspective(cameraComponent.GetFov(), aspect, cameraComponent.GetZNear(), cameraComponent.GetZFar());
+		renderViewportInfo.projection = glm::perspectiveRH_ZO(cameraComponent.GetFov(), aspect, cameraComponent.GetZFar(), cameraComponent.GetZNear());
 
 		viewportsByScene[scene].emplace_back(renderViewportInfo);
 
