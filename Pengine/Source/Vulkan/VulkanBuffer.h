@@ -67,11 +67,11 @@ namespace Pengine::Vk
 			VkDeviceSize size = VK_WHOLE_SIZE,
 			VkDeviceSize offset = 0) const;
 
-		inline [[nodiscard]] VkBuffer GetBuffer() const;
-		inline [[nodiscard]] VkDeviceSize GetAlignmentSize() const { return m_AlignmentSize; }
-		inline [[nodiscard]] VkBufferUsageFlags GetUsageFlags() const { return m_UsageFlags; }
-		inline [[nodiscard]] VmaMemoryUsage GetMemoryUsage() const { return m_MemoryUsage; }
-		inline [[nodiscard]] VmaAllocationCreateFlags GetMemoryFlags() const { return m_MemoryFlags; }
+		[[nodiscard]] inline VkBuffer GetBuffer() const { return m_BufferDatas[swapChainImageIndex * m_IsMultiBuffered].m_Buffer; }
+		[[nodiscard]] inline VkDeviceSize GetAlignmentSize() const { return m_AlignmentSize; }
+		[[nodiscard]] inline VkBufferUsageFlags GetUsageFlags() const { return m_UsageFlags; }
+		[[nodiscard]] inline VmaMemoryUsage GetMemoryUsage() const { return m_MemoryUsage; }
+		[[nodiscard]] inline VmaAllocationCreateFlags GetMemoryFlags() const { return m_MemoryFlags; }
 
 	private:
 		static VkDeviceSize GetAlignment(

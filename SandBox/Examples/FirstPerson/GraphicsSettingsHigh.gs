@@ -12,7 +12,7 @@ CSM:
   Quality: 1
   CascadeCount: 6
   SplitFactor: 0.899999976
-  MaxDistance: 50
+  MaxDistance: 200
   FogFactor: 0.200000003
   Filter: 2
   PcfRange: 1
@@ -36,6 +36,10 @@ SSS:
 PointLightShadows:
   IsEnabled: true
   AtlasQuality: 3
+  FaceQuality: 2
+SpotLightShadows:
+  IsEnabled: true
+  AtlasQuality: 2
   FaceQuality: 2
 Bloom:
   IsEnabled: true

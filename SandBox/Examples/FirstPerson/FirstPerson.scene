@@ -75,10 +75,6 @@ Scene:
       Friction: 0.200000003
       Restitution: 0
       AllowSleeping: true
-    struct Enemy>(void) noexcept:
-      health:
-        Type: float>(void) noexcept
-        Value: 100
     Childs:
       []
   - UUID: 0xd68ff8561247ae1ab82af462b3a4c78f
@@ -201,9 +197,9 @@ Scene:
     Name: Camera
     IsEnabled: true
     Transform:
-      Position: [8.11751652, -7.20284319, 3.46242905]
-      Rotation: [-0.219000459, -0.238670215, 0]
-      Scale: [1, 1, 1]
+      Position: [2.10120392, -0.512343049, 5.22507143]
+      Rotation: [-0.42637834, -0.47981745, 0]
+      Scale: [1, 1.00000012, 1]
       FollowOwner: true
     Camera:
       Fov: 1.57079637
@@ -214,6 +210,7 @@ Scene:
       RenderTargetIndex: 0
       ObjectVisibilityMask: 255
       ShadowVisibilityMask: 255
+      Viewport: Main
     Childs:
       []
   - UUID: 0xf36997a588e9a4f3b5919dfa07776dbd
@@ -300,13 +297,6 @@ Scene:
       AllowSleeping: true
     Childs:
       []
-  - PrefabFilepath: 0x65fc476ed7998dc16300d71309ea23b3
-    UUID: 0xdf311777653bfa460db928aca62b0dd0
-    Transform:
-      Position: [-1.09403825, -9, -6.9993391]
-      Rotation: [-1.57079673, -0, 0]
-      Scale: [1, 0.99999994, 0.99999994]
-      FollowOwner: true
   - UUID: 0xed72e17bb578a4ddb323b737c5a4c703
     Name: PointLight
     IsEnabled: true

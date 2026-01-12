@@ -84,7 +84,7 @@ namespace Pengine
 			std::vector<std::string> prefabs;
 		};
 
-		static [[nodiscard]] ImportInfo GetImportInfo(const std::filesystem::path& filepath);
+		static Serializer::ImportInfo GetImportInfo(const std::filesystem::path& filepath);
 
 		struct ImportOptions
 		{

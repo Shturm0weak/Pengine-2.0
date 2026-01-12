@@ -39,7 +39,7 @@ namespace Pengine
 
 		std::vector<entt::entity> CullAgainstSphere(const glm::vec3& position, float radius);
 
-		std::multimap<Raycast::Hit, std::shared_ptr<Entity>> Raycast(
+		std::multimap<Pengine::Raycast::Hit, std::shared_ptr<Entity>> Raycast(
 			const glm::vec3& start,
 			const glm::vec3& direction,
 			const float length) const;

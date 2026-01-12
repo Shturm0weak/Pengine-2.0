@@ -291,8 +291,3 @@ VkDescriptorBufferInfo VulkanBuffer::GetDescriptorInfo(
 		size,
 	};
 }
-
-VkBuffer VulkanBuffer::GetBuffer() const
-{
-	return m_BufferDatas[swapChainImageIndex * m_IsMultiBuffered].m_Buffer;
-}

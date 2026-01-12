@@ -1726,7 +1726,7 @@ void Editor::AssetBrowser(const std::shared_ptr<Scene>& scene)
 			{
 				ImGui::SameLine();
 
-				if (ImGui::Button(path->filename().c_str()))
+				if (ImGui::Button(path->filename().string().c_str()))
 				{
 					m_CurrentDirectory = *path;
 				}

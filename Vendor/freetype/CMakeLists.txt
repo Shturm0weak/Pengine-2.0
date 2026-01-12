@@ -162,6 +162,8 @@ endif ()
 
 project(freetype C)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 set(VERSION_MAJOR "2")
 set(VERSION_MINOR "13")
 set(VERSION_PATCH "3")

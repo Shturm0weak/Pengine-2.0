@@ -15,12 +15,13 @@
 #include "Components/Transform.h"
 #include "Components/SkeletalAnimator.h"
 #include "Components/Decal.h"
-#include "Components/Rigidbody.h"
+#include "Components/RigidBody.h"
 
 #include "ComponentSystems/PhysicsSystem.h"
 
 #include <Jolt/Jolt.h>
 #include <Jolt/RegisterTypes.h>
+#include <Jolt/Core/Factory.h>
 #include <Jolt/Physics/Character/Character.h>
 #include <Jolt/Physics/Collision/Shape/RotatedTranslatedShape.h>
 #include <Jolt/Physics/Collision/Shape/CapsuleShape.h>

@@ -67,7 +67,7 @@ REGISTER_CLAY_SCRIPT(Ammo)
 
 			if (!entity->HasComponent<FirstPersonCharacter>())
 			{
-				Pengine::ClayManager::EndLayout();
+				return Pengine::ClayManager::EndLayout();
 			}
 
 			FirstPersonCharacter& character = entity->GetComponent<FirstPersonCharacter>();
