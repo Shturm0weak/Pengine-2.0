@@ -30,7 +30,7 @@ SSS:
   ResolutionBlurScale: 2
   MaxRayDistance: 0.100000001
   MaxDistance: 50
-  MaxSteps: 128
+  MaxSteps: 16
   MinThickness: -0.0125000002
   MaxThickness: 0
 PointLightShadows:

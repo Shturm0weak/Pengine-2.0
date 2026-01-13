@@ -3875,7 +3875,7 @@ std::shared_ptr<Entity> Serializer::GenerateEntity(
 
 			if (r3d.mesh->GetType() == Mesh::Type::SKINNED)
 			{
-				r3d.material->SetBaseMaterial(AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(
+				r3d.material->SetBaseMaterial(MaterialManager::GetInstance().LoadBaseMaterial(
 					std::filesystem::path("Materials") / "MeshBaseSkinned.basemat"));
 				Material::Save(r3d.material, false);
 

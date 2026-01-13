@@ -1,6 +1,5 @@
 #include "AsyncAssetLoader.h"
 
-#include "ThreadPool.h"
 #include "MaterialManager.h"
 #include "MeshManager.h"
 #include "TextureManager.h"
@@ -13,12 +12,22 @@ AsyncAssetLoader& Pengine::AsyncAssetLoader::GetInstance()
 	return asyncAssetLoader;
 }
 
-void AsyncAssetLoader::AsyncLoadMaterial(const std::filesystem::path& filepath, std::function<void(std::weak_ptr<Material>)>&& callback)
+void Pengine::AsyncAssetLoader::Initialize()
+{
+	m_ThreadPool.Initialize(10);
+}
+
+void Pengine::AsyncAssetLoader::Shutdown()
+{
+	m_ThreadPool.Shutdown();
+}
+
+void AsyncAssetLoader::AsyncLoadMaterial(const std::filesystem::path &filepath, std::function<void(std::weak_ptr<Material>)> &&callback)
 {
 	std::lock_guard<std::mutex> lock(m_MaterialMutex);
 	if (!m_MaterialsLoading.count(filepath))
 	{
-		ThreadPool::GetInstance().EnqueueAsync([this, filepath]()
+		m_ThreadPool.EnqueueAsync([this, filepath]()
 		{
 			MaterialManager::GetInstance().LoadMaterial(filepath);
 
@@ -37,7 +46,7 @@ void AsyncAssetLoader::AsyncLoadBaseMaterial(const std::filesystem::path& filepa
 	std::lock_guard<std::mutex> lock(m_BaseMaterialMutex);
 	if (!m_BaseMaterialsLoading.count(filepath))
 	{
-		ThreadPool::GetInstance().EnqueueAsync([this, filepath]()
+		m_ThreadPool.EnqueueAsync([this, filepath]()
 		{
 			MaterialManager::GetInstance().LoadBaseMaterial(filepath);
 
@@ -56,7 +65,7 @@ void AsyncAssetLoader::AsyncLoadMesh(const std::filesystem::path& filepath, std:
 	std::lock_guard<std::mutex> lock(m_MeshMutex);
 	if (!m_MeshesLoading.count(filepath))
 	{
-		ThreadPool::GetInstance().EnqueueAsync([this, filepath]()
+		m_ThreadPool.EnqueueAsync([this, filepath]()
 		{
 			MeshManager::GetInstance().LoadMesh(filepath);
 
@@ -75,7 +84,7 @@ void AsyncAssetLoader::AsyncLoadTexture(const std::filesystem::path& filepath, s
 	std::lock_guard<std::mutex> lock(m_TextureMutex);
 	if (!m_TexturesLoading.count(filepath))
 	{
-		ThreadPool::GetInstance().EnqueueAsync([this, filepath, flip]()
+		m_ThreadPool.EnqueueAsync([this, filepath, flip]()
 		{
 			TextureManager::GetInstance().Load(filepath, flip);
 
@@ -119,7 +128,7 @@ std::shared_ptr<Material> AsyncAssetLoader::SyncLoadMaterial(const std::filesyst
 		m_MaterialsLoading.emplace(filepath);
 	}
 
-	return ThreadPool::GetInstance().EnqueueSync([this, filepath]()
+	return m_ThreadPool.EnqueueAsyncFuture([this, filepath]()
 	{
 		std::shared_ptr<Material> material = MaterialManager::GetInstance().LoadMaterial(filepath);
 		
@@ -156,7 +165,7 @@ std::shared_ptr<BaseMaterial> AsyncAssetLoader::SyncLoadBaseMaterial(const std::
 		}
 	}
 
-	return ThreadPool::GetInstance().EnqueueSync([this, filepath]() mutable
+	return m_ThreadPool.EnqueueAsyncFuture([this, filepath]() mutable
 	{
 		std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial(filepath);
 
@@ -198,7 +207,7 @@ std::shared_ptr<Mesh> AsyncAssetLoader::SyncLoadMesh(const std::filesystem::path
 		m_MeshesLoading.emplace(filepath);
 	}
 
-	return ThreadPool::GetInstance().EnqueueSync([this, filepath]()
+	return m_ThreadPool.EnqueueAsyncFuture([this, filepath]()
 	{
 		std::shared_ptr<Mesh> mesh = MeshManager::GetInstance().LoadMesh(filepath);
 
@@ -240,7 +249,7 @@ std::shared_ptr<Texture> AsyncAssetLoader::SyncLoadTexture(const std::filesystem
 		m_TexturesLoading.emplace(filepath);
 	}
 
-	return ThreadPool::GetInstance().EnqueueSync([this, filepath, flip]()
+	return m_ThreadPool.EnqueueAsyncFuture([this, filepath, flip]()
 	{
 		std::shared_ptr<Texture> texture = TextureManager::GetInstance().Load(filepath, flip);
 
@@ -354,7 +363,6 @@ void AsyncAssetLoader::Update()
 void AsyncAssetLoader::WaitIdle()
 {
 	std::unique_lock<std::mutex> lock(m_WaitMutex);
-
 	m_WaitIdleConditionalVariable.wait(lock, [this]()
 	{
 		Update();

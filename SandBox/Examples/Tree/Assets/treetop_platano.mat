@@ -3,6 +3,18 @@ Mat:
   Options:
     []
   Pipelines:
+    - RenderPass: ZPrePass
+      Uniforms:
+        []
+    - RenderPass: SpotLightShadows
+      Uniforms:
+        []
+    - RenderPass: PointLightShadows
+      Uniforms:
+        []
+    - RenderPass: CSM
+      Uniforms:
+        []
     - RenderPass: GBuffer
       Uniforms:
         - Name: GBufferMaterial
@@ -29,7 +41,7 @@ Mat:
               Value: 1
               Type: float
             - Name: material.alphaCutoff
-              Value: 0.5
+              Value: 0.0500000007
               Type: float
             - Name: material.maxParallaxLayers
               Value: 0
@@ -61,9 +73,3 @@ Mat:
           Value: White
         - Name: heightTexture
           Value: White
-    - RenderPass: CSM
-      Uniforms:
-        []
-    - RenderPass: ZPrePass
-      Uniforms:
-        []

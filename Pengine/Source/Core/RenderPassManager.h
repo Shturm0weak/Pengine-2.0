@@ -21,6 +21,8 @@ namespace Pengine
 		RenderPassManager(const RenderPassManager&) = delete;
 		RenderPassManager& operator=(const RenderPassManager&) = delete;
 
+		void Initialize();
+
 		std::shared_ptr<RenderPass> CreateRenderPass(const RenderPass::CreateInfo& createInfo);
 
 		std::shared_ptr<ComputePass> CreateComputePass(const ComputePass::CreateInfo& createInfo);
@@ -78,7 +80,7 @@ namespace Pengine
 			glm::mat3 inverseTransform;
 		};
 
-		RenderPassManager();
+		RenderPassManager() = default;
 		~RenderPassManager() = default;
 
 		static void GetVertexBuffers(

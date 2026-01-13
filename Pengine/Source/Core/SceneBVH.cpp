@@ -2,7 +2,6 @@
 
 #include "Scene.h"
 #include "Profiler.h"
-#include "ThreadPool.h"
 
 #include "../Components/Transform.h"
 #include "../Components/Renderer3D.h"
@@ -12,6 +11,17 @@
 #include "../Utils/Utils.h"
 
 using namespace Pengine;
+
+Pengine::SceneBVH::SceneBVH()
+{
+	m_ThreadPool.Initialize(2);
+}
+
+Pengine::SceneBVH::~SceneBVH()
+{
+	Clear();
+	m_ThreadPool.Shutdown();
+}
 
 void SceneBVH::Clear()
 {
@@ -334,7 +344,7 @@ uint32_t SceneBVH::BuildRecursive(int start, int end, std::atomic<int>& parallel
 	BVHNode node{};
 	if (parallel.fetch_sub(1) > 0)
 	{
-		futures.emplace_back(ThreadPool::GetInstance().EnqueueSync([&]()
+		futures.emplace_back(m_ThreadPool.EnqueueAsyncFuture([&]()
 		{
 			node.left = BuildRecursive(start, mid, parallel);
 		}));
@@ -346,7 +356,7 @@ uint32_t SceneBVH::BuildRecursive(int start, int end, std::atomic<int>& parallel
 
 	if (parallel.fetch_sub(1) > 0)
 	{
-		futures.emplace_back(ThreadPool::GetInstance().EnqueueSync([&]()
+		futures.emplace_back(m_ThreadPool.EnqueueAsyncFuture([&]()
 		{
 			node.right = BuildRecursive(mid, end, parallel);
 		}));

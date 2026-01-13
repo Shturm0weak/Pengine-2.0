@@ -2,11 +2,9 @@
 
 using namespace Pengine;
 
-void ThreadPool::Initialize()
+void ThreadPool::Initialize(size_t threadCount)
 {
-	m_ThreadsAmount = std::thread::hardware_concurrency() - 1;
-
-	for (size_t i = 0; i < m_ThreadsAmount; i++)
+	for (size_t i = 0; i < threadCount; i++)
 	{
 		m_Threads.emplace_back([this]
 		{

@@ -16,6 +16,7 @@
 #include "WindowManager.h"
 #include "ThreadPool.h"
 #include "Profiler.h"
+#include "Logger.h"
 
 #include "../Components/Camera.h"
 #include "../EventSystem/EventSystem.h"
@@ -140,8 +141,9 @@ void EntryPoint::Run() const
 	EventSystem& eventSystem = EventSystem::GetInstance();
 
 	Serializer::GenerateFilesUUID(std::filesystem::current_path());
-	RenderPassManager::GetInstance();
-	ThreadPool::GetInstance().Initialize();
+	RenderPassManager::GetInstance().Initialize();
+	AsyncAssetLoader::GetInstance().Initialize();
+	ThreadPool::GetInstance().Initialize(std::thread::hardware_concurrency() - 1);
 	FontManager::GetInstance().Initialize();
 
 	TextureManager::GetInstance().CreateDefaultResources();
@@ -282,6 +284,7 @@ void EntryPoint::Run() const
 
 	eventSystem.ProcessEvents();
 
+	AsyncAssetLoader::GetInstance().Shutdown();
 	ThreadPool::GetInstance().Shutdown();
 	SceneManager::GetInstance().ShutDown();
 	MaterialManager::GetInstance().ShutDown();

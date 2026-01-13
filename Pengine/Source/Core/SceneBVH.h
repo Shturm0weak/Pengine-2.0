@@ -3,6 +3,7 @@
 #include "Core.h"
 #include "Raycast.h"
 #include "BoundingBox.h"
+#include "ThreadPool.h"
 
 namespace Pengine
 {
@@ -24,8 +25,8 @@ namespace Pengine
 			[[nodiscard]] bool IsLeaf() const { return left == -1 && right == -1; }
 		};
 
-		SceneBVH() = default;
-		~SceneBVH() { Clear(); }
+		SceneBVH();
+		~SceneBVH();
 
 		void Clear();
 
@@ -58,6 +59,8 @@ namespace Pengine
 		std::mutex m_LockBVH;
 		mutable std::condition_variable m_BVHConditionalVariable;
 		mutable std::atomic<size_t> m_BVHUseCount;
+
+		ThreadPool m_ThreadPool;
 
 		void WaitIdle();
 

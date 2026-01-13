@@ -320,7 +320,7 @@ std::shared_ptr<Texture> RenderPassManager::ScaleTexture(
 	return dstTexture;
 }
 
-RenderPassManager::RenderPassManager()
+void RenderPassManager::Initialize()
 {
 	CreateDefaultReflection();
 	CreateZPrePass();

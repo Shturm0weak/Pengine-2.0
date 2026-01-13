@@ -2,8 +2,7 @@
 
 #include "Core.h"
 
-#include <future>
-#include <mutex>
+#include "ThreadPool.h"
 
 namespace Pengine
 {
@@ -15,6 +14,10 @@ namespace Pengine
 
 		AsyncAssetLoader(const AsyncAssetLoader&) = delete;
 		AsyncAssetLoader& operator=(const AsyncAssetLoader&) = delete;
+
+		void Initialize();
+
+		void Shutdown();
 
 		void AsyncLoadMaterial(const std::filesystem::path& filepath, std::function<void(std::weak_ptr<class Material>)>&& callback);
 
@@ -57,6 +60,8 @@ namespace Pengine
 		std::unordered_set<std::filesystem::path> m_BaseMaterialsLoading;
 		std::unordered_set<std::filesystem::path> m_MeshesLoading;
 		std::unordered_set<std::filesystem::path> m_TexturesLoading;
+
+		ThreadPool m_ThreadPool;
 	};
 
 }
