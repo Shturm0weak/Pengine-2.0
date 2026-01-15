@@ -2617,9 +2617,9 @@ Serializer::LoadIntermediate(
 	if (options.materials)
 	{
 		workName = "Generating Materials";
-		std::mutex futureMaterialMutex;
-		std::condition_variable futureMaterialCondVar;
-		std::atomic<int> materialCount = 0;
+
+		std::vector<std::future<void>> futures;
+		std::mutex mutex;
 		for (size_t materialIndex = 0; materialIndex < gltfAsset.materials.size(); materialIndex++)
 		{
 			if (gltfAsset.materials[materialIndex].name.empty())
@@ -2627,40 +2627,31 @@ Serializer::LoadIntermediate(
 				gltfAsset.materials[materialIndex].name = std::format("{}Material{}", filename, materialIndex);
 			}
 
-			ThreadPool::GetInstance().EnqueueAsync([
+			futures.emplace_back(ThreadPool::GetInstance().EnqueueAsyncFuture([
 					&gltfMaterial = gltfAsset.materials[materialIndex],
 					texturesDirectory,
 					directory,
 					materialIndex,
 					maxWorkStatus,
+					&mutex,
 					&gltfAsset,
-					&materialCount,
-					&futureMaterialMutex,
-					&futureMaterialCondVar,
 					&materialsByIndex,
 					&workStatus,
 					&currentWorkStatus]()
-				{
-					std::shared_ptr<Material> material = GenerateMaterial(gltfAsset, gltfAsset.materials[materialIndex], texturesDirectory, directory);
+			{
+				std::shared_ptr<Material> material = GenerateMaterial(gltfAsset, gltfAsset.materials[materialIndex], texturesDirectory, directory);
 
-					std::lock_guard<std::mutex> lock(futureMaterialMutex);
+				std::lock_guard<std::mutex> lock(mutex);
+				materialsByIndex[materialIndex] = material;
 
-					workStatus = currentWorkStatus++ / maxWorkStatus;
-
-					materialsByIndex[materialIndex] = material;
-
-					materialCount.store(materialsByIndex.size());
-
-					futureMaterialCondVar.notify_all();
-				});
+				workStatus = currentWorkStatus++ / maxWorkStatus;
+			}));
 		}
 
-		std::mutex futureMaterialCondVarMutex;
-		std::unique_lock<std::mutex> lock(futureMaterialCondVarMutex);
-		futureMaterialCondVar.wait(lock, [&materialCount, &gltfAsset]
+		for (auto& future : futures)
 		{
-			return materialCount.load() == gltfAsset.materials.size();
-		});
+			future.get();
+		}
 	}
 
 	std::vector<std::shared_ptr<Skeleton>> skeletonsByIndex;
@@ -2684,10 +2675,14 @@ Serializer::LoadIntermediate(
 	if (options.meshes.import)
 	{
 		workName = "Generating Meshes";
+
+		std::vector<std::future<void>> futures;
+		std::mutex mutex;
 		for (size_t meshIndex = 0; meshIndex < gltfAsset.meshes.size(); meshIndex++)
 		{
 			uint32_t primitiveIndex = 0;
 			auto& primitivesByIndex = meshesByIndex.emplace_back();
+
 			for (const auto& primitive : gltfAsset.meshes[meshIndex].primitives)
 			{
 				std::string meshName = gltfAsset.meshes[meshIndex].name.c_str();
@@ -2703,30 +2698,53 @@ Serializer::LoadIntermediate(
 
 				if (gltfAsset.meshes[meshIndex].primitives.size() > 1)
 				{
+					std::lock_guard<std::mutex> lock(mutex);
 					meshName += std::format("{}", primitiveIndex++);
 				}
 
-				std::optional<Mesh::CreateInfo> meshCreateInfo = GenerateMesh(
+				futures.emplace_back(ThreadPool::GetInstance().EnqueueAsyncFuture([
+					&gltfAsset,
+					&materialsByMeshes,
+					&materialsByIndex,
+					&meshesByIndex,
+					&mutex,
+					&directory,
+					&options,
+					&workStatus,
+					&currentWorkStatus,
 					sourceFileInfo,
-					gltfAsset,
-					primitive,
 					meshName,
-					directory,
-					options.meshes);
-
-				std::shared_ptr<Mesh> mesh = nullptr;
-
-				if (meshCreateInfo)
+					maxWorkStatus,
+					meshIndex]()
 				{
-					mesh = MeshManager::GetInstance().CreateMesh(*meshCreateInfo);
-					SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
-				}
+					std::optional<Mesh::CreateInfo> meshCreateInfo = GenerateMesh(
+						sourceFileInfo,
+						gltfAsset,
+						gltfAsset.meshes[meshIndex].primitives[sourceFileInfo.primitiveIndex],
+						meshName,
+						directory,
+						options.meshes);
 
-				primitivesByIndex.emplace_back(mesh);
-				materialsByMeshes[mesh] = materialsByIndex[*primitive.materialIndex];
+					std::shared_ptr<Mesh> mesh = nullptr;
+
+					if (meshCreateInfo)
+					{
+						mesh = MeshManager::GetInstance().CreateMesh(*meshCreateInfo);
+						SerializeMesh(mesh->GetFilepath().parent_path(), mesh);
+					}
+
+					std::lock_guard<std::mutex> lock(mutex);
+					meshesByIndex[meshIndex].emplace_back(mesh);
+					materialsByMeshes[mesh] = materialsByIndex[*(gltfAsset.meshes[meshIndex].primitives[sourceFileInfo.primitiveIndex].materialIndex)];
+				
+					workStatus = currentWorkStatus++ / maxWorkStatus;
+				}));
 			}
+		}
 
-			workStatus = currentWorkStatus++ / maxWorkStatus;
+		for (auto& future : futures)
+		{
+			future.get();
 		}
 	}
 
