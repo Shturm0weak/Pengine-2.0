@@ -13,10 +13,13 @@ Basemat:
           RenderPass: DefaultReflection
           Set: 0
         - Type: Material
+          RenderPass: Decals
           Set: 1
+        - Type: Bindless
+          Set: 2
         - Type: Renderer
           RenderPass: Decals
-          Set: 2
+          Set: 3
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex

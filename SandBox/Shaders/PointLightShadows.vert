@@ -18,7 +18,7 @@ layout(location = 3) flat out float radius;
 #include "Shaders/Includes/CSM.h"
 #include "Shaders/Includes/SSS.h"
 
-layout(set = 1, binding = 0) uniform Lights
+layout(set = 2, binding = 0) uniform Lights
 {
 	PointLight pointLights[32];
 	int pointLightsCount;

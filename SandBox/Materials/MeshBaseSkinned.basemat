@@ -15,9 +15,11 @@ Basemat:
         - Type: Material
           RenderPass: GBuffer
           Set: 1
+        - Type: Bindless
+          Set: 2
         - Type: Object
           RenderPass: GBuffer
-          Set: 2
+          Set: 3
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex
@@ -67,15 +69,17 @@ Basemat:
         - Type: Material
           RenderPass: GBuffer
           Set: 1
-        - Type: Renderer
-          RenderPass: Deferred
+        - Type: Bindless
           Set: 2
         - Type: Renderer
-          RenderPass: Lights
+          RenderPass: Deferred
           Set: 3
+        - Type: Renderer
+          RenderPass: Lights
+          Set: 4
         - Type: Object
           RenderPass: GBuffer
-          Set: 4
+          Set: 5
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex
@@ -128,9 +132,11 @@ Basemat:
         - Type: Material
           RenderPass: GBuffer
           Set: 1
+        - Type: Bindless
+          Set: 2
         - Type: Object
           RenderPass: GBuffer
-          Set: 2
+          Set: 3
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex
@@ -165,12 +171,14 @@ Basemat:
         - Type: Material
           RenderPass: GBuffer
           Set: 0
+        - Type: Bindless
+          Set: 1
         - Type: Renderer
           RenderPass: Lights
-          Set: 1
+          Set: 2
         - Type: Object
           RenderPass: GBuffer
-          Set: 2
+          Set: 3
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex
@@ -206,12 +214,14 @@ Basemat:
         - Type: Material
           RenderPass: GBuffer
           Set: 0
+        - Type: Bindless
+          Set: 1
         - Type: Renderer
           RenderPass: Lights
-          Set: 1
+          Set: 2
         - Type: Object
           RenderPass: GBuffer
-          Set: 2
+          Set: 3
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex
@@ -247,9 +257,11 @@ Basemat:
         - Type: Material
           RenderPass: GBuffer
           Set: 1
+        - Type: Bindless
+          Set: 2
         - Type: Object
           RenderPass: GBuffer
-          Set: 2
+          Set: 3
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex

@@ -59,6 +59,11 @@ Editor::Editor()
 	SceneManager::GetInstance().SetIsPhysicsSystemsUpdating(false);
 }
 
+Editor::~Editor()
+{
+	m_Thumbnails.ShutDown();
+}
+
 void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
 {
 	PROFILER_SCOPE(__FUNCTION__);
@@ -3336,6 +3341,107 @@ void Editor::MaterialMenu::Update(Editor& editor)
 
 	const bool previousOpened = opened;
 
+	auto drawTexture = [this, &editor](
+		const std::shared_ptr<Texture> texture,
+		const ShaderReflection::ReflectDescriptorSetBinding& binding,
+		const std::string& passName,
+		bool& isChangedToSerialize)
+	{
+		ImGui::Text("%s", binding.name.c_str());
+		ImGui::SameLine();
+		ImGui::Text("%s", texture->GetFilepath().string().c_str());
+		ImGui::Image(ImTextureID(texture->GetId()), { 128, 128 });
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+			{
+				std::wstring filepath((const wchar_t*)payload->Data);
+				filepath.resize(payload->DataSize / sizeof(wchar_t));
+
+				if (FileFormats::IsTexture(Utils::GetFileFormat(filepath)))
+				{
+					material->GetUniformWriter(passName)->WriteTexture(binding.name, TextureManager::GetInstance().Load(filepath));
+					
+					isChangedToSerialize = true;
+				}
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGui::SameLine();
+
+		const std::string whiteId = "Set White" + binding.name;
+		ImGui::PushID(whiteId.c_str());
+		if (ImGui::Button("White"))
+		{
+			material->GetUniformWriter(passName)->WriteTexture(binding.name, TextureManager::GetInstance().GetWhite());
+
+			isChangedToSerialize = true;
+		}
+		ImGui::PopID();
+
+		ImGui::SameLine();
+
+		const std::string blackId = "Set Black" + binding.name;
+		ImGui::PushID(blackId.c_str());
+		if (ImGui::Button("Black"))
+		{
+			material->GetUniformWriter(passName)->WriteTexture(binding.name, TextureManager::GetInstance().GetBlack());
+
+			isChangedToSerialize = true;
+		}
+		ImGui::PopID();
+	};
+
+	auto drawTextureVariable = [this, &editor](
+		const std::shared_ptr<Texture> texture,
+		const std::string& name,
+		std::shared_ptr<Texture>& newTexture)
+	{
+		ImGui::Text("%s", name.c_str());
+		ImGui::SameLine();
+		ImGui::Text("%s", texture->GetFilepath().string().c_str());
+		ImGui::Image(ImTextureID(texture->GetId()), { 128, 128 });
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
+			{
+				std::wstring filepath((const wchar_t*)payload->Data);
+				filepath.resize(payload->DataSize / sizeof(wchar_t));
+
+				if (FileFormats::IsTexture(Utils::GetFileFormat(filepath)))
+				{
+					newTexture = TextureManager::GetInstance().Load(filepath);
+				}
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGui::SameLine();
+
+		const std::string whiteId = "Set White" + name;
+		ImGui::PushID(whiteId.c_str());
+		if (ImGui::Button("White"))
+		{
+			newTexture = TextureManager::GetInstance().GetWhite();
+		}
+		ImGui::PopID();
+
+		ImGui::SameLine();
+
+		const std::string blackId = "Set Black" + name;
+		ImGui::PushID(blackId.c_str());
+		if (ImGui::Button("Black"))
+		{
+			newTexture = TextureManager::GetInstance().GetBlack();
+		}
+		ImGui::PopID();
+	};
+
 	if (opened && ImGui::Begin("Material", &opened))
 	{
 		if (ImGui::Button("Reload"))
@@ -3390,53 +3496,7 @@ void Editor::MaterialMenu::Update(Editor& editor)
 						{
 							if (std::shared_ptr<Texture> texture = uniformWriter->GetTexture(binding.name).back())
 							{
-								ImGui::Text("%s", binding.name.c_str());
-								ImGui::SameLine();
-								ImGui::Text("%s", texture->GetFilepath().string().c_str());
-								ImGui::Image(ImTextureID(texture->GetId()), { 128, 128 });
-
-								if (ImGui::BeginDragDropTarget())
-								{
-									if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS_BROWSER_ITEM"))
-									{
-										std::wstring filepath((const wchar_t*)payload->Data);
-										filepath.resize(payload->DataSize / sizeof(wchar_t));
-
-										if (FileFormats::IsTexture(Utils::GetFileFormat(filepath)))
-										{
-											material->GetUniformWriter(passName)->WriteTexture(binding.name, TextureManager::GetInstance().Load(filepath));
-											
-											isChangedToSerialize = true;
-										}
-									}
-
-									ImGui::EndDragDropTarget();
-								}
-
-								ImGui::SameLine();
-
-								const std::string whiteId = "Set White" + binding.name;
-								ImGui::PushID(whiteId.c_str());
-								if (ImGui::Button("White"))
-								{
-									material->GetUniformWriter(passName)->WriteTexture(binding.name, TextureManager::GetInstance().GetWhite());
-
-									isChangedToSerialize = true;
-								}
-								ImGui::PopID();
-
-								ImGui::SameLine();
-
-								const std::string blackId = "Set Black" + binding.name;
-								ImGui::PushID(blackId.c_str());
-								if (ImGui::Button("Black"))
-								{
-									material->GetUniformWriter(passName)->WriteTexture(binding.name, TextureManager::GetInstance().GetBlack());
-
-									isChangedToSerialize = true;
-								}
-								ImGui::PopID();
-
+								drawTexture(texture, binding, passName, isChangedToSerialize);
 							}
 						}
 						else if (binding.type == ShaderReflection::Type::UNIFORM_BUFFER)
@@ -3471,7 +3531,7 @@ void Editor::MaterialMenu::Update(Editor& editor)
 									return;
 								}
 
-								// Variable with names that contain any "color" part and types int will be considered as a bool variable
+								// Variable with names that contain any "use" part and types int will be considered as a bool variable
 								// and will be represented in the editor as check boxes.
 								if (Utils::Contains(Utils::ToLower(variable.name), "use"))
 								{
@@ -3504,7 +3564,25 @@ void Editor::MaterialMenu::Update(Editor& editor)
 								{
 									isChanged += editor.DrawVec4Control(variable.name.c_str(), Utils::GetValue<glm::vec4>(data, variable.offset));
 								}
-								else if (variable.type == ShaderReflection::ReflectVariable::Type::STRUCT)
+								if (variable.type == ShaderReflection::ReflectVariable::Type::TEXTURE)
+								{
+									int& bindlessTextureIndex = Utils::GetValue<int>(data, variable.offset);
+									const auto texture = material->GetBindlessTexture(bindlessTextureIndex);
+
+									std::shared_ptr<Texture> newTexture = texture;
+									drawTextureVariable(texture, variable.name, newTexture);
+
+									if (newTexture && newTexture != texture)
+									{
+										// Note: Lets assume that we never unbind manually, it will unbind on delete.
+										//material->UnBindBindlessTexture(texture);
+										bindlessTextureIndex = material->BindBindlessTexture(newTexture);
+
+										isChangedToSerialize = true;
+										isChanged += 1;
+									}
+								}
+								if (variable.type == ShaderReflection::ReflectVariable::Type::STRUCT)
 								{
 									for (const auto& memberVariable : variable.variables)
 									{
@@ -4036,6 +4114,13 @@ void Editor::Thumbnails::Initialize()
 	Pengine::GlobalDataAccessor::GetInstance().GetDevice()->WaitIdle();
 
 	swapChainImageIndex = previousSwapChainImageIndex;
+}
+
+void Editor::Thumbnails::ShutDown()
+{
+	m_ThumbnailWindow = nullptr;
+	SceneManager::GetInstance().Delete(m_ThumbnailScene);
+	m_ThumbnailRenderer = nullptr;
 }
 
 void Editor::Thumbnails::UpdateThumbnails()

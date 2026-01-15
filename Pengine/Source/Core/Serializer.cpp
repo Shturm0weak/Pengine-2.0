@@ -610,6 +610,10 @@ void Serializer::DeserializeDescriptorSets(
 		if (const auto& typeData = descriptorSetData["Type"])
 		{
 			std::string typeName = typeData.as<std::string>();
+			if (typeName == "Bindless")
+			{
+				type = Pipeline::DescriptorSetIndexType::BINDLESS;
+			}
 			if (typeName == "Renderer")
 			{
 				type = Pipeline::DescriptorSetIndexType::RENDERER;
@@ -1340,7 +1344,7 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material, bo
 
 				out << YAML::BeginSeq;
 
-				std::function<void(const ShaderReflection::ReflectVariable&, std::string)> saveValue = [&saveValue, &out, &data]
+				std::function<void(const ShaderReflection::ReflectVariable&, std::string)> saveValue = [&saveValue, &out, &data, &material]
 				(const ShaderReflection::ReflectVariable& value, std::string parentName)
 				{
 					parentName += value.name;
@@ -1377,6 +1381,11 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material, bo
 					else if (value.type == ShaderReflection::ReflectVariable::Type::INT)
 					{
 						out << YAML::Key << "Value" << YAML::Value << Utils::GetValue<int>(data, value.offset);
+					}
+					else if (value.type == ShaderReflection::ReflectVariable::Type::TEXTURE)
+					{
+						const int bindlessTextureIndex = Utils::GetValue<int>(data, value.offset);
+						out << YAML::Key << "Value" << YAML::Value << material->GetBindlessTexture(bindlessTextureIndex)->GetFilepath();
 					}
 
 					out << YAML::Key << "Type" << ShaderReflection::ConvertTypeToString(value.type);
@@ -2878,6 +2887,8 @@ std::shared_ptr<Texture> Serializer::LoadGltfTexture(
 	}
 	if (const auto* view = std::get_if<fastgltf::sources::BufferView>(&image.data))
 	{
+		Logger::FatalError("Bindless not supported yet!");
+
 		const auto& bufferView = gltfAsset.bufferViews[view->bufferViewIndex];
 		const auto& buffer = gltfAsset.buffers[bufferView.bufferIndex];
 
@@ -3763,7 +3774,9 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 		material->WriteToBuffer("GBufferMaterial", "material.minParallaxLayers", minParallaxLayers);
 		material->WriteToBuffer("GBufferMaterial", "material.maxParallaxLayers", maxParallaxLayers);
 		material->WriteToBuffer("GBufferMaterial", "material.parallaxHeightScale", parallaxHeightScale);
-		uniformWriter->WriteTexture("heightTexture", TextureManager::GetInstance().GetWhite());
+
+		const int heightTextureIndex = TextureManager::GetInstance().GetWhite()->GetBindlessIndex();
+		material->WriteToBuffer("GBufferMaterial", "material.heightTexture", heightTextureIndex);
 	}
 
 	float ao = 1.0f;
@@ -3782,8 +3795,14 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 			materialName + "_BaseColor" + FileFormats::Png(),
 			meta))
 		{
-			uniformWriter->WriteTexture("albedoTexture", albedoTexture);
+			const int albedoTextureIndex = albedoTexture->GetBindlessIndex();
+			material->WriteToBuffer("GBufferMaterial", "material.albedoTexture", albedoTextureIndex);
 		}
+	}
+	else
+	{
+		const int albedoTextureIndex = TextureManager::GetInstance().GetWhite()->GetBindlessIndex();
+		material->WriteToBuffer("GBufferMaterial", "material.albedoTexture", albedoTextureIndex);
 	}
 
 	if (gltfMaterial.normalTexture.has_value())
@@ -3795,10 +3814,17 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 			directory,
 			materialName + "_Normal" + FileFormats::Png()))
 		{
-			uniformWriter->WriteTexture("normalTexture", normalTexture);
+			const int normalTextureIndex = normalTexture->GetBindlessIndex();
+			material->WriteToBuffer("GBufferMaterial", "material.normalTexture", normalTextureIndex);
+
 			constexpr int useNormalMap = 1;
 			material->WriteToBuffer("GBufferMaterial", "material.useNormalMap", useNormalMap);
 		}
+	}
+	else
+	{
+		const int normalTextureIndex = TextureManager::GetInstance().GetWhite()->GetBindlessIndex();
+		material->WriteToBuffer("GBufferMaterial", "material.normalTexture", normalTextureIndex);
 	}
 
 	if (gltfMaterial.pbrData.metallicRoughnessTexture.has_value())
@@ -3810,8 +3836,14 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 			directory,
 			materialName + "_MetallicRoughness" + FileFormats::Png()))
 		{
-			uniformWriter->WriteTexture("metallicRoughnessTexture", metallicRoughnessTexture);
+			const int metallicRoughnessTextureIndex = metallicRoughnessTexture->GetBindlessIndex();
+			material->WriteToBuffer("GBufferMaterial", "material.metallicRoughnessTexture", metallicRoughnessTextureIndex);
 		}
+	}
+	else
+	{
+		const int metallicRoughnessTextureIndex = TextureManager::GetInstance().GetWhite()->GetBindlessIndex();
+		material->WriteToBuffer("GBufferMaterial", "material.metallicRoughnessTexture", metallicRoughnessTextureIndex);
 	}
 
 	if (gltfMaterial.occlusionTexture.has_value())
@@ -3823,8 +3855,14 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 			directory,
 			materialName + "_Occlusion" + FileFormats::Png()))
 		{
-			uniformWriter->WriteTexture("aoTexture", aoTexture);
+			const int aoTextureIndex = aoTexture->GetBindlessIndex();
+			material->WriteToBuffer("GBufferMaterial", "material.aoTexture", aoTextureIndex);
 		}
+	}
+	else
+	{
+		const int aoTextureIndex = TextureManager::GetInstance().GetWhite()->GetBindlessIndex();
+		material->WriteToBuffer("GBufferMaterial", "material.aoTexture", aoTextureIndex);
 	}
 
 	if (gltfMaterial.emissiveTexture.has_value())
@@ -3836,8 +3874,14 @@ std::shared_ptr<Material> Serializer::GenerateMaterial(
 			directory,
 			materialName + "_Emissive" + FileFormats::Png()))
 		{
-			uniformWriter->WriteTexture("emissiveTexture", emissiveTexture);
+			const int emissiveTextureIndex = emissiveTexture->GetBindlessIndex();
+			material->WriteToBuffer("GBufferMaterial", "material.emissiveTexture", emissiveTextureIndex);
 		}
+	}
+	else
+	{
+		const int emissiveTextureIndex = TextureManager::GetInstance().GetWhite()->GetBindlessIndex();
+		material->WriteToBuffer("GBufferMaterial", "material.emissiveTexture", emissiveTextureIndex);
 	}
 
 	material->GetBuffer("GBufferMaterial")->Flush();
@@ -6036,6 +6080,37 @@ void Serializer::ParseUniformValues(
 	const YAML::detail::iterator_value& data,
 	Pipeline::UniformInfo& uniformsInfo)
 {
+	auto parseTextureName = [&uniformsInfo](const std::string& name)
+	{
+		if (name.empty())
+		{
+			return TextureManager::GetInstance().GetWhite()->GetName();
+		}
+		else if (std::filesystem::exists(name))
+		{
+			return name;
+		}
+		else
+		{
+			if (TextureManager::GetInstance().GetTexture(name))
+			{
+				return name;
+			}
+			else
+			{
+				const auto filepathByUUID = Utils::FindFilepath(UUID::FromString(name));
+				if (!filepathByUUID.empty())
+				{
+					return filepathByUUID.string();	
+				}
+				else
+				{
+					return TextureManager::GetInstance().GetPink()->GetName();
+				}
+			}
+		}
+	};
+
 	for (const auto& uniformData : data["Uniforms"])
 	{
 		std::string uniformName;
@@ -6089,6 +6164,10 @@ void Serializer::ParseUniformValues(
 					{
 						uniformBufferInfo.vec4ValuesByName.emplace(valueName, bufferValueData.as<glm::vec4>());
 					}
+					else if (valueType == ShaderReflection::ReflectVariable::Type::TEXTURE)
+					{
+						uniformBufferInfo.texturesByName.emplace(valueName, parseTextureName(bufferValueData.as<std::string>()));
+					}
 				}
 			}
 			uniformsInfo.uniformBuffersByName.emplace(uniformName, uniformBufferInfo);
@@ -6096,35 +6175,7 @@ void Serializer::ParseUniformValues(
 
 		if (const auto& nameData = uniformData["Value"])
 		{
-			const std::string textureFilepathOrUUID = nameData.as<std::string>();
-
-			if (textureFilepathOrUUID.empty())
-			{
-				uniformsInfo.texturesByName.emplace(uniformName, TextureManager::GetInstance().GetWhite()->GetName());
-			}
-			else if (std::filesystem::exists(textureFilepathOrUUID))
-			{
-				uniformsInfo.texturesByName.emplace(uniformName, textureFilepathOrUUID);
-			}
-			else
-			{
-				if (TextureManager::GetInstance().GetTexture(textureFilepathOrUUID))
-				{
-					uniformsInfo.texturesByName.emplace(uniformName, textureFilepathOrUUID);
-				}
-				else
-				{
-					const auto filepathByUUID = Utils::FindFilepath(UUID::FromString(textureFilepathOrUUID));
-					if (!filepathByUUID.empty())
-					{
-						uniformsInfo.texturesByName.emplace(uniformName, filepathByUUID.string());	
-					}
-					else
-					{
-						uniformsInfo.texturesByName.emplace(uniformName, TextureManager::GetInstance().GetPink()->GetName());
-					}
-				}
-			}
+			uniformsInfo.texturesByName.emplace(uniformName, parseTextureName(nameData.as<std::string>()));
 		}
 
 		if (const auto& nameData = uniformData["TextureAttachment"])

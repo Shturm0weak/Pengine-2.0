@@ -8,6 +8,21 @@ Mat:
       Inactive:
         - GBuffer
   Pipelines:
+    - RenderPass: ZPrePass
+      Uniforms:
+        []
+    - RenderPass: SpotLightShadows
+      Uniforms:
+        []
+    - RenderPass: PointLightShadows
+      Uniforms:
+        []
+    - RenderPass: CSM
+      Uniforms:
+        []
+    - RenderPass: Transparent
+      Uniforms:
+        []
     - RenderPass: GBuffer
       Uniforms:
         - Name: GBufferMaterial
@@ -16,7 +31,7 @@ Mat:
               Value: [0, 0, 0, 1]
               Type: vec4
             - Name: material.emissiveColor
-              Value: [1, 0.196078435, 0.196078435, 1]
+              Value: [1, 0.19607842, 0.19607842, 1]
               Type: vec4
             - Name: material.uvTransform
               Value: [1, 1, 0, 0]
@@ -54,24 +69,21 @@ Mat:
             - Name: material.useParallaxOcclusion
               Value: 0
               Type: int
-        - Name: albedoTexture
-          Value: White
-        - Name: normalTexture
-          Value: Black
-        - Name: metallicRoughnessTexture
-          Value: White
-        - Name: aoTexture
-          Value: White
-        - Name: emissiveTexture
-          Value: White
-        - Name: heightTexture
-          Value: White
-    - RenderPass: Transparent
-      Uniforms:
-        []
-    - RenderPass: CSM
-      Uniforms:
-        []
-    - RenderPass: ZPrePass
-      Uniforms:
-        []
+            - Name: material.albedoTexture
+              Value: White
+              Type: texture
+            - Name: material.normalTexture
+              Value: Black
+              Type: texture
+            - Name: material.metallicRoughnessTexture
+              Value: White
+              Type: texture
+            - Name: material.aoTexture
+              Value: White
+              Type: texture
+            - Name: material.emissiveTexture
+              Value: White
+              Type: texture
+            - Name: material.heightTexture
+              Value: White
+              Type: texture

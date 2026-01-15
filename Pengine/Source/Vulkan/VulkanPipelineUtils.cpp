@@ -201,6 +201,12 @@ void VulkanPipelineUtils::ReflectDescriptorSets(
 			case SpvOp::SpvOpTypeInt:
 			{
 				memberVariable.type = ShaderReflection::ReflectVariable::Type::INT;
+
+				if (Utils::Contains(Utils::ToLower(memberVariable.name), "texture"))
+				{
+					memberVariable.type = ShaderReflection::ReflectVariable::Type::TEXTURE;
+				}
+
 				break;
 			}
 			case SpvOp::SpvOpTypeVector:

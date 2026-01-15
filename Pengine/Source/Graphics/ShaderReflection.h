@@ -34,7 +34,8 @@ namespace Pengine::ShaderReflection
 			VEC3,
 			VEC4,
 			STRUCT,
-			MATRIX
+			MATRIX,
+			TEXTURE,
 		};
 
 		std::string name;
@@ -120,6 +121,10 @@ namespace Pengine::ShaderReflection
 		{
 			return ReflectVariable::Type::STRUCT;
 		}
+		else if (type == "texture")
+		{
+			return ReflectVariable::Type::TEXTURE;
+		}
 
 		return ReflectVariable::Type::UNDEFINED;
 	}
@@ -153,6 +158,10 @@ namespace Pengine::ShaderReflection
 		else if (type == ReflectVariable::Type::STRUCT)
 		{
 			return "struct";
+		}
+		else if (type == ReflectVariable::Type::TEXTURE)
+		{
+			return "texture";
 		}
 
 		return "Undefined";;

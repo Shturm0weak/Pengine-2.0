@@ -28,6 +28,8 @@ namespace Pengine::Vk
 
 	private:
 		VkShaderModule m_ShaderModule = VK_NULL_HANDLE;
+
+		std::atomic<bool> m_IsReloading = false;
 	};
 
 }

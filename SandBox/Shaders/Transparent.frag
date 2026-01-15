@@ -21,18 +21,13 @@ layout(set = 0, binding = 0) uniform GlobalBuffer
 	Camera camera;
 };
 
-layout(set = 1, binding = 1) uniform sampler2D albedoTexture;
-layout(set = 1, binding = 2) uniform sampler2D normalTexture;
-layout(set = 1, binding = 3) uniform sampler2D metallicRoughnessTexture;
-layout(set = 1, binding = 4) uniform sampler2D aoTexture;
-layout(set = 1, binding = 5) uniform sampler2D emissiveTexture;
-layout(set = 1, binding = 6) uniform sampler2D heightTexture;
-
 #include "Shaders/Includes/DefaultMaterial.h"
 layout(set = 1, binding = 0) uniform GBufferMaterial
 {
 	DefaultMaterial material;
 };
+
+layout(set = 2, binding = 0) uniform sampler2D bindlessTextures[10000];
 
 #include "Shaders/Includes/IsBrightPixel.h"
 #include "Shaders/Includes/DirectionalLight.h"
@@ -41,17 +36,17 @@ layout(set = 1, binding = 0) uniform GBufferMaterial
 #include "Shaders/Includes/CSM.h"
 #include "Shaders/Includes/SSS.h"
 
-layout(set = 2, binding = 0) uniform sampler2D deferredAlbedoTexture;
-layout(set = 2, binding = 1) uniform sampler2D deferredNormalTexture;
-layout(set = 2, binding = 2) uniform sampler2D deferredShadingTexture;
-layout(set = 2, binding = 3) uniform sampler2D deferredDepthTexture;
-layout(set = 2, binding = 4) uniform sampler2D deferredSsaoTexture;
-layout(set = 2, binding = 5) uniform sampler2D deferredSssTexture;
-layout(set = 2, binding = 6) uniform sampler2DArray deferredCSMTexture;
-layout(set = 2, binding = 7) uniform sampler2D deferredPointLightShadowMapTexture;
-layout(set = 2, binding = 8) uniform sampler2D deferredSpotLightShadowMapTexture;
+layout(set = 3, binding = 0) uniform sampler2D deferredAlbedoTexture;
+layout(set = 3, binding = 1) uniform sampler2D deferredNormalTexture;
+layout(set = 3, binding = 2) uniform sampler2D deferredShadingTexture;
+layout(set = 3, binding = 3) uniform sampler2D deferredDepthTexture;
+layout(set = 3, binding = 4) uniform sampler2D deferredSsaoTexture;
+layout(set = 3, binding = 5) uniform sampler2D deferredSssTexture;
+layout(set = 3, binding = 6) uniform sampler2DArray deferredCSMTexture;
+layout(set = 3, binding = 7) uniform sampler2D deferredPointLightShadowMapTexture;
+layout(set = 3, binding = 8) uniform sampler2D deferredSpotLightShadowMapTexture;
 
-layout(set = 3, binding = 0) uniform Lights
+layout(set = 4, binding = 0) uniform Lights
 {
 	PointLight pointLights[32];
 	int pointLightsCount;
@@ -81,7 +76,7 @@ void main()
 	{
 		vec3 viewDirectionTangentSpace = normalize(cameraPositionTangentSpace - positionTangentSpace);
 		finalUV = ParallaxOcclusionMapping(
-			heightTexture,
+			bindlessTextures[material.heightTexture],
 			finalUV,
 			viewDirectionTangentSpace,
 			material.minParallaxLayers,
@@ -89,12 +84,12 @@ void main()
 			material.parallaxHeightScale);
 	}
 
-	vec4 albedoColor = texture(albedoTexture, finalUV) * material.albedoColor * color;
+	vec4 albedoColor = texture(bindlessTextures[material.albedoTexture], finalUV) * material.albedoColor * color;
 
-	vec3 metallicRoughness = texture(metallicRoughnessTexture, finalUV).xyz;
+	vec3 metallicRoughness = texture(bindlessTextures[material.metallicRoughnessTexture], finalUV).xyz;
 	float metallic = metallicRoughness.b;
 	float roughness = metallicRoughness.g;
-	float ao = texture(aoTexture, finalUV).r;
+	float ao = texture(bindlessTextures[material.aoTexture], finalUV).r;
 
 	vec4 shading = vec4(
 		metallic * material.metallicFactor,
@@ -107,7 +102,7 @@ void main()
 	if (material.useNormalMap > 0)
 	{
 		mat3 TBN = mat3(normalize(tangentViewSpace), normalize(bitangentViewSpace), normalViewSpaceFinal);
-		normalViewSpaceFinal = texture(normalTexture, finalUV).xyz;
+		normalViewSpaceFinal = texture(bindlessTextures[material.normalTexture], finalUV).xyz;
 		normalViewSpaceFinal = normalViewSpaceFinal * 2.0f - 1.0f;
 		normalViewSpaceFinal = normalize(TBN * normalViewSpaceFinal);
 	}
@@ -208,7 +203,7 @@ void main()
 		}
 	}
 
-	vec3 emissiveColor = texture(emissiveTexture, finalUV).xyz;
+	vec3 emissiveColor = texture(bindlessTextures[material.emissiveTexture], finalUV).xyz;
     outEmissive = max(vec4(emissiveColor * material.emissiveColor.xyz * material.emissiveFactor, albedoColor.a), vec4(IsBrightPixel(result, brightnessThreshold), albedoColor.a));
 	outColor = vec4(result, albedoColor.a);
 	outNormal = OctEncode(normalViewSpaceFinal);

@@ -41,6 +41,5 @@ void main()
 	}
 
 	vec4 uiColor = texture(uiTexture, uv);
-
 	outColor = vec4(mix(toneMappedColor, uiColor.xyz, uiColor.a), 1.0f);
 }

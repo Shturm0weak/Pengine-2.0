@@ -54,18 +54,24 @@ Mat:
             - Name: material.useParallaxOcclusion
               Value: 1
               Type: int
-        - Name: albedoTexture
-          Value: 0xb57750dd9c8f14cd31fc2f769fff1f92
-        - Name: normalTexture
-          Value: 0xbf079c729d5e3a7586ba084fea6b2beb
-        - Name: metallicRoughnessTexture
-          Value: White
-        - Name: aoTexture
-          Value: 0x970bd066ca04d302caa8b1e721ce2f6b
-        - Name: emissiveTexture
-          Value: White
-        - Name: heightTexture
-          Value: 0xa1fdb3cbe78ff07479abc956fb2ab65e
+            - Name: material.albedoTexture
+              Value: 0xb57750dd9c8f14cd31fc2f769fff1f92
+              Type: texture
+            - Name: material.normalTexture
+              Value: 0xbf079c729d5e3a7586ba084fea6b2beb
+              Type: texture
+            - Name: material.metallicRoughnessTexture
+              Value: White
+              Type: texture
+            - Name: material.aoTexture
+              Value: 0x970bd066ca04d302caa8b1e721ce2f6b
+              Type: texture
+            - Name: material.emissiveTexture
+              Value: White
+              Type: texture
+            - Name: material.heightTexture
+              Value: 0xa1fdb3cbe78ff07479abc956fb2ab65e
+              Type: texture
     - RenderPass: Transparent
       Uniforms:
         []

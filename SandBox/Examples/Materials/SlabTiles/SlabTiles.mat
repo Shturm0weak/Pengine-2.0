@@ -8,6 +8,21 @@ Mat:
       Inactive:
         - GBuffer
   Pipelines:
+    - RenderPass: ZPrePass
+      Uniforms:
+        []
+    - RenderPass: SpotLightShadows
+      Uniforms:
+        []
+    - RenderPass: PointLightShadows
+      Uniforms:
+        []
+    - RenderPass: CSM
+      Uniforms:
+        []
+    - RenderPass: Transparent
+      Uniforms:
+        []
     - RenderPass: GBuffer
       Uniforms:
         - Name: GBufferMaterial
@@ -54,6 +69,24 @@ Mat:
             - Name: material.useParallaxOcclusion
               Value: 1
               Type: int
+            - Name: material.albedoTexture
+              Value: Examples/Materials/SlabTiles/slab_tiles_diff_2k.png
+              Type: texture
+            - Name: material.normalTexture
+              Value: Examples/Materials/SlabTiles/slab_tiles_nor_gl_2k.png
+              Type: texture
+            - Name: material.metallicRoughnessTexture
+              Value: Examples/Materials/SlabTiles/slab_tiles_arm_2k.png
+              Type: texture
+            - Name: material.aoTexture
+              Value: Examples/Materials/SlabTiles/slab_tiles_ao_2k.png
+              Type: texture
+            - Name: material.emissiveTexture
+              Value: White
+              Type: texture
+            - Name: material.heightTexture
+              Value: Examples/Materials/SlabTiles/slab_tiles_disp_2k.png
+              Type: texture
         - Name: albedoTexture
           Value: 0xbf79571806abb7b3c1d7d6965da55487
         - Name: normalTexture
@@ -66,12 +99,3 @@ Mat:
           Value: White
         - Name: heightTexture
           Value: 0x5b3c5a6565c9b13b0df3453aa6bd6c4a
-    - RenderPass: Transparent
-      Uniforms:
-        []
-    - RenderPass: CSM
-      Uniforms:
-        []
-    - RenderPass: ZPrePass
-      Uniforms:
-        []

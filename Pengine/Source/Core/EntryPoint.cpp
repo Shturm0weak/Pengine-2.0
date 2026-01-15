@@ -161,7 +161,7 @@ void EntryPoint::Run() const
 
 	m_Application->OnPreStart();
 
-	const std::shared_ptr<Renderer> renderer = Renderer::Create();
+	std::shared_ptr<Renderer> renderer = Renderer::Create();
 	
 	m_Application->OnStart();
 
@@ -294,6 +294,8 @@ void EntryPoint::Run() const
 	RenderPassManager::GetInstance().ShutDown();
 	WindowManager::GetInstance().ShutDown();
 
+	renderer = nullptr;
 	mainWindow = nullptr;
+	
 	device->ShutDown();
 }

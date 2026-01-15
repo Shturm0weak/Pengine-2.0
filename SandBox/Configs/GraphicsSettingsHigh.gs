@@ -23,14 +23,14 @@ CSM:
     - 1
   StabilizeCascades: true
 SSS:
-  IsEnabled: true
+  IsEnabled: false
   ResolutionScale: 2
   ResolutionBlurScale: 2
   MaxRayDistance: 0.100000001
   MaxDistance: 50
-  MaxSteps: 16
+  MaxSteps: 128
   MinThickness: -0.0125000002
-  MaxThickness: 0.000150000007
+  MaxThickness: 0
 PointLightShadows:
   IsEnabled: true
   AtlasQuality: 3

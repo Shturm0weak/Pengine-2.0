@@ -6,12 +6,11 @@ layout(location = 0) out vec4 outAlbedo;
 layout(location = 1) out vec4 outShading;
 layout(location = 2) out vec4 outEmissive;
 
-layout(set = 1, binding = 1) uniform sampler2D albedoTexture;
-layout(set = 1, binding = 2) uniform sampler2D normalTexture;
-layout(set = 1, binding = 3) uniform sampler2D metallicRoughnessTexture;
-layout(set = 1, binding = 4) uniform sampler2D aoTexture;
-layout(set = 1, binding = 5) uniform sampler2D emissiveTexture;
-layout(set = 1, binding = 6) uniform sampler2D heightTexture;
+#include "Shaders/Includes/Camera.h"
+layout(set = 0, binding = 0) uniform GlobalBuffer
+{
+	Camera camera;
+};
 
 #include "Shaders/Includes/DefaultMaterial.h"
 layout(set = 1, binding = 0) uniform GBufferMaterial
@@ -19,14 +18,10 @@ layout(set = 1, binding = 0) uniform GBufferMaterial
 	DefaultMaterial material;
 };
 
-#include "Shaders/Includes/Camera.h"
-layout(set = 0, binding = 0) uniform GlobalBuffer
-{
-	Camera camera;
-};
+layout(set = 2, binding = 0) uniform sampler2D bindlessTextures[10000];
 
-layout(set = 2, binding = 0) uniform sampler2D depthGBufferTexture;
-layout(set = 2, binding = 1, rg16f) uniform image2D normalGBufferTexture;
+layout(set = 3, binding = 0) uniform sampler2D depthGBufferTexture;
+layout(set = 3, binding = 1, rg16f) uniform image2D normalGBufferTexture;
 
 #include "Shaders/Includes/ParallaxOcclusionMapping.h"
 
@@ -81,7 +76,7 @@ void main()
     	vec3 positionTangentSpace = TBN * positionWorldSpace;
 		vec3 viewDirectionTangentSpace = normalize(cameraPositionTangentSpace - positionTangentSpace);
 		decalUV = ParallaxOcclusionMapping(
-			heightTexture,
+			bindlessTextures[material.heightTexture],
 			decalUV,
 			viewDirectionTangentSpace,
 			material.minParallaxLayers,
@@ -89,7 +84,7 @@ void main()
 			-material.parallaxHeightScale);
 	}
 
-	vec4 albedoColor = texture(albedoTexture, decalUV) * material.albedoColor;
+	vec4 albedoColor = texture(bindlessTextures[material.albedoTexture], decalUV) * material.albedoColor;
 	if (material.useAlphaCutoff > 0)
 	{
 		if (albedoColor.a < material.alphaCutoff)
@@ -98,10 +93,10 @@ void main()
 		}
 	}
 
-	vec3 metallicRoughness = texture(metallicRoughnessTexture, decalUV).xyz;
+	vec3 metallicRoughness = texture(bindlessTextures[material.metallicRoughnessTexture], decalUV).xyz;
 	float metallic = metallicRoughness.b;
 	float roughness = metallicRoughness.g;
-	float ao = texture(aoTexture, decalUV).r;
+	float ao = texture(bindlessTextures[material.aoTexture], decalUV).r;
 
 	outAlbedo = albedoColor;
 	outShading = vec4(
@@ -109,12 +104,12 @@ void main()
 		roughness * material.roughnessFactor,
 		ao * material.aoFactor,
 		1.0f);
-	outEmissive = texture(emissiveTexture, decalUV) * material.emissiveColor * material.emissiveFactor;
+	outEmissive = texture(bindlessTextures[material.emissiveTexture], decalUV) * material.emissiveColor * material.emissiveFactor;
 	
 	if (material.useNormalMap > 0)
 	{
 		mat3 TBN = ConstructTBN(gbufferNormalViewSpace, positionViewSpace, uvForTBN);
-		vec3 normalMap = texture(normalTexture, decalUV).xyz;
+		vec3 normalMap = texture(bindlessTextures[material.normalTexture], decalUV).xyz;
 		normalMap = normalMap * 2.0f - 1.0f;
 		imageStore(normalGBufferTexture, pixelCoord, vec4(OctEncode(normalize(TBN * normalMap)), 0.0f, 0.0f));
 	}

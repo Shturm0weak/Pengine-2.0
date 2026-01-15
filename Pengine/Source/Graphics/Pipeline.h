@@ -20,6 +20,7 @@ namespace Pengine
 
 		enum class DescriptorSetIndexType
 		{
+			BINDLESS,
 			RENDERER,
 			SCENE,
 			RENDERPASS,
@@ -36,6 +37,7 @@ namespace Pengine
 			std::unordered_map<std::string, glm::vec2> vec2ValuesByName;
 			std::unordered_map<std::string, glm::vec3> vec3ValuesByName;
 			std::unordered_map<std::string, glm::vec4> vec4ValuesByName;
+			std::unordered_map<std::string, std::string> texturesByName;
 		};
 
 		/**

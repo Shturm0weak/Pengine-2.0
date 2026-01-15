@@ -53,11 +53,11 @@ SSR:
   Resolution: 1
   ResolutionBlurScale: 2
   ResolutionScale: 1
-  StepCount: 10
-  Thickness: 1
-  BlurRange: 1
+  StepCount: 20
+  Thickness: 50
+  BlurRange: 5
   BlurOffset: 1
-  MipMultiplier: 0.5
+  MipMultiplier: 0
   UseSkyBoxFallback: true
   Blur: 1
 PostProcess:

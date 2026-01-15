@@ -115,6 +115,9 @@ void RenderPassManager::GetUniformWriters(
 	{
 		switch (location.first)
 		{
+		case Pipeline::DescriptorSetIndexType::BINDLESS:
+			uniformWriters.emplace_back(TextureManager::GetInstance().GetBindlessUniformWriter());
+			break;
 		case Pipeline::DescriptorSetIndexType::RENDERER:
 			uniformWriters.emplace_back(renderInfo.renderView->GetUniformWriter(location.second));
 			break;
@@ -423,7 +426,7 @@ void RenderPassManager::CreateZPrePass()
 	{
 		PROFILER_SCOPE(ZPrePass);
 
-		const std::string renderPassName = renderInfo.renderPass->GetName();
+		const std::string& renderPassName = renderInfo.renderPass->GetName();
 
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
 		const Camera& camera = renderInfo.camera->GetComponent<Camera>();
@@ -553,7 +556,7 @@ void RenderPassManager::CreateGBuffer()
 	{
 		PROFILER_SCOPE(GBuffer);
 		
-		const std::string renderPassName = renderInfo.renderPass->GetName();
+		const std::string& renderPassName = renderInfo.renderPass->GetName();
 
 		VisibleData* visibleData = (VisibleData*)renderInfo.renderView->GetCustomData("VisibleData");
 
@@ -1000,7 +1003,7 @@ void RenderPassManager::CreateAtmosphere()
 	{
 		PROFILER_SCOPE(Atmosphere);
 
-		const std::string renderPassName = renderInfo.renderPass->GetName();
+		const std::string& renderPassName = renderInfo.renderPass->GetName();
 		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.scene->GetRenderView()->GetFrameBuffer(Atmosphere);
 		auto directionalLightView = renderInfo.scene->GetRegistry().view<DirectionalLight>();
 
@@ -1109,7 +1112,7 @@ void RenderPassManager::CreateAtmosphere()
 		}
 	};
 
-	const std::shared_ptr<RenderPass> renderPass = CreateRenderPass(createInfo);
+	CreateRenderPass(createInfo);
 }
 
 void RenderPassManager::CreateTransparent()
@@ -1183,7 +1186,7 @@ void RenderPassManager::CreateTransparent()
 	{
 		PROFILER_SCOPE(Transparent);
 
-		const std::string renderPassName = renderInfo.renderPass->GetName();
+		const std::string& renderPassName = renderInfo.renderPass->GetName();
 
 		VisibleData* visibleData = (VisibleData*)renderInfo.renderView->GetCustomData("VisibleData");
 
@@ -1428,7 +1431,7 @@ void RenderPassManager::CreateCSM()
 	{
 		PROFILER_SCOPE(CSM);
 
-		const std::string renderPassName = renderInfo.renderPass->GetName();
+		const std::string& renderPassName = renderInfo.renderPass->GetName();
 
 		const GraphicsSettings::Shadows::CSM& shadowsSettings = renderInfo.scene->GetGraphicsSettings().shadows.csm;
 		if (!shadowsSettings.isEnabled)
@@ -1456,7 +1459,7 @@ void RenderPassManager::CreateCSM()
 		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
 		if (!frameBuffer)
 		{
-			const std::string renderPassName = renderInfo.renderPass->GetName();
+			const std::string& renderPassName = renderInfo.renderPass->GetName();
 			renderInfo.renderPass->GetAttachmentDescriptions().back().textureCreateInfo.layerCount = shadowsSettings.cascadeCount;
 			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderView.get(), shadowMapSize);
 
@@ -1804,7 +1807,7 @@ void RenderPassManager::CreatePointLightShadows()
 	{
 		PROFILER_SCOPE(PointLightShadows);
 
-		const std::string renderPassName = renderInfo.renderPass->GetName();
+		const std::string& renderPassName = renderInfo.renderPass->GetName();
 
 		size_t renderableCount = 0;
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
@@ -2040,7 +2043,7 @@ void RenderPassManager::CreatePointLightShadows()
 		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
 		if (!frameBuffer)
 		{
-			const std::string renderPassName = renderInfo.renderPass->GetName();
+			const std::string& renderPassName = renderInfo.renderPass->GetName();
 			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderView.get(), shadowMapAtlasSize);
 
 			renderInfo.renderView->SetFrameBuffer(renderPassName, frameBuffer);
@@ -2289,7 +2292,7 @@ void RenderPassManager::CreatePointLightShadows()
 							if (skeletalAnimator)
 							{
 								std::vector<NativeHandle> newUniformWriterNativeHandles = uniformWriterNativeHandles;
-								uniformWriterNativeHandles.emplace_back(skeletalAnimator->GetUniformWriter()->GetNativeHandle());
+								newUniformWriterNativeHandles.emplace_back(skeletalAnimator->GetUniformWriter()->GetNativeHandle());
 
 								std::vector<NativeHandle> vertexBuffers;
 								std::vector<size_t> vertexBufferOffsets;
@@ -2370,7 +2373,7 @@ void RenderPassManager::CreateSpotLightShadows()
 	{
 		PROFILER_SCOPE(SpotLightShadows);
 
-		const std::string renderPassName = renderInfo.renderPass->GetName();
+		const std::string& renderPassName = renderInfo.renderPass->GetName();
 
 		size_t renderableCount = 0;
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
@@ -2566,7 +2569,7 @@ void RenderPassManager::CreateSpotLightShadows()
 		std::shared_ptr<FrameBuffer> frameBuffer = renderInfo.renderView->GetFrameBuffer(renderPassName);
 		if (!frameBuffer)
 		{
-			const std::string renderPassName = renderInfo.renderPass->GetName();
+			const std::string& renderPassName = renderInfo.renderPass->GetName();
 			frameBuffer = FrameBuffer::Create(renderInfo.renderPass, renderInfo.renderView.get(), shadowMapAtlasSize);
 
 			renderInfo.renderView->SetFrameBuffer(renderPassName, frameBuffer);
@@ -2881,7 +2884,7 @@ void RenderPassManager::CreateBloom()
 	{
 		PROFILER_SCOPE(Bloom);
 
-		const std::string renderPassName = renderInfo.renderPass->GetName();
+		const std::string& renderPassName = renderInfo.renderPass->GetName();
 		const GraphicsSettings::Bloom& bloomSettings = renderInfo.scene->GetGraphicsSettings().bloom;
 		const int mipCount = bloomSettings.mipCount;
 
@@ -3822,7 +3825,7 @@ void RenderPassManager::CreateDecalPass()
 	{
 		PROFILER_SCOPE(Decals);
 
-		const std::string renderPassName = renderInfo.renderPass->GetName();
+		const std::string& renderPassName = renderInfo.renderPass->GetName();
 
 		size_t renderableCount = 0;
 		const std::shared_ptr<Scene> scene = renderInfo.scene;
@@ -4010,7 +4013,7 @@ void RenderPassManager::CreateToneMappingPass()
 
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 
-		const std::string renderPassName = renderInfo.renderPass->GetName();
+		const std::string& renderPassName = renderInfo.renderPass->GetName();
 
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/ToneMapping.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);
@@ -4104,7 +4107,7 @@ void RenderPassManager::CreateAntiAliasingAndComposePass()
 
 		const std::shared_ptr<Mesh> plane = MeshManager::GetInstance().LoadMesh("FullScreenQuad");
 
-		const std::string renderPassName = renderInfo.renderPass->GetName();
+		const std::string& renderPassName = renderInfo.renderPass->GetName();
 
 		const std::shared_ptr<BaseMaterial> baseMaterial = MaterialManager::GetInstance().LoadBaseMaterial("Materials/AntiAliasingAndCompose.basemat");
 		const std::shared_ptr<Pipeline> pipeline = baseMaterial->GetPipeline(renderPassName);

@@ -26,6 +26,7 @@ class Editor
 {
 public:
 	Editor();
+	~Editor();
 
 	void Update(const std::shared_ptr<Pengine::Scene>& scene, Pengine::Window& window);
 
@@ -276,6 +277,8 @@ private:
 		std::unordered_map<std::filesystem::path, Pengine::ThumbnailAtlas::TileInfo>::iterator m_ThumbnailToCheck = m_CacheThumbnails.end();
 
 		void Initialize();
+
+		void ShutDown();
 
 		void UpdateThumbnails();
 

@@ -56,14 +56,20 @@ void UniformWriter::WriteBuffer(uint32_t location, const std::shared_ptr<Buffer>
 	write.size = size;
 	write.binding = *binding;
 
+	std::lock_guard<std::mutex> lock(mutex);
 	for (size_t i = 0; i < m_Writes.size(); i++)
 	{
-		m_Writes[i].m_BufferWritesByLocation[location] = write;
+		m_Writes[i].bufferWritesByLocation[location] = write;
 	}
 }
 
-void UniformWriter::WriteTexture(uint32_t location, const std::shared_ptr<Texture>& texture)
+#include <format>
+#include <thread>
+
+void UniformWriter::WriteTexture(uint32_t location, const std::shared_ptr<Texture>& texture, uint32_t dstArrayElement)
 {
+	assert(texture);
+
 	const auto binding = m_UniformLayout->GetBindingByLocation(location);
 	if (!binding)
 	{
@@ -73,15 +79,19 @@ void UniformWriter::WriteTexture(uint32_t location, const std::shared_ptr<Textur
 	TextureWrite write{};
 	write.textures = { texture };
 	write.binding = *binding;
+	write.dstArrayElement = dstArrayElement;
 
+	std::lock_guard<std::mutex> lock(mutex);
 	for (size_t i = 0; i < m_Writes.size(); i++)
 	{
-		m_Writes[i].m_TextureWritesByLocation[location] = write;
+		m_Writes[i].textureWritesByLocation[location].emplace_back(write);
 	}
 }
 
-void UniformWriter::WriteTextures(uint32_t location, const std::vector<std::shared_ptr<Texture>>& textures)
+void UniformWriter::WriteTextures(uint32_t location, const std::vector<std::shared_ptr<Texture>>& textures, uint32_t dstArrayElement)
 {
+	assert(!textures.empty());
+
 	const auto binding = m_UniformLayout->GetBindingByLocation(location);
 	if (!binding)
 	{
@@ -91,10 +101,12 @@ void UniformWriter::WriteTextures(uint32_t location, const std::vector<std::shar
 	TextureWrite write{};
 	write.textures = textures;
 	write.binding = *binding;
+	write.dstArrayElement = dstArrayElement;
 
+	std::lock_guard<std::mutex> lock(mutex);
 	for (size_t i = 0; i < m_Writes.size(); i++)
 	{
-		m_Writes[i].m_TextureWritesByLocation[location] = write;
+		m_Writes[i].textureWritesByLocation[location].emplace_back(write);
 	}
 }
 
@@ -107,22 +119,22 @@ void UniformWriter::WriteBuffer(const std::string& name, const std::shared_ptr<B
 	WriteBuffer(location, buffer, size, offset);
 }
 
-void UniformWriter::WriteTexture(const std::string& name, const std::shared_ptr<Texture>& texture)
+void UniformWriter::WriteTexture(const std::string& name, const std::shared_ptr<Texture>& texture, uint32_t dstArrayElement)
 {
 	const uint32_t location = m_UniformLayout->GetBindingLocationByName(name);
 	m_TextureNameByLocation[location] = name;
 	m_TexturesByName[name] = { texture };
 
-	WriteTexture(location, texture);
+	WriteTexture(location, texture, dstArrayElement);
 }
 
-void UniformWriter::WriteTextures(const std::string& name, const std::vector<std::shared_ptr<Texture>>& textures)
+void UniformWriter::WriteTextures(const std::string& name, const std::vector<std::shared_ptr<Texture>>& textures, uint32_t dstArrayElement)
 {
 	const uint32_t location = m_UniformLayout->GetBindingLocationByName(name);
 	m_TextureNameByLocation[location] = name;
 	m_TexturesByName[name] = textures;
 
-	WriteTextures(location, textures);
+	WriteTextures(location, textures, dstArrayElement);
 }
 
 std::vector<std::shared_ptr<Buffer>> UniformWriter::GetBuffer(const std::string& name)

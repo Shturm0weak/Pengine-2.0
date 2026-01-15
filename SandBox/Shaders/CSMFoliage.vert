@@ -10,7 +10,7 @@ layout(location = 0) out vec2 uv;
 layout(location = 1) flat out uint layers;
 
 #include "Shaders/Includes/Camera.h"
-layout(set = 2, binding = 0) uniform GlobalBuffer
+layout(set = 3, binding = 0) uniform GlobalBuffer
 {
 	Camera camera;
 };

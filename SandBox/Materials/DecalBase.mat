@@ -49,15 +49,21 @@ Mat:
             - Name: material.useParallaxOcclusion
               Value: 0
               Type: int
-        - Name: albedoTexture
-          Value: 0x3b7fe01a6b00eb14caa3d7a7de935a33
-        - Name: normalTexture
-          Value: 0xf97f2797b46e6bb936148a3543dfe504
-        - Name: metallicRoughnessTexture
-          Value: White
-        - Name: aoTexture
-          Value: White
-        - Name: emissiveTexture
-          Value: White
-        - Name: heightTexture
-          Value: White
+            - Name: material.albedoTexture
+              Value: 0x3b7fe01a6b00eb14caa3d7a7de935a33
+              Type: texture
+            - Name: material.normalTexture
+              Value: 0xf97f2797b46e6bb936148a3543dfe504
+              Type: texture
+            - Name: material.metallicRoughnessTexture
+              Value: White
+              Type: texture
+            - Name: material.aoTexture
+              Value: White
+              Type: texture
+            - Name: material.emissiveTexture
+              Value: White
+              Type: texture
+            - Name: material.heightTexture
+              Value: White
+              Type: texture

@@ -8,6 +8,15 @@ Mat:
       Inactive:
         - GBuffer
   Pipelines:
+    - RenderPass: ZPrePass
+      Uniforms:
+        []
+    - RenderPass: CSM
+      Uniforms:
+        []
+    - RenderPass: Transparent
+      Uniforms:
+        []
     - RenderPass: GBuffer
       Uniforms:
         - Name: GBufferMaterial
@@ -54,6 +63,24 @@ Mat:
             - Name: material.useParallaxOcclusion
               Value: 1
               Type: int
+            - Name: material.albedoTexture
+              Value: White
+              Type: texture
+            - Name: material.normalTexture
+              Value: Black
+              Type: texture
+            - Name: material.metallicRoughnessTexture
+              Value: White
+              Type: texture
+            - Name: material.aoTexture
+              Value: White
+              Type: texture
+            - Name: material.emissiveTexture
+              Value: White
+              Type: texture
+            - Name: material.heightTexture
+              Value: White
+              Type: texture
             - Name: size
               Value: [1, 1]
               Type: vec2
@@ -63,24 +90,3 @@ Mat:
             - Name: secondColor
               Value: [0.0196078438, 0.0196078438, 0.0196078438, 1]
               Type: vec4
-        - Name: albedoTexture
-          Value: White
-        - Name: normalTexture
-          Value: Black
-        - Name: metallicRoughnessTexture
-          Value: White
-        - Name: aoTexture
-          Value: White
-        - Name: emissiveTexture
-          Value: White
-        - Name: heightTexture
-          Value: White
-    - RenderPass: Transparent
-      Uniforms:
-        []
-    - RenderPass: CSM
-      Uniforms:
-        []
-    - RenderPass: ZPrePass
-      Uniforms:
-        []

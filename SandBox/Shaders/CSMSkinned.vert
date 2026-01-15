@@ -11,7 +11,7 @@ layout(location = 0) out vec2 uv;
 layout(location = 1) flat out uint layers;
 
 #include "Shaders/Includes/Bones.h"
-layout(set = 2, binding = 0) uniform BoneMatrices
+layout(set = 3, binding = 0) uniform BoneMatrices
 {
 	mat4 boneMatrices[MAX_BONES];
 };

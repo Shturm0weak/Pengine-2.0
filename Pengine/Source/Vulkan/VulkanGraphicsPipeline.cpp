@@ -140,6 +140,7 @@ VulkanGraphicsPipeline::~VulkanGraphicsPipeline()
 	{
 		vkDestroyPipelineLayout(GetVkDevice()->GetDevice(), pipelineLayout, nullptr);
 		vkDestroyPipeline(GetVkDevice()->GetDevice(), graphicsPipeline, nullptr);
+		
 	});
 }
 

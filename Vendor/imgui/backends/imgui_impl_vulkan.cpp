@@ -1023,10 +1023,20 @@ bool ImGui_ImplVulkan_CreateDeviceObjects()
         binding[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         binding[0].descriptorCount = 1;
         binding[0].stageFlags = VK_SHADER_STAGE_ALL;
+
+        VkDescriptorBindingFlags bindingFlag = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT;
+
+        VkDescriptorSetLayoutBindingFlagsCreateInfo flagsInfo{};
+        flagsInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
+        flagsInfo.bindingCount = 1;
+        flagsInfo.pBindingFlags = &bindingFlag;
+
         VkDescriptorSetLayoutCreateInfo info = {};
         info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
         info.bindingCount = 1;
         info.pBindings = binding;
+        info.pNext = &flagsInfo;
+        info.flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT;
         err = vkCreateDescriptorSetLayout(v->Device, &info, v->Allocator, &bd->DescriptorSetLayout);
         check_vk_result(err);
     }

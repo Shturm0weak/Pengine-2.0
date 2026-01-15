@@ -54,18 +54,24 @@ Mat:
             - Name: material.useParallaxOcclusion
               Value: 0
               Type: int
-        - Name: albedoTexture
-          Value: White
-        - Name: normalTexture
-          Value: Black
-        - Name: metallicRoughnessTexture
-          Value: White
-        - Name: aoTexture
-          Value: White
-        - Name: emissiveTexture
-          Value: White
-        - Name: heightTexture
-          Value: White
+            - Name: material.albedoTexture
+              Value: White
+              Type: texture
+            - Name: material.normalTexture
+              Value: Black
+              Type: texture
+            - Name: material.metallicRoughnessTexture
+              Value: White
+              Type: texture
+            - Name: material.aoTexture
+              Value: White
+              Type: texture
+            - Name: material.emissiveTexture
+              Value: White
+              Type: texture
+            - Name: material.heightTexture
+              Value: White
+              Type: texture
     - RenderPass: Transparent
       Uniforms:
         []

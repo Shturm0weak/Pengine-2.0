@@ -44,9 +44,23 @@ void Material::Reload(const std::shared_ptr<Material>& material, bool reloadBase
 	auto callback = [material]()
 	{
 		material->m_UniformWriterByPass.clear();
-		material->m_BuffersByName.clear();
 		material->m_OptionsByName.clear();
 		material->m_PipelineStates.clear();
+		material->m_BuffersByName.clear();
+
+		std::vector<std::shared_ptr<Texture>> textures;
+		textures.reserve(material->m_BindlessTexturesByIndex.size());
+		
+		for (const auto& [index, texture] : material->m_BindlessTexturesByIndex)
+		{
+			textures.emplace_back(texture);
+		}
+		material->m_BindlessTexturesByIndex.clear();
+
+		for (auto& texture : textures)
+		{
+			TextureManager::GetInstance().Delete(texture);
+		}
 
 		try
 		{
@@ -93,7 +107,11 @@ std::shared_ptr<Material> Material::Clone(
 
 				auto& uniformBufferInfo = createInfo.uniformInfos[passName].uniformBuffersByName[binding.name];
 
-				std::function<void(const ShaderReflection::ReflectVariable&, std::string)> copyValue = [data, &copyValue, &uniformBufferInfo]
+				std::function<void(const ShaderReflection::ReflectVariable&, std::string)> copyValue = [
+					data,
+					&material,
+					&copyValue,
+					&uniformBufferInfo]
 				(const ShaderReflection::ReflectVariable& value, std::string parentName)
 				{
 					parentName += value.name;
@@ -125,6 +143,11 @@ std::shared_ptr<Material> Material::Clone(
 							copyValue(memberValue, parentName + ".");
 						}
 					}
+					else if (value.type == ShaderReflection::ReflectVariable::Type::TEXTURE)
+					{
+						const int index = Utils::GetValue<int>(data, value.offset);
+						uniformBufferInfo.texturesByName.emplace(parentName, material->GetBindlessTexture(index)->GetFilepath());
+					}
 				};
 
 				for (const auto& value : binding.buffer->variables)
@@ -149,6 +172,20 @@ Material::Material(
 
 Material::~Material()
 {
+	std::vector<std::shared_ptr<Texture>> textures;
+	textures.reserve(m_BindlessTexturesByIndex.size());
+	
+	for (const auto& [index, texture] : m_BindlessTexturesByIndex)
+	{
+		textures.emplace_back(texture);
+	}
+	m_BindlessTexturesByIndex.clear();
+
+	for (auto& texture : textures)
+	{
+		TextureManager::GetInstance().Delete(texture);
+	}
+
 	MaterialManager::GetInstance().DeleteBaseMaterial(m_BaseMaterial);
 }
 
@@ -194,7 +231,31 @@ void Material::SetOption(const std::string& name, bool isEnabled)
 	}
 }
 
-void Material::CreateResources(const CreateInfo& createInfo)
+std::shared_ptr<Texture> Pengine::Material::GetBindlessTexture(const int index) const
+{
+	auto bindlessTextureByIndex = m_BindlessTexturesByIndex.find(index);
+	if (bindlessTextureByIndex != m_BindlessTexturesByIndex.end())
+	{
+		return bindlessTextureByIndex->second;
+	}
+
+	return nullptr;
+}
+
+int Pengine::Material::BindBindlessTexture(const std::shared_ptr<Texture>& texture)
+{
+    const int index = TextureManager::GetInstance().BindTextureToBindlessUniformWriter(texture);
+	m_BindlessTexturesByIndex[index] = texture;
+	return index;
+}
+
+void Pengine::Material::UnBindBindlessTexture(const std::shared_ptr<Texture>& texture)
+{
+	m_BindlessTexturesByIndex.erase(texture->GetBindlessIndex());
+	TextureManager::GetInstance().UnBindTextureFromBindlessUniformWriter(texture);
+}
+
+void Material::CreateResources(const CreateInfo &createInfo)
 {
 	m_BaseMaterial = AsyncAssetLoader::GetInstance().SyncLoadBaseMaterial(createInfo.baseMaterial);
 	m_OptionsByName = createInfo.optionsByName;
@@ -274,6 +335,13 @@ void Material::CreateResources(const CreateInfo& createInfo)
 			for (auto const& [loadedValueName, loadedValue] : bufferInfo.vec2ValuesByName)
 			{
 				WriteToBuffer(uniformBufferName, loadedValueName, loadedValue);
+			}
+
+			for (const auto& [name, filepath] : bufferInfo.texturesByName)
+			{
+				std::shared_ptr<Texture> texture = TextureManager::GetInstance().Load(filepath);
+				const int index = BindBindlessTexture(texture);
+				WriteToBuffer(uniformBufferName, name, index);
 			}
 		}
 	}

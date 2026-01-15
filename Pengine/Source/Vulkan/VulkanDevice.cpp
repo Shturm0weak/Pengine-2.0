@@ -221,7 +221,12 @@ void VulkanDevice::CreateLogicalDevice()
 	vulkan12Features.descriptorIndexing = VK_TRUE;
 	vulkan12Features.runtimeDescriptorArray = VK_TRUE;
 	vulkan12Features.descriptorBindingPartiallyBound = VK_TRUE;
-
+	vulkan12Features.shaderSampledImageArrayNonUniformIndexing = VK_TRUE;
+	vulkan12Features.descriptorBindingUniformBufferUpdateAfterBind = VK_TRUE;
+	vulkan12Features.descriptorBindingStorageBufferUpdateAfterBind = VK_TRUE;
+	vulkan12Features.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE;
+	vulkan12Features.descriptorBindingStorageImageUpdateAfterBind = VK_TRUE;
+	
 	VkDeviceCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	createInfo.pNext = &vulkan12Features;
@@ -609,12 +614,12 @@ VulkanDevice::VulkanDevice(const std::string& applicationName)
 	if (!m_DescriptorPool)
 	{
 		m_DescriptorPool = VulkanDescriptorPool::Builder()
-			.SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT)
+			.SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT)
 			.SetMaxSets(1000 * 10)
-			.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 4000)
-			.AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 4000)
-			.AddPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 4000)
-			.AddPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 4000)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10000)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10000)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 10000)
+			.AddPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 10000)
 			.Build(m_Device);
 	}
 }

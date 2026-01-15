@@ -13,7 +13,10 @@ Basemat:
           RenderPass: DefaultReflection
           Set: 0
         - Type: Material
+          RenderPass: GBuffer
           Set: 1
+        - Type: Bindless
+          Set: 2
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex
@@ -56,12 +59,14 @@ Basemat:
         - Type: Material
           RenderPass: GBuffer
           Set: 1
-        - Type: Renderer
-          RenderPass: Deferred
+        - Type: Bindless
           Set: 2
         - Type: Renderer
-          RenderPass: Lights
+          RenderPass: Deferred
           Set: 3
+        - Type: Renderer
+          RenderPass: Lights
+          Set: 4
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex
@@ -108,6 +113,8 @@ Basemat:
         - Type: Material
           RenderPass: GBuffer
           Set: 1
+        - Type: Bindless
+          Set: 2
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex
@@ -137,6 +144,8 @@ Basemat:
         - Type: Material
           RenderPass: GBuffer
           Set: 1
+        - Type: Bindless
+          Set: 2
       VertexInputBindingDescriptions:
         - Binding: 0
           InputRate: Vertex

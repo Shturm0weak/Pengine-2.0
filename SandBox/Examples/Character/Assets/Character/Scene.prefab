@@ -1,0 +1,583 @@
+Name: Character
+IsEnabled: true
+Transform:
+  Position: [-8.09042931, 1.00676608, -1.26587462]
+  Rotation: [1.57079625, -0, 0]
+  Scale: [0.00999999978, 0.00999999978, 0.00999999978]
+  FollowOwner: true
+SkeletalAnimator:
+  Skeleton: 0x9efce6a66fc7150fcc7cc21d735208f6
+  SkeletalAnimation: 0x57091eb674bcf972aa4a33786cac50c2
+  Speed: 1
+  CurrentTime: 0.223920166
+  ApplySkeletonTransform: false
+Childs:
+  - Name: vanguard_Mesh
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: Character
+      Mesh: 0x0eb72e10751534ea2e14949c8eeb7083
+      Material: 0x857be4457a7fee77267e52b8043d942f
+      RenderingOrder: 5
+      IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
+    Childs:
+      []
+  - Name: vanguard_visor
+    IsEnabled: true
+    Transform:
+      Position: [0, 0, 0]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+      FollowOwner: true
+    Renderer3D:
+      SkeletalAnimatorEntity: Character
+      Mesh: 0x9de8e5064d92acf0c8158fa734668033
+      Material: 0xba457a080f09a349bb5757ce8e9fa563
+      RenderingOrder: 5
+      IsEnabled: true
+      CastShadows: true
+      ObjectVisibilityMask: 255
+      ShadowVisibilityMask: 255
+    Childs:
+      []
+  - Name: mixamorig:Hips
+    IsEnabled: true
+    Transform:
+      Position: [-1.17566609, -2.38825917, -89.6125488]
+      Rotation: [-1.27560973, 0.0815335661, -0.0632636845]
+      Scale: [1, 0.99999994, 1]
+      FollowOwner: true
+    Childs:
+      - Name: mixamorig:Spine
+        IsEnabled: true
+        Transform:
+          Position: [0.000800234033, 9.22629929, 1.57709837]
+          Rotation: [0.0979297161, 0.0242690425, -0.117367245]
+          Scale: [0.999999881, 1, 0.999999881]
+          FollowOwner: true
+        Childs:
+          - Name: mixamorig:Spine1
+            IsEnabled: true
+            Transform:
+              Position: [2.04408053e-07, 16.254797, 5.58260854e-06]
+              Rotation: [-0.0204509702, 0.0105830012, -0.0336910523]
+              Scale: [0.999999881, 1, 1]
+              FollowOwner: true
+            Childs:
+              - Name: mixamorig:Spine2
+                IsEnabled: true
+                Transform:
+                  Position: [-1.6180951e-07, 13.7007141, -2.27632654e-07]
+                  Rotation: [-0.145624548, 0.0147625804, -0.0320066102]
+                  Scale: [1, 1, 1]
+                  FollowOwner: true
+                Childs:
+                  - Name: mixamorig:Neck
+                    IsEnabled: true
+                    Transform:
+                      Position: [-8.42869383e-07, 14.5444965, 2.18068578e-07]
+                      Rotation: [0.274461031, -0.0299608409, 0.00490579056]
+                      Scale: [1, 1.00000012, 1]
+                      FollowOwner: true
+                    Childs:
+                      - Name: mixamorig:Head
+                        IsEnabled: true
+                        Transform:
+                          Position: [4.68244309e-07, 4.02660131, 0.858498394]
+                          Rotation: [-0.222420514, -0.130787432, 0.203844458]
+                          Scale: [1, 0.99999994, 1]
+                          FollowOwner: true
+                        Childs:
+                          - Name: mixamorig:HeadTop_End
+                            IsEnabled: true
+                            Transform:
+                              Position: [1.62757971e-07, 21.7487755, -1.19458139e-06]
+                              Rotation: [-9.53059232e-09, -1.08095199e-09, -1.7937859e-09]
+                              Scale: [1, 1, 1]
+                              FollowOwner: true
+                            Childs:
+                              []
+                  - Name: mixamorig:LeftShoulder
+                    IsEnabled: true
+                    Transform:
+                      Position: [6.14419842, 10.8553953, -0.569598913]
+                      Rotation: [-2.95344329, 1.20084882, 1.29861522]
+                      Scale: [1, 1.00000012, 1.00000036]
+                      FollowOwner: true
+                    Childs:
+                      - Name: mixamorig:LeftArm
+                        IsEnabled: true
+                        Transform:
+                          Position: [-3.55333668e-07, 12.4985981, -8.10522397e-06]
+                          Rotation: [0.71719557, 0.223310232, 0.296492338]
+                          Scale: [1, 0.99999994, 1.00000012]
+                          FollowOwner: true
+                        Childs:
+                          - Name: mixamorig:LeftForeArm
+                            IsEnabled: true
+                            Transform:
+                              Position: [-1.23531618e-06, 27.6870079, 1.54879388e-06]
+                              Rotation: [-1.65944599e-07, -1.03304139e-08, 0.801520646]
+                              Scale: [1, 0.99999994, 0.99999994]
+                              FollowOwner: true
+                            Childs:
+                              - Name: mixamorig:LeftHand
+                                IsEnabled: true
+                                Transform:
+                                  Position: [-2.87943885e-06, 27.873806, -6.01315196e-06]
+                                  Rotation: [-0.846678078, -0.634931087, 0.655042887]
+                                  Scale: [0.999999881, 0.999999881, 1]
+                                  FollowOwner: true
+                                Childs:
+                                  - Name: mixamorig:LeftHandThumb1
+                                    IsEnabled: true
+                                    Transform:
+                                      Position: [-2.39240217, 2.42101192, 1.39549708]
+                                      Rotation: [0.37048924, -0.195752427, 0.40282014]
+                                      Scale: [1, 1.00000024, 0.99999994]
+                                      FollowOwner: true
+                                    Childs:
+                                      - Name: mixamorig:LeftHandThumb2
+                                        IsEnabled: true
+                                        Transform:
+                                          Position: [2.7930023e-06, 4.51400089, -2.39517385e-06]
+                                          Rotation: [-0.107171811, 0.0235024747, -0.446805686]
+                                          Scale: [1, 1, 1]
+                                          FollowOwner: true
+                                        Childs:
+                                          - Name: mixamorig:LeftHandThumb3
+                                            IsEnabled: true
+                                            Transform:
+                                              Position: [3.36240055e-06, 5.17870188, -3.61218736e-06]
+                                              Rotation: [-0.270983517, -0.157115459, -0.160513058]
+                                              Scale: [1, 0.999999881, 1]
+                                              FollowOwner: true
+                                            Childs:
+                                              - Name: mixamorig:LeftHandThumb4
+                                                IsEnabled: true
+                                                Transform:
+                                                  Position: [-3.03931529e-06, 2.70559287, -6.07511083e-07]
+                                                  Rotation: [0.0373948514, 0.249888435, 0.150128573]
+                                                  Scale: [0.99999994, 1.00000024, 0.99999994]
+                                                  FollowOwner: true
+                                                Childs:
+                                                  []
+                                  - Name: mixamorig:LeftHandIndex1
+                                    IsEnabled: true
+                                    Transform:
+                                      Position: [-2.26479864, 10.5148182, 0.231401429]
+                                      Rotation: [1.4644841, 0.0449605957, -0.102471389]
+                                      Scale: [1, 0.999999881, 1]
+                                      FollowOwner: true
+                                    Childs:
+                                      - Name: mixamorig:LeftHandIndex2
+                                        IsEnabled: true
+                                        Transform:
+                                          Position: [-2.88766387e-07, 5.54930401, -1.98471025e-06]
+                                          Rotation: [1.03534389, 0.0502812602, -0.0882553756]
+                                          Scale: [0.999999881, 1.00000012, 1.00000012]
+                                          FollowOwner: true
+                                        Childs:
+                                          - Name: mixamorig:LeftHandIndex3
+                                            IsEnabled: true
+                                            Transform:
+                                              Position: [-1.64917958e-06, 3.39110422, 1.58286639e-07]
+                                              Rotation: [0.848216295, 0.0347572863, -0.0769498572]
+                                              Scale: [1, 1, 1]
+                                              FollowOwner: true
+                                            Childs:
+                                              - Name: mixamorig:LeftHandIndex4
+                                                IsEnabled: true
+                                                Transform:
+                                                  Position: [-2.9821731e-06, 2.33430529, 2.16533948e-07]
+                                                  Rotation: [1.26661988e-08, 0.00800403673, 4.36226837e-05]
+                                                  Scale: [1, 1, 1.00000012]
+                                                  FollowOwner: true
+                                                Childs:
+                                                  []
+                                  - Name: mixamorig:LeftHandMiddle1
+                                    IsEnabled: true
+                                    Transform:
+                                      Position: [4.00505633e-06, 10.4908113, 2.12866325e-07]
+                                      Rotation: [1.48329914, 0.0526880845, -0.139679596]
+                                      Scale: [1, 1, 1.00000012]
+                                      FollowOwner: true
+                                    Childs:
+                                      - Name: mixamorig:LeftHandMiddle2
+                                        IsEnabled: true
+                                        Transform:
+                                          Position: [-9.64030505e-07, 5.792099, 2.47215667e-07]
+                                          Rotation: [1.0386759, 0.0505759977, -0.0884300694]
+                                          Scale: [1, 0.99999994, 0.99999994]
+                                          FollowOwner: true
+                                        Childs:
+                                          - Name: mixamorig:LeftHandMiddle3
+                                            IsEnabled: true
+                                            Transform:
+                                              Position: [1.82550866e-06, 3.71319842, 6.88311047e-07]
+                                              Rotation: [0.84750706, 0.0347028486, -0.0769014731]
+                                              Scale: [0.999999881, 1.00000012, 1]
+                                              FollowOwner: true
+                                            Childs:
+                                              - Name: mixamorig:LeftHandMiddle4
+                                                IsEnabled: true
+                                                Transform:
+                                                  Position: [-3.95362667e-06, 2.75200701, 4.81065126e-06]
+                                                  Rotation: [-1.10874826e-05, 0.00915958639, -0.00130720553]
+                                                  Scale: [1, 1, 1]
+                                                  FollowOwner: true
+                                                Childs:
+                                                  []
+                                  - Name: mixamorig:LeftHandRing1
+                                    IsEnabled: true
+                                    Transform:
+                                      Position: [2.31410217, 10.240716, 0.0460015461]
+                                      Rotation: [1.47762716, 0.0587162152, -0.140031099]
+                                      Scale: [1, 1.00000012, 0.99999994]
+                                      FollowOwner: true
+                                    Childs:
+                                      - Name: mixamorig:LeftHandRing2
+                                        IsEnabled: true
+                                        Transform:
+                                          Position: [1.917585e-06, 5.44520664, -3.56666851e-06]
+                                          Rotation: [1.05730844, 0.0522348173, -0.0893867463]
+                                          Scale: [1, 1, 0.999999881]
+                                          FollowOwner: true
+                                        Childs:
+                                          - Name: mixamorig:LeftHandRing3
+                                            IsEnabled: true
+                                            Transform:
+                                              Position: [-2.4412775e-06, 3.71318936, -2.10318558e-06]
+                                              Rotation: [0.829579711, 0.033332821, -0.0756698176]
+                                              Scale: [1, 0.999999881, 0.999999881]
+                                              FollowOwner: true
+                                            Childs:
+                                              - Name: mixamorig:LeftHandRing4
+                                                IsEnabled: true
+                                                Transform:
+                                                  Position: [8.12412691e-06, 2.28071022, -9.99079703e-07]
+                                                  Rotation: [2.01035273e-05, 0.0147933224, 0.0015550293]
+                                                  Scale: [1, 1, 0.999999881]
+                                                  FollowOwner: true
+                                                Childs:
+                                                  []
+                                  - Name: mixamorig:LeftHandPinky1
+                                    IsEnabled: true
+                                    Transform:
+                                      Position: [4.4185009, 9.82030869, 0.209698409]
+                                      Rotation: [1.75737798, 0.208564356, -0.31776461]
+                                      Scale: [0.99999994, 1, 1]
+                                      FollowOwner: true
+                                    Childs:
+                                      - Name: mixamorig:LeftHandPinky2
+                                        IsEnabled: true
+                                        Transform:
+                                          Position: [4.44231591e-06, 3.6762991, -1.21698406e-06]
+                                          Rotation: [1.06008577, 0.0524837635, -0.0895270705]
+                                          Scale: [0.999999881, 0.999999881, 1]
+                                          FollowOwner: true
+                                        Childs:
+                                          - Name: mixamorig:LeftHandPinky3
+                                            IsEnabled: true
+                                            Transform:
+                                              Position: [1.51535005e-06, 2.8112936, -1.01430714e-06]
+                                              Rotation: [0.848978162, 0.0348160379, -0.0770016536]
+                                              Scale: [1, 1, 0.999999881]
+                                              FollowOwner: true
+                                            Childs:
+                                              - Name: mixamorig:LeftHandPinky4
+                                                IsEnabled: true
+                                                Transform:
+                                                  Position: [2.64826076e-06, 1.65950942, -4.22268704e-06]
+                                                  Rotation: [-9.17366015e-06, 0.00819960982, -0.00114311208]
+                                                  Scale: [0.999999881, 1, 1.00000012]
+                                                  FollowOwner: true
+                                                Childs:
+                                                  []
+                  - Name: mixamorig:RightShoulder
+                    IsEnabled: true
+                    Transform:
+                      Position: [-6.14020157, 10.8553972, -0.5695014]
+                      Rotation: [2.71136117, -1.15311623, -0.992060781]
+                      Scale: [0.999999881, 0.999999881, 0.999999881]
+                      FollowOwner: true
+                    Childs:
+                      - Name: mixamorig:RightArm
+                        IsEnabled: true
+                        Transform:
+                          Position: [7.14933594e-06, 12.5025988, 6.70373038e-06]
+                          Rotation: [1.07876325, 0.0665818676, -0.345531285]
+                          Scale: [1, 1, 1]
+                          FollowOwner: true
+                        Childs:
+                          - Name: mixamorig:RightForeArm
+                            IsEnabled: true
+                            Transform:
+                              Position: [-4.77581352e-07, 27.6870117, 5.56718931e-07]
+                              Rotation: [-8.02099862e-08, -8.52700168e-08, -1.03896952]
+                              Scale: [1.00000012, 1, 1.00000012]
+                              FollowOwner: true
+                            Childs:
+                              - Name: mixamorig:RightHand
+                                IsEnabled: true
+                                Transform:
+                                  Position: [6.67602808e-06, 27.8738136, 1.57953571e-06]
+                                  Rotation: [-0.175012231, 0.343086898, -0.129176274]
+                                  Scale: [1, 1, 1]
+                                  FollowOwner: true
+                                Childs:
+                                  - Name: mixamorig:RightHandThumb1
+                                    IsEnabled: true
+                                    Transform:
+                                      Position: [2.31910825, 2.57040524, 1.24510348]
+                                      Rotation: [0.342791766, 0.200129643, -0.51089406]
+                                      Scale: [1, 1, 1]
+                                      FollowOwner: true
+                                    Childs:
+                                      - Name: mixamorig:RightHandThumb2
+                                        IsEnabled: true
+                                        Transform:
+                                          Position: [-1.26891573e-05, 4.54269314, -3.06366815e-07]
+                                          Rotation: [-0.121598974, -0.0151309781, 0.478641331]
+                                          Scale: [0.99999994, 1, 1]
+                                          FollowOwner: true
+                                        Childs:
+                                          - Name: mixamorig:RightHandThumb3
+                                            IsEnabled: true
+                                            Transform:
+                                              Position: [-7.03596243e-07, 5.0932951, 7.30753754e-06]
+                                              Rotation: [-0.258669704, 0.13399674, 0.129649132]
+                                              Scale: [1, 1, 0.999999881]
+                                              FollowOwner: true
+                                            Childs:
+                                              - Name: mixamorig:RightHandThumb4
+                                                IsEnabled: true
+                                                Transform:
+                                                  Position: [-6.04715922e-07, 2.65338945, 3.80933125e-06]
+                                                  Rotation: [0.0379942134, -0.252791584, -0.150815532]
+                                                  Scale: [0.999999881, 0.999999762, 0.999999881]
+                                                  FollowOwner: true
+                                                Childs:
+                                                  []
+                                  - Name: mixamorig:RightHandIndex1
+                                    IsEnabled: true
+                                    Transform:
+                                      Position: [2.2872963, 10.5773087, 0.175393626]
+                                      Rotation: [1.45260429, -0.0430158339, 0.0817030668]
+                                      Scale: [1, 1.00000024, 1.00000012]
+                                      FollowOwner: true
+                                    Childs:
+                                      - Name: mixamorig:RightHandIndex2
+                                        IsEnabled: true
+                                        Transform:
+                                          Position: [-1.77396794e-06, 5.37679863, -6.19860975e-06]
+                                          Rotation: [1.03780532, -0.0401207618, 0.0702313036]
+                                          Scale: [1, 1, 1]
+                                          FollowOwner: true
+                                        Childs:
+                                          - Name: mixamorig:RightHandIndex3
+                                            IsEnabled: true
+                                            Transform:
+                                              Position: [2.10554072e-06, 3.38550448, 1.50202129e-06]
+                                              Rotation: [0.850143909, -0.0277358126, 0.061256513]
+                                              Scale: [0.99999994, 1, 1]
+                                              FollowOwner: true
+                                            Childs:
+                                              - Name: mixamorig:RightHandIndex4
+                                                IsEnabled: true
+                                                Transform:
+                                                  Position: [4.64501954e-06, 2.36360574, -2.10075223e-06]
+                                                  Rotation: [-3.87397522e-05, -0.0134182768, 0.00276811002]
+                                                  Scale: [1, 1, 0.99999994]
+                                                  FollowOwner: true
+                                                Childs:
+                                                  []
+                                  - Name: mixamorig:RightHandMiddle1
+                                    IsEnabled: true
+                                    Transform:
+                                      Position: [-2.78281163e-06, 10.7792044, 6.95738777e-07]
+                                      Rotation: [1.47388673, -0.0325072631, 0.116852216]
+                                      Scale: [1, 1, 1]
+                                      FollowOwner: true
+                                    Childs:
+                                      - Name: mixamorig:RightHandMiddle2
+                                        IsEnabled: true
+                                        Transform:
+                                          Position: [6.23989536e-06, 5.61680984, 2.00423233e-06]
+                                          Rotation: [1.04114687, -0.0403553508, 0.0703695118]
+                                          Scale: [0.999999881, 1, 0.99999994]
+                                          FollowOwner: true
+                                        Childs:
+                                          - Name: mixamorig:RightHandMiddle3
+                                            IsEnabled: true
+                                            Transform:
+                                              Position: [-3.78948607e-06, 3.73639846, -5.53720668e-07]
+                                              Rotation: [0.84943378, -0.0276924577, 0.0612181611]
+                                              Scale: [0.999999881, 1, 1.00000012]
+                                              FollowOwner: true
+                                            Childs:
+                                              - Name: mixamorig:RightHandMiddle4
+                                                IsEnabled: true
+                                                Transform:
+                                                  Position: [-1.05863783e-05, 2.69148088, 1.316728e-06]
+                                                  Rotation: [4.5411005e-05, -0.0133902673, -0.00342962286]
+                                                  Scale: [1, 1.00000012, 1]
+                                                  FollowOwner: true
+                                                Childs:
+                                                  []
+                                  - Name: mixamorig:RightHandRing1
+                                    IsEnabled: true
+                                    Transform:
+                                      Position: [-2.34990287, 10.3919086, -0.105194882]
+                                      Rotation: [1.54702866, -0.112139985, 0.12209411]
+                                      Scale: [1, 1, 1]
+                                      FollowOwner: true
+                                    Childs:
+                                      - Name: mixamorig:RightHandRing2
+                                        IsEnabled: true
+                                        Transform:
+                                          Position: [-8.5959955e-06, 5.40130663, -3.35421191e-07]
+                                          Rotation: [1.0599196, -0.0416849479, 0.071131818]
+                                          Scale: [0.999999881, 0.99999994, 1]
+                                          FollowOwner: true
+                                        Childs:
+                                          - Name: mixamorig:RightHandRing3
+                                            IsEnabled: true
+                                            Transform:
+                                              Position: [-2.60507409e-06, 3.39159799, -1.51452537e-06]
+                                              Rotation: [0.831452966, -0.0265994053, 0.0602391139]
+                                              Scale: [1, 1, 1]
+                                              FollowOwner: true
+                                            Childs:
+                                              - Name: mixamorig:RightHandRing4
+                                                IsEnabled: true
+                                                Transform:
+                                                  Position: [-3.21542529e-06, 2.35319138, 1.00577927e-06]
+                                                  Rotation: [6.50055972e-06, -0.0152263176, -0.000609218143]
+                                                  Scale: [1, 0.999999881, 1]
+                                                  FollowOwner: true
+                                                Childs:
+                                                  []
+                                  - Name: mixamorig:RightHandPinky1
+                                    IsEnabled: true
+                                    Transform:
+                                      Position: [-4.37829924, 9.7910099, 0.212897107]
+                                      Rotation: [1.60834503, -0.193699747, 0.292341441]
+                                      Scale: [0.999999881, 1.00000012, 1]
+                                      FollowOwner: true
+                                    Childs:
+                                      - Name: mixamorig:RightHandPinky2
+                                        IsEnabled: true
+                                        Transform:
+                                          Position: [-1.19280867e-06, 3.65280294, 8.13932729e-07]
+                                          Rotation: [1.06261981, -0.0418770798, 0.0712392852]
+                                          Scale: [1, 0.999999881, 0.999999881]
+                                          FollowOwner: true
+                                        Childs:
+                                          - Name: mixamorig:RightHandPinky3
+                                            IsEnabled: true
+                                            Transform:
+                                              Position: [1.1435508e-05, 2.7819972, 5.40867063e-07]
+                                              Rotation: [0.850908339, -0.0277823973, 0.0612977035]
+                                              Scale: [0.999999881, 1, 1]
+                                              FollowOwner: true
+                                            Childs:
+                                              - Name: mixamorig:RightHandPinky4
+                                                IsEnabled: true
+                                                Transform:
+                                                  Position: [3.78007303e-06, 1.61210346, -2.97925953e-06]
+                                                  Rotation: [-7.57659e-05, -0.0169979818, 0.00440852018]
+                                                  Scale: [0.999999881, 0.99999994, 1]
+                                                  FollowOwner: true
+                                                Childs:
+                                                  []
+      - Name: mixamorig:RightUpLeg
+        IsEnabled: true
+        Transform:
+          Position: [-9.63409996, -3.27239394, -2.40716008e-06]
+          Rotation: [0.278991908, 0.291410178, -3.10119152]
+          Scale: [0.999999881, 0.999999881, 1]
+          FollowOwner: true
+        Childs:
+          - Name: mixamorig:RightLeg
+            IsEnabled: true
+            Transform:
+              Position: [3.65426956e-07, 41.7658119, 4.90143748e-07]
+              Rotation: [-1.68947387, -0.0134530403, -0.0577278733]
+              Scale: [0.999999881, 1, 1]
+              FollowOwner: true
+            Childs:
+              - Name: mixamorig:RightFoot
+                IsEnabled: true
+                Transform:
+                  Position: [5.68149545e-08, 39.1991959, 1.10599615e-07]
+                  Rotation: [0.0499690883, 0.00105169928, 0.102893017]
+                  Scale: [0.999999881, 1, 0.999999881]
+                  FollowOwner: true
+                Childs:
+                  - Name: mixamorig:RightToeBase
+                    IsEnabled: true
+                    Transform:
+                      Position: [6.86365667e-08, 14.7350006, 3.20953575e-07]
+                      Rotation: [0.843506873, 0.00966623146, 0.0351295397]
+                      Scale: [0.999999881, 0.999999881, 1]
+                      FollowOwner: true
+                    Childs:
+                      - Name: mixamorig:RightToe_End
+                        IsEnabled: true
+                        Transform:
+                          Position: [-9.83569493e-08, 6.67759991, 2.86564479e-08]
+                          Rotation: [-2.17858478e-08, 1.47385237e-09, -4.68315475e-09]
+                          Scale: [1, 1, 1]
+                          FollowOwner: true
+                        Childs:
+                          []
+      - Name: mixamorig:LeftUpLeg
+        IsEnabled: true
+        Transform:
+          Position: [9.6335001, -3.27420473, -7.65444952e-07]
+          Rotation: [0.766053677, -0.0663309991, 2.88286829]
+          Scale: [1, 1, 1.00000024]
+          FollowOwner: true
+        Childs:
+          - Name: mixamorig:LeftLeg
+            IsEnabled: true
+            Transform:
+              Position: [-3.81155814e-07, 41.7658081, -4.37424023e-06]
+              Rotation: [-0.675842106, -0.146132514, 0.106762037]
+              Scale: [0.999999881, 1.00000036, 1.00000024]
+              FollowOwner: true
+            Childs:
+              - Name: mixamorig:LeftFoot
+                IsEnabled: true
+                Transform:
+                  Position: [-1.29464382e-07, 39.1992035, -6.50999368e-07]
+                  Rotation: [0.833500028, -0.023656575, 0.0483095087]
+                  Scale: [0.999999762, 1, 1]
+                  FollowOwner: true
+                Childs:
+                  - Name: mixamorig:LeftToeBase
+                    IsEnabled: true
+                    Transform:
+                      Position: [-1.26717964e-06, 14.7350006, 5.49476738e-07]
+                      Rotation: [0.973424554, 0.00975144375, -0.0109153334]
+                      Scale: [0.99999994, 1, 1]
+                      FollowOwner: true
+                    Childs:
+                      - Name: mixamorig:LeftToe_End
+                        IsEnabled: true
+                        Transform:
+                          Position: [-1.10956591e-07, 6.6650033, 7.55924475e-07]
+                          Rotation: [9.70733449e-09, -2.09871387e-09, -5.55883206e-09]
+                          Scale: [1, 0.999999881, 1]
+                          FollowOwner: true
+                        Childs:
+                          []

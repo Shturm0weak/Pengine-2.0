@@ -208,6 +208,11 @@ namespace Pengine
 		[[nodiscard]] bool IsMultiBuffered() const { return m_IsMultiBuffered; }
 
 		[[nodiscard]] std::shared_ptr<class UniformWriter> GetUniformWriter() const { return m_UniformWriter; }
+
+		[[nodiscard]] int GetBindlessIndex() const { return m_BindlessIndex; }
+
+		void SetBindlessIndex(const int index) { m_BindlessIndex = index; }
+
 	protected:
 		glm::ivec2 m_Size = { 0, 0 };
 
@@ -219,6 +224,8 @@ namespace Pengine
 		Format m_Format{};
 		AspectMask m_AspectMask{};
 		MemoryType m_MemoryType{};
+
+		int m_BindlessIndex = 0;
 
 		bool m_IsMultiBuffered = false;
 

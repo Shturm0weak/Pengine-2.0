@@ -24,11 +24,11 @@ namespace Pengine
 		UniformWriter& operator=(const UniformWriter&) = delete;
 
 		void WriteBuffer(uint32_t location, const std::shared_ptr<Buffer>& buffer, size_t size = -1, size_t offset = 0);
-		void WriteTexture(uint32_t location, const std::shared_ptr<Texture>& texture);
-		void WriteTextures(uint32_t location, const std::vector<std::shared_ptr<Texture>>& textures);
+		void WriteTexture(uint32_t location, const std::shared_ptr<Texture>& texture, uint32_t dstArrayElement = 0);
+		void WriteTextures(uint32_t location, const std::vector<std::shared_ptr<Texture>>& textures, uint32_t dstArrayElement = 0);
 		void WriteBuffer(const std::string& name, const std::shared_ptr<Buffer>& buffer, size_t size = -1, size_t offset = 0);
-		void WriteTexture(const std::string& name, const std::shared_ptr<Texture>& texture);
-		void WriteTextures(const std::string& name, const std::vector<std::shared_ptr<Texture>>& textures);
+		void WriteTexture(const std::string& name, const std::shared_ptr<Texture>& texture, uint32_t dstArrayElement = 0);
+		void WriteTextures(const std::string& name, const std::vector<std::shared_ptr<Texture>>& textures, uint32_t dstArrayElement = 0);
 		virtual void Flush() = 0;
 		virtual NativeHandle GetNativeHandle() const = 0;
 
@@ -65,15 +65,18 @@ namespace Pengine
 		{
 			ShaderReflection::ReflectDescriptorSetBinding binding;
 			std::vector<std::shared_ptr<Texture>> textures;
+			uint32_t dstArrayElement = 0;
 		};
 
 		struct Write
 		{
-			std::unordered_map<uint32_t, BufferWrite> m_BufferWritesByLocation;
-			std::unordered_map<uint32_t, TextureWrite> m_TextureWritesByLocation;
+			std::unordered_map<uint32_t, BufferWrite> bufferWritesByLocation;
+			std::unordered_map<uint32_t, std::vector<TextureWrite>> textureWritesByLocation;
 		};
 
 		std::vector<Write> m_Writes;
+
+		std::mutex mutex;
 
 		bool m_IsMultiBuffered = false;
 	};

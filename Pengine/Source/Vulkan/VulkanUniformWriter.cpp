@@ -43,15 +43,17 @@ void VulkanUniformWriter::Flush()
 	std::vector<VkWriteDescriptorSet> writes;
 
 	size_t bufferInfoCount = 0;
-	for (const auto& [location, bufferWrite] : m_Writes[index].m_BufferWritesByLocation)
+	for (const auto& [location, bufferWrite] : m_Writes[index].bufferWritesByLocation)
 	{
 		bufferInfoCount += bufferWrite.buffers.size();
 	}
 
 	std::vector<VkDescriptorBufferInfo> bufferInfos;
 	bufferInfos.reserve(bufferInfoCount);
-	for (const auto& [location, bufferWrite] : m_Writes[index].m_BufferWritesByLocation)
+	for (const auto& [location, bufferWrite] : m_Writes[index].bufferWritesByLocation)
 	{
+		const size_t bufferInfoIndex = bufferInfos.size();
+
 		for (const auto& buffer : bufferWrite.buffers)
 		{
 			assert(bufferInfoCount > 0);
@@ -62,41 +64,50 @@ void VulkanUniformWriter::Flush()
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.descriptorType = VulkanUniformLayout::ConvertDescriptorType(bufferWrite.binding.type);
 		write.dstBinding = location;
-		write.pBufferInfo = &bufferInfos.back();
+		write.pBufferInfo = &bufferInfos[bufferInfoIndex];
 		write.descriptorCount = bufferWrite.binding.count;
 		write.dstSet = set;
 
 		writes.emplace_back(write);
 	}
-	m_Writes[index].m_BufferWritesByLocation.clear();
+	m_Writes[index].bufferWritesByLocation.clear();
 
 	size_t imageInfoCount = 0;
-	for (const auto& [location, textureWrite] : m_Writes[index].m_TextureWritesByLocation)
+	for (const auto& [location, textureWrites] : m_Writes[index].textureWritesByLocation)
 	{
-		imageInfoCount += textureWrite.textures.size();
+		for (const auto& textureWrite : textureWrites)
+		{
+			imageInfoCount += textureWrite.textures.size();
+		}
 	}
 
 	std::vector<VkDescriptorImageInfo> imageInfos;
 	imageInfos.reserve(imageInfoCount);
-	for (const auto& [location, textureWrite] : m_Writes[index].m_TextureWritesByLocation)
+	for (const auto& [location, textureWrites] : m_Writes[index].textureWritesByLocation)
 	{
-		for (const auto& texture : textureWrite.textures)
+		for (const auto& textureWrite : textureWrites)
 		{
-			assert(imageInfoCount > 0);
-			imageInfos.emplace_back(std::static_pointer_cast<VulkanTexture>(texture)->GetDescriptorInfo(index));
+			const size_t imageInfoIndex = imageInfos.size();
+
+			for (const auto& texture : textureWrite.textures)
+			{
+				assert(imageInfoCount > 0);
+				imageInfos.emplace_back(std::static_pointer_cast<VulkanTexture>(texture)->GetDescriptorInfo(index));
+			}
+
+			VkWriteDescriptorSet write{};
+			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			write.descriptorType = VulkanUniformLayout::ConvertDescriptorType(textureWrite.binding.type);
+			write.dstBinding = location;
+			write.pImageInfo = &imageInfos[imageInfoIndex];
+			write.descriptorCount = textureWrite.textures.size();
+			write.dstArrayElement = textureWrite.dstArrayElement;
+			write.dstSet = set;
+
+			writes.emplace_back(write);
 		}
-
-		VkWriteDescriptorSet write{};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.descriptorType = VulkanUniformLayout::ConvertDescriptorType(textureWrite.binding.type);
-		write.dstBinding = location;
-		write.pImageInfo = &imageInfos.back();
-		write.descriptorCount = textureWrite.binding.count;
-		write.dstSet = set;
-
-		writes.emplace_back(write);
 	}
-	m_Writes[index].m_TextureWritesByLocation.clear();
+	m_Writes[index].textureWritesByLocation.clear();
 
 	if (writes.empty())
 	{
