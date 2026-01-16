@@ -3,9 +3,7 @@
 #include "FileFormatNames.h"
 #include "Serializer.h"
 #include "Profiler.h"
-
-#include "../Graphics/UniformLayout.h"
-#include "../Graphics/UniformWriter.h"
+#include "BindlessUniformWriter.h"
 
 #include "../Utils/Utils.h"
 
@@ -111,19 +109,6 @@ void TextureManager::CreateDefaultResources()
 {
 	PROFILER_SCOPE(__FUNCTION__);
 
-	{
-		std::vector<ShaderReflection::ReflectDescriptorSetBinding> bindings;
-		ShaderReflection::ReflectDescriptorSetBinding& binding = bindings.emplace_back();
-		binding.stage = ShaderReflection::Stage::ALL;
-		binding.type = ShaderReflection::Type::COMBINED_IMAGE_SAMPLER;
-		binding.binding = 0;
-		binding.count = 10000;
-		binding.name = "BindlessTextures";
-		
-		const auto uniformLayout = UniformLayout::Create(bindings);
-		m_BindlessUniformWriter = UniformWriter::Create(uniformLayout, false);
-	}
-
 	Texture::CreateInfo whiteTextureCreateInfo{};
 	whiteTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
 	whiteTextureCreateInfo.instanceSize = sizeof(uint8_t) * 4;
@@ -176,12 +161,11 @@ void TextureManager::CreateDefaultResources()
 	m_Black = TextureManager::GetInstance().Create(blackTextureCreateInfo);
 
 	{
-		BindTextureToBindlessUniformWriter(m_Pink);
-		BindTextureToBindlessUniformWriter(m_White);
-		BindTextureToBindlessUniformWriter(m_Black);
+		BindlessUniformWriter::GetInstance().BindTexture(m_Pink);
+		BindlessUniformWriter::GetInstance().BindTexture(m_White);
+		BindlessUniformWriter::GetInstance().BindTexture(m_Black);
+		BindlessUniformWriter::GetInstance().Flush();
 	}
-
-	m_BindlessUniformWriter->Flush();
 
 	Texture::CreateInfo whiteLayeredTextureCreateInfo;
 	whiteLayeredTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
@@ -206,69 +190,20 @@ void TextureManager::Delete(std::shared_ptr<Texture>& texture)
 {
 	if (texture.use_count() == 2)
 	{
-		UnBindTextureFromBindlessUniformWriter(texture);
+		BindlessUniformWriter::GetInstance().UnBindTexture(texture);
 		Delete(texture->GetFilepath());
 	}
 
 	texture = nullptr;
 }
 
-int Pengine::TextureManager::BindTextureToBindlessUniformWriter(const std::shared_ptr<Texture>& texture)
-{
-	if (texture->GetBindlessIndex() > 0)
-	{
-		return texture->GetBindlessIndex();
-	}
-
-	const int index = m_SlotManager.TakeSlot();
-	texture->SetBindlessIndex(index);
-
-	m_TexturesByIndex[index] = std::weak_ptr<Texture>(texture);
-
-	// Note: Slot 0 is supposed to be pink texture and always taken!
-	if (index > 0)
-	{
-		m_BindlessUniformWriter->WriteTexture(0, texture, index);
-	}
-
-	return index;
-}
-
-void Pengine::TextureManager::UnBindTextureFromBindlessUniformWriter(const std::shared_ptr<Texture> &texture)
-{
-	const int index = texture->GetBindlessIndex();
-    if (index == 0)
-	{
-		return;
-	}
-
-	m_SlotManager.FreeSlot(index);
-	texture->SetBindlessIndex(0);
-
-	m_TexturesByIndex.erase(index);
-}
-
-std::shared_ptr<Texture> Pengine::TextureManager::GetBindlessTexture(const int index)
-{
-    auto textureByIndex = m_TexturesByIndex.find(index);
-	if (textureByIndex != m_TexturesByIndex.end())
-	{
-		return textureByIndex->second.lock();
-	}
-
-	return 0;
-}
-
 void TextureManager::ShutDown()
 {
 	std::lock_guard<std::mutex> lock(m_MutexTexture);
 	m_TexturesByFilepath.clear();
-	m_TexturesByIndex.clear();
 
 	m_WhiteLayered = nullptr;
 	m_White = nullptr;
 	m_Black = nullptr;
 	m_Pink = nullptr;
-
-	m_BindlessUniformWriter = nullptr;
 }

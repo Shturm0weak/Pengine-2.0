@@ -1,6 +1,7 @@
 #include "RenderPassManager.h"
 
 #include "Logger.h"
+#include "BindlessUniformWriter.h"
 #include "MaterialManager.h"
 #include "MeshManager.h"
 #include "SceneManager.h"
@@ -116,7 +117,7 @@ void RenderPassManager::GetUniformWriters(
 		switch (location.first)
 		{
 		case Pipeline::DescriptorSetIndexType::BINDLESS:
-			uniformWriters.emplace_back(TextureManager::GetInstance().GetBindlessUniformWriter());
+			uniformWriters.emplace_back(BindlessUniformWriter::GetInstance().GetBindlessUniformWriter());
 			break;
 		case Pipeline::DescriptorSetIndexType::RENDERER:
 			uniformWriters.emplace_back(renderInfo.renderView->GetUniformWriter(location.second));
@@ -164,7 +165,7 @@ bool RenderPassManager::BindAndFlushUniformWriters(
 			switch (type)
 			{
 			case Pipeline::DescriptorSetIndexType::BINDLESS:
-				uniformWriter = TextureManager::GetInstance().GetBindlessUniformWriter();
+				uniformWriter = BindlessUniformWriter::GetInstance().GetBindlessUniformWriter();
 				break;
 			case Pipeline::DescriptorSetIndexType::RENDERER:
 				uniformWriter = renderInfo.renderView->GetUniformWriter(name);

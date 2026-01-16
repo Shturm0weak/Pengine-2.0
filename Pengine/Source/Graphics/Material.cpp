@@ -5,6 +5,7 @@
 #include "../Core/TextureManager.h"
 #include "../Core/MaterialManager.h"
 #include "../Core/AsyncAssetLoader.h"
+#include "../Core/BindlessUniformWriter.h"
 #include "../EventSystem/EventSystem.h"
 #include "../EventSystem/NextFrameEvent.h"
 
@@ -244,7 +245,7 @@ std::shared_ptr<Texture> Pengine::Material::GetBindlessTexture(const int index) 
 
 int Pengine::Material::BindBindlessTexture(const std::shared_ptr<Texture>& texture)
 {
-    const int index = TextureManager::GetInstance().BindTextureToBindlessUniformWriter(texture);
+    const int index = BindlessUniformWriter::GetInstance().BindTexture(texture);
 	m_BindlessTexturesByIndex[index] = texture;
 	return index;
 }
@@ -252,7 +253,7 @@ int Pengine::Material::BindBindlessTexture(const std::shared_ptr<Texture>& textu
 void Pengine::Material::UnBindBindlessTexture(const std::shared_ptr<Texture>& texture)
 {
 	m_BindlessTexturesByIndex.erase(texture->GetBindlessIndex());
-	TextureManager::GetInstance().UnBindTextureFromBindlessUniformWriter(texture);
+	BindlessUniformWriter::GetInstance().UnBindTexture(texture);
 }
 
 void Material::CreateResources(const CreateInfo &createInfo)

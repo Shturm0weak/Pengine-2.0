@@ -40,6 +40,7 @@ set(CORE_SOURCES
 	Core/Application.h
 	Core/Asset.h
 	Core/AsyncAssetLoader.cpp Core/AsyncAssetLoader.h
+	Core/BindlessUniformWriter.cpp Core/BindlessUniformWriter.h
 	Core/BoundingBox.h
 	Core/ClayManager.cpp Core/ClayManager.h
 	Core/ColoredOutput.h

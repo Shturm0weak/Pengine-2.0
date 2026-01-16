@@ -1,6 +1,7 @@
 #include "EntryPoint.h"
 
 #include "AsyncAssetLoader.h"
+#include "BindlessUniformWriter.h"
 #include "FileFormatNames.h"
 #include "FontManager.h"
 #include "Input.h"
@@ -141,6 +142,8 @@ void EntryPoint::Run() const
 	EventSystem& eventSystem = EventSystem::GetInstance();
 
 	Serializer::GenerateFilesUUID(std::filesystem::current_path());
+
+	BindlessUniformWriter::GetInstance().Initialize();
 	RenderPassManager::GetInstance().Initialize();
 	AsyncAssetLoader::GetInstance().Initialize();
 	ThreadPool::GetInstance().Initialize(std::thread::hardware_concurrency() - 1);
@@ -292,6 +295,7 @@ void EntryPoint::Run() const
 	FontManager::GetInstance().ShutDown();
 	TextureManager::GetInstance().ShutDown();
 	RenderPassManager::GetInstance().ShutDown();
+	BindlessUniformWriter::GetInstance().ShutDown();
 	WindowManager::GetInstance().ShutDown();
 
 	renderer = nullptr;
