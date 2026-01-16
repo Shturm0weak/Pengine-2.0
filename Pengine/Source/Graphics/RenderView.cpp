@@ -157,7 +157,7 @@ void RenderView::SetStorageImage(const std::string& name, std::shared_ptr<Textur
 	m_StorageImagesByName[name] = texture;
 }
 
-void RenderView::Resize(const glm::ivec2& size) const
+void RenderView::Resize(const glm::ivec2& size)
 {
 	for (const std::string& renderPassName : m_RenderPassOrder)
 	{
@@ -171,4 +171,14 @@ void RenderView::Resize(const glm::ivec2& size) const
 			}
 		}
 	}
+
+	m_StorageImagesByName.clear();
+	m_UniformWriterByName.clear();
+	m_BuffersByName.clear();
+	
+	for (auto& [name, data] : m_CustomDataByName)
+	{
+		delete data;
+	}
+	m_CustomDataByName.clear();
 }

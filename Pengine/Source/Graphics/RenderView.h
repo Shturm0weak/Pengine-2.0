@@ -61,7 +61,7 @@ namespace Pengine
 
 		void DeleteStorageImage(const std::string& name) { m_StorageImagesByName.erase(name); }
 
-		void Resize(const glm::ivec2& size) const;
+		void Resize(const glm::ivec2& size);
 
 	protected:
 		std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> m_FrameBuffersByName;
