@@ -132,13 +132,13 @@ void Editor::Update(const std::shared_ptr<Scene>& scene, Window& window)
 
 	ImGui::Begin("Settings");
 	ImGui::Text("FPS: %.0f", 1.0f / static_cast<float>(Time::GetDeltaTime()));
-	ImGui::Text("DrawCalls: %d", globalDataAccessor.GetDrawCallsCount());
-	ImGui::Text("Triangles: %d", static_cast<int>(globalDataAccessor.GetVertexCount()));
+	ImGui::Text("DrawCalls: %d", globalDataAccessor.GetDrawCallCount());
+	ImGui::Text("Triangles: %d", static_cast<int>(globalDataAccessor.GetTriangleCount()));
 	ImGui::Text("Meshes: %d", static_cast<int>(MeshManager::GetInstance().GetMeshes().size()));
 	ImGui::Text("BaseMaterials: %d", static_cast<int>(MaterialManager::GetInstance().GetBaseMaterials().size()));
 	ImGui::Text("Materials: %d", static_cast<int>(MaterialManager::GetInstance().GetMaterials().size()));
 	ImGui::Text("Textures: %d", static_cast<int>(TextureManager::GetInstance().GetTextures().size()));
-	ImGui::Text("VRAM Allocated: %d", static_cast<int>(globalDataAccessor.GetVramAllocated() / 1024));
+	ImGui::Text("VRAM Allocated: %.3f GB", static_cast<float>(globalDataAccessor.GetVramAllocated() / 1024.0f / 1024.0f / 1024.0f));
 
 	ImGui::Checkbox("Snap", &isSnapEnabled);
 	if (isSnapEnabled)

@@ -11,8 +11,8 @@ GlobalDataAccessor& GlobalDataAccessor::GetInstance()
 std::unordered_map<UUID, std::filesystem::path, uuid_hash>& GlobalDataAccessor::GetFilepathByUuid() { return filepathByUuid; }
 std::unordered_map<std::filesystem::path, UUID, path_hash>& GlobalDataAccessor::GetUuidByFilepath() { return uuidByFilepath; }
 
-int GlobalDataAccessor::GetDrawCallsCount() const { return drawCallsCount; }
-size_t GlobalDataAccessor::GetVertexCount() const { return vertexCount; }
+int GlobalDataAccessor::GetDrawCallCount() const { return drawCallCount; }
+size_t GlobalDataAccessor::GetTriangleCount() const { return triangleCount; }
 size_t GlobalDataAccessor::GetCurrentFrame() const { return currentFrame; }
 int64_t GlobalDataAccessor::GetVramAllocated() const { return vramAllocated; }
 

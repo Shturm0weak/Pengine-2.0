@@ -118,8 +118,8 @@ namespace Pengine
 	inline std::unordered_map<std::filesystem::path, UUID, path_hash> uuidByFilepath;
 
 	// TODO: Maybe move this somewhere!
-	inline int drawCallsCount;
-	inline size_t vertexCount;
+	inline int drawCallCount;
+	inline size_t triangleCount;
 	inline size_t currentFrame = 0;
 	inline int64_t vramAllocated = 0;
 
@@ -144,8 +144,8 @@ namespace Pengine
 		std::unordered_map<UUID, std::filesystem::path, uuid_hash>& GetFilepathByUuid();
 		std::unordered_map<std::filesystem::path, UUID, path_hash>& GetUuidByFilepath();
 
-		int GetDrawCallsCount() const;
-		size_t GetVertexCount() const;
+		int GetDrawCallCount() const;
+		size_t GetTriangleCount() const;
 		size_t GetCurrentFrame() const;
 		int64_t GetVramAllocated() const;
 

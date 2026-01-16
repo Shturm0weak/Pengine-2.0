@@ -237,8 +237,8 @@ void EntryPoint::Run() const
 
 			window->ImGuiEnd();
 
-			drawCallsCount = 0;
-			vertexCount = 0;
+			drawCallCount = 0;
+			triangleCount = 0;
 
 			if (void* frame = window->BeginFrame())
 			{
