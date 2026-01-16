@@ -8,6 +8,21 @@ Mat:
       Inactive:
         - GBuffer
   Pipelines:
+    - RenderPass: ZPrePass
+      Uniforms:
+        []
+    - RenderPass: SpotLightShadows
+      Uniforms:
+        []
+    - RenderPass: PointLightShadows
+      Uniforms:
+        []
+    - RenderPass: CSM
+      Uniforms:
+        []
+    - RenderPass: Transparent
+      Uniforms:
+        []
     - RenderPass: GBuffer
       Uniforms:
         - Name: GBufferMaterial
@@ -72,12 +87,3 @@ Mat:
             - Name: material.heightTexture
               Value: 0xa1fdb3cbe78ff07479abc956fb2ab65e
               Type: texture
-    - RenderPass: Transparent
-      Uniforms:
-        []
-    - RenderPass: CSM
-      Uniforms:
-        []
-    - RenderPass: ZPrePass
-      Uniforms:
-        []

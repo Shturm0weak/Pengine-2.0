@@ -1385,7 +1385,19 @@ void Serializer::SerializeMaterial(const std::shared_ptr<Material>& material, bo
 					else if (value.type == ShaderReflection::ReflectVariable::Type::TEXTURE)
 					{
 						const int bindlessTextureIndex = Utils::GetValue<int>(data, value.offset);
-						out << YAML::Key << "Value" << YAML::Value << material->GetBindlessTexture(bindlessTextureIndex)->GetFilepath();
+						const std::shared_ptr<Texture> texture = material->GetBindlessTexture(bindlessTextureIndex);
+						if (texture)
+						{
+							const auto uuid = Utils::FindUuid(texture->GetFilepath());
+							if (uuid.IsValid())
+							{
+								out << YAML::Key << "Value" << YAML::Value << uuid;
+							}
+							else
+							{
+								out << YAML::Key << "Value" << YAML::Value << texture->GetFilepath();
+							}
+						}
 					}
 
 					out << YAML::Key << "Type" << ShaderReflection::ConvertTypeToString(value.type);
