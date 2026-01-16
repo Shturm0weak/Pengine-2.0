@@ -58,18 +58,46 @@ namespace Pengine
 			std::vector<size_t>& vertexBufferOffsets,
 			const NativeHandle indexBuffer,
 			const size_t indexBufferOffset,
-			const int indexCount,
+			const uint32_t indexCount,
 			const std::shared_ptr<Pipeline>& pipeline,
 			const NativeHandle instanceBuffer,
 			const size_t instanceBufferOffset,
-			const size_t count,
+			const uint32_t count,
 			const std::vector<NativeHandle>& uniformWriters,
 			void* frame) = 0;
 
-		virtual void Dispatch(
+		virtual void Compute(
 			const std::shared_ptr<Pipeline>& pipeline,
 			const glm::uvec3& groupCount,
 			const std::vector<NativeHandle>& uniformWriters,
+			void* frame) = 0;
+
+		virtual void BindPipeline(
+			const std::shared_ptr<Pipeline>& pipeline,
+			void* frame) = 0;
+
+		virtual void BindUniformWriters(
+			const std::shared_ptr<Pipeline>& pipeline,
+			const std::vector<NativeHandle>& uniformWriters,
+			uint32_t offset,
+			void* frame) = 0;
+
+		virtual void BindVertexBuffers(
+			std::vector<NativeHandle>& vertexBuffers,
+			std::vector<size_t>& vertexBufferOffsets,
+			const NativeHandle indexBuffer,
+			const size_t indexBufferOffset,
+			const NativeHandle instanceBuffer,
+			const size_t instanceBufferOffset,
+			void* frame) = 0;
+
+		virtual void DrawIndexed(
+			const uint32_t indexCount,
+			const uint32_t instanceCount,
+			void* frame) = 0;
+
+		virtual void Dispatch(
+			const glm::uvec3& groupCount,
 			void* frame) = 0;
 
 		virtual void MemoryBarrierFragmentReadWrite(void* frame) = 0;

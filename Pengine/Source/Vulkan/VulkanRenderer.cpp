@@ -26,24 +26,20 @@ void VulkanRenderer::Render(
 	std::vector<size_t>& vertexBufferOffsets,
 	const NativeHandle indexBuffer,
 	const size_t indexBufferOffset,
-	const int indexCount,
+	const uint32_t indexCount,
 	const std::shared_ptr<Pipeline>& pipeline,
 	const NativeHandle instanceBuffer,
 	const size_t instanceBufferOffset,
-	const size_t count,
+	const uint32_t count,
 	const std::vector<NativeHandle>& uniformWriters,
 	void* frame)
 {
 	PROFILER_SCOPE(__FUNCTION__);
 
 	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
-	std::shared_ptr<VulkanGraphicsPipeline> vkPipeline = std::static_pointer_cast<VulkanGraphicsPipeline>(pipeline);
 	
-	if (m_Pipeline != pipeline)
-	{
-		m_Pipeline = pipeline;
-		vkPipeline->Bind(vkFrame->CommandBuffer);
-	}
+	const std::shared_ptr<VulkanGraphicsPipeline>& vkPipeline = std::static_pointer_cast<VulkanGraphicsPipeline>(pipeline);
+	vkPipeline->Bind(vkFrame->CommandBuffer);
 
 	if (!uniformWriters.empty())
 	{
@@ -60,12 +56,11 @@ void VulkanRenderer::Render(
 			nullptr);
 	}
 
-	vertexCount += (indexCount / 3) * count;
-	BindBuffers(vkFrame->CommandBuffer, vertexBuffers, vertexBufferOffsets, instanceBuffer, instanceBufferOffset, indexBuffer, indexBufferOffset);
-	DrawIndexed(vkFrame->CommandBuffer, indexCount, count);
+	BindVertexBuffers(vertexBuffers, vertexBufferOffsets, indexBuffer, indexBufferOffset, instanceBuffer, instanceBufferOffset, frame);
+	DrawIndexed(indexCount, count, frame);
 }
 
-void VulkanRenderer::Dispatch(
+void VulkanRenderer::Compute(
 	const std::shared_ptr<Pipeline>& pipeline,
 	const glm::uvec3& groupCount,
 	const std::vector<NativeHandle>& uniformWriters,
@@ -75,21 +70,8 @@ void VulkanRenderer::Dispatch(
 
 	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 
-	std::shared_ptr<VulkanComputePipeline> vkPipeline;
-	if (pipeline)
-	{
-		vkPipeline = std::dynamic_pointer_cast<VulkanComputePipeline>(pipeline);
-	}
-	else
-	{
-		return;
-	}
-
-	if (m_Pipeline != pipeline)
-	{
-		m_Pipeline = pipeline;
-		vkPipeline->Bind(vkFrame->CommandBuffer);
-	}
+	const std::shared_ptr<VulkanComputePipeline>& vkPipeline = std::dynamic_pointer_cast<VulkanComputePipeline>(pipeline);
+	vkPipeline->Bind(vkFrame->CommandBuffer);
 
 	if (!uniformWriters.empty())
 	{
@@ -104,6 +86,101 @@ void VulkanRenderer::Dispatch(
 			nullptr);
 	}
 
+	vkCmdDispatch(vkFrame->CommandBuffer, groupCount.x, groupCount.y, groupCount.z);
+}
+
+void VulkanRenderer::BindPipeline(
+	const std::shared_ptr<Pipeline>& pipeline,
+	void* frame)
+{
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
+	std::static_pointer_cast<VulkanGraphicsPipeline>(pipeline)->Bind(vkFrame->CommandBuffer);
+}
+
+void VulkanRenderer::BindUniformWriters(
+	const std::shared_ptr<Pipeline>& pipeline,
+	const std::vector<NativeHandle>& uniformWriters,
+	uint32_t offset,
+	void* frame)
+{
+	if (uniformWriters.empty())
+	{
+		return;
+	}
+
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
+
+	VkPipelineLayout vkPipelineLayout{};
+	VkPipelineBindPoint vkPipelineBindPoint{};
+	if (pipeline->GetType() == Pipeline::Type::GRAPHICS)
+	{
+		const std::shared_ptr<VulkanGraphicsPipeline>& vkGraphicsPipeline = std::static_pointer_cast<VulkanGraphicsPipeline>(pipeline);
+		vkPipelineLayout = vkGraphicsPipeline->GetPipelineLayout();
+		vkPipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+	}
+	else if (pipeline->GetType() == Pipeline::Type::COMPUTE)
+	{
+		const std::shared_ptr<VulkanComputePipeline>& vkComputePipeline = std::static_pointer_cast<VulkanComputePipeline>(pipeline);
+		vkPipelineLayout = vkComputePipeline->GetPipelineLayout();
+		vkPipelineBindPoint = VK_PIPELINE_BIND_POINT_COMPUTE;
+	}
+
+	vkCmdBindDescriptorSets(
+		vkFrame->CommandBuffer,
+		vkPipelineBindPoint,
+		vkPipelineLayout,
+		offset,
+		uniformWriters.size(),
+		(VkDescriptorSet*)uniformWriters.data(),
+		0,
+		nullptr);
+}
+
+void VulkanRenderer::BindVertexBuffers(
+	std::vector<NativeHandle> &vertexBuffers,
+	std::vector<size_t> &vertexBufferOffsets,
+	const NativeHandle indexBuffer,
+	const size_t indexBufferOffset,
+	const NativeHandle instanceBuffer,
+	const size_t instanceBufferOffset,
+	void* frame)
+{
+	PROFILER_SCOPE(__FUNCTION__);
+
+	assert(vertexBuffers.size() == vertexBufferOffsets.size());
+
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
+
+	if (instanceBuffer)
+	{
+		vertexBuffers.emplace_back(instanceBuffer);
+		vertexBufferOffsets.emplace_back(instanceBufferOffset);
+	}
+
+	vkCmdBindVertexBuffers(vkFrame->CommandBuffer, 0, vertexBuffers.size(), (VkBuffer*)vertexBuffers.data(), (VkDeviceSize*)vertexBufferOffsets.data());
+	vkCmdBindIndexBuffer(vkFrame->CommandBuffer, *(VkBuffer*)&indexBuffer, indexBufferOffset, VK_INDEX_TYPE_UINT32);
+}
+
+void VulkanRenderer::DrawIndexed(
+	const uint32_t indexCount,
+	const uint32_t instanceCount,
+	void* frame)
+{
+	PROFILER_SCOPE(__FUNCTION__);
+
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
+	vkCmdDrawIndexed(vkFrame->CommandBuffer, indexCount, instanceCount, 0, 0, 0);
+	drawCallCount++;
+	triangleCount += (indexCount / 3) * instanceCount;
+}
+
+void VulkanRenderer::Dispatch(
+	const glm::uvec3& groupCount,
+	void* frame)
+{
+	PROFILER_SCOPE(__FUNCTION__);
+
+	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 	vkCmdDispatch(vkFrame->CommandBuffer, groupCount.x, groupCount.y, groupCount.z);
 }
 
@@ -294,35 +371,4 @@ void VulkanRenderer::SetViewport(const RenderPass::Viewport& viewport, void* fra
 
 	const VulkanFrameInfo* vkFrame = static_cast<VulkanFrameInfo*>(frame);
 	vkCmdSetViewport(vkFrame->CommandBuffer, 0, 1, &vkViewport);
-}
-
-void VulkanRenderer::BindBuffers(
-	const VkCommandBuffer commandBuffer,
-	std::vector<NativeHandle>& vertexBuffers,
-	std::vector<size_t>& vertexBufferOffsets,
-	const NativeHandle instanceBuffer,
-	const size_t instanceBufferOffset,
-	const NativeHandle indexBuffer,
-	const size_t indexBufferOffset)
-{
-	PROFILER_SCOPE(__FUNCTION__);
-
-	assert(vertexBuffers.size() == vertexBufferOffsets.size());
-
-	if (instanceBuffer)
-	{
-		vertexBuffers.emplace_back(instanceBuffer);
-		vertexBufferOffsets.emplace_back(instanceBufferOffset);
-	}
-
-	vkCmdBindVertexBuffers(commandBuffer, 0, vertexBuffers.size(), (VkBuffer*)vertexBuffers.data(), (VkDeviceSize*)vertexBufferOffsets.data());
-	vkCmdBindIndexBuffer(commandBuffer, *(VkBuffer*)&indexBuffer, indexBufferOffset, VK_INDEX_TYPE_UINT32);
-}
-
-void VulkanRenderer::DrawIndexed(const VkCommandBuffer commandBuffer, const uint32_t indexCount, const uint32_t instanceCount)
-{
-	PROFILER_SCOPE(__FUNCTION__);
-
-	drawCallsCount++;
-	vkCmdDrawIndexed(commandBuffer, indexCount, instanceCount, 0, 0, 0);
 }

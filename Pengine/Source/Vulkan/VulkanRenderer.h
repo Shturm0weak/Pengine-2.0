@@ -34,18 +34,46 @@ namespace Pengine::Vk
 			std::vector<size_t>& vertexBufferOffsets,
 			const NativeHandle indexBuffer,
 			const size_t indexBufferOffset,
-			const int indexCount,
+			const uint32_t indexCount,
 			const std::shared_ptr<Pipeline>& pipeline,
 			const NativeHandle instanceBuffer,
 			const size_t instanceBufferOffset,
-			const size_t count,
+			const uint32_t count,
 			const std::vector<NativeHandle>& uniformWriters,
 			void* frame) override;
 
-		virtual void Dispatch(
+		virtual void Compute(
 			const std::shared_ptr<Pipeline>& pipeline,
 			const glm::uvec3& groupCount,
 			const std::vector<NativeHandle>& uniformWriters,
+			void* frame) override;
+
+		virtual void BindPipeline(
+			const std::shared_ptr<Pipeline>& pipeline,
+			void* frame) override;
+
+		virtual void BindUniformWriters(
+			const std::shared_ptr<Pipeline>& pipeline,
+			const std::vector<NativeHandle>& uniformWriters,
+			uint32_t offset,
+			void* frame) override;
+
+		virtual void BindVertexBuffers(
+			std::vector<NativeHandle>& vertexBuffers,
+			std::vector<size_t>& vertexBufferOffsets,
+			const NativeHandle indexBuffer,
+			const size_t indexBufferOffset,
+			const NativeHandle instanceBuffer,
+			const size_t instanceBufferOffset,
+			void* frame) override;
+
+		virtual void DrawIndexed(
+			const uint32_t indexCount,
+			const uint32_t instanceCount,
+			void* frame) override;
+
+		virtual void Dispatch(
+			const glm::uvec3& groupCount,
 			void* frame) override;
 
 		virtual void MemoryBarrierFragmentReadWrite(void* frame) override;
@@ -61,20 +89,6 @@ namespace Pengine::Vk
 			std::shared_ptr<Texture> texture,
 			const RenderPass::ClearDepth& clearDepth,
 			void* frame) override;
-
-	private:
-		void BindBuffers(
-			VkCommandBuffer commandBuffer,
-			std::vector<NativeHandle>& vertexBuffers,
-			std::vector<size_t>& vertexBufferOffsets,
-			const NativeHandle instanceBuffer,
-			const size_t instanceBufferOffset,
-			const NativeHandle indexBuffer,
-			const size_t indexBufferOffset);
-
-		static void DrawIndexed(VkCommandBuffer commandBuffer, uint32_t indexCount, uint32_t instanceCount);
-
-		std::shared_ptr<class Pipeline> m_Pipeline;
 	};
 
 }
