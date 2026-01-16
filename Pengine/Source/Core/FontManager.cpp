@@ -128,7 +128,7 @@ std::shared_ptr<FontManager::Font> FontManager::LoadFont(const std::filesystem::
 
 	Texture::CreateInfo createInfo{};
 	createInfo.aspectMask = Texture::AspectMask::COLOR;
-	createInfo.channels = 1;
+	createInfo.instanceSize = sizeof(uint8_t);
 	createInfo.filepath = filepath;
 	createInfo.name = Utils::GetFilename(filepath);
 	createInfo.format = Format::R8_SRGB;

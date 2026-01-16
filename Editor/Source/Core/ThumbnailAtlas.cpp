@@ -50,7 +50,7 @@ std::shared_ptr<class Texture> ThumbnailAtlas::Push(
 
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
-		createInfo.channels = 4;
+		createInfo.instanceSize = sizeof(uint8_t) * 4;
 		createInfo.filepath = "ThumbnailAtlas";
 		createInfo.name = "ThumbnailAtlas";
 		createInfo.format = Format::R8G8B8A8_SRGB;

@@ -126,7 +126,7 @@ void TextureManager::CreateDefaultResources()
 
 	Texture::CreateInfo whiteTextureCreateInfo{};
 	whiteTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	whiteTextureCreateInfo.channels = 4;
+	whiteTextureCreateInfo.instanceSize = sizeof(uint8_t) * 4;
 	whiteTextureCreateInfo.filepath = "White";
 	whiteTextureCreateInfo.name = "White";
 	whiteTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
@@ -143,7 +143,7 @@ void TextureManager::CreateDefaultResources()
 
 	Texture::CreateInfo pinkTextureCreateInfo{};
 	pinkTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	pinkTextureCreateInfo.channels = 4;
+	pinkTextureCreateInfo.instanceSize = sizeof(uint8_t) * 4;
 	pinkTextureCreateInfo.filepath = "Pink";
 	pinkTextureCreateInfo.name = "Pink";
 	pinkTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
@@ -160,7 +160,7 @@ void TextureManager::CreateDefaultResources()
 
 	Texture::CreateInfo blackTextureCreateInfo{};
 	blackTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	blackTextureCreateInfo.channels = 4;
+	blackTextureCreateInfo.instanceSize = sizeof(uint8_t) * 4;
 	blackTextureCreateInfo.filepath = "Black";
 	blackTextureCreateInfo.name = "Black";
 	blackTextureCreateInfo.format = Format::R8G8B8A8_SRGB;
@@ -185,7 +185,7 @@ void TextureManager::CreateDefaultResources()
 
 	Texture::CreateInfo whiteLayeredTextureCreateInfo;
 	whiteLayeredTextureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	whiteLayeredTextureCreateInfo.channels = 4;
+	whiteLayeredTextureCreateInfo.instanceSize = sizeof(uint8_t) * 4;
 	whiteLayeredTextureCreateInfo.filepath = "WhiteLayered";
 	whiteLayeredTextureCreateInfo.name = "WhiteLayered";
 	whiteLayeredTextureCreateInfo.format = Format::R8G8B8A8_SRGB;

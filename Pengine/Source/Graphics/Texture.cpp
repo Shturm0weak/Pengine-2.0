@@ -36,16 +36,17 @@ std::shared_ptr<Texture> Texture::Load(const std::filesystem::path& filepath, bo
 	textureCreateInfo.aspectMask = AspectMask::COLOR;
 
 	textureCreateInfo.format = meta.srgb ? Format::R8G8B8A8_SRGB : Format::R8G8B8A8_UNORM;
+
+	int channels = 0;
 	void* data = stbi_load(
 		filepath.string().c_str(),
 		&textureCreateInfo.size.x,
 		&textureCreateInfo.size.y,
-		&textureCreateInfo.channels,
+		&channels,
 		STBI_rgb_alpha);
-	textureCreateInfo.channels = STBI_rgb_alpha;
-	textureCreateInfo.instanceSize = sizeof(uint8_t);
+	textureCreateInfo.instanceSize = sizeof(uint8_t) * STBI_rgb_alpha;
 
-	const size_t size = textureCreateInfo.size.x * textureCreateInfo.size.y * textureCreateInfo.channels * textureCreateInfo.instanceSize;
+	const size_t size = textureCreateInfo.size.x * textureCreateInfo.size.y * textureCreateInfo.instanceSize;
 	textureCreateInfo.data = data;
 
 	textureCreateInfo.mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(
@@ -82,7 +83,6 @@ Texture::Texture(const CreateInfo& createInfo)
 {
 	m_Meta = createInfo.meta;
 	m_Size = createInfo.size;
-	m_Channels = createInfo.channels;
 	m_Format = createInfo.format;
 	m_AspectMask = createInfo.aspectMask;
 	m_MipLevels = createInfo.mipLevels;

@@ -79,7 +79,7 @@ VulkanTexture::VulkanTexture(const CreateInfo& createInfo)
 	if (createInfo.data)
 	{
 		std::shared_ptr<VulkanBuffer> stagingBuffer = VulkanBuffer::CreateStagingBuffer(
-			createInfo.channels * createInfo.instanceSize,
+			createInfo.instanceSize,
 			m_Size.x * m_Size.y);
 
 		stagingBuffer->WriteToBuffer(createInfo.data, stagingBuffer->GetSize());

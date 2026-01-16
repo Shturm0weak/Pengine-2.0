@@ -355,7 +355,7 @@ std::shared_ptr<Texture> RenderPassManager::ScaleTexture(
 
 	Texture::CreateInfo createInfo{};
 	createInfo.aspectMask = Texture::AspectMask::COLOR;
-	createInfo.channels = 4;
+	createInfo.instanceSize = sizeof(uint8_t) * 4;
 	createInfo.filepath = "dstScaleTexture";
 	createInfo.name = "dstScaleTexture";
 	createInfo.format = Format::R8G8B8A8_UNORM;
@@ -459,7 +459,7 @@ void RenderPassManager::CreateZPrePass()
 	RenderPass::AttachmentDescription depth{};
 	depth.textureCreateInfo.format = Format::D32_SFLOAT;
 	depth.textureCreateInfo.aspectMask = Texture::AspectMask::DEPTH;
-	depth.textureCreateInfo.channels = 1;
+	depth.textureCreateInfo.instanceSize = sizeof(float);
 	depth.textureCreateInfo.isMultiBuffered = true;
 	depth.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::DEPTH_STENCIL_ATTACHMENT };
 	depth.textureCreateInfo.name = "ZPrePassDepth";
@@ -544,7 +544,7 @@ void RenderPassManager::CreateGBuffer()
 	RenderPass::AttachmentDescription color{};
 	color.textureCreateInfo.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	color.textureCreateInfo.channels = 3;
+	color.textureCreateInfo.instanceSize = sizeof(uint32_t);
 	color.textureCreateInfo.isMultiBuffered = true;
 	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
 	color.textureCreateInfo.name = "GBufferColor";
@@ -557,7 +557,7 @@ void RenderPassManager::CreateGBuffer()
 	RenderPass::AttachmentDescription normal{};
 	normal.textureCreateInfo.format = Format::R16G16_SFLOAT;
 	normal.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	normal.textureCreateInfo.channels = 2;
+	normal.textureCreateInfo.instanceSize = sizeof(uint16_t) * 2;
 	normal.textureCreateInfo.isMultiBuffered = true;
 	normal.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::STORAGE, Texture::Usage::COLOR_ATTACHMENT };
 	normal.textureCreateInfo.name = "GBufferNormal";
@@ -570,7 +570,7 @@ void RenderPassManager::CreateGBuffer()
 	RenderPass::AttachmentDescription shading{};
 	shading.textureCreateInfo.format = Format::R8G8B8A8_UNORM;
 	shading.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	shading.textureCreateInfo.channels = 4;
+	shading.textureCreateInfo.instanceSize = sizeof(uint8_t) * 4;
 	shading.textureCreateInfo.isMultiBuffered = true;
 	shading.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
 	shading.textureCreateInfo.name = "GBufferShading";
@@ -583,7 +583,7 @@ void RenderPassManager::CreateGBuffer()
 	RenderPass::AttachmentDescription emissive{};
 	emissive.textureCreateInfo.format = Format::B10G11R11_UFLOAT_PACK32;
 	emissive.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	emissive.textureCreateInfo.channels = 3;
+	emissive.textureCreateInfo.instanceSize = sizeof(uint32_t);
 	emissive.textureCreateInfo.isMultiBuffered = true;
 	emissive.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::STORAGE, Texture::Usage::COLOR_ATTACHMENT };
 	emissive.textureCreateInfo.name = "GBufferEmissive";
@@ -1052,7 +1052,7 @@ void RenderPassManager::CreateDefaultReflection()
 	RenderPass::AttachmentDescription color{};
 	color.textureCreateInfo.format = Format::R8G8B8A8_SRGB;
 	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	color.textureCreateInfo.channels = 4;
+	color.textureCreateInfo.instanceSize = sizeof(uint8_t) * 4;
 	color.textureCreateInfo.isMultiBuffered = true;
 	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
 	color.textureCreateInfo.name = "DefaultReflectionColor";
@@ -1078,7 +1078,7 @@ void RenderPassManager::CreateAtmosphere()
 
 	color.textureCreateInfo.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	color.textureCreateInfo.channels = 3;
+	color.textureCreateInfo.instanceSize = sizeof(uint32_t);
 	color.textureCreateInfo.isMultiBuffered = true;
 	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
 	color.textureCreateInfo.name = "AtmosphereColor";
@@ -1226,7 +1226,7 @@ void RenderPassManager::CreateTransparent()
 	RenderPass::AttachmentDescription color{};
 	color.textureCreateInfo.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	color.textureCreateInfo.channels = 3;
+	color.textureCreateInfo.instanceSize = sizeof(uint32_t);
 	color.textureCreateInfo.isMultiBuffered = true;
 	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::STORAGE, Texture::Usage::COLOR_ATTACHMENT };
 	color.textureCreateInfo.name = "DeferredColor";
@@ -1501,7 +1501,7 @@ void RenderPassManager::CreateCSM()
 	RenderPass::AttachmentDescription depth{};
 	depth.textureCreateInfo.format = Format::D32_SFLOAT;
 	depth.textureCreateInfo.aspectMask = Texture::AspectMask::DEPTH;
-	depth.textureCreateInfo.channels = 1;
+	depth.textureCreateInfo.instanceSize = sizeof(float);
 	depth.textureCreateInfo.isMultiBuffered = true;
 	depth.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::DEPTH_STENCIL_ATTACHMENT };
 	depth.textureCreateInfo.name = "CSM";
@@ -1877,7 +1877,7 @@ void RenderPassManager::CreatePointLightShadows()
 	RenderPass::AttachmentDescription depth{};
 	depth.textureCreateInfo.format = Format::D16_UNORM;
 	depth.textureCreateInfo.aspectMask = Texture::AspectMask::DEPTH;
-	depth.textureCreateInfo.channels = 1;
+	depth.textureCreateInfo.instanceSize = sizeof(uint16_t);
 	depth.textureCreateInfo.isMultiBuffered = true;
 	depth.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::TRANSFER_DST, Texture::Usage::DEPTH_STENCIL_ATTACHMENT };
 	depth.textureCreateInfo.name = "PointLightShadows";
@@ -2445,7 +2445,7 @@ void RenderPassManager::CreateSpotLightShadows()
 	RenderPass::AttachmentDescription depth{};
 	depth.textureCreateInfo.format = Format::D16_UNORM;
 	depth.textureCreateInfo.aspectMask = Texture::AspectMask::DEPTH;
-	depth.textureCreateInfo.channels = 1;
+	depth.textureCreateInfo.instanceSize = sizeof(uint16_t);
 	depth.textureCreateInfo.isMultiBuffered = true;
 	depth.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::TRANSFER_DST, Texture::Usage::DEPTH_STENCIL_ATTACHMENT };
 	depth.textureCreateInfo.name = "SpotLightShadows";
@@ -2957,7 +2957,7 @@ void RenderPassManager::CreateBloom()
 	RenderPass::AttachmentDescription color{};
 	color.textureCreateInfo.format = Format::B10G11R11_UFLOAT_PACK32;
 	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	color.textureCreateInfo.channels = 3;
+	color.textureCreateInfo.instanceSize = sizeof(uint32_t);
 	color.textureCreateInfo.isMultiBuffered = true;
 	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
 	color.textureCreateInfo.name = "BloomColor";
@@ -3244,7 +3244,7 @@ void RenderPassManager::CreateSSR()
 
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
-		createInfo.channels = 4;
+		createInfo.instanceSize = sizeof(uint8_t) * 4;
 		createInfo.filepath = passName;
 		createInfo.name = passName;
 		createInfo.format = Format::R8G8B8A8_UNORM;
@@ -3343,7 +3343,7 @@ void RenderPassManager::CreateSSRBlur()
 
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
-		createInfo.channels = 4;
+		createInfo.instanceSize = sizeof(uint8_t) * 4;
 		createInfo.filepath = passName;
 		createInfo.name = passName;
 		createInfo.format = Format::R8G8B8A8_UNORM;
@@ -3440,7 +3440,7 @@ void RenderPassManager::CreateSSAO()
 
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
-		createInfo.channels = 1;
+		createInfo.instanceSize = sizeof(uint8_t);
 		createInfo.filepath = passName;
 		createInfo.name = passName;
 		createInfo.format = Format::R8_UNORM;
@@ -3553,7 +3553,7 @@ void RenderPassManager::CreateSSAOBlur()
 
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
-		createInfo.channels = 1;
+		createInfo.instanceSize = sizeof(uint8_t);
 		createInfo.filepath = passName;
 		createInfo.name = passName;
 		createInfo.format = Format::R8_UNORM;
@@ -3633,7 +3633,7 @@ void RenderPassManager::CreateSSS()
 
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
-		createInfo.channels = 1;
+		createInfo.instanceSize = sizeof(uint8_t);
 		createInfo.filepath = passName;
 		createInfo.name = passName;
 		createInfo.format = Format::R8_UNORM;
@@ -3736,7 +3736,7 @@ void RenderPassManager::CreateSSSBlur()
 
 		Texture::CreateInfo createInfo{};
 		createInfo.aspectMask = Texture::AspectMask::COLOR;
-		createInfo.channels = 1;
+		createInfo.instanceSize = sizeof(uint8_t);
 		createInfo.filepath = passName;
 		createInfo.name = passName;
 		createInfo.format = Format::R8_UNORM;
@@ -3800,7 +3800,7 @@ void RenderPassManager::CreateUI()
 	RenderPass::AttachmentDescription color{};
 	color.textureCreateInfo.format = Format::R8G8B8A8_UNORM;
 	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	color.textureCreateInfo.channels = 4;
+	color.textureCreateInfo.instanceSize = sizeof(uint8_t) * 4;
 	color.textureCreateInfo.isMultiBuffered = true;
 	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
 	color.textureCreateInfo.name = "UIColor";
@@ -4093,7 +4093,7 @@ void RenderPassManager::CreateToneMappingPass()
 	RenderPass::AttachmentDescription color{};
 	color.textureCreateInfo.format = Format::R8G8B8A8_SRGB;
 	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	color.textureCreateInfo.channels = 4;
+	color.textureCreateInfo.instanceSize = sizeof(uint8_t) * 4;
 	color.textureCreateInfo.isMultiBuffered = true;
 	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
 	color.textureCreateInfo.name = "ToneMappedColor";
@@ -4187,7 +4187,7 @@ void RenderPassManager::CreateAntiAliasingAndComposePass()
 	RenderPass::AttachmentDescription color{};
 	color.textureCreateInfo.format = Format::R8G8B8A8_SRGB;
 	color.textureCreateInfo.aspectMask = Texture::AspectMask::COLOR;
-	color.textureCreateInfo.channels = 4;
+	color.textureCreateInfo.instanceSize = sizeof(uint8_t) * 4;
 	color.textureCreateInfo.isMultiBuffered = true;
 	color.textureCreateInfo.usage = { Texture::Usage::SAMPLED, Texture::Usage::TRANSFER_SRC, Texture::Usage::COLOR_ATTACHMENT };
 	color.textureCreateInfo.name = "AntiAliasingAndCompose";

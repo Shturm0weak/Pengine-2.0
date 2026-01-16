@@ -133,10 +133,9 @@ namespace Pengine
 			SamplerCreateInfo samplerCreateInfo{};
 			glm::ivec2 size = { 0, 0 };
 			void* data = nullptr;
-			uint32_t instanceSize = sizeof(uint8_t);
 			uint32_t mipLevels = 1;
 			uint32_t layerCount = 1;
-			int channels = 0;
+			uint32_t instanceSize = 0;
 			std::string name;
 			std::filesystem::path filepath;
 			Format format;
@@ -191,7 +190,7 @@ namespace Pengine
 
 		[[nodiscard]] glm::ivec2 GetSize() const { return m_Size; }
 
-		[[nodiscard]] int GetChannels() const { return m_Channels; }
+		[[nodiscard]] uint32_t GetInstanceSize() const { return m_InstanceSize; }
 
 		[[nodiscard]] Format GetFormat() const { return m_Format; }
 
@@ -216,10 +215,9 @@ namespace Pengine
 	protected:
 		glm::ivec2 m_Size = { 0, 0 };
 
-		int m_Channels = 0;
 		uint32_t m_MipLevels = 1;
 		uint32_t m_LayerCount = 1;
-		uint32_t m_InstanceSize = sizeof(uint8_t);
+		uint32_t m_InstanceSize = sizeof(uint8_t) * 4;
 
 		Format m_Format{};
 		AspectMask m_AspectMask{};

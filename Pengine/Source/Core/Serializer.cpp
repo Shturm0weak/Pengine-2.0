@@ -698,7 +698,7 @@ void Serializer::SerializeTexture(const std::filesystem::path& filepath, std::sh
 {
 	Texture::CreateInfo createInfo{};
 	createInfo.aspectMask = texture->GetAspectMask();
-	createInfo.channels = texture->GetChannels();
+	createInfo.instanceSize = texture->GetInstanceSize();
 	createInfo.filepath = "Copy";
 	createInfo.name = "Copy";
 	createInfo.format = texture->GetFormat();
@@ -728,7 +728,7 @@ void Serializer::SerializeTexture(const std::filesystem::path& filepath, std::sh
 		SerializeTextureMeta(meta);
 
 		stbi_flip_vertically_on_write(false);
-		stbi_write_png(filepath.string().c_str(), copy->GetSize().x, copy->GetSize().y, copy->GetChannels(), data, subresourceLayout.rowPitch);
+		stbi_write_png(filepath.string().c_str(), copy->GetSize().x, copy->GetSize().y, 4, data, subresourceLayout.rowPitch);
 
 		Logger::Log("Texture:" + filepath.string() + " has been saved!", BOLDGREEN);
 
@@ -2910,16 +2910,17 @@ std::shared_ptr<Texture> Serializer::LoadGltfTexture(
 			createInfo.name = bufferView.name.empty() ? debugName : bufferView.name.c_str();
 			createInfo.filepath = directory / createInfo.name;
 
+			int channels = 0;
 			stbi_set_flip_vertically_on_load(true);
 			createInfo.data = stbi_load_from_memory(
 				reinterpret_cast<const stbi_uc*>(array->bytes.data() + bufferView.byteOffset),
 				static_cast<int>(bufferView.byteLength),
 				&createInfo.size.x,
 				&createInfo.size.y,
-				&createInfo.channels,
-				4);
+				&channels,
+				STBI_rgb_alpha);
 
-			createInfo.channels = 4;
+			createInfo.instanceSize = sizeof(uint8_t) * 4;
 
 			if (!createInfo.data)
 			{
@@ -2932,9 +2933,9 @@ std::shared_ptr<Texture> Serializer::LoadGltfTexture(
 				createInfo.filepath.string().c_str(),
 				createInfo.size.x,
 				createInfo.size.y,
-				createInfo.channels,
+				channels,
 				createInfo.data,
-				createInfo.size.x * createInfo.channels);
+				createInfo.size.x * createInfo.instanceSize);
 
 			if (!meta)
 			{
