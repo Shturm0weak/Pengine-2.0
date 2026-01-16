@@ -144,6 +144,65 @@ void RenderPassManager::GetUniformWriters(
 	}
 }
 
+bool RenderPassManager::BindAndFlushUniformWriters(
+	std::shared_ptr<Pipeline> pipeline,
+	std::shared_ptr<BaseMaterial> baseMaterial,
+	std::shared_ptr<Material> material,
+	const RenderPass::RenderCallbackInfo& renderInfo,
+	const std::vector<Pipeline::DescriptorSetIndexType>& descriptorSetIndexTypes,
+	std::shared_ptr<UniformWriter> objectUniformWriter)
+{
+    PROFILER_SCOPE(__FUNCTION__);
+
+	// NOTE: May return reference for better performance!
+	for (const auto& type : descriptorSetIndexTypes)
+	{
+		const auto descriptorSet = pipeline->GetDescriptorSetIndexByType(type);
+		for (const auto& [name, set] : descriptorSet)
+		{
+			std::shared_ptr<UniformWriter> uniformWriter;
+			switch (type)
+			{
+			case Pipeline::DescriptorSetIndexType::BINDLESS:
+				uniformWriter = TextureManager::GetInstance().GetBindlessUniformWriter();
+				break;
+			case Pipeline::DescriptorSetIndexType::RENDERER:
+				uniformWriter = renderInfo.renderView->GetUniformWriter(name);
+				break;
+			case Pipeline::DescriptorSetIndexType::SCENE:
+				uniformWriter = renderInfo.scene->GetRenderView()->GetUniformWriter(name);
+				break;
+			case Pipeline::DescriptorSetIndexType::RENDERPASS:
+				uniformWriter = RenderPassManager::GetInstance().GetRenderPass(name)->GetUniformWriter();
+				break;
+			case Pipeline::DescriptorSetIndexType::BASE_MATERIAL:
+				if (!baseMaterial) continue;
+				uniformWriter = baseMaterial->GetUniformWriter(name);
+				break;
+			case Pipeline::DescriptorSetIndexType::MATERIAL:
+				if (!material) continue;
+				uniformWriter = material->GetUniformWriter(name);
+				break;
+			case Pipeline::DescriptorSetIndexType::OBJECT:
+				if (!objectUniformWriter) continue;
+				uniformWriter = objectUniformWriter;
+				break;
+			default:
+				break;
+			}
+
+			if (!FlushUniformWriters({ uniformWriter }))
+			{
+				return false;
+			}
+
+			renderInfo.renderer->BindUniformWriters(pipeline, { uniformWriter->GetNativeHandle() }, set, renderInfo.frame);
+		}
+	}
+
+	return true;
+}
+
 void RenderPassManager::PrepareUniformsPerViewportBeforeDraw(const RenderPass::RenderCallbackInfo& renderInfo)
 {
 	PROFILER_SCOPE(__FUNCTION__);
@@ -309,7 +368,7 @@ std::shared_ptr<Texture> RenderPassManager::ScaleTexture(
 
 	glm::uvec2 groupCount = glm::uvec2(dstSize.x / 16, dstSize.y / 16);
 	groupCount += glm::uvec2(1, 1);
-	renderer->Dispatch(
+	renderer->Compute(
 		pipeline,
 		{ groupCount.x, groupCount.y, 1 },
 		{
@@ -686,12 +745,36 @@ void RenderPassManager::CreateGBuffer()
 				continue;
 			}
 
+			renderInfo.renderer->BindPipeline(pipeline, renderInfo.frame);
+
+			if (!BindAndFlushUniformWriters(
+				pipeline,
+				baseMaterial,
+				nullptr,
+				renderInfo,
+				{
+					Pipeline::DescriptorSetIndexType::BINDLESS,
+					Pipeline::DescriptorSetIndexType::SCENE,
+					Pipeline::DescriptorSetIndexType::BASE_MATERIAL,
+					Pipeline::DescriptorSetIndexType::RENDERER,
+					Pipeline::DescriptorSetIndexType::RENDERPASS
+				}
+			))
+			{
+				continue;
+			}
+
 			for (const auto& [material, gameObjectsByMeshes] : meshesByMaterial)
 			{
-				std::vector<NativeHandle> uniformWriterNativeHandles;
-				std::vector<std::shared_ptr<UniformWriter>> uniformWriters;
-				GetUniformWriters(pipeline, baseMaterial, material, renderInfo, uniformWriters, uniformWriterNativeHandles);
-				if (!FlushUniformWriters(uniformWriters))
+				if (!BindAndFlushUniformWriters(
+					pipeline,
+					nullptr,
+					material,
+					renderInfo,
+					{
+						Pipeline::DescriptorSetIndexType::MATERIAL,
+					}
+				))
 				{
 					continue;
 				}
@@ -700,11 +783,13 @@ void RenderPassManager::CreateGBuffer()
 				{
 					GetVertexBuffers(pipeline, mesh, vertexBuffers, vertexBufferOffsets);
 
-					for (size_t i = 0; i < entitiesByLod.size(); i++)
+					for (size_t lod = 0; lod < entitiesByLod.size(); lod++)
 					{
+						if (entitiesByLod[lod].empty()) continue;
+
 						const size_t instanceDataOffset = instanceDatas.size();
 
-						for (const entt::entity& entity : entitiesByLod[i])
+						for (const entt::entity& entity : entitiesByLod[lod])
 						{
 							InstanceData data{};
 							const Transform& transform = registry.get<Transform>(entity);
@@ -713,17 +798,18 @@ void RenderPassManager::CreateGBuffer()
 							instanceDatas.emplace_back(data);
 						}
 
-						renderInfo.renderer->Render(
+						renderInfo.renderer->BindVertexBuffers(
 							vertexBuffers,
 							vertexBufferOffsets,
 							mesh->GetIndexBuffer()->GetNativeHandle(),
-							mesh->GetLods()[i].indexOffset * sizeof(uint32_t),
-							mesh->GetLods()[i].indexCount,
-							pipeline,
+							mesh->GetLods()[lod].indexOffset * sizeof(uint32_t),
 							instanceBuffer->GetNativeHandle(),
 							instanceDataOffset * instanceBuffer->GetInstanceSize(),
-							entitiesByLod[i].size(),
-							uniformWriterNativeHandles,
+							renderInfo.frame);
+						
+						renderInfo.renderer->DrawIndexed(
+							mesh->GetLods()[lod].indexCount,
+							entitiesByLod[lod].size(),
 							renderInfo.frame);
 					}
 				}
@@ -747,23 +833,34 @@ void RenderPassManager::CreateGBuffer()
 
 					if (skeletalAnimator)
 					{
-						std::vector<NativeHandle> newUniformWriterNativeHandles = uniformWriterNativeHandles;
-						newUniformWriterNativeHandles.emplace_back(skeletalAnimator->GetUniformWriter()->GetNativeHandle());
-						skeletalAnimator->GetUniformWriter()->Flush();
-
+						if (!BindAndFlushUniformWriters(
+							pipeline,
+							nullptr,
+							nullptr,
+							renderInfo,
+							{
+								Pipeline::DescriptorSetIndexType::OBJECT,
+							},
+							skeletalAnimator->GetUniformWriter()
+						))
+						{
+							continue;
+						}
+						
 						GetVertexBuffers(pipeline, single.mesh, vertexBuffers, vertexBufferOffsets);
 
-						renderInfo.renderer->Render(
+						renderInfo.renderer->BindVertexBuffers(
 							vertexBuffers,
 							vertexBufferOffsets,
 							single.mesh->GetIndexBuffer()->GetNativeHandle(),
 							single.mesh->GetLods()[single.lod].indexOffset * sizeof(uint32_t),
-							single.mesh->GetLods()[single.lod].indexCount,
-							pipeline,
 							instanceBuffer->GetNativeHandle(),
 							instanceDataOffset * instanceBuffer->GetInstanceSize(),
+							renderInfo.frame);
+						
+						renderInfo.renderer->DrawIndexed(
+							single.mesh->GetLods()[single.lod].indexCount,
 							1,
-							newUniformWriterNativeHandles,
 							renderInfo.frame);
 					}
 				}
@@ -935,7 +1032,7 @@ void RenderPassManager::CreateDeferred()
 
 			glm::uvec2 groupCount = renderInfo.viewportSize / glm::ivec2(16, 16);
 			groupCount += glm::uvec2(1, 1);
-			renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
+			renderInfo.renderer->Compute(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
 
 			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 		}
@@ -1682,6 +1779,8 @@ void RenderPassManager::CreateCSM()
 				{
 					for (size_t lod = 0; lod < entitiesByLod.size(); lod++)
 					{
+						if (entitiesByLod[lod].empty()) continue;
+
 						const size_t instanceDataOffset = instanceDatas.size();
 
 						for (const entt::entity& entity : entitiesByLod[lod])
@@ -2240,6 +2339,8 @@ void RenderPassManager::CreatePointLightShadows()
 						{
 							for (size_t lod = 0; lod < entitiesByLod.size(); lod++)
 							{
+								if (entitiesByLod[lod].empty()) continue;
+
 								const size_t instanceDataOffset = instanceDatas.size();
 
 								for (const entt::entity& entity : entitiesByLod[lod])
@@ -2757,6 +2858,8 @@ void RenderPassManager::CreateSpotLightShadows()
 					{
 						for (size_t lod = 0; lod < entitiesByLod.size(); lod++)
 						{
+							if (entitiesByLod[lod].empty()) continue;
+
 							const size_t instanceDataOffset = instanceDatas.size();
 
 							for (const entt::entity& entity : entitiesByLod[lod])
@@ -3206,7 +3309,7 @@ void RenderPassManager::CreateSSR()
 
 			glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
 			groupCount += glm::uvec2(1, 1);
-			renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
+			renderInfo.renderer->Compute(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
 
 			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 		}
@@ -3298,7 +3401,7 @@ void RenderPassManager::CreateSSRBlur()
 
 			glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
 			groupCount += glm::uvec2(1, 1);
-			renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
+			renderInfo.renderer->Compute(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
 
 			renderInfo.renderer->MemoryBarrierFragmentReadWrite(renderInfo.frame);
 
@@ -3417,7 +3520,7 @@ void RenderPassManager::CreateSSAO()
 
 			glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
 			groupCount += glm::uvec2(1, 1);
-			renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
+			renderInfo.renderer->Compute(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
 
 			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 		}
@@ -3495,7 +3598,7 @@ void RenderPassManager::CreateSSAOBlur()
 
 			glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
 			groupCount += glm::uvec2(1, 1);
-			renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
+			renderInfo.renderer->Compute(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
 
 			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 
@@ -3600,7 +3703,7 @@ void RenderPassManager::CreateSSS()
 
 			glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
 			groupCount += glm::uvec2(1, 1);
-			renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
+			renderInfo.renderer->Compute(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
 
 			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 		}
@@ -3678,7 +3781,7 @@ void RenderPassManager::CreateSSSBlur()
 
 			glm::uvec2 groupCount = currentViewportSize / glm::ivec2(16, 16);
 			groupCount += glm::uvec2(1, 1);
-			renderInfo.renderer->Dispatch(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
+			renderInfo.renderer->Compute(pipeline, { groupCount.x, groupCount.y, 1 }, uniformWriterNativeHandles, renderInfo.frame);
 
 			renderInfo.renderer->EndCommandLabel(renderInfo.frame);
 

@@ -45,6 +45,14 @@ namespace Pengine
 			std::vector<std::shared_ptr<UniformWriter>>& uniformWriters,
 			std::vector<NativeHandle>& uniformWriterNativeHandles);
 
+		static bool BindAndFlushUniformWriters(
+			std::shared_ptr<class Pipeline> pipeline,
+			std::shared_ptr<class BaseMaterial> baseMaterial,
+			std::shared_ptr<class Material> material,
+			const RenderPass::RenderCallbackInfo& renderInfo,
+			const std::vector<Pipeline::DescriptorSetIndexType>& descriptorSetIndexTypes,
+			std::shared_ptr<UniformWriter> objectUniformWriter = nullptr);
+
 		static void PrepareUniformsPerViewportBeforeDraw(const RenderPass::RenderCallbackInfo& renderInfo);
 
 		std::shared_ptr<Texture> ScaleTexture(
